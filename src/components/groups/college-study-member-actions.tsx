@@ -67,7 +67,7 @@ export function CollegeStudyMemberActions({
       }
       setError(null);
       setAction({ action: "ADD", membershipId });
-    }} className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+    }} className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-body leading-4">
         Add learner
         <Select value={selection} onChange={(event) => {setSelection(event.target.value);if(event.target.value)setManualId("");}}
@@ -81,7 +81,7 @@ export function CollegeStudyMemberActions({
         <Input value={manualId} onChange={(event) => {setManualId(event.target.value);if(event.target.value.trim())setSelection("");}}
           placeholder="UUID" className="min-h-11 min-w-0 md:min-h-9" />
       </label>
-      <Button type="submit" loading={pending} className="min-h-11 w-full md:col-span-2 md:min-h-9 min-[992px]:col-span-1 min-[992px]:w-auto" disabled={pending}>Review add</Button>
+      <Button type="submit" loading={pending} className="min-h-11 w-full md:col-span-2 md:min-h-9 lg:col-span-1 lg:w-auto" disabled={pending}>Review add</Button>
     </form>
     <details className="border-b border-border pb-3 text-xs text-muted-foreground"><summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9">Membership policy</summary><p>
       Adding to a full group follows the registered group waitlist policy. Only active same-college learners are eligible.

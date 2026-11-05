@@ -7,6 +7,7 @@ import {SuperAdminSectionSyllabusOrder} from "@/components/courses/super-admin-s
 import {
  listCollegeSectionSyllabusChoices,listCollegeSectionSyllabus,
 } from "@/modules/courses/college-section-syllabus-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function CollegeContentOrderPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -49,7 +50,7 @@ export default async function CollegeContentOrderPage({searchParams}:{
   {failed?<ErrorState title="Syllabus unavailable"
    description="Could not load the selected class. Your saved content order has not changed."/>:null}
   {syllabus?<section aria-label="Selected class syllabus" className="min-w-0 space-y-4">
-   <h2 className="text-base font-semibold text-foreground">{selected?.courseCode} · {selected?.courseName} · {selected?.sectionName}</h2>
+   <Heading level={2} size="base" className="text-foreground">{selected?.courseCode} · {selected?.courseName} · {selected?.sectionName}</Heading>
    <p className="text-sm text-body">Use the focusable Up and Down controls to move an item. Changes are a preview until you choose Save lesson order; Undo restores the last saved order.</p>
    {syllabus.truncated?<Banner tone="warning">More than 500 content entries exist. Reduce the class syllabus before reordering.</Banner>:null}
    {!syllabus.canReorder?<Banner tone="info">Class ordering is read-only until the verified content-order database migration is enabled.</Banner>:null}

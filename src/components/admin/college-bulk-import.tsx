@@ -14,6 +14,8 @@ import {useToast} from "@/components/ui/toast";
 import {collegeBulkImportToast} from "@/modules/colleges/bulk-import-feedback-model";
 import {parseCollegeImportCsv,COLLEGE_IMPORT_TEMPLATE,LEGACY_COLLEGE_IMPORT_TEMPLATE} from "@/modules/colleges/bulk-import-model";
 import {canApplyConfirmedCollegeBulkImport} from "@/modules/colleges/bulk-import-confirmation-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Result={line:number;code:string;name?:string;status:"CREATED"|"SKIPPED"|"FAILED";message:string};
 export function CollegeBulkImport({organizations}:{organizations:readonly {id:string;name:string}[]}){
  const versionRef=useRef(0),confirmedVersionRef=useRef(-1),inFlightRef=useRef(false);
@@ -126,14 +128,14 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
     <p>Legacy columns: orgId, name, uniqueId, city, state. The new import keeps the verified organization selector and maps uniqueId to code. Header optional; up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
     <p>Converting an old LMS CSV? Map every numeric orgId to its verified vNext organization UUID, separate rows by organization and choose the matching organization above. Use <strong>uniqueId</strong> as the new <strong>code</strong>. Mixed-organization uploads are rejected rather than assigned to the wrong college.</p>
     <div className="flex flex-wrap gap-4">
-     <a download="colleges-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(COLLEGE_IMPORT_TEMPLATE+"\n")} className="font-semibold text-primary-text underline">Download new CSV template</a>
-     <a download="colleges-legacy-conversion-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(LEGACY_COLLEGE_IMPORT_TEMPLATE+"\n")} className="font-semibold text-primary-text underline">Download legacy conversion template</a>
+     <TextLink download="colleges-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(COLLEGE_IMPORT_TEMPLATE+"\n")}>Download new CSV template</TextLink>
+     <TextLink download="colleges-legacy-conversion-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(LEGACY_COLLEGE_IMPORT_TEMPLATE+"\n")}>Download legacy conversion template</TextLink>
     </div>
    </div>
    {valid>0?<Alert tone="info">{valid} colleges ready</Alert>:null}
    {!organizations.length?<Alert tone="warning">Choose an organization before importing colleges.</Alert>:null}
    {(error||validation)?<Alert tone="error">{error||validation}</Alert>:null}
-   {results.length>0?<div role="region" aria-label="College import results" aria-live="polite" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)]"><h3 className="font-semibold text-[var(--lms-heading)]">Import results</h3>
+   {results.length>0?<div role="region" aria-label="College import results" aria-live="polite" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)]"><Heading level={3} className="text-[var(--lms-heading)]">Import results</Heading>
     <DataTable caption="College bulk import results" rows={results} getRowKey={row=>String(row.line)}
      empty={<EmptyState title="No import results" description="No import results have been recorded."/>}
      columns={[

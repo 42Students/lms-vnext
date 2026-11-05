@@ -16,6 +16,8 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { academicDirectorySearchParams, collegeSemesterDirectorySchema } from "@/modules/academics/college-academic-directory-model";
 import { listCollegeSemesters } from "@/modules/academics/college-academic-directory-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -86,13 +88,13 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Semesters"
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —."
-      actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-[650] text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Semester–Course Mapping</Link>} />
+      actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Semester–Course Mapping</Link>} />
     <AcademicSetupSteps step={3} showRefresh={false} />
     <div className="grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6" aria-label="Semesters">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">Semesters</h2>
+        <Heading level={2} size="base" className="m-0 text-foreground">Semesters</Heading>
         <span className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} total</span>
       </div>
       <div className="border-b border-border pb-4" aria-label="Semester filters">
@@ -134,13 +136,13 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <Input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
       <Button type="submit" variant="secondary" className="min-h-11 w-full sm:min-h-9 sm:w-auto">Refresh</Button>
     </form>
-    <a aria-label="Export semesters.csv" href={"/api/admin/semesters/export?"+new URLSearchParams({
+    <ButtonLink variant="secondary" aria-label="Export semesters.csv" href={"/api/admin/semesters/export?"+new URLSearchParams({
       ...(data.query.q?{q:data.query.q}:{}),
       ...(data.query.programId?{programId:data.query.programId}:{}),
       ...(data.query.status!=="ALL"?{status:data.query.status}:{})
-    }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    }).toString()}>
       CSV
-    </a>
+    </ButtonLink>
     </div>
     <div className="min-w-0 space-y-3">
       <p role="status" className="m-0 break-words text-sm text-muted-foreground">Showing {data.total?((data.query.page-1)*data.query.pageSize+1):0}–{Math.min(data.query.page*data.query.pageSize,data.total)} of {data.total.toLocaleString("en-IN")} semesters</p>

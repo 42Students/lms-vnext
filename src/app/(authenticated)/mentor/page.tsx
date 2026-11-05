@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { hasActiveMembership, hasMembershipRole } from "@/modules/identity/context";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 
@@ -35,9 +36,9 @@ export default async function MentorLandingPage() {
       {failed?"The LMS could not check your college module settings. This does not mean Projects is disabled.":"Projects is disabled for this account. You can still check notifications."}
     </p>
     {failed?
-      <a href="/mentor?retry=1" className="mt-6 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+      <ButtonLink variant="primary" href="/mentor?retry=1" className="mt-6">
         Retry access check
-      </a>:
+      </ButtonLink>:
       <Link href="/mentor/notifications" className="mt-6 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         View notifications
       </Link>}

@@ -7,6 +7,7 @@ import { Alert } from "@/components/ui/alert";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {COLLEGE_GLANCE_LOAD_ERROR,COLLEGE_GLANCE_REFRESH_ERROR,displayedGlanceNumber,
  isCollegeAtGlanceCounts,type CollegeAtGlanceCounts} from "@/modules/colleges/admin-college-at-glance-model";
+import { Heading } from "@/components/ui/heading";
 const ITEMS=[
  {key:"students" as const,label:"Students",href:"/admin/people"},
  {key:"faculty" as const,label:"Faculty",href:"/admin/people"},
@@ -52,7 +53,7 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
  },[refresh,initial]);
  return <section aria-label="At a glance" className="space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
-   <h2 className="font-semibold text-foreground">At a glance</h2>
+   <Heading level={2} className="text-foreground">At a glance</Heading>
    {error?<Button type="button" variant="secondary" disabled={refreshing} onClick={()=>void refresh()}
      className="min-h-11 md:min-h-9 print:hidden">
      {refreshing?"Refreshing…":"Retry"}</Button>:null}

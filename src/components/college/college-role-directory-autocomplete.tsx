@@ -112,7 +112,7 @@ export function CollegeRoleDirectoryAutocomplete({
     />
     {open?<div id={"college-role-suggest-"+kind} role="listbox"
       aria-label={kind==="FACULTY"?"Faculty name suggestions":"Student suggestions"}
-      className="absolute left-0 right-0 top-full z-20 mt-1 max-h-52 overflow-y-auto rounded border border-border bg-surface p-1 shadow-lg">
+      className="absolute left-0 right-0 top-full z-(--lms-z-sticky-inline) mt-1 max-h-52 overflow-y-auto rounded border border-border bg-surface p-1 shadow-lg">
       <p className="px-2 py-1 text-xs text-muted-foreground">
         {loading?"Searching…":showingLive?"Matching this college":recent.length?"Recent searches":"Popular on this page"}
       </p>

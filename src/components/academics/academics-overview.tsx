@@ -13,6 +13,7 @@ import {
   ProgramActions,
   SectionActions,
 } from "./academics-actions";
+import { Heading } from "@/components/ui/heading";
 
 type Workspace = Awaited<
   ReturnType<typeof getAcademicsWorkspace>
@@ -348,9 +349,9 @@ export function AcademicsOverview({
 
       <section className="space-y-3" aria-labelledby="admin-academic-periods-title">
         <div>
-          <h2 id="admin-academic-periods-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <Heading level={2} size="xl" id="admin-academic-periods-title" className="m-0 text-[var(--lms-heading)]">
             Academic periods
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             College calendar windows with explicit lifecycle.
           </p>
@@ -365,9 +366,9 @@ export function AcademicsOverview({
       <section className="space-y-3" aria-labelledby="admin-academic-programs-title">
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-[var(--lms-space-3)]">
           <div className="min-w-0">
-            <h2 id="admin-academic-programs-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+            <Heading level={2} size="xl" id="admin-academic-programs-title" className="m-0 text-[var(--lms-heading)]">
               Programs
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body">
               Department-owned academic programs.
             </p>
@@ -387,9 +388,9 @@ export function AcademicsOverview({
 
       <section className="space-y-3" aria-labelledby="admin-academic-cohorts-title">
         <div>
-          <h2 id="admin-academic-cohorts-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <Heading level={2} size="xl" id="admin-academic-cohorts-title" className="m-0 text-[var(--lms-heading)]">
             Cohorts / batches
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Program intakes with progression stored as learner history.
           </p>
@@ -403,9 +404,9 @@ export function AcademicsOverview({
 
       <section className="space-y-3" aria-labelledby="admin-academic-sections-title">
         <div>
-          <h2 id="admin-academic-sections-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+          <Heading level={2} size="xl" id="admin-academic-sections-title" className="m-0 text-[var(--lms-heading)]">
             Sections
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Period-specific roster boundaries. Open a Section for learners, Faculty responsibilities and schedule.
           </p>

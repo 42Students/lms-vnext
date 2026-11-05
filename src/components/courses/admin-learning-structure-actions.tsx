@@ -17,6 +17,7 @@ import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { courseApiError } from "./learner-course-api";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 async function requestJson(
   path: string,
@@ -117,9 +118,9 @@ export function CreateLearningPathPanel({
       onSubmit={submit}
       className="border-b border-border pb-5"
     >
-      <h2 className="m-0 text-lg font-semibold text-foreground">
+      <Heading level={2} size="lg" className="m-0 text-foreground">
         Create shared Learning Path
-      </h2>
+      </Heading>
       <p className="mt-1 text-sm leading-6 text-body">
         This path becomes the common lesson
         structure for every Section Delivery in

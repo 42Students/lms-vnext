@@ -25,7 +25,7 @@ export default async function PublicIssuesPage(){
    )).orderBy(desc(db10BugReports.publicCatalogApprovedAt),desc(db10BugReports.id))
      .limit(20).then(items=>({ok:true as const,items}))
      .catch(()=>({ok:false as const,items:[]}));
- return <main className="mx-auto min-h-dvh w-full max-w-4xl space-y-5 bg-white p-4 text-foreground md:p-8">
+ return <main className="mx-auto min-h-dvh w-full max-w-4xl space-y-5 bg-surface p-4 text-foreground md:p-8">
    <header className="border-b border-border pb-4">
     <h1 className="text-[24px] font-semibold text-[var(--lms-heading)]">42 Tracker · Issues</h1>
     <p className="mt-2 text-sm text-body">Public issue summaries are published only after verification and an explicit review. Reporter details and private issue reports are never public.</p>

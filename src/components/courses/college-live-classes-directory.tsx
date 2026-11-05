@@ -11,6 +11,8 @@ import {CollegeContentPreview} from "./college-content-preview";
 import {collegeLiveClassHref} from "@/modules/courses/college-live-classes-model";
 import {liveClassIstSchedule} from "@/modules/courses/college-live-classes-model";
 import type {listCollegeContentAggregate} from "@/modules/courses/college-content-aggregate-service";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Data=Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 /** Authorized source must provide this URL; never reconstruct it from IDs.
  * Treat invalid or credentialed URLs as unavailable.
@@ -32,15 +34,15 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       lesson:item.lessonName,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
       visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>}/>:null}
   <form method="get" action="/college/live-classes"
-    className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] print:hidden">
+    className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] print:hidden">
     <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Session, lesson or course
       <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
         className="min-h-11 min-w-0 md:min-h-9"/>
     </label>
-    <details className="min-w-0 border-t border-border pt-2 md:col-span-2 min-[992px]:col-span-4" open={Boolean(data.query.courseCode||data.query.deliveryId||data.query.scope!=="ALL"||data.view!=="ALL"||data.from||data.to)||undefined}>
+    <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4" open={Boolean(data.query.courseCode||data.query.deliveryId||data.query.scope!=="ALL"||data.view!=="ALL"||data.from||data.to)||undefined}>
       <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
-      <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-4">
+      <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-4">
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Course code (exact)
       <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
@@ -89,14 +91,14 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       </div>
     </details>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
+    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
   </form>
   <section aria-label="Persisted live classes" className="border-y border-border">
     <p className="border-b border-border p-4 text-sm text-muted-foreground">{data.total} matching live classes</p>
     {data.items.length===0?<p className="p-6 text-sm text-body">No saved sessions match these filters.</p>:
       <div className="divide-y divide-border">{data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 px-1 py-4 md:px-4">
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-          <h2 className="min-w-0 break-words font-semibold text-foreground">{item.title}</h2>
+          <Heading level={2} className="min-w-0 break-words text-foreground">{item.title}</Heading>
           <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
            type:item.contentType,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
            visible:item.visibleToStudents,details:liveClassIstSchedule(item.startsAt,item.endsAt)}}/>
@@ -105,8 +107,8 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
         <p className="text-sm text-body">{liveClassIstSchedule(item.startsAt,item.endsAt)}</p>
         {"meetingUrl" in item
           ? safeCollegeLiveMeetingUrl(item.meetingUrl)
-            ? <a href={safeCollegeLiveMeetingUrl(item.meetingUrl)!} rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
-                Join ↗</a>
+            ? <TextLink href={safeCollegeLiveMeetingUrl(item.meetingUrl)!} rel="noopener noreferrer" className="inline-flex min-h-11 items-center">
+                Join ↗</TextLink>
             : <p role="status" className="text-xs text-muted-foreground">
                 {item.meetingUrl?"Invalid link":"No link"}</p>
           : <p className="text-xs text-muted-foreground">

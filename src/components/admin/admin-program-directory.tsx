@@ -21,6 +21,8 @@ import {
   type AdminProgramRow,
   programDurationYearsLabel, legacyDurationYearsToTerms,
 } from "@/modules/admin-ui/program-directory";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const PROGRAM_SIZE_KEY = "admin-programs-page-size";
 const FALLBACK_PROGRAM_SIZE_KEY = "42lms-program-page-size";
@@ -203,7 +205,7 @@ export function AdminProgramDirectory({
   return (
     <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
       <section aria-label="Create New Program" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 print:hidden">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)]">Create New Program</h2>
+        <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)]">Create New Program</Heading>
         <form onSubmit={create} noValidate className="min-w-0 pt-3">
         {createError?<Alert tone="error" role="alert">
           <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
@@ -273,9 +275,9 @@ export function AdminProgramDirectory({
       </section>
       <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4" aria-label="Existing Programs">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-          <h2 className="m-0 text-base font-semibold">Existing Programs</h2>
+          <Heading level={2} size="base" className="m-0">Existing Programs</Heading>
           <div className="flex flex-wrap items-center gap-2 print:hidden">
-            <a href={csvHref} download="programs.csv" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{serverPage?"Export CSV (page)":"Export CSV"}</a>
+            <ButtonLink variant="secondary" href={csvHref} download="programs.csv">{serverPage?"Export CSV (page)":"Export CSV"}</ButtonLink>
             <Button variant="secondary" size="sm" disabled={refreshPending} className="min-h-11 md:min-h-9"
               onClick={()=>startRefresh(()=>router.refresh())}>{refreshPending?"Refreshing programs…":"Refresh"}</Button>
           </div>

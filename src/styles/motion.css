@@ -1,0 +1,97 @@
+/* All @keyframes live here (guarded by ux:consistency). Durations and easings come from --lms-motion-* tokens at the use site. */
+
+@keyframes lms-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lms-overlay-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes lms-drawer-in {
+  from { opacity: 0; translate: 16px 0; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes lms-sheet-in {
+  from { opacity: 0; translate: 0 16px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes lms-sheet-content-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes lms-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes lms-skeleton-shimmer {
+  to { transform: translateX(100%); }
+}
+
+@keyframes lms-legacy-spin-rotate {
+ from {transform:rotate(45deg);}
+ to {transform:rotate(405deg);}
+}
+
+@keyframes lms-legacy-spin-move {to {opacity:1;}}
+
+@keyframes lms-route-slide-in {
+ from { opacity:0; transform:translateY(8px); }
+ to { opacity:1; transform:translateY(0); }
+}
+
+@keyframes lms-legacy-dialog-enter {
+  from { opacity: 0; scale: .985; }
+  to { opacity: 1; scale: 1; }
+}
+
+@keyframes lms-legacy-drawer-enter {
+  from { opacity: 0; translate: 20px 0; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes lms-legacy-drawer-left-enter {
+  from { opacity: 0; translate: -20px 0; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes lms-legacy-dialog-exit {
+  from { opacity: 1; scale: 1; }
+  to { opacity: 0; scale: .985; }
+}
+
+@keyframes lms-legacy-drawer-exit {
+  from { opacity: 1; translate: 0 0; }
+  to { opacity: 0; translate: 20px 0; }
+}
+
+@keyframes lms-legacy-drawer-left-exit {
+  from { opacity: 1; translate: 0 0; }
+  to { opacity: 0; translate: -20px 0; }
+}
+
+@keyframes lms-legacy-popup-enter {
+  from { opacity: 0; translate: 0 -8px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes lms-micro-notification-panel-enter {
+  from { opacity: 0; translate: 0 -8px; }
+  to { opacity: 1; translate: 0 0; }
+}

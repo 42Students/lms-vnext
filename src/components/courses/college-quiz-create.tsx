@@ -281,19 +281,19 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       className="min-h-11 min-w-0 flex-1"/>
      {question.options.length>2?<Button variant="danger" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
       ...question,options:question.options.filter((_,k)=>k!==j)})}
-      className="min-h-11 text-xs font-[650] md:min-h-9">Remove</Button>:null}
+      className="min-h-11 text-xs font-semibold md:min-h-9">Remove</Button>:null}
     </label>)}
     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
      <Button variant="ghost" type="button" disabled={busy||i===0} onClick={()=>moveQuestion(i,-1)}
-      className="min-h-11 w-full text-sm font-[650] text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9">Move question up</Button>
+      className="min-h-11 w-full text-sm font-semibold text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9">Move question up</Button>
      <Button variant="ghost" type="button" disabled={busy||i===questions.length-1} onClick={()=>moveQuestion(i,1)}
-      className="min-h-11 w-full text-sm font-[650] text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9">Move question down</Button>
+      className="min-h-11 w-full text-sm font-semibold text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9">Move question down</Button>
      <Button variant="ghost" type="button" disabled={busy||question.options.length>=20}
       onClick={()=>replaceQuestion(i,{...question,options:[...question.options,{text:"",correct:false}]})}
-      className="min-h-11 w-full text-sm font-[650] text-primary-text sm:w-auto md:min-h-9">+ Add option</Button>
+      className="min-h-11 w-full text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">+ Add option</Button>
      {questions.length>1?<Button variant="danger" type="button" disabled={busy}
       onClick={()=>setQuestions(rows=>rows.filter((_,k)=>k!==i))}
-      className="min-h-11 w-full text-sm font-[650] sm:w-auto md:min-h-9">Remove question</Button>:null}
+      className="min-h-11 w-full text-sm font-semibold sm:w-auto md:min-h-9">Remove question</Button>:null}
     </div>
    </fieldset>)}
    <Button variant="secondary" type="button" disabled={busy||questions.length>=100}
@@ -305,7 +305,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     Create another quiz after saving
    </label>
    {error?<Banner tone="error" role="alert">{error}</Banner>:null}
-   <div className="sticky bottom-0 z-10 flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 md:flex-row md:items-center">
+   <div className="sticky bottom-0 z-(--lms-z-raised) flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 md:flex-row md:items-center">
     <Button variant="primary" type="button" loading={busy} disabled={busy} onClick={()=>void create()} className="min-h-11 w-full md:min-h-9 md:w-auto"
      >
      {busy?"Saving…":publishNow?"Create and publish":"Create quiz draft"}</Button>

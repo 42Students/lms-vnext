@@ -3,6 +3,7 @@ import Link from "next/link";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 /** Saved consent is distinct from a live provider token verification. */
 export function MentorGoogleCalendarAccount({connected,available,connectedAt}:{
@@ -40,7 +41,7 @@ export function MentorGoogleCalendarAccount({connected,available,connectedAt}:{
  }
  return <section className="space-y-2 rounded-lg border border-border p-3"
    aria-label="Google Calendar account connection">
-  <h3 className="text-sm font-semibold">Google Calendar</h3>
+  <Heading level={3} size="sm">Google Calendar</Heading>
   <p role="status" className="text-sm">
    {!available?"Google Calendar requires secure operator configuration":
     !connected?"No saved Google Calendar consent":

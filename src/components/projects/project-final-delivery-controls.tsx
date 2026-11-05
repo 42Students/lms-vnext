@@ -22,6 +22,7 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
 import {savedDeliverySubmissionReadiness} from "@/modules/projects/saved-delivery-submission-readiness";
 import {finalDeliveryUserError} from "@/modules/projects/final-delivery-user-error";
+import { Heading } from "@/components/ui/heading";
 
 type Submission = {
   id: string;
@@ -342,7 +343,7 @@ export function LearnerFinalDeliveryControl({
         description="Drafts can be prepared early. Final submission unlocks after Project execution is complete."
       >
         <section aria-label="What is left before you can submit" className="mb-[var(--lms-space-4)] min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
-          <h3 className="font-semibold text-foreground">What’s left before you can submit</h3>
+          <Heading level={3} className="text-foreground">What’s left before you can submit</Heading>
           {canSubmitDraft?<p className="mt-1">Ready to submit after saving this draft.</p>:<ul className="mt-2 list-disc space-y-1 pl-5">
             <li>{readinessDetail?.tasksRemaining??"Some"} task(s) still need completion</li>
             <li>{readinessDetail?.sprintsRemaining??"Some"} sprint(s) need sign-off</li>

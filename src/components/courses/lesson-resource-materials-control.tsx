@@ -8,6 +8,8 @@ import { Alert } from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 import {LessonResourceFileUploader} from "./lesson-resource-file-uploader";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Material={id:string;kind:string;title:string;notes:string|null;externalUrl:string|null;
  originalName:string|null;sizeBytes:number|null;sequence:number;uploadStatus:string};
@@ -118,7 +120,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
  const activeMaterials=materials.filter(material=>material.uploadStatus!=="DELETED");
  return <section aria-label="Resource materials" className="mt-4 space-y-3 rounded-xl border border-border bg-surface-subtle p-3">
   <div className="flex items-center justify-between gap-2">
-   <h4 className="text-sm font-semibold text-foreground">Materials ({activeMaterials.length}/20)</h4>
+   <Heading level={4} size="sm" className="text-foreground">Materials ({activeMaterials.length}/20)</Heading>
    {loading?<span role="status" className="text-xs">Loading…</span>:null}
   </div>
   {!loading&&!activeMaterials.length?<p className="text-xs text-muted-foreground">No Resource materials.</p>:null}
@@ -133,8 +135,8 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      <p className="break-words text-sm font-semibold">{material.title}</p>
      {material.notes?<p className="whitespace-pre-wrap text-xs text-body">{material.notes}</p>:null}
      {material.kind==="LINK"&&facultyContentExternalHref("RESOURCE",material.externalUrl)?
-      <a href={facultyContentExternalHref("RESOURCE",material.externalUrl)!} rel="noopener noreferrer"
-       className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open</a>:
+      <TextLink href={facultyContentExternalHref("RESOURCE",material.externalUrl)!} rel="noopener noreferrer"
+       className="inline-flex min-h-11 items-center text-xs md:min-h-9">Open</TextLink>:
       material.kind==="LINK"?<span role="status" className="text-xs text-muted-foreground">Link unavailable</span>:
       material.kind==="FILE"?<div className="flex items-center gap-2">
        {material.uploadStatus==="READY"?

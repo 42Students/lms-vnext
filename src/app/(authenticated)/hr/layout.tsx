@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasActiveRecruiter } from "@/modules/identity/context";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function HrLayout({
   children,
@@ -18,12 +19,12 @@ export default async function HrLayout({
   // HR's deep routes still need a keyboard skip target and an overflow-safe rail.
   return (
     <>
-      <a
+      <ButtonLink variant="secondary"
         href="#hr-page-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-[max(1rem,env(safe-area-inset-top))] focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-[var(--lms-control-radius)] focus:border focus:border-primary focus:bg-surface focus:px-4 focus:text-sm focus:font-semibold focus:text-primary-text focus:outline-2 focus:outline-offset-[3px] focus:outline-[var(--lms-primary-text)]"
+        className="sr-only focus:left-4 focus:top-[max(1rem,env(safe-area-inset-top))] focus:z-(--lms-z-overlay)"
       >
         Skip to HR content
-      </a>
+      </ButtonLink>
       <div
         id="hr-page-content"
         tabIndex={-1}

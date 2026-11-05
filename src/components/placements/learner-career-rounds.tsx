@@ -9,6 +9,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { isCareerRoundVisible } from "@/modules/placements/learner-round-visibility-policy";
 import { learnerRoundTimeLabel, learnerRoundTimeSignal } from "@/modules/placements/learner-round-time-signal";
 import {learnerInterviewCountdown} from "@/modules/placements/learner-interview-countdown-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export type LearnerCareerRound = {
   applicationId: string;
@@ -109,7 +111,7 @@ export function LearnerCareerRounds({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text leading-[20px]">{round.companyName}</p>
-                <h2 className="mt-1 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{round.roleTitle}</h2>
+                <Heading level={2} size="base" className="mt-1 break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{round.roleTitle}</Heading>
                 <p className="mt-1 text-sm font-semibold text-body leading-[22px]">Round {round.sequence} · {round.roundName}</p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -143,8 +145,8 @@ export function LearnerCareerRounds({
                   Round details
                 </Button>
               ) : null}
-              {meetingUrl ? <a href={meetingUrl} rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open meeting ↗</a> : null}
-              {assessmentLink ? <a href={assessmentLink} rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open employer assessment ↗</a> : null}
+              {meetingUrl ? <TextLink href={meetingUrl} rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm md:min-h-9">Open meeting ↗</TextLink> : null}
+              {assessmentLink ? <TextLink href={assessmentLink} rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm md:min-h-9">Open employer assessment ↗</TextLink> : null}
               <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(round.applicationId)} className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">View application</Link>
             </div>
             {kind === "ASSESSMENT" ? (

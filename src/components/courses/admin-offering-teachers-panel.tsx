@@ -2,6 +2,7 @@ import {facultyAssignmentRoleLabel} from "@/modules/courses/college-courses-copy
 import type {listOfferingTeachingOverview} from "@/modules/courses/college-course-teachers-service";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Heading } from "@/components/ui/heading";
 type Roster=Awaited<ReturnType<typeof listOfferingTeachingOverview>>;
 
 export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
@@ -9,7 +10,7 @@ export function AdminOfferingTeachersPanel({roster,academicPeriodName}:{
 }){
  return <section id="who-teaches-it" aria-label="Who teaches it"
   className="scroll-mt-24 space-y-3 border-b border-border pb-5">
-  <h2 className="text-lg font-semibold text-foreground">Who teaches it</h2>
+  <Heading level={2} size="lg" className="text-foreground">Who teaches it</Heading>
   {!roster.faculty.length?<p className="text-sm text-muted-foreground">
    No active Faculty assignment was found for this Course Offering.
   </p>:<ul className="divide-y divide-border border-y border-border">

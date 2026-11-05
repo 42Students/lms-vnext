@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Heading } from "@/components/ui/heading";
 
 /** Small legacy read-only policy card on the Attendance landing screen. */
 export function AttendancePolicySummaryCard({
@@ -10,7 +11,7 @@ export function AttendancePolicySummaryCard({
 }){
  return <section aria-label="Attendance policy" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Attendance policy</h2>
+   <Heading level={2} size="base" className="text-[var(--lms-heading)]">Attendance policy</Heading>
    <div className="flex flex-wrap items-center gap-2">
     <StatusBadge tone="neutral">Read-only</StatusBadge>
     <StatusBadge tone={hasCollegeOverride===true?"info":"neutral"}>

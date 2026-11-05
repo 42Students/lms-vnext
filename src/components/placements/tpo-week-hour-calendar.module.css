@@ -44,7 +44,7 @@
   cursor: cell;
 }
 .slot:hover:not(:disabled) {
-  background: rgba(38, 186, 199, 0.04) !important;
+  background: color-mix(in srgb, var(--lms-primary) 4%, transparent) !important;
 }
 .slot:focus-visible {
   outline: 2px solid var(--lms-primary);
@@ -56,14 +56,14 @@
 }
 .event {
   border: 1px solid var(--lms-header-border) !important;
-  border-left: 4px solid var(--lms-button-primary) !important;
+  border-left: 2px solid var(--lms-button-primary) !important;
   border-radius: 8px !important;
-  padding: 5px 7px !important;
+  padding: 6px 8px !important;
   background: var(--lms-topbar-search) !important;
   color: var(--lms-topbar-ink) !important;
   font-size: 12px !important;
   line-height: 20px !important;
-  transition: background 150ms ease, border-color 150ms ease;
+  transition: background var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .event:hover {
   background: var(--lms-neutral-100) !important;

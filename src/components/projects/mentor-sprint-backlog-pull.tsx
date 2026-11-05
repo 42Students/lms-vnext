@@ -8,6 +8,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {projectMutation} from "./project-api";
 import {mentorPullEligible,mentorPullSelectedPoints} from "@/modules/projects/mentor-sprint-backlog-pull-model";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 export type MentorSprintBacklogChoice={
  id:string;title:string;status:string;updatedAt:string;estimatePoints:number|null;
@@ -63,7 +64,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
    "?tab=board&scope=all&lane=BACKLOG";
  return <section aria-label={"Plan backlog work for "+sprintTitle}
    className="my-3 space-y-3 rounded-lg border border-border p-4">
-   <h3 className="font-semibold">{sprintTitle} created · plan its backlog work</h3>
+   <Heading level={3}>{sprintTitle} created · plan its backlog work</Heading>
    {!canPull?<p>Project tasks can be pulled only while the project is active.
       The sprint itself has been saved.</p>:<>
      <p>Select the existing backlog tasks to pull into the new sprint.

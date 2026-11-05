@@ -14,6 +14,8 @@ import {learnerJobAvailabilityBanner} from "@/modules/placements/learner-job-ava
 import {learnerDriveEvidenceRequirements} from "@/modules/placements/learner-drive-evidence-requirements-model";
 import {learnerJobDeadlineLabel} from "@/modules/placements/learner-job-deadline-label-model";
 import {learnerDrivePayFacts} from "@/modules/placements/learner-drive-pay-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function relativePostedDate(value:string|null|undefined){
  if(!value||!Number.isFinite(Date.parse(value)))return "Not specified";
@@ -152,21 +154,20 @@ export function LearnerPlacementJobDetail({
               <StatusBadge tone={urgency.tone} className="ml-2">{urgencyCopy}</StatusBadge></dd></div>
         </dl>
         <div className="mt-4 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <a href="#job-role-options" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] transition-colors duration-150 hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9">
+          <ButtonLink variant="primary" href="#job-role-options">
             {summary.appliedCount ? "View roles & applications" : "See roles & application"} ↓
-          </a>
+          </ButtonLink>
           {website ? (
-            <a href={website} rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-5 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9">
+            <ButtonLink variant="secondary" href={website} rel="noopener noreferrer">
               Company website ↗
-            </a>
+            </ButtonLink>
           ) : null}
         </div>
       </section>
       {applied.length>0 ? (
         <section role="status" aria-label="Application receipt" id="application-receipt"
           className="rounded-lg border-2 border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] p-4">
-          <h2 className="font-semibold text-foreground">Applied successfully</h2>
+          <Heading level={2} className="text-foreground">Applied successfully</Heading>
           <p className="mt-2 text-sm text-body">
             {applied.length} role{applied.length===1?"":"s"} already recorded in your applications.
           </p>
@@ -181,7 +182,7 @@ export function LearnerPlacementJobDetail({
           </ul>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link href="/learn/my-placements/applications"
-              className="inline-flex min-h-11 items-center rounded-md bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white">
+              className="inline-flex min-h-11 items-center rounded-md bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)]">
               View applications
             </Link>
             <Link href={returnHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -196,7 +197,7 @@ export function LearnerPlacementJobDetail({
       {evidencePreviewUnavailable?(
         <section role="alert" aria-label="Eligibility preview unavailable"
           className="rounded-md border border-[var(--lms-warning-border)] p-4">
-          <h2 className="font-semibold">Eligibility preview unavailable</h2>
+          <Heading level={2}>Eligibility preview unavailable</Heading>
           <p className="mt-1 text-sm">Role-specific evidence is not available here right now.
             Review your profile and placement rules. No application has been changed.</p>
           <div className="mt-3 flex flex-wrap gap-3">
@@ -211,7 +212,7 @@ export function LearnerPlacementJobDetail({
       {availability ? (
         <aside role="status" aria-label="Application availability"
           className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{availability.title}</h2>
+          <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">{availability.title}</Heading>
           {availability.kind!=="OPEN" && availability.kind!=="APPLIED" && primaryDenial
             ? <p role="alert" className="mt-2 text-sm text-body leading-[22px]">{primaryDenial}</p>
             : <p className="mt-2 text-sm text-body leading-[22px]">{availability.detail}</p>}
@@ -230,16 +231,16 @@ export function LearnerPlacementJobDetail({
           {availability.kind!=="OPEN" ? (
             <div className="mt-3 flex flex-wrap gap-4">
               <Link href="/learn/my-placements/applications"
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
                 Check my applications →
               </Link>
               <Link href="/learn/profile"
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
                 Review my profile →
               </Link>
               {(availability.kind==="NOT_OPEN" || availability.kind==="EVIDENCE") ? (
                 <Link href="/learn/my-placements#registration"
-                  className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
                   Register for placements →
                 </Link>
               ) : null}
@@ -250,7 +251,7 @@ export function LearnerPlacementJobDetail({
 
       <section className="min-w-0 rounded-[12px] border border-border bg-surface p-4 sm:p-5"
         aria-label="Registration and evidence requirements">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Requirements &amp; preferences</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Requirements &amp; preferences</Heading>
         <p className="mt-2 text-sm text-body leading-[22px]">
           These are role-specific eligibility checks from your college placement data.
           Separate placement registration or consent status is not established by this checklist.
@@ -272,11 +273,11 @@ export function LearnerPlacementJobDetail({
         </ul>
         <div className="mt-4 flex flex-wrap gap-4">
           <Link href="/learn/my-placements/rules"
-            className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Review placement rules →
           </Link>
           <Link href="/learn/profile"
-            className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Review profile evidence →
           </Link>
           <Link href="/learn/my-placements#registration"
@@ -295,7 +296,7 @@ export function LearnerPlacementJobDetail({
       </div>:null}
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <section className="min-w-0 rounded-[12px] border border-border bg-surface p-4 sm:p-5" aria-labelledby="about-drive">
-          <h2 id="about-drive" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">About this opportunity</h2>
+          <Heading level={2} size="base" id="about-drive" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">About this opportunity</Heading>
           <p className="mt-4 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
             {item.job.description || "No description has been added for this role yet. You can still apply and ask the recruiter for details."}
           </p>
@@ -312,7 +313,7 @@ export function LearnerPlacementJobDetail({
           ) : null}
           {item.job.candidatePreferences? (
            <div className="mt-4 space-y-2 text-sm text-body">
-            <h3 className="font-semibold text-foreground">Candidate preferences</h3><div className="flex flex-wrap gap-2">
+            <Heading level={3} className="text-foreground">Candidate preferences</Heading><div className="flex flex-wrap gap-2">
             {item.job.candidatePreferences.preferredDegree?<StatusBadge tone="info">Degree: {item.job.candidatePreferences.preferredDegree}</StatusBadge>:null}
             {item.job.candidatePreferences.specialization?<StatusBadge tone="info">Specialization: {item.job.candidatePreferences.specialization}</StatusBadge>:null}
             {item.job.candidatePreferences.graduationYear?<StatusBadge tone="info">Passing year: {item.job.candidatePreferences.graduationYear}</StatusBadge>:null}
@@ -321,10 +322,10 @@ export function LearnerPlacementJobDetail({
             </div>
            </div>
           ):null}
-          <h3 className="mt-6 text-base font-semibold text-foreground">Key dates</h3>
+          <Heading level={3} size="base" className="mt-6 text-foreground">Key dates</Heading>
           <p className="mt-2 text-sm text-body leading-[22px]">Applications close: {learnerJobDeadlineLabel(item.job.applicationDeadline)}</p>
-          <h3 className="mt-6 text-base font-semibold text-foreground">Company & role details</h3>
-          <dl className="mt-4 grid min-w-0 gap-4 min-[768px]:grid-cols-2">
+          <Heading level={3} size="base" className="mt-6 text-foreground">Company & role details</Heading>
+          <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
             <div>
               <dt className="text-xs font-semibold text-muted-foreground">Locations</dt>
               <dd className="mt-1 text-sm text-foreground">
@@ -347,9 +348,9 @@ export function LearnerPlacementJobDetail({
         </section>
 
         <section className="min-w-0 rounded-[12px] border border-border bg-surface p-4 sm:p-5" aria-labelledby="eligibility-title">
-          <h2 id="eligibility-title" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <Heading level={2} size="base" id="eligibility-title" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">
             Eligibility breakdown
-          </h2>
+          </Heading>
           <p className="mt-2 text-sm text-body leading-[22px]">
             Your college&apos;s published eligibility rules are checked separately for each role.
           </p>
@@ -372,7 +373,7 @@ export function LearnerPlacementJobDetail({
             <div className="mt-4 divide-y divide-border">
               {items.map((row) => (
                 <div key={row.roleOption.id} className="border-t border-border pt-4">
-                  <h3 className="m-0 text-sm font-semibold text-foreground">{row.roleOption.title}</h3>
+                  <Heading level={3} size="sm" className="m-0 text-foreground">{row.roleOption.title}</Heading>
                   {row.eligibility.checks.length ? (
                     <ul className="mt-3 space-y-3">
                       {row.eligibility.checks.map((check) => (
@@ -413,13 +414,13 @@ export function LearnerPlacementJobDetail({
       </div>
 
       <section aria-labelledby="drive-pay-title" className="min-w-0 rounded-[12px] border border-border bg-surface p-4 sm:p-5">
-        <h2 id="drive-pay-title" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Pay</h2>
+        <Heading level={2} size="base" id="drive-pay-title" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Pay</Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">Published compensation for each role. Missing amounts are not estimated.</p>
         <ul className="mt-4 divide-y divide-border">{items.map(row=>{
           const pay=learnerDrivePayFacts({...row.roleOption,stipendPerMonthInr:row.job.stipendPerMonthInr??null});
           return <li key={row.roleOption.id} className="border-t border-border pt-4">
-            <h3 className="font-semibold text-foreground">{items.length>1?row.roleOption.title:"Compensation"}</h3>
-            <dl className="mt-3 grid grid-cols-1 gap-3 text-sm min-[768px]:grid-cols-2">
+            <Heading level={3} className="text-foreground">{items.length>1?row.roleOption.title:"Compensation"}</Heading>
+            <dl className="mt-3 grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
               <div><dt className="text-muted-foreground">CTC</dt><dd>{pay.ctc}</dd></div>
               <div><dt className="text-muted-foreground">Fixed</dt><dd>{pay.fixed}</dd></div>
               <div><dt className="text-muted-foreground">Variable</dt><dd>{pay.variable}</dd></div>
@@ -435,9 +436,9 @@ export function LearnerPlacementJobDetail({
       <section id="job-role-options" tabIndex={-1} className="scroll-mt-24 space-y-4 focus:outline-2 focus:outline-[var(--lms-primary)]" aria-labelledby="role-options-title">
         <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 id="role-options-title" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+            <Heading level={2} size="base" id="role-options-title" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">
               Roles and application status
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body leading-[22px]">
               Your current application is authoritative. A withdrawn, closed or ineligible role cannot be submitted here.
             </p>
@@ -453,11 +454,11 @@ export function LearnerPlacementJobDetail({
         </aside>
       </div>
     {summary.canApplyCount>0?(
-         <nav aria-label="Apply to this drive" className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface px-4 pt-3 shadow-lg lg:hidden"
+         <nav aria-label="Apply to this drive" className="fixed inset-x-0 bottom-0 z-(--lms-z-sticky-header) border-t border-border bg-surface px-4 pt-3 shadow-lg lg:hidden"
            style={{paddingBottom:"max(0.75rem,env(safe-area-inset-bottom))"}}>
-           <a href="#job-role-options" className="flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+           <ButtonLink variant="primary" href="#job-role-options" className="flex w-full">
              View role options · Apply now
-           </a>
+           </ButtonLink>
          </nav>
        ):null}
        </div>

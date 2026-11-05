@@ -8,6 +8,7 @@ import {getMentorProjectReviewCompleteness}
   from "@/modules/projects/mentor-review-completeness-service";
 import {mentorReviewCompletenessHref,mentorReviewCompletenessQuerySchema}
   from "@/modules/projects/mentor-review-completeness-model";
+import { Heading } from "@/components/ui/heading";
 
 type Params={page?:string|string[]};
 export default async function MentorProjectReviewCompletenessPage({
@@ -45,7 +46,7 @@ export default async function MentorProjectReviewCompletenessPage({
       :<ol aria-label="Recorded delivery review versions" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="m-0 min-w-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">Delivery version {item.version}</h2>
+            <Heading level={2} size="base" className="m-0 min-w-0 break-words leading-6 text-[var(--lms-heading)]">Delivery version {item.version}</Heading>
             <StatusBadge tone={item.status==="APPROVED"?"success":item.status==="REJECTED"?"error":"neutral"}>{item.status}</StatusBadge>
           </div>
           <dl className="mt-2 grid min-w-0 gap-2 md:grid-cols-2">

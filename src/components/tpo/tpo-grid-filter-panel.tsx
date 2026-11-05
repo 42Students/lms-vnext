@@ -9,6 +9,7 @@ import {BottomSheet} from "@/components/ui/bottom-sheet";
 import {updateTpoGridQuery} from "@/modules/placements/tpo-grid-model";
 import {activeTpoGridFilterCount,invalidTpoGridFilterValue,resolvedTpoGridFilterValue} from "@/modules/placements/tpo-grid-filter-state";
 import {clearTpoGridFilters} from "@/modules/placements/tpo-grid-filter-reset";
+import { Heading } from "@/components/ui/heading";
 export type TpoFilterField={key:string;label:string;urlKey?:string;allValue?:string;options:readonly {value:string;label:string}[]};
 export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter students",autoOpenMobile=false,onAutoClose}:{fields:readonly TpoFilterField[];mobileSheet?:boolean;title?:string;autoOpenMobile?:boolean;onAutoClose?:()=>void}){
  const router=useRouter(),pathname=usePathname(),query=useSearchParams();
@@ -30,7 +31,7 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter stude
    return [{key,label:field.label+": "+(chosen?.label??"Unknown filter"),field}];
  });
  const content=<>
-  <h2 className={mobileSheet?"hidden text-base font-semibold md:block":"text-base font-semibold"}>{title}</h2>
+  <Heading level={2} className={mobileSheet?"hidden text-base font-semibold md:block":"text-base font-semibold"}>{title}</Heading>
   <p role="status" className="text-xs text-muted-foreground">{activeCount} active {activeCount===1?"filter":"filters"}</p>
   {chips.length>0?<div className="flex min-w-0 flex-wrap gap-2" role="group" aria-label="Active grid filters">
    {chips.map(chip=><FilterChip key={chip.key} type="button" aria-pressed={true} onClick={()=>update(chip.field,"")}

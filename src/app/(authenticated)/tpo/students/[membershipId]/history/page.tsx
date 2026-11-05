@@ -11,6 +11,7 @@ import {
 import {
   tpoStudentHistoryQuerySchema,
 } from "@/modules/placements/tpo-student-history-model";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = { page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -48,7 +49,7 @@ export default async function TpoLearnerPlacementHistoryPage({
     encodeURIComponent(history.learner.membershipId) + "/history?page=" + page;
 
   return (
-    <div className="min-w-0 space-y-4 min-[768px]:space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader
          title={history.learner.displayName + " · Placement history"}
         description="Read-only application status, versioned round results, offer transitions and joining evidence across persisted placement seasons."
@@ -69,7 +70,7 @@ export default async function TpoLearnerPlacementHistoryPage({
         }
       />
       <Disclosure title="Placement history totals" className="min-w-0" contentClassName="pt-3">
-      <section className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border min-[768px]:grid-cols-2 min-[992px]:grid-cols-4" aria-label="Placement history totals">
+      <section className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4" aria-label="Placement history totals">
         {[
           ["Applications (all seasons)", history.total],
           ["Offer versions (this page)", history.pageFacts.offerVersions],
@@ -98,7 +99,7 @@ export default async function TpoLearnerPlacementHistoryPage({
             <article key={item.id} className="min-w-0 space-y-4 border-b border-border py-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.jobTitle}</h2>
+                  <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">{item.jobTitle}</Heading>
                   <p className="mt-1 text-sm text-body leading-[22px]">
                     {item.companyName} · {item.seasonName} · {item.roleTitle}
                   </p>
@@ -116,9 +117,9 @@ export default async function TpoLearnerPlacementHistoryPage({
               </p>
               <Disclosure title="Application status history" className="min-w-0 border-t border-border pt-3" contentClassName="pt-3">
               <section aria-label="Application status changes">
-                <h3 className="mb-2 font-semibold text-foreground">
+                <Heading level={3} className="mb-2 text-foreground">
                   Application status history
-                </h3>
+                </Heading>
                 {item.applicationEvents.length === 0 ? (
                   <p className="text-sm text-body leading-[22px]">
                     No separate application status events are recorded.
@@ -137,9 +138,9 @@ export default async function TpoLearnerPlacementHistoryPage({
               </Disclosure>
               <div className="grid min-w-0 gap-4 xl:grid-cols-2">
                 <section>
-                  <h3 className="mb-2 font-semibold text-foreground">
+                  <Heading level={3} className="mb-2 text-foreground">
                     Applied round results ({item.appliedRounds.length})
-                  </h3>
+                  </Heading>
                   {item.appliedRounds.length === 0 ? (
                     <p className="text-sm text-body leading-[22px]">No applied round outcomes recorded.</p>
                   ) : (
@@ -176,9 +177,9 @@ export default async function TpoLearnerPlacementHistoryPage({
                 </section>
                 <section>
                   <Disclosure title={"Offer history ("+item.offers.length+" version(s))"} className="min-w-0" contentClassName="pt-3">
-                  <h3 className="sr-only">
+                  <Heading level={3} className="sr-only">
                     Offer history ({item.offers.length} version(s))
-                  </h3>
+                  </Heading>
                   {item.offers.length === 0 ? (
                     <p className="text-sm text-body leading-[22px]">No persisted offers recorded.</p>
                   ) : (

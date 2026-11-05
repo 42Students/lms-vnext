@@ -9,6 +9,7 @@ import {safeNotificationActionHref} from "@/modules/activity/notification-action
 import {mentorUnifiedNotificationGroups,mentorUnifiedOpenReadRequest,mergeMentorUnifiedPages,type MentorUnifiedNotification} from
   "@/modules/projects/mentor-unified-notification-model";
 import {MentorSourceNotificationRead} from "./mentor-source-notification-read";
+import { Heading } from "@/components/ui/heading";
 
 function MentorPersonalRead({id}:{id:string}){
  const router=useRouter();
@@ -124,14 +125,14 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,pers
  }
  return <section className="min-w-0 space-y-3" aria-label="Mentor chronological notifications">
   <header className="flex flex-wrap items-center justify-between gap-3">
-    <h2 className="text-lg font-semibold">Your notifications · {combined.length} loaded</h2>
+    <Heading level={2} size="lg">Your notifications · {combined.length} loaded</Heading>
     <p className="text-xs text-muted-foreground">
       Personal messages, verified project attention and visible college notices · IST
     </p>
   </header>
   {openError?<p role="alert" className="text-sm text-error">{openError}</p>:null}
   {groups.length?groups.map(group=><div key={group.label} className="space-y-2">
-    <h3 className="border-b border-border py-2 text-sm font-semibold">{group.label}</h3>
+    <Heading level={3} size="sm" className="border-b border-border py-2">{group.label}</Heading>
     {group.items.map(item=>{
       const href=safeNotificationActionHref(item.actionHref);
       return <article key={item.source+":"+item.id}

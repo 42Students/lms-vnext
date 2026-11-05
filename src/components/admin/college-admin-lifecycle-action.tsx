@@ -55,7 +55,7 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole,d
     onClick={()=>{setError("");setChosenAction(defaultAction);setConfirmOpen(true);}}
     className="min-h-11 gap-2 md:min-h-9">
     <span aria-hidden="true" className={"inline-flex h-5 w-9 items-center rounded-full px-0.5 transition-colors "+(status==="ACTIVE"?"bg-[var(--lms-primary)]":"bg-[var(--lms-neutral-300)]")}>
-     <span className={"h-4 w-4 rounded-full bg-white transition-transform "+(status==="ACTIVE"?"translate-x-4":"translate-x-0")}/>
+     <span className={"h-4 w-4 rounded-full bg-surface transition-transform "+(status==="ACTIVE"?"translate-x-4":"translate-x-0")}/>
     </span>
     {status==="ACTIVE"?"Enabled":"Suspended"}
    </Button>

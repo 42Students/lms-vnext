@@ -23,6 +23,7 @@ import { listOrganizations,listArchivedOrganizations } from "@/modules/organizat
 import {listArchivedColleges} from "@/modules/colleges/service";
 import {organizationCreatedIstDate} from "@/modules/organizations/organization-created-date-model";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 type OrganizationRow = Awaited<
   ReturnType<typeof listOrganizations>
@@ -44,7 +45,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     <PageHeader title="Organizations"/>
     <ErrorState title="Invalid organization directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/organizations" className="inline-flex min-h-11 w-full items-center justify-center font-[650] text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+      action={<Link href="/admin/organizations" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const organizations = await listOrganizations(context).catch(()=>null);
   if(!organizations)return <div className="min-w-0 space-y-4">
@@ -119,12 +120,12 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         </p>:null}
         {canCreateGlobal?<section aria-label="Create New Organization"
           className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm">
-          <h2 className="-mx-4 border-b border-border px-4 pb-4 text-base font-semibold text-[var(--lms-heading)]">Create New Organization</h2>
+          <Heading level={2} size="base" className="-mx-4 border-b border-border px-4 pb-4 text-[var(--lms-heading)]">Create New Organization</Heading>
           <OrganizationCreateForm/>
         </section>:null}
         <section aria-label="Existing Organizations" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm">
           <div className="-mx-4 flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border px-4 pb-4">
-            <h2 className="text-base font-semibold text-[var(--lms-heading)]">Existing Organizations</h2>
+            <Heading level={2} size="base" className="text-[var(--lms-heading)]">Existing Organizations</Heading>
             <div className="flex flex-wrap items-center gap-2">
               <form method="get" role="search" aria-label="Search organizations" className="flex flex-wrap items-center gap-2">
                 <label htmlFor="organization-search" className="sr-only">Search organizations</label>
@@ -161,7 +162,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
       {canCreate?<section aria-label="Deleted Items" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
         <div className="flex min-w-0 flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Deleted Items</h2>
+            <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Deleted Items</Heading>
             <p className="mt-1 text-xs text-muted-foreground">Restoring a parent does not automatically restore its children. Select an entity type to inspect authorized archived records.</p>
           </div>
           <form method="get" className="flex flex-wrap items-end gap-2">

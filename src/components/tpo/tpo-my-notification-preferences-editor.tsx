@@ -43,14 +43,14 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
  return <section aria-label="Edit my notification preferences" className="space-y-3">
   <p className="text-xs text-muted-foreground">These five preferences are for your own TPO account in this college. In-app history remains accessible. Delivery routing is controlled separately.</p>
   <div className="divide-y divide-border">
-   {TPO_NOTIFICATION_PREFERENCE_FIELDS.map(field=><label key={field.key} className={"flex min-h-14 min-w-0 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] rounded-[var(--lms-control-radius-sm,8px)] px-[var(--lms-space-3)] py-[var(--lms-space-3)] transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(value[field.key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+   {TPO_NOTIFICATION_PREFERENCE_FIELDS.map(field=><label key={field.key} className={"flex min-h-14 min-w-0 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] rounded-[var(--lms-control-radius-sm,8px)] px-[var(--lms-space-3)] py-[var(--lms-space-3)] transition-colors duration-[var(--lms-motion-fast)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(value[field.key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
     <span className="min-w-0 flex-1 break-words"><strong className="block text-sm">{field.label}</strong><span className="text-xs text-body">{field.description}</span></span>
     <span className="shrink-0"><Checkbox aria-label={field.label} checked={value[field.key]} disabled={busy}
      onChange={e=>setValue(previous=>({...previous,[field.key]:e.target.checked}))}/></span>
    </label>)}
   </div>
   <Button type="button" disabled={busy||(!dirty&&currentVersion!==null)} onClick={()=>void save()}
-   className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</Button>
+   className="min-h-11 w-full md:min-h-9 md:w-auto">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
  </section>;

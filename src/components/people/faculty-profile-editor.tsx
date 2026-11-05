@@ -25,6 +25,8 @@ import { newFacultyExperience } from "@/modules/people/faculty-profile-row-facto
 import { newFacultyCertification } from "@/modules/people/faculty-profile-row-factories";
 import { newFacultyEducation } from "@/modules/people/faculty-profile-row-factories";
 import { newFacultyLanguage } from "@/modules/people/faculty-profile-row-factories";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 const ABOUT_FIELDS = [{name:"description",label:"About me",multiline:true,maxLength:5000}] as const;
 const PERSONAL_DETAILS_FIELDS = [{name:"gender",label:"Gender",maxLength:64},{name:"dateOfBirth",label:"Date of birth",type:"date",maxLength:10},{name:"bloodGroup",label:"Blood group",maxLength:16}] as const;
 const CONTACT_FIELDS = [{name:"contactMobile",label:"Primary mobile",maxLength:10},{name:"contactPhone",label:"Alternate phone",maxLength:15},{name:"contactMail",label:"Contact email",maxLength:320}] as const;
@@ -111,7 +113,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   {error?<Alert tone="error" className="max-w-[80ch] space-y-[var(--lms-space-2)]">
    <p className="m-0 break-words [overflow-wrap:anywhere]">{error}</p>
    {fieldErrorKeys.length?<p className="mt-2 text-sm">Check: {fieldErrorKeys.join(", ")}</p>:null}
-   {needsReload?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9" onClick={()=>{
+   {needsReload?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
     setReloadOpen(true);
    }} >Reload latest profile</Button>:null}
   </Alert>:null}
@@ -120,9 +122,9 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <nav aria-label="Profile sections" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
     <p className="mb-[var(--lms-space-2)] text-sm font-semibold text-foreground">Jump to a profile section</p>
     <div className="flex min-w-0 snap-x snap-proximity gap-[var(--lms-space-2)] overflow-x-auto overscroll-x-contain pb-[var(--lms-space-2)]">
-     {FACULTY_PROFILE_LEGACY_NAV.map(item=><a key={item.key}
-      className="inline-flex min-h-11 shrink-0 snap-start items-center rounded-[var(--lms-control-radius)] border-b-[3px] border-transparent bg-transparent px-[var(--lms-space-3)] py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] transition-[border-color,color] duration-[200ms] ease-in-out hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] motion-reduce:transition-none"
-      href={item.href} aria-label={item.editable?item.label:item.label+" (read-only)"}>{item.label}</a>)}</div>
+     {FACULTY_PROFILE_LEGACY_NAV.map(item=><ButtonLink variant="secondary" key={item.key}
+      className="shrink-0"
+      href={item.href} aria-label={item.editable?item.label:item.label+" (read-only)"}>{item.label}</ButtonLink>)}</div>
   </nav>
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
    description="Introduce your teaching and research interests."
@@ -164,7 +166,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    fields={SOCIAL_PROFILES_FIELDS}
    initial={{linkedIn:document.socialProfiles.linkedIn,github:document.socialProfiles.github,portfolio:document.socialProfiles.portfolio,twitter:document.socialProfiles.twitter,googleScholar:document.socialProfiles.googleScholar,researchGate:document.socialProfiles.researchGate}} pending={pending} onSave={save}/>
    <section id="faculty-identity-readonly" aria-label="Identity documents" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">
-    <h2 className="text-base font-semibold text-foreground">Identity Documents</h2>
+    <Heading level={2} size="base" className="text-foreground">Identity Documents</Heading>
     <p className="text-sm text-muted-foreground">College-managed records. Private documents are not downloadable from the public profile.</p>
     <dl className="grid min-w-0 gap-2 text-sm">
      <div><dt className="font-semibold">Aadhaar (masked)</dt><dd className="break-words text-body">{document.identitySummary.aadhaarLast4?"•••• "+document.identitySummary.aadhaarLast4:"Not provided"}</dd></div>

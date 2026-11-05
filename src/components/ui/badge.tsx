@@ -12,7 +12,7 @@ const tones = {
   error: "bg-[var(--lms-error-subtle)] text-[var(--lms-error)]",
 } as const;
 
-const interactiveBadgeClass = "cursor-pointer hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:shadow-[0_0_0_4px_rgba(26,149,161,0.12)] max-[767px]:min-h-11";
+const interactiveBadgeClass = "cursor-pointer hover:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:shadow-(--lms-focus-ring) max-md:min-h-11";
 
 const baseBadgeClass = "inline-flex min-h-[22px] min-w-0 max-w-full items-center justify-center gap-[var(--lms-space-1)] rounded-[var(--lms-radius-pill)] border border-current/10 px-[var(--lms-space-2)] py-[1px] align-middle whitespace-normal text-center tabular-nums text-[var(--lms-font-xs)] font-semibold leading-[18px] break-words shadow-none";
 

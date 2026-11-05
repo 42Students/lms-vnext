@@ -14,6 +14,7 @@ import { courseApiError } from "./learner-course-api";
 import {
   quizReviewActions,
 } from "./faculty-assessment-operation-model";
+import { Heading } from "@/components/ui/heading";
 
 type AttemptAnswer = {
   id: string;
@@ -342,9 +343,9 @@ export function FacultyQuizReview({
                     {learnerLabel(attempt).slice(0,1).toUpperCase()}
                   </span>
                   <div className="min-w-0">
-                    <h4 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
+                    <Heading level={4} size="sm" className="m-0 text-[var(--lms-heading)]">
                       {learnerLabel(attempt)}
-                    </h4>
+                    </Heading>
                     {attempt.learnerRollNumber?<p className="mt-1 text-xs text-muted-foreground">Roll: {attempt.learnerRollNumber}</p>:null}
                   {attempt.learnerEmail ? (
                     <p className="mt-1 text-xs text-muted-foreground leading-5">

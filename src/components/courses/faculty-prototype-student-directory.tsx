@@ -6,15 +6,16 @@ import {facultyRosterCsv,facultyRosterFileName} from "@/modules/courses/faculty-
 import type {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 function maskPhone(value:string){const digits=value.replace(/\D/g,"");return digits.length<6?"Call student":digits.slice(0,2)+"x".repeat(digits.length-4)+digits.slice(-2);}
 
 
 type Signals=Awaited<ReturnType<typeof getFacultyCourseHomeSignals>>|null;
 function percent(value:number|null,mode:"progress"|"attendance"){
  const tone=value===null?"bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-text-muted)]":
-  value<(mode==="progress"?50:70)?"bg-red-50 text-red-700":
-  value<80?"bg-amber-50 text-amber-800":"bg-emerald-50 text-emerald-700";
- return <span className={"rounded-full px-2.5 py-1 text-xs font-bold "+tone}>
+  value<(mode==="progress"?50:70)?"bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-text)]":
+  value<80?"bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]":"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]";
+ return <span className={"rounded-full px-3 py-1 text-xs font-bold "+tone}>
   {value===null?"—":value+"%"}</span>;
 }
 
@@ -50,9 +51,9 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
  const cards=[
   {label:"Students",value:learners.length,tone:"text-[color:var(--lms-heading)]"},
   {label:"Behind on the course",value:completion?.behindTotal??"—",
-   tone:"text-red-700"},
+   tone:"text-[color:var(--lms-error-text)]"},
   {label:"Attendance under 75%",value:attendanceComplete&&metrics?metrics.lowAttendanceTotal:"—",
-   tone:"text-orange-700"},
+   tone:"text-[color:var(--lms-error-text)]"},
   {label:signals?.latestAssignmentMissing?"Not submitted "+signals.latestAssignmentMissing.title:"Not submitted latest assignment",
    value:signals?.latestAssignmentMissing?.missing??"—",tone:"text-[color:var(--lms-heading)]"},
  ];
@@ -60,7 +61,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{cards.map(card=>
    <div key={card.label} className="rounded-xl border border-[color:var(--lms-border)] p-5">
     <p className="faculty-proto-subtitle">{card.label}</p>
-    <p className={"mt-1 text-3xl font-extrabold tabular-nums "+card.tone}>{card.value}</p>
+    <p className={"mt-1 text-3xl font-bold tabular-nums "+card.tone}>{card.value}</p>
    </div>)}</div>
   <div className="flex min-w-0 flex-wrap items-center gap-2">
    <label htmlFor="faculty-student-directory-search" className="sr-only">Search students</label>
@@ -101,11 +102,11 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
      <td>{percent(attendance,"attendance")}</td>
      <td>{assignmentComplete&&row?row.submittedAssignments+" of "+row.totalAssignments:"—"}</td>
      <td><div className="flex min-w-0 flex-col text-xs leading-5">
-      {student.phoneE164?<a className="text-[color:var(--lms-text-muted)] hover:text-[color:var(--lms-button-primary)] hover:underline"
+      {student.phoneE164?<TextLink className="text-[color:var(--lms-text-muted)]"
        href={"tel:"+student.phoneE164.replace(/[^+\d]/g,"")} title={"Call "+name}>
-       {maskPhone(student.phoneE164)}</a>:null}
-      {student.email?<a className="break-all text-[color:var(--lms-text-muted)] hover:text-[color:var(--lms-button-primary)] hover:underline"
-       href={"mailto:"+student.email} title={"Email "+name}>{student.email}</a>:null}
+       {maskPhone(student.phoneE164)}</TextLink>:null}
+      {student.email?<TextLink className="break-all text-[color:var(--lms-text-muted)]"
+       href={"mailto:"+student.email} title={"Email "+name}>{student.email}</TextLink>:null}
       {!student.phoneE164&&!student.email?<span>—</span>:null}
      </div></td>
     </tr>;

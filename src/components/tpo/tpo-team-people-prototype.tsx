@@ -6,6 +6,8 @@ import {
 } from "@/modules/placements/tpo-team-people-prototype-model";
 import styles from "./tpo-team-people-prototype.module.css";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
  people:readonly TpoPrototypeTeamPerson[];
@@ -16,7 +18,7 @@ export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
  return <section aria-label="Placement team People" className={styles.root} data-testid="tpo.team.people">
    <header className={styles.head}>
     <p><strong>{people.length} {people.length===1?"person":"people"}</strong> in your recorded placement team</p>
-    <a href="#tpo-team-management" className={styles.action}>+ Add a team member</a>
+    <TextLink variant="bare" href="#tpo-team-management" className={styles.action}>+ Add a team member</TextLink>
    </header>
    <div className={styles.columns}>
     <div className={styles.list}>
@@ -49,14 +51,14 @@ export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
         <small>{summarizeTpoPrototypePerson(selected,workloadReady).role}</small>
        </span>
       </div>
-      <h3 className={styles.eyebrow}>THEIR RECORDED WORK</h3>
+      <Heading level={3} className={styles.eyebrow}>THEIR RECORDED WORK</Heading>
       <dl className={styles.facts}>
        <div><dt>Drive Day duties</dt><dd>{selected.studentDutyCount}</dd></div>
        <div><dt>Open asks</dt><dd>{workloadReady?selected.openAsks:"Unavailable"}</dd></div>
        <div><dt>Late asks</dt><dd>{workloadReady?selected.overdueAsks:"Unavailable"}</dd></div>
        <div><dt>Last active</dt><dd>Not recorded</dd></div>
       </dl>
-      <h3 className={styles.eyebrow}>AWAY</h3>
+      <Heading level={3} className={styles.eyebrow}>AWAY</Heading>
       <p>{selected.awayUntil?
         "Away until "+new Intl.DateTimeFormat("en-IN",{
          timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
@@ -64,13 +66,13 @@ export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
         "No currently recorded away interval"}</p>
       <div className={styles.actions}>
        {selected.membershipId===selfMembershipId?
-         <a href="#tpo-team-availability" className={styles.action}>Set away…</a>:null}
+         <TextLink variant="bare" href="#tpo-team-availability" className={styles.action}>Set away…</TextLink>:null}
        <Link href="/tpo/messages?tab=team" className={styles.action}>Message</Link>
       </div>
       <div className={styles.management}>
        <strong>Manage team access</strong>
        <p>Review the member’s real permissions and handover options below. Team messages remain separate from drive ownership.</p>
-       <a href="#tpo-team-management" className={styles.action}>Manage membership and handover ›</a>
+       <TextLink variant="bare" href="#tpo-team-management" className={styles.action}>Manage membership and handover ›</TextLink>
       </div>
     </aside>:null}
    </div>

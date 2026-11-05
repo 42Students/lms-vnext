@@ -18,6 +18,7 @@ import {
   tpoStudentRequestsQuerySchema,
 } from "@/modules/placements/tpo-students-service";
 import {Input} from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = {
   status?: string | string[];
@@ -133,9 +134,9 @@ export default async function TpoStudentRequestsPage({
           description="College-wide placement exception and change requests."
         />
         <Alert tone="error">
-          <h2 className="text-lg font-semibold text-foreground">
+          <Heading level={2} size="lg" className="text-foreground">
             Invalid request filters
-          </h2>
+          </Heading>
           <p className="mt-2 text-sm text-body">
             No requests were loaded because one or more filters
             are invalid.
@@ -208,7 +209,7 @@ export default async function TpoStudentRequestsPage({
         <Link
           href="/tpo/students/requests"
           aria-current="page"
-          className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-primary px-4 py-2 text-sm font-[650] text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-primary px-4 py-2 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Requests
         </Link>
@@ -331,9 +332,9 @@ export default async function TpoStudentRequestsPage({
       <section className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">
+            <Heading level={2} size="lg" className="text-foreground">
               Request queue
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body">
               {data.total.toLocaleString("en-IN")} matching request
               {data.total === 1 ? "" : "s"}

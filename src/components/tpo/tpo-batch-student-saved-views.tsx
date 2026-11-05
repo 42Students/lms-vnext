@@ -10,6 +10,8 @@ import {tpoBatchViewUrl,type TpoBatchSavedFilter} from "@/modules/placements/tpo
 import {batchStudentViewExportHref} from "@/modules/placements/tpo-batch-student-filtered-export-model";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 type View={id:string;name:string;query:TpoBatchSavedFilter;pinned:boolean;createdAt:string};
 export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
  const router=useRouter(),params=useSearchParams();
@@ -67,7 +69,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
   <Button variant="secondary" type="button" aria-expanded={open} aria-controls={panelId} onClick={toggle}
    className="min-h-11 w-full sm:w-auto md:min-h-9">Saved batch views</Button>
   {open?<div id={panelId} role="region" aria-label="Saved batch view editor" className="min-w-0 space-y-3 border-y border-border py-4">
-   <h3 className="font-semibold">Saved views</h3>
+   <Heading level={3}>Saved views</Heading>
    {busy&&!views.length?<p role="status" className="text-sm text-muted-foreground">Loading saved batch views…</p>:null}
    <p className="text-xs text-body">These filters are private to your account and this batch. Pin up to five views.</p>
    {pinnedViews.length?<div className="flex min-w-0 flex-wrap gap-2" aria-label="Pinned batch views">
@@ -97,8 +99,8 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
     </label>
     <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>void openSaved(view)}
      className="min-h-11 w-full md:min-h-9">Open</Button>
-    <a href={batchStudentViewExportHref(batchId,1,view.query)}
-     className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Download CSV</a>
+    <ButtonLink variant="secondary" href={batchStudentViewExportHref(batchId,1,view.query)}
+     className="w-full">Download CSV</ButtonLink>
     <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>setDeleteTarget(view)}
      className="min-h-11 w-full md:min-h-9">Delete</Button>
    </li>)}</ul>

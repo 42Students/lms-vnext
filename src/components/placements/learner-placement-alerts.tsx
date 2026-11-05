@@ -3,6 +3,7 @@ import type { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-
 import {learnerAlertsHistoryHref} from "@/modules/placements/learner-alerts-history-navigation-model";
 import {learnerAlertSafeDate,learnerAlertRelativeDay} from "@/modules/placements/learner-alert-safe-date-model";
 import {LearnerPlacementAlertAction} from "./learner-placement-alert-action";
+import { Heading } from "@/components/ui/heading";
 
 type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
 type RestrictionNotice={active:true;untilDate:string|null;remainingDrives:number|null;reasons?:readonly string[]};
@@ -14,9 +15,9 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
     <section aria-labelledby="learner-placement-alerts"
       className="min-w-0 border-t border-border pt-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 id="learner-placement-alerts" className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <Heading level={2} size="base" id="learner-placement-alerts" className="min-w-0 break-words text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
           Your placement alerts
-        </h2>
+        </Heading>
         <Link href={learnerAlertsHistoryHref(unreadOnly)}
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Personal notification history →
@@ -27,7 +28,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
         These are not a substitute for official college-wide placement notices or dispute decisions.
       </p>
       {restriction?.active?<aside aria-label="Placement restriction" role="status"
-        className="mt-4 border-l-4 border-warning bg-muted px-4 py-3 text-sm leading-[22px]">
+        className="mt-4 border-l-2 border-warning bg-muted px-4 py-3 text-sm leading-[22px]">
         <p className="font-semibold">Placement restriction active</p>
         {restriction.reasons?.length?<p className="mt-1">Reason: {restriction.reasons.join("; ")}</p>:null}
         {restriction.untilDate?<p>Restricted until {restriction.untilDate} (IST).</p>:null}

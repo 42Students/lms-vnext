@@ -11,6 +11,8 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Evidence={kind:"FILE"|"LINK";name:string;fileId:string|null;url:string|null};
 function attachment(item:unknown,index:number):Evidence{
@@ -74,7 +76,7 @@ export async function CollegeProjectDeliveryOverview({projectId,basePath="/colle
   <section aria-labelledby="delivery-summary" className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
    <div className="flex flex-wrap items-center justify-between gap-3">
     <div><p className="text-xs font-semibold uppercase tracking-wider text-primary-text">Final delivery</p>
-     <h2 id="delivery-summary" className="mt-1 text-xl font-semibold">Submission package and review state</h2></div>
+     <Heading level={2} size="xl" id="delivery-summary" className="mt-1">Submission package and review state</Heading></div>
     <StatusBadge tone={reviewTone}>{reviewStatus.replaceAll("_"," ")}</StatusBadge>
    </div>
    {!last?<div className="space-y-3">
@@ -88,26 +90,26 @@ export async function CollegeProjectDeliveryOverview({projectId,basePath="/colle
      {last.notes?<p className="whitespace-pre-wrap text-sm text-body">{last.notes}</p>:null}
      <div className="flex flex-wrap items-start gap-3">
       {primary?.kind==="FILE"?<ProjectDeliveryEvidenceDownload projectId={project.id} fileId={primary.fileId} name={primary.name} legacyReference={last.legacyStorageKey}/>:
-       primary?.url&&safeUrl(primary.url)?<a href={safeUrl(primary.url)!} rel="noopener noreferrer" className={linkStyle}>Open submitted link ↗</a>:null}
-      {safeUrl(last.sourceUrl)?<a href={safeUrl(last.sourceUrl)!} rel="noopener noreferrer" className={linkStyle}>Source code ↗</a>:null}
-      {safeUrl(last.demoUrl)?<a href={safeUrl(last.demoUrl)!} rel="noopener noreferrer" className={linkStyle}>Demo ↗</a>:null}
+       primary?.url&&safeUrl(primary.url)?<TextLink variant="bare" href={safeUrl(primary.url)!} rel="noopener noreferrer" className={linkStyle}>Open submitted link ↗</TextLink>:null}
+      {safeUrl(last.sourceUrl)?<TextLink variant="bare" href={safeUrl(last.sourceUrl)!} rel="noopener noreferrer" className={linkStyle}>Source code ↗</TextLink>:null}
+      {safeUrl(last.demoUrl)?<TextLink variant="bare" href={safeUrl(last.demoUrl)!} rel="noopener noreferrer" className={linkStyle}>Demo ↗</TextLink>:null}
       {primary?.kind==="LINK"&&!safeUrl(primary.url)?<span role="status" className="text-sm text-muted-foreground">Unavailable link</span>:null}
      </div>
     </>}
   </section>
   <section aria-labelledby="delivery-evidence" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
-   <h2 id="delivery-evidence" className="text-lg font-semibold">Additional evidence ({additional.length})</h2>
+   <Heading level={2} size="lg" id="delivery-evidence">Additional evidence ({additional.length})</Heading>
    {!additional.length?<p role="status" className="text-sm text-muted-foreground">No additional evidence has been attached.</p>:
     <ol className="space-y-3">{additional.map((item,index)=>
      <li key={index} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-2">
       <span className="break-words text-sm font-medium">{item.name}</span>
       {item.kind==="FILE"?<ProjectDeliveryEvidenceDownload projectId={project.id} fileId={item.fileId} name={item.name}/>:
-       safeUrl(item.url)?<a href={safeUrl(item.url)!} rel="noopener noreferrer" className={linkStyle}>Open evidence ↗</a>:
+       safeUrl(item.url)?<TextLink variant="bare" href={safeUrl(item.url)!} rel="noopener noreferrer" className={linkStyle}>Open evidence ↗</TextLink>:
        <span role="status" className="text-xs text-muted-foreground">Unavailable link</span>}
      </li>)}</ol>}
   </section>
   <section aria-labelledby="delivery-review" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
-   <h2 id="delivery-review" className="text-lg font-semibold">Review</h2>
+   <Heading level={2} size="lg" id="delivery-review">Review</Heading>
    {!review?<p role="status" className="text-sm text-muted-foreground">No mentor feedback has been recorded yet.</p>:<>
     <StatusBadge tone={reviewTone}>{reviewStatus.replaceAll("_"," ")}</StatusBadge>
     <dl className="grid gap-4 text-sm sm:grid-cols-2">
@@ -115,7 +117,7 @@ export async function CollegeProjectDeliveryOverview({projectId,basePath="/colle
      <div><dt className="text-xs text-muted-foreground">Reviewed at</dt><dd>{date(review.reviewedAt)}</dd></div>
     </dl>
     {review.feedback?<div>
-     <h3 className="text-xs text-muted-foreground">Mentor feedback</h3>
+     <Heading level={3} size="xs" className="text-muted-foreground">Mentor feedback</Heading>
      <p className="mt-1 whitespace-pre-wrap text-sm text-body">{review.feedback}</p>
     </div>:<p className="text-sm text-muted-foreground">No mentor feedback has been recorded yet.</p>}
    </>}

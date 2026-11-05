@@ -19,6 +19,7 @@ import {
 import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { parseTrackerIssuesPageParams } from "@/modules/bug-tracker/issues-query-model";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const metadata={title:"Issues · 42 Tracker"};
@@ -131,7 +132,7 @@ export default async function TrackerIssuesPage({
           (page.items.length === 1 && !page.nextCursor ? "issue" : "issues") +
           " in this view. Search what has already been reported before adding another."}
         actions={<Link href="/tracker"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">
           Report issue
         </Link>}
       />
@@ -165,9 +166,9 @@ export default async function TrackerIssuesPage({
               <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)}
                 className="block min-w-0 rounded-[10px] border border-border bg-surface p-4 no-underline hover:border-[var(--lms-primary)] hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                 <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-                  <h2 className="m-0 break-words text-sm font-semibold text-link">
+                  <Heading level={2} size="sm" className="m-0 break-words text-link">
                     {issue.publicId} · {[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")||issue.issueType}
-                  </h2>
+                  </Heading>
                   <div className="flex flex-wrap gap-2">
                     <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":
                       issue.severity==="MAJOR"?"warning":"neutral"}>

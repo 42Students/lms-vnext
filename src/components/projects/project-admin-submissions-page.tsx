@@ -28,6 +28,8 @@ import {
   listProjectAdminSubmissionQueue,
   getProjectAdminSubmissionSummary,
 } from "@/modules/projects/admin-insights-service";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function tone(status: string) {
   if (status === "APPROVED") {
@@ -165,7 +167,7 @@ export async function ProjectAdminSubmissionsPage({
             progressPercent:item.progressPercent,
             inactiveDays:projectAdminElapsedDays(item.updatedAt,renderedAt),
           }))}/>} />
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Not submitted · {unsubmitted.total} workspaces</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Not submitted · {unsubmitted.total} workspaces</Heading>
         <DataTable
           caption="Unsubmitted project workspaces"
           rows={unsubmitted.items}
@@ -246,7 +248,7 @@ export async function ProjectAdminSubmissionsPage({
       }))}/>} />
 
       <section className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
-        <h2 className="font-semibold text-foreground">Submissions</h2>
+        <Heading level={2} className="text-foreground">Submissions</Heading>
         <p className="text-xs text-body">
           Showing current and historical final-delivery versions. Historical versions
           are read only; review actions target only the latest active version.
@@ -305,8 +307,8 @@ export async function ProjectAdminSubmissionsPage({
                 {([row.sourceUrl,row.demoUrl] as const).map((value,index)=>{
                   if(!value)return null;
                   const href=safeProjectExternalHref(value);
-                  return href?<a key={index} href={href}
-                    rel="noopener noreferrer" className="text-link underline">Open link</a>:
+                  return href?<TextLink key={index} href={href}
+                    rel="noopener noreferrer">Open link</TextLink>:
                     <span key={index} role="status" className="text-xs text-error">
                       Could not resolve this submission&apos;s file.</span>;
                 })}
@@ -314,8 +316,7 @@ export async function ProjectAdminSubmissionsPage({
                   if(!item||typeof item!=="object")return null;
                   const entry=item as Record<string,unknown>;
                   const href=typeof entry["url"]==="string"?safeProjectExternalHref(entry["url"]):null;
-                  return href?<a key={index} href={href} rel="noopener noreferrer"
-                    className="text-link underline">Open {entry["kind"]==="FILE"?"file":"link"}</a>:
+                  return href?<TextLink key={index} href={href} rel="noopener noreferrer">Open {entry["kind"]==="FILE"?"file":"link"}</TextLink>:
                     <span key={index} role="status" className="text-xs text-error">
                       Could not resolve this submission&apos;s file.</span>;
                 })}
@@ -323,7 +324,7 @@ export async function ProjectAdminSubmissionsPage({
             {key:"status",header:"Status",mobilePriority:"secondary",
               cell:row=>row.isCurrentVersion?"Current":("Historical · v"+row.version)},
             {key:"actions",header:"Actions",mobilePriority:"action",
-              className:"md:sticky md:right-0 md:z-10 md:bg-surface",
+              className:"md:sticky md:right-0 md:z-(--lms-z-raised) md:bg-surface",
               cell:row=><div className="flex min-w-0 flex-col gap-1">
                 {row.submittedAt?<ProjectAdminSubmissionReview
                   historical={!row.isCurrentVersion}

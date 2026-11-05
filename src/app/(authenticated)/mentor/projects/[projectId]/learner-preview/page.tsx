@@ -6,6 +6,8 @@ import {requireProjectReadAccess} from "@/modules/projects/access";
 import {getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {mentorStudentVisibilityPreview}
   from "@/modules/projects/mentor-student-visibility-preview-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Visibility-only preview: no student impersonation, mutation endpoints,
  * personal learner records, Mentor-only resource notes or signed file links.
@@ -40,12 +42,12 @@ export default async function MentorLearnerVisibilityPreview({
      </p>
    </div>
    <section className="space-y-2 border-b pb-4" aria-label="Shared project overview">
-     <h2 className="text-xl font-semibold">{visible.project.title}</h2>
+     <Heading level={2} size="xl">{visible.project.title}</Heading>
      <p>Status: {visible.project.status.replaceAll("_"," ")}</p>
      <p>{visible.project.summary||"No shared project summary recorded."}</p>
    </section>
    <section className="space-y-2" aria-label="Visible Sprint plan">
-     <h2 className="text-lg font-semibold">Sprints · {visible.sprints.length}</h2>
+     <Heading level={2} size="lg">Sprints · {visible.sprints.length}</Heading>
      {visible.sprints.length===0?<p>No sprints recorded.</p>:<ul className="space-y-2">
        {visible.sprints.map(item=><li key={item.id} className="border-b py-2">
          {item.title} · {item.status.replaceAll("_"," ")}
@@ -53,7 +55,7 @@ export default async function MentorLearnerVisibilityPreview({
      </ul>}
    </section>
    <section className="space-y-2" aria-label="Shared task board">
-     <h2 className="text-lg font-semibold">Project tasks · {visible.tasks.length}</h2>
+     <Heading level={2} size="lg">Project tasks · {visible.tasks.length}</Heading>
      {visible.tasks.length===0?<p>No active task records.</p>:<ul className="space-y-2">
        {visible.tasks.map(item=><li key={item.id} className="border-b py-2">
          <strong>{item.title}</strong>
@@ -65,15 +67,15 @@ export default async function MentorLearnerVisibilityPreview({
      </ul>}
    </section>
    <section className="space-y-2" aria-label="Shared active project resources">
-     <h2 className="text-lg font-semibold">
+     <Heading level={2} size="lg">
        Shared resources · {visible.resources.length}
-     </h2>
+     </Heading>
      {visible.resources.length===0?<p>No active team-visible resources.</p>:<ul className="space-y-3">
        {visible.resources.map(item=><li key={item.id} className="border-b py-2">
          <strong>{item.title}</strong>
          {item.description?<p className="whitespace-pre-wrap">{item.description}</p>:null}
-         {item.url?<a href={item.url} rel="noopener noreferrer"
-           className="inline-flex py-2 text-sm font-semibold underline">Open resource ↗</a>:
+         {item.url?<TextLink href={item.url} rel="noopener noreferrer"
+           className="inline-flex py-2 text-sm">Open resource ↗</TextLink>:
            <p className="text-xs text-muted-foreground">
              No public link. An authorized uploaded file may require a signed download.
            </p>}

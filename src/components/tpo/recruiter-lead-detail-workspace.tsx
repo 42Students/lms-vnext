@@ -19,6 +19,8 @@ import {buildTpoRecruiterInviteMessage} from "@/modules/placements/tpo-recruiter
 import {RECRUITER_STAGE_LEGACY_LABELS,type TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lead-policy";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Lead = {
   id: string;
@@ -68,7 +70,7 @@ type EditValues = {
   source: string;
 };
 // Anchor and Link destinations retain native navigation while adopting the shared secondary-button skin.
-const button = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] leading-5 text-body transition-colors duration-200 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:min-h-9 md:w-auto";
+const button = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold leading-5 text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:min-h-9 md:w-auto";
 const SOURCES = [
   ["", "Added by hand / Imported"], ["ALUMNI", "Alumni"],
   ["REFERRAL", "Referral"], ["LINKEDIN", "LinkedIn"],
@@ -478,8 +480,8 @@ export function RecruiterLeadDetailWorkspace({
               (lead.designation ? " · " + lead.designation : "")}
             actions={
             <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
-              {!lead.recruiterUserId&&!lead.unsubscribedAt?<a className={button}
-                href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</a>:null}
+              {!lead.recruiterUserId&&!lead.unsubscribedAt?<TextLink variant="bare" className={button}
+                href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</TextLink>:null}
               <Link className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}
                 href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>
                 Create drive
@@ -525,7 +527,7 @@ export function RecruiterLeadDetailWorkspace({
 
           {lead.companyName?<section aria-label="Company" className="border-b border-border py-4">
              <div className="min-w-0 space-y-2">
-             <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Company</h2>
+             <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Company</Heading>
              <p className="mt-2 text-sm font-medium leading-[22px]">{lead.companyName}</p>
              {companySummary?<div className="mt-3 space-y-2 text-sm text-body">
                <p>{companySummary.drivesRan} drives that ran · {companySummary.acceptedOfferDrives} accepted-offer drives</p>
@@ -552,13 +554,13 @@ export function RecruiterLeadDetailWorkspace({
            </section>:null}
            <div className="grid min-w-0 gap-5 lg:grid-cols-2">
             <section className="space-y-3 border-b border-border py-5">
-              <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Contact</h2>
+              <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Contact</Heading>
               <dl className="space-y-3 text-sm [&_dd]:min-w-0 [&_dd]:break-words">
                 <div><dt className="text-muted-foreground">Email</dt>
-                  <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<a href={"mailto:" + lead.emailNorm} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">{lead.emailNorm}</a>
+                  <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<TextLink href={"mailto:" + lead.emailNorm} className="lms-inline-link inline-flex min-h-11 items-center">{lead.emailNorm}</TextLink>
                     : <Button type="button" variant="link" className="min-h-11 md:min-h-9" onClick={openEdit}>Add email</Button>}</dd></div>
                 <div><dt className="text-muted-foreground">Phone</dt>
-                  <dd>{lead.phoneNorm ? lead.unsubscribedAt?<span>{lead.phoneNorm} · opted out</span>:<a href={"tel:" + lead.phoneNorm} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">{lead.phoneNorm}</a>
+                  <dd>{lead.phoneNorm ? lead.unsubscribedAt?<span>{lead.phoneNorm} · opted out</span>:<TextLink href={"tel:" + lead.phoneNorm} className="lms-inline-link inline-flex min-h-11 items-center">{lead.phoneNorm}</TextLink>
                     : <Button type="button" variant="link" className="min-h-11 md:min-h-9" onClick={openEdit}>Add phone</Button>}</dd></div>
                 <div><dt className="text-muted-foreground">Came from</dt><dd>{leadSourceLabel(lead.source)}</dd></div>
               </dl>
@@ -618,10 +620,10 @@ export function RecruiterLeadDetailWorkspace({
                           ()=>setInviteNotice("Invite link copied."),
                           ()=>setInviteNotice("Copy the link from its input.")
                         )}>Copy link</Button>
-                      {lead.emailNorm?<a className={button}
+                      {lead.emailNorm?<TextLink variant="bare" className={button}
                         href={"mailto:"+lead.emailNorm+"?subject="+encodeURIComponent("Placement Cell recruiter invitation")+
                           "&body="+encodeURIComponent(inviteMessage)}>
-                        Also email it (open draft)</a>:null}
+                        Also email it (open draft)</TextLink>:null}
                       <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
                         setConfirmation("CLOSE_INVITE");
                       }}>Close preview</Button>
@@ -641,13 +643,13 @@ export function RecruiterLeadDetailWorkspace({
             </section>
 
             <section id="tpo-recruiter-log-interaction" className="scroll-mt-24 space-y-4 border-b border-border py-5">
-              <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Log an interaction</h2>
+              <Heading level={2} size="base" className="leading-[26px] md:text-[18px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Log an interaction</Heading>
               <form className="space-y-3" onSubmit={e => void addActivity(e)}>
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Interaction type">
                   {ACTIVITY_TYPES.map(type=><FilterChip type="button" key={type} aria-pressed={logType===type}
                     onClick={()=>{setLogType(type);setLogOutcome("");}}>{type==="CALL"?"Call":type==="EMAIL"?"Email":type==="MEETING"?"Meeting":"Note"}</FilterChip>)}
                 </div>
-                <details className="border-b border-border pb-3"><summary className="cursor-pointer py-2 text-[13px] font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Choose interaction type</summary><label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+                <details className="border-b border-border pb-3"><summary className="cursor-pointer py-2 text-[13px] font-semibold max-md:flex max-md:min-h-11 max-md:items-center">Choose interaction type</summary><label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
                   <Select className="mt-[6px] min-w-0 min-h-11 md:min-h-9" value={logType}
                     onChange={e => {setLogType(e.target.value as typeof logType);setLogOutcome("");}}>
                     {ACTIVITY_TYPES.map(type => <option value={type} key={type}>{type}</option>)}
@@ -675,15 +677,15 @@ export function RecruiterLeadDetailWorkspace({
                   {saving ? "Saving…" : "Save"}
                 </Button>
               </form>
-              <h3 className="font-semibold border-b border-border pt-3 pb-2">Timeline</h3>
+              <Heading level={3} className="border-b border-border pt-3 pb-2">Timeline</Heading>
               {activities.length ? (
                 <ol className="ml-2 divide-y divide-border border-l-2 border-primary-subtle pl-4">
                   {activities.map((a,index) => (
                     <li key={a.id} className="relative py-3 text-sm before:absolute before:-left-[22px] before:top-5 before:h-2 before:w-2 before:rounded-full before:bg-primary">
                       {(!index||activityDayIst(activities[index-1]?.createdAt ?? a.createdAt)!==activityDayIst(a.createdAt))?
-                        <h4 className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        <Heading level={4} size="xs" className="mb-2 mt-4 uppercase tracking-wide text-muted-foreground">
                           {activityDayIst(a.createdAt)}
-                        </h4>:null}
+                        </Heading>:null}
                       <div className={a.isSystem?"text-muted-foreground":"text-body"}>
                       <span className="font-semibold">{a.type==="CALL"?"Call":a.type==="EMAIL"?"Email":a.type==="MEETING"?"Meeting":a.type==="NOTE"?"Note":a.type==="SYSTEM"?"System":a.type.replaceAll("_"," ")}</span>
                       {a.outcome ? " · " + a.outcome.toLowerCase().replaceAll("_"," ") : ""}
@@ -701,7 +703,7 @@ export function RecruiterLeadDetailWorkspace({
 
           <section className="space-y-4 border-b border-border py-5">
             <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-             <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Follow-ups</h2>
+             <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Follow-ups</Heading>
              <Button variant="secondary" type="button" onClick={()=>setFollowOpen(true)}>
               Add follow-up
              </Button>

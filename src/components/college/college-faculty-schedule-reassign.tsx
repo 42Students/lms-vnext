@@ -72,7 +72,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
         <p className="font-semibold">Reassigned {receipt.reassigned} of {receipt.total} upcoming session(s).</p>
         <p className="text-xs">Review the per-session results below. Retry checks only sessions still assigned to the original faculty.</p>
         {receipt.skipped?<details className="min-w-0">
-          <summary className="min-h-11 cursor-pointer py-2.5 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:py-2">{receipt.skipped} skipped.</summary>
+          <summary className="min-h-11 cursor-pointer py-3 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:py-2">{receipt.skipped} skipped.</summary>
           <ul className="space-y-[var(--lms-space-2)] pl-[var(--lms-space-4)] text-sm">
             {receipt.results.filter(row=>row.status==="SKIPPED").map(row=><li key={row.id}>
               {row.title}: {row.reason}</li>)}

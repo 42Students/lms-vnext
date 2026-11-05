@@ -10,6 +10,7 @@ import {Alert} from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useToast} from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
  const router=useRouter();
  const {pending,run}=useGuardedAction();
@@ -94,7 +95,7 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
  const labelClass="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
  return <section className="min-w-0 border-b border-border pb-5">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-   <h2 className="text-base font-semibold text-foreground">This college&apos;s companies</h2>
+   <Heading level={2} size="base" className="text-foreground">This college&apos;s companies</Heading>
    <Button variant="primary" type="button" disabled={pending}
     onClick={()=>{setError("");setOpen(true);}} className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden">
     <svg aria-hidden="true" viewBox="0 0 16 16" className="mr-1 inline-block size-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M8 2.5v11M2.5 8h11" strokeLinecap="round"/></svg>

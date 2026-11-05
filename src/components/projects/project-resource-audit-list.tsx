@@ -9,6 +9,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { projectResourceAuditAction } from "@/modules/projects/project-resource-audit-model";
 import {formatProjectIstDateTime} from "@/modules/projects/project-date-time-format-model";
+import { Heading } from "@/components/ui/heading";
 
 type ResourceEvent = {
   id: string;
@@ -95,7 +96,7 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
   return <section aria-label="Resource activity" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5">
     <div>
       <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Resource activity</p>
-      <h3 className="mt-1 text-base font-semibold text-foreground">See who changed project resources and when</h3>
+      <Heading level={3} size="base" className="mt-1 text-foreground">See who changed project resources and when</Heading>
       <p className="mt-1 text-sm text-body">
         This view focuses on resource changes inside the workspace. Use the full audit trail for broader project events.
       </p>

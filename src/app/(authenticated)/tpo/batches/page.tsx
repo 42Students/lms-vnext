@@ -34,6 +34,7 @@ import {sortTpoBatchWorkingPriority} from "@/modules/placements/tpo-batch-priori
 import {parseTpoBatchFacetQuery,filterTpoBatchFacets} from "@/modules/placements/tpo-batch-facets-model";
 import {TpoBatchFacetFilters} from "@/components/tpo/tpo-batch-facet-filters";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 
 export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[];facetState?:string|string[];facetProgram?:string|string[];facetDepartment?:string|string[];facetFinalYear?:string|string[];selectedBatch?:string|string[]}>}){
@@ -130,8 +131,8 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="16" height="16"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
      Filters{filterCount>0?<Badge tone="info">{filterCount}</Badge>:null}
     </summary>
-    <div className="absolute right-0 z-20 mt-2 max-h-[min(75vh,700px)] w-[min(90vw,480px)] min-w-[min(90vw,300px)] overflow-y-auto rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-lg">
-     <h2 className="mb-3 text-lg font-semibold">Filter batches</h2>
+    <div className="absolute right-0 z-(--lms-z-sticky-inline) mt-2 max-h-[min(75vh,700px)] w-[min(90vw,480px)] min-w-[min(90vw,300px)] overflow-y-auto rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-lg">
+     <Heading level={2} size="lg" className="mb-3">Filter batches</Heading>
   <form role="search" aria-label="tpo batches filters" className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3" action="/tpo/batches" method="get">
    <input type="hidden" name="q" value={parsed.data.q??""}/>
    <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">State<Select name="state" defaultValue={parsed.data.state} className="block min-h-11 w-full md:min-h-9"><option value="ALL">All</option><option value="IN_PLACEMENTS">In placements</option><option value="NOT_STARTED">Not started</option><option value="FINISHED">Finished</option></Select></label>
@@ -212,7 +213,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     </Table>
    </div>
    <aside aria-label="Selected batch decision" className="min-w-0 rounded-xl border border-border bg-surface p-4">
-    {activeBatch?<><h2 className="text-lg font-bold text-foreground">Decide {activeBatch.name}</h2>
+    {activeBatch?<><Heading level={2} size="lg" className="text-foreground">Decide {activeBatch.name}</Heading>
      <p className="mt-1 text-sm text-body">{activeBatch.program} · {activeBatch.department}</p>
      <p className="mt-4 rounded-lg bg-surface-secondary p-3 text-sm text-body">
       Students follow their batch unless a class or individual decision overrides it.
@@ -246,7 +247,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     title={tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?"No batches yet":"No batches match this view"}
     description={data.batches.length===0?"Batches come from Academic Setup. Create the academic batch there first.":"Try another search or clear the active batch filters."}
     action={data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
-      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search and filters</Link>:undefined}/>:<ul className="grid min-w-0 grid-cols-1 gap-4 min-[700px]:grid-cols-[repeat(auto-fill,minmax(320px,1fr))]">
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search and filters</Link>:undefined}/>:<ul className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-[repeat(auto-fill,minmax(320px,1fr))]">
    {batchPage.items.map(b=>{
     const summary=eligibility?.get(b.id);
     const total=summary?.assessed??0;
@@ -257,9 +258,9 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     return <li key={b.id} className={"flex min-w-0 flex-col gap-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-4 shadow-sm "+(b.finishedAt?"bg-[var(--lms-neutral-50)]":"bg-surface")}>
      <header className="flex min-w-0 items-start justify-between gap-2">
       <div className="flex min-w-0 flex-col gap-1">
-       <h2 className="m-0 break-words text-[var(--lms-font-lg)] font-semibold leading-6">
+       <Heading level={2} className="m-0 break-words text-[var(--lms-font-lg)] leading-6">
         <Link href={detailsHref} className="lms-inline-link text-[var(--lms-heading)] hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{b.name}</Link>
-       </h2>
+       </Heading>
        <p className="text-xs text-muted-foreground">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
       </div>
       <Badge tone={status==="In placements"?"success":status==="Finished"?"neutral":"warning"} className="shrink-0">{status}</Badge>
@@ -287,7 +288,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
      </div>:<p role="status" className="text-sm text-muted-foreground">Eligibility counts unavailable.</p>}
      <footer className="mt-auto flex flex-wrap items-center gap-3 pt-2">
       <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,summary,progress)}
-       className={"lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 "+(next==="Review history"?"border-border bg-surface text-link":"border-[var(--lms-primary)] bg-[var(--lms-primary)] text-white")}>{next}</Link>
+       className={"lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 "+(next==="Review history"?"border-border bg-surface text-link":"border-[var(--lms-primary)] bg-[var(--lms-primary)] text-[color:var(--lms-on-primary)]")}>{next}</Link>
       {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<span className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</span>:null}
      </footer>
     </li>;
@@ -295,8 +296,8 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    </div>
   </details>
   {(batchPage.hasPrev||batchPage.hasNext)?<nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
-   {batchPage.hasPrev?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
-   {batchPage.hasNext?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
+   {batchPage.hasPrev?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
+   {batchPage.hasNext?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
 
   </nav>:null}
  </div>;

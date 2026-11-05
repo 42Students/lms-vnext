@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { listScopedAdminNotificationPage } from "@/modules/activity/notification-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Heading } from "@/components/ui/heading";
 
 type Query = Record<string, string | string[] | undefined>;
 const statuses = ["SENT", "SCHEDULED", "PROCESSING", "FAILED", "DELETED"] as const;
@@ -73,7 +74,7 @@ export default async function NotificationDeliveryPage({
       <PageHeader title="Notification delivery" description="Review delivery states separately from announcement visibility and read receipts." />
       <Link href="/admin/announcements" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to announcements</Link>
       <section aria-label="Delivery status filters" className="space-y-2">
-        <h2 className="text-lg font-semibold">Delivery history</h2>
+        <Heading level={2} size="lg">Delivery history</Heading>
         <nav aria-label="Filter delivery status" className="flex flex-wrap gap-2">
           <Link href="/admin/notification-delivery" aria-current={!status ? "page" : undefined} className="inline-flex min-h-11 items-center rounded border px-3 text-sm">All</Link>
           {statuses.map((value) => (

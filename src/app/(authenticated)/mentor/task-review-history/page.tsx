@@ -14,6 +14,7 @@ import {
   mentorTaskHistoryHref, mentorTaskHistoryQuerySchema, taskReviewDecisionLabel,
 } from "@/modules/projects/mentor-task-history-model";
 import { getMentorTaskReviewHistory } from "@/modules/projects/mentor-task-history-service";
+import { Heading } from "@/components/ui/heading";
 
 type Params={decision?:string|string[];priority?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -52,11 +53,11 @@ export default async function MentorTaskReviewHistoryPage({
         className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
-            className="min-h-11 min-[768px]:min-h-9" />
+            className="min-h-11 md:min-h-9" />
         </label>
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision
           <Select name="decision" defaultValue={data.query.decision}
-            className="min-h-11 min-[768px]:min-h-9">
+            className="min-h-11 md:min-h-9">
             <option value="ALL">All reviews</option>
             <option value="APPROVED">Approved</option>
             <option value="CHANGES_REQUESTED">Changes requested</option>
@@ -69,7 +70,7 @@ export default async function MentorTaskReviewHistoryPage({
         <Disclosure title="More review history filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task priority
           <Select name="priority" defaultValue={data.query.priority}
-            className="min-h-11 min-[768px]:min-h-9">
+            className="min-h-11 md:min-h-9">
             <option value="ALL">All priorities</option><option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
@@ -77,7 +78,7 @@ export default async function MentorTaskReviewHistoryPage({
         </label>
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review chronology
           <Select name="order" defaultValue={data.query.order}
-            className="min-h-11 min-[768px]:min-h-9">
+            className="min-h-11 md:min-h-9">
             <option value="NEWEST">Most recently reviewed</option>
             <option value="OLDEST">Earliest reviewed first</option>
           </Select>
@@ -105,7 +106,7 @@ export default async function MentorTaskReviewHistoryPage({
       : <ol aria-label="mentor task review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="min-w-0 break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{item.taskTitle}</h2>
+            <Heading level={2} className="min-w-0 break-words text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">{item.taskTitle}</Heading>
             <span className="text-sm font-semibold text-body">{taskReviewDecisionLabel(item.status)}</span>
           </div>
           <p className="mt-2 text-sm text-body leading-[22px]">{item.projectTitle} · Version {item.version}</p>

@@ -22,6 +22,7 @@ import { Banner } from "@/components/ui/banner";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {projectTpoBatchNextStep} from "@/modules/placements/tpo-batch-next-step-state-model";
 import {getTpoBatchOwnDecisionSummary} from "@/modules/placements/tpo-batch-own-decision-service";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {batchId}=await params;
@@ -168,8 +169,8 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <div className="grid min-w-0 gap-4 lg:grid-cols-2 lg:items-start">
  <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
   className="scroll-mt-24 space-y-3 border-b border-[var(--lms-canvas-border)] py-4 target:animate-pulse">
-  <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Next step</h2>
-  <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{next.title}</h3>
+  <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Next step</Heading>
+  <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{next.title}</Heading>
   <p className="text-sm text-body leading-[22px]">{next.detail}</p>
   <div className="flex flex-wrap gap-3">
    <Link href={"/tpo/batches/"+batchId+next.href}
@@ -183,7 +184,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   </div>
  </section>
  <section aria-label="Batch eligibility snapshot" className="min-w-0 space-y-3 border-b border-border py-4">
-  <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Eligibility decisions</h2>
+  <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Eligibility decisions</Heading>
   <p className="text-sm text-muted-foreground leading-[22px]">{summary.complete?
    "Inherited learner, class and batch decisions for the active roster.":
    "Partial snapshot: only the first "+eligibility.limit+" learners were assessed. Do not treat these counts as batch totals."}</p>
@@ -226,7 +227,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   </Link>:<p role="status" className="text-sm text-body leading-[22px]">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
  <section aria-label="Whole batch eligibility decision" className="space-y-2 border-b border-border py-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
-    <div><h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Whole batch</h2>
+    <div><Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Whole batch</Heading>
       <p className="text-sm text-body leading-[22px]">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
       {decision.reason?<p className="text-xs text-muted-foreground leading-5">Reason: {decision.reason}</p>:null}
     </div>

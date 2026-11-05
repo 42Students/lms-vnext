@@ -11,6 +11,7 @@ import {useToast} from "@/components/ui/toast";
 import {mentorEstimateLabel,mentorEstimateOptions} from "@/modules/projects/mentor-estimation-unit-model";
 import {projectMutation} from "./project-api";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
+import { Heading } from "@/components/ui/heading";
 
 type Sprint={id:string;title:string;status:string;releaseStatus:string};
 export function ProjectAdminTaskAdd({
@@ -76,7 +77,7 @@ export function ProjectAdminTaskAdd({
   {open?<div className="min-w-0 space-y-3 border-y border-border py-4">
    <div>
     <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Work breakdown</p>
-    <h4 className="mt-1 text-base font-semibold text-foreground">Add task</h4>
+    <Heading level={4} size="base" className="mt-1 text-foreground">Add task</Heading>
     <p className="text-sm text-body">
      Assign this item to a sprint or leave it in the backlog. Status, assignee and
      learner submissions are not changed here.

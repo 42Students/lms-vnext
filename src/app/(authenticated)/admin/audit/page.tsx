@@ -13,6 +13,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {SubjectEventHistory} from "@/components/activity/subject-event-history";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 function smsDate(value:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
@@ -91,7 +92,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
   </div>}
   {!blocked?<section aria-label="SMS delivery attempts" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
    <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
-    <div><h2 className="text-base font-semibold text-[var(--lms-heading)]">SMS delivery attempts</h2>
+    <div><Heading level={2} size="base" className="text-[var(--lms-heading)]">SMS delivery attempts</Heading>
      <p className="mt-1 text-xs text-muted-foreground">Newest attempts first. Provider accepted does not mean handset delivered. Phone numbers, codes and message bodies are not shown.</p>
     </div>
     {isGlobal?<form method="get" action="/admin/audit" className="flex items-center gap-2">

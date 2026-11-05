@@ -15,6 +15,8 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoActorAudit } from "@/modules/placements/tpo-actor-audit-service";
 import { tpoActorAuditQuerySchema } from "@/modules/placements/tpo-actor-audit-model";
 import {tpoAuditEntityHref} from "@/modules/placements/tpo-audit-entity-link-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   actorId?: string | string[];
@@ -75,10 +77,10 @@ export default async function TpoActorAuditPage({
     <PageHeader title="Actor and entity audit"
       description="Canonical placement activity events with exact persisted actor, entity and IST date filters."
       actions={<>
-        <a href={exportHref}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
+        <ButtonLink variant="secondary" href={exportHref}
+          className="w-full md:w-auto">
           Export matching CSV (first 2,000)
-        </a>
+        </ButtonLink>
         <Link href="/tpo/audit"
           className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
           ← All audit sources
@@ -136,9 +138,9 @@ export default async function TpoActorAuditPage({
       </div>
     </form>
     <section className="min-w-0 space-y-4">
-      <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">
+      <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
         {data.total.toLocaleString("en-IN")} matching canonical record(s)
-      </h2>
+      </Heading>
       <DataTable
         caption="Matching canonical placement audit records"
         rows={data.rows}

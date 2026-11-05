@@ -28,14 +28,14 @@ export default async function HrRoundRemovalConfirm({params}:{
    <p className="break-words font-semibold text-foreground">{round.sequence}. {round.name}</p>
    <p className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-sm leading-6 text-body">{round.kind} · <StatusBadge tone="warning">{round.status}</StatusBadge> · No recorded candidate results.</p>
   </section>
-  <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center">
+  <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center">
    <PageBackLink href={"/recruiter/drives/"+encodeURIComponent(jobId)+"/rounds/editor"} label="Keep round"
-    className="min-h-11 w-full justify-center border border-border px-4 text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto [&_span]:!inline"/>
-   <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"} className="min-w-0 max-w-full w-full min-[768px]:w-auto">
+    className="min-h-11 w-full justify-center border border-border px-4 text-primary-text md:min-h-9 md:w-auto [&_span]:!inline"/>
+   <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"} className="min-w-0 max-w-full w-full md:w-auto">
     <Input type="hidden" name="action" value="REMOVE"/>
     <Input type="hidden" name="roundId" value={round.id}/>
     <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-    <Button type="submit" variant="danger" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
+    <Button type="submit" variant="danger" className="min-h-11 w-full md:min-h-9 md:w-auto">
      Confirm remove
     </Button>
    </form>

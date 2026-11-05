@@ -219,7 +219,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
                 <p>{item.gradedLearners} graded · {Math.max(0,item.submittedLearners-item.gradedLearners)} not graded</p>
               </div>},
             {key:"actions",header:"Actions",mobilePriority:"action" as const,
-              className:"md:sticky md:right-0 md:z-20 md:bg-surface min-w-[230px]",
+              className:"md:sticky md:right-0 md:z-(--lms-z-sticky-inline) md:bg-surface min-w-[230px]",
               cell:(item:CollegeAssessmentAggregateItem)=><div className="flex flex-wrap gap-2">
                 <SuperAdminAssignmentSubmissionsDialog title={item.title||"Untitled"} count={item.submittedLearners}>
                   <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
@@ -252,7 +252,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
             {key:"due",header:"Due",mobilePriority:"secondary" as const,
               cell:(item:CollegeAssessmentAggregateItem)=><span className="whitespace-nowrap">{formatDue(item.dueAt)}</span>},
             {key:"actions",header:"Actions",mobilePriority:"action" as const,
-              className:"md:sticky md:right-0 md:z-20 md:bg-surface min-w-[240px]",
+              className:"md:sticky md:right-0 md:z-(--lms-z-sticky-inline) md:bg-surface min-w-[240px]",
               cell:(item:CollegeAssessmentAggregateItem)=><div className="flex min-w-[210px] flex-col gap-2">
                 <CollegeQuizActions quiz={item}/>
                 <div className="flex flex-wrap items-center gap-2">

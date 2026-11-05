@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
+import { Heading } from "@/components/ui/heading";
 /** Legacy picker displays YYYY-MM-DD HH:mm in the college's IST timezone. */
 function suggestedDeadlineInput(deadline:string|null){
  const original=deadline?Date.parse(deadline):NaN;
@@ -52,7 +53,7 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   finally{inFlightRef.current=false;setBusy(false);endDriveMutation(jobId);}
  }
  return <div className="space-y-3"><form onSubmit={review} aria-labelledby="super-admin-deadline-heading" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
-  <h2 id="super-admin-deadline-heading" className="text-base font-semibold">Extend deadline</h2>
+  <Heading level={2} size="base" id="super-admin-deadline-heading">Extend deadline</Heading>
   <p className="text-sm text-body">Current deadline: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
   <p className="max-w-2xl text-xs leading-5 text-muted-foreground">
     Choose a later date and time (YYYY-MM-DD HH:mm). If the previous deadline has passed,

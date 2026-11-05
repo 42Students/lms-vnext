@@ -22,6 +22,8 @@ import {
  effectiveCourseContentVisibleToStudents,type AdminContentKind,
 } from "@/modules/courses/super-admin-content-directory-model";
 import { listSuperAdminContentDirectory,listSuperAdminContentSectionOptions } from "@/modules/courses/super-admin-content-directory-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function publicHttpsHref(value:string|null){
  return safePublicCourseContentUrl(value);
@@ -69,7 +71,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <PageHeader title={title}/>
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+". If your scope was changed but content has not appeared, reselect your college or refresh this page."}/>
   {kind==="VIDEOS"?<section aria-label="Global video policy" className="space-y-2 border-t border-border pt-4">
-   <h2 className="text-base font-semibold">Video watched threshold</h2>
+   <Heading level={2} size="base">Video watched threshold</Heading>
    <Banner tone="info">The video "watched" threshold is platform-wide (default 90%, valid range 1–100%). It can be edited only in GLOBAL platform settings, without a selected college.</Banner>
    <Link href="/admin/settings?q=watchedThresholdPercent"
     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
@@ -126,7 +128,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   </nav>
   {kind==="VIDEOS"?<section aria-label="Video policy"
     className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
-    <h2 className="text-base font-semibold text-foreground">Video policy</h2>
+    <Heading level={2} size="base" className="text-foreground">Video policy</Heading>
     <p className="mt-2 text-sm text-body">Video &quot;watched&quot; threshold: 90% by default.
       The platform value is configurable globally between 1% and 100%.</p>
     <Banner tone="info">
@@ -139,9 +141,9 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <div className="grid min-w-0 items-start gap-6 lg:grid-cols-2">
    <section aria-label="Add lesson content"
      className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
-    <h2 className="mb-3 text-lg font-semibold text-foreground">
+    <Heading level={2} size="lg" className="mb-3 text-foreground">
       {kind==="VIDEOS"?"Add Video":kind==="LIVE_CLASSES"?"Add Live Class":"Add Resource"}
-    </h2>
+    </Heading>
   <form method="get" className="mb-3 flex min-w-0 flex-wrap items-end gap-2" role="search">
     {Object.entries({
       q:data.query.q,status:data.query.status,page:String(data.query.page),
@@ -179,7 +181,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    <section aria-label="Existing Content"
     className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
     <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-      <h2 className="text-lg font-semibold text-foreground">Existing Content</h2>
+      <Heading level={2} size="lg" className="text-foreground">Existing Content</Heading>
       <Link href={adminContentHref(kind,data.query)}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
         ↻ Refresh
@@ -240,16 +242,15 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    <div className="flex flex-wrap items-center gap-2" aria-label="Existing Content toolbar">
     <Link href="/admin/content-order" className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Arrange class content</Link>
     <Link href={adminContentHref(kind,data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Refresh</Link>
-    <a href={"/api/courses/admin-content-export?"+new URLSearchParams({
+    <ButtonLink variant="secondary" href={"/api/courses/admin-content-export?"+new URLSearchParams({
      kind,q:data.query.q,status:data.query.status,
      ...(data.query.offeringId?{offeringId:data.query.offeringId}:{}),
      ...(data.query.lessonId?{lessonId:data.query.lessonId}:{}),
      ...(data.query.deliveryId?{deliveryId:data.query.deliveryId}:{}),
      scope:data.query.scope,
-    }).toString()}
-      className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">
+    }).toString()}>
       Export CSV
-    </a>
+    </ButtonLink>
    </div>
   </div>
   <p className="text-xs text-muted-foreground">Class syllabus order includes Videos, Resources, YouTube and Live Classes in one sequence per Lesson and Section. Choose a Section from a content row, then use the accessible Up/Down controls and Save lesson order. Keyboard users can tab to the move controls.</p>
@@ -262,7 +263,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    {data.items.map(item=><article role="row" key={item.id}
     className="grid min-w-[900px] grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,2fr)_minmax(0,1.5fr)] gap-3 border-b border-border py-3 last:border-b-0">
     <div role="cell" className="min-w-0">
-     <h2 className="m-0 break-words text-sm font-semibold text-foreground">{item.title?.trim()||"Untitled"}</h2>
+     <Heading level={2} size="sm" className="m-0 break-words text-foreground">{item.title?.trim()||"Untitled"}</Heading>
      <p className="mt-1 break-words text-xs text-muted-foreground">{item.courseName} ({item.courseCode}) · {item.lessonName}</p>
      <p className="mt-1 break-words text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
     </div>

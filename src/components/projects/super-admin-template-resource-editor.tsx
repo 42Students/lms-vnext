@@ -13,6 +13,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectTemplateBlueprintSchema,type ProjectTemplateBlueprint} from "@/modules/projects/validation";
 import {projectMutation} from "./project-api";
+import { Heading } from "@/components/ui/heading";
 type Resource=ProjectTemplateBlueprint["resources"][number];
 const cls="mt-1 w-full";
 function slug(value:string){
@@ -140,7 +141,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
  }
  return <section className="min-w-0 space-y-3 border-b border-border pb-4">
   <div className="flex min-w-0 items-center justify-between gap-3">
-   <h2 className="font-semibold text-[18px] text-[var(--lms-heading)]">Reading material and links copied into this template</h2>
+   <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Reading material and links copied into this template</Heading>
    <Button type="button" variant="secondary" className="min-h-11 w-full sm:min-h-9 sm:w-auto" aria-expanded={open} disabled={pending} onClick={()=>{if(open)guard.requestClose();else setOpen(true);}}
     >
     {open?"Close editor":"Edit resources"}</Button>

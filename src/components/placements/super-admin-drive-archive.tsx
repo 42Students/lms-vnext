@@ -6,6 +6,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
+import { Heading } from "@/components/ui/heading";
 type Impact={activeApplications:number;affectedLearners:number;openRounds:number;
  issuedOffers:number;acceptedOffers:number};
 type Preview={jobId:string;title:string;status:string;expectedUpdatedAt:string;
@@ -46,7 +47,7 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
   });}finally{endDriveMutation(jobId);}
  }
  return <section aria-labelledby="super-admin-drive-danger-title" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border border-[color:var(--lms-error-surface)] bg-[color:var(--lms-error-surface)] p-[var(--lms-space-4)]">
-  <h2 id="super-admin-drive-danger-title" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[color:var(--lms-error-text)]">Danger zone · Delete drive</h2>
+  <Heading level={2} size="base" id="super-admin-drive-danger-title" className="leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px] text-[color:var(--lms-error-text)]">Danger zone · Delete drive</Heading>
   <p className="text-sm leading-[22px] text-[color:var(--lms-error-strong)]">This action archives the drive, rather than permanently deleting its applicant records.
    Application history is retained. Scheduled interviews and unaccepted offers are cancelled,
    and affected learners are notified by the registered in-app notice flow.</p>

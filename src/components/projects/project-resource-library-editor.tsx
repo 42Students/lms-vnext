@@ -12,6 +12,7 @@ import {projectMutation} from "./project-api";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {legacyResourceKinds,legacyResourceKind,makeResourceKey,
  type ProjectResourceLibraryRow} from "@/modules/projects/project-resource-library-model";
+import { Heading } from "@/components/ui/heading";
 
 type Persisted={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
@@ -180,10 +181,10 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
   <div className="flex flex-wrap items-start justify-between gap-3">
    <div>
     <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Project references</p>
-    <h2 className="mt-1 text-lg font-semibold text-foreground">Resource library</h2>
-    <h3 className="mt-1 text-base font-semibold text-foreground">
+    <Heading level={2} size="lg" className="mt-1 text-foreground">Resource library</Heading>
+    <Heading level={3} size="base" className="mt-1 text-foreground">
      Keep everything the team needs in one curated place
-    </h3>
+    </Heading>
     <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
      Add only useful project references, label them clearly, and include access notes
      when a link or file needs a college account, permission request, or other prerequisite.

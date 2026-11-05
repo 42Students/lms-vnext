@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
+import { Heading } from "@/components/ui/heading";
 export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
  campaignId:string;ready:boolean;recipients:number;status:string;
 }){
@@ -49,7 +50,7 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
   This campaign is {status.toLowerCase()}. Provider acceptance does not prove inbox delivery.
  </p>;
  return <section className="min-w-0 space-y-3 border-t border-border pt-4" aria-label="Campaign send">
-  <h2 className="font-semibold">Step 2 of 2 · Email {recipients} {recipients===1?"recruiter":"recruiters"}</h2>
+  <Heading level={2}>Step 2 of 2 · Email {recipients} {recipients===1?"recruiter":"recruiters"}</Heading>
   <p className="text-sm text-body">Legacy Send an email is now a verified draft-and-confirm workflow. Review the saved subject and recipient selection before final confirmation. You may save a draft without email delivery configured, but Send requires a ready provider and at least one reachable recipient.</p>
   {!ready?<Alert tone="warning">
    Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.
@@ -60,7 +61,7 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
   </p>}
   {ready&&recipients===0?<p role="status" className="text-sm text-muted-foreground">No eligible recipients are available for this campaign.</p>:null}
   <Button variant="primary" type="button" disabled={!ready||busy||recipients===0}
-   className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50"
+   className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
    onClick={()=>setConfirmOpen(true)}>{busy?"Sending…":"Send"}</Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}} pending={busy}
     title={"Email "+recipients+" recruiters?"}

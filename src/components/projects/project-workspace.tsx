@@ -88,6 +88,8 @@ import { AddProjectMemberControl } from "./project-team-controls";
 import type {
   getProjectWorkspaceView,
 } from "@/modules/projects/workspace-view-service";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Workspace = Awaited<
   ReturnType<typeof getProjectWorkspaceView>
@@ -253,7 +255,7 @@ function WorkspaceHealthSnapshot({ workspace, templateHref }: { workspace: Works
 function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
   const readiness = workspace.readiness;
   if (!readiness) return <section role="alert" className="border-y border-warning-border bg-warning-subtle p-4">
-    <h2 className="font-semibold">Readiness snapshot is unavailable</h2>
+    <Heading level={2}>Readiness snapshot is unavailable</Heading>
     <p className="mt-1 text-sm">The workspace loaded, but its readiness calculation was not included. Retry before making a submission-readiness decision.</p>
     <Link href={"?retry=1"} className="mt-2 inline-flex text-sm font-semibold text-link underline">Retry</Link>
   </section>;
@@ -284,10 +286,10 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Submission readiness</p>
-          <h2 className="mt-1 text-lg font-semibold text-foreground">
+          <Heading level={2} size="lg" className="mt-1 text-foreground">
             {hasFinalSubmission?"This workspace already has a final submission":
               ready ? "This workspace is ready to submit" : "This workspace still has readiness gaps"}
-          </h2>
+          </Heading>
         </div>
         <StatusBadge tone={ready ? "success" : "error"}>
           {hasFinalSubmission?"Submitted":ready ? "Ready" : "Not ready"}
@@ -364,7 +366,7 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
   <section className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
    <div className="flex flex-wrap items-start justify-between gap-3">
     <div><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Final delivery</p>
-     <h3 className="mt-1 text-base font-semibold text-foreground">Submission package and review state</h3></div>
+     <Heading level={3} size="base" className="mt-1 text-foreground">Submission package and review state</Heading></div>
     <StatusBadge tone={reviewTone}>{reviewText}</StatusBadge>
    </div>
    <dl className="mt-4 grid gap-3 text-sm text-body sm:grid-cols-2 lg:grid-cols-4">
@@ -374,7 +376,7 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
     <div><dt className="text-xs text-muted-foreground">Revisions</dt><dd>{delivery.revisionCount??"—"}</dd></div>
    </dl>
    <div className="mt-4 border-t border-[var(--lms-canvas-border)] pt-3">
-    <h4 className="text-sm font-semibold">Primary submission</h4>
+    <Heading level={4} size="sm">Primary submission</Heading>
     <div className="mt-2 flex flex-wrap gap-3 text-sm">
      {latest?.attachments.map((item,index)=>{
       if(!item||typeof item!=="object")return null;
@@ -383,11 +385,10 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
       return <ProjectDeliveryEvidenceDownload key={index} projectId={workspace.project.id}
        fileId={row["fileId"]} name={typeof row["name"]==="string"?row["name"]:"Open submitted file"}/>;
      })}
-     {source?<a href={source} rel="noopener noreferrer"
-      className="font-semibold text-link underline">Open source link</a>:null}
-     {safeHttpHref(delivery.demoUrl)?<a href={safeHttpHref(delivery.demoUrl) ?? undefined}
-      rel="noopener noreferrer" className="font-semibold text-link underline">
-      Open demo</a>:null}
+     {source?<TextLink href={source} rel="noopener noreferrer">Open source link</TextLink>:null}
+     {safeHttpHref(delivery.demoUrl)?<TextLink href={safeHttpHref(delivery.demoUrl) ?? undefined}
+      rel="noopener noreferrer">
+      Open demo</TextLink>:null}
      {!source&&!latest?.attachments.some(item=>Boolean(item&&typeof item==="object"&&
       (item as {kind?:unknown}).kind==="FILE"))?
        <p className="text-sm text-muted-foreground">No valid file or source link is attached.</p>:null}
@@ -396,7 +397,7 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
   </section>
   <section className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
    <div className="flex flex-wrap justify-between gap-2">
-    <h3 className="text-sm font-semibold">Additional evidence</h3>
+    <Heading level={3} size="sm">Additional evidence</Heading>
     <span className="text-xs text-muted-foreground">{delivery.attachments.length} additional item{delivery.attachments.length===1?"":"s"}</span>
    </div>
    {!delivery.attachments.length?<p className="mt-2 text-sm text-muted-foreground">No additional files or links.</p>:
@@ -411,19 +412,19 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
       <span>{name}</span>
       {row["kind"]==="FILE"&&typeof row["fileId"]==="string"?
        <ProjectDeliveryEvidenceDownload projectId={workspace.project.id} fileId={row["fileId"]} name={name}/>:
-       href?<a href={href} rel="noopener noreferrer" className="text-link underline">Open</a>:
+       href?<TextLink href={href} rel="noopener noreferrer">Open</TextLink>:
        <span className="text-muted-foreground">Unavailable link</span>}
      </li>;
     })}</ul>}
   </section>
   <section className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
-   <h3 className="text-sm font-semibold">Review</h3>
+   <Heading level={3} size="sm">Review</Heading>
    <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
     <div><dt className="text-xs text-muted-foreground">Reviewed by</dt><dd>{delivery.reviewedBy??"—"}</dd></div>
     <div><dt className="text-xs text-muted-foreground">Reviewed at</dt><dd>{formatDateTime(delivery.reviewedAt)}</dd></div>
    </dl>
    {delivery.feedback?<div className="mt-3">
-    <h4 className="text-xs text-muted-foreground">Mentor feedback</h4>
+    <Heading level={4} size="xs" className="text-muted-foreground">Mentor feedback</Heading>
     <p className="mt-1 whitespace-pre-wrap text-sm text-body">{delivery.feedback}</p>
    </div>:<p className="mt-3 text-sm text-muted-foreground">No mentor feedback has been recorded yet.</p>}
   </section>
@@ -810,9 +811,9 @@ export function ProjectWorkspace({
         <section className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="m-0 text-base font-semibold text-foreground">
+              <Heading level={2} size="base" className="m-0 text-foreground">
                 Your final submission
-              </h2>
+              </Heading>
 
             </div>
             {!readOnly ? <LearnerFinalDeliveryControl
@@ -857,7 +858,7 @@ export function ProjectWorkspace({
         <section id={mode==="MENTOR"?"mentor-project-brief-editor":undefined}
           className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</h2>
+            <Heading level={2} size="lg" className="m-0 text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</Heading>
             {mentorReviewHref ? <Link href={mentorReviewHref}
               className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link hover:bg-primary-subtle sm:w-auto md:min-h-9">
               Review submission
@@ -870,16 +871,16 @@ export function ProjectWorkspace({
           {mode==="MENTOR"&&!readOnly?<MentorProjectAboutEditor project={workspace.project}/>:null}
           {(isAuthored&&authoredBrief.completionConditions.length>0)||
             (isAuthored&&authoredBrief.personas.length>0)?<div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div><h3 className="text-sm font-semibold">Completion conditions</h3>
+            <div><Heading level={3} size="sm">Completion conditions</Heading>
               <ul className="mt-2 list-disc pl-5 text-sm">{authoredBrief.completionConditions.map((v,i)=><li key={i}>{v}</li>)}</ul>
             </div>
-            <div><h3 className="text-sm font-semibold">Personas</h3>
+            <div><Heading level={3} size="sm">Personas</Heading>
               <ul className="mt-2 list-disc pl-5 text-sm">{authoredBrief.personas.map((v,i)=><li key={i}>{v}</li>)}</ul>
             </div>
           </div>:null}
           {mode!=="ADMIN"?<div className="mt-4 grid gap-3 sm:grid-cols-2">
             <section className="border-b border-border pb-3">
-              <h3 className="font-semibold text-foreground">Definition of done</h3>
+              <Heading level={3} className="text-foreground">Definition of done</Heading>
               <p className="mt-1 text-sm text-body">
                 Finish the planned tasks, have each sprint signed off, and send the final submission for mentor review.
               </p>
@@ -888,7 +889,7 @@ export function ProjectWorkspace({
               </p>
             </section>
             <section className="border-b border-border pb-3">
-              <h3 className="font-semibold text-foreground">Who’s who</h3>
+              <Heading level={3} className="text-foreground">Who’s who</Heading>
               <ul className="mt-2 space-y-1 text-sm text-body">
                 <li>Mentor · Reviews tasks and final delivery</li>
                 <li>Project team · Works on assigned tasks and shared submissions</li>
@@ -898,13 +899,13 @@ export function ProjectWorkspace({
             </section>
           </div>:null}
           {mode==="MENTOR"?<section aria-label="Final submission" className="mt-4 border-b border-border pb-4 text-sm text-body">
-            <h3 className="font-semibold text-foreground">Final submission</h3>
+            <Heading level={3} className="text-foreground">Final submission</Heading>
             <p className="mt-1">Status: {readiness.finalSubmission.latest?label(readiness.finalSubmission.latest.status):"Not submitted"}</p>
             <Link href={mentorReviewHref??("/mentor/projects/"+workspace.project.id+"?tab=delivery")}
               className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Review submission</Link>
           </section>:null}
           {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 border-b border-border pb-4">
-            <h3 className="font-semibold">Task progress</h3>
+            <Heading level={3}>Task progress</Heading>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
                 <div key={lane.id} className="rounded-[var(--lms-control-radius)] bg-muted p-2 text-center">
@@ -916,7 +917,7 @@ export function ProjectWorkspace({
               {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>
           </section>:null}
           {mode==="LEARNER"?<section aria-label="Task completion donut" className="mt-4 border-b border-border pb-4">
-            <h3 className="text-sm font-semibold">Task completion</h3>
+            <Heading level={3} size="sm">Task completion</Heading>
             {readiness.execution.tasks.total>0?<div className="mt-3 flex flex-wrap items-center gap-4">
               <svg viewBox="0 0 42 42" role="img"
                 aria-label={Math.round(100*readiness.execution.tasks.done/readiness.execution.tasks.total)+"% tasks completed"}
@@ -943,7 +944,7 @@ export function ProjectWorkspace({
               <p className="mt-3 text-xs text-body">Tasks only — this project has no sprints.</p>}
           </section>:null}
           {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 border-b border-border pb-4">
-            <h3 className="font-semibold text-foreground">Task progress</h3>
+            <Heading level={3} className="text-foreground">Task progress</Heading>
             <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
                 <div key={lane.id} className="rounded-[var(--lms-control-radius)] bg-muted p-2 text-center">
@@ -955,15 +956,15 @@ export function ProjectWorkspace({
           {workspace.templateOverview||isAuthored ? (
             <div className="mt-3 space-y-4 text-sm leading-6 text-body">
               {brief.goal ? <div>
-                <h3 className="font-semibold text-foreground">Project goal</h3>
+                <Heading level={3} className="text-foreground">Project goal</Heading>
                 <p className="whitespace-pre-wrap">{brief.goal}</p>
               </div> : null}
               {brief.description ? <div>
-                <h3 className="font-semibold text-foreground">Description</h3>
+                <Heading level={3} className="text-foreground">Description</Heading>
                 <p className="whitespace-pre-wrap">{brief.description}</p>
               </div> : null}
               <div>
-                <h3 className="font-semibold text-foreground">Deliverables</h3>
+                <Heading level={3} className="text-foreground">Deliverables</Heading>
                 {brief.deliverables.length ? (
                   <ul className="list-disc space-y-1 pl-6">
                     {brief.deliverables.map((deliverable, index) => (
@@ -1000,7 +1001,7 @@ export function ProjectWorkspace({
           {mode === "LEARNER" ? (
             <section className="mt-4 border-b border-border pb-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-sm font-semibold text-foreground">Final submission</h3>
+                <Heading level={3} size="sm" className="text-foreground">Final submission</Heading>
                 <StatusBadge tone={readiness.finalSubmission.latest?.status === "APPROVED" ? "success" :
                   readiness.finalSubmission.latest?.status === "SUBMITTED" ? "info" : "warning"}>
                   {readiness.finalSubmission.latest?.status === "APPROVED" ? "Accepted" :
@@ -1043,7 +1044,7 @@ export function ProjectWorkspace({
               </div>
               {!archived && workspace.tasks.some(task => task.status === "BLOCKED") ? (
                 <div className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
-                  <h3 className="text-sm font-semibold">Requires attention</h3>
+                  <Heading level={3} size="sm">Requires attention</Heading>
                   <p className="mt-1 text-sm text-body">One or more tasks are blocked.</p>
                   <Link href={"/learn/projects/" + workspace.project.id + "?tab=board&taskStatus=BLOCKED"}
                     className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
@@ -1082,7 +1083,7 @@ export function ProjectWorkspace({
       {show("team") ? <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="LEARNER"?"Project team":"Team"}</h2>
+            <Heading level={2} size="lg" className="m-0 text-foreground">{mode==="LEARNER"?"Project team":"Team"}</Heading>
             <p className="mt-1 text-sm text-body">Manage mentor ownership, student membership and workload across this workspace.</p>
           </div>
           {mode==="ADMIN"&&!readOnly
@@ -1128,7 +1129,7 @@ export function ProjectWorkspace({
         {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId?<div className="flex justify-end">
           <AddProjectMemberControl projectId={workspace.project.id}/>
         </div>:null}
-        {mode==="ADMIN"?<><h3 className="text-base font-semibold text-[var(--lms-heading)]">Project people</h3><ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
+        {mode==="ADMIN"?<><Heading level={3} size="base" className="text-[var(--lms-heading)]">Project people</Heading><ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
           // Deleted tasks are not part of a member's current assignment coverage.
           // Match membership UUIDs; legacy numeric assignee IDs are not valid here.
           const assigned=workspace.tasks.filter(task=>!task.deletedAt&&
@@ -1165,8 +1166,8 @@ export function ProjectWorkspace({
                 <p className="font-semibold text-foreground">{member.academicTitle?.trim()||"Project mentor"}</p>
                 {member.bio?<p className="whitespace-pre-wrap break-words">{member.bio}</p>:
                   <p className="text-xs">No mentor bio yet. Update your faculty profile to introduce your role.</p>}
-                {linkedIn?<a href={linkedIn} rel="noopener noreferrer"
-                  className="inline-flex min-h-11 md:min-h-9 items-center text-link underline">LinkedIn profile ↗</a>:null}
+                {linkedIn?<TextLink href={linkedIn} rel="noopener noreferrer"
+                  className="inline-flex min-h-11 md:min-h-9 items-center">LinkedIn profile ↗</TextLink>:null}
               </div>:null}
             </article>;
           }):null}
@@ -1206,10 +1207,10 @@ export function ProjectWorkspace({
 
       {show("sprints") || show("tasks") ? <section className="space-y-3">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <Heading level={2} size="lg" className="m-0 text-foreground">
             {mode==="ADMIN"?(activeSection==="tasks"?"Task plan":activeSection==="sprints"?
               "Sprint plan":"Execution"):"Releases and Sprints"}
-          </h2>
+          </Heading>
           {mentorReviewHref && !show("overview") ? <Link href={mentorReviewHref}
             className="mt-2 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link">
             Review submission
@@ -1222,7 +1223,7 @@ export function ProjectWorkspace({
           {mode==="ADMIN"&&show("sprints")?<section aria-label="Sprint plan summary"
             className="mt-4 space-y-3 border-y border-[var(--lms-canvas-border)] py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Delivery cadence</p>
-            <h3 className="text-base font-semibold text-foreground">Plan work in clear, release-bound increments</h3>
+            <Heading level={3} size="base" className="text-foreground">Plan work in clear, release-bound increments</Heading>
             <p className="text-sm leading-6 text-body">
               Keep sprint goals outcome-focused and attach every sprint to the release it contributes to.
               The row summaries let you scan dates and task completion without expanding everything.
@@ -1249,12 +1250,12 @@ export function ProjectWorkspace({
               description="Add the sprints this project should be measured against."
               action={readOnly?
                 <p className="text-sm text-body">This workspace is read-only, so sprints cannot be added.</p>:
-                <p className="text-sm text-body">First <a href="#mentor-project-add-release"
-                  className="font-semibold text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">add a release</a>,
+                <p className="text-sm text-body">First <TextLink href="#mentor-project-add-release"
+                  className="max-md:inline-flex max-md:min-h-11 max-md:items-center">add a release</TextLink>,
                   then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
             />:null}
           {workspace.releasesLoadError ? (
-            <div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-l-[3px] border-error bg-error-subtle px-3 py-3 text-sm">
+            <div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-l-2 border-error bg-error-subtle px-3 py-3 text-sm">
               <div>
                 <p className="font-semibold text-foreground">Project releases could not be loaded</p>
                 <p className="mt-1 text-body">Tasks, Team and other loaded workspace sections remain available.</p>
@@ -1292,7 +1293,7 @@ export function ProjectWorkspace({
         </div>:null}
         {mode==="LEARNER"&&workspace.releases.length>0?
           <nav aria-label="Release roadmap" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {workspace.releases.map(release=><a key={release.id}
+            {workspace.releases.map(release=><TextLink variant="bare" key={release.id}
               href={"#project-release-"+release.id}
               aria-current={release.status==="ACTIVE"?"step":undefined}
               className={"min-h-11 rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold "+
@@ -1300,7 +1301,7 @@ export function ProjectWorkspace({
                   release.status==="ACTIVE"?"border-primary bg-primary-subtle text-link":
                   "border-border bg-surface text-body")}>
               {release.title} · {label(release.status)}
-            </a>)}
+            </TextLink>)}
           </nav>:null}
         {mode==="ADMIN"&&show("tasks")?(()=>{
           const liveTasks=workspace.tasks.filter(task=>!task.deletedAt);
@@ -1318,9 +1319,9 @@ export function ProjectWorkspace({
           return <div className="space-y-4">
             <section aria-label="Task plan metrics" className="space-y-2">
              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Work breakdown</p>
-             <h3 className="text-base font-semibold text-foreground">
+             <Heading level={3} size="base" className="text-foreground">
                Turn sprint goals into clear, reviewable work
-             </h3>
+             </Heading>
              <p className="text-sm text-body">
                Keep each task small enough to own, link it to the right sprint,
                and make “done” explicit. Workflow state and learner submissions stay read-only here.
@@ -1393,7 +1394,7 @@ export function ProjectWorkspace({
         {mode === "ADMIN" && backlogTasks.length > 0 ? (
           <section aria-label="Product backlog" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
             <div>
-              <h3 className="text-base font-semibold text-foreground">Product backlog</h3>
+              <Heading level={3} size="base" className="text-foreground">Product backlog</Heading>
               <p className="mt-1 text-sm text-body">
                 {backlogTasks.length} task{backlogTasks.length === 1 ? "" : "s"} not assigned to a sprint.
                 Tasks remain in the backlog until explicitly allocated to an active plan.
@@ -1416,9 +1417,9 @@ export function ProjectWorkspace({
                   <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-link">
                     Release {release.sequence + 1}
                   </p>
-                  <h3 className="mt-1 min-w-0 break-words text-base font-semibold text-foreground">
+                  <Heading level={3} size="base" className="mt-1 min-w-0 break-words text-foreground">
                     {release.title}
-                  </h3>
+                  </Heading>
                   {mode==="MENTOR"?<p className="mt-2 text-xs font-semibold text-body">
                     {(sprintsByRelease.get(release.id)??[]).filter(s=>s.status==="COMPLETED").length}
                     {" "}of {(sprintsByRelease.get(release.id)??[]).length} sprints complete ·
@@ -1697,9 +1698,9 @@ export function ProjectWorkspace({
                               </div> : null}
                               {latestAttempt?.submissionUrl && safeHttpHref(latestAttempt.submissionUrl) ?
                                 <div className="sm:col-span-2"><dt className="font-semibold">Submission</dt>
-                                  <dd><a rel="noopener noreferrer"
+                                  <dd><TextLink rel="noopener noreferrer"
                                     href={safeHttpHref(latestAttempt.submissionUrl)!}
-                                    className="text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open submission</a></dd>
+                                    className="max-md:inline-flex max-md:min-h-11 max-md:items-center">Open submission</TextLink></dd>
                                 </div> : null}
                             </dl>
                             {mode === "LEARNER" &&
@@ -1816,15 +1817,15 @@ export function ProjectWorkspace({
           </div>
         ) : null}
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <Heading level={2} size="lg" className="m-0 text-foreground">
             {mode==="ADMIN"?"Delivery":"Final submission"}
-          </h2>
+          </Heading>
           {mode==="ADMIN"?<p className="mt-1 text-sm text-muted-foreground">Review the final submission package, evidence, revisions and mentor feedback.</p>:null}
         </div>
         {mode==="ADMIN"?<AdminDeliveryOverview workspace={workspace}/>:null}
         {mode==="ADMIN"&&workspace.finalDelivery.submissions.length>0?
          <div className="mt-4 space-y-1">
-          <h3 className="text-sm font-semibold">Submission history</h3>
+          <Heading level={3} size="sm">Submission history</Heading>
           <p className="text-xs text-body">
             {workspace.finalDelivery.submissions.length} recorded version{
               workspace.finalDelivery.submissions.length===1?"":"s"}.
@@ -1916,7 +1917,7 @@ export function ProjectWorkspace({
                     ) : null}
                     {mode !== "LEARNER" && submission.attachments.length ? (
                       <section aria-label="Additional evidence" className="mt-3 space-y-2">
-                        <h3 className="text-sm font-semibold text-foreground">Additional evidence</h3>
+                        <Heading level={3} size="sm" className="text-foreground">Additional evidence</Heading>
                         {submission.attachments.map((item, index) => {
                           if (!item || typeof item !== "object") return null;
                           const row = item as Record<string, unknown>;
@@ -1924,8 +1925,8 @@ export function ProjectWorkspace({
                           const href = typeof row["url"] === "string" ? safeHttpHref(row["url"]) : null;
                           return <p key={index} className="text-xs text-body">
                             {href && row["kind"] === "LINK" ?
-                              <a href={href} rel="noopener noreferrer"
-                                className="text-link hover:underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open link · {name}</a> :
+                              <TextLink href={href} rel="noopener noreferrer"
+                                className="max-md:inline-flex max-md:min-h-11 max-md:items-center">Open link · {name}</TextLink> :
                               row["kind"] === "FILE" && typeof row["fileId"] === "string"
                                 ? <ProjectDeliveryEvidenceDownload projectId={workspace.project.id}
                                     fileId={row["fileId"]} name={name}/>
@@ -1938,28 +1939,26 @@ export function ProjectWorkspace({
                     {source || demo ? (
                       <div className="mt-3 flex flex-wrap gap-3 text-sm font-semibold">
                         {source ? (
-                          <a
+                          <TextLink
                             href={source}
                             rel="noopener noreferrer"
-                            className="text-link hover:text-[var(--lms-primary-text)]"
                           >
                             Open source ↗
-                          </a>
+                          </TextLink>
                         ) : null}
                         {demo ? (
-                          <a
+                          <TextLink
                             href={demo}
                             rel="noopener noreferrer"
-                            className="text-link hover:text-[var(--lms-primary-text)]"
                           >
                             Open demo ↗
-                          </a>
+                          </TextLink>
                         ) : null}
                       </div>
                     ) : null}
 
                     {review ? (
-                      <div className="mt-4 border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-3 py-2">
+                      <div className="mt-4 border-l-2 border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-3 py-2">
                         <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                           Review · {label(review.decision)}
                         </p>
@@ -2030,7 +2029,7 @@ export function ProjectWorkspace({
                     ) : null}
 
                     {evaluation ? (
-                      <div className="mt-3 border-l-[3px] border-success bg-[var(--lms-success-subtle)] px-3 py-2">
+                      <div className="mt-3 border-l-2 border-success bg-[var(--lms-success-subtle)] px-3 py-2">
                         <p className="m-0 text-sm font-semibold text-success">
                           Evaluation ·{" "}
                           {evaluation.totalScore}/
@@ -2059,9 +2058,9 @@ export function ProjectWorkspace({
             <div>
               {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
                 Project references</p>:null}
-              <h2 className="m-0 text-lg font-semibold text-foreground">
+              <Heading level={2} size="lg" className="m-0 text-foreground">
                 {mode==="ADMIN"?"Resource library":"Resources"}
-              </h2>
+              </Heading>
               {mode==="ADMIN"?<p className="mt-1 text-sm text-body">
                 Curate the references, files and access guidance this workspace team needs.
               </p>:null}
@@ -2118,9 +2117,9 @@ export function ProjectWorkspace({
             <div>
               {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
                 Team cadence</p>:null}
-              <h2 className="m-0 text-lg font-semibold text-foreground">
+              <Heading level={2} size="lg" className="m-0 text-foreground">
                 {mode==="ADMIN"?"Meeting plan":"Meetings"}
-              </h2>
+              </Heading>
               <p className="mt-1 text-sm text-body">
                 {mode==="ADMIN"?"Plan project touchpoints and connect conversations to the work they support.":
                   mode==="LEARNER"?"Upcoming meetings and recent history.":
@@ -2175,7 +2174,7 @@ export function ProjectWorkspace({
             const upcoming=workspace.meetings.filter(m=>(m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)>renderTime)
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
             return <section aria-label="Upcoming project meetings" className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
-              <h3 className="text-sm font-semibold">Next meeting</h3>
+              <Heading level={3} size="sm">Next meeting</Heading>
               {upcoming[0]?<p className="mt-1 text-sm">
                 {upcoming[0].title} · {formatDateTime(upcoming[0].startsAt)}
                 {upcoming[0].meetingType?" · "+label(upcoming[0].meetingType):""}
@@ -2196,9 +2195,9 @@ export function ProjectWorkspace({
                 }))}/>
             </section>;
           })():null}
-          {mode==="LEARNER"&&workspace.meetings.length>0?<h3 className="text-sm font-semibold">
+          {mode==="LEARNER"&&workspace.meetings.length>0?<Heading level={3} size="sm">
             Meeting history
-          </h3>:null}
+          </Heading>:null}
           <div className="space-y-3">
             {workspace.meetings.length === 0 && !workspace.meetingsLoadError ? (
               <EmptyState title="No meetings yet."
@@ -2279,7 +2278,7 @@ export function ProjectWorkspace({
                     {meeting.agenda ? (
                       <section aria-label="Meeting agenda"
                         className="mt-2 min-w-0 border-b border-[var(--lms-canvas-border)] pb-2">
-                        <h4 className="text-sm font-semibold">Agenda</h4>
+                        <Heading level={4} size="sm">Agenda</Heading>
                         <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body">
                           {meeting.agenda}
                         </p>
@@ -2302,7 +2301,7 @@ export function ProjectWorkspace({
                         className="mt-2 border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
                         {hasNotes?<section aria-label="Meeting notes and action items"
                           className="min-w-0 border-b border-[var(--lms-canvas-border)] py-2">
-                          <h4 className="text-sm font-semibold">Notes and action items</h4>
+                          <Heading level={4} size="sm">Notes and action items</Heading>
                           {([["Notes",detail.notes],["Action items",detail.actionItems]] as const)
                             .filter(([,value])=>Boolean(value)).map(([field,value])=>
                               <p key={field} className="mt-2 whitespace-pre-wrap break-words">
@@ -2316,7 +2315,7 @@ export function ProjectWorkspace({
                         </section>:null}
                         {hasRetro?<section aria-label="Retrospective"
                           className="min-w-0 border-b border-[var(--lms-canvas-border)] py-2">
-                          <h4 className="text-sm font-semibold">Retrospective</h4>
+                          <Heading level={4} size="sm">Retrospective</Heading>
                           {([
                             ["What went well?",detail.wentWell],
                             ["What didn't go well?",detail.retroDidntGoWell],
@@ -2333,7 +2332,7 @@ export function ProjectWorkspace({
                                 </li>)}</ul>:null}
                         </section>:null}
                         {hasFollowUp?<section aria-label="Meeting follow-up" className="min-w-0 py-2">
-                          <h4 className="text-sm font-semibold">Follow-up</h4>
+                          <Heading level={4} size="sm">Follow-up</Heading>
                           <p className="mt-2 text-sm">
                             <strong>Follow-up status: </strong>{label(detail.followUpStatus)}
                           </p>
@@ -2359,13 +2358,13 @@ export function ProjectWorkspace({
                       </Link>
                     ) : null}
                     {href && meeting.status!=="CANCELLED" && meeting.status!=="COMPLETED" && mentorMeetingDisplayStatus(meeting.status,meeting.endsAt,renderTime)!=="MISSED" ? (
-                      <a
+                      <TextLink
                         href={href}
                         rel="noopener noreferrer"
-                        className="mt-3 inline-flex text-sm font-semibold text-link hover:text-[var(--lms-primary-text)]"
+                        className="mt-3 inline-flex text-sm"
                       >
                         Join meeting ↗
-                      </a>
+                      </TextLink>
                     ) : null}
                     {mode !== "LEARNER" &&
                     !readOnly &&
@@ -2415,9 +2414,9 @@ export function ProjectWorkspace({
           <div>
             {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
               Resource activity</p>:null}
-            <h2 className="m-0 text-lg font-semibold text-foreground">
+            <Heading level={2} size="lg" className="m-0 text-foreground">
               {mode==="ADMIN"?"See who changed project resources and when":"Activity"}
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body">
               {mode==="ADMIN"?
                 "Trace resource changes here, or open the full project audit trail for broader events.":
@@ -2430,7 +2429,7 @@ export function ProjectWorkspace({
               <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>
               View audit trail</Link> : null}
           {mode==="ADMIN"&&workspace.activityLoadError?
-            <div role="alert" className="border-l-[3px] border-warning-border bg-warning-subtle p-3 text-sm">
+            <div role="alert" className="border-l-2 border-warning-border bg-warning-subtle p-3 text-sm">
               <p className="font-semibold">Resource audit could not be loaded.</p>
               <p className="mt-1 text-body">The workspace remains available. Retry the audit without losing the project context.</p>
               <Link href="?retry=1" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">

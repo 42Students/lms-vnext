@@ -16,6 +16,7 @@ import { CollegePersonNotFoundError } from "@/modules/people/college-person-deta
 import {CollegeFacultyScheduleReassign} from "@/components/college/college-faculty-schedule-reassign";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
@@ -65,7 +66,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </div>} />
     <section className="min-w-0 border-b border-border pb-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Faculty record</h2>
+        <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)]">Faculty record</Heading>
         <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Lifecycle audit</Link>
       </div>
@@ -77,7 +78,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </dl>
     </section>
     <section className="min-w-0 border-b border-border pb-4">
-      <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
+      <Heading level={2} className="text-foreground">Faculty teaching assignments</Heading>
       <p className="mt-3 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·
         {" "}{data.counts.distinctOfferings} distinct course offerings ·
@@ -87,10 +88,10 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       </p>
       <p className="mt-2 max-w-2xl text-xs text-muted-foreground">College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure.</p>
       <details className="mt-4 min-w-0 border-y border-border py-2" open={data.filter.status!=="ALL"||data.filter.role!=="ALL"}>
-        <summary className="min-h-11 cursor-pointer py-2.5 font-semibold text-primary-text hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:py-2">Filter</summary>
-        <form method="get" className="mt-3 grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
+        <summary className="min-h-11 cursor-pointer py-3 font-semibold text-primary-text hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:py-2">Filter</summary>
+        <form method="get" className="mt-3 grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
           action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:w-full">
           Assignment history
           <Select name="status" defaultValue={data.filter.status}
             >
@@ -99,7 +100,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="ENDED">Ended only</option>
           </Select>
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:w-full">
           Teaching role
           <Select name="role" defaultValue={data.filter.role}
             >
@@ -115,7 +116,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
               {[10,25,50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
             </Select>
           </label>
-          <Button type="submit" className="min-h-11 w-full md:min-h-9 min-[992px]:w-auto">Filter</Button>
+          <Button type="submit" className="min-h-11 w-full md:min-h-9 lg:w-auto">Filter</Button>
         </form>
       </details>
       <div className="mt-4 min-w-0">

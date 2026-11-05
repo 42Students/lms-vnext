@@ -34,7 +34,7 @@ export function CampaignUnsubscribeConfirm({token,cell}:{token:string;cell:boole
  return <form onSubmit={event=>void confirm(event)} aria-busy={pending} className="mt-4 space-y-3">
   {error?<div ref={errorRef} tabIndex={-1} role="alert" className="outline-none"><InlineNotice tone="error" message={error}/></div>:null}
   <Button type="submit" loading={pending} disabled={pending||confirmed||!token.trim()}
-   aria-busy={pending} className="min-h-11 w-auto min-[768px]:min-h-9">
+   aria-busy={pending} className="min-h-11 w-auto md:min-h-9">
    {cell?"Unsubscribe":"Confirm unsubscribe"}
   </Button>
  </form>;

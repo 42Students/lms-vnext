@@ -8,6 +8,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Heading } from "@/components/ui/heading";
 type Preview={id:string;expectedUpdatedAt:string;counts:{applications:number;rounds:number;offers:number}};
 export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  const router=useRouter(),[pending,setPending]=useState(false),[error,setError]=useState<string|null>(null);
@@ -55,7 +56,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
   ["Offer versions",preview.counts.offers],
  ] as const;
  return <form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-6">
-  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Review consequences</h2>
+  <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Review consequences</Heading>
   <p className="max-w-prose text-sm text-body leading-[22px]">Closing stops new applications. Applicants without accepted offers who are still in the process are marked Not selected and told; pending withdrawal requests are settled. Accepted offers remain valid. Application, round and offer history is retained.</p>
   <dl className="grid min-w-0 grid-cols-3 gap-2 border-y border-border sm:gap-4">
    {consequences

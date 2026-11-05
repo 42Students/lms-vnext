@@ -14,6 +14,8 @@ import { listTenantDomainsWithRuntime } from "@/modules/tenant-domains/runtime";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {ManagedCollegeSubdomain} from "@/components/admin/managed-college-subdomain";
 import {getManagedCollegeSubdomain} from "@/modules/tenant-domains/managed-subdomain-service";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function CollegeWebAddressLoading() {
  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading web address">
@@ -62,7 +64,7 @@ export async function CollegeWebAddressContent({ params }: {
    </Banner>
    <section aria-label="Web address" className="min-w-0 rounded-lg border border-border bg-surface p-4">
      <div className="flex flex-wrap items-center justify-between gap-3">
-       <h2 className="text-base font-semibold text-[var(--lms-heading)]">Web address</h2>
+       <Heading level={2} size="base" className="text-[var(--lms-heading)]">Web address</Heading>
        <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain?reload=1"}
          className="inline-flex min-h-11 md:min-h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
          <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -80,8 +82,8 @@ export async function CollegeWebAddressContent({ params }: {
      {managedResult.status==="fulfilled"&&managedResult.value?.currentHost?
        <p role="status" className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-success bg-success-subtle px-3 py-2 text-sm">
          <strong>Live at</strong>
-         <a href={"https://"+managedResult.value.currentHost}
-           className="break-all font-semibold text-primary-text underline">{managedResult.value.currentHost} ↗</a>
+         <TextLink href={"https://"+managedResult.value.currentHost}
+           className="break-all">{managedResult.value.currentHost} ↗</TextLink>
        </p>:null}
      {managedResult.status==="fulfilled"&&managedResult.value ? <ManagedCollegeSubdomain collegeId={college.id} initial={managedResult.value}/> :
        <ErrorState title="Couldn't load the web address"

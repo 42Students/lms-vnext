@@ -51,11 +51,11 @@
   border-radius: 8px !important;
   background: transparent !important;
   color: var(--lms-neutral-500) !important;
-  transition: color 150ms cubic-bezier(.2,0,0,1), background 150ms cubic-bezier(.2,0,0,1);
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease), background var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .navArrow:hover:not(:disabled) {
   color: var(--lms-primary) !important;
-  background: rgba(38,186,199,.08) !important;
+  background: color-mix(in srgb, var(--lms-primary) 8%, transparent) !important;
 }
 .navArrow:focus-visible {
   outline: 2px solid var(--lms-primary-text) !important;
@@ -66,11 +66,11 @@
   min-height: 44px !important;
   border-color: var(--lms-primary) !important;
   color: var(--lms-primary) !important;
-  transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease;
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease), background-color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .today:hover:not(:disabled) {
   border-color: var(--lms-primary-hover) !important;
-  background: rgba(38,186,199,.08) !important;
+  background: color-mix(in srgb, var(--lms-primary) 8%, transparent) !important;
   color: var(--lms-primary-hover) !important;
 }
 .today:focus-visible {
@@ -118,7 +118,7 @@
   font-size: 12px !important;
   font-weight: 400 !important;
   line-height: 1.4 !important;
-  transition: background 150ms cubic-bezier(.2,0,0,1), border-color 150ms cubic-bezier(.2,0,0,1), box-shadow 150ms cubic-bezier(.2,0,0,1);
+  transition: background var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .legendChip:hover:not(:disabled) {
   background: var(--lms-primary-subtle) !important;
@@ -133,7 +133,7 @@
   border-color: var(--lms-primary) !important;
   color: var(--lms-primary-text) !important;
   font-weight: 600 !important;
-  box-shadow: inset 0 0 0 1px var(--lms-primary) !important;
+  box-shadow: var(--lms-ring-inset-subtle) !important;
 }
 /* Career event accent pairs: lms2-fe@prod-2026/
  * src/components/Placements/careerEventVisuals.js:11-48.
@@ -146,7 +146,7 @@
   border-color: var(--lms-info-blue) !important;
 }
 .legendChip[data-kind="ASSESSMENT"][aria-pressed="true"] {
-  box-shadow: inset 0 0 0 1px var(--lms-info-blue) !important;
+  box-shadow: var(--lms-ring-inset-subtle) !important;
 }
 .legendChip[data-kind="INTERVIEW"]:hover:not(:disabled),
 .legendChip[data-kind="INTERVIEW"][aria-pressed="true"] {
@@ -155,7 +155,7 @@
   border-color: var(--lms-success) !important;
 }
 .legendChip[data-kind="INTERVIEW"][aria-pressed="true"] {
-  box-shadow: inset 0 0 0 1px var(--lms-success) !important;
+  box-shadow: var(--lms-ring-inset-subtle) !important;
 }
 .legendChip[data-kind="OTHER"]:hover:not(:disabled),
 .legendChip[data-kind="OTHER"][aria-pressed="true"] {
@@ -164,7 +164,7 @@
   border-color: var(--lms-text-body) !important;
 }
 .legendChip[data-kind="OTHER"][aria-pressed="true"] {
-  box-shadow: inset 0 0 0 1px var(--lms-text-body) !important;
+  box-shadow: var(--lms-ring-inset-subtle) !important;
 }
 .gridFrame {
   position: relative;
@@ -209,13 +209,13 @@
 }
 .scheduleGrid { min-width: 630px !important; }
 @media (min-width: 768px) { .scheduleGrid { min-width: 0 !important; } }
-.blockedDay { background: rgba(180,35,24,0.15) !important; }
-.blockedDay:hover { background: rgba(180,35,24,0.22) !important; }
+.blockedDay { background: color-mix(in srgb, var(--lms-error-text) 15%, transparent) !important; }
+.blockedDay:hover { background: color-mix(in srgb, var(--lms-error-text) 22%, transparent) !important; }
 .outsideDay { background: var(--lms-neutral-50) !important; }
 .outsideDay:hover { background: var(--lms-primary-subtle) !important; }
 .todayDay {
   background: var(--lms-primary-subtle) !important;
-  box-shadow: inset 0 0 0 2px rgba(38,186,199,.45) !important;
+  box-shadow: var(--lms-ring-inset-selected) !important;
 }
 .dayNumber {
   display: block;
@@ -230,14 +230,14 @@
   display: block;
   min-height: 28px;
   margin: 2px 4px;
-  padding: 6px 10px 6px 8px;
+  padding: 6px 12px 6px 8px;
   border: 1px solid var(--lms-neutral-300);
-  border-left: 3px solid var(--lms-text-body);
+  border-left: 2px solid var(--lms-text-body);
   border-radius: 6px;
   background: var(--lms-neutral-100);
   color: var(--lms-topbar-ink);
   font-size: 13px;
-  line-height: 1.35;
+  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -255,7 +255,7 @@
 .more {
   display: inline-flex;
   margin: 2px 4px;
-  padding: 3px 8px;
+  padding: 4px 8px;
   border: 1px solid var(--lms-neutral-200);
   border-radius: 999px;
   background: var(--lms-neutral-100);
@@ -274,11 +274,11 @@
 .mobileRow {
   border: 0;
   border-bottom: 1px solid var(--lms-neutral-200);
-  border-left: 3px solid transparent;
+  border-left: 2px solid transparent;
   border-radius: 0;
   background: var(--lms-white);
   padding: 12px 8px;
-  transition: box-shadow 150ms cubic-bezier(.2,0,0,1), border-color 150ms cubic-bezier(.2,0,0,1);
+  transition: box-shadow var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .agendaEvent:hover,
 .mobileRow:hover {
@@ -313,7 +313,7 @@
   padding: 0;
   list-style: none;
 }
-@media (max-width: 1099px) {
+@media (max-width: 991px) {
   .gridFrame::after {
     content: "";
     position: absolute;
@@ -322,7 +322,7 @@
     bottom: 0;
     width: 28px;
     pointer-events: none;
-    background: linear-gradient(90deg, rgba(255,255,255,0),var(--lms-white));
+    background: linear-gradient(90deg, color-mix(in srgb, var(--lms-white) 0%, transparent),var(--lms-white));
   }
 }
 @media (max-width: 767px) {

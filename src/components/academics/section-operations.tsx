@@ -16,6 +16,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Choice = {
   membershipId: string;
@@ -137,7 +139,7 @@ function statusTone(status: string) {
 
 function SectionEmpty({ href, label }: { href: string; label: string }) {
   return <EmptyState title="No records to show" action={
-    <a href={href} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{label}</a>
+    <TextLink href={href} className="inline-flex min-h-11 items-center md:min-h-9">{label}</TextLink>
   } />;
 }
 
@@ -568,9 +570,9 @@ export function SectionOperations({
 
       <section className="min-w-0 space-y-[var(--lms-space-4)]">
         <div>
-          <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+          <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
             Learner progression
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body leading-[22px]">
             Admit learners to the Program, then place or move them into this Section. History is retained automatically.
           </p>
@@ -698,9 +700,9 @@ export function SectionOperations({
         </div>
 
         <div className="min-w-0 space-y-[var(--lms-space-3)]">
-          <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="sm" className="m-0 text-[var(--lms-heading)]">
             Program enrollments
-          </h3>
+          </Heading>
           <DataTable empty={<SectionEmpty href="#section-admit-learner" label="Admit learner to Program" />}
             columns={enrollmentColumns}
             rows={programEnrollments}
@@ -709,9 +711,9 @@ export function SectionOperations({
         </div>
 
         <div className="min-w-0 space-y-[var(--lms-space-3)]">
-          <h3 id="section-roster" className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="sm" id="section-roster" className="m-0 text-[var(--lms-heading)]">
             Section roster history
-          </h3>
+          </Heading>
           <DataTable empty={<SectionEmpty href="#section-place-learner" label="Place learner in this Section" />}
             columns={rosterColumns}
             rows={roster}
@@ -722,9 +724,9 @@ export function SectionOperations({
 
       <section className="min-w-0 space-y-[var(--lms-space-4)]">
         <div>
-          <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+          <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
             Faculty responsibilities
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body leading-[22px]">
             Section-level Advisor/Coordinator roles only. Course teaching assignments belong to Courses.
           </p>
@@ -804,9 +806,9 @@ export function SectionOperations({
 
       <section className="min-w-0 space-y-[var(--lms-space-4)]">
         <div>
-          <h2 id="section-schedule" className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+          <Heading level={2} size="base" id="section-schedule" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
             Section schedule
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body leading-[22px]">
             Section calendar for {section.startDate} → {section.endDate}. Attendance and roster details remain restricted to staff with section access. Link teaching sessions to a Course delivery for faculty and learner calendars.
           </p>

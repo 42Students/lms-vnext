@@ -30,7 +30,7 @@ describe("UX-UNOWNED-DENSE-GRID-05 semantic grid exceptions",()=>{
     expect(text).toContain('<Table scrollLabel="College attendance monthly grid"');
     expect(text).toContain("<caption");
     expect(text).toContain("sessionDays.map");
-    expect(text).toContain('className="sticky left-0 z-10 bg-surface px-4 py-3"');
+    expect(text).toContain('className="sticky left-0 z-(--lms-z-raised) bg-surface px-4 py-3"');
     expect(text).toContain('aria-label="No class scheduled"');
     expect(text).toContain("Multiple sessions on a day open a session chooser");
     expect(text).toContain("<Modal");

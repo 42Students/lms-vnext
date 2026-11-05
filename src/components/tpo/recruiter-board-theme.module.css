@@ -12,11 +12,11 @@
   border-radius: 12px;
   background: var(--lms-topbar-search);
   box-shadow: none;
-  padding: 10px;
+  padding: 12px;
 }
 .columnTitle {
   min-height: 46px;
-  padding: 10px 12px;
+  padding: 12px 12px;
   border-bottom: 1px solid var(--lms-border);
   background: var(--lms-neutral-100);
 }

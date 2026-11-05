@@ -8,6 +8,8 @@ import {MentorXlsxEvidencePreview} from "./mentor-xlsx-evidence-preview";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export type MentorEvidenceGalleryItem={
   index:number;name:string;type:string;href:string|null;
@@ -23,7 +25,7 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
   const pdfSrc=active?.href&&kind==="DOCUMENT"?
     mentorPdfEmbedUrl(active.href,pdfPage,pdfZoom):null;
   return <div className="prototype-mentor-delivery-artifacts">
-    <h3>What they sent · {items.length} files and links</h3>
+    <Heading level={3}>What they sent · {items.length} files and links</Heading>
     <div role="group" aria-label="Choose evidence to preview">
       {items.map(item=><Button variant="bare" key={item.index} type="button"
         aria-pressed={active?.index===item.index}
@@ -40,7 +42,7 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
     </div>
     {active?<section aria-live="polite" aria-label="Selected submission evidence"
       className="space-y-2 border border-border p-3">
-      <h4 className="font-semibold">{active.name}</h4>
+      <Heading level={4}>{active.name}</Heading>
       <p className="text-xs text-muted-foreground">{active.type}</p>
       {active.change&&active.change!=="ORIGINAL"?<p className="text-xs text-muted-foreground">
         {active.change==="NEW"?"This reference was not found under a unique name in the previous attempt.":
@@ -102,10 +104,10 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
         className="text-xs text-muted-foreground">
         This legacy spreadsheet format needs its original authorized provider.
       </p>:null}
-      {active.href?<a href={active.href}
-        rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-link underline">
+      {active.href?<TextLink href={active.href}
+        rel="noopener noreferrer" className="inline-flex min-h-11 items-center">
         Open evidence ↗
-      </a>:<p>The saved record has no accessible evidence link.</p>}
+      </TextLink>:<p>The saved record has no accessible evidence link.</p>}
       <p className="text-xs text-muted-foreground">Preview availability depends on
         the original provider's access rules; permission to this workspace
         does not grant access to an external file.</p>

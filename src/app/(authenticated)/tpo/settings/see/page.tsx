@@ -13,6 +13,7 @@ import {
 import {
   getCompanyVisibilitySettings,
 } from "@/modules/placements/tpo-policy-service";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic = "force-dynamic";
 
@@ -69,9 +70,9 @@ export default async function TpoWhatCompaniesSeePage() {
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+            <Heading level={3} size="base" className="m-0 leading-[26px] text-foreground md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
               College sharing policy
-            </h3>
+            </Heading>
             <p className="mt-1 text-sm leading-6 text-body">
               {settings.source === "PERSISTED"
                 ? "These choices are saved for your college."
@@ -90,7 +91,7 @@ export default async function TpoWhatCompaniesSeePage() {
           </StatusBadge>
         </div>
 
-        <div className="mt-5 grid gap-3 min-[768px]:grid-cols-2">
+        <div className="mt-5 grid gap-3 md:grid-cols-2">
           <div className="border-b border-border px-1 py-4">
             <p className="text-xs font-semibold text-muted-foreground">
               Sharing flags enabled
@@ -118,12 +119,12 @@ export default async function TpoWhatCompaniesSeePage() {
         className="space-y-3"
       >
         <div>
-          <h3
+          <Heading level={3} size="lg"
             id="company-visibility-fields"
-            className="m-0 text-lg font-semibold text-foreground"
+            className="m-0 text-foreground"
           >
             Recruiter-visible fields
-          </h3>
+          </Heading>
           <p className="mt-1 text-sm leading-6 text-body">
             Each flag determines whether the college&apos;s
             sharing policy permits the corresponding
@@ -132,16 +133,16 @@ export default async function TpoWhatCompaniesSeePage() {
           </p>
         </div>
 
-        <div className="grid gap-3 min-[768px]:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2">
           {settings.fields.map((field) => (
             <article
               key={field.key}
               className="border-b border-border py-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <h4 className="m-0 text-base font-semibold text-foreground">
+                <Heading level={4} size="base" className="m-0 text-foreground">
                   {field.label}
-                </h4>
+                </Heading>
 
                 <StatusBadge
                   tone={
@@ -188,9 +189,9 @@ export default async function TpoWhatCompaniesSeePage() {
         aria-label="Company visibility methodology"
         className="border-t border-border pt-4 text-sm leading-6 text-body"
       >
-        <h3 className="m-0 text-sm font-semibold text-foreground">
+        <Heading level={3} size="sm" className="m-0 text-foreground">
           How these settings work
-        </h3>
+        </Heading>
 
         <p className="mt-2">
           An allowed flag is permission to include

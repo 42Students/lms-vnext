@@ -109,7 +109,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       {([{name:"Overview",suffix:"overview"},{name:"Applications",suffix:"applications"},
         {name:"Schedule",suffix:"interviews"},{name:"Settings",suffix:"settings"}] as const).map(tab=>
         <Link key={tab.suffix} href={base+"/"+tab.suffix} aria-current={tab.suffix==="interviews"?"page":undefined}
-          className={"inline-flex min-h-11 items-center border-b-[3px] px-4 md:min-h-9 "+
+          className={"inline-flex min-h-11 items-center border-b-2 px-4 md:min-h-9 "+
             (tab.suffix==="interviews"?"border-[var(--lms-teal-deep)] text-[var(--lms-teal-deep)]":
             "border-transparent text-body hover:text-link hover:border-border")}>{tab.name}</Link>)}
     </nav>
@@ -135,7 +135,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     <div className="flex flex-wrap items-center gap-3">
       <Link href={toggleConflictHref} role="button" aria-pressed={conflictOnly}
         className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 "+
-          (conflictOnly?"border-[var(--lms-error)] bg-red-50 text-[var(--lms-error)]":"border-[var(--lms-error)] text-[var(--lms-error)] hover:bg-red-50")}>
+          (conflictOnly?"border-[var(--lms-error)] bg-[color:var(--lms-error-surface)] text-[var(--lms-error)]":"border-[var(--lms-error)] text-[var(--lms-error)] hover:bg-[color:var(--lms-error-surface)]")}>
         {conflictOnly?"Show all interviews":"Conflicts ("+conflicts+")"}
       </Link>
       {conflictOnly?<span role="status" className="text-sm text-[var(--lms-error)]">Showing {visibleAppointments.length} conflicting appointments on this page.</span>:null}
@@ -246,11 +246,11 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       <div className="flex flex-wrap gap-2" aria-label="Interview type indicators">
         {(["SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"] as const).map((kind,index)=>
           <span key={kind} className={"rounded-full border px-2 py-1 text-xs font-semibold "+
-            (index===0?"border-sky-200 bg-sky-50 text-sky-800":
-             index===1?"border-indigo-200 bg-indigo-50 text-indigo-800":
-             index===2?"border-emerald-200 bg-emerald-50 text-emerald-800":
-             index===3?"border-amber-200 bg-amber-50 text-amber-800":
-             "border-violet-200 bg-violet-50 text-violet-800")}>
+            (index===0?"border-[color:var(--lms-info-blue-surface)] bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-info-text)]":
+             index===1?"border-[color:var(--lms-border-strong)] bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple-text)]":
+             index===2?"border-[color:var(--lms-primary-light)] bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]":
+             index===3?"border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]":
+             "border-[color:var(--lms-purple-surface)] bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]")}>
             {kind.charAt(0)+kind.slice(1).toLowerCase()}
           </span>)}
       </div>
@@ -258,7 +258,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
         getRowKey={item=>item.id} empty={<EmptyState title="No matching interview rounds" description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."} action={<Link href={data.total===0?driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1}):driveInterviewsHref(jobId,{...query,page:Math.max(1,query.page-1)})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">{data.total===0?"Clear filters":"Previous page"}</Link>}/>} />
     </section>
     <nav aria-label="Interview round pages" className="flex min-w-0 flex-col items-stretch justify-between gap-3 border-t border-border pt-[var(--lms-space-3)] text-sm text-body sm:flex-row sm:items-center">
-      <span>Page {query.page} of {data.totalPages}</span><div className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&_a]:flex-1 max-[767px]:[&_a]:justify-center">
+      <span>Page {query.page} of {data.totalPages}</span><div className="flex min-w-0 flex-wrap gap-3 max-md:[&_a]:flex-1 max-md:[&_a]:justify-center">
         {query.page>1?<Link href={driveInterviewsHref(jobId,{...query,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
         {query.page<data.totalPages?<Link href={driveInterviewsHref(jobId,{...query,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
       </div>

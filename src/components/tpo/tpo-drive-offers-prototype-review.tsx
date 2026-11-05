@@ -3,6 +3,7 @@ import {useState} from "react";
 import Link from "next/link";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 type OfferRow={
  id:string;name:string;membershipId:string;rollNumber:string|null;branch:string|null;
  role:string;status:string;statusLabel:string;kind:string;issued:string;
@@ -37,12 +38,12 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
    className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4 md:p-5">
    <div className="flex flex-wrap items-start justify-between gap-3">
     <div>
-     <p className="text-xs font-bold uppercase tracking-wide text-amber-800">
+     <p className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-warning-strong)]">
       Step 1 of 2 · Before students see their offers
      </p>
-     <h2 className="mt-1 text-lg font-bold text-foreground">
+     <Heading level={2} size="lg" className="mt-1 text-foreground">
       {queueAvailable?toCheck.length+" recorded selections await review or release":"Selection queue unavailable"}
-     </h2>
+     </Heading>
      <p className="mt-1 text-xs leading-5 text-body">
       {queueAvailable?
        ready.length+" preliminarily eligible · "+needsReview.length+" need evidence review. Final held-offer and college-rule checks occur again during confirmed release.":
@@ -58,14 +59,14 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
     {needsReview.slice(0,5).map(row=><li key={row.id}
       className="flex flex-wrap items-center justify-between gap-3 py-3">
       <span className="min-w-0 text-sm"><strong>{row.name}</strong> · {row.roleTitle}
-       <span className="block text-xs text-amber-800">Needs eligibility review · not cleared for release</span>
+       <span className="block text-xs text-[color:var(--lms-warning-strong)]">Needs eligibility review · not cleared for release</span>
       </span>
       <Link href={root+"/selections"} className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
        Review in selections
       </Link>
      </li>)}
     {ready.length?<li className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
-      <strong className="text-emerald-800">✓ {ready.length} preliminarily eligible</strong>
+      <strong className="text-[color:var(--lms-success)]">✓ {ready.length} preliminarily eligible</strong>
       <span className="text-xs text-muted-foreground">Still rechecked against current placement rules before issuance</span>
      </li>:null}
    </ul>:queueAvailable?<p role="status" className="text-sm text-muted-foreground">
@@ -108,7 +109,7 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
         </td>
         <td className="p-3">
          <span className="block font-semibold">{row.statusLabel}</span>
-         {row.status==="ISSUED"&&row.expires?<span className="mt-1 block text-xs text-amber-800">Answer by {date(row.expires)}</span>:null}
+         {row.status==="ISSUED"&&row.expires?<span className="mt-1 block text-xs text-[color:var(--lms-warning-strong)]">Answer by {date(row.expires)}</span>:null}
         </td>
         <td className="p-3 text-xs">{row.joining??"Not recorded"}
          <span className="mt-1 block text-muted-foreground">Letter visibility unavailable in this register</span>
@@ -125,11 +126,11 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
     {!selected?<p role="status" className="text-sm text-body">Select an offer version to review its recorded outcomes.</p>:
      <div className="space-y-4">
       <header className="border-b border-border pb-3">
-       <h3 className="break-words text-lg font-bold text-foreground">{selected.name}</h3>
+       <Heading level={3} size="lg" className="break-words text-foreground">{selected.name}</Heading>
        <p className="mt-1 text-sm text-body">
         {selected.role} · {selected.annualCtcInr===null?"Package not recorded":"₹"+(selected.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}
        </p>
-       <p className="mt-2 text-sm font-semibold text-amber-800">
+       <p className="mt-2 text-sm font-semibold text-[color:var(--lms-warning-strong)]">
         {selected.status==="ISSUED"?"Waiting on student":
          selected.status==="ACCEPTED"?"Accepted offer":selected.statusLabel}
        </p>

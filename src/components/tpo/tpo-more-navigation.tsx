@@ -4,6 +4,7 @@ import {useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {TPO_MORE_GROUPS} from "@/modules/placements/tpo-utility-model";
 import {apiFetch} from "@/lib/api-fetch";
+import { Heading } from "@/components/ui/heading";
 
 type Counts={requests:number;messages:number;notifications:number;team:number|null};
 function showBadge(count:number){
@@ -59,7 +60,7 @@ export function TpoMoreNavigation(){
   void refresh();
   return ()=>{mounted.current=false;};
  },[]);
- return <div className="min-w-0 space-y-[14px]">
+ return <div className="min-w-0 space-y-[16px]">
   {error?<div role="alert" data-testid="tpo.more.counts-failed"
     className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm text-muted-foreground">
    <span>Waiting requests and unread messages could not be counted.</span>
@@ -67,32 +68,32 @@ export function TpoMoreNavigation(){
     className="min-h-11 md:min-h-9">{busy?"Retrying…":"Retry"}</Button>
   </div>:null}
   <nav aria-label="More TPO destinations"
-   className="grid grid-cols-1 gap-[15px] min-[900px]:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] min-[900px]:gap-[18px]">
+   className="grid grid-cols-1 gap-[16px] lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-[20px]">
    {TPO_MORE_GROUPS.map(group=>{
     const titleId="tpo-more-"+group.heading.toLowerCase();
     return <section key={group.heading} aria-labelledby={titleId}
-      className={"min-w-0 "+(group.heading==="Work"?"min-[900px]:row-span-2":"")}>
-     <h2 id={titleId}
-       className="mb-[7px] ml-1 text-xs font-bold uppercase leading-[1.2] tracking-[0.09em] text-muted-foreground">
+      className={"min-w-0 "+(group.heading==="Work"?"lg:row-span-2":"")}>
+     <Heading level={2} size="xs" id={titleId}
+       className="mb-[8px] ml-1 uppercase leading-[1.25] tracking-[.08em] text-muted-foreground">
        {group.heading}
-     </h2>
-     <div className="overflow-hidden rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
+     </Heading>
+     <div className="overflow-hidden rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface shadow-(--lms-elevation-3)">
       {group.links.map(item=>{
        const count=item.href==="/tpo/requests"?counts?.requests:
          item.href==="/tpo/messages"?counts?.messages:undefined;
        const badge=count===undefined?null:showBadge(count);
        return <Link key={item.href} href={item.href}
-        className="group flex min-h-16 min-w-0 items-center gap-3 border-t border-[var(--lms-canvas-border)] bg-surface px-3 py-[11px] transition-colors duration-150 first:border-t-0 hover:bg-[var(--lms-primary-subtle)] focus-visible:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[68px] min-[768px]:px-[14px] min-[768px]:py-3">
+        className="group flex min-h-16 min-w-0 items-center gap-3 border-t border-[var(--lms-canvas-border)] bg-surface px-3 py-[12px] transition-colors duration-[var(--lms-motion-fast)] first:border-t-0 hover:bg-[var(--lms-primary-subtle)] focus-visible:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] md:min-h-[68px] md:px-[16px] md:py-3">
         <span aria-hidden="true"
-          className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[color:var(--lms-border)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-500)] min-[768px]:size-[38px]">
+          className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[color:var(--lms-border)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-500)] md:size-[38px]">
          <MoreIcon href={item.href}/>
         </span>
         <span className="min-w-0 flex-1">
-         <span className="block text-[14px] font-[650] leading-[1.3] text-[color:var(--lms-text-body)] group-hover:text-[var(--lms-primary)]">{item.label}</span>
+         <span className="block text-[14px] font-semibold leading-[1.3] text-[color:var(--lms-text-body)] group-hover:text-[var(--lms-primary)]">{item.label}</span>
          <span className="mt-[2px] block break-words text-xs leading-[1.4] text-muted-foreground">{item.description}</span>
         </span>
         {badge?<span aria-label={item.href==="/tpo/messages"?count+" unread messages":count+" waiting requests"} className="inline-flex min-w-6 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-on-primary">{badge}</span>:null}
-        <svg aria-hidden="true" className="size-3 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-[2px] group-hover:text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 5 7 7-7 7"/></svg>
+        <svg aria-hidden="true" className="size-3 shrink-0 text-muted-foreground transition-transform duration-[var(--lms-motion-fast)] group-hover:translate-x-[2px] group-hover:text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 5 7 7-7 7"/></svg>
        </Link>;
       })}
      </div>

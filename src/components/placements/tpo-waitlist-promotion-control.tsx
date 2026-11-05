@@ -9,6 +9,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {DataTable} from "@/components/ui/data-table";
 import {apiFetch} from "@/lib/api-fetch";
 import {Textarea} from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
 type Row={applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null;rank:number;
  reasons:string[];canPromote:boolean;promotionStatus:string|null};
 type Preview={storageReady:boolean;freeSeats:number|null;activeOffers:number;rows:Row[];next:Row|null;previewToken:string};
@@ -39,7 +40,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
    Waitlist promotion storage is not registered yet. No promotion can be released.</Alert>:null}
   <p className="text-sm text-body leading-[22px]">{preview.rows.filter(row=>row.canPromote).length} waitlisted learner(s) currently pass preliminary checks; {preview.rows.filter(row=>!row.canPromote).length} have a blocking reason. The next eligible rank is shown below.</p>
   {preview.next&&preview.storageReady?<div className="min-w-0 space-y-3 border-b border-border pb-4">
-   <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Offer to next waitlisted: {preview.next.name} (rank {preview.next.rank})</h2>
+   <Heading level={2} size="base" className="break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Offer to next waitlisted: {preview.next.name} (rank {preview.next.rank})</Heading>
    <p className="text-sm text-body leading-[22px]">Review the ranked queue before release. The offer issuer rechecks held-offer rules, eligibility and response deadline.</p>
    <label className="grid min-w-0 gap-[6px] text-[13px]">Reason for promotion
     <Textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} className="min-h-24 w-full min-w-0"
@@ -49,7 +50,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     {busy?"Verifying…":"Verify and release next offer"}</Button>
   </div>:null}
   <section aria-label="Applied waitlist results" className="min-w-0 space-y-3">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Applied waitlist results</h2>
+  <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Applied waitlist results</Heading>
   <DataTable<(typeof preview.rows)[number]> caption="Applied waitlist results"
    rows={preview.rows} getRowKey={row=>row.applicationId}
    empty={<EmptyState title="No applied waitlist results in the final round."/>}

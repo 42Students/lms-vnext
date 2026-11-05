@@ -34,6 +34,8 @@ import {CollegeLogoUploader} from "@/components/admin/college-logo-uploader";
 import {CollegeBrandingForm} from "@/components/admin/college-branding-form";
 import {getCollegeBranding} from "@/modules/colleges/branding-service";
 import {parseTenantLifecycleSearchParams} from "@/modules/colleges/admin-tenant-lifecycle-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 type Tab="STRUCTURE"|"LAUNCH";
@@ -179,17 +181,17 @@ export default async function SuperAdminTenantSetup({
    </Banner>:
    tab==="STRUCTURE"?<>
     <section aria-label="Organization setup" className="min-w-0 space-y-4 border-b border-border pb-6">
-     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Organizations</h2>
+     <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Organizations</Heading>
      {organizationFailed?<Banner tone="error" action={retry}>
       Organizations could not be loaded. College creation and organization changes are disabled until the authorized directory is available.
      </Banner>:null}
      {orgCreate?<div className="min-w-0 space-y-3">
-      <h3 className="font-semibold text-body">Create New Organization</h3>
+      <Heading level={3} className="text-body">Create New Organization</Heading>
       <OrganizationCreateForm/>
      </div>:!organizationFailed?<Banner tone="warning">Organization creation is not permitted in this administrative scope.</Banner>:null}
      {!organizationFailed?<div className="min-w-0 space-y-3 border-t border-border pt-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-       <h3 className="font-semibold text-body">Existing Organizations</h3>
+       <Heading level={3} className="text-body">Existing Organizations</Heading>
        <Link href="/admin/organizations" className="font-semibold text-primary-text underline">Manage all</Link>
       </div>
       <TenantSetupOrganizationList rows={organizations.map(o=>({
@@ -198,12 +200,12 @@ export default async function SuperAdminTenantSetup({
      </div>:null}
     </section>
     <section aria-label="College setup" className="min-w-0 space-y-4 border-b border-border pb-6">
-     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Colleges</h2>
+     <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Colleges</Heading>
      {collegesFailed?<Banner tone="error" action={retry}>
       Colleges could not be loaded. Retry the college directory before interpreting this as an empty roster.
      </Banner>:null}
      <div className="min-w-0 space-y-3">
-      <h3 className="font-semibold text-body">Create New College</h3>
+      <Heading level={3} className="text-body">Create New College</Heading>
       {creatable.length&&list&&!organizationFailed?
        <CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
        <Banner tone="warning">No verified, authorized active organization is available for college creation. Create an organization or retry the directory.</Banner>}
@@ -211,7 +213,7 @@ export default async function SuperAdminTenantSetup({
      {!organizationFailed&&creatable.length>0?<CollegeBulkImport organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:null}
      {!collegesFailed&&list?<div className="min-w-0 space-y-3 border-t border-border pt-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-       <h3 className="font-semibold text-body">Existing Colleges</h3>
+       <Heading level={3} className="text-body">Existing Colleges</Heading>
        <Link href="/admin/colleges" className="font-semibold text-primary-text underline">Manage all</Link>
       </div>
       <form action="/admin/tenants/setup" method="get" role="search"
@@ -248,7 +250,7 @@ export default async function SuperAdminTenantSetup({
     <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Continue to launch setup →</Link>
   </>:college?<>
    <div className="space-y-2">
-     <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Get this college ready to go live</h2>
+     <Heading level={2} size="lg" className="m-0 break-words leading-7 text-[var(--lms-heading)]">Get this college ready to go live</Heading>
      <Badge tone="info">Working on: {college.name}</Badge>
      <p className="max-w-3xl text-sm text-body">Set this college's web address, sign-in method and branding. Platform domains, OTP and SMS delivery are managed under <Link href="/admin/settings" className="font-semibold text-link underline">Tenant Settings</Link>.</p>
    </div>
@@ -259,9 +261,9 @@ export default async function SuperAdminTenantSetup({
     Persisted readiness: {summary.label}. {summary.detail}
    </Banner>}
    <nav aria-label="Jump to launch sections" className="flex flex-wrap gap-3 text-sm">
-    <a href="#college-identity" className="font-semibold text-link underline">Identity settings</a>
-    <a href="#college-branding" className="font-semibold text-link underline">Branding</a>
-    <a href="#college-readiness" className="font-semibold text-link underline">Launch checklist</a>
+    <TextLink href="#college-identity">Identity settings</TextLink>
+    <TextLink href="#college-branding">Branding</TextLink>
+    <TextLink href="#college-readiness">Launch checklist</TextLink>
    </nav>
    <section id="college-identity" aria-label="College identity editors" className="min-w-0 space-y-4">
     <div className="grid min-w-0 items-start gap-6 2xl:grid-cols-2">
@@ -282,7 +284,7 @@ export default async function SuperAdminTenantSetup({
      </div>
     </div>
     <section id="college-branding" aria-label="Look and feel" className="min-w-0 space-y-4 border-t border-border pt-4">
-     <h3 className="text-lg font-semibold text-[var(--lms-heading)]">Look and feel</h3>
+     <Heading level={3} size="lg" className="text-[var(--lms-heading)]">Look and feel</Heading>
      {branding?<>
       <CollegeLogoUploader collegeId={college.id} currentUrl={branding.uploadedLogoUrl} canEdit/>
       <CollegeBrandingForm key={college.id} collegeId={college.id} collegeName={branding.collegeName}
@@ -303,13 +305,13 @@ export default async function SuperAdminTenantSetup({
    </section>
    <section id="college-readiness" aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
-     <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Launch checklist</h2>
+     <Heading level={2} size="lg" className="m-0 break-words leading-7 text-[var(--lms-heading)]">Launch checklist</Heading>
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-x-6 gap-y-2 2xl:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
-      <h3 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{step.title}</h3>
+      <Heading level={3} className="mt-1 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{step.title}</Heading>
       <p className="mt-2 text-sm text-body">{step.description}</p>
       <Link href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open workspace →</Link>
      </li>)}

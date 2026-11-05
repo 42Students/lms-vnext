@@ -18,6 +18,8 @@ import { adminLearningHref, adminProgressStats } from "@/modules/courses/admin-l
 import {parseSuperAdminCourseProgressParams} from "@/modules/courses/super-admin-course-progress-query";
 import {requirePermission} from "@/modules/permissions/policy";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function SuperAdminCourseProgressPage({
   searchParams,
@@ -28,7 +30,7 @@ export default async function SuperAdminCourseProgressPage({
   if (!parsed) return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title="Course Progress" />
     <ErrorState title="Invalid course progress filters" description="Search, status or page is invalid."
-      action={<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-[650] text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-6">
     <PageHeader title="Course Progress" />
@@ -82,17 +84,16 @@ export default async function SuperAdminCourseProgressPage({
     
     <form method="get" action="/admin/course-progress" role="search" aria-label="Select class and course progress"
       className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-5">
-      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Choose a class, then one of its courses.</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)]">Choose a class, then one of its courses.</Heading>
       <p className="text-xs text-muted-foreground">Class sections are represented by their active batch in this directory. Use the offering detail for authorized class-level learner completion.</p>
-      <div className="grid min-w-0 items-end gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+      <div className="grid min-w-0 items-end gap-3 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
         <SuperAdminCourseProgressSelector courses={filters.courses} cohorts={filters.cohorts}
           {...(data.query.courseCode !== undefined ? {selectedCourse:data.query.courseCode} : {})}
           {...(data.query.cohortCode !== undefined ? {selectedCohort:data.query.cohortCode} : {})}/>
         <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9">
           <span aria-hidden="true" className="mr-2">↻</span> Refresh
         </Button>
-        {selected&&data.items.length>0?<a href={exportHref}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Export CSV</a>:
+        {selected&&data.items.length>0?<ButtonLink variant="secondary" href={exportHref}>Export CSV</ButtonLink>:
          <span aria-disabled="true" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted px-4 text-sm text-muted-foreground md:min-h-9">Export CSV</span>}
       </div>
       <details className="border-t border-border pt-3">
@@ -127,7 +128,7 @@ export default async function SuperAdminCourseProgressPage({
           <dd className="mt-2 text-xl font-semibold tabular-nums">{stat.value}</dd>
         </div>)}
       </dl>
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Per student</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Per student</Heading>
       {inlineStudents ? <section aria-label="Per student progress preview"
         className="min-w-0 overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
         <Table className="min-w-[600px]">
@@ -172,7 +173,7 @@ export default async function SuperAdminCourseProgressPage({
     {selected&&data.items.length ? <div className="divide-y divide-border border-y border-border">
       {data.items.map(item => <article key={item.offeringId} className="min-w-0 py-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{item.courseName} ({item.courseCode})</h2>
+          <Heading level={2} className="m-0 break-words text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">{item.courseName} ({item.courseCode})</Heading>
           <StatusBadge tone={item.offeringStatus === "ACTIVE" ? "success" : "neutral"}>{item.offeringStatus}</StatusBadge>
         </div>
         <p className="mt-1 text-sm text-body">{item.cohortName} · {item.periodName}</p>
@@ -182,11 +183,11 @@ export default async function SuperAdminCourseProgressPage({
           <div className="col-span-2"><dt className="text-xs text-muted-foreground">Learners with recorded activity</dt><dd className="text-lg font-semibold tabular-nums">{item.learnersWithRecords}</dd></div>
         </dl>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:bg-primary-subtle underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)]">
+          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)]">
           Open offering →
         </Link>
         <Link href={`/admin/course-progress/students?offeringId=${encodeURIComponent(item.offeringId)}`}
-         className="ml-3 mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:bg-primary-subtle hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+         className="ml-3 mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           View student progress →
         </Link>
       </article>)}

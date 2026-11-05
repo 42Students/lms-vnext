@@ -19,6 +19,8 @@ import {Pagination} from "@/components/ui/pagination";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Banner} from "@/components/ui/banner";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -54,7 +56,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
    actions={<>
     <Link href={root} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">← Back to drive</Link>
-    <a href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">Export filtered CSV</a>
+    <ButtonLink variant="secondary" href={csvHref} className="w-full md:w-auto">Export filtered CSV</ButtonLink>
    </>}/>
   <Banner tone="info">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</Banner>
   <TpoDriveOffersPrototypeReview jobId={data.job.id} rows={data.rows}
@@ -118,7 +120,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <p role="status" className="text-sm text-body leading-[1.6]">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<EmptyState title="No offers match this filter."/>:
    <section aria-label="Recorded offers" className="min-w-0 divide-y divide-border border-y border-border">{data.rows.map(row=><article key={row.id} className="min-w-0 py-4">
-    <div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><div className="min-w-0 flex-1"><h2 className="break-words text-base font-semibold leading-6 text-foreground">{row.name}</h2><p className="break-words text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><StatusBadge tone={row.status==="ACCEPTED"?"success":row.status==="DECLINED"?"error":row.status==="PENDING"?"warning":"neutral"}>{row.status}</StatusBadge></div>
+    <div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><div className="min-w-0 flex-1"><Heading level={2} size="base" className="break-words leading-6 text-foreground">{row.name}</Heading><p className="break-words text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><StatusBadge tone={row.status==="ACCEPTED"?"success":row.status==="DECLINED"?"error":row.status==="PENDING"?"warning":"neutral"}>{row.status}</StatusBadge></div>
     <div className="mt-3 grid min-w-0 gap-3 text-sm sm:grid-cols-3">
       <div className="min-w-0"><p className="text-xs text-muted-foreground">Issued</p><p className="mt-1 break-words text-body">{formatIst(row.issued)}</p></div>
       <div className="min-w-0"><p className="text-xs text-muted-foreground">Offer expiry</p><p className="mt-1 break-words text-body">{formatIst(row.expires)}</p></div>
@@ -135,7 +137,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
       Acceptance evidence: {row.acceptanceChannel}
       {row.acceptedDisputableUntil?" · Dispute window until "+formatIst(row.acceptedDisputableUntil):""}
     </p>:null}
-    <dl className="mt-3 grid min-w-0 gap-[var(--lms-space-3)] text-sm min-[768px]:grid-cols-3"><div><dt>Issued</dt><dd><time dateTime={row.issued}>{formatIst(row.issued)}</time></dd></div><div><dt>Responded</dt><dd>{row.responded?<time dateTime={row.responded}>{formatIst(row.responded)}</time>:"Not recorded"}</dd></div><div><dt>Joining</dt><dd>{row.joining??"Not applicable"}</dd></div>
+    <dl className="mt-3 grid min-w-0 gap-[var(--lms-space-3)] text-sm md:grid-cols-3"><div><dt>Issued</dt><dd><time dateTime={row.issued}>{formatIst(row.issued)}</time></dd></div><div><dt>Responded</dt><dd>{row.responded?<time dateTime={row.responded}>{formatIst(row.responded)}</time>:"Not recorded"}</dd></div><div><dt>Joining</dt><dd>{row.joining??"Not applicable"}</dd></div>
     <div><dt>Offer expiry</dt><dd>{row.expires?<time dateTime={row.expires}>{formatIst(row.expires)}</time>:"Not recorded"}</dd></div><div><dt>Respond by</dt><dd>{row.respondByHours===null?"Not applicable":row.respondByHours===0?"Time is up":row.respondByHours+" h left"}</dd></div>
     <div><dt>Email</dt><dd>{row.email??"Not recorded"}</dd></div><div><dt>Phone</dt><dd>{row.phone??"Not recorded"}</dd></div><div><dt>Rules check</dt><dd title="Offer state only; consult the college placement rules for eligibility and held-offer limits.">{row.ruleCheck}</dd></div>
     {row.expiryIndicator!=="NOT_APPLICABLE"?<div><dt>Issued-offer expiry state</dt><dd>{row.expiryIndicator.replaceAll("_"," ").toLowerCase()}</dd></div>:null}</dl>

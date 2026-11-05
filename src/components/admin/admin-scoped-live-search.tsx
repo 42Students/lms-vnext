@@ -99,7 +99,7 @@ export function AdminScopedLiveSearch({initial,path,placeholder,recentSuggestion
    className="min-h-11 w-full md:min-h-9"/>
   {focused&&all.length>0?<div id="admin-scoped-search-suggestions"
     role="listbox" aria-label="Search suggestions"
-    className="absolute left-0 right-0 top-full z-30 max-h-72 overflow-auto rounded border border-border bg-surface p-2 shadow-md">
+    className="absolute left-0 right-0 top-full z-(--lms-z-sticky-header) max-h-72 overflow-auto rounded border border-border bg-surface p-2 shadow-md">
     {recent.length?<div><p className="px-2 py-1 text-xs font-semibold">Recent</p>
       {recent.map((label,index)=><Button variant="bare" key={"recent:"+label} id={"admin-scoped-suggestion-"+index} role="option" type="button" aria-selected={value===label||active===index}
         onMouseDown={event=>event.preventDefault()} onClick={()=>{setFocused(false);setValue(label);navigate(label);}}

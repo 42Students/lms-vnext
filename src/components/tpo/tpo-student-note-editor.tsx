@@ -6,6 +6,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import { Heading } from "@/components/ui/heading";
 export function TpoStudentNoteEditor({membershipIds,afterSave}:{
  membershipIds:readonly string[];afterSave?:()=>void;
 }){
@@ -30,7 +31,7 @@ export function TpoStudentNoteEditor({membershipIds,afterSave}:{
   finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="min-w-0 space-y-2 border-t border-border pt-3">
-  <h4 className="font-semibold">Add a note</h4>
+  <Heading level={4}>Add a note</Heading>
   <p className="text-xs text-muted-foreground">Private to the college placement team, appended permanently to each selected student&apos;s history.</p>
   <Textarea aria-label="Internal student note" className="min-h-32 w-full" value={note} rows={3} maxLength={2000}
    onChange={e=>setNote(e.target.value)} onKeyDown={e=>{

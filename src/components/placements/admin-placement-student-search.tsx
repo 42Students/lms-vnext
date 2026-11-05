@@ -132,7 +132,7 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
         show ? `${visible.length} matching students. Use arrow keys to select.` : ""}
     </p>
     {show ? <div id={listId} role="listbox" aria-label="Matching students"
-      className="absolute z-30 mt-1 max-h-[280px] w-full overflow-auto rounded-[8px] border border-border bg-surface p-1 shadow-lg">
+      className="absolute z-(--lms-z-sticky-header) mt-1 max-h-[280px] w-full overflow-auto rounded-[8px] border border-border bg-surface p-1 shadow-lg">
       {value.length < 2 ? <p role="status" className="p-2 text-xs text-muted-foreground">Enter one more character to search.</p>
         : searching ? <p role="status" className="p-2 text-sm text-muted-foreground">Searching students…</p>
         : unavailable ? <p role="alert" className="p-2 text-sm text-error">Search failed — try again.</p>

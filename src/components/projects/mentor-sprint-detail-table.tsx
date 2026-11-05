@@ -4,6 +4,7 @@ import {useState} from "react";
 import { Select } from "@/components/ui/select";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 export type MentorSprintDetailRow={
   id:string;sequence:number;title:string;release:string;
@@ -25,7 +26,7 @@ export function MentorSprintDetailTable({projectId,rows}:{
   const base="/mentor/projects/"+encodeURIComponent(projectId);
   return <section className="prototype-mentor-chart-card" aria-label="Detailed sprint plan">
     <div className="prototype-mentor-card-title">
-      <h2>All sprints · detailed plan</h2>
+      <Heading level={2}>All sprints · detailed plan</Heading>
       <span>{matching.length} of {rows.length} recorded sprints</span>
     </div>
     <div className="mb-3 flex flex-wrap gap-3">

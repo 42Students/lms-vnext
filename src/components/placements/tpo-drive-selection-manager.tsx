@@ -100,7 +100,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       <option value="">Choose a role package or enter manually</option>
       {roleOptions.map(o=><option value={o.id} key={o.id}>{o.title}{o.annualCtcInr==null?"":" · ₹"+(o.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</option>)}
      </Select></label>:null}
-    {mode==="RECORD"?<div className="grid gap-3 min-[768px]:grid-cols-2">
+    {mode==="RECORD"?<div className="grid gap-3 md:grid-cols-2">
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role<Input required value={role} onChange={e=>setRole(e.target.value)}
       maxLength={200} /></label>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Package (LPA, optional)<Input type="number" min={0} max={1000} step="0.01"

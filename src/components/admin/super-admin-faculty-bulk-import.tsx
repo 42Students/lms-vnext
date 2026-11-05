@@ -11,6 +11,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
+import { Heading } from "@/components/ui/heading";
 
 type Result={row:number;name:string;status:"CREATED"|"FAILED"|"SKIPPED"|"PARTIAL";message:string};
 export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
@@ -141,7 +142,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
  };
  return <section aria-label="Faculty bulk registration" className="min-w-0 space-y-3 pb-2">
   {dialog}
-  <h3 className="font-semibold text-foreground">Bulk register faculty</h3>
+  <Heading level={3} className="text-foreground">Bulk register faculty</Heading>
   <p className="text-sm text-body">
     Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional), Department (optional), Faculty Type (LECTURER or MENTOR).
     The selected college department is the fallback when a CSV Department cell is blank. Named departments must match an active department in this college.

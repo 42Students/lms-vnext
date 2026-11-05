@@ -83,8 +83,8 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
    expect(source,route).toMatch(/<Input\b|<Select\b|<DateInput\b|<FilterBar\b/);
    const input=readFileSync(join(process.cwd(),"src/components/ui/input.tsx"),"utf8");
    const select=readFileSync(join(process.cwd(),"src/components/ui/select.tsx"),"utf8");
-   expect(input).toContain("max-[767px]:min-h-11");
-   expect(select).toContain("max-[767px]:text-[16px]");
+   expect(input).toContain("max-md:min-h-11");
+   expect(select).toContain("max-md:text-[16px]");
    expect(input).toContain("focus-visible:outline-2");
    expect(select).toContain("focus-visible:outline-2");
   });

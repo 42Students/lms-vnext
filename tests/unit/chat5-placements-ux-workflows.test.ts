@@ -91,7 +91,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
  });
  it("UX-placements-bulk-round-targets-01 makes mass-selection a full touch target",()=>{
   const bulk=source("src/components/placements/tpo-bulk-round-result-recorder.tsx");
-  expect(bulk).toContain('className="inline-flex min-h-11 w-full items-center justify-center px-4 font-[650] text-primary-text sm:w-auto md:min-h-9">Select first 25 unmarked');
+  expect(bulk).toContain('className="inline-flex min-h-11 w-full items-center justify-center px-4 font-semibold text-primary-text sm:w-auto md:min-h-9">Select first 25 unmarked');
   expect(bulk).toContain("pendingTotal > 25");
   expect(bulk).toContain("if(!confirmed){setConfirmOpen(true);return;}");
  });

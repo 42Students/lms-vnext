@@ -8,6 +8,7 @@ import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {isConfirmedRecruiterLeaveResponse} from "@/modules/placements/recruiter-profile-access-model";
 import Link from "next/link";
 import {hrRecruiterGrantLinks} from "@/modules/placements/hr-recruiter-grant-navigation-model";
+import { Heading } from "@/components/ui/heading";
 
 type Grant = {
   id: string;
@@ -51,7 +52,7 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
 
   return (
     <section aria-label="College Access" className="min-w-0 border-t border-border pt-4">
-      {hideHeading ? null : <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">College Access</h2>}
+      {hideHeading ? null : <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">College Access</Heading>}
       <p className="mt-1 max-w-3xl text-sm text-muted-foreground leading-[22px]">
         College access is granted and managed by the placement cell at each college.
         You cannot add or approve college access from this profile.
@@ -73,7 +74,7 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
       ) : (
         <div className="mt-4 divide-y divide-border">
           {items.map((grant) => (
-            <div key={grant.id} className="flex min-w-0 flex-col gap-3 py-4 first:pt-0 last:pb-0 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+            <div key={grant.id} className="flex min-w-0 flex-col gap-3 py-4 first:pt-0 last:pb-0 md:flex-row md:items-start md:justify-between">
               <div className="min-w-0 flex-1">
                 <div className="break-words font-medium text-foreground">{grant.collegeName}</div>
                 <div className="mt-1 text-xs text-muted-foreground">Active recruiter access</div>
@@ -81,21 +82,21 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
                   className="mt-2 flex min-w-0 flex-wrap gap-x-4 gap-y-1 text-sm">
                   {hrRecruiterGrantLinks(grant.collegeId).map(link=>(
                     <Link key={link.label} href={link.href}
-                      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                      className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                       {link.label}
                     </Link>
                   ))}
                 </nav>
               </div>
-              <details className="min-w-0 min-[768px]:shrink-0">
-              <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Manage access</summary>
+              <details className="min-w-0 md:shrink-0">
+              <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage access</summary>
               <Button
                 variant="secondary"
                 type="button"
                 disabled={leaving === grant.id}
                 loading={leaving === grant.id}
                 onClick={() => setConfirmGrant(grant)}
-                className="mt-2 min-h-11 w-full justify-center border-error/30 text-error hover:bg-error/5 min-[768px]:min-h-9 min-[768px]:w-auto"
+                className="mt-2 min-h-11 w-full justify-center border-error/30 text-error hover:bg-error/5 md:min-h-9 md:w-auto"
               >
                 {leaving === grant.id ? "Leaving…" : "Leave Access"}
               </Button>

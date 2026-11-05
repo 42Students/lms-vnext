@@ -17,6 +17,7 @@ import {
   updateCollegeSectionSchema,
 } from "@/modules/academics/college-section-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
+import { Heading } from "@/components/ui/heading";
 
 type Cohort = { id: string; name: string; code: string; programName: string; programId: string };
 type Period = { id: string; name: string; code: string };
@@ -146,7 +147,7 @@ export function CollegeClassCreate({ cohorts, periods,
     });
   }
 
-  return <Disclosure ariaLabel="Create class" defaultOpen={alwaysOpen} title={<h2 className="m-0 text-lg font-semibold text-foreground">Create New Class/Section</h2>}
+  return <Disclosure ariaLabel="Create class" defaultOpen={alwaysOpen} title={<Heading level={2} size="lg" className="m-0 text-foreground">Create New Class/Section</Heading>}
     className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
     {!cohorts.length || !periods.length
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">

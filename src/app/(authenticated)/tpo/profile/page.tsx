@@ -9,6 +9,7 @@ import { TpoProfileAvatar } from "@/components/tpo/tpo-profile-avatar";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getOwnTpoProfile } from "@/modules/placements/tpo-self-profile-service";
 import { formatTpoProfileRole } from "@/modules/placements/tpo-utility-model";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic = "force-dynamic";
 
@@ -51,9 +52,9 @@ export default async function TpoProfilePage() {
           </div>
         </div>
         <div className="px-4 py-5 sm:px-6">
-          <h2 id="tpo-profile-card-heading" className="text-lg font-semibold leading-6 text-[var(--lms-heading)]">
+          <Heading level={2} size="lg" id="tpo-profile-card-heading" className="leading-6 text-[var(--lms-heading)]">
             How students and recruiters see you
-          </h2>
+          </Heading>
           <dl className="mt-4 min-w-0">
             <ProfileField label="Name" value={profile.displayName} empty="-" />
             <ProfileField label="Role" value="Placement officer" />

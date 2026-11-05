@@ -4,6 +4,7 @@ import {
   MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta,
   marketingPageMetadata,
 } from "@/components/marketing/marketing-layout";
+import { Heading } from "@/components/ui/heading";
 
 const site = "https://42lms.com";
 // The legacy AI-title has been intentionally retired with the AI features.
@@ -82,10 +83,10 @@ export default function HomeMarketingPage() {
       description="One connected platform for learning, hands-on projects, mentoring and placements—built for universities and the employers who recruit from them." />
 
     {/* 2. Personalization: the legacy quote band, without retired AI promises. */}
-    <section aria-labelledby="home-personalization" className="relative left-1/2 w-screen -translate-x-1/2 bg-[color:var(--lms-neutral-50)] px-5 py-16 min-[768px]:py-24">
+    <section aria-labelledby="home-personalization" className="relative left-1/2 w-screen -translate-x-1/2 bg-[color:var(--lms-neutral-50)] px-5 py-16 md:py-24">
       <div className="mx-auto max-w-[1180px] text-center">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">Every individual is different</p>
-        <h2 id="home-personalization" className="mx-auto mt-5 max-w-[850px] text-[clamp(1.9rem,4vw,3.25rem)] font-semibold leading-[1.14] tracking-tight text-[var(--lms-heading)]">Why should learning be the same?</h2>
+        <Heading level={2} id="home-personalization" className="mx-auto mt-5 max-w-[850px] text-[clamp(1.9rem,4vw,3.25rem)] leading-[1.25] tracking-tight text-[var(--lms-heading)]">Why should learning be the same?</Heading>
         <p className="mx-auto mt-6 max-w-[750px] text-base leading-7 text-[var(--lms-body-text)]">
           Students learn, practice and demonstrate their skills in different ways. 42 LMS
           keeps their courses, project work, mentor feedback and career preparation
@@ -98,13 +99,13 @@ export default function HomeMarketingPage() {
     <MarketingFeatureGrid title="One connected team developing talent" items={workspaceCapabilities} />
 
     {/* 4. Legacy tinted chips strip, limited to actual workflow signals. */}
-    <section aria-labelledby="home-integrations" className="relative left-1/2 w-screen -translate-x-1/2 bg-[color:var(--lms-primary-subtle)] px-5 py-16 min-[768px]:py-20">
+    <section aria-labelledby="home-integrations" className="relative left-1/2 w-screen -translate-x-1/2 bg-[color:var(--lms-primary-subtle)] px-5 py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] space-y-6">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">Connected workflows</p>
-        <h2 id="home-integrations" className="max-w-[800px] text-[clamp(1.6rem,3vw,2.25rem)] font-semibold leading-tight text-[var(--lms-heading)]">The signals that matter, in one place</h2>
+        <Heading level={2} id="home-integrations" className="max-w-[800px] text-[clamp(1.6rem,3vw,2.25rem)] leading-tight text-[var(--lms-heading)]">The signals that matter, in one place</Heading>
         <p className="max-w-[780px] text-base leading-7 text-[var(--lms-body-text)]">A shared view of student learning, projects and hiring coordination, grounded in real LMS workflows.</p>
         <ul className="flex flex-wrap gap-3" aria-label="Connected platform workflows">
-          {workflowSignals.map(label => <li key={label} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--lms-border)] bg-white px-4 py-2 text-sm font-semibold text-[var(--lms-heading)] shadow-[0_3px_12px_rgba(29,79,88,.04)]">
+          {workflowSignals.map(label => <li key={label} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--lms-border)] bg-surface px-4 py-2 text-sm font-semibold text-[var(--lms-heading)] shadow-(--lms-elevation-2)">
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[color:var(--lms-button-primary)]" />{label}
           </li>)}
         </ul>
@@ -112,19 +113,19 @@ export default function HomeMarketingPage() {
     </section>
 
     {/* 5. Legacy two-audience split: checklist, outcomes pills and dark second half. */}
-    <section aria-labelledby="home-audiences" className="relative left-1/2 w-screen -translate-x-1/2 bg-white px-5 py-16 min-[768px]:py-20">
+    <section aria-labelledby="home-audiences" className="relative left-1/2 w-screen -translate-x-1/2 bg-surface px-5 py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] space-y-9">
         <div className="space-y-3 text-center">
           <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">Who it&apos;s for</p>
-          <h2 id="home-audiences" className="text-[clamp(1.7rem,3vw,2.4rem)] font-semibold text-[var(--lms-heading)]">One platform. Two outcomes.</h2>
+          <Heading level={2} id="home-audiences" className="text-[clamp(1.7rem,3vw,2.4rem)] text-[var(--lms-heading)]">One platform. Two outcomes.</Heading>
           <p className="text-[var(--lms-body-text)]">Connect the people developing talent with the people hiring it.</p>
         </div>
-        <div className="grid gap-5 min-[768px]:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2">
           {audiences.map((audience, index) => <article key={audience.title}
-            className={"flex min-w-0 flex-col rounded-[20px] border p-6 shadow-[0_8px_32px_rgba(21,73,83,.06)] min-[768px]:p-9 " +
-              (index === 1 ? "border-[color:var(--lms-button-primary-hover)] bg-[color:var(--lms-brand-dark)] text-white" : "border-[color:var(--lms-border)] bg-white text-[var(--lms-heading)]")}>
-            <p className={"text-xs font-bold uppercase tracking-[.14em] " + (index === 1 ? "text-[color:var(--lms-primary-light)]" : "text-[var(--lms-primary-text)]")}>{audience.eyebrow}</p>
-            <h3 className="mt-3 text-2xl font-semibold leading-tight">{audience.headline}</h3>
+            className={"flex min-w-0 flex-col rounded-[20px] border p-6 shadow-(--lms-elevation-3) md:p-9 " +
+              (index === 1 ? "border-[color:var(--lms-button-primary-hover)] bg-[color:var(--lms-brand-dark)] text-[color:var(--lms-on-primary)]" : "border-[color:var(--lms-border)] bg-surface text-[var(--lms-heading)]")}>
+            <p className={"text-xs font-bold uppercase tracking-[.16em] " + (index === 1 ? "text-[color:var(--lms-primary-light)]" : "text-[var(--lms-primary-text)]")}>{audience.eyebrow}</p>
+            <Heading level={3} size="2xl" className="mt-3 leading-tight">{audience.headline}</Heading>
             <ul className="mt-6 flex-1 space-y-4">
               {audience.points.map(point => <li key={point} className="flex items-start gap-3 text-sm leading-6">
                 <span aria-hidden="true" className={"mt-0.5 font-bold " + (index === 1 ? "text-[color:var(--lms-primary-light)]" : "text-[var(--lms-primary-text)]")}>✓</span>
@@ -133,10 +134,10 @@ export default function HomeMarketingPage() {
             </ul>
             <ul aria-label={audience.title + " outcomes"} className="mt-7 flex flex-wrap gap-2">
               {audience.outcomes.map(outcome => <li key={outcome} className={"rounded-full px-3 py-1.5 text-xs font-semibold " +
-                (index === 1 ? "bg-white/15 text-white" : "bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary-hover)]")}>{outcome}</li>)}
+                (index === 1 ? "bg-[color:color-mix(in_srgb,var(--lms-white)_15%,transparent)] text-[color:var(--lms-on-primary)]" : "bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary-hover)]")}>{outcome}</li>)}
             </ul>
             <Link href={audience.href} className={"mt-7 inline-flex min-h-11 self-start items-center justify-center rounded-full px-5 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 " +
-              (index === 1 ? "bg-white text-[color:var(--lms-brand-dark)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-white" : "border border-[color:var(--lms-button-primary)] text-[color:var(--lms-button-primary)] hover:bg-[color:var(--lms-primary-subtle)]")}>
+              (index === 1 ? "bg-surface text-[color:var(--lms-brand-dark)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-[color:var(--lms-white)]" : "border border-[color:var(--lms-button-primary)] text-[color:var(--lms-button-primary)] hover:bg-[color:var(--lms-primary-subtle)]")}>
               For {audience.title}<span aria-hidden="true" className="ml-2">↗</span>
             </Link>
           </article>)}
@@ -148,14 +149,14 @@ export default function HomeMarketingPage() {
     <MarketingFeatureGrid title="Everything you need to develop talent" items={pillars} />
 
     {/* 7. Horizontal lifecycle with step arrows (four approved non-AI stages). */}
-    <section aria-labelledby="home-journey-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-white px-5 py-16 min-[768px]:py-20">
+    <section aria-labelledby="home-journey-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-surface px-5 py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] space-y-8">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">Continuous talent development</p>
-        <h2 id="home-journey-heading" className="text-[clamp(1.6rem,3vw,2.25rem)] font-semibold text-[var(--lms-heading)]">Learn. Build. Demonstrate. Get hired.</h2>
+        <Heading level={2} id="home-journey-heading" className="text-[clamp(1.6rem,3vw,2.25rem)] text-[var(--lms-heading)]">Learn. Build. Demonstrate. Get hired.</Heading>
         <p className="max-w-[760px] leading-7 text-[var(--lms-body-text)]">Follow the learner journey from academic work and project experience through to recruitment.</p>
         <ol className="flex flex-wrap items-center gap-3 rounded-[18px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] p-5">
           {["Learn", "Build", "Demonstrate", "Get hired"].map((step,index) => <li key={step} className="inline-flex min-h-11 items-center gap-3">
-            <span className="rounded-full border border-[color:var(--lms-neutral-300)] bg-white px-5 py-3 text-sm font-bold text-[color:var(--lms-button-primary-hover)]">{step}</span>
+            <span className="rounded-full border border-[color:var(--lms-neutral-300)] bg-surface px-5 py-3 text-sm font-bold text-[color:var(--lms-button-primary-hover)]">{step}</span>
             {index < 3 ? <span aria-hidden="true" className="text-xl text-[color:var(--lms-button-primary)]">→</span> : null}
           </li>)}
         </ol>

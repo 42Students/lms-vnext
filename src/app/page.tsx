@@ -11,6 +11,8 @@ import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { publicLoginStyleVariables } from "@/modules/colleges/branding";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import {effectiveCollegeSignInCapabilities} from "@/modules/colleges/public-signin-policy-service";
+import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Branding is optional presentation data. A transient media/config failure
  * must not disable otherwise verified and policy-authorized college sign-in. */
@@ -187,32 +189,31 @@ export default async function HomePage({
           {/* The mark and letterforms are the original LMS SVG, not a CSS approximation. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <Link href="/" aria-label="42 LMS home">
-            <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles["legacyLogo"]} />
+            <Img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles["legacyLogo"]} />
           </Link>
         </div>
         {branding?.collegeName ? (
           <div className={styles["collegeBrand"]}>
             {branding.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={branding.logoUrl} alt="" referrerPolicy="no-referrer" className={styles["collegeLogo"]} />
+              <Img src={branding.logoUrl} alt="" referrerPolicy="no-referrer" className={styles["collegeLogo"]} />
             ) : null}
             <p className={styles["collegeName"]}>{branding.collegeName}</p>
           </div>
         ) : null}
       </header>
 
-      <a href="#sign-in-content" className={styles["skipLink"]}>Skip to sign in</a>
+      <TextLink variant="bare" href="#sign-in-content" className={styles["skipLink"]}>Skip to sign in</TextLink>
       <div className={styles["center"]}>
         <div className="relative w-full max-w-[468px]">
           {!desktopBackground ? <LegacyLoginMascot /> : null}
-          <section id="sign-in-content" tabIndex={-1} className={`${styles["card"]} relative z-10`} aria-label="Sign in">
+          <section id="sign-in-content" tabIndex={-1} className={`${styles["card"]} relative z-(--lms-z-raised)`} aria-label="Sign in">
           {message ? (
             <div role="alert" className={`${styles["status"]} ${message.tone === "error" ? styles["statusError"] : styles["statusWarning"]}`}>
               <p className={styles["statusTitle"]}>{message.title}</p>
               <p className={styles["statusMessage"]}>{message.description}</p>
               <div className="mt-3 flex flex-wrap items-center gap-3">
-                <a className={styles["statusLink"]} href={restartHref}>Start a fresh sign-in</a>
-                <a className={styles["statusLink"]} href="/home">Back to home</a>
+                <TextLink variant="bare" className={styles["statusLink"]} href={restartHref}>Start a fresh sign-in</TextLink>
+                <TextLink variant="bare" className={styles["statusLink"]} href="/home">Back to home</TextLink>
               </div>
             </div>
           ) : null}
@@ -231,8 +232,8 @@ export default async function HomePage({
                 This address may be correct, but its settings didn&apos;t load. Try again in a moment, or use the main sign-in page.
               </p>
               <div className="flex flex-wrap items-center gap-3">
-                <a className={styles["statusLink"]} href="/login">Retry college lookup</a>
-                <a className={styles["statusLink"]} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
+                <TextLink variant="bare" className={styles["statusLink"]} href="/login">Retry college lookup</TextLink>
+                <TextLink variant="bare" className={styles["statusLink"]} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</TextLink>
               </div>
             </div>
           ) : tenant.kind === "unknown" ? (
@@ -242,8 +243,8 @@ export default async function HomePage({
                 Ask your administrator to add this college&apos;s address in 42LMS, or use the main sign-in page.
               </p>
               <div className="flex flex-wrap items-center gap-3">
-                <a className={styles["statusLink"]} href="/login">Try again</a>
-                <a className={styles["statusLink"]} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
+                <TextLink variant="bare" className={styles["statusLink"]} href="/login">Try again</TextLink>
+                <TextLink variant="bare" className={styles["statusLink"]} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</TextLink>
               </div>
             </div>
           ) : !signin ? (
@@ -252,7 +253,7 @@ export default async function HomePage({
               <p className={styles["statusMessage"]}>
                 We could not confirm the sign-in methods for this college. Try again to reload the current policy.
               </p>
-              <a className={styles["statusLink"]} href={restartHref}>Retry sign-in</a>
+              <TextLink variant="bare" className={styles["statusLink"]} href={restartHref}>Retry sign-in</TextLink>
             </div>
           ) : (
             <LoginForm collegeName={branding?.collegeName ?? null}
@@ -268,11 +269,11 @@ export default async function HomePage({
       <footer className={styles["footer"]}>
         <span>{legacySuperAdmin?"JRSPF Technologies Pvt. Ltd. All rights reserved.":<>© {new Date().getFullYear()} 42LMS · JRSPF Technologies Pvt. Ltd.{tenant.kind === "college" ? " · Powered by 42LMS" : ""}</>}</span>
         <nav className={styles["footerLinks"]} aria-label="Sign-in footer">
-          {branding?.supportEmail ? <a href={`mailto:${branding.supportEmail}`}>{branding.supportEmail}</a> : null}
-          {branding?.supportPhone ? <a href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}>{branding.supportPhone}</a> : null}
+          {branding?.supportEmail ? <TextLink href={`mailto:${branding.supportEmail}`}>{branding.supportEmail}</TextLink> : null}
+          {branding?.supportPhone ? <TextLink href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}>{branding.supportPhone}</TextLink> : null}
           {!legacySuperAdmin?<Link href="/tracker/issues/public">Public issue updates</Link>:null}
-          <a href={legacySuperAdmin?"/assets/static/privacy-policy-view.html":branding?.privacyUrl ?? "/privacy-policy"} rel="noopener noreferrer">{legacySuperAdmin?"Privacy Policy":"Privacy"}</a>
-          <a href={legacySuperAdmin?"/assets/static/terms-and-conditions-view.html":branding?.termsUrl ?? "/assets/static/terms-and-conditions-view.html"} rel="noopener noreferrer">{legacySuperAdmin?"Terms & Conditions":"Terms"}</a>
+          <TextLink href={legacySuperAdmin?"/assets/static/privacy-policy-view.html":branding?.privacyUrl ?? "/privacy-policy"} rel="noopener noreferrer">{legacySuperAdmin?"Privacy Policy":"Privacy"}</TextLink>
+          <TextLink href={legacySuperAdmin?"/assets/static/terms-and-conditions-view.html":branding?.termsUrl ?? "/assets/static/terms-and-conditions-view.html"} rel="noopener noreferrer">{legacySuperAdmin?"Terms & Conditions":"Terms"}</TextLink>
         </nav>
       </footer>
     </main>
@@ -332,24 +333,24 @@ function LegacyLoginDecor() {
   return <div aria-hidden="true"
     className="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden lg:block">
     <svg viewBox="0 0 48 48" width="84" height="84" fill="none"
-      className="absolute left-[8%] top-[20%] -rotate-[8deg] text-[var(--auth-primary)] opacity-[.18]"
+      className="absolute left-[8%] top-[20%] -rotate-[8deg] text-[var(--auth-primary)] opacity-20"
       stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
       <rect x="5" y="9" width="38" height="30" rx="3.5" />
       <path d="M13 19l6 5-6 5M23 30h11" />
     </svg>
     <svg viewBox="0 0 48 48" width="92" height="92" fill="none"
-      className="absolute right-[8%] top-[17%] rotate-[5deg] text-[var(--lms-body-text)] opacity-[.12]"
+      className="absolute right-[8%] top-[17%] rotate-[5deg] text-[var(--lms-body-text)] opacity-10"
       stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
       <rect x="5" y="8" width="38" height="32" rx="3.5" />
       <path d="M5 15h38M19 22l-5 5 5 5M29 22l5 5-5 5M26 20l-4 14" />
     </svg>
     <svg viewBox="0 0 48 48" width="70" height="70" fill="none"
-      className="absolute right-[22%] bottom-[18%] -rotate-[6deg] text-[var(--auth-primary)] opacity-[.15]"
+      className="absolute right-[22%] bottom-[18%] -rotate-[6deg] text-[var(--auth-primary)] opacity-20"
       stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
       <ellipse cx="24" cy="11" rx="14" ry="5" />
       <path d="M10 11v26c0 2.8 6.3 5 14 5s14-2.2 14-5V11M10 24c0 2.8 6.3 5 14 5s14-2.2 14-5" />
     </svg>
-    <span className="absolute left-[15%] bottom-[9%] font-mono text-3xl text-[var(--auth-primary)] opacity-[.16]">{"&&"}</span>
-    <span className="absolute right-[8%] bottom-[26%] font-mono text-3xl text-[var(--lms-body-text)] opacity-[.12]">{"//"}</span>
+    <span className="absolute left-[15%] bottom-[9%] font-mono text-3xl text-[var(--auth-primary)] opacity-20">{"&&"}</span>
+    <span className="absolute right-[8%] bottom-[26%] font-mono text-3xl text-[var(--lms-body-text)] opacity-10">{"//"}</span>
   </div>;
 }

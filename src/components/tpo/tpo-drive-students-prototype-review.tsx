@@ -7,6 +7,7 @@ import {applicantDrawerReviewable,type TpoApplicantReviewSnapshot}
 import {applicantStage} from "@/modules/placements/tpo-applicant-pipeline-model";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type Candidate=TpoApplicantReviewSnapshot&{
  rollNumber:string|null;branchName:string|null;cgpaHundredths:number|null;
@@ -126,13 +127,13 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
        {bucket==="WAITING"?"Waiting for your decision":label(focused,jobStatus)}
        {bucket==="WAITING"?" · "+(selectedIndex+1)+" of "+filtered.length+" on this page":""}
       </p>
-      <h3 className="mt-2 break-words text-xl font-bold text-foreground">{focused.student??"Name unavailable"}</h3>
+      <Heading level={3} size="xl" className="mt-2 break-words text-foreground">{focused.student??"Name unavailable"}</Heading>
       <p className="mt-1 break-words text-sm text-body">
        {focused.rollNumber??"Roll not recorded"} · {focused.branchName??"Branch not recorded"} · {focused.role}
       </p>
      </header>
      <section aria-label="Recorded applicant evidence" className="space-y-3">
-      <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Recorded profile evidence</h4>
+      <Heading level={4} size="xs" className="uppercase tracking-wide text-muted-foreground">Recorded profile evidence</Heading>
       <dl className="grid grid-cols-2 gap-3 text-sm">
        <div><dt className="text-xs text-muted-foreground">CGPA</dt><dd>{shortNumber(focused.cgpaHundredths,100)}</dd></div>
        <div><dt className="text-xs text-muted-foreground">Backlogs</dt><dd>{shortNumber(focused.activeBacklogs)}</dd></div>

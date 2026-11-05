@@ -16,6 +16,8 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import { LEGACY_STUDENT_CSV_COLUMNS, parseStudentCsv, studentImportReportCsv, type StudentCsvResult } from "@/modules/people/college-student-csv-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Report = {
   preview: boolean;
@@ -107,7 +109,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Step 1 of 3 · Prepare</p>
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Bulk Register Students</h2>
+          <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Bulk Register Students</Heading>
         </div>
         <CollegeStudentImportHistory/>
       </div>
@@ -120,10 +122,9 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       </p>
       <p className="mt-2 break-all font-mono text-xs text-muted-foreground leading-[20px]">{TEMPLATE}</p>
       <div className="mt-2 flex flex-wrap gap-2 print:hidden">
-        <a download={SAMPLE_FILENAME} href={"data:text/csv;charset=utf-8,"+encodeURIComponent(SAMPLE_CSV)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        <ButtonLink variant="secondary" download={SAMPLE_FILENAME} href={"data:text/csv;charset=utf-8,"+encodeURIComponent(SAMPLE_CSV)}>
           Download sample CSV
-        </a>
+        </ButtonLink>
         <Button type="button" onClick={()=>{
           fileRevision.current++;setCsv(SAMPLE_CSV);setSelectedFilename(SAMPLE_FILENAME);
           setReport(null);setConfirm(false);setSummary(null);setError(null);
@@ -214,19 +215,19 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
 
     {report ? <section aria-label="CSV validation and result report"
       className="min-w-0 space-y-4 border-t border-border pt-4">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+      <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">
         {report.preview ? "Step 2 of 3 · Validation report" : "Step 3 of 3 · Import result"}
-      </h2>
+      </Heading>
       <Alert tone="info">{report.valid} structurally valid; {report.invalid} invalid.
         {report.preview ? " No learner has been created or enrolled." :
           " Import is per-row. PARTIAL means onboarding succeeded but enrollment did not."}</Alert>
       {report.structuralErrors.length ? <Alert tone="error">
         {report.structuralErrors.join(", ")}
       </Alert> : null}
-      {csvDownload ? <a href={csvDownload} download="student-import-result.csv"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
+      {csvDownload ? <ButtonLink variant="secondary" href={csvDownload} download="student-import-result.csv"
+        className="print:hidden">
         Export neutralized result CSV
-      </a> : null}
+      </ButtonLink> : null}
       <DataTable<StudentCsvResult> caption="Student CSV validation and import results"
         rows={report.results} getRowKey={item=>String(item.row)}
         columns={[

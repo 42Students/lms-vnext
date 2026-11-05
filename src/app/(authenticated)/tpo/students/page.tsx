@@ -53,6 +53,7 @@ import {
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Table} from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = {
   journeyState?: string | string[];
@@ -271,9 +272,9 @@ export default async function TpoStudentsPage({
           description="Students by placement participation and college roster."
         />
         <Alert tone="error">
-          <h2 className="text-lg font-semibold text-foreground">
+          <Heading level={2} size="lg" className="text-foreground">
             Invalid Students filters
-          </h2>
+          </Heading>
           <p className="mt-2 text-sm text-body">
             {urlError ?? tpoStudentFilterMessage(raw)}
           </p>
@@ -431,7 +432,7 @@ export default async function TpoStudentsPage({
         <Link
           href="/tpo/students"
           aria-current="page"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-[650] text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
         >
           Students roster
         </Link>
@@ -445,8 +446,8 @@ export default async function TpoStudentsPage({
 
       <Dropdown mobileSheet align="start" label="Student roster tools" trigger="More student tools">
         <nav aria-label="Student roster tools" className="flex min-w-52 flex-col gap-2">
-        <Link href="/tpo/students/requests" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Student Requests</Link>
-        <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Preparation support</Link>
+        <Link href="/tpo/students/requests" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Student Requests</Link>
+        <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Preparation support</Link>
         <TpoSafeCsvDownload href={exportHref} filename="students.csv" label="Export filtered CSV" />
        </nav>
       </Dropdown>
@@ -624,9 +625,9 @@ export default async function TpoStudentsPage({
 
       {!data.definitions.registrationsAvailable ? (
         <Alert tone="warning">
-          <h2 className="text-base font-semibold text-warning">
+          <Heading level={2} size="base" className="text-warning">
             Placement registration data unavailable
-          </h2>
+          </Heading>
           <p className="mt-2 text-sm leading-6 text-body">
             Placement registration information is unavailable. Registration counts may be incomplete.
           </p>
@@ -683,7 +684,7 @@ export default async function TpoStudentsPage({
           <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Show students</Button>
         </form>
         <div role="group" aria-label="Student placement journey"
-          className="grid min-w-0 grid-cols-2 gap-2 min-[992px]:grid-cols-5">
+          className="grid min-w-0 grid-cols-2 gap-2 lg:grid-cols-5">
           {tpoStudentPrototypeJourneySteps(summary,verifiedCount).map((step,index)=>{
             const selected=step.key==="ELIGIBLE"?!query.journeyState&&!query.legacyStage:
               step.key==="REGISTERED"?query.legacyStage==="REGISTERED":
@@ -732,9 +733,9 @@ export default async function TpoStudentsPage({
       <section className="min-w-0 space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">
+            <Heading level={2} size="lg" className="text-foreground">
               Students roster
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body" aria-live="polite">
               {roster.total} students in this view · showing {firstItem}–{lastItem}
             </p>
@@ -927,7 +928,7 @@ export default async function TpoStudentsPage({
                   ...currentFilters,
                   page: roster.page - 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Previous
               </Link>
@@ -939,7 +940,7 @@ export default async function TpoStudentsPage({
                   ...currentFilters,
                   page: roster.page + 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Next
               </Link>
@@ -957,9 +958,9 @@ export default async function TpoStudentsPage({
       <section className="min-w-0">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">
+            <Heading level={2} size="lg" className="text-foreground">
               Placement intelligence
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body">
               {data.season
                 ? `Active placement season: ${data.season.name}`
@@ -972,7 +973,7 @@ export default async function TpoStudentsPage({
         <p className="mt-3 text-sm text-body" aria-live="polite">Journey of the {summary.activeLearners} students in {query.batchId?"this batch":query.programId?"this program":query.branchId?"this branch":"placements"}.</p>
         <div role="group" className="mt-5 grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-4" aria-label="Student placement journey">
          {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="min-w-0 border-b border-r border-border bg-surface p-4 last:border-r-0">
-          <h3 className="text-sm font-semibold">{step.label}</h3>
+          <Heading level={3} size="sm">{step.label}</Heading>
           <p className="mt-2 text-2xl font-bold tabular-nums">{step.count}</p>
           <p className="text-xs text-muted-foreground">{step.percent}% of {summary.activeLearners} student(s)</p>
          </div>)}
@@ -1064,9 +1065,9 @@ export default async function TpoStudentsPage({
       <Disclosure title="Branch intelligence" className="min-w-0 border-y border-border py-3" contentClassName="pt-3">
       <section className="min-w-0">
         <div className="border-b border-border px-6 py-4">
-          <h2 className="text-lg font-semibold text-foreground">
+          <Heading level={2} size="lg" className="text-foreground">
             Branch intelligence
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Placement rates use registered placement-pool learners
             as the denominator, not every enrolled learner.

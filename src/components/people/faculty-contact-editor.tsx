@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {facultyContactEditSchema} from "@/modules/people/faculty-profile-document";
 import {facultyProfileSaveReceipt} from "@/modules/people/faculty-profile-save-response";
+import { Heading } from "@/components/ui/heading";
 
 type Contact={contactMobile:string;contactPhone:string;contactMail:string};
 type Field=keyof Contact;
@@ -67,7 +68,7 @@ export function FacultyContactEditor({initial,initialVersion}:{
  }
  return <form onSubmit={save} aria-label="Edit contact details" noValidate
   className="max-w-2xl min-w-0 space-y-4 border-t border-border pt-4">
-  <h3 className="text-base font-semibold text-[var(--lms-heading)]">Edit contacts</h3>
+  <Heading level={3} size="base" className="text-[var(--lms-heading)]">Edit contacts</Heading>
   <div className="grid gap-4 sm:grid-cols-2">
    {fields.map(field=><label key={field.name}
     className="min-w-0 space-y-1.5 text-sm font-semibold text-body">

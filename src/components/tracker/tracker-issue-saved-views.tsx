@@ -112,7 +112,7 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
       <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">
         <span aria-hidden="true">★</span> Saved views {views.length>0?`(${views.length})`:""}
       </summary>
-      <div className="absolute left-0 top-full z-30 mt-2 min-w-[240px] max-w-[min(90vw,360px)] rounded-[10px] border border-border bg-surface p-3 shadow-lg">
+      <div className="absolute left-0 top-full z-(--lms-z-sticky-header) mt-2 min-w-[240px] max-w-[min(90vw,360px)] rounded-[10px] border border-border bg-surface p-3 shadow-lg">
         {views.length?<ul className="space-y-1" aria-label="Choose a saved view">
           {views.map(view=><li key={view.name} className="flex min-w-0 items-center gap-1">
             <Button type="button" variant="ghost" className="min-w-0 min-h-11 flex-1 justify-start break-words text-left md:min-h-9"

@@ -17,6 +17,8 @@ import {
   BUG_RESOLUTIONS,
   BUG_STATUSES,
 } from "@/modules/bug-tracker/workflow";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export type TrackerWorkflowIssue = {
   publicId: string;
@@ -119,11 +121,11 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
     });
   }
 
-  if (!canManage) return <section className="space-y-2 border-b border-border pb-4"><h2 className="font-semibold">Issue status</h2><StatusBadge>{issue.status}</StatusBadge><p className="text-xs text-muted-foreground">Status is read-only for this viewer.</p></section>;
+  if (!canManage) return <section className="space-y-2 border-b border-border pb-4"><Heading level={2}>Issue status</Heading><StatusBadge>{issue.status}</StatusBadge><p className="text-xs text-muted-foreground">Status is read-only for this viewer.</p></section>;
   return (
     <section className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
       <div>
-        <h2 className="m-0 text-lg font-semibold text-foreground">Issue status</h2>
+        <Heading level={2} size="lg" className="m-0 text-foreground">Issue status</Heading>
         <p className="mt-1 text-sm text-body">Super Admin only. Status changes save immediately; engineering details are saved separately. Version {issue.version}; stale writes are rejected.</p>
       </div>
       <div className="grid min-w-0 gap-4 sm:grid-cols-2">
@@ -175,16 +177,16 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           <Input id="tracker-workflow-frontend-sha" className="mt-[6px] min-w-0 w-full" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
           {frontendCommitSha.trim().length >= 7 && !/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim()) ?
             <p role="status" className="mt-1 text-xs font-normal text-muted-foreground">Enter 7–40 hexadecimal SHA characters to enable the commit link.</p> : null}
-          {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<a href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
-            rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
+          {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<TextLink href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
+            rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">View on GitHub ↗</TextLink>:null}
         </div>
         <div className="min-w-0 text-sm font-semibold text-body">
           <label htmlFor="tracker-workflow-backend-sha">Backend commit SHA</label>
           <Input id="tracker-workflow-backend-sha" className="mt-[6px] min-w-0 w-full" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
           {backendCommitSha.trim().length >= 7 && !/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim()) ?
             <p role="status" className="mt-1 text-xs font-normal text-muted-foreground">Enter 7–40 hexadecimal SHA characters to enable the commit link.</p> : null}
-          {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<a href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
-            rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
+          {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<TextLink href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
+            rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">View on GitHub ↗</TextLink>:null}
         </div>
           </div>
         </details>
@@ -200,7 +202,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
 
       {issue.status === "READY_FOR_RETEST" ? (
         <div className="space-y-3 border-t border-border pt-4">
-          <h3 className="m-0 text-base font-semibold text-foreground">Ready for retest</h3>
+          <Heading level={3} size="base" className="m-0 text-foreground">Ready for retest</Heading>
           <p className="text-sm font-semibold text-body">Does it work now?</p>
           <p className="text-sm text-body">Check the same flow once more. One click sends it back to engineering or closes it.</p>
           <label className="grid min-w-0 gap-1 text-sm font-semibold">Retest notes (optional)

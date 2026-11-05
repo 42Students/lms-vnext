@@ -13,6 +13,9 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 const FILTERS = [
  ["following","Following"],["all","All"],["me","@ Me"],["asks","Asks"],
@@ -95,8 +98,8 @@ export async function TpoTeamMessagesDirectory({
    <aside aria-label="Conversations" className={(explicit?"hidden lg:block ":"block ")+"min-w-0 border-b border-border lg:border-b-0 lg:border-r"}>
     <div className="space-y-3 border-b border-border p-3">
      <div className="flex items-center justify-between gap-2">
-      <h2 className="text-lg font-semibold text-foreground">Team conversations</h2>
-      <a href="#new-team-conversation" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link" aria-label="New conversation">+ New</a>
+      <Heading level={2} size="lg" className="text-foreground">Team conversations</Heading>
+      <ButtonLink variant="secondary" href="#new-team-conversation" aria-label="New conversation">+ New</ButtonLink>
      </div>
      <TpoTeamSearch value={safeQuery}/>
      <nav aria-label="Show team conversations" className="flex flex-wrap gap-1.5">
@@ -165,7 +168,7 @@ export async function TpoTeamMessagesDirectory({
      everyone.status!=="READY"?<EmptyState title="Everyone is unavailable" description="The placement team channel needs its registered storage."/>:
      <>
       <header className="mb-3 border-b border-border pb-3">
-       <h3 className="text-lg font-semibold text-foreground">Everyone</h3>
+       <Heading level={3} size="lg" className="text-foreground">Everyone</Heading>
        <p className="text-xs text-muted-foreground">Everyone on the placement team can read this conversation.</p>
       </header>
       {everyone.rows.length===0?<EmptyState title="No messages in Everyone yet." description="Write the first message below."/>:
@@ -188,7 +191,7 @@ export async function TpoTeamMessagesDirectory({
      <>
       <TpoTeamOpenRead threadId={active.thread.id}/>
       <header className="mb-3 border-b border-border pb-3">
-       <h3 className="text-lg font-semibold text-foreground">{active.thread.topic}</h3>
+       <Heading level={3} size="lg" className="text-foreground">{active.thread.topic}</Heading>
        <p className="text-xs text-muted-foreground">With {active.thread.counterpartName} · Private placement-team conversation</p>
        <Link href={"/tpo/team/"+active.thread.id+(askId?"?ask="+encodeURIComponent(askId):"")}
         className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open full conversation and asks</Link>
@@ -205,19 +208,19 @@ export async function TpoTeamMessagesDirectory({
         </li>)}
        </ol>}
       {messageId&&tpoThreadIdSchema.safeParse(messageId).success?
-       <p className="my-2 text-xs text-muted-foreground"><a href={"#team-message-"+messageId} className="text-link underline">Jump to linked message</a></p>:null}
+       <p className="my-2 text-xs text-muted-foreground"><TextLink href={"#team-message-"+messageId}>Jump to linked message</TextLink></p>:null}
       <TpoTeamReplyComposer threadId={active.thread.id} actorUserId={context.user.id}
         kind={active.thread.kind}/>
      </>}
    </section>
    <aside aria-label="Conversation details" className="hidden min-w-0 border-l border-border p-4 xl:block">
     {showEveryone?<div className="space-y-3 text-sm">
-     <h3 className="font-semibold text-foreground">About Everyone</h3>
+     <Heading level={3} className="text-foreground">About Everyone</Heading>
      <p>Everyone in this college's active placement team can read the channel.</p>
      <p>Recruiters and students never see these conversations.</p>
      <Link href="/tpo/team/everyone" className="inline-flex min-h-9 items-center font-semibold text-link underline">Channel history and settings</Link>
     </div>:active?<div className="space-y-3 text-sm">
-     <h3 className="font-semibold text-foreground">About this conversation</h3>
+     <Heading level={3} className="text-foreground">About this conversation</Heading>
      <dl className="space-y-3">
       <div><dt className="text-xs text-muted-foreground">Topic</dt><dd className="break-words">{active.thread.topic}</dd></div>
       <div><dt className="text-xs text-muted-foreground">With</dt><dd>{active.thread.counterpartName}</dd></div>
@@ -225,12 +228,12 @@ export async function TpoTeamMessagesDirectory({
       <div><dt className="text-xs text-muted-foreground">Decisions here</dt><dd>{active.messages.filter(item=>item.decision&&!item.removed).length}</dd></div>
      </dl>
      {active.messages.some(message=>message.decision&&!message.removed)?<div>
-      <h4 className="mb-2 text-xs font-semibold text-muted-foreground">Decided:</h4>
+      <Heading level={4} size="xs" className="mb-2 text-muted-foreground">Decided:</Heading>
       {active.messages.filter(message=>message.decision&&!message.removed).slice(-5).map(message=>
-       <a key={message.id} href={"#team-message-"+message.id} className="my-1 block truncate text-sm text-link underline">{message.body}</a>)}
+       <TextLink key={message.id} href={"#team-message-"+message.id} className="my-1 block truncate text-sm">{message.body}</TextLink>)}
      </div>:null}
      {asks?.status==="READY"&&asks.items.some(ask=>ask.status==="OPEN")?<div>
-      <h4 className="mb-2 text-xs font-semibold text-muted-foreground">Open asks</h4>
+      <Heading level={4} size="xs" className="mb-2 text-muted-foreground">Open asks</Heading>
       {asks.items.filter(ask=>ask.status==="OPEN").slice(0,5).map(ask=>
        <Link key={ask.id} href={"/tpo/team/"+active.thread.id+"?ask="+encodeURIComponent(ask.id)}
         className="my-1 block break-words text-sm text-link underline">{ask.title}</Link>)}

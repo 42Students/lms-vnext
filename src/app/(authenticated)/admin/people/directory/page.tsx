@@ -44,7 +44,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  }:{invalid:true});
  if(!query?.success) return <div className="space-y-4"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
-   action={<Link href="/admin/people/directory" className="font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">Clear filters</Link>}/>
+   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">Clear filters</Link>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
   <PageHeader title="People Directory"
@@ -62,7 +62,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     ?"Your account can no longer view these membership records."
     : "Something went wrong on our end. Please try again. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
-    className="font-[650] text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">
+    className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">
     {loaded.denied?"Back to dashboard":"Retry loading users"}
    </Link>}/>
  </div>;
@@ -179,10 +179,10 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    columns={[
     {key:"name",header:"Name",mobilePriority:"primary",cell:row=>{
      const label=row.displayName||"Unnamed user";
-     const palette=["bg-cyan-50 text-cyan-800","bg-indigo-50 text-indigo-800",
-      "bg-amber-50 text-amber-800","bg-emerald-50 text-emerald-800",
-      "bg-rose-50 text-rose-800","bg-violet-50 text-violet-800",
-      "bg-sky-50 text-sky-800","bg-orange-50 text-orange-800"];
+     const palette=["bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary-hover)]","bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple-text)]",
+      "bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]","bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]",
+      "bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-strong)]","bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]",
+      "bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-info-text)]","bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]"];
      const ix=[...row.membershipId].reduce((sum,c)=>sum+c.charCodeAt(0),0)%palette.length;
      const initials=label.trim().split(/\s+/).slice(0,2).map(x=>x.slice(0,1).toUpperCase()).join("");
      return <div className="flex min-w-0 items-center gap-3">

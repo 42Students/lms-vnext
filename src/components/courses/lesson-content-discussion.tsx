@@ -4,6 +4,7 @@ import {useEffect,useRef,useState} from "react";
 import {Alert} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
 
 type Message={
  id:string;contentText:string;sequence:number;parentDiscussionId:string|null;
@@ -104,7 +105,7 @@ export function LessonContentDiscussion({contentId,deliveryId}:{
   }
  }
  return <section aria-label="Lesson content discussion" className="mt-4 space-y-3 border-t border-border pt-4">
-  <h3 className="text-sm font-semibold text-foreground">Discussion on this lesson content</h3>
+  <Heading level={3} size="sm" className="text-foreground">Discussion on this lesson content</Heading>
   <p className="text-xs text-muted-foreground">Comments are attached to this lesson item, not the whole classroom discussion. Only eligible members of this Section can see or post them.</p>
   {unavailable?<Alert tone="info">Lesson discussion is not available until its verified private data store is enabled. Classroom chat remains separate.</Alert>:null}
   {error?<Alert tone="error" role="alert">{error}</Alert>:null}

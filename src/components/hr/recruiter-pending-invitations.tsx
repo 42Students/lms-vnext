@@ -4,6 +4,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Heading } from "@/components/ui/heading";
 
 type PendingInvitation={
  collegeId:string;
@@ -55,9 +56,9 @@ export function RecruiterPendingInvitations({invitations,total,hasMore}:{
  }
  return <section aria-labelledby="recruiter-pending-invitations" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
   <div className="flex flex-wrap items-center justify-between gap-2">
-   <h2 id="recruiter-pending-invitations" className="text-base font-semibold text-[var(--lms-heading)]">
+   <Heading level={2} size="base" id="recruiter-pending-invitations" className="text-[var(--lms-heading)]">
     Pending college invitations ({total})
-   </h2>
+   </Heading>
    <span className="text-xs text-muted-foreground">Your approval is required</span>
   </div>
   <p className="text-sm leading-6 text-body">These invitations are tied to your signed-in recruiter identity. You can accept or decline without switching into a college you cannot yet access.</p>

@@ -4,6 +4,8 @@ import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import type {FacultyProfileDocument} from "@/modules/people/faculty-profile-document";
 import { Input } from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Purpose="EDUCATION_CERTIFICATE"|"CERTIFICATION"|"EXPERIENCE_CERTIFICATE"|"OFFER_LETTER";
 type Item={purpose:Purpose;entryId:string;label:string;receiptId:string|null};
 type Changed={purpose:Purpose;entryId:string;receiptId:string|null;version:number};
@@ -124,7 +126,7 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
  }
  return <section aria-label="Faculty private qualification attachments"
    className="space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">
-  <h2 className="text-base font-semibold">Private qualification attachments</h2>
+  <Heading level={2} size="base">Private qualification attachments</Heading>
   <p className="text-xs text-muted-foreground">
    Save an education, certification or experience row before attaching its document.
    Files stay private and require a security scan. Replacing or removing an
@@ -153,10 +155,10 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
        onClick={()=>setRevokeItem(item)}>Remove</Button>
      </div>:null}
     {link?.key===item.purpose+":"+item.entryId&&link.expiresAt>Date.now()?
-     <a href={link.url} rel="noopener noreferrer"
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+     <TextLink href={link.url} rel="noopener noreferrer"
+      className="inline-flex min-h-11 items-center text-sm">
       Open verified attachment (expires soon)
-     </a>:null}
+     </TextLink>:null}
    </div>)}
   {awaiting?<Button type="button" variant="secondary" disabled={locked}
     onClick={()=>void confirm()}>Confirm uploaded attachment after scan</Button>:null}

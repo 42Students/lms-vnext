@@ -2,6 +2,7 @@ import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {DataTable} from "@/components/ui/data-table";
 import type { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
+import { Heading } from "@/components/ui/heading";
 
 type DriveDay = Awaited<ReturnType<typeof getPlacementDriveDay>>;
 function tone(status: string): "neutral" | "info" | "success" | "warning" | "error" {
@@ -18,7 +19,7 @@ export function PlacementDriveDayOverview({ driveDay, embedded = false }: { driv
   return <div className="min-w-0 space-y-4">
     <section className="border-b border-border pb-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0"><p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">{driveDay.job.company.name}</p>{!embedded ? <h2 className="mt-1 break-words text-xl font-semibold text-foreground">{driveDay.job.title}</h2> : null}</div>
+        <div className="min-w-0"><p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">{driveDay.job.company.name}</p>{!embedded ? <Heading level={2} size="xl" className="mt-1 break-words text-foreground">{driveDay.job.title}</Heading> : null}</div>
         <StatusBadge tone={tone(driveDay.driveStatus)}>{driveDay.driveStatus.toLowerCase().split("_").join(" ")}</StatusBadge>
       </div>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border xl:grid-cols-4">
@@ -26,13 +27,13 @@ export function PlacementDriveDayOverview({ driveDay, embedded = false }: { driv
           <div key={String(label)} className="min-w-0 border-b border-r border-border px-3 py-3 last:border-r-0 [@media(max-width:1279px)]:[&:nth-child(even)]:border-r-0 xl:border-b-0 xl:px-4"><p className="m-0 text-xs font-semibold text-muted-foreground">{label}</p><p className="mt-1 text-xl font-semibold text-foreground">{value}</p></div>)}
       </div>
     </section>
-    {driveDay.attention.length > 0 ? <section className="border-b border-border pb-4"><h2 className="mb-2 text-base font-semibold text-foreground">Attention</h2><div className="flex flex-wrap gap-2">{driveDay.attention.map((item,index) =>
+    {driveDay.attention.length > 0 ? <section className="border-b border-border pb-4"><Heading level={2} size="base" className="mb-2 text-foreground">Attention</Heading><div className="flex flex-wrap gap-2">{driveDay.attention.map((item,index) =>
       <StatusBadge key={String(item["code"])+index} tone={item["code"] === "RESULTS_OVERDUE" || item["code"] === "INACTIVE_CANDIDATES" ? "error" : "warning"}>{String(item["code"]).toLowerCase().split("_").join(" ")}{typeof item["count"] === "number" ? " · "+item["count"] : ""}</StatusBadge>)}</div></section> : null}
     <section className="space-y-3">
-      <div><h2 className="m-0 text-base font-semibold text-foreground">Round pipeline</h2><p className="mt-1 text-sm text-body">Progression is derived from applied results, never staged drafts.</p></div>
+      <div><Heading level={2} size="base" className="m-0 text-foreground">Round pipeline</Heading><p className="mt-1 text-sm text-body">Progression is derived from applied results, never staged drafts.</p></div>
       {driveDay.rounds.length === 0 ? <div role="status" className="border-b border-border py-6 text-sm text-muted-foreground">{embedded ? "No rounds planned for this drive day yet." : "Evaluation rounds are not configured yet."}</div> :
         driveDay.rounds.map(round => <article key={round.id} id={`round-${round.id}`} className="scroll-mt-24 border-b border-border py-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between"><div><p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">Round {round.sequence} · {round.kind}</p><h3 className="mt-1 text-lg font-semibold text-foreground">{round.name}</h3><p className="mt-1 text-sm text-body">{formatWhen(round.scheduledAt, round.timezone)}{round.venue ? " · "+round.venue : ""}</p></div><StatusBadge tone={tone(round.status)}>{round.status}</StatusBadge></div>
+          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between"><div><p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">Round {round.sequence} · {round.kind}</p><Heading level={3} size="lg" className="mt-1 text-foreground">{round.name}</Heading><p className="mt-1 text-sm text-body">{formatWhen(round.scheduledAt, round.timezone)}{round.venue ? " · "+round.venue : ""}</p></div><StatusBadge tone={tone(round.status)}>{round.status}</StatusBadge></div>
           <Link href={"/tpo/placements/jobs/"+encodeURIComponent(driveDay.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
             className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">See attendance and results</Link>
           <div className="mt-3 grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border xl:grid-cols-5">{[["Participants",round.participantCount],["Staged",round.stagedResultCount],["Applied",round.appliedResultCount],["Missing",round.missingResultCount],["Passed",round.outcomes.pass]].map(([label,value]) => <div key={String(label)} className="min-w-0 border-b border-r border-border p-3 last:border-r-0 [&:nth-child(even)]:border-r-0 xl:border-b-0 xl:[&:nth-child(even)]:border-r xl:last:border-r-0"><p className="m-0 text-xs text-muted-foreground">{label}</p><p className="mt-1 font-semibold text-foreground">{value}</p></div>)}</div>

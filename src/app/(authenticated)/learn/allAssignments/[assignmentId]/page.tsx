@@ -17,6 +17,8 @@ import {
 import {LearnerAssignmentResourceOpenControl} from "@/components/courses/learner-assignment-resource-open-control";
 import { resolveLearnerOfferingDelivery } from "@/modules/courses/learner-offering-delivery-model";
 import { findOwnLearnerAssignment } from "@/modules/courses/learner-assignment-detail-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Props = {
   params: Promise<{ assignmentId: string }>;
@@ -58,16 +60,16 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
     <PageHeader title={item.title} />
     <div className="grid min-w-0 grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-x-4 gap-y-2 border-b border-border pb-4 md:gap-x-6 md:pb-6">
       <section aria-labelledby="assignment-due-title" className="min-w-0">
-        <h2 id="assignment-due-title" className="text-xs font-semibold text-muted-foreground">Due</h2>
+        <Heading level={2} size="xs" id="assignment-due-title" className="text-muted-foreground">Due</Heading>
         <p className="mt-1 break-words text-foreground">{formatDate(item.dueAt)}</p>
       </section>
       <section className="min-w-0">
-        <h2 className="text-xs font-semibold text-muted-foreground">Points</h2>
+        <Heading level={2} size="xs" className="text-muted-foreground">Points</Heading>
         <p className="mt-1 text-foreground">{item.maxPoints}</p>
       </section>
     </div>
     <section className="min-w-0 space-y-3 border-b border-border pb-4 md:pb-6">
-      <h2 className="font-semibold text-[var(--lms-heading)]">Instructions & resources</h2>
+      <Heading level={2} className="text-[var(--lms-heading)]">Instructions & resources</Heading>
       <p className="max-w-prose whitespace-pre-wrap break-words text-sm text-body">
         {item.description || "Your faculty hasn't added any resources to this assignment yet."}
       </p>
@@ -84,10 +86,10 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
           {resource.kind==="INSTRUCTIONS"&&resource.body?
             <p className="mt-2 max-w-prose whitespace-pre-wrap break-words text-body">{resource.body}</p>:null}
           {resource.kind==="LINK"&&resource.href?
-            <a href={resource.href} rel="noopener noreferrer"
-             className="mt-2 inline-flex min-h-11 max-w-full items-center break-all font-semibold text-primary-text underline md:min-h-9">
+            <TextLink href={resource.href} rel="noopener noreferrer"
+             className="mt-2 inline-flex min-h-11 max-w-full items-center break-all md:min-h-9">
               Open link
-            </a>:null}
+            </TextLink>:null}
           {(resource.kind==="PDF"||resource.kind==="FILE")?
             <div className="mt-2">
               <LearnerAssignmentResourceOpenControl
@@ -98,23 +100,23 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       </ul>:null}
       {materials.links.length>0 ? <ul className="min-w-0 divide-y divide-border" aria-label="Instructor resources">
         {materials.links.map(link=><li key={link.id} className="min-w-0 py-1 text-sm">
-          <a href={link.href} rel="noopener noreferrer"
-            className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          <TextLink href={link.href} rel="noopener noreferrer"
+            className="inline-flex min-h-11 max-w-full items-center break-words md:min-h-9">
             Open link: {link.title}
-          </a>
+          </TextLink>
         </li>)}
       </ul> : null}
     </section>
     <section className="min-w-0 space-y-3">
-      <h2 className="font-semibold text-[var(--lms-heading)]">Your submission</h2>
+      <Heading level={2} className="text-[var(--lms-heading)]">Your submission</Heading>
       {item.submissionId ? <div className="min-w-0 space-y-3 text-sm text-body">
         <p role="status" className="flex flex-wrap items-center gap-2"><StatusBadge tone="success">Submitted</StatusBadge>{formatDate(item.submittedAt)}</p>
         {item.submissionType === "TEXT" ? (
           <p className="max-w-prose whitespace-pre-wrap break-words border-l-2 border-border bg-surface-subtle py-3 pl-4 pr-2">{item.submissionText}</p>
         ) : item.submissionType === "LINK" && item.submissionUrl ? (
           learnerAssessmentSubmittedLinkHref(item.submissionUrl) ? (
-            <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} 
-              className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{item.submissionUrl}</a>
+            <TextLink href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} 
+              className="inline-flex min-h-11 max-w-full items-center break-all md:min-h-9">{item.submissionUrl}</TextLink>
           ) : (
             <Alert tone="warning" className="break-all">Saved link unavailable. Open the original submission from a trusted HTTPS source.</Alert>
           )

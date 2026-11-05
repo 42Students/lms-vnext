@@ -21,6 +21,9 @@ import {learnerOfferActionErrorMessage} from "@/modules/placements/learner-offer
 import { useToast } from "@/components/ui/toast";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type OfferAcceptImpact={
  offerId:string;offerStatus:string;expiresAt:string|null;blockedByAnotherAcceptedOffer:boolean;
@@ -307,7 +310,7 @@ export function LearnerPlacementOffers({
   }
   if (offers.length === 0) {
     return <section id="my-offers" aria-labelledby="sp-off-empty" className="space-y-3">
-      <h2 id="sp-off-empty" className="text-lg font-semibold text-foreground">No offers yet</h2>
+      <Heading level={2} size="lg" id="sp-off-empty" className="text-foreground">No offers yet</Heading>
       <p className="text-sm text-body">When a company selects you and the placement cell releases the offer, it shows here and you get a notice. You&apos;ll have time to read it and decide.{" "}
         <Link href="/learn/my-placements/applications" className="font-semibold text-link underline">See where your applications stand</Link>
       </p>
@@ -338,19 +341,19 @@ export function LearnerPlacementOffers({
               <div className="flex min-w-0 flex-1 items-start gap-3">
                 <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle text-base font-bold text-primary-text" aria-hidden="true">
                   {safePublicOfferLogo(item.companyLogoUrl) ? (
-                    <img alt="" src={safePublicOfferLogo(item.companyLogoUrl)!}
+                    <Img alt="" src={safePublicOfferLogo(item.companyLogoUrl)!}
                       width={44} height={44} loading="lazy" className="size-11 object-contain"/>
                   ) : <span aria-hidden="true">{item.companyName.trim().slice(0,2).toUpperCase()||"CO"}</span>}
                 </span>
                 <div className="min-w-0">
                   <p className="m-0 break-words text-sm font-semibold text-foreground">{item.companyName}</p>
-                  <h3 className="mt-1 break-words text-base font-semibold text-foreground">
+                  <Heading level={3} size="base" className="mt-1 break-words text-foreground">
                     {offerJobHref(item) ? (
                       <Link href={offerJobHref(item)!} className="text-link hover:underline focus-visible:underline">
                         {item.roleTitle}{item.roleOption ? " · "+item.roleOption : ""}
                       </Link>
                     ) : <span>{item.roleTitle}{item.roleOption ? " · "+item.roleOption : ""}</span>}
-                  </h3>
+                  </Heading>
                   <p className="mt-1 break-words text-sm text-body">
                     {item.kind==="LOI"?"Letter of intent · ":""}{item.jobTitle}
                   </p>
@@ -512,8 +515,8 @@ export function LearnerPlacementOffers({
                 >
                   Decline
                 </Button>
-                {item.letterHref && item.status==="ISSUED" ? <a href={item.letterHref} rel="noopener noreferrer"
-                  className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-body hover:border-primary hover:text-primary-text sm:w-auto md:min-h-9">View offer letter</a> : null}
+                {item.letterHref && item.status==="ISSUED" ? <ButtonLink variant="secondary" href={item.letterHref} rel="noopener noreferrer"
+                  className="w-full sm:w-auto">View offer letter</ButtonLink> : null}
                 {extensionsAvailable && item.expiresAt && !pendingExtensions.has(item.offerId) ? (
                   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="sm" variant="secondary" disabled={pendingId!==null}
                     onClick={()=>{
@@ -666,14 +669,14 @@ export function LearnerPlacementOffers({
                 onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}}>Check again</Button>
             </div>:null}
             {acceptImpact?<div className="space-y-2 border-b border-border py-3">
-              <h3 className="font-semibold text-foreground">What accepting this offer changes</h3>
+              <Heading level={3} className="text-foreground">What accepting this offer changes</Heading>
               {([
                 ["Withdrawn",acceptImpact.withdrawn,"These applications end."],
                 ["Other offers declined",acceptImpact.declined,"These offers are turned down for you."],
                 ["You stay in",acceptImpact.stayed,"These carry on as before."],
               ] as const).filter(([,rows])=>rows.length>0).map(([label,rows,note])=>(
                 <section key={label} aria-label={label}>
-                  <h4 className="font-semibold">{label} ({rows.length})</h4>
+                  <Heading level={4}>{label} ({rows.length})</Heading>
                   <p className="text-xs text-muted-foreground">{note}</p>
                   <ul className="list-disc pl-5">{rows.map(row=><li key={row.id}>{row.title}</li>)}</ul>
                 </section>

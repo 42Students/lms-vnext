@@ -14,6 +14,7 @@ import { apiFetch } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { Heading } from "@/components/ui/heading";
 
 type Option = { id: string; label: string };
 type CourseTeachingRole = "PRIMARY" | "CO_TEACHER" | "TA";
@@ -155,7 +156,7 @@ export function CollegeFacultyAssignmentCreate({
   const fieldClass = "min-w-0";
   return <>{confirmation}<section aria-label="Create teaching assignment"
     className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
+    <Heading level={2} size="lg" className="text-[var(--lms-heading)]">{FACULTY_ASSIGNMENT_COPY.createTitle}</Heading>
     <form onSubmit={event => void submit(event)} className="mt-[var(--lms-space-3)] grid min-w-0 max-w-[1100px] gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select required className={fieldClass} value={programId}
@@ -261,7 +262,7 @@ export function CollegeFacultyAssignmentCreate({
     {error && <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>}
     {message && <Alert tone={messageWarning?"warning":"success"} className="mt-[var(--lms-space-3)]">{message}</Alert>}
     {batchDetails.length?<div className="mt-3 rounded-[var(--lms-control-radius)] border border-border p-3">
-      <h3 className="text-sm font-semibold">Per-faculty results</h3>
+      <Heading level={3} size="sm">Per-faculty results</Heading>
       <ul className="mt-2 space-y-2 text-xs text-body" aria-live="polite">
         {batchDetails.map((line,index)=><li key={index} className="break-words">{line}</li>)}
       </ul>

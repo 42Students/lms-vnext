@@ -4,6 +4,8 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import type {LearnerGroupListItem} from "@/modules/groups/learner-group-list-service";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export function LearnerGroupLists({mine,open}:{mine:LearnerGroupListItem[];open:LearnerGroupListItem[]}){
  const router=useRouter();
@@ -54,11 +56,11 @@ export function LearnerGroupLists({mine,open}:{mine:LearnerGroupListItem[];open:
   </li>);
  return <div className="min-w-0 space-y-6">
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <section aria-label="My groups"><h2 className="text-lg font-semibold">Mine</h2>
+  <section aria-label="My groups"><Heading level={2} size="lg">Mine</Heading>
    {mine.some(row=>stateOf(row)!==null)?<ul className="mt-2 border-t border-border">{mine.filter(row=>stateOf(row)!==null).map(render)}</ul>:
-    <div className="mt-2 space-y-2"><p className="text-sm text-body">You have not joined any groups.</p><a href="#browse-open-groups" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-2">Browse groups</a></div>}
+    <div className="mt-2 space-y-2"><p className="text-sm text-body">You have not joined any groups.</p><TextLink href="#browse-open-groups" className="inline-flex min-h-11 items-center">Browse groups</TextLink></div>}
   </section>
-  <section id="browse-open-groups" aria-label="Open groups"><h2 className="text-lg font-semibold">Open groups</h2>
+  <section id="browse-open-groups" aria-label="Open groups"><Heading level={2} size="lg">Open groups</Heading>
    {open.length?<ul className="mt-2 border-t border-border">{open.map(render)}</ul>:
     <p className="mt-2 text-sm text-body">No groups are open for joining right now.</p>}
   </section>

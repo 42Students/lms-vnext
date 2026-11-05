@@ -11,6 +11,8 @@ import { Alert } from "@/components/ui/alert";
 import { TpoDueFollowupWorkspace } from "@/components/tpo/tpo-due-followup-workspace";
 import { getTpoDueFollowupQueue } from "@/modules/placements/tpo-followup-queue-service";
 import { tpoFollowupQueueHref,tpoFollowupQueueExportHref } from "@/modules/placements/tpo-followup-queue-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 const FOLLOWUP_SCOPES=["MINE","TEAM"] as const;
@@ -41,8 +43,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       <PageHeader eyebrow="TPO · Recruiter relationships" title="Follow-ups due"
         description="Schedule recruiter follow-ups and log completed outcomes using registered CRM data."
         actions={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-          {data ? <a href={tpoFollowupQueueExportHref({scope,window,q})}
-            className="lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export filtered follow-ups CSV</a> : null}
+          {data ? <ButtonLink variant="secondary" href={tpoFollowupQueueExportHref({scope,window,q})}>Export filtered follow-ups CSV</ButtonLink> : null}
           <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Back to recruiter leads</Link>
         </div>}
       />
@@ -50,14 +51,14 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       <nav aria-label="Follow-up ownership" className="flex min-w-0 flex-wrap gap-2">
         {FOLLOWUP_SCOPES.map(view=><Link key={view} href={tpoFollowupQueueHref({scope:view,window,q})}
           aria-current={view===scope?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-[rgba(38,186,199,0.07)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           {view==="MINE"?"My Work":"Placement Team"}
         </Link>)}
       </nav>
       <nav aria-label="Follow-up date window" className="flex min-w-0 flex-wrap gap-2">
         {FOLLOWUP_WINDOWS.map(view=><Link key={view} href={tpoFollowupQueueHref({scope,window:view,q})}
           aria-current={view===window?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-[rgba(38,186,199,0.07)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           {view==="DUE"?"Due now":"Next 7 days"}
         </Link>)}
       </nav>
@@ -74,7 +75,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       {data ? <><TpoDueFollowupWorkspace data={data} />
         <div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"><span className="text-body">Showing {(data.total===0?0:(data.page-1)*data.pageSize+1).toLocaleString("en-IN")}–{Math.min(data.total,data.page*data.pageSize).toLocaleString("en-IN")} of {data.total.toLocaleString("en-IN")} matching tasks · page {data.page} of {data.totalPages}</span>{data.totalPages > 1 ? <Pagination label="Follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>tpoFollowupQueueHref({scope,window,q,page})}/> : null}</div></> : (
         <Alert tone="warning" className="border-t border-border">
-          <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recruiter follow-ups unavailable</h2>
+          <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Recruiter follow-ups unavailable</Heading>
           <p className="mt-2 text-sm text-body leading-[22px]">
             DB09 must be verified before recruiter follow-ups can be loaded or changed.
             Unavailable records are not counted as zero.

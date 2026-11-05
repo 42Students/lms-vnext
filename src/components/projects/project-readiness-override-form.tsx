@@ -11,6 +11,7 @@ import { apiFetch } from "@/lib/api-fetch";
 import { projectReadinessLegacyCopy as copy } from "@/modules/projects/readiness-override-copy";
 import type { ReadinessOverrideState } from "@/modules/projects/readiness-override-model";
 import { Radio } from "@/components/ui/radio";
+import { Heading } from "@/components/ui/heading";
 
 export function ProjectReadinessOverrideForm({
   projectId,
@@ -115,7 +116,7 @@ export function ProjectReadinessOverrideForm({
   return (
     <>
       <form onSubmit={requestSave} className={compactLayout?"min-w-0 space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]":"min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-5)]"}>
-        {compactLayout?null:<h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{copy.overrideTitle}</h2>}
+        {compactLayout?null:<Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">{copy.overrideTitle}</Heading>}
         {feedback&&!confirmOpen ? <Alert tone={feedback === copy.updated ? "success" : "error"} role={feedback === copy.updated ? "status" : "alert"}>{feedback}</Alert> : null}
         {liveHasSubmission && state !== "CLEAR" ? (
           <Alert tone="warning">

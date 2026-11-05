@@ -25,6 +25,7 @@ import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-act
 import {groupTpoBulkExceptions} from "@/modules/placements/tpo-bulk-exception-groups";
 import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,TPO_BULK_VIEW_LIMIT,
   type TpoBulkUiRow,matchTpoBulkRollNumbers} from "@/modules/placements/tpo-bulk-ui-model";
+import { Heading } from "@/components/ui/heading";
 
 type Action="ELIGIBLE"|"INELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE"|"SEND_MESSAGE"|"MOVE_TEST"|"MOVE_INTERVIEW";
 type PreviewPlan={
@@ -179,7 +180,7 @@ export function TpoBulkActionPanel({bulkTarget:target,jobId,rows,allRows,viewCou
  if(rows.length===0)return null;
  return <section aria-label={target==="STUDENTS"?"Bulk student actions":"Bulk application actions"}
    className="min-w-0 space-y-4 border-y border-border py-4">
-  <div><h2 className="font-semibold text-foreground">Actions · {target==="STUDENTS"?"Students":"Applications"}</h2>
+  <div><Heading level={2} className="text-foreground">Actions · {target==="STUDENTS"?"Students":"Applications"}</Heading>
    <p className="mt-1 text-sm text-body">
     Select eligible rows or act on all matching records in this filtered view (in verified batches of up to 200 per preview).
     Confirmation rechecks permission and versions; existing decisions are audited.
@@ -289,7 +290,7 @@ export function TpoBulkActionPanel({bulkTarget:target,jobId,rows,allRows,viewCou
     To correct a result, open the applicant and record a new reviewed decision.
    </p>:null}
   <section aria-label="Actions window" className="min-w-0 space-y-3 border-t border-border pt-4">
-   <h3 className="font-semibold">Actions</h3>
+   <Heading level={3}>Actions</Heading>
    <p className="text-sm text-body">Check how many selected rows can receive each action before you confirm any change.</p>
    {target==="STUDENTS"&&note.trim().length<3?<p className="text-xs text-muted-foreground">To include “Make ineligible” in the action counts, enter an ineligibility reason of at least 3 characters. No eligibility is changed while checking counts.</p>:null}
    <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||safeSelected.length===0}
@@ -382,7 +383,7 @@ export function TpoBulkActionPanel({bulkTarget:target,jobId,rows,allRows,viewCou
      {" "}{outcomes.filter(item=>item.status!=="updated").length} not applied
     </p>
     {exceptionGroups.length>0?<div aria-label="Not applied by reason" className="min-w-0 space-y-2 border-b border-border py-3">
-     <h3 className="text-sm font-semibold">Not applied by reason</h3>
+     <Heading level={3} size="sm">Not applied by reason</Heading>
      <ul className="space-y-2 text-sm">{exceptionGroups.map(group=><li key={group.reason}>
       <p className="font-semibold">{group.reason} ({group.count})</p>
       <p className="break-words text-body">{group.names.join(", ")}{group.count>group.names.length?", and "+(group.count-group.names.length)+" more":""}</p>

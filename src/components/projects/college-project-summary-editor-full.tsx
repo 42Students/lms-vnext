@@ -12,6 +12,7 @@ import { projectSummaryRefreshDecision } from "@/modules/projects/project-summar
 import {useEffect,useRef,useState} from "react";
 import {usePathname,useRouter} from "next/navigation";
 import Link from "next/link";
+import { Heading } from "@/components/ui/heading";
 export type SummaryProject={
  id:string;collegeId:string;title:string;summary:string|null;status:string;updatedAt:Date;
  progressPercent:number;phase:string|null;dueLabel:string|null;courseLabel:string|null;sectionId:string|null;
@@ -180,7 +181,7 @@ export function CollegeProjectSummaryEditorFull({
   <div className="flex flex-wrap items-center justify-between gap-3">
     <div>
       <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Workspace settings</p>
-      <h2 className="mt-1 text-lg font-semibold text-foreground">Basic info</h2>
+      <Heading level={2} size="lg" className="mt-1 text-foreground">Basic info</Heading>
     </div>
     <Button variant="secondary" type="button"
       aria-expanded={open} onClick={()=>open?discard.requestClose():setOpen(true)}>
@@ -190,7 +191,7 @@ export function CollegeProjectSummaryEditorFull({
    <div className="grid gap-3 md:grid-cols-2">
     {field("Workspace title","title",160)}
     <p className="col-span-full text-xs text-muted-foreground" aria-live="polite">{form.title.length}/160 characters</p>
-    <h3 className="col-span-full border-t border-border pt-3 font-semibold text-foreground">Status</h3>
+    <Heading level={3} className="col-span-full border-t border-border pt-3 text-foreground">Status</Heading>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select className={style} aria-describedby="summary-status-help"
      value={form.status} onChange={e=>change("status",e.target.value)}>
       {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
@@ -206,7 +207,7 @@ export function CollegeProjectSummaryEditorFull({
      onChange={e=>change("progressPercent",Number(e.target.value))}/>
      {hasTaskData?<span id="project-summary-progress-help" className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
     </label>
-    <h3 className="col-span-full border-t border-border pt-3 font-semibold text-foreground">Schedule &amp; setup</h3>
+    <Heading level={3} className="col-span-full border-t border-border pt-3 text-foreground">Schedule &amp; setup</Heading>
     <div className="col-span-full grid min-w-0 gap-3 md:grid-cols-3">
       {field("Phase","phase",80)}{field("Due label","dueLabel",80)}
       {field("Course label","courseLabel",160)}
@@ -243,7 +244,7 @@ export function CollegeProjectSummaryEditorFull({
       </span>:null}
     </label>
    </div>
-   <h3 className="border-t border-border pt-3 font-semibold text-foreground">Content</h3>
+   <Heading level={3} className="border-t border-border pt-3 text-foreground">Content</Heading>
    {(["summary","blocker","nextAction"] as const).map(k=><label key={k} className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
     {k==="summary"?"Summary":k==="blocker"?"Blocker":"Next action"}
     <Textarea className="mt-1 w-full min-h-24" maxLength={Math.max(4000,form[k].length)}

@@ -17,6 +17,8 @@ import {
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPerformanceIntelligence } from "@/modules/placements/tpo-intelligence-service";
 import { tpoIntelligenceFiltersSchema } from "@/modules/placements/tpo-intelligence-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = { seasonId?: string | string[]; jobId?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -64,10 +66,10 @@ export default async function TpoPerformanceIntelligencePage({
         title="Company funnel and compensation"
         description="Observed applications and offer decisions by employer, plus explicitly defined annual CTC measures."
         actions={
-          <a href={csvHref}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 sm:w-auto text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          <ButtonLink variant="primary" href={csvHref}
+            className="w-full sm:w-auto">
             Export intelligence CSV
-          </a>
+          </ButtonLink>
         }
       />
       <ReportNavigation workspace={workspace} />
@@ -77,7 +79,7 @@ export default async function TpoPerformanceIntelligencePage({
         <EmptyState title="No placement season exists." description="No company funnel or package performance is inferred."/>
       ) : null}
       <section aria-label="Company funnel">
-        <h2 className="mb-2 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Company funnel</h2>
+        <Heading level={2} size="lg" className="mb-2 leading-[1.4] text-[var(--lms-heading)]">Company funnel</Heading>
         <p className="mb-4 text-sm text-body leading-[1.6]">
           Applicant denominator = distinct learners with SUBMITTED applications to
           this company in the selected season and drive scope. Numerator = distinct
@@ -104,7 +106,7 @@ export default async function TpoPerformanceIntelligencePage({
         />
       </section>
       <section aria-label="Compensation intelligence" className="space-y-4">
-        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Compensation intelligence</h2>
+        <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Compensation intelligence</Heading>
         <p className="text-sm text-body leading-[1.6]">
           Only current ACCEPTED, FULL_TIME offers qualify. Offer-based measures
           count offer versions; best-per-learner measures retain each learner&apos;s
@@ -125,7 +127,7 @@ export default async function TpoPerformanceIntelligencePage({
             ["Best-per-learner highest annual CTC", reportCurrency(compensation.uniqueLearnerBestHighestInr)],
           ] as const).map(([name, value]) => (
             <div key={name} className="min-w-0 border-b border-border py-3">
-              <h3 className="text-xs font-semibold text-muted-foreground">{name}</h3>
+              <Heading level={3} size="xs" className="text-muted-foreground">{name}</Heading>
               <p className="mt-2 text-xl font-bold tabular-nums text-foreground">{value}</p>
             </div>
           ))}

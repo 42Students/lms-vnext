@@ -10,6 +10,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
+import { Heading } from "@/components/ui/heading";
 
 type Path={id:string;courseName:string;cohortName:string;periodName:string};
  export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
@@ -60,14 +61,14 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
   }finally{lock.current=false;setPending(false);}
  }
  if(!paths.length)return <section aria-label="Create New Lesson" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
-  <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Create New Lesson</h2>
+  <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Create New Lesson</Heading>
   <Alert tone="warning" title="No courses in this college yet">
     Create a Course and an active Offering before adding its first Lesson.
     <Link href="/admin/courses" className="ml-2 font-semibold text-link underline">Go to Courses</Link>
   </Alert>
  </section>;
  return <section aria-label="Create New Lesson" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
-  <h2 className="mb-[var(--lms-space-4)] text-[18px] font-semibold text-[var(--lms-heading)]">Create New Lesson</h2>
+  <Heading level={2} size="lg" className="mb-[var(--lms-space-4)] text-[var(--lms-heading)]">Create New Lesson</Heading>
   <form aria-label="Create New Lesson" noValidate onSubmit={event=>void submit(event)} className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)]">
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
    <Input type="search" value={courseSearch} onChange={event=>setCourseSearch(event.target.value)}

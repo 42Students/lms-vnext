@@ -6,6 +6,7 @@ import { ModuleAccessHierarchyActions } from "@/components/admin/module-access-h
 import { requirePermission } from "@/modules/permissions/policy";
 import { getModuleAccessOverviewMetrics } from "@/modules/module-access/admin-overview-metrics-service";
 import SuperAdminCollegeModuleAccessPage from "@/app/(authenticated)/admin/features/[collegeId]/page";
+import { Heading } from "@/components/ui/heading";
 
 /** Legacy hierarchy editor follows the active college selector, not a
  * global list. The embedded college page exposes editable college,
@@ -41,7 +42,7 @@ export default async function SuperAdminModuleAccessPage({
     <section aria-label="Module Access selected-college summary" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <PageHeader eyebrow="Module Access" title="Optional module access hierarchy"
        description="Use this page for inherited Projects/Placements access below the college level. Review which rules are stored, inherited and locked." />
-      <h2 className="mt-3 text-sm font-semibold text-[var(--lms-heading)]">Effective access</h2>
+      <Heading level={2} size="sm" className="mt-3 text-[var(--lms-heading)]">Effective access</Heading>
       <div className="flex flex-wrap gap-5 text-sm text-body">
         <p><span className="font-semibold">Hierarchy scopes: </span><strong>8</strong> · Global · Organization · College · Department · Program · Batch · Class · Learner</p>
         {metrics.available ? <>

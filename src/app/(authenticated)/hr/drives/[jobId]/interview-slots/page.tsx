@@ -11,6 +11,7 @@ import {RecruiterInterviewSlotForm,RecruiterInterviewSlotActions} from "@/compon
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrInterviewSlots} from "@/modules/placements/hr-interview-slot-service";
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
+import { Heading } from "@/components/ui/heading";
 export default async function RecruiterInterviewSlots({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
@@ -45,7 +46,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
   <>
    <section id="propose-time-block" className="min-w-0 border-b border-border pb-4">
     <details open={slots.items.length===0} className="min-w-0">
-     <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Propose an interviewer time block</summary>
+     <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Propose an interviewer time block</summary>
      <div className="mt-3 min-w-0 space-y-3">
     {rounds.length===0?<Alert tone="warning">
      No pending or scheduled interview round is available for this drive.{" "}
@@ -60,7 +61,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     </details>
    </section>
    <section className="min-w-0 space-y-3">
-    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Time blocks ({slots.items.length})</h2>
+    <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Time blocks ({slots.items.length})</Heading>
     {slots.items.map(slot=><article key={slot.id} className="min-w-0 space-y-2 border-b border-border py-4">
      <p className="break-words font-semibold text-foreground">{when(slot.startAt)} – {when(slot.endAt)}</p>
      <p className="break-words [overflow-wrap:anywhere] text-sm text-body leading-[22px]">
@@ -80,7 +81,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
      </p>}
     </article>)}
     {!slots.items.length?<EmptyState title="No persisted employer time blocks for this drive."
-      action={<Link href="#propose-time-block" className="inline-flex min-h-11 items-center text-primary-text underline min-[768px]:min-h-9">Propose an interviewer time block</Link>} />:null}
+      action={<Link href="#propose-time-block" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Propose an interviewer time block</Link>} />:null}
    </section>
   </>
  </div>;

@@ -34,7 +34,7 @@ describe("UX-chat15-shell-activity-components-01",()=>{
   expect(s).toContain('size="icon"');
    expect(s).toContain('className="w-11 shrink-0 md:hidden"');
    const button=code("src/components/ui/button.tsx");
-   expect(button).toContain('max-[767px]:min-h-11 max-[767px]:min-w-11');
+   expect(button).toContain('max-md:min-h-11 max-md:min-w-11');
  });
  it("UX-shell-route-announcer-01 reports route changes without stealing focus on query-only updates",()=>{
   const s=code("src/components/shell/route-announcer.tsx");

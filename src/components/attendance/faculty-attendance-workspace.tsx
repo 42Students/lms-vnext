@@ -34,6 +34,7 @@ import {
   shiftIndiaAttendanceMonth,
 } from "@/modules/attendance/faculty-grid-model";
 import {SegmentedControl} from "@/components/ui/segmented-control";
+import { Heading } from "@/components/ui/heading";
 
 type Course = {
   deliveryId: string;
@@ -629,7 +630,7 @@ export function FacultyAttendanceWorkspace({
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)] [--legacy-attendance-panel-gap:var(--lms-space-4)]">
       {savedNotice?<Alert tone="success">{savedNotice}</Alert>:null}
-      {writeUnknown?<div role="alert" className="flex flex-wrap items-center gap-3 border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+      {writeUnknown?<div role="alert" className="flex flex-wrap items-center gap-3 border border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] p-3 text-sm text-[color:var(--lms-warning-strong)]">
         Attendance save status is unknown. Do not submit this roster again until it is reloaded.
         <Button type="button" size="sm" variant="secondary" onClick={()=>window.location.reload()}>
           Reload roster to verify
@@ -721,7 +722,7 @@ export function FacultyAttendanceWorkspace({
           <section aria-label="Monthly class health" className="learn-attendance-summary learn-attendance-summary--faculty border-b border-border pb-4">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h2 className="text-sm font-semibold text-body">Monthly class health</h2>
+                <Heading level={2} size="sm" className="text-body">Monthly class health</Heading>
                 <p className="mt-1 text-xs text-muted-foreground">
                   See each student&apos;s attendance day by day for this month.
                 </p>
@@ -756,7 +757,7 @@ export function FacultyAttendanceWorkspace({
           ) : (
             <section className="learn-attendance-grid-card min-w-0">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <div><h2 className="text-base font-semibold text-foreground">Monthly Attendance</h2>
+                <div><Heading level={2} size="base" className="text-foreground">Monthly Attendance</Heading>
                   <p className="mt-1 text-xs text-muted-foreground">See each student’s attendance day by day for this month.</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
@@ -813,11 +814,11 @@ export function FacultyAttendanceWorkspace({
               <Table scrollLabel="Faculty attendance monthly grid" className="min-w-[48rem]">
                 <caption className="sr-only">Attendance by student and day for {monthLabel}</caption>
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
-                  <tr><th scope="col" aria-label="Student name" className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-2" />
+                  <tr><th scope="col" aria-label="Student name" className="sticky left-0 z-(--lms-z-raised) bg-[var(--lms-table-header)] px-3 py-2" />
                     {calendarDays.map(day=><th scope="col" key={day.dayKey+"-weekday"} className={"min-w-16 px-2 py-2 text-center " + (new Date(day.dayKey + "T12:00:00+05:30").getUTCDay() === 0 ? "text-error" : "")} aria-label={day.dayKey}>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"})
                       .format(new Date(day.dayKey+"T12:00:00+05:30")).slice(0,1)}</th>)}
                   </tr>
-                  <tr><th scope="col" className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-2">Student Name</th>
+                  <tr><th scope="col" className="sticky left-0 z-(--lms-z-raised) bg-[var(--lms-table-header)] px-3 py-2">Student Name</th>
                     {calendarDays.map(day=><th scope="col" key={day.dayKey} className={"min-w-16 px-2 py-2 text-center " + (new Date(day.dayKey + "T12:00:00+05:30").getUTCDay() === 0 ? "text-error" : "")} title={day.sessions.map(session=>sessionTime(session)).join(" · ")}>{Number(day.dayKey.slice(-2))}
                       {day.sessions.length>1?<span className="ml-1 text-xs font-normal text-muted-foreground">×{day.sessions.length}</span>:null}</th>)}
                   </tr>
@@ -825,7 +826,7 @@ export function FacultyAttendanceWorkspace({
                 <tbody className="divide-y divide-border">
                   {allLearners.map((learner) => (
                     <tr key={learner.membershipId} className="[content-visibility:auto] [contain-intrinsic-size:auto_64px]">
-                      <th scope="row" className="sticky left-0 z-10 bg-surface px-3 py-3 text-left">
+                      <th scope="row" className="sticky left-0 z-(--lms-z-raised) bg-surface px-3 py-3 text-left">
                         <Button
                           type="button"
                           onClick={() => setSelectedLearnerId(learner.membershipId)}
@@ -880,7 +881,7 @@ export function FacultyAttendanceWorkspace({
                                   aria-label={state.label + ". Show session attendance details"}>
                                   <StatusBadge tone={tone}>{state.ratio ?? state.code}</StatusBadge>
                                 </summary>
-                                <div className="absolute bottom-full left-0 z-30 min-w-48 rounded-lg border border-border bg-surface p-2 text-xs shadow-lg">
+                                <div className="absolute bottom-full left-0 z-(--lms-z-sticky-header) min-w-48 rounded-lg border border-border bg-surface p-2 text-xs shadow-lg">
                                   <Table>
                                     <thead><tr><th scope="col" className="pr-3">Session Time</th><th scope="col">Attendance</th></tr></thead>
                                     <tbody>{day.sessions.map(session => {
@@ -910,9 +911,9 @@ export function FacultyAttendanceWorkspace({
             </section>
           )}
           <section aria-label="Attendance threshold guidance" className="mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
-              <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
+              <Heading level={3} size="sm" className="text-[var(--lms-heading)]">
                 College attendance guidance: {attendanceRisk.threshold}%
-              </h3>
+              </Heading>
               <p className="mt-2 text-sm text-body">
                 {attendanceRisk.below.length} below guidance · {attendanceRisk.meets} meeting guidance ·
                 {" "}{attendanceRisk.unknown.length} without recorded attendance
@@ -995,7 +996,7 @@ export function FacultyAttendanceWorkspace({
                 </div>
                 {selectedSession ? (
                   <div className="border-l-2 border-border pl-[var(--lms-space-3)] text-sm text-body">
-                    <h2 className="m-0 font-semibold text-foreground">Attendance Session</h2>
+                    <Heading level={2} className="m-0 text-foreground">Attendance Session</Heading>
                     <p className="mt-1 font-medium text-foreground">
                       {legacySessionDate(selectedSession.startsAt)}
                     </p>
@@ -1079,7 +1080,7 @@ export function FacultyAttendanceWorkspace({
               <div className="mt-[var(--lms-space-4)] max-h-[420px] min-w-0 overflow-auto border-y border-border"
                 aria-label="Attendance roster" role="region" tabIndex={0}>
                 <Table className="min-w-[500px] table-fixed">
-                  <thead className="sticky top-0 z-10 border-b border-border bg-surface text-xs font-semibold text-muted-foreground">
+                  <thead className="sticky top-0 z-(--lms-z-raised) border-b border-border bg-surface text-xs font-semibold text-muted-foreground">
                     <tr><th scope="col" className="w-1/2 px-3 py-2">Student Name</th><th scope="col" className="w-1/2 px-3 py-2">Status</th></tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -1105,8 +1106,8 @@ export function FacultyAttendanceWorkspace({
                           <div className="grid grid-cols-2 gap-2 [&>button]:w-full" role="group" aria-label={"Attendance for "+learnerName(learner)}>
                               <Button
                                 size="md"
-                                className={"min-h-11 rounded-lg border px-[14px] text-[13px] font-semibold md:min-h-9 " +
-                                  (!isAbsent ? "!border-[rgba(34,139,83,0.28)] !bg-[rgba(34,139,83,0.08)] !text-[color:var(--lms-success-strong)]" : "!border-[color:var(--lms-neutral-300)] !bg-[color:var(--lms-neutral-50)] !text-[color:var(--lms-text-muted)]")}
+                                className={"min-h-11 rounded-lg border px-[16px] text-[13px] font-semibold md:min-h-9 " +
+                                  (!isAbsent ? "!border-[color-mix(in_srgb,var(--lms-success-strong)_28%,transparent)] !bg-[color-mix(in_srgb,var(--lms-success-strong)_8%,transparent)] !text-[color:var(--lms-success-strong)]" : "!border-[color:var(--lms-neutral-300)] !bg-[color:var(--lms-neutral-50)] !text-[color:var(--lms-text-muted)]")}
                                 variant="secondary"
                                 disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={!isAbsent}
@@ -1124,8 +1125,8 @@ export function FacultyAttendanceWorkspace({
                               </Button>
                               <Button
                                 size="md"
-                                className={"min-h-11 rounded-lg border px-[14px] text-[13px] font-semibold md:min-h-9 " +
-                                  (isAbsent ? "!border-[rgba(220,38,38,0.28)] !bg-[rgba(220,38,38,0.08)] !text-[color:var(--lms-error)]" : "!border-[color:var(--lms-neutral-300)] !bg-[color:var(--lms-neutral-50)] !text-[color:var(--lms-text-muted)]")}
+                                className={"min-h-11 rounded-lg border px-[16px] text-[13px] font-semibold md:min-h-9 " +
+                                  (isAbsent ? "!border-[color-mix(in_srgb,var(--lms-error)_28%,transparent)] !bg-[color-mix(in_srgb,var(--lms-error)_8%,transparent)] !text-[color:var(--lms-error)]" : "!border-[color:var(--lms-neutral-300)] !bg-[color:var(--lms-neutral-50)] !text-[color:var(--lms-text-muted)]")}
                                 variant="secondary"
                                 disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={isAbsent}
@@ -1166,7 +1167,7 @@ export function FacultyAttendanceWorkspace({
                   {attendanceConfirmation ?? "No recorded marks have changed. Choose a changed mark to correct attendance."}
                 </p>
               ) : null}
-              <div className="take-attendance-panel__submit sticky bottom-0 z-20 mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-t border-border bg-surface px-0 py-[var(--lms-space-3)] md:static md:flex-row md:items-center md:justify-between">
+              <div className="take-attendance-panel__submit sticky bottom-0 z-(--lms-z-sticky-inline) mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-t border-border bg-surface px-0 py-[var(--lms-space-3)] md:static md:flex-row md:items-center md:justify-between">
                 <span className="text-sm font-semibold text-body">
                   {absent.size} absent ·{" "}
                   {Math.max(
@@ -1265,7 +1266,7 @@ export function FacultyAttendanceWorkspace({
                 </div>
               ))}
             </div>
-            <h3 className="text-base font-semibold text-[var(--lms-heading)]">Session history</h3>
+            <Heading level={3} size="base" className="text-[var(--lms-heading)]">Session history</Heading>
             {learnerDetail.rows.length === 0 ? (
               <p className="text-sm text-body">No class sessions are scheduled for this month.</p>
             ) : (

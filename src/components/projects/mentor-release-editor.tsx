@@ -7,6 +7,7 @@ import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
+import { Heading } from "@/components/ui/heading";
 type Release={id:string;title:string;description:string|null;targetDate?:string|null;status:string;updatedAt:Date};
 type Readiness={readyToShip:boolean;completedSprintCount:number;
  committedPoints:number;completedPoints:number};
@@ -118,7 +119,7 @@ export function MentorReleaseEditor({
    onClick={()=>{if(open)requestClose();else setOpen(true);}}>{release?"Edit release":"Add release"}</Button>:null}
   {open?<form id={editorId} aria-labelledby={editorId+"-heading"}
     onSubmit={event=>{event.preventDefault();void save();}} className="space-y-3 border-t border-border pt-3">
-   <h3 id={editorId+"-heading"} className="text-sm font-semibold leading-[22px]">{release?"Edit release":"New release"}</h3>
+   <Heading level={3} size="sm" id={editorId+"-heading"} className="leading-[22px]">{release?"Edit release":"New release"}</Heading>
    <label className="block text-[13px] font-semibold">Title
     <Input className="mt-1 min-h-11 w-full md:min-h-9" maxLength={200}
      required value={title} onChange={e=>setTitle(e.target.value)}/></label>
@@ -129,7 +130,7 @@ export function MentorReleaseEditor({
     <Input type="date" className="mt-1 min-h-11 w-full md:min-h-9"
      value={targetDate} onChange={e=>setTargetDate(e.target.value)}/>
    </label>
-   <div className="sticky bottom-0 z-10 flex flex-wrap gap-2 border-t border-[var(--lms-canvas-border)] bg-surface py-3">
+   <div className="sticky bottom-0 z-(--lms-z-raised) flex flex-wrap gap-2 border-t border-[var(--lms-canvas-border)] bg-surface py-3">
     <Button variant="primary" type="submit" disabled={pending||!title.trim()}
      className="min-h-11 w-auto px-3 py-2 md:min-h-9">
      {pending?"Saving…":"Save release"}</Button>

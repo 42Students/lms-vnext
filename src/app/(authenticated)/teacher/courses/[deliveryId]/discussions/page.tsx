@@ -4,6 +4,7 @@ import {courseDiscussionMessages} from "@/db/schema";
 import {and,eq,gte,isNull,sql} from "drizzle-orm";
 import { LearnerCourseDiscussion } from "@/components/courses/learner-course-discussion";
 import { getFacultyCourseWorkspace } from "@/modules/courses/faculty-course-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function FacultyCourseDiscussionsPage({
   params,
@@ -28,9 +29,9 @@ export default async function FacultyCourseDiscussionsPage({
   return (
     <div className="faculty-prototype-discussion min-w-0 max-w-full">
       <section className="min-w-0 overflow-hidden rounded-[12px] border border-[color:var(--lms-border)]">
-       <header className="flex min-w-0 flex-wrap items-center justify-between gap-4 border-b border-[color:var(--lms-border)] px-[18px] py-4">
+       <header className="flex min-w-0 flex-wrap items-center justify-between gap-4 border-b border-[color:var(--lms-border)] px-[20px] py-4">
         <div className="min-w-0">
-         <h2 className="text-base font-bold text-heading">Course discussions · {workspace.course.sectionName}</h2>
+         <Heading level={2} size="base" className="text-heading">Course discussions · {workspace.course.sectionName}</Heading>
          <p className="mt-1 text-xs text-body">Everyone in {workspace.course.sectionName} who takes this course sees these.
           Other classes have their own.</p>
         </div>

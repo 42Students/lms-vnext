@@ -60,8 +60,8 @@
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody tr):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-white) !important;
-  box-shadow: inset 0 -1px 0 var(--lms-neutral-200);
-  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1);
+  box-shadow: var(--lms-shadow-sm);
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 /* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -80,12 +80,12 @@
 /* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody tr:hover):not(:where([data-unskin], [data-unskin] *)) {
-  background-color: rgba(38, 186, 199, 0.045) !important;
+  background-color: color-mix(in srgb, var(--lms-primary) 5%, transparent) !important;
 }
 /* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(tbody tr:focus-within):not(:where([data-unskin], [data-unskin] *)) {
-  background-color: rgba(38, 186, 199, 0.045) !important;
+  background-color: color-mix(in srgb, var(--lms-primary) 5%, transparent) !important;
 }
 /* Legacy: components___common.scss:711-713 (last row without separator).
  * Inset paint rather than border-width avoids moving any table row.
@@ -117,7 +117,7 @@
   font-size: 14px !important;
   font-weight: 400 !important;
   box-shadow: none;
-  transition: background-color 200ms ease, border-color 200ms ease,
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease),
     box-shadow 200ms ease;
 }
 
@@ -165,20 +165,20 @@
     select, textarea
   ):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   border-color: var(--lms-primary) !important;
-  box-shadow: 0 0 0 2px rgba(38, 186, 199, 0.15) !important;
+  box-shadow: var(--lms-focus-ring) !important;
 }
 /* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea)[aria-invalid="true"]:not(:where([data-unskin], [data-unskin] *)) {
   border-color: var(--lms-error) !important;
-  background-color: rgba(239, 68, 68, 0.06) !important;
+  background-color: color-mix(in srgb, var(--lms-error) 6%, transparent) !important;
 }
 /* Legacy: components___form.scss:136-143 (red invalid focus). */
 /* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]), select, textarea)[aria-invalid="true"]:not(:where([data-unskin], [data-unskin] *)):focus-visible {
   border-color: var(--lms-error) !important;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+  box-shadow: var(--lms-focus-ring-error) !important;
 }
 
 /* READ-ONLY / DISABLED FIELDS
@@ -220,9 +220,9 @@
   color: var(--lms-on-primary) !important;
   font-family: inherit !important;
   font-size: 14px !important;
-  font-weight: 650 !important;
+  font-weight: 600 !important;
   box-shadow: none !important;
-  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1),
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease),
     border-color 150ms cubic-bezier(0.2, 0, 0, 1),
     color 150ms cubic-bezier(0.2, 0, 0, 1),
     box-shadow 150ms cubic-bezier(0.2, 0, 0, 1);
@@ -254,7 +254,7 @@
 /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="option"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
-  box-shadow: 0 0 0 3px rgba(38, 186, 199, 0.35) !important;
+  box-shadow: var(--lms-focus-ring) !important;
 }
 /* Legacy reduced motion: components___antddesign.scss:184-189. */
 @media (prefers-reduced-motion: reduce) {
@@ -405,7 +405,7 @@
   :where(a:not([data-slot="button"]):not([role="tab"])):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-primary) !important;
   font-weight: 500 !important;
-  transition: color 150ms cubic-bezier(0.2, 0, 0, 1);
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 /* Legacy refs: components___common.scss:68-75; components___accessibility.scss:19-23 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -420,7 +420,7 @@
 /* Legacy refs: components___common.scss:68-75; components___accessibility.scss:19-23 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(a:not([data-slot="button"]):not([role="tab"])):not(:where([data-unskin], [data-unskin] *)):focus-visible {
-  box-shadow: 0 0 0 2px rgba(26, 149, 161, 0.12) !important;
+  box-shadow: var(--lms-focus-ring) !important;
 }
 
 /* FORM LABELS
@@ -486,7 +486,7 @@
   background-color: var(--lms-white) !important;
   border-color: var(--lms-neutral-200) !important;
   border-radius: 10px !important;
-  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1);
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 /* Legacy refs: components___common.scss:1322-1326; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -496,7 +496,7 @@
   font-weight: 600 !important;
   border-color: var(--lms-neutral-200) !important;
   border-radius: 10px !important;
-  transition: color 150ms cubic-bezier(0.2, 0, 0, 1),
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease),
     background-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 /* Legacy: components___variables.scss:10-13 (var(--lms-primary-subtle) hover fill,
@@ -573,7 +573,7 @@
 /* Legacy refs: components___common.scss:1322-1326; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(summary, [role="button"]:not(button)):not(:where([data-unskin], [data-unskin] *)):focus-visible {
-  box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12) !important;
+  box-shadow: var(--lms-focus-ring) !important;
 }
 /* Legacy: components___accessibility.scss:13-23,
  * components___form.scss:23-36 (pointer focus reset, keyboard kept).
@@ -582,7 +582,7 @@
 /* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input, select, textarea, summary):not(:where([data-unskin], [data-unskin] *)):focus-visible {
-  transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1),
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease),
     box-shadow 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 
@@ -628,13 +628,13 @@
 
 /* NATIVE DIALOG BACKDROP
  * Legacy: components___antddesign.scss:143-146 (drawer mask uses
- * rgba(30,54,63,.10)); role dialogs use their own chat-16 overlay/backdrop
+ * color-mix(in srgb, var(--lms-brand-dark) 10%, transparent)); role dialogs use their own chat-16 overlay/backdrop
  * mechanisms and are intentionally unaffected.
  */
 /* Legacy refs: components___antddesign.scss:1033-1061,143-146; components___variables.scss:224-232 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(dialog):not(:where([data-unskin], [data-unskin] *))::backdrop {
-  background-color: rgba(30, 54, 63, 0.1) !important;
+  background-color: color-mix(in srgb, var(--lms-brand-dark) 10%, transparent) !important;
 }
 
 /* Choice labels are BODY TEXT, not muted form captions.
@@ -655,19 +655,19 @@
 
 /* Explicit legacy error class and user-touched native validity:
  * components___form.scss:136-143 (.ln-in2.error: var(--lms-error) border,
- * rgba(239,68,68,.06) background, 20% focus halo). Untouched :invalid
+ * color-mix(in srgb, var(--lms-error) 6%, transparent) background, 20% focus halo). Untouched :invalid
  * is intentionally left alone to avoid displaying errors on empty forms.
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), select, textarea):is(.error, :user-invalid):not(:where([data-unskin], [data-unskin] *)) {
   border-color: var(--lms-error) !important;
-  background-color: rgba(239, 68, 68, 0.06) !important;
+  background-color: color-mix(in srgb, var(--lms-error) 6%, transparent) !important;
 }
 /* Legacy: components___form.scss:140-143 (2px red 20% active halo). */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]), select, textarea):is(.error, :user-invalid):not(:where([data-unskin], [data-unskin] *)):focus-visible {
   border-color: var(--lms-error) !important;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+  box-shadow: var(--lms-focus-ring-error) !important;
 }
 /* Legacy: components___antddesign.scss:178-185 (loading actions retain
  * the teal fill while being inert, rather than appearing disabled gray);
@@ -758,15 +758,15 @@
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where([data-slot="input-group"]:focus-within):not(:where([data-unskin], [data-unskin] *)) {
   border-color: var(--lms-primary) !important;
-  box-shadow: 0 0 0 2px rgba(38, 186, 199, 0.15) !important;
+  box-shadow: var(--lms-focus-ring) !important;
 }
 /* Legacy: components___form.scss:136-143 (6% invalid fill, red 20% halo). */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where([data-slot="input-group"]:has([aria-invalid="true"])):not(:where([data-unskin], [data-unskin] *)) {
   border-color: var(--lms-error) !important;
-  background-color: rgba(239, 68, 68, 0.06) !important;
+  background-color: color-mix(in srgb, var(--lms-error) 6%, transparent) !important;
 }
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where([data-slot="input-group"]:has([aria-invalid="true"]):focus-within):not(:where([data-unskin], [data-unskin] *)) {
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+  box-shadow: var(--lms-focus-ring-error) !important;
 }

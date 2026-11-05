@@ -4,6 +4,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
 import type {EngageColumn} from "@/modules/placements/tpo-recruiter-table-view-model";
+import { Heading } from "@/components/ui/heading";
 type SavedView={
  id:string;name:string;note:string|null;query_json:Record<string,string>;
  columns_json:EngageColumn[];pinned:boolean;updated_at:string;
@@ -84,7 +85,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
  }
  const active=views.find(view=>view.id===selected);
  return <section aria-label="Saved recruiter views" className="min-w-0 space-y-3 border-y border-border py-3">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Saved views</h2>
+  <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Saved views</Heading>
   {ready===null?<p role="status" className="text-sm leading-[22px]">Loading views…</p>:
    !ready?<p role="status" className="text-sm leading-[22px]">Saved views are unavailable until storage is registered.</p>:<>
    <div className="grid min-w-0 grid-cols-1 items-center gap-2 md:grid-cols-2 xl:grid-cols-3">

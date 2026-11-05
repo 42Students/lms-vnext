@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Heading } from "@/components/ui/heading";
 /** COL-placements-18: College Admin routes only—never link College Admin into TPO-gated reports. */
 export function CollegeReportNavigation(){
  const links=[
@@ -8,7 +9,7 @@ export function CollegeReportNavigation(){
   {href:"/college/placements/student-lookup",label:"Student placement lookup"},
  ] as const;
  return <nav aria-label="College placement reports" className="space-y-2 print:hidden">
-  <h2 className="font-semibold">Placement reports</h2>
+  <Heading level={2}>Placement reports</Heading>
   <p className="text-xs text-muted-foreground">These reports use College Admin access and contain only data recorded for your college.</p>
   <div className="flex flex-wrap gap-3">
    {links.map(link=><Link key={link.href} href={link.href}

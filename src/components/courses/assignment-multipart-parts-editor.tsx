@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 
 import {Button} from "@/components/ui/button";
 import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
+import { Heading } from "@/components/ui/heading";
 export type AssignmentLinkPart={kind:"REPOSITORY_LINK"|"EXTERNAL_LINK";url:string;caption:string};
 
 export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksChange,disabled,allowText=true,allowedLinkKinds=["REPOSITORY_LINK","EXTERNAL_LINK"]}:{
@@ -12,8 +13,8 @@ export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksC
  allowText?:boolean;allowedLinkKinds?:readonly AssignmentLinkPart["kind"][];
 }){
  return <section aria-label="Additional submission parts" className="space-y-3 rounded-xl border border-border bg-surface-subtle p-3">
-  <h4 className="text-sm font-semibold text-foreground">{allowText&&allowedLinkKinds.length
-   ?"Written response and links (optional)":allowText?"Written response (optional)":"Submission links (optional)"}</h4>
+  <Heading level={4} size="sm" className="text-foreground">{allowText&&allowedLinkKinds.length
+   ?"Written response and links (optional)":allowText?"Written response (optional)":"Submission links (optional)"}</Heading>
   {allowText?<LearnerRichResponseEditor value={text} onChange={onTextChange} disabled={disabled}/>:null}
   {allowedLinkKinds.length>0&&links.map((link,index)=><div key={index} className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
    <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Link type

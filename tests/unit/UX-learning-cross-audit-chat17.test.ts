@@ -87,7 +87,7 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     expect(p).toContain('<Button variant="ghost" type="button"');
     expect(p).toContain('aria-label={"Open notification: "');
     const button=readComponent("ui/button.tsx");
-    expect(button).toContain("max-[767px]:min-h-11");
+    expect(button).toContain("max-md:min-h-11");
     expect(p).not.toContain('className="min-h-10 text-left');
   });
   it("UX-learn-courses-02 course list has a 44px Show more courses action (LX-08)", () => {
@@ -168,7 +168,7 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     expect(p).toContain('aria-label="Jump to month"');
     expect(p).toContain("max-md:min-h-11");
     const input=readComponent("ui/input.tsx");
-    expect(input).toContain("max-[767px]:min-h-11");
+    expect(input).toContain("max-md:min-h-11");
     expect(input).toContain("text-[var(--lms-font-base)]");
   });
   it("UX-learn-schedule-03 guards reschedule actions with 44px targets (LX-16)", () => {

@@ -16,6 +16,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { StatusBadge } from "@/components/ui/status-badge";
 import Link from "next/link";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:string;basePath:string}){
   // A forged project UUID, expired role or interrupted DB read must never
   // produce a raw server error or expose another college's readiness values.
@@ -85,9 +86,9 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Current readiness</p>
-          <h2 id="workspace-readiness-title" className="mt-1 text-lg font-semibold text-[var(--lms-heading)]">
+          <Heading level={2} size="lg" id="workspace-readiness-title" className="mt-1 text-[var(--lms-heading)]">
             {isReady?"This workspace is ready to submit":"This workspace still has readiness gaps"}
-          </h2>
+          </Heading>
         </div>
         <StatusBadge tone={isReady?"success":"error"}>{isReady?"Ready":"Not ready"}{override.state?" (override)":""}</StatusBadge>
       </div>
@@ -137,7 +138,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       </dl>
       {readiness.legacyReadiness.advisoryWarnings.length>0?
         <aside role="note" aria-label="Nonblocking readiness advisories"
-          className="border-l-[3px] border-warning bg-[var(--lms-warning-subtle)] px-3 py-2 text-sm text-body">
+          className="border-l-2 border-warning bg-[var(--lms-warning-subtle)] px-3 py-2 text-sm text-body">
           <strong>Additional evidence to review (does not block submission)</strong>
           <ul className="mt-1 list-disc pl-5">
             {readiness.legacyReadiness.advisoryWarnings.map(note=><li key={note}>{note}</li>)}

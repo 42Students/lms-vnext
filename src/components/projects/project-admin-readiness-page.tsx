@@ -29,6 +29,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {
   listProjectAdminSnapshots,
 } from "@/modules/projects/admin-insights-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function one(
   value: string | string[] | undefined,
@@ -200,12 +202,11 @@ export async function ProjectAdminReadinessPage({
         </nav>:null}
       </Disclosure>
       <div className="flex min-w-0 flex-wrap items-center justify-end">
-        {visibleOverrides.length&&!overridesFailed?<a download href={exportHref}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        {visibleOverrides.length&&!overridesFailed?<ButtonLink variant="secondary" download href={exportHref}>
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             strokeWidth="1.8" className="size-4"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></svg>
           Export displayed page CSV
-        </a>:<span aria-disabled="true" className="inline-flex min-h-11 cursor-not-allowed items-center rounded-[var(--lms-control-radius)] border border-border px-3.5 text-sm text-muted-foreground opacity-60 md:min-h-9">
+        </ButtonLink>:<span aria-disabled="true" className="inline-flex min-h-11 cursor-not-allowed items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-muted-foreground opacity-60 md:min-h-9">
           Export displayed page CSV
         </span>}
       </div>
@@ -228,7 +229,7 @@ export async function ProjectAdminReadinessPage({
             Manage override
           </Link>
           <section aria-label="Current readiness" className="space-y-3 border-y border-border py-4">
-            <h3 className="text-base font-semibold">Current readiness</h3>
+            <Heading level={3} size="base">Current readiness</Heading>
             {selectedReadiness?<>
               <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                 <div><dt className="text-xs font-semibold text-body">State</dt>
@@ -289,7 +290,7 @@ export async function ProjectAdminReadinessPage({
               action={<Link href={readinessPath+"?projectId="+encodeURIComponent(selected)}
                 className="text-link underline">Retry readiness</Link>}/>}
           </section>
-          <h3 className="text-sm font-semibold">Releases</h3>
+          <Heading level={3} size="sm">Releases</Heading>
           {releaseUnavailable?<Banner tone="warning" role="alert">Couldn't load releases. Retry this page to review release readiness.</Banner>:
            !releaseContext.length ? <EmptyState title="No releases defined" description="No releases defined on this project."/> :
             <DataTable<(typeof releaseContext)[number]>
@@ -309,7 +310,7 @@ export async function ProjectAdminReadinessPage({
         </> : null}
       </Disclosure>
       {selected && selectedReadiness?<section id="manual-override" aria-label="Manual override" className="scroll-mt-24 space-y-3 border-t border-border pt-4">
-        <h2 className="text-lg font-semibold text-foreground">Manual override</h2>
+        <Heading level={2} size="lg" className="text-foreground">Manual override</Heading>
         <p className="text-sm text-muted-foreground">The override changes submission gating and is recorded in the project audit trail.</p>
         <ProjectReadinessOverrideForm projectId={selected}
           initialState={selectedReadiness.readinessOverride.state}

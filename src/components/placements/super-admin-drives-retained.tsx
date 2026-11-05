@@ -21,7 +21,7 @@ export function SuperAdminDrivesRetained({children,failed}:{
    <p>The drive list may be out of date. Actions are unavailable until the college-scoped refresh succeeds.</p>
    <SuperAdminDrivesRetryButton/>
   </Alert>
-  <div inert aria-label="Previous drive list, read-only until refresh" className="opacity-75">{lastGood}</div>
+  <div inert aria-label="Previous drive list, read-only until refresh" className="opacity-80">{lastGood}</div>
  </div>;
 }
 

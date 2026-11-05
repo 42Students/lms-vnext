@@ -15,6 +15,7 @@ import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {getAssignedProjectTemplateDetail} from "@/modules/projects/template-service";
 import {publishableProjectTemplateBlueprintSchema} from "@/modules/projects/validation";
+import { Heading } from "@/components/ui/heading";
 
 const subtitle="Maintained by 42Students — use this template to start a workspace.";
 const backHref="/college/projects/templates";
@@ -34,7 +35,7 @@ export default async function CollegeProjectTemplateDetailPage({
   actions={<div className="flex min-w-0 flex-wrap gap-2">
    {backAction}
    {useAction?<Link href={"/college/projects/create?templateId="+encodeURIComponent(templateId)}
-    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none"
      stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
     Use this template
@@ -99,7 +100,7 @@ export default async function CollegeProjectTemplateDetailPage({
      Version {detail.version.version}
     </Badge>
    </div>
-   <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{detail.version.title||detail.template.title||"Template"}</h2>
+   <Heading level={2} size="lg" className="text-[var(--lms-heading)]">{detail.version.title||detail.template.title||"Template"}</Heading>
    <p className="whitespace-pre-wrap break-words text-sm text-muted-foreground">{detail.version.summary?.trim()||"—"}</p>
    <p className="text-xs text-muted-foreground">Published at: {publishedAt}</p>
   </section>

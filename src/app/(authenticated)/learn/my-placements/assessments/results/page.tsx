@@ -15,6 +15,7 @@ import {
   type LearnerAssessmentResultsView,
 } from "@/modules/placements/learner-assessment-results-model";
 import { getOwnLearnerAssessmentResults } from "@/modules/placements/learner-assessment-results-service";
+import { Heading } from "@/components/ui/heading";
 
 const views: readonly { id: LearnerAssessmentResultsView; label: string }[] = [
   { id: "all", label: "All results" },
@@ -98,9 +99,9 @@ export default async function LearnerAssessmentResultsPage({
       </p>
       {paged.items.length === 0 ? (
         <section role="status" className="flex min-h-44 flex-col items-start justify-center border-y border-border px-2 py-6">
-          <h2 className="text-base font-semibold text-[var(--lms-heading)]">
+          <Heading level={2} size="base" className="text-[var(--lms-heading)]">
             {results.counts.all === 0 ? "No official assessment results yet" : "No results in this category"}
-          </h2>
+          </Heading>
           <p className="mt-2 text-sm text-body">
             {results.counts.all === 0
               ? "No applied test outcomes are recorded for your placement applications. Check the schedule for upcoming assessments; submitting on a provider platform does not publish a result here."
@@ -122,7 +123,7 @@ export default async function LearnerAssessmentResultsPage({
                   <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
                     {item.companyName}
                   </p>
-                  <h2 className="mt-1 break-words text-base font-semibold text-[var(--lms-heading)]">{item.roundName}</h2>
+                  <Heading level={2} size="base" className="mt-1 break-words text-[var(--lms-heading)]">{item.roundName}</Heading>
                   <p className="mt-1 text-sm text-body">
                     {item.roleTitle} · Round {item.roundSequence}
                   </p>
@@ -148,7 +149,7 @@ export default async function LearnerAssessmentResultsPage({
               </dl>
               {item.candidateMessage ? (
                 <section className="mt-4 min-w-0 border-t border-border pt-3">
-                  <h3 className="text-xs font-semibold text-[var(--lms-heading)]">Shared feedback</h3>
+                  <Heading level={3} size="xs" className="text-[var(--lms-heading)]">Shared feedback</Heading>
                   <p className="mt-2 max-w-3xl whitespace-pre-wrap break-words text-sm leading-6 text-body">{item.candidateMessage}</p>
                 </section>
               ) : null}

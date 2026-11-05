@@ -6,6 +6,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {parseTpoAcademicPreviewCsv,previewTpoAcademicPageMatches} from "@/modules/placements/tpo-academic-preview-import-model";
+import { Heading } from "@/components/ui/heading";
 export function TpoAcademicImportPreview({activeIds}:{activeIds:readonly string[]}){
  const [text,setText]=useState("studentCode,cgpa,activeBacklogs\n");
  type AcademicPreviewRow=ReturnType<typeof parseTpoAcademicPreviewCsv>[number]&{matchedOnCurrentPage:boolean};
@@ -19,7 +20,7 @@ export function TpoAcademicImportPreview({activeIds}:{activeIds:readonly string[
   }catch(err){setRows(null);setError(err instanceof Error?err.message:"Invalid CSV");}
  }
  return <section className="min-w-0 space-y-3 border-y border-border py-3">
-  <h2 className="text-base font-semibold text-foreground">Preview academic CSV</h2>
+  <Heading level={2} size="base" className="text-foreground">Preview academic CSV</Heading>
   <p className="text-xs text-muted-foreground print:hidden">Paste academic rows → Validate this-page preview → Review unmatched learner IDs. Nothing is saved.</p>
   <details className="min-w-0 text-[13px] text-[var(--lms-body-text)] print:hidden"><summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-primary-text)] sm:min-h-9">CSV format and limits</summary><p className="mt-1 break-words leading-5">Strict studentCode,cgpa,activeBacklogs format. This checks IDs only against the 25 active learners on this page, never the whole batch. No changes are saved and no marksheets are uploaded.</p></details>
   <label className="block text-[13px] print:hidden">CSV data<Textarea value={text} onChange={e=>{setText(e.target.value);setRows(null);setError("");}} rows={5} maxLength={50000} className="mt-1 min-h-32 w-full min-w-0 font-mono text-sm [overflow-wrap:anywhere]"/></label>

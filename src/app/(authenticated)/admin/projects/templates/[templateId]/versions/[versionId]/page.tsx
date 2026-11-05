@@ -12,6 +12,7 @@ import { ProjectsServiceError } from "@/modules/projects/errors";
 import { templateVersionComparisonParamsSchema } from "@/modules/projects/template-version-comparison-model";
 import { getSuperAdminTemplateVersionComparison } from "@/modules/projects/template-version-comparison-service";
 import {previewProjectTemplateRollbackImpact} from "@/modules/projects/template-rollback-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function TemplateVersionComparisonPage({ params,searchParams }: {
   params: Promise<{ templateId: string; versionId: string }>;
@@ -59,10 +60,10 @@ export default async function TemplateVersionComparisonPage({ params,searchParam
     <Banner tone="info">This snapshot is read-only. Publication, deletion/archive state and college assignments are managed separately. Rolling back creates a new blueprint version; it does not restore legacy lifecycle fields.</Banner>
     {detail.changes.length ? <section id="compare" aria-label="Changed fields" className="max-w-[860px] space-y-4">
       {detail.changes.map(change => <article key={change.label} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="m-0 break-words text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">{change.label}</h2>
+        <Heading level={2} size="lg" className="m-0 break-words leading-[1.4] text-[var(--lms-heading)]">{change.label}</Heading>
         <div className="grid min-w-0 gap-4 lg:grid-cols-2">
           {[{ label: "Current", value: change.current }, { label: "Selected version", value: change.selected }].map(value =>
-            <div key={value.label} className="min-w-0"><h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{value.label}</h3>
+            <div key={value.label} className="min-w-0"><Heading level={3} size="base" className="leading-[1.4] text-[var(--lms-heading)]">{value.label}</Heading>
               <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-[220px] min-w-0 overflow-y-auto overscroll-contain whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] bg-surface py-[var(--lms-space-3)] text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{value.value}</pre></div>)}
         </div>
       </article>)}
@@ -76,7 +77,7 @@ export default async function TemplateVersionComparisonPage({ params,searchParam
     {canManage&&!impact?<Banner tone="warning">
       Rollback impact could not be checked. Refresh comparison before restoring a version.
     </Banner>:null}
-    <section aria-label="Selected version snapshot" className="min-w-0 border-t border-border pt-[var(--lms-space-4)]"><h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Version {detail.selected.version} snapshot</h2>
+    <section aria-label="Selected version snapshot" className="min-w-0 border-t border-border pt-[var(--lms-space-4)]"><Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Version {detail.selected.version} snapshot</Heading>
       <ProjectTemplateView blueprint={detail.selected.blueprint} />
     </section>
   </div>;

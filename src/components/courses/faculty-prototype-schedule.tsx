@@ -3,6 +3,7 @@ import {useState} from "react";
 import Link from "next/link";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 export type FacultyCalendarItem={id:string;title:string;sectionName:string;courseCode:string|null;
  startsAt:string;location:string|null;deliveryId:string|null};
 function istDay(instant:string):string{
@@ -51,7 +52,7 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
  const next=view==="Month"?monthJump(1):shift(day,view==="Week"?7:1);
  return <section className="space-y-5" aria-label="Faculty class schedule prototype">
   <div className="flex flex-wrap items-start justify-between gap-3">
-   <div><h2 className="sr-only">Calendar views and schedule</h2>
+   <div><Heading level={2} className="sr-only">Calendar views and schedule</Heading>
     <p className="faculty-proto-subtitle mt-1">
      {todayClasses} {todayClasses===1?"class":"classes"} today · {thisWeekClasses} this week · {nextMessage}
     </p></div>
@@ -60,7 +61,7 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
       className="faculty-proto-pill" aria-pressed={view===v} onClick={()=>setView(v)}>{v}</Button>)}
     <label className="sr-only" htmlFor="faculty-calendar-course">Filter class schedule by course</label>
     <Select id="faculty-calendar-course" value={course} onChange={e=>setCourse(e.target.value)}
-     className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-white px-3 text-sm">
+     className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm">
      <option value="all">All courses</option>
      {courses.map(code=><option key={code} value={code}>{code}</option>)}
     </Select>
@@ -78,13 +79,13 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
   </div>
   <div className="overflow-x-auto" role="region" aria-label="Calendar dates, scroll horizontally for other days" tabIndex={0}>
    <div className="grid min-w-[800px] gap-[6px]" style={{gridTemplateColumns:view==="Day"?"1fr":"repeat(7,minmax(0,1fr))"}}>
-    {keys.map(key=><section key={key} aria-label={key+" IST"} className={"min-h-[264px] rounded-xl border p-2.5 "+(key===today?"border-[color:var(--lms-primary)] bg-[color:var(--lms-primary-subtle)]":"border-[color:var(--lms-border)]")}>
-     <h2 className={"text-sm font-bold "+(key===today?"text-[color:var(--lms-button-primary)]":"text-[color:var(--lms-heading)]")}>{dayLabel(key)}{key===today?" · today":""}</h2>
+    {keys.map(key=><section key={key} aria-label={key+" IST"} className={"min-h-[264px] rounded-xl border p-3 "+(key===today?"border-[color:var(--lms-primary)] bg-[color:var(--lms-primary-subtle)]":"border-[color:var(--lms-border)]")}>
+     <Heading level={2} className={"text-sm font-bold "+(key===today?"text-[color:var(--lms-button-primary)]":"text-[color:var(--lms-heading)]")}>{dayLabel(key)}{key===today?" · today":""}</Heading>
      {selectedEvents.filter(e=>istDay(e.startsAt)===key).map((e,i)=>{
       const tone=["border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]","border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)]","border-[color:var(--lms-purple)] bg-[color:var(--lms-purple-surface)]"][
        [...(e.courseCode??e.title)].reduce((n,char)=>n+char.charCodeAt(0),0)%3]!;
       return <article key={e.id+":"+(e.deliveryId??"section")+":"+i}
-       className={"mt-2 rounded-md border-l-[3px] px-2 py-2 text-xs "+tone}>
+       className={"mt-2 rounded-md border-l-2 px-2 py-2 text-xs "+tone}>
       <p className="font-semibold text-[color:var(--lms-heading)]">{localTime(e.startsAt)} · {e.courseCode??e.title} · {e.sectionName}</p>
       {e.location?<p className="mt-1 text-[color:var(--lms-text-body)]">{e.location}</p>:null}
       {e.deliveryId?<Link className="faculty-proto-link mt-1 inline-block"
@@ -96,7 +97,7 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
    </div>
   </div>
   <section className="rounded-xl border border-[color:var(--lms-border)] p-5">
-   <h2 className="text-xs font-bold uppercase text-[color:var(--lms-text-muted)]">Next 3 classes</h2>
+   <Heading level={2} size="xs" className="uppercase text-[color:var(--lms-text-muted)]">Next 3 classes</Heading>
    {ordered.length?<ol className="mt-2 divide-y divide-[color:var(--lms-border)]">{ordered.map(e=><li key={e.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
     <span><strong>{istDay(e.startsAt)===today?"Today":dayLabel(istDay(e.startsAt))} {localTime(e.startsAt)}</strong> · {e.courseCode??e.title} · {e.sectionName}{e.location?" · "+e.location:""}</span>
     {e.deliveryId?<Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(e.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(e.id)}>Take attendance</Link>:null}

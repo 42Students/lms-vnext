@@ -23,6 +23,7 @@ import { createSubmissionFlightGuard } from "@/modules/courses/learner-submissio
 import { isLearnerAssignmentHttpsLink } from "@/modules/courses/learner-assignment-link-model";
 import { learnerAssignmentFinalConfirmation } from "@/modules/courses/learner-assignment-confirmation-model";
 import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
+import { Heading } from "@/components/ui/heading";
 
 type SubmissionType = "TEXT" | "LINK" | "FILE";
 
@@ -328,12 +329,12 @@ export function AssignmentSubmissionControl({
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} allowedMethods={allowedMethods} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
           onSubmitted={() => { setSuccess(true);setFormDirty(false);setDrawerOpen(false); showToast({tone:"success",title:"Assignment submitted successfully."}); router.refresh(); }} /> : submissionType === "TEXT" ? (
           <section className="mt-[var(--lms-space-4)] min-w-0">
-            <h3 className="mb-[var(--lms-space-2)] text-xs font-semibold text-body">Written response</h3>
+            <Heading level={3} size="xs" className="mb-[var(--lms-space-2)] text-body">Written response</Heading>
             <LearnerRichResponseEditor value={textContent} onChange={setTextContent} disabled={submitting}/>
           </section>
         ) : (
           <section aria-label="Submission links" className="mt-4 space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">{linkKind==="REPOSITORY_LINK"?"Repository Links":"Website / External Links"}</h3>
+            <Heading level={3} size="sm" className="text-foreground">{linkKind==="REPOSITORY_LINK"?"Repository Links":"Website / External Links"}</Heading>
             <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
               {linkKind==="REPOSITORY_LINK"?"Repository Link":"Website / External Link"} 1
               <Input type="url" inputMode="url" maxLength={2048} value={submissionUrl}

@@ -33,6 +33,8 @@ import {
   getTpoAuditLog,
   tpoAuditQuerySchema,
 } from "@/modules/placements/tpo-audit-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 
 type SearchParams = {
@@ -108,7 +110,7 @@ export default async function TpoAuditPage({
           action={
             <Link
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
             >
               Clear filters
             </Link>
@@ -228,20 +230,20 @@ export default async function TpoAuditPage({
 
         <Disclosure title="Exports" className="min-w-0 border-0" summaryClassName="border border-[var(--lms-canvas-border)] px-3" contentClassName="pt-2">
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <a href={"/api/placements/tpo/audit/export?"+new URLSearchParams({
+          <ButtonLink variant="secondary" href={"/api/placements/tpo/audit/export?"+new URLSearchParams({
             ...(query.kind!=="ALL"?{kind:query.kind}:{}),
             ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
             ...(query.q?{q:query.q}:{}),...(query.who?{who:query.who}:{}),
            }).toString()}
-           className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+           className="w-full sm:w-auto">
            Export audit-log CSV
-          </a>
-          <a href={"/api/placements/tpo/audit/actors/export?"+new URLSearchParams({
+          </ButtonLink>
+          <ButtonLink variant="secondary" href={"/api/placements/tpo/audit/actors/export?"+new URLSearchParams({
            ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
           }).toString()}
-           className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+           className="w-full sm:w-auto">
            Export actor audit CSV
-          </a>
+          </ButtonLink>
           </div>
         </Disclosure>
         </div>}
@@ -291,8 +293,8 @@ export default async function TpoAuditPage({
       <p className="text-xs text-muted-foreground leading-5">About and What happened: use the category tabs. Who and When: use the actor/entity view and date filters. The actor view contains additional scoped audit filters.</p>
       <TpoAuditSavedViews
        filters={{kind:query.kind,...(query.from===undefined?{}:{from:query.from}),...(query.to===undefined?{}:{to:query.to}),q:query.q,who:query.who}}/>
-      <section className="min-w-0 overflow-hidden rounded-[14px] border border-[var(--lms-canvas-border)] bg-surface shadow-[0_5px_20px_rgba(26,45,72,0.05)]">
-       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-[13px] py-3 md:px-[18px] md:py-[17px]">
+      <section className="min-w-0 overflow-hidden rounded-[14px] border border-[var(--lms-canvas-border)] bg-surface shadow-(--lms-elevation-3)">
+       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-[12px] py-3 md:px-[20px] md:py-[16px]">
         <div className="min-w-0">
          <p className="text-xs text-muted-foreground">
           {query.from&&query.to
@@ -307,12 +309,12 @@ export default async function TpoAuditPage({
           selected={query.from===look.from&&query.to===look.to}>{look.label}</FilterChipLink>)}
         </nav>
        </div>
-       <div className="min-w-0 px-3 py-4 md:px-[18px] md:pb-5">
+       <div className="min-w-0 px-3 py-4 md:px-[20px] md:pb-5">
       <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,...(item.count==null?{}:{count:item.count}),href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
       <section aria-labelledby="section-audit-filters" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-        <h2 id="section-audit-filters" className="m-0 text-base font-semibold text-foreground">
+        <Heading level={2} size="base" id="section-audit-filters" className="m-0 text-foreground">
           Filter the audit log
-        </h2>
+        </Heading>
 
         <form role="search" aria-label="tpo audit filters"
           method="get"
@@ -393,7 +395,7 @@ export default async function TpoAuditPage({
             </Button>
             <Link
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
             >
               Clear filters
             </Link>
@@ -404,7 +406,7 @@ export default async function TpoAuditPage({
       {result.unavailableSources.length > 0 ? (
         <section
           role="status"
-          className="border-l-[3px] border-border bg-surface-subtle px-3 py-2 text-sm leading-6 text-body"
+          className="border-l-2 border-border bg-surface-subtle px-3 py-2 text-sm leading-6 text-body"
         >
           Some sharing activity could not be loaded. The totals shown may be incomplete. Try again later.
         </section>
@@ -413,9 +415,9 @@ export default async function TpoAuditPage({
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">
+            <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
               Event history
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
               {summary.total === 0
                 ? "Nothing logged yet"
@@ -464,7 +466,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
               >
                 ← Previous
               </Link>
@@ -476,7 +478,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
               >
                 First page
               </Link>
@@ -488,7 +490,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
               >
                 Next →
               </Link>

@@ -8,12 +8,12 @@
 .title {
   color: var(--lms-topbar-ink);
   font-size: 14px;
-  font-weight: 650;
+  font-weight: 600;
 }
 .chartRow {
   display: grid;
   grid-template-columns: minmax(120px, 180px) minmax(0, 1fr) 52px;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   margin-bottom: 8px;
 }
@@ -29,7 +29,7 @@
 .value {
   color: var(--lms-topbar-ink);
   font-size: 12px;
-  font-weight: 650;
+  font-weight: 600;
   text-align: right;
 }
 .track {
@@ -47,6 +47,6 @@
 @media (max-width: 767px) {
   .chartRow {
     grid-template-columns: minmax(82px, 110px) minmax(0, 1fr) 42px;
-    gap: 7px;
+    gap: 8px;
   }
 }

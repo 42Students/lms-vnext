@@ -83,7 +83,7 @@ describe("chat-2 TPO last-third runtime settings pages", () => {
     expect(html).toContain("No matching active TPO or coordinator memberships");
     expect(html).toContain("Distinct active members");
     expect(html).not.toContain("Faculty team assignments unavailable");
-    expect(html).toContain("min-[768px]:grid-cols-2");
+    expect(html).toContain("md:grid-cols-2");
     expect(html).toContain("min-h-11");
   });
 

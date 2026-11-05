@@ -10,6 +10,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {mentorReviewOverviewSchema,mentorReviewOverviewHref} from "@/modules/projects/mentor-review-overview-model";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {getMentorDeliveryReviewOverview} from "@/modules/projects/mentor-review-overview-service";
+import { Heading } from "@/components/ui/heading";
 type Search={status?:string|string[];feedback?:string|string[];version?:string|string[];page?:string|string[]};
 export default async function MentorReviewOverviewPage({
  params,searchParams,
@@ -38,14 +39,14 @@ export default async function MentorReviewOverviewPage({
  className="grid min-w-0 items-end gap-[8px] border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto_auto]">
   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Delivery status
    <Select name="status" defaultValue={data.query.status}
-    className="min-h-11 min-[768px]:min-h-9">
+    className="min-h-11 md:min-h-9">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
    </Select>
   </label>
   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Written feedback
    <Select name="feedback" defaultValue={data.query.feedback}
-    className="min-h-11 min-[768px]:min-h-9">
+    className="min-h-11 md:min-h-9">
     <option value="ALL">Any</option>
     <option value="WITH">Recorded</option>
     <option value="WITHOUT">Not recorded</option>
@@ -54,7 +55,7 @@ export default async function MentorReviewOverviewPage({
   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact delivery version
    <Input type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
-    placeholder="All versions" className="min-h-11 min-[768px]:min-h-9"/>
+    placeholder="All versions" className="min-h-11 md:min-h-9"/>
   </label>
   <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
    Filter
@@ -72,7 +73,7 @@ export default async function MentorReviewOverviewPage({
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
  </div>
  <section className="min-w-0 border-b border-border pb-4">
- <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Recorded review coverage on this page</h2>
+ <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Recorded review coverage on this page</Heading>
  <p className="mt-2 text-sm text-body leading-[22px]">{data.counts.reviewed} reviewed version{data.counts.reviewed===1?"":"s"};
  {" "}{data.counts.withFeedback} with written feedback.</p>
  <p className="mt-1 text-xs text-muted-foreground leading-5">
@@ -85,7 +86,7 @@ export default async function MentorReviewOverviewPage({
  :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
  <li key={item.id} className="py-[var(--lms-space-3)]">
  <div className="flex flex-wrap items-center justify-between gap-3">
- <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Delivery version {item.version}</h2>
+ <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Delivery version {item.version}</Heading>
  <span className="text-xs font-semibold text-body">{item.status}</span></div>
  <p className="mt-2 text-sm text-body leading-[22px]">{item.reviewLabel}</p>
  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+

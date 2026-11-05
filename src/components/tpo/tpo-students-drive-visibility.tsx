@@ -12,6 +12,7 @@ import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {tpoDriveVisibilitySelection,tpoDriveVisibilityValid} from "@/modules/placements/tpo-drive-visibility-bulk-model";
 import {mapTpoBulkBounded} from "@/modules/placements/tpo-bulk-bounded-execution";
+import { Heading } from "@/components/ui/heading";
 type Learner={id:string;name:string};
 type Drive={id:string;name:string;status:string};
 type PreviousOverride={id:string;decision:"INCLUDE"|"EXCLUDE";reason:string};
@@ -117,7 +118,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
  }
 
  return <section aria-label="Show or hide a drive for selected students" className="min-w-0 space-y-3 border-y border-border py-4">
-  <h2 className="font-semibold">Show or hide a drive for selected students</h2>
+  <Heading level={2}>Show or hide a drive for selected students</Heading>
   <p className="text-sm text-body">Apply an individual include or exclude decision with a reason. Include may bypass ordinary grade thresholds, but active membership, academic targeting and required verified evidence remain mandatory. Existing applications are preserved. Each selected override is version-checked so another officer’s newer decision is not overwritten. Undo restores the previous explicit Include/Exclude state if your change is still current; history is retained.</p>
   <p role="status" className="break-words text-sm text-body">{picked.length} selected from the current filtered roster (up to 200 per review).</p>
   {drives.length===0?<p role="status" className="text-sm text-body">No draft or published drives can be changed here.</p>:null}

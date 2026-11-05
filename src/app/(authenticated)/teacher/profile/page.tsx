@@ -11,6 +11,7 @@ import { loadOwnFacultyProfileDocumentStaged } from "@/modules/people/faculty-pr
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnFacultyProfileWithRuntime } from "@/modules/people/runtime";
 import {facultyProfileCompleteness} from "@/modules/people/faculty-profile-completeness-model";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic = "force-dynamic";
 
@@ -89,7 +90,7 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
       <section id="faculty-header" aria-label="Faculty profile identity" aria-busy={false} className="flex min-w-0 flex-wrap items-center gap-5 border-b border-[var(--lms-canvas-border)] pb-5">
         <FacultyAvatarUpload initialVersion={selfDocument?.version??0} initials={initials || "F"}/>
         <div className="min-w-0 space-y-1">
-          <h2 className="break-words text-xl font-semibold text-[var(--lms-heading)]">{person.user.displayName}</h2>
+          <Heading level={2} size="xl" className="break-words text-[var(--lms-heading)]">{person.user.displayName}</Heading>
           <p className="break-all text-sm text-body">{person.user.email || "No email recorded"}</p>
           <p className="text-sm text-muted-foreground">{profile?.academicTitle || "Faculty"} · {profile?.employmentType || "Faculty type not specified"} · College-managed identity</p>
           {document?.about.description?<p className="max-w-2xl whitespace-pre-wrap text-sm text-body">{document.about.description}</p>:null}
@@ -98,7 +99,7 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
       </section>
       <section aria-label="Profile completeness" className="space-y-2 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-base font-semibold text-[var(--lms-heading)]">Profile completeness</h2>
+          <Heading level={2} size="base" className="text-[var(--lms-heading)]">Profile completeness</Heading>
           <span className="text-sm font-semibold tabular-nums">{completenessScore===null?"Not available":completenessScore+"%"}</span>
         </div>
         <progress aria-label="Profile completeness" max={100} value={completenessScore??0} className="h-2 w-full accent-[var(--lms-primary)]"/>
@@ -115,7 +116,7 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
         </Link>
       </nav>
       <section id="contacts" aria-label="Faculty profile details" className="min-w-0 space-y-3 scroll-mt-24 py-4">
-        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">About</h2>
+        <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">About</Heading>
         <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
           {fields.map(({ label, value }) => (
             <div key={label}>
@@ -133,8 +134,8 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
         </p>
       </section>
       <section id="faculty-profile-sections" aria-label="Full faculty profile" className="min-w-0 space-y-4 scroll-mt-24 border-t border-[var(--lms-canvas-border)] pt-5">
-        <h2 id="social-profiles" className="sr-only">Social Profiles</h2>
-        <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Profile sections</h2>
+        <Heading level={2} id="social-profiles" className="sr-only">Social Profiles</Heading>
+        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Profile sections</Heading>
         <p className="text-sm text-muted-foreground">About · Personal Details · Contacts · Education/Qualification · Experiences · Certifications · Publications · Awards · Social Profiles</p>
         {!documentReady || !selfDocument ? (
           <div role="status" className="border-y border-[var(--lms-canvas-border)] py-5">

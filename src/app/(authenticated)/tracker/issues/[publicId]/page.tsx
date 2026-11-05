@@ -24,6 +24,9 @@ import { isSuperAdmin } from "@/modules/identity/context";
 
 import {parseTrackerActivityCursorParams} from "@/modules/bug-tracker/admin-detail-cursor-model";
 import {auditActivityText} from "@/modules/bug-tracker/audit-activity-display-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
@@ -142,17 +145,17 @@ export default async function TrackerIssueDetailPage({
         </div>
         <div className="flex min-w-40 shrink-0 items-start gap-2 lg:flex-col">
           <span className="text-xs font-semibold text-muted-foreground">Status</span>
-          <a href="#tracker-workflow" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link underline"
+          <ButtonLink variant="secondary" href="#tracker-workflow"
             aria-label={"Change issue status, currently "+legacyLabel(issue.status,STATUS_TEXT)}>
             {legacyLabel(issue.status,STATUS_TEXT)} ↓
-          </a>
+          </ButtonLink>
         </div>
       </header>
       <TrackerAdminNav/>
       {issue.status==="READY_FOR_RETEST"?<section aria-label="Ready for retest" className="rounded-[var(--lms-control-radius)] border border-border p-4">
-        <h2 className="font-semibold">Ready for retest</h2>
+        <Heading level={2}>Ready for retest</Heading>
         <p className="mt-1 text-sm text-body">Does it work now? Confirm the same flow, then use the retest controls under Engineering details.</p>
-        <a href="#tracker-workflow" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Retest this issue ↓</a>
+        <TextLink href="#tracker-workflow" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center">Retest this issue ↓</TextLink>
       </section>:null}
       <section aria-label="What went wrong" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">What went wrong</p>
@@ -160,7 +163,7 @@ export default async function TrackerIssueDetailPage({
       </section>
       {(detail.attachments.length>0||detail.attachmentsUnavailable||Boolean(issue.evidenceLink))?
         <section aria-label="Evidence" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Evidence</h2>
+          <Heading level={2} size="xs" className="uppercase tracking-wide text-muted-foreground">Evidence</Heading>
           {detail.attachmentsUnavailable?<Alert tone="warning">Screenshots could not be loaded right now. The report remains available.
             {" "}<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="text-link underline">Retry screenshots</Link>
           </Alert>:null}
@@ -214,7 +217,7 @@ export default async function TrackerIssueDetailPage({
       </Alert> : null}
       {!detail.activityUnavailable&&detail.activities.length>0?
         <section aria-label="Activity" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Activity</h2>
+          <Heading level={2} size="xs" className="uppercase tracking-wide text-muted-foreground">Activity</Heading>
           <ol className="mt-3 space-y-1 border-l-2 border-border pl-5">
             {[...detail.activities].reverse().map(activity=><li key={activity.id}
               className="relative py-3">

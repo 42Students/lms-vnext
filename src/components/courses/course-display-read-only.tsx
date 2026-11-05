@@ -1,3 +1,4 @@
+import { Heading } from "@/components/ui/heading";
 export function CourseDisplayReadOnly({
   introductionText,
   bodyHtml,
@@ -22,9 +23,9 @@ export function CourseDisplayReadOnly({
       className="border-b border-border pb-5"
       aria-label="Course overview"
     >
-      <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
+      <Heading level={2} size="lg" className="m-0 text-[var(--lms-heading)]">
         About this course
-      </h2>
+      </Heading>
 
       {introductionText?.trim() ? (
         <p className="mt-2 text-sm font-medium leading-[22px] text-foreground">

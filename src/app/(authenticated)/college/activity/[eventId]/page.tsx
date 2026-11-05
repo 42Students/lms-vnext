@@ -18,6 +18,7 @@ function activityDetails(metadata:unknown):[string,string][]{
 }
 
 import { getCollegeActivityDetail } from "@/modules/activity/college-activity-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function CollegeActivityDetailPage({
   params,
@@ -48,7 +49,7 @@ export default async function CollegeActivityDetailPage({
         <dd className="mt-1 break-words [overflow-wrap:anywhere] text-body">{event.subjectLabel ?? event.subjectId}</dd></div>
     </dl>
     {compact.length ? <section className="min-w-0 space-y-3" aria-label="Activity details">
-      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Details</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)]">Details</Heading>
       <dl className="grid min-w-0 gap-3 sm:grid-cols-2">
         {compact.map(([label,value],index)=><div key={label+"-"+index} className="min-w-0">
           <dt className="break-words text-xs font-semibold capitalize text-muted-foreground">{label}</dt>

@@ -142,7 +142,7 @@ export async function AdminProjectSectionPage({
     return <section className="min-w-0 space-y-4">
       <ProjectAdminNav basePath={basePath} active="workspaces"/>
       <WorkspaceContextTabs projectId={projectId} section={section} basePath={basePath}/>
-      <div role="alert" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3 text-sm">
+      <div role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-4 py-3 text-sm">
         <p className="font-semibold">Workspace summary could not be loaded</p>
         <p className="mt-1 text-body">
           The workspace summary is unavailable, but the project audit can still be reviewed.

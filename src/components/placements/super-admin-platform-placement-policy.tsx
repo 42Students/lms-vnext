@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { PlacementPolicyKey } from "@/modules/placements/platform-placement-policy-model";
+import { Heading } from "@/components/ui/heading";
 type Field={key:PlacementPolicyKey;label:string;unit:string;value:number;defaultValue:number;version:number;
  min:number;max:number;step:number;isOverridden:boolean;updatedAt:string|null};
 export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
@@ -56,7 +57,7 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
  }
  return <section aria-labelledby="platform-placement-policy" aria-busy={Boolean(busy)} className="min-w-0 space-y-[var(--lms-space-4)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-4)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
-   <div><h2 id="platform-placement-policy" className="text-lg font-semibold text-foreground">Placements policy</h2>
+   <div><Heading level={2} size="lg" id="platform-placement-policy" className="text-foreground">Placements policy</Heading>
     <p className="text-sm text-muted-foreground">Platform-wide defaults. Clear the college selection to review global settings. Changes require Super Admin access.</p>
    </div>
    <Button type="button" variant="secondary" disabled={Boolean(busy)} onClick={()=>void refresh()}>Reload</Button>

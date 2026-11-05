@@ -12,6 +12,7 @@ import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar
 import {mentorMeetingHasDifferentRequestedWindow}
   from "@/modules/projects/mentor-meeting-form-model";
 import {fromIstLocalInput} from "@/modules/projects/mentor-meeting-reschedule-model";
+import { Heading } from "@/components/ui/heading";
 
 const displayIst=(instant:string)=>{
   const date=new Date(instant);
@@ -87,7 +88,7 @@ export function MentorMeetingRequestActions({meeting}:{
     }
   }
   return <section className="prototype-mentor-meeting-request" aria-label="Answer meeting request">
-    <h3>Meeting request · needs your answer</h3>
+    <Heading level={3}>Meeting request · needs your answer</Heading>
     <p>Confirm the requested time, choose a different future time, or decline with
       an optional note. Provide an online join link or a physical room. The team is informed
       only when the server saves the change; no calendar sync is claimed.</p>

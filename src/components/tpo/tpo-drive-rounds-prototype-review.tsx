@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 export type RoundPreview={
  id:string;sequence:number;name:string;kind:string;status:string;mode:string|null;
@@ -50,9 +51,9 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
       return <li key={round.id}>
        <Link aria-current={selected?.id===round.id?"page":undefined} href={roundLink(round.id)}
         className={"flex min-h-20 gap-3 px-4 py-3 hover:bg-primary-subtle "+
-         (selected?.id===round.id?"border-l-[3px] border-primary bg-primary-subtle":"")}>
+         (selected?.id===round.id?"border-l-2 border-primary bg-primary-subtle":"")}>
         <span aria-hidden="true" className={"mt-1 flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold "+
-         (completed?"bg-emerald-50 text-emerald-800":"bg-primary-subtle text-primary-text")}>
+         (completed?"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]":"bg-primary-subtle text-primary-text")}>
          {completed?"✓":round.sequence}
         </span>
         <span className="min-w-0">
@@ -74,13 +75,13 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
    </aside>
    <article aria-label="Selected round" className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-5">
     {!selected?<div role="status" className="space-y-3">
-     <h2 className="font-semibold">{selectedId?"That round is not in this authorized drive.":"No round selected."}</h2>
+     <Heading level={2}>{selectedId?"That round is not in this authorized drive.":"No round selected."}</Heading>
      <p className="text-sm text-body">No other round has been substituted.</p>
      <Link className="inline-flex min-h-11 items-center text-link underline" href={root+"/rounds"}>Reset round selection</Link>
     </div>:<div className="space-y-5">
      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
       <div>
-       <h2 className="text-xl font-bold text-foreground">{selected.name}</h2>
+       <Heading level={2} size="xl" className="text-foreground">{selected.name}</Heading>
        <p className="mt-1 text-sm text-body">
         {when(selected.scheduledAt)} · {selected.venue??"Venue not recorded"} · {selected.mode??"Mode not recorded"}
        </p>
@@ -105,7 +106,7 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
         Booked does not necessarily mean the student confirmed.
        </p>
        {slots.reschedules.length?<div className="space-y-2">
-        <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Asked to move</h3>
+        <Heading level={3} size="xs" className="uppercase tracking-wide text-muted-foreground">Asked to move</Heading>
         {slots.reschedules.slice(0,6).map(item=><div key={item.id}
            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-border bg-warning-subtle px-3 py-2">
           <p className="min-w-0 break-words text-sm"><strong>{item.name?.trim()||"Candidate name unavailable"}</strong> · {item.reason??"No reason recorded"}</p>
@@ -118,10 +119,10 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
        </div>:null}
        <div>
         <div className="mb-2 flex flex-wrap justify-between gap-3">
-         <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+         <Heading level={3} size="xs" className="uppercase tracking-wide text-muted-foreground">
           {selected.scheduledAt&&dateKey(selected.scheduledAt)===dateKey(now)?"Today":selected.scheduledAt&&dateKey(selected.scheduledAt)===dateKey(new Date(now.getTime()+86400000))?"Tomorrow":"Current booked slots"}
           {" · "}{selected.durationMinutes?selected.durationMinutes+" min planned round":"Interview round"}
-         </h3>
+         </Heading>
          <Link href={root+"/rounds/"+encodeURIComponent(selected.id)+"/slots"}
           className="text-xs font-semibold text-link underline">Change the plan</Link>
         </div>

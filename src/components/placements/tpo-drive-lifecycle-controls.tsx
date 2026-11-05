@@ -16,6 +16,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Select} from "@/components/ui/select";
 import {useToast} from "@/components/ui/toast";
 import { Radio } from "@/components/ui/radio";
+import { Heading } from "@/components/ui/heading";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
@@ -133,7 +134,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
 
   return (
     <section id="drive-lifecycle-publish" className="border-b border-border pb-6">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Drive publish / close / reopen</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Drive publish / close / reopen</Heading>
       <p className="mt-1 text-sm text-body leading-[22px]">
         Current state: {readiness.status}. Publish and reopen require a persisted
         eligibility policy, an active role, an evaluative round and an active season/company.
@@ -149,7 +150,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
         <p className="mb-2 text-xs text-muted-foreground">Close stops further applications. Cancel is a separate irreversible workflow, not the same action.</p>
         {readiness.close.allowed ? (
           <Link href={"/tpo/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/close-preview"}
-            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
             Review close consequences before confirming
           </Link>
         ) : (

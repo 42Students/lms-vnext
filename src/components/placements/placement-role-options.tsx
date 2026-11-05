@@ -8,6 +8,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 type PlacementRoleOptionItem = {
   id: string;
@@ -279,9 +280,9 @@ export function PlacementRoleOptions({
       <div className="border-b border-border pb-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="m-0 text-base font-semibold text-foreground">
+            <Heading level={2} size="base" className="m-0 text-foreground">
               Drive roles
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body">
               One employer drive can expose multiple exact role options. The primary role stays synchronized with the main drive details.
             </p>

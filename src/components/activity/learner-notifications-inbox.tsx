@@ -27,6 +27,9 @@ import {
   learnerNotificationCategoryCounts,
   type LearnerNotificationCategory,
 } from "@/modules/activity/learner-notification-category";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 
 function NotificationCategoryIcon({ category }: { category: LearnerNotificationCategory }) {
@@ -66,8 +69,7 @@ function safeNotificationMarkup(body:string):ReactNode[] {
             safeHref=parsed.toString();
         }catch{ /* Malformed links are not opened. */ }
         nodes.push(safeHref?
-          <a key={key} href={safeHref}
-            className="text-primary-text underline underline-offset-2">{children}</a>:
+          <TextLink key={key} href={safeHref}>{children}</TextLink>:
           <span key={key} title="Only secure HTTPS links can be opened">{children}</span>);
         break;
       }
@@ -197,7 +199,7 @@ export function LearnerNotificationsInbox({
 
   return (
     <section className="min-w-0 space-y-[var(--lms-space-4)]" aria-label="Learner notifications inbox">
-      <p role="status" className="break-words text-sm text-body min-[768px]:hidden leading-[22px]">{mobileSummary}</p>
+      <p role="status" className="break-words text-sm text-body md:hidden leading-[22px]">{mobileSummary}</p>
       <div role="group" aria-label="Filter notifications by type" className="min-w-0" data-slot="notification-header-metrics">
         <div className="flex min-w-0 flex-wrap gap-2 pb-1">
           {learnerNotificationCategories.map(({ key, label }) => (
@@ -209,20 +211,20 @@ export function LearnerNotificationsInbox({
               onClick={() => selectCategory(key)}
               className={"!min-h-11 shrink-0 rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] whitespace-nowrap focus-visible:!outline-offset-2 focus-visible:!outline-[var(--lms-primary)] "+
                 (active===key
-                  ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-white enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-white"
-                  : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[rgba(38,186,199,0.4)] enabled:hover:!bg-[rgba(38,186,199,0.05)] enabled:hover:!text-[var(--lms-primary)]")}
+                  ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-[color:var(--lms-on-primary)] enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-[color:var(--lms-on-primary)]"
+                  : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] enabled:hover:!bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] enabled:hover:!text-[var(--lms-primary)]")}
             >
               <span className="inline-flex items-center gap-2">
                 <NotificationCategoryIcon category={key}/>
                 <span aria-hidden="true">{label}</span>
-                <span aria-hidden="true" className="rounded-full bg-black/5 px-2 py-0.5 text-xs tabular-nums">{categoryCounts[key]}</span>
+                <span aria-hidden="true" className="rounded-full bg-[color:color-mix(in_srgb,var(--lms-black)_5%,transparent)] px-2 py-0.5 text-xs tabular-nums">{categoryCounts[key]}</span>
               </span>
             </FilterChip>
           ))}
         </div>
       </div>
-      <div className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-3)] min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
-        <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:col-span-1">
+      <div className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
+        <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-1">
           Search notifications
           <Input type="search" value={search} maxLength={100}
             onChange={event=>setSearch(event.target.value)}
@@ -232,25 +234,25 @@ export function LearnerNotificationsInbox({
         </label>
         <FilterChip type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
-          className={"!min-h-11 w-full min-[768px]:w-auto rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] "+
+          className={"!min-h-11 w-full md:w-auto rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] "+
             (unread==="unread"
-              ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-white enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-white"
-              : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[rgba(38,186,199,0.4)] enabled:hover:!bg-[rgba(38,186,199,0.05)] enabled:hover:!text-[var(--lms-primary)]")}>
+              ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-[color:var(--lms-on-primary)] enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-[color:var(--lms-on-primary)]"
+              : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] enabled:hover:!bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] enabled:hover:!text-[var(--lms-primary)]")}>
           {unread==="unread"?"Unread only ✓":"Unread only"}
         </FilterChip>
         <Button type="button" onClick={applySearch}
-          variant="secondary" className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">
+          variant="secondary" className="min-h-11 w-full md:min-h-[var(--lms-control-height)] md:w-auto">
           Apply search
         </Button>
         <Button type="button" disabled={!filtered} onClick={resetFilters}
-          variant="secondary" className="col-span-2 min-h-11 w-full min-[768px]:col-span-1 min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">
+          variant="secondary" className="col-span-2 min-h-11 w-full md:col-span-1 md:min-h-[var(--lms-control-height)] md:w-auto">
           Clear filters
         </Button>
       </div>
       {unreadPersonalCount>0 ? (
-        <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] border-b border-border py-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
+        <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] border-b border-border py-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
           <p className="text-sm text-body leading-[22px]">{unreadPersonalCount} unread personal notifications</p>
-          <Button variant="secondary" size="sm" className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
+          <Button variant="secondary" size="sm" className="min-h-11 w-full md:min-h-[var(--lms-control-height)] md:w-auto" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
             Mark all personal as read
           </Button>
         </div>
@@ -287,11 +289,11 @@ export function LearnerNotificationsInbox({
       {visible.length === 0 ? (
         <div className="flex min-h-[180px] flex-col items-center justify-center gap-3 py-10 text-center">
           <span aria-hidden="true" className="flex size-14 items-center justify-center rounded-full bg-[var(--lms-primary-subtle)] text-2xl">🔔</span>
-          <h2 className="text-[20px] font-semibold text-[var(--lms-neutral-900)]">
+          <Heading level={2} size="xl" className="text-[var(--lms-neutral-900)]">
             {combined.length>0 && active!=="all" && unread==="all" && !search.trim()
               ? "No "+(learnerNotificationCategories.find(item=>item.key===active)?.label??"")+" notifications yet"
               : learnerInboxEmptyLabel({total:combined.length,category:active,unread,search})}
-          </h2>
+          </Heading>
           <p className="max-w-[320px] text-sm text-muted-foreground">
             {filtered?"Try another category or return to the complete notification feed.":"You'll see course updates and announcements here when available."}
           </p>
@@ -314,7 +316,7 @@ export function LearnerNotificationsInbox({
         title="Mark all personal notifications as read?"
         description="This acknowledges all unread notifications in your current college, including older pages. College announcements have no personal read status."
         dismissible={!markingAll}
-        footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] min-[768px]:flex-row min-[768px]:justify-end [&>button]:w-full min-[768px]:[&>button]:w-auto">
+        footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           <Button variant="secondary" disabled={markingAll} onClick={()=>setConfirmReadAll(false)}>Keep unread</Button>
           <Button disabled={markingAll} onClick={()=>void markAllRead()}>
             {markingAll?"Updating…":"Confirm mark all read"}
@@ -329,22 +331,22 @@ export function LearnerNotificationsInbox({
         className="!max-w-[min(520px,calc(100vw-32px))]"
         description={selected?.source === "ANNOUNCEMENT" ? "College announcement" : "Personal notification"}
         footer={
-          <div className="flex w-full flex-col gap-[var(--lms-space-2)] min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:justify-end">
+          <div className="flex w-full flex-col gap-[var(--lms-space-2)] md:flex-row md:flex-wrap md:justify-end">
             {learnerNotificationPlacementAction(selected?.actionHref) ? (
               <Link
                 href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-[650] text-primary-text min-[768px]:w-auto md:min-h-9"
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text md:w-auto md:min-h-9"
               >
                 {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
               </Link>
             ) : null}
             {selected?.source==="ANNOUNCEMENT"&&selected.externalCta?
-              <a href={selected.externalCta.href}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text md:w-auto md:min-h-9">
+              <ButtonLink variant="secondary" href={selected.externalCta.href}
+                className="w-full md:w-auto">
                 {selected.externalCta.label} ↗
-              </a>:null}
-            <Button className="w-full min-[768px]:w-auto max-[767px]:min-h-11" onClick={() => setSelected(null)}>Got it</Button>
+              </ButtonLink>:null}
+            <Button className="w-full md:w-auto max-md:min-h-11" onClick={() => setSelected(null)}>Got it</Button>
           </div>
         }
       >

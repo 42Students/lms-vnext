@@ -12,8 +12,8 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
   const page=source("src/app/(authenticated)/admin/placements/page.tsx");
   expect(page).toContain("hover:bg-[var(--lms-primary)] hover:text-[var(--lms-on-primary)]");
   expect(page).toContain("active:bg-[var(--lms-primary-hover)] active:text-[var(--lms-on-primary)]");
-  expect(page).not.toContain("hover:text-white");
-  expect(page).not.toContain("active:text-white");
+  expect(page).not.toContain("hover:text-on-primary");
+  expect(page).not.toContain("active:text-on-primary");
  });
  it("SA-placements-projects-15 guards unsaved changes on create and edit while preserving draft text",()=>{
   const create=source("src/components/placements/placement-job-create-form.tsx");

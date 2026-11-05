@@ -2,6 +2,7 @@
 import {useState} from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 export type FacultyTodayTask = {
  id:string;eyebrow:string;title:string;detail:string;action:string;href:string;
@@ -32,13 +33,13 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
    </h1>
    <p className="faculty-proto-subtitle mt-1">{nextClass??"Your current classes, grading and deadlines are below."}</p>
   </header>
-  <div className="grid min-w-0 items-start gap-[18px] xl:grid-cols-[minmax(0,1fr)_300px]">
+  <div className="grid min-w-0 items-start gap-[20px] xl:grid-cols-[minmax(0,1fr)_300px]">
    <div className="min-w-0">
     {active.length>0?<div className="faculty-proto-task-list">
      {active.map(item=><article key={item.id} className="faculty-proto-task">
       <div className="min-w-0">
        <p className="faculty-proto-task-label" style={item.tone==="warning"?{color:"var(--lms-error-text)"}:undefined}>{item.eyebrow}</p>
-       <h2 className="mt-1">{item.title}</h2>
+       <Heading level={2} className="mt-1">{item.title}</Heading>
        <p className="faculty-proto-subtitle">{item.detail}</p>
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-2">
@@ -49,7 +50,7 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
       </div>
      </article>)}
     </div>:<div className="rounded-xl border border-[color:var(--lms-border)] p-6">
-     <h2 className="faculty-proto-empty-heading">Nothing waiting right now</h2>
+     <Heading level={2} className="faculty-proto-empty-heading">Nothing waiting right now</Heading>
      <p className="faculty-proto-subtitle mt-2">Your current teaching priorities are up to date.</p>
      <Link className="faculty-proto-link mt-3 inline-block" href="/teacher/courses">View courses</Link>
     </div>}
@@ -57,9 +58,9 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
      onClick={()=>setLater([])}>Show {later.length} hidden {later.length===1?"item":"items"}</Button>:null}
    </div>
    <aside className="grid min-w-0 gap-4" aria-label="Today's classes and this week">
-    <section className="rounded-[12px] border border-[color:var(--lms-border)] px-[17px] py-4">
+    <section className="rounded-[12px] border border-[color:var(--lms-border)] px-[16px] py-4">
      <div className="flex items-center justify-between gap-3">
-      <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">Today&apos;s classes</h2>
+      <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">Today&apos;s classes</Heading>
       <Link className="faculty-proto-link text-sm" href="/teacher/calendar">Schedule ›</Link>
      </div>
      {dailyClasses.length>0?<ol className="mt-3 divide-y divide-[color:var(--lms-neutral-100)]">
@@ -68,13 +69,13 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
         <Link className="block text-sm font-bold text-[color:var(--lms-heading)] hover:underline" href={item.href}>{item.timeLabel} {item.title} · {item.sectionName}</Link>
         <p className="faculty-proto-subtitle">{item.location??"Room not provided"}{item.learnerCount!==null?" · "+item.learnerCount+" students":""}</p>
        </div>
-       {index===0?<Link className="faculty-proto-action shrink-0 !min-h-[34px] !px-[10px] !py-[6px] !text-xs" href={item.href}>{item.actionLabel}</Link>:
+       {index===0?<Link className="faculty-proto-action shrink-0 !min-h-[34px] !px-[12px] !py-[6px] !text-xs" href={item.href}>{item.actionLabel}</Link>:
         <span className="shrink-0 rounded-md bg-[color:var(--lms-neutral-100)] px-2 py-1 text-xs font-semibold text-[color:var(--lms-text-muted)]" title="Later scheduled class">Later</span>}
       </li>)}
      </ol>:<p className="faculty-proto-subtitle mt-3">No classes scheduled for today.</p>}
     </section>
-    <section className="rounded-[12px] border border-[color:var(--lms-border)] px-[17px] py-4">
-     <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">This week</h2>
+    <section className="rounded-[12px] border border-[color:var(--lms-border)] px-[16px] py-4">
+     <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">This week</Heading>
      {deadlines.length>0?<ul className="mt-2 divide-y divide-[color:var(--lms-neutral-100)]">
       {deadlines.map(item=><li key={item.id} className="flex items-start justify-between gap-3 py-3 text-sm">
        <Link className="min-w-0 font-medium text-[color:var(--lms-heading)] hover:underline" href={item.href}>{item.title}</Link>

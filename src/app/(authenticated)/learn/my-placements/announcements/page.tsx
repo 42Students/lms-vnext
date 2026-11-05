@@ -33,9 +33,10 @@ import {filterLearnerNoticesBySource} from "@/modules/placements/learner-notice-
 import {learnerNoticeEmptyLabel} from "@/modules/placements/learner-notice-empty-label-model";
 import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learnerNoticeMissing, learnerNoticeRecoveryHref } from "@/modules/placements/learner-notice-deep-link-model";
 import {TpoNoticeAcknowledge} from "@/components/tpo/tpo-notice-acknowledge";
+import { Heading } from "@/components/ui/heading";
 
 // Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
-const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-[var(--lms-motion-fast)] hover:border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
 // Legacy mobile (<768px): single-line horizontal strip; desktop wraps (SCSS:56-74).
 const placementFilterNavClass = "min-w-0 max-w-full flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
 
@@ -121,11 +122,11 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       </div>
       <nav aria-label="Placement notice views" className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-0">
         <Link href={tabHref("announcements")} aria-current={activeView==="announcements"?"page":undefined}
-          className={"inline-flex min-h-11 shrink-0 items-center gap-2 border-b-[3px] px-4 text-sm font-semibold "+(activeView==="announcements"?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-primary-text")}>
+          className={"inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-4 text-sm font-semibold "+(activeView==="announcements"?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-primary-text")}>
           Announcements <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs">{noticeUnread===null?"Unread ?":noticeUnread+" unread"}</span>
         </Link>
         <Link href={tabHref("updates")} aria-current={activeView==="updates"?"page":undefined}
-          className={"inline-flex min-h-11 shrink-0 items-center gap-2 border-b-[3px] px-4 text-sm font-semibold "+(activeView==="updates"?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-primary-text")}>
+          className={"inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-4 text-sm font-semibold "+(activeView==="updates"?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-primary-text")}>
           Updates about you ({unreadCount.available?unreadCount.items[0]:"?"} unread)
         </Link>
       </nav>
@@ -241,7 +242,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                 {notice.unread===true ? <Badge tone="info">New</Badge> : null}
                 {/* Never present a recent publication as unread without a receipt. */}
               </div>
-              <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
+              <Heading level={2} size="lg" className="break-words text-foreground">{notice.title}</Heading>
               <p className="mt-1 text-xs text-muted-foreground">
                 {notice.senderLabel ?? "College announcement"}
                 {notice.audienceLabel ? " · For "+notice.audienceLabel : ""}
@@ -279,13 +280,13 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       )}
       {pages.total > 0 ? <nav aria-label="College notice pages" className="flex flex-col items-start gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
         <p className="text-muted-foreground">{pages.from}–{pages.to} of {pages.total} loaded matching notices</p>
-        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[8px] md:rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link> : null}
+        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[8px] md:rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link> : null}
         <span aria-current="page">Page {pages.page} of {pages.pages}</span>
-        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[8px] md:rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link> : null}
+        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[8px] md:rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link> : null}
       </nav> : null}
       </section>
       <section hidden={activeView!=="updates"} aria-label="Personal placement updates" className="min-w-0 space-y-4">
-      <div id="personal-updates" className="scroll-mt-24 border-t border-border pt-6"><h2 className="text-lg font-semibold text-foreground">Updates about you</h2></div>
+      <div id="personal-updates" className="scroll-mt-24 border-t border-border pt-6"><Heading level={2} size="lg" className="text-foreground">Updates about you</Heading></div>
       <nav aria-label="Personal alert filter" className={placementFilterNavClass}>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>

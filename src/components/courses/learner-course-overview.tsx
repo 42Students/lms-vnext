@@ -15,6 +15,8 @@ import { learnerCoursePathPreview } from "@/modules/courses/learner-course-path-
 import { learnerCourseAboutSource } from "@/modules/courses/learner-course-about-model";
 import { learnerCourseOverviewJumps } from "@/modules/courses/learner-course-overview-mobile-model";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
 
@@ -243,14 +245,14 @@ export function LearnerCourseOverview({
       <nav aria-label="Course overview sections"
         className="-mx-1 flex gap-2 overflow-x-auto border-b border-border bg-surface p-2 shadow-none md:hidden">
         {jumpLinks.map(item=>(
-          <a key={item.id} href={"#"+item.id}
-            className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none">
+          <ButtonLink variant="secondary" key={item.id} href={"#"+item.id}
+            className="shrink-0">
             {item.label}
-          </a>
+          </ButtonLink>
         ))}
       </nav>
       <div>
-        <h2 className="sr-only">Overview</h2>
+        <Heading level={2} className="sr-only">Overview</Heading>
         <p className="m-0 text-sm text-body">
           See progress, next steps, and updates for this course at a glance.
         </p>
@@ -260,9 +262,9 @@ export function LearnerCourseOverview({
         meta.credits!==null||meta.instructors.length>0)?<section id="course-overview-about" className="scroll-mt-24 rounded-[12px] border border-border bg-surface p-4 shadow-sm md:p-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-4xl">
-            <h3 className="m-0 text-lg font-semibold text-foreground">
+            <Heading level={3} size="lg" className="m-0 text-foreground">
               About this course
-            </h3>
+            </Heading>
             <p className="mt-1 text-xs text-muted-foreground" role="note">
               {aboutSource.label}
             </p>
@@ -348,7 +350,7 @@ export function LearnerCourseOverview({
       <section id="course-overview-path" aria-label="Learning path preview" className="scroll-mt-24 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold text-foreground">Learning path preview</h3>
+            <Heading level={3} size="base" className="text-foreground">Learning path preview</Heading>
             <p className="mt-1 text-sm text-body">
               {pathPreview.totalLessons} published {pathPreview.totalLessons===1?"lesson":"lessons"} in sequence.
               Lesson names describe the curriculum, not promises of learning outcomes.
@@ -386,7 +388,7 @@ export function LearnerCourseOverview({
       >
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
+            <p className="m-0 text-xs font-bold uppercase tracking-[.08em] text-primary-text">
               {learnerCourseHomeActionLabel({
                 readOnly,priorityType:priorityActivity?.type ?? null,
                 overdue:Boolean(priorityActivity && "overdue" in priorityActivity && priorityActivity.overdue),
@@ -395,11 +397,11 @@ export function LearnerCourseOverview({
                 hasMissed:summary.itemsMissed>0,
               })}
             </p>
-            <h3 className="mt-2 text-xl font-semibold text-foreground">
+            <Heading level={3} size="xl" className="mt-2 text-foreground">
               {nextAction
                 ? nextAction.title
                 : homeCompletion.title}
-            </h3>
+            </Heading>
             <p className="mt-1 text-sm text-body">
               {nextAction
                 ? nextAction.detail
@@ -408,7 +410,7 @@ export function LearnerCourseOverview({
           </div>
           {deliveryId ? <Link
             href={nextAction?.href ?? `/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
           >
             <NextActionIcon kind={priorityActivity?.type==="Live Session"?"session":priorityActivity?"deadline":"lesson"}/>
             {readOnly
@@ -466,9 +468,9 @@ export function LearnerCourseOverview({
         <section id="course-overview-updates" className="scroll-mt-24 border-b border-border pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="m-0 text-base font-semibold text-foreground">
+              <Heading level={3} size="base" className="m-0 text-foreground">
                 Recent updates
-              </h3>
+              </Heading>
               <p className="mt-1 text-xs text-body">
                 Official class announcements, saved completions, upcoming assessments, and live sessions.
               </p>
@@ -493,7 +495,7 @@ export function LearnerCourseOverview({
               <article key={update.key} className="py-3 first:pt-0 last:pb-0">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <Link href={update.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-w-0 max-[767px]:min-h-11">
+                    <Link href={update.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-w-0 max-md:min-h-11">
                       {update.title}
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">{update.detail}</p>

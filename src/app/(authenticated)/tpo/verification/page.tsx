@@ -11,6 +11,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {Select} from "@/components/ui/select";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic="force-dynamic";
 
@@ -32,7 +33,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
   if(error instanceof AuthorizationError) {
    return <section className="min-w-0 space-y-3">
     <PageHeader title="Verification" />
-    <h2 className="text-base font-semibold">You cannot verify profiles here</h2>
+    <Heading level={2} size="base">You cannot verify profiles here</Heading>
     <Alert tone="warning">Your verification access has been removed. Ask your college admin.</Alert>
    </section>;
   }
@@ -143,7 +144,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    <Alert tone="warning" role="alert">Could not load the queue. Please try again or contact your college admin.</Alert>
    <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>
   </section>:!queue.enabled||!queue.permitted?<section className="space-y-3">
-   <h2 className="text-base font-semibold text-[var(--lms-heading)]">You cannot verify profiles here</h2>
+   <Heading level={2} size="base" className="text-[var(--lms-heading)]">You cannot verify profiles here</Heading>
    <Alert tone="warning">{!queue.enabled
     ?"Your college admin has not allowed the placement cell to verify profiles"
      :"Your verification access has been removed. Ask your college admin."}</Alert>

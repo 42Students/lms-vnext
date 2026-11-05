@@ -5,6 +5,7 @@ import {tpoBulkFailedLines,tpoBulkFailedSummary} from "@/modules/placements/tpo-
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 type LeadChoice = {
   id: string;
@@ -164,7 +165,7 @@ export function RecruiterBulkOwnerControls({
       aria-label="Bulk recruiter lead owner assignment"
     >
       <div>
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Bulk assign lead owner</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Bulk assign lead owner</Heading>
         <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
           Select up to 100 filtered leads and one active college placement staff member.
           Joined and unsubscribed contacts can be assigned a placement-cell owner. Each reassignment is audited.
@@ -248,7 +249,7 @@ export function RecruiterBulkOwnerControls({
       {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
       {results.length > 0 ? (
         <section aria-live="polite">
-          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Per-lead results</h3>
+          <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Per-lead results</Heading>
           {runAuditId?<p className="mt-1 text-xs text-muted-foreground leading-[20px]">Audited batch: <code>{runAuditId}</code></p>:null}
           {undoRunId?<div className="mt-3 rounded-lg border border-border p-3 text-sm">
            <p>Undo these owner assignments within five minutes. If a changed lead has since been edited, nothing is restored.</p>

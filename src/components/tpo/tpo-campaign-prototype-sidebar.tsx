@@ -3,6 +3,7 @@ import {useMemo,useState} from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 export type TpoCampaignSidebarRow={
  campaign_id:string;title:string;subject:string;status:string;
  created_at:Date|string;createdByUserId:string;
@@ -61,13 +62,13 @@ export function TpoCampaignPrototypeSidebar({
   </p>:null}
   {([["SENT","Sent",sent],["DRAFTS","Drafts and sending",drafts]] as const).map(([key,heading,items])=>
    <section key={key} className="min-w-0 border-b border-border last:border-b-0" aria-label={heading}>
-    <h2 className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">{heading}</h2>
+    <Heading level={2} size="xs" className="px-4 py-3 uppercase tracking-wide text-muted-foreground">{heading}</Heading>
     <ul className="divide-y divide-border">{items.map(item=>
      <li key={item.campaign_id}>
       <Link href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}
        aria-current={activeId===item.campaign_id?"page":undefined}
        className={"block min-h-11 px-4 py-3 hover:bg-primary-subtle "+(activeId===item.campaign_id?
-        "border-l-[3px] border-primary bg-primary-subtle":"")}>
+        "border-l-2 border-primary bg-primary-subtle":"")}>
        <span className="flex items-start justify-between gap-2">
         <strong className="min-w-0 break-words text-sm text-foreground">{item.title}</strong>
         <span className="shrink-0 text-xs text-muted-foreground">{calendarLabel(item.created_at)}</span>

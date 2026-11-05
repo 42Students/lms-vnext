@@ -10,6 +10,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {Alert} from "@/components/ui/alert";
 import {Banner} from "@/components/ui/banner";
 import {listAdminTermCourseMappings} from "@/modules/admin-ui/super-admin-term-mapping-service";
+import { Heading } from "@/components/ui/heading";
 const statuses=["ALL","ACTIVE","INACTIVE"] as const;
 const legacySubtitle="Define the curriculum for each semester and spot courses that still need faculty coverage.";
 export default async function SuperAdminSemesterCourseMappingPage({searchParams}:{
@@ -61,11 +62,11 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
    </Banner>:null}
    {curriculum?<div aria-label="Manage semester course mappings" className="grid min-w-0 gap-4 border-b border-[var(--lms-canvas-border)] pb-5 lg:grid-cols-[minmax(0,10fr)_minmax(240px,4fr)]">
     <section className="min-w-0 space-y-3">
-      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Manage semester course mappings</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)]">Manage semester course mappings</Heading>
       <CollegeTermMappingManager key={context.adminScope.collegeId} data={curriculum}/>
     </section>
     <aside className="min-w-0 space-y-3 border-t border-border pt-4 text-sm text-body lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0">
-      <h3 className="font-semibold text-[var(--lms-heading)]">Mapping guide</h3>
+      <Heading level={3} className="text-[var(--lms-heading)]">Mapping guide</Heading>
       <p>Choose a program and semester, then review its mapped courses, credits and order before saving.</p>
       <p>The directory below is a separate read-only view of the current selected-college mappings.</p>
       <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">View semesters</Link>

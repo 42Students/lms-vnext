@@ -11,6 +11,7 @@ import {TpoInterviewRescheduleForm} from "@/components/placements/tpo-interview-
 import {EmptyState} from "@/components/ui/empty-state";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoInterviewReadiness} from "@/modules/placements/tpo-interview-readiness-service";
+import { Heading } from "@/components/ui/heading";
 type Props={searchParams:Promise<{days?:string|string[];page?:string|string[];q?:string|string[]}>};
 export default async function TpoInterviewReadinessPage({searchParams}:Props){
  const context=await getCurrentRequestContext();
@@ -34,7 +35,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
     </Select></label>
    <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Apply</Button>
   </form>
-  <section aria-label="Interview readiness counts" className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-3">
+  <section aria-label="Interview readiness counts" className="grid grid-cols-1 gap-3 md:grid-cols-3">
    {Object.entries(data.counts).map(([key,n])=><StatTile key={key} {...(tpoTileStyles["tile"] !== undefined ? {className:tpoTileStyles["tile"]} : {})}
     label={key.replaceAll(/([A-Z])/g," $1")} value={n} />)}
   </section>
@@ -42,11 +43,11 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
   {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found." action={<Link href="/tpo/calendar/interviews" className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">Apply</Link>}/>:
    <section aria-label="Interview rounds" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {data.rows.map(r=><article key={r.id} className="min-w-0 space-y-2 py-4">
-    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{r.companyName} · {r.jobTitle}</h2>
+    <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{r.companyName} · {r.jobTitle}</Heading>
     <p className="mt-1 text-sm text-body leading-[22px]">{r.name} · {r.state.replaceAll("_"," ")} · {r.mode??"Mode not recorded"}</p>
     <p className="mt-1 text-sm text-body leading-[22px]">{r.scheduledAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(r.scheduledAt)) + " IST":"Start not scheduled"} · {r.venue??"Venue not recorded"}</p>
     <p className="mt-1 text-xs text-[var(--lms-muted-text)] leading-5">Duration: {r.durationMinutes??"Not recorded"} minutes</p>
-    <Link href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-link hover:underline lms-inline-link">
+    <Link href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link hover:underline lms-inline-link">
       View round and candidate readiness →
     </Link>
     {r.status==="SCHEDULED"&&r.updatedAt?
@@ -54,8 +55,8 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
        scheduledAt:r.scheduledAt,mode:r.mode,venue:r.venue,meetingUrl:r.meetingUrl??null}}/>:null}
    </article>)}</section>}
   {(data.page>1||data.limited)?<nav aria-label="Interview round pages" className="flex flex-wrap gap-3">
-   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous 200</Link>:null}
-   {data.limited?<Link href={href(data.page+1)} className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next 200</Link>:null}
+   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous 200</Link>:null}
+   {data.limited?<Link href={href(data.page+1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next 200</Link>:null}
   </nav>:null}
   <p className="text-xs text-[var(--lms-muted-text)] leading-5">No interviewer identities, per-candidate slots or calendar invitations are invented from the round schedule.</p>
  </div>;

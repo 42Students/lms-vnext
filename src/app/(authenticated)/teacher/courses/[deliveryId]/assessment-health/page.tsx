@@ -11,6 +11,7 @@ import {
   facultyCourseHealthHref, facultyCourseHealthParamsSchema,
 } from "@/modules/courses/faculty-course-health-model";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
+import { Heading } from "@/components/ui/heading";
 
 type Params = { kind?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -44,7 +45,7 @@ export default async function FacultyCourseAssessmentHealthPage({
         Section students
       </Link>} />
     <section className="border-b border-border pb-4">
-      <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Scope</h2>
+      <Heading level={2} size="sm" className="text-[var(--lms-heading)]">Scope</Heading>
       <p className="mt-1 text-sm text-body leading-[22px]">
         {data.rosterSize} currently enrolled learners in this authorized Section.
         Only published Assignment and Quiz responses are summarized.
@@ -73,7 +74,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       <article key={item.kind + ":" + item.id}
         className="min-w-0 py-4 first:pt-1">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="min-w-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.title}</h2>
+          <Heading level={2} size="base" className="min-w-0 break-words leading-6 text-[var(--lms-heading)]">{item.title}</Heading>
           <Badge tone="neutral">{item.kind}</Badge>
         </div>
         <dl className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">

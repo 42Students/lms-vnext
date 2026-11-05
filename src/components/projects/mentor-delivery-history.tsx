@@ -2,6 +2,7 @@
 
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 export type MentorDeliveryHistoryEntry={
  id:string;version:number;kind:string;occurredAt:string;
@@ -14,7 +15,7 @@ export function MentorDeliveryHistory({events}:{events:readonly MentorDeliveryHi
    b.version-a.version||b.id.localeCompare(a.id));
  const shown=ordered.slice(0,limit);
  return <div className="prototype-mentor-delivery-history">
-   <h3>Submission and review history · {events.length} recorded events</h3>
+   <Heading level={3}>Submission and review history · {events.length} recorded events</Heading>
    <p>Newest first · each attempt retains its own version and reviewer feedback.</p>
    {shown.length?<ol>{shown.map(event=><li key={event.id}>
      <strong>Version {event.version} · {event.kind.replaceAll("_"," ")}</strong>

@@ -27,6 +27,8 @@ import {
   ACTIVITY_MODULES,
 } from "@/modules/activity/taxonomy";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -208,10 +210,10 @@ export default async function ActivityPage({
       <PageHeader title="Activity Log" />
       <ErrorState title="Couldn't load activity."
         description="Your filters have been preserved. Please try again."
-        action={<a href={retryHref}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">
+        action={<TextLink href={retryHref}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Retry
-        </a>} />
+        </TextLink>} />
     </div>;
   }
 
@@ -331,22 +333,22 @@ export default async function ActivityPage({
           {result.items.length===0?<span aria-disabled="true" className="inline-flex min-h-11 items-center text-sm text-muted-foreground md:min-h-9">
             Export unavailable (no matching activity)
           </span>:<>
-            <a href={pageCsvHref} download="activity-current-page.csv"
-              className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 md:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            <TextLink href={pageCsvHref} download="activity-current-page.csv"
+              className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm md:w-auto md:min-h-9">
               Export current page (8 columns)
-            </a>
+            </TextLink>
             {importantOnly ? <span className="flex min-h-11 items-center text-xs text-muted-foreground md:min-h-9">
               All-matching Important-only export requires the category-aware export API.
-            </span> : <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
+            </span> : <TextLink href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
               (exportParams.size ? "?" + exportParams.toString() : "")}
-              className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 hover:bg-[rgba(38,186,199,0.07)] md:w-auto hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)]">
+              className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm md:w-auto md:min-h-9">
               Export all matching CSV
-            </a>}
+            </TextLink>}
           </>}
-          <a href={retryHref}
-            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <TextLink href={retryHref}
+            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm md:min-h-9 md:w-auto">
             Refresh
-          </a>
+          </TextLink>
           {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
             className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]">
             Open audit findings board →
@@ -371,7 +373,7 @@ export default async function ActivityPage({
       {collegeOptionsFailed ? (
         <div role="status" className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-3 text-sm text-body">
           <span>College filter options could not load. Your activity results are still scoped to the current administrator access.</span>
-          <a href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Retry</a>
+          <TextLink href={retryHref} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
         </div>
       ) : null}
       {isSuperAdmin(context)?<nav aria-label="Activity Log filters" className="space-y-2">
@@ -575,7 +577,7 @@ export default async function ActivityPage({
 
       {rawMode ? (
         <section aria-labelledby="raw-audit-log" className="min-w-0 space-y-3">
-          <h2 id="raw-audit-log" className="text-lg font-semibold text-[var(--lms-heading)]">Raw Audit Logs</h2>
+          <Heading level={2} size="lg" id="raw-audit-log" className="text-[var(--lms-heading)]">Raw Audit Logs</Heading>
           <p className="text-sm text-muted-foreground">
             Raw events in newest-first order. IP addresses are not retained in vNext;
             the audit record uses privacy-safe provenance instead.

@@ -25,6 +25,7 @@ import {
 import { storageApiError } from "@/modules/courses/learner-storage-ui-model";
 import { uploadFacultyLessonThumbnail, uploadFacultyLessonVideo } from "./faculty-video-transfer";
 import { FacultyVideoPreview } from "./faculty-video-preview";
+import { Heading } from "@/components/ui/heading";
 
 type Action = (signal: AbortSignal) => Promise<void>;
 type VideoConfirmation = {kind: "DELETE"; video: ManagedVideo} | {kind: "REPLACE"; video: ManagedVideo; file: File};
@@ -284,7 +285,7 @@ export function FacultyLessonVideoManager({
   }
 
   return <section id={"faculty-video-upload-"+lessonId} aria-label="Lesson video management" className="mt-4 min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
-    <h3 className="text-base font-semibold text-[var(--lms-heading)]">Video</h3>
+    <Heading level={3} size="base" className="text-[var(--lms-heading)]">Video</Heading>
     <div className="flex flex-wrap items-center justify-between gap-2">
      <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("lesson-video")}</p>
      <p role="note" className="text-xs text-muted-foreground">For videos hosted elsewhere, download an authorized copy and upload it locally. This workspace does not fetch arbitrary external URLs.</p>
@@ -335,7 +336,7 @@ export function FacultyLessonVideoManager({
         return <li key={video.id} className="min-w-0 space-y-3 py-4">
           <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
            <div className="min-w-0">
-            <h4 className="break-words text-sm font-semibold text-foreground leading-[22px]">{video.title} · {formatFileSize(video.sizeBytes)}</h4>
+            <Heading level={4} size="sm" className="break-words text-foreground leading-[22px]">{video.title} · {formatFileSize(video.sizeBytes)}</Heading>
             <p className="text-xs text-muted-foreground">Added {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(video.createdAt))}</p>
            </div>
            <div className="flex flex-wrap items-center gap-2">

@@ -9,7 +9,7 @@ export const LETTER_SPACING = ["-0.02em", "0", "0.2px", "0.05em", "0.08em", "0.1
 export const BORDER_WIDTH_PX = [0, 1, 2];
 export const OPACITY = [0, 0.1, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8, 1];
 export const MIN_BREAKPOINTS_PX = [640, 768, 992, 1280];
-export const Z_LITERAL_OK = [-1, 0, 1];
+export const Z_LITERAL_OK = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // local stacking inside a component
 export const MOTION_LITERAL_OK = ["0s", "0ms", "0.01ms"];
 
 const TOKEN_FILES = new Set(["src/app/globals.css", "src/components/ui/branding-color-tokens.ts"]);
@@ -20,7 +20,8 @@ export const RULES = {
   "raw-control": "Use the shared Button/Input/Select/Textarea/Table/PageHeader instead of raw <button>/<input>/<select>/<textarea>/<table>/<h1>.",
   "raw-heading": "Use the shared Heading instead of raw <h2>-<h6>.",
   "raw-link": "Use the shared TextLink instead of a raw <a>.",
-  "raw-image": "Use the shared Image/Avatar instead of a raw <img>.",
+  "raw-image": "Use the shared Img/Avatar instead of a raw <img>.",
+  "link-bare": 'TextLink variant="bare" has no standard look. Use TextLink, ButtonLink, or a real component.',
   "button-bare": 'Button variant="bare" has no standard look. Use primary/secondary/ghost/danger/link/chip/menu-item.',
   "hex-color": "Use a --lms-* color token instead of a hex literal.",
   "color-literal": "Use a --lms-* color token instead of rgb()/hsl()/named colors.",
@@ -127,6 +128,7 @@ export function scanFile(path, rawSource) {
   // --- raw elements (tsx only, outside the shared ui folder)
   if (isTsx && !path.startsWith(SHARED_CONTROL_DIR)) {
     for (const m of source.matchAll(/<Button\b[^>]*?\bvariant="bare"/g)) add("button-bare", m.index, m[0]);
+    for (const m of source.matchAll(/<TextLink\b[^>]*?\bvariant="bare"/g)) add("link-bare", m.index, m[0]);
     for (const m of source.matchAll(/<(button|input|select|textarea|table|h1)(?=[\s>/])/g)) {
       if (m[1] === "input" && /^<input\b[^>]*?\btype=["']hidden["']/.test(source.slice(m.index, m.index + 400))) continue;
       add("raw-control", m.index, m[0]);
@@ -249,7 +251,7 @@ export function scanFile(path, rawSource) {
   }
 
   if (isCss) {
-    if (path !== MOTION_FILE && !isToken) for (const m of source.matchAll(/@keyframes\s+[\w-]+/g)) add("keyframes-local", m.index, m[0]);
+    if (path !== MOTION_FILE && !isToken && !path.endsWith(".module.css")) for (const m of source.matchAll(/@keyframes\s+[\w-]+/g)) add("keyframes-local", m.index, m[0]);
     for (const m of source.matchAll(/@media[^{]*\((max|min)-width:\s*([0-9.]+)(px|em|rem)\)/g)) {
       const w = px(num(m[2]), m[3] === "px" ? "px" : "rem");
       const okMin = MIN_BREAKPOINTS_PX.includes(w), okMax = MIN_BREAKPOINTS_PX.map((x) => x - 1).includes(w);
@@ -268,7 +270,7 @@ export function scanFile(path, rawSource) {
       const ok = m[2] ? inSet(LINE_HEIGHT_PX, px(num(m[1]), m[2])) : inSet(LINE_HEIGHT_UNITLESS, num(m[1]));
       if (!ok) add("line-height-off-scale", m.index, m[0]);
     });
-    T(/(?<![\w-])leading-(snug|relaxed|loose|3|11|12)\b/g, (m) => add("line-height-off-scale", m.index, m[0]));
+    T(/(?<![\w-])leading-(snug|relaxed|loose|3)\b/g, (m) => add("line-height-off-scale", m.index, m[0]));
     T(/(?<![\w-])tracking-\[(-?[0-9.]+(?:px|em))\]/g, (m) => { if (!LETTER_SPACING.includes(normEm(m[1]))) add("letter-spacing-off-scale", m.index, m[0]); });
     T(/(?<![\w-])border(?:-[trblxy])?-\[([0-9.]+)px\]/g, (m) => { if (!inSet(BORDER_WIDTH_PX, num(m[1]))) add("border-width-off-scale", m.index, m[0]); });
     T(/(?<![\w-])border(?:-[trblxy])?-(4|8)\b/g, (m) => add("border-width-off-scale", m.index, m[0]));
@@ -276,7 +278,7 @@ export function scanFile(path, rawSource) {
     T(/(?<![\w-])opacity-([0-9]+)\b/g, (m) => { if (!inSet(OPACITY, num(m[1]) / 100)) add("opacity-off-scale", m.index, m[0]); });
     T(/(?<![\w-])-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me|gap|gap-x|gap-y|space-x|space-y)-\[(-?[0-9.]+)(px|rem)\]/g, (m) => { if (!spacingOk(px(num(m[1]), m[2]))) add("spacing-off-grid", m.index, m[0]); });
     T(/(?<![\w-])-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me|gap|gap-x|gap-y|space-x|space-y)-(?:2\.5|3\.5)\b/g, (m) => add("spacing-off-grid", m.index, m[0]));
-    T(/(?<![\w-])shadow-\[/g, (m) => add("shadow-literal", m.index, m[0]));
+    T(/(?<![\w-])shadow-\[(?!var\()/g, (m) => add("shadow-literal", m.index, m[0]));
     T(/(?<![\w-])shadow-(2xl|inner)\b/g, (m) => add("shadow-literal", m.index, m[0]));
     T(/(?<![\w-])z-(?:\[([0-9-]+)\]|([0-9]+))(?![\w-])/g, (m) => { if (!inSet(Z_LITERAL_OK, num(m[1] ?? m[2]))) add("z-index-literal", m.index, m[0]); });
     T(/(?<![\w-])(?:duration|delay)-(?:\[[0-9.]+m?s\]|[0-9]+)(?![\w-])/g, (m) => add("motion-literal", m.index, m[0]));

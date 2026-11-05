@@ -44,7 +44,7 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
       </svg>
     </Button>
     <Drawer id="lms-mobile-navigation" open={open} onOpenChange={setOpen} side="left" title="Navigation menu"
-      headerLeading={<ShellLogoMark />} className="lms-mobile-sidebar max-[767px]:!w-64 max-[767px]:!max-w-64 md:hidden"
+      headerLeading={<ShellLogoMark />} className="lms-mobile-sidebar max-md:!w-64 max-md:!max-w-64 md:hidden"
       bodyClassName="!px-[var(--lms-space-3)] !pt-[var(--lms-space-2)] !pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
       <SidebarNav items={items} onNavigate={() => setOpen(false)} />
     </Drawer>

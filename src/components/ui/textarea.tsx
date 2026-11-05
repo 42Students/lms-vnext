@@ -7,7 +7,7 @@ export type TextareaProps = ComponentPropsWithRef<"textarea"> & { error?: boolea
  * Multi-line .ln-in2 family.
  * Legacy: components___form.scss:117-143, background var(--lms-neutral-50),
  * radius 10px, 14px/400/20px, tracking 0.2px, 200ms halo,
- * invalid var(--lms-error) and focus halo rgba(239,68,68,.2).
+ * invalid var(--lms-error) and focus halo color-mix(in srgb, var(--lms-error) 20%, transparent).
  * Preserve caller rows/cols, controlled state, ref and resizing.
  */
 export function Textarea({ className, error = false, rows, ...props }: TextareaProps) {
@@ -26,22 +26,22 @@ export function Textarea({ className, error = false, rows, ...props }: TextareaP
         touchHeightClass,
         "w-full min-w-0 resize-y disabled:resize-none font-[inherit] scroll-mt-3",
         "rounded-[var(--lms-field-radius)] border-0",
-        "bg-[var(--lms-form-bg)] px-[10px] py-[15px]",
+        "bg-[var(--lms-form-bg)] px-[12px] py-[16px]",
         "text-[var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",
         "caret-[var(--lms-primary)] outline-none shadow-none",
-        "transition-[border-color,box-shadow,background-color] duration-200 ease-[var(--lms-motion-ease)]",
+        "transition-[border-color,box-shadow,background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)]",
         "placeholder:text-[var(--lms-placeholder)]",
         "enabled:not-read-only:hover:border-[var(--lms-field-hover-border)]",
         "read-only:cursor-default read-only:bg-[var(--lms-neutral-50)] read-only:hover:border-[var(--lms-canvas-border)]",
-        "focus-visible:border-[var(--lms-primary)] focus-visible:shadow-[var(--lms-control-shadow)]",
+        "focus-visible:border-[var(--lms-primary)] focus-visible:shadow-(--lms-control-shadow)",
         "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
         "disabled:cursor-not-allowed disabled:select-none disabled:opacity-100",
         "disabled:border-[var(--lms-canvas-border)] disabled:bg-[var(--lms-neutral-50)] disabled:text-[var(--lms-neutral-400)]",
         "disabled:placeholder:text-[var(--lms-neutral-400)]",
-        "aria-invalid:border aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[rgba(239,68,68,0.06)]",
+        "aria-invalid:border aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[color-mix(in_srgb,var(--lms-error)_6%,transparent)]",
         "aria-invalid:enabled:hover:border-[var(--lms-error)]",
         "aria-invalid:focus-visible:border-[var(--lms-error)]",
-        "aria-invalid:focus-visible:shadow-[0_0_0_2px_rgba(239,68,68,0.2)]",
+        "aria-invalid:focus-visible:shadow-(--lms-focus-ring-error)",
         "aria-invalid:focus-visible:outline-[var(--lms-error)]",
         "motion-reduce:transition-none",
         className,

@@ -14,6 +14,8 @@ import {
   getYouTubeVideoId,
   shouldPersistPlayback,
 } from "./course-media-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type YouTubePlayer = {
   destroy: () => void;
@@ -473,14 +475,14 @@ export function LearnerYouTubePlayer({
     return (
       <div className="mt-4 space-y-2">
         <Alert tone="error">Video unavailable. It may be region-blocked or removed.</Alert>
-        <a
+        <TextLink
           href={videoUrl}
           
           rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+          className="mt-2 inline-flex min-h-11 items-center text-sm md:min-h-9"
         >
           Open on YouTube
-        </a>
+        </TextLink>
       </div>
     );
   }
@@ -490,7 +492,7 @@ export function LearnerYouTubePlayer({
       <header className="mb-3 flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold text-muted-foreground">YouTube Video</p>
-          <h3 className="break-words text-base font-semibold text-foreground">{contentTitle?.trim()||"Embedded YouTube video"}</h3>
+          <Heading level={3} size="base" className="break-words text-foreground">{contentTitle?.trim()||"Embedded YouTube video"}</Heading>
           {contentAddedAt?<p className="mt-1 text-xs text-muted-foreground">Added {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(contentAddedAt))}</p>:null}
         </div>
         {(onEdit||onDelete)?<div className="flex flex-wrap items-center gap-2">
@@ -528,14 +530,14 @@ export function LearnerYouTubePlayer({
         <Alert tone="warning" className="mt-2">Video unavailable. It may be region-blocked or removed.</Alert>
       ) : null}
       {loadFailed ? (
-        <a
+        <TextLink
           href={videoUrl}
           
           rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+          className="mt-2 inline-flex min-h-11 items-center text-sm md:min-h-9"
         >
           Open on YouTube
-        </a>
+        </TextLink>
       ) : null}
 
       {saveError ? <Alert tone="error" className="mt-2">{saveError}</Alert> : null}

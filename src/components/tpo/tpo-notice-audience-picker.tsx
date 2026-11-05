@@ -39,7 +39,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
       {value:"DRIVE",label:"Published drive"}] as const).map(option=>
       <label key={option.value}
        className={"inline-flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold md:min-h-9 "+
-        (audience===option.value?"bg-[var(--lms-primary)] text-white":
+        (audience===option.value?"bg-[var(--lms-primary)] text-[color:var(--lms-on-primary)]":
           "text-body hover:bg-surface-subtle")}>
         <Radio name="audience-choice" value={option.value} checked={audience===option.value}
           onChange={()=>{setAudience(option.value);setTarget("");setTargets([]);setSearch("");setValidationError("");}}
@@ -51,7 +51,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
   {multiple&&options?<div className="grid min-w-0 gap-3 text-sm">
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find {targetKind==="batches"?"batches":"branches"}
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-     placeholder="Search options" className="min-h-11 min-[768px]:min-h-9"/>
+     placeholder="Search options" className="min-h-11 md:min-h-9"/>
    </label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose {targetKind==="batches"?"batches":"branches"}
     <Select aria-label="Selected audience groups" multiple required value={targets}
@@ -87,14 +87,14 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
     <Input type="search" value={search}
      onChange={event=>{setSearch(event.target.value);setTarget("");}}
      placeholder="Search published drives"
-     className="min-h-11 min-[768px]:min-h-9 max-w-full"/>
+     className="min-h-11 md:min-h-9 max-w-full"/>
    </label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose a drive
     <Select name="targetId" required value={target}
      aria-invalid={Boolean(validationError)} aria-describedby={validationError?"notice-drive-error":undefined}
      onInvalid={event=>{event.currentTarget.setCustomValidity("Pick a drive");setValidationError("Pick a drive");}}
      onChange={event=>{event.currentTarget.setCustomValidity("");setValidationError("");setTarget(event.target.value);}}
-     className="min-h-11 min-[768px]:min-h-9 max-w-full">
+     className="min-h-11 md:min-h-9 max-w-full">
      <option value="">{!available.length?emptyText:!filtered.length?"Nothing matches this search":"Pick a drive"}</option>
      {filtered.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>

@@ -8,6 +8,7 @@ import {
   APPLICANT_NOTE_MAX_LENGTH,
   type ApplicantNotesSnapshot,
 } from "@/modules/placements/applicant-notes-model";
+import { Heading } from "@/components/ui/heading";
 
 function formatIst(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -67,9 +68,9 @@ export function ApplicantNotesPanel({
 
   return (
     <section aria-labelledby="applicant-notes-title" className="space-y-3 border-b border-border pb-6">
-      <h2 id="applicant-notes-title" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+      <Heading level={2} size="base" id="applicant-notes-title" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
         Private notes
-      </h2>
+      </Heading>
       <p className="text-xs text-body leading-[20px]">Visible only to {audience}. Notes cannot be edited or deleted; add a new note to correct one.</p>
       {snapshot.notes.length === 0 ? (
         <p className="text-sm text-body leading-[22px]">No notes yet.</p>
@@ -109,7 +110,7 @@ export function ApplicantNotesPanel({
           type="submit"
           disabled={pending}
           loading={pending}
-          className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
+          className="min-h-11 w-full md:min-h-9 md:w-auto"
         >
           {pending ? "Saving…" : "Save note"}
         </Button>

@@ -28,6 +28,9 @@ import { recruiterTeamAttributedDriveCounts } from "@/modules/placements/recruit
 import { hrTeamSearchSchema, searchHrTeam } from "@/modules/placements/hr-team-search-model";
 import {hrTeamRosterMessage} from "@/modules/placements/hr-team-roster-message-model";
 import {hrTeamPageSchema,hrTeamPage} from "@/modules/placements/hr-team-pagination-model";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 
 type PageProps = {
   searchParams: Promise<{
@@ -51,7 +54,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   // value. Keep the existing recoverable invalid-college state on ambiguity.
   const repeated=Object.values(query).some(Array.isArray);
   const collegeQuery = z.string().uuid().optional().safeParse(repeated?null:one(query.collegeId));
-  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6"><PageHeader title="Company & Team" />
+  if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<Link href="/hr/company" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
@@ -84,7 +87,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
   if (result.status !== "READY") {
     return (
-      <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
+      <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
         <PageHeader
           title="Company & Team"
           description="Choose the college whose recruiter relationship you want to view. We never guess a college when more than one access grant is active."
@@ -93,7 +96,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           title="Open this on your college&apos;s placement address"
           description="Your recruiter account has no active college session. Contact the placement cell that invited you."/>:
           <section className="space-y-3 border-b border-border pb-6">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Choose a college</h2>
+            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Choose a college</Heading>
             <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
               key:grant.collegeId,label:grant.collegeName,
               href:"/hr/company?collegeId="+encodeURIComponent(grant.collegeId),
@@ -185,7 +188,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     />;
   }
   return (
-    <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="Company & Team"
         description={"Your work with "+result.grant.collegeName}
@@ -209,15 +212,15 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
       {tab === "company" ? (
         <section className="border-b border-border pb-6">
-          <div className="flex min-w-0 flex-col items-start gap-3 min-[768px]:flex-row min-[768px]:justify-between">
+          <div className="flex min-w-0 flex-col items-start gap-3 md:flex-row md:justify-between">
             <div className="flex min-w-0 items-start gap-4">
               <span aria-label={"Company logo for "+result.company.name}
                 className="inline-flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-muted text-2xl font-semibold text-foreground">
-                {publicLogo?<img src={publicLogo} alt="" className="h-full w-full object-contain"/>:
+                {publicLogo?<Img src={publicLogo} alt="" className="h-full w-full object-contain"/>:
                   result.company.name.slice(0,1).toUpperCase()}
               </span>
               <div className="min-w-0">
-                <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{result.company.name}</h2>
+                <Heading level={2} className="break-words text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">{result.company.name}</Heading>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   {profile?.verifiedAt&&result.company.trusted?<Badge tone="success">Verified</Badge>:null}
                   {companyDomains.length?<span className="break-all text-sm text-muted-foreground">{companyDomains.join(", ")}</span>:null}
@@ -231,7 +234,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Website</dt>
               <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl?.startsWith("https://")||result.company.websiteUrl?.startsWith("http://")
-                ? <a href={result.company.websiteUrl} rel="noopener noreferrer" className="max-w-full break-all min-h-11 md:min-h-9 inline-flex items-center text-link underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{result.company.websiteUrl}</a>
+                ? <TextLink href={result.company.websiteUrl} rel="noopener noreferrer" className="max-w-full break-all min-h-11 md:min-h-9 inline-flex items-center">{result.company.websiteUrl}</TextLink>
                 : (result.company.websiteUrl??"Not provided")}</dd>
             </div>
             <div>
@@ -246,10 +249,10 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             {" "}To change the name or logo, ask the placement cell.
           </p>
           <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-6">
-            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Hiring footprint with this college</h3>
+            <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">Hiring footprint with this college</Heading>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
             {overview.recent.length ? <div className="mt-4 space-y-2">
-              <h4 className="text-sm font-semibold text-foreground">Recent hiring drives</h4>
+              <Heading level={4} size="sm" className="text-foreground">Recent hiring drives</Heading>
               <div className="divide-y divide-border border-y border-border">
               {overview.recent.map(job=><Link key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
                 className="flex min-h-11 min-w-0 flex-wrap items-center justify-between gap-2 py-3 text-sm transition-colors hover:bg-[var(--lms-table-hover)] md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -268,7 +271,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       ) : (
         <section className="border-b border-border pb-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Recruiter team</h2>
+            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Recruiter team</Heading>
             <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
               className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               Export authorized team CSV
@@ -277,13 +280,13 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <p className="mt-2 text-sm text-body">
             Colleagues from your company who work with this college. To add one, ask the placement cell to invite them with their work email; the placement cell decides who gets access.
           </p>
-          <form action="/hr/company" method="get" role="search" aria-label="Recruiter team search" className="mt-3 flex min-w-0 flex-col items-stretch gap-2 min-[768px]:flex-row min-[768px]:items-center">
+          <form action="/hr/company" method="get" role="search" aria-label="Recruiter team search" className="mt-3 flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:items-center">
             <Input type="hidden" name="collegeId" value={result.grant.collegeId}/>
             <Input type="hidden" name="tab" value="team"/>
             <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
             <Input id="hr-team-query" type="search" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
-              className="min-h-11 min-w-0 w-full min-[768px]:min-h-9 min-[768px]:max-w-sm min-[768px]:flex-1"/>
+              className="min-h-11 min-w-0 w-full md:min-h-9 md:max-w-sm md:flex-1"/>
             <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           </form>
           {teamCountsUnavailable ? <p role="alert" className="mb-3 border-l-2 border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] p-3 text-sm text-warning-text">Could not load this team’s drive counts. Retry Team to restore counts.</p> : null}
@@ -298,7 +301,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             action={teamQuery.data ? <Link href={base+"&tab=team"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear search</Link> : undefined}/> : (
             <div className="mt-4 min-w-0 divide-y divide-border border-y border-border">
               {teamPageResult.rows.map((member) => (
-                <div key={member.userId} className="flex min-w-0 flex-col gap-2 py-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+                <div key={member.userId} className="flex min-w-0 flex-col gap-2 py-3 md:flex-row md:items-start md:justify-between">
                   <div className="flex min-w-0 items-start gap-3">
                     <span aria-hidden="true" className="inline-flex size-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted text-sm font-semibold text-foreground">
                       {(member.displayName||member.email||"R").trim().charAt(0).toUpperCase()}

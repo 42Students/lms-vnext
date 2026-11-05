@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 type Delivery = { id: string; courseId: string; course: string; code: string; section: string };
 type Group = { id: string; name: string; capacity: number | null };
@@ -143,21 +144,21 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
     <Dialog open={opened} onOpenChange={next=>{if(!next)close();}}
       title="Elective slot details"
       description="Offerings, seat allocation and faculty access for the selected elective slot."
-      className="!max-w-[1100px] max-[767px]:!w-[calc(100vw_-_16px)]"
-      bodyClassName="max-[767px]:!px-3">
+      className="!max-w-[1100px] max-md:!w-[calc(100vw_-_16px)]"
+      bodyClassName="max-md:!px-3">
     <section aria-label="Elective course offerings"
       className="min-w-0 w-full space-y-[var(--lms-space-3)]">
       {loading && <p role="status">Loading eligible courses and groups…</p>}
       {data && <>
-        <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Courses in this elective slot</h3>
+        <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Courses in this elective slot</Heading>
         {data.offerings.length === 0 && <p className="text-sm text-muted-foreground leading-[22px]">
           No courses added yet.</p>}
         <div role="table" aria-label="Courses in elective slot" className="min-w-0 overflow-x-auto">
-          <div role="row" className="hidden min-[850px]:grid min-[850px]:grid-cols-[minmax(170px,2fr)_minmax(90px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_auto] gap-3 border-b border-border py-2 text-xs font-semibold text-muted-foreground">
+          <div role="row" className="hidden md:grid md:grid-cols-[minmax(170px,2fr)_minmax(90px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_auto] gap-3 border-b border-border py-2 text-xs font-semibold text-muted-foreground">
             {["Course","Seats","Waitlist","Faculty","Actions"].map(text=><span role="columnheader" key={text}>{text}</span>)}
           </div>
           {data.offerings.map(offering => <div role="row" key={offering.offeringId}
-            className="grid min-w-0 grid-cols-1 items-center gap-2 border-b border-border py-3 text-sm min-[850px]:grid-cols-[minmax(170px,2fr)_minmax(90px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_auto] min-[850px]:gap-3">
+            className="grid min-w-0 grid-cols-1 items-center gap-2 border-b border-border py-3 text-sm md:grid-cols-[minmax(170px,2fr)_minmax(90px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_auto] md:gap-3">
             <div role="cell" className="min-w-0 break-words">
               <span className="font-semibold">{offering.courseName}</span>
               <span className="block text-xs text-muted-foreground">{offering.courseCode} · {offering.status}</span>
@@ -167,7 +168,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
             </div>
             <div role="cell">
               <span className={`inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${offering.waitlistedCount>0?
-                "border-amber-300 bg-amber-50 text-amber-800":"border-border bg-surface text-muted-foreground"}`}>
+                "border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]":"border-border bg-surface text-muted-foreground"}`}>
                 Waitlist {offering.waitlistedCount}
               </span>
             </div>
@@ -189,7 +190,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           </div>)}
         </div>
         <div className="border-t border-border pt-3">
-          <h4 className="text-sm font-semibold">{editing ? "Edit offering" : "Add offering"}</h4>
+          <Heading level={4} size="sm">{editing ? "Edit offering" : "Add offering"}</Heading>
           <p className="mt-2 text-xs leading-5 text-muted-foreground">
             An active course delivery is required for learner access. Faculty assignments and learner allocations
             are managed on the offering&apos;s Roster & faculty page.

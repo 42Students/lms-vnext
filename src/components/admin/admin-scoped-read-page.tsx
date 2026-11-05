@@ -19,6 +19,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
+import { Heading } from "@/components/ui/heading";
 export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page",backHref,headerActions,intro,compactReadLayout=false}:{
  title:string;path:string;description:string;headingMode?:"page"|"section";backHref?:string;headerActions?:ReactNode;intro?:ReactNode;compactReadLayout?:boolean;
  statuses:readonly string[];
@@ -33,7 +34,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  // Student registration owns the page h1; the directory then has a section
  // heading. Other callers retain the original PageHeader by default.
  const heading=(eyebrow:string,detail?:string,exportAction?:ReactNode)=>headingMode==="section"
-  ? <div><h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{title}</h2>
+  ? <div><Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{title}</Heading>
      {detail?<p className="mt-1 text-sm text-body leading-[22px]">{detail}</p>:null}</div>
   : compactReadLayout
     ? <div className="min-w-0 space-y-2">
@@ -123,7 +124,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>detailValue(row,"Class")},
   {key:"gender",header:"Gender",mobilePriority:"secondary",cell:row=>detailValue(row,"Gender")},
   {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>},
-  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
+  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-(--lms-z-raised) md:bg-surface",cell:actionCell},
  ];
  const facultyColumns:DataTableColumn<SuperAdminReadRow>[]=[
   {key:"name",header:"Name",mobilePriority:"primary",cell:row=><strong className="break-words">{row.title}</strong>},
@@ -133,7 +134,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>facultyTypeLabel(detailValue(row,"Faculty type")!=="—"?detailValue(row,"Faculty type"):detailValue(row,"Employment type"))},
   {key:"gender",header:"Gender",mobilePriority:"secondary",cell:row=>detailValue(row,"Gender")},
   {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>},
-  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
+  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-(--lms-z-raised) md:bg-surface",cell:actionCell},
  ];
  const assignmentColumns:DataTableColumn<SuperAdminReadRow>[]=[
   {key:"faculty",header:"Faculty",mobilePriority:"primary",cell:row=><strong className="break-words">{row.title}</strong>},
@@ -143,7 +144,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"year",header:"Year",mobilePriority:"secondary",cell:row=>detailValue(row,"Year")},
   {key:"role",header:"Role",mobilePriority:"secondary",cell:row=><StatusBadge tone={detailValue(row,"Teaching role")==="PRIMARY"?"success":"neutral"}>{teachingRoleLabel(detailValue(row,"Teaching role"))}</StatusBadge>},
   {key:"active",header:"Active",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status==="ACTIVE"?"Yes":"No"}</StatusBadge>},
-  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
+  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-(--lms-z-raised) md:bg-surface",cell:actionCell},
  ];
  const scopedColumns=directoryKind==="LEARNER"?studentColumns:
   directoryKind==="FACULTY"?facultyColumns:
@@ -327,7 +328,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <div className="grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-6">
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
-          <h2 className="m-0 min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.title}</h2>
+          <Heading level={2} size="base" className="m-0 min-w-0 break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{row.title}</Heading>
           <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>
         </div>
         <p className="mt-1 break-words text-sm text-body leading-[22px]">{row.subtitle}</p>
@@ -346,7 +347,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     action={<Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>}/>}
   </> : scopedColumns?<>
-   {title==="Faculty Assignments"?<h2 className="text-lg font-semibold">Current teaching assignments</h2>:null}
+   {title==="Faculty Assignments"?<Heading level={2} size="lg">Current teaching assignments</Heading>:null}
     <DataTable columns={scopedColumns} rows={data.items} getRowKey={row=>row.id}
       caption={title} mobileMode="scroll" className="min-w-0 text-[13px]"
       empty={<EmptyState title={emptyRosterTitle}
@@ -359,7 +360,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-     <h2 className="m-0 min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.title}</h2>
+     <Heading level={2} size="base" className="m-0 min-w-0 break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{row.title}</Heading>
      <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>
     </div>
     <p className="break-words text-sm text-body leading-[22px]">{row.subtitle}</p>

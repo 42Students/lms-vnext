@@ -18,6 +18,8 @@ import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {historicalHiringTotals,hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
 import {SuperAdminHiringAcademicFilters} from "@/components/admin/super-admin-hiring-academic-filters";
 import {Pagination} from "@/components/ui/pagination";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
@@ -37,7 +39,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
      :parsed.error.issues[0]?.path[0]==="programId"?"Select a valid program."
      :parsed.error.issues[0]?.path[0]==="cohortId"?"Select a valid batch."
      :"Check the date format and selected analytics filters."}
-   action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-[650] text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear all</Link>}/>
+   action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear all</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  const collegeSelected=Boolean(context.adminScope?.collegeId);
@@ -134,10 +136,10 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
      <Button type="submit" variant="secondary" className="min-h-11 w-full gap-2 md:min-h-9 sm:w-auto">
       <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 11a8 8 0 1 0-2 6M20 5v6h-6"/></svg>Refresh
      </Button>
-     <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
-      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
+     <ButtonLink variant="secondary" href={"/api/admin/placements/hiring-report/export?"+params.toString()}
+      className="w-full sm:w-auto">
       <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg>Export report
-     </a>
+     </ButtonLink>
     </div>
     <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Academic hiring filters">
      <SuperAdminHiringAcademicFilters key={[q.departmentId??"",q.programId??"",q.cohortId??""].join(":")}
@@ -162,7 +164,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     This report reached its 5,000-drive row and CSV limit. Headline metrics and funnel totals are calculated on the server across all {data.matchingJobCount.toLocaleString("en-IN")} filtered drives. Company subtotals and the CSV cover only the displayed 5,000 rows. Narrow filters for a complete per-company breakdown and export.
   </Banner>:null}
   <section aria-label="Hiring metrics" className="min-w-0">
-   <h2 className="sr-only">Hiring metrics</h2>
+   <Heading level={2} className="sr-only">Hiring metrics</Heading>
    <dl className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
     {metricKeys.map((key,index)=><div key={key} className={"min-w-0 border-r border-b border-[var(--lms-canvas-border)] bg-surface px-3 py-4 last:border-r-0 "+(index===0?"col-span-2 sm:col-span-2":"")}>
      <dt className="text-[13px] font-medium text-muted-foreground">{hiringMetricLabel(key)}</dt>
@@ -171,7 +173,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    </dl>
   </section>
   <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4" aria-label="Hiring Funnel">
-   <h2 className="mb-4 text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Hiring Funnel</h2>
+   <Heading level={2} className="mb-4 text-[var(--lms-font-lg)] text-[var(--lms-heading)]">Hiring Funnel</Heading>
    {funnelTotals.applied===0?
     <p role="status" className="text-sm text-muted-foreground">No funnel data</p>:
     <ol className="max-w-[500px] space-y-3">{funnel.map((step,index)=>
@@ -196,7 +198,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <p className="mt-1 text-xs text-muted-foreground">Mean of drives with recorded first-shortlist transitions.</p>
   </div>:<p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. A first-shortlist transition is required before this metric can be calculated.</p>}
   <section aria-label="Company-wise Hiring Report" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
-   <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company-wise Hiring Report</h2>
+   <Heading level={2} className="text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Company-wise Hiring Report</Heading>
    <DataTable columns={columns} rows={visibleRows} getRowKey={row=>row.jobId}
     caption="Company-wise Hiring Report" mobileMode="scroll"
     className="min-w-0 [&_table]:min-w-[950px]"

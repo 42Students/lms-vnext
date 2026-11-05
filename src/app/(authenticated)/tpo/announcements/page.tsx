@@ -37,6 +37,9 @@ import {tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-prev
 import {TpoNoticeLiveAudienceProvider,TpoNoticeLiveReach,TpoNoticeLiveSubmitControls} from "@/components/tpo/tpo-notice-live-preview";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
 import {tpoNoticeDeliveryVerified} from "@/modules/announcements/tpo-notice-delivery-readiness";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[];notice?:string|string[];compose?:string|string[]}>};
 
 // Only confirmed persisted delivery starts the 30-second undo window.
@@ -107,7 +110,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     "What you tell your students, to whom, and who has read it. They read it under Placements."}
    actions={result.status==="READY" && tab.data==="yours"?
     <TpoNoticeComposerDialog initialOpen={raw.compose==="1"||Boolean(first(raw.audience)||first(raw.targetId)||raw.targetIds)}><section aria-labelledby="section-compose-a-college-notice" className="space-y-4">
-   <h2 id="section-compose-a-college-notice" className="sr-only">Compose a college notice</h2>
+   <Heading level={2} id="section-compose-a-college-notice" className="sr-only">Compose a college notice</Heading>
    <p className="mt-1 text-sm text-body">Only active college members can see published notices. Email is unavailable (emailReady: false); no email or SMS is sent.</p>
    <TpoNoticeLiveAudienceProvider formId="tpo-notice-create">
    <TpoNoticeDraftGuard formId="tpo-notice-create" actorId={context.user.id}/>
@@ -119,7 +122,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <TpoNoticeLiveReach targetedReady={targetedReady}/>
     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
      <Input name="title" required maxLength={200} placeholder="Omega pre-placement talk on Monday"
-      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]" />
+      className="min-h-11 md:min-h-[var(--lms-control-height)]" />
     </label>
     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Announcement
      <Textarea name="message" required maxLength={8000} rows={5}
@@ -132,17 +135,17 @@ export default async function TpoAnnouncements({searchParams}:Props){
      <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
      <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
       <Input name="buttonLabel" maxLength={60} placeholder="Register"
-       className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
+       className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
      </label>
      <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
       <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
        placeholder="https://forms.gle/…" title="The link has to start with https://"
-       className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
+       className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
      </label>
      </div>
     </details>
     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST, optional)
-      <DateInput mode="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
+      <DateInput mode="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
     </label>
     <p className="text-xs text-muted-foreground">After this, students no longer see it. You still do.</p>
     <label className="flex items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4"><Checkbox name="pinned" /> Pin it to the top</label>
@@ -175,11 +178,11 @@ export default async function TpoAnnouncements({searchParams}:Props){
         "border-[var(--lms-canvas-border)] bg-surface text-[var(--lms-body-text)] hover:border-[var(--lms-primary)]")}>All team notices</Link>
    </nav>:null}
   {result.status==="FAILED"?<Alert tone="error">
-   <h2 className="font-semibold text-foreground">Couldn't load announcements</h2>
+   <Heading level={2} className="text-foreground">Couldn't load announcements</Heading>
    <p className="mt-2 text-sm text-body">Announcements could not be loaded. Your filters are unchanged.</p>
    <div className="mt-2"><CurrentPageRetry label="Retry loading announcements" /></div>
   </Alert>:result.status==="NOT_REGISTERED"?<Alert tone="warning">
-   <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
+   <Heading level={2} className="text-foreground">Announcement storage pending</Heading>
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
   </Alert>:result.items.length?<div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)]"
     data-testid="tpo.announcements.prototype-workspace">
@@ -191,12 +194,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <section className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-5" aria-label="Announcement details">
     {selectedNotice?<ol aria-label="tpo announcements entries" className="min-w-0 space-y-3">
    {[selectedNotice].map(row=><li key={row.id} id={"announcement-"+row.id}
-    className={"min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-5 "+(row.isPinned?"border-l-[3px] border-l-[var(--lms-primary)] ":"")+(row.expiresAt&&new Date(row.expiresAt)<=new Date()?"opacity-75":"")}>
+    className={"min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-5 "+(row.isPinned?"border-l-2 border-l-[var(--lms-primary)] ":"")+(row.expiresAt&&new Date(row.expiresAt)<=new Date()?"opacity-80":"")}>
     <div className="flex min-w-0 flex-wrap items-center gap-2">
      {row.isPinned?<svg role="img" aria-label="Pinned" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="shrink-0 text-primary-text">
       <path d="M15.7 3.3a1 1 0 0 0-1.4 0l-.8.8 1.5 1.5-3.1 3.1-4.2-.4-1.6 1.6 3.4 3.4-5.8 5.8 1.4 1.4 5.8-5.8 3.4 3.4 1.6-1.6-.4-4.2 3.1-3.1 1.5 1.5.8-.8a1 1 0 0 0 0-1.4z"/>
      </svg>:null}
-     <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] font-semibold leading-[30px] text-[var(--lms-heading)] md:text-[24px] md:leading-[32px]">{row.title}</h2>
+     <Heading level={2} className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] leading-[30px] text-[var(--lms-heading)] md:text-[24px] md:leading-[32px]">{row.title}</Heading>
      {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<StatusBadge tone="info">New</StatusBadge>:null}
      {tab.data==="yours"&&row.scheduledAt&&new Date(row.scheduledAt)>new Date()?<StatusBadge tone="warning">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</StatusBadge>:null}
      {row.expiresAt&&new Date(row.expiresAt)<=new Date()?<StatusBadge tone="neutral">Ended</StatusBadge>:null}
@@ -210,16 +213,14 @@ export default async function TpoAnnouncements({searchParams}:Props){
     </p>
     <p className="mt-3 max-w-[72ch] whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
      {tpoNoticeTextParts(row.message).map((part,index)=>part.kind==="link"?
-      <a key={index} href={part.value} rel="noopener noreferrer"
-       className="font-semibold text-[var(--lms-link-text)] underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{part.value}</a>:
+      <TextLink key={index} href={part.value} rel="noopener noreferrer">{part.value}</TextLink>:
       <span key={index}>{part.value}</span>)}
     </p>
     {(row.buttonUrl?.startsWith("https://")&&row.buttonLabel)||tab.data==="from-42"?
      <div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
-      {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl} rel="noopener noreferrer" referrerPolicy="no-referrer"
-       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 font-[650] text-[var(--lms-link-text)] min-[768px]:min-h-[var(--lms-control-height)] md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:underline">
+      {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<ButtonLink variant="secondary" href={row.buttonUrl} rel="noopener noreferrer" referrerPolicy="no-referrer">
        {row.buttonLabel} ↗
-      </a>:null}
+      </ButtonLink>:null}
       {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id} autoMarkRead={result.readStateReady&&!row.readAt}/>:null}
      </div>:null}
     {tab.data!=="from-42"?<div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
@@ -230,7 +231,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
         <Input name="title" required maxLength={200} defaultValue={row.title}
          placeholder="Omega pre-placement talk on Monday"
-         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
+         className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
        </label>
        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Announcement
         <Textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
@@ -243,24 +244,24 @@ export default async function TpoAnnouncements({searchParams}:Props){
         <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
         <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
          <Input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
-          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
+          className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
         </label>
         <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
          <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
           defaultValue={row.buttonUrl??""} title="The link has to start with https://"
-          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
+          className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
         </label>
         </div>
        </details>
        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Send at (IST)
         <DateInput mode="datetime-local" name="sendAt" disabled={!deliveryReady}
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
-         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
+         className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
        </label>
        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST)
         <DateInput mode="datetime-local" name="showUntil"
          defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
-         className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
+         className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
        </label>
        <p className="text-xs text-muted-foreground">After this, students no longer see it. You still do.</p>
        <label className="flex items-center gap-2 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">

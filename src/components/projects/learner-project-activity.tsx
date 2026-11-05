@@ -13,6 +13,8 @@ import Link from "next/link";
 import { learnerProjectActivityCsv } from "@/modules/projects/learner-project-activity-csv-model";
 import { filterLearnerProjectActivity, learnerProjectActivityCategories,
   learnerProjectActivityPageHref, parseLearnerProjectActivityFilters, learnerProjectActivityCategorySchema } from "@/modules/projects/learner-project-activity-filter-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type ActivityRow = {
   id: string; eventType: string; summary: string; occurredAt: Date;
@@ -35,13 +37,13 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
   const csv=learnerProjectActivityCsv(shown);
   const route = "/learn/projects/" + encodeURIComponent(projectId);
   return <section aria-labelledby="learner-project-activity-heading" className="space-y-4">
-    <h2 id="learner-project-activity-heading" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Activity</h2>
+    <Heading level={2} size="base" id="learner-project-activity-heading" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Activity</Heading>
     <details className="border-b border-border" open={Boolean(parsed.success &&
       (category !== "ALL" || parsed.data.from || parsed.data.to))}>
       <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
         Filter activity by type and dates
       </summary>
-    <form method="get" action={route} className="grid min-w-0 grid-cols-1 gap-3 pb-5 pt-3 md:grid-cols-2 min-[992px]:grid-cols-5">
+    <form method="get" action={route} className="grid min-w-0 grid-cols-1 gap-3 pb-5 pt-3 md:grid-cols-2 lg:grid-cols-5">
       <input type="hidden" name="tab" value="activity" />
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Activity type
         <Select name="activityCategory" defaultValue={category}
@@ -58,7 +60,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
           className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9" />
       </label>
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Apply</Button>
-      <Link data-unskin="" href={route + "?tab=activity"} className="inline-flex min-h-11 md:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none hover:underline">Clear</Link>
+      <Link data-unskin="" href={route + "?tab=activity"} className="inline-flex min-h-11 md:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:underline">Clear</Link>
     </form>
     </details>
     {parsed.success && pageRows.length > 0 ? (
@@ -78,10 +80,9 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p role="status" className="text-sm text-muted-foreground leading-[22px]">{shown.length} matching events shown</p>
       {parsed.success && shown.length ? (
-        <a data-unskin="" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(csv.content)} download="learner-project-activity.csv"
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 text-sm font-[650] text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none hover:underline">
+        <ButtonLink variant="secondary" data-unskin="" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(csv.content)} download="learner-project-activity.csv">
           Download shown events CSV
-        </a>
+        </ButtonLink>
       ) : null}
     </div>
     {shown.length === 0 ? <div className="border-b border-border py-4 text-sm text-muted-foreground">
@@ -102,9 +103,9 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     </li>)}</ol>}
     {parsed.success ? <nav aria-label="Activity pages" className="flex flex-wrap gap-3">
       {parsed.data.beforeTime ? <Link data-unskin="" href={learnerProjectActivityPageHref(projectId, parsed.data)}
-        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none hover:underline">Newest activity page</Link> : null}
+        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:underline">Newest activity page</Link> : null}
       {hasMore && lastEvent ? <Link data-unskin="" href={learnerProjectActivityPageHref(projectId, parsed.data, { time: lastEvent.cursorOccurredAt, id: lastEvent.id })}
-        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none hover:underline">Older activity page →</Link> : null}
+        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:underline">Older activity page →</Link> : null}
     </nav> : null}
     <p className="text-xs text-muted-foreground leading-[20px]">Category and IST dates are applied to authorized Project history. Text search only filters the current page of up to 100 fetched events; Older activity pages use the original page cursor to avoid skipping history. CSV downloads include only the currently displayed matches.</p>
   </section>;

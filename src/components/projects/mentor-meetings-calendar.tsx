@@ -22,6 +22,8 @@ import {MentorGoogleMeetingProviderStatus} from "./mentor-google-meeting-provide
 import {MentorGoogleMeetingSyncControls} from "./mentor-google-meeting-sync-controls";
 import styles from "./mentor-meetings-calendar.module.css";
 import { Select } from "@/components/ui/select";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 const PAST_PREVIEW = 20;
 const validTime=(raw:string)=>raw.trim().length>0&&Number.isFinite(Date.parse(raw));
@@ -63,7 +65,7 @@ function MeetingRow({
     <article className={styles.row}>
       <div className={styles.head}>
         <div className={styles.titleBlock}>
-          <h3 className={styles.title}>{meeting.title}</h3>
+          <Heading level={3} className={styles.title}>{meeting.title}</Heading>
           <p className={styles.subtitle}>{meeting.projectTitle}</p>
         </div>
         <StatusBadge tone={
@@ -79,7 +81,7 @@ function MeetingRow({
       </p>
       {meeting.status==="REQUESTED"?<div className="prototype-mentor-meeting-section"
         aria-label="Recorded meeting request details">
-        <h3>Asked to meet</h3>
+        <Heading level={3}>Asked to meet</Heading>
         <p>Requested by: {meeting.requestedByName??"Requester name unavailable"}</p>
         <p>Suggested slot: {dateLabel(meeting.startsAt,viewerTimeZone)} ·
           {" "}{meetingTimeLabel(meeting,viewerTimeZone)}</p>
@@ -118,10 +120,10 @@ function MeetingRow({
               meeting.status==="CANCELLED"||Date.parse(meeting.startsAt)>now.getTime())}/>:null}
       </div>
       {meeting.agenda?.trim()?<section className="prototype-mentor-meeting-section">
-        <h3>Agenda</h3><p>{meeting.agenda}</p>
+        <Heading level={3}>Agenda</Heading><p>{meeting.agenda}</p>
       </section>:null}
       {(meeting.facilitation?.attendees?.length??0)>0?<section className="prototype-mentor-meeting-section">
-        <h3>Who came · {meeting.facilitation?.attendees?.length??0}</h3>
+        <Heading level={3}>Who came · {meeting.facilitation?.attendees?.length??0}</Heading>
         <ul className="prototype-mentor-meeting-attendees">
           {meeting.facilitation?.attendees?.map((person,index)=><li key={person.membershipId??index}>
             <span>{person.name}</span>
@@ -131,12 +133,12 @@ function MeetingRow({
       </section>:null}
       {meeting.facilitation?.notes?.trim()||meeting.outcome?.trim()?
         <section className="prototype-mentor-meeting-section">
-          <h3>Recorded mentor notes and outcome</h3>
+          <Heading level={3}>Recorded mentor notes and outcome</Heading>
           <p>{meeting.facilitation?.notes?.trim()||meeting.outcome}</p>
         </section>:null}
       {(meeting.facilitation?.actionItemRows?.length??0)>0?
         <section className="prototype-mentor-meeting-section">
-          <h3>Action items · one a line, @ who</h3>
+          <Heading level={3}>Action items · one a line, @ who</Heading>
           <ol>{meeting.facilitation?.actionItemRows?.map((item,index)=>
             <li key={index}><span>{item.text}</span>
               {item.owner?<small>Owner: {item.owner}</small>:null}
@@ -145,7 +147,7 @@ function MeetingRow({
         </section>:null}
       {meeting.facilitation?.wentWell||meeting.facilitation?.improve?
         <section className="prototype-mentor-meeting-section">
-          <h3>Retrospective</h3>
+          <Heading level={3}>Retrospective</Heading>
           {meeting.facilitation.wentWell?<p>Went well: {meeting.facilitation.wentWell}</p>:null}
           {meeting.facilitation.improve?<p>Improve: {meeting.facilitation.improve}</p>:null}
           {meeting.facilitation.nextTime?<p>Next time: {meeting.facilitation.nextTime}</p>:null}
@@ -183,8 +185,8 @@ function MeetingRow({
           {editable?
             "Edit attendance, notes & action items":"View meeting record"}
         </Link>
-        {safeProjectExternalHref(href) ? <a className={styles.action} href={safeProjectExternalHref(href)!}
-          >Join link</a> : null}
+        {safeProjectExternalHref(href) ? <TextLink variant="bare" className={styles.action} href={safeProjectExternalHref(href)!}
+          >Join link</TextLink> : null}
         {meeting.status==="COMPLETED"?<Link className={styles.action}
           href={"/mentor/projects/"+encodeURIComponent(meeting.projectId)+
             "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}>
@@ -234,8 +236,8 @@ function LegacyMeetingRow({meeting,now,viewerTimeZone}:{
         <span>{"Sprint: "+(meeting.linkedSprintTitle||meeting.legacySprintLabel)}</span>:null}
     </div>
     <div className={styles.legacyMeetingActions}>
-      {safeJoin?<a href={safeJoin} target="_blank" rel="noopener noreferrer">
-        Join link</a>:null}
+      {safeJoin?<TextLink href={safeJoin} target="_blank" rel="noopener noreferrer">
+        Join link</TextLink>:null}
       <Link href={"/mentor/projects/"+encodeURIComponent(meeting.projectId)+"?tab=team"}>
         Open project
       </Link>
@@ -301,7 +303,7 @@ export function MentorMeetingsCalendar({
     <div className={styles.legacyCalendar} aria-label="Meetings list">
       <p className="text-xs text-muted-foreground" aria-live="polite">Meeting times are shown in {viewerTimeZone}.</p>
       <section className={styles.legacySection} aria-label="Upcoming meetings">
-        <h2 className={styles.legacySectionHeading}>
+        <Heading level={2} className={styles.legacySectionHeading}>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"
             fill="none" stroke="currentColor" strokeWidth="1.8"
             strokeLinecap="round" strokeLinejoin="round">
@@ -309,13 +311,13 @@ export function MentorMeetingsCalendar({
             <path d="M7 3v4M17 3v4M3 10h18"/>
           </svg>
           Upcoming ({upcoming.length})
-        </h2>
+        </Heading>
         {upcoming.length?upcoming.map(item=>
           <LegacyMeetingRow key={item.id} meeting={item} now={instant} viewerTimeZone={viewerTimeZone}/>):
           <p className={styles.legacyEmpty}>No upcoming meetings.</p>}
       </section>
       <section className={styles.legacySection} aria-label="Past and cancelled meetings">
-        <h2 className={styles.legacySectionHeading}>Past &amp; Cancelled ({past.length})</h2>
+        <Heading level={2} className={styles.legacySectionHeading}>Past &amp; Cancelled ({past.length})</Heading>
         {past.length?past.slice(0,expanded?past.length:PAST_PREVIEW).map(item=>
           <LegacyMeetingRow key={item.id} meeting={item} now={instant} viewerTimeZone={viewerTimeZone}/>):
           <p className={styles.legacyEmpty}>No past meetings yet.</p>}
@@ -375,7 +377,7 @@ export function MentorMeetingsCalendar({
             {matchingMeetings.length} of {meetings.length} loaded meetings
           </small>
         </label>
-        <h2>{listScope==="ASKED"?"Meeting requests":"Upcoming"}</h2>
+        <Heading level={2}>{listScope==="ASKED"?"Meeting requests":"Upcoming"}</Heading>
         {upcoming.length ? upcoming.map(item=><Button variant="bare" key={item.id}
           type="button" className="prototype-mentor-meeting-option"
           aria-pressed={selected?.id===item.id}
@@ -385,7 +387,7 @@ export function MentorMeetingsCalendar({
             <small>{mentorMeetingDisplayStatus(item,instant)}</small>
           </span>
         </Button>):<p className={styles.empty}>No upcoming meetings.</p>}
-        <h2>{listScope==="NOTES_MISSING"?"Past · notes to finish":"Past and cancelled"}</h2>
+        <Heading level={2}>{listScope==="NOTES_MISSING"?"Past · notes to finish":"Past and cancelled"}</Heading>
         {visiblePast.length ? visiblePast.map(item=><Button variant="bare" key={item.id}
           type="button" className="prototype-mentor-meeting-option"
           aria-pressed={selected?.id===item.id}

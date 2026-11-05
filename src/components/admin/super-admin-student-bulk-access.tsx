@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {useEffect,useRef,useState} from "react";
 import {superAdminStudentBulkFailure} from "@/modules/module-access/super-admin-student-bulk-feedback";
 import {useRouter} from "next/navigation";
+import { Heading } from "@/components/ui/heading";
 type Learner={id:string;name:string};
 const MAX_SELECTED_STUDENTS=1000;
 export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:readonly Learner[];collegeId:string}){
@@ -126,7 +127,7 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
  }
 
  return <section aria-label="Bulk student access" className="min-w-0 space-y-3 pb-4">
-  <div className="flex flex-wrap justify-between gap-3"><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Bulk module access</h2></div>
+  <div className="flex flex-wrap justify-between gap-3"><Heading level={2} size="lg" className="text-[var(--lms-heading)]">Bulk module access</Heading></div>
   {selected.length>0?<div role="status" aria-live="polite"
     className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] p-3">
     <strong className="text-sm text-body">{selected.length} students selected</strong>

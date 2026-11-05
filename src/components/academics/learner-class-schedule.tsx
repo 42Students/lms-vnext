@@ -45,6 +45,8 @@ import {
   upcomingScheduleEvents,
   type LearnerScheduleView,
 } from "./learner-schedule-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type CourseChoice = {
   deliveryId: string;
@@ -232,7 +234,7 @@ function EventCard({
         (compact
           ? styles.eventCard+" px-3 py-2 "
           : styles.eventCard+" p-3 ") +
-        "border-l-4 " + learnerCourseTint(event)
+        "border-l-2 " + learnerCourseTint(event)
       }
     >
       <div className="flex flex-wrap items-center gap-2">
@@ -270,7 +272,7 @@ function EventCard({
     <div className="overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface">
       <Link
         href={`${courseBasePath}/${event.deliveryId}${courseBasePath === "/learn/courses" || courseBasePath === "/teacher/courses" ? "/home" : ""}`}
-        className="block rounded-[var(--lms-control-radius)] outline-none transition-colors duration-150 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+        className="block rounded-[var(--lms-control-radius)] outline-none transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
       >
         {content}
       </Link>
@@ -279,7 +281,7 @@ function EventCard({
         <Link
           href={`${courseBasePath}/${encodeURIComponent(event.deliveryId)}/attendanceDetail?sessionId=${encodeURIComponent(event.id)}`}
           aria-label={`Open attendance for ${event.title}`}
-          className="flex min-h-11 items-center border-t border-border px-3 py-2 text-xs font-[650] text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 rounded-[var(--lms-control-radius)] text-sm"
+          className="flex min-h-11 items-center border-t border-border px-3 py-2 text-xs font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 rounded-[var(--lms-control-radius)] text-sm"
         >
           Open class attendance
         </Link>
@@ -562,7 +564,7 @@ export function LearnerClassSchedule({
       {upcoming.length > 0 ? (
         <section aria-label="Next classes" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
           <div className="mb-2 flex items-center justify-between gap-3">
-            <h2 className="text-sm font-semibold text-foreground">Next classes</h2>
+            <Heading level={2} size="sm" className="text-foreground">Next classes</Heading>
             <span className="text-xs font-semibold text-muted-foreground">Next 3 upcoming</span>
           </div>
           <div className={styles.upcomingList}>
@@ -804,14 +806,14 @@ export function LearnerClassSchedule({
                 </CalendarGrid>
                 <section id="learner-selected-day-agenda" className={styles.selectedAgenda} aria-label="Selected day agenda">
                   <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <h3 className="text-sm font-semibold text-foreground">
+                    <Heading level={3} size="sm" className="text-foreground">
                       {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
-                    </h3>
-                    {agenda.length ? <a download={"classes-"+chosenDay+".ics"}
+                    </Heading>
+                    {agenda.length ? <ButtonLink variant="secondary" download={"classes-"+chosenDay+".ics"}
                       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
-                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text sm:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                      className="w-full sm:w-auto">
                       Download selected day (.ics)
-                    </a> : null}
+                    </ButtonLink> : null}
                   </div>
                   {dayIcs.truncated ? <p className="mt-2 text-xs text-warning-foreground">Export includes the first 100 selected sessions only.</p> : null}
                   {agenda.length ? <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -823,11 +825,10 @@ export function LearnerClassSchedule({
             {courseBasePath === "/learn/courses" && learnerScheduleWeekdayExportAvailable(view,calendarMode,agenda.length) ? (
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3" aria-label="Selected day class export">
                 <p className="min-w-0 text-sm font-semibold text-body">{chosenDay} · {agenda.length} authorized sessions</p>
-                <a download={"classes-"+chosenDay+".ics"}
-                  href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
-                  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                <ButtonLink variant="secondary" download={"classes-"+chosenDay+".ics"}
+                  href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}>
                   Download selected day (.ics)
-                </a>
+                </ButtonLink>
                 {dayIcs.truncated ? <p className="w-full text-xs text-warning-foreground">Export includes the first 100 selected sessions only.</p> : null}
               </div>
             ) : null}
@@ -937,9 +938,9 @@ export function LearnerClassSchedule({
                     key={localDayKey(day)}
                     className={styles.agendaDay}
                   >
-                    <h3 className="m-0 text-sm font-semibold text-foreground">
+                    <Heading level={3} size="sm" className="m-0 text-foreground">
                       {dayHeading(day)}
-                    </h3>
+                    </Heading>
                     <div className="mt-3 space-y-2">
                       {dayEvents.length > 0 ? (
                         dayEvents.map((event) => (

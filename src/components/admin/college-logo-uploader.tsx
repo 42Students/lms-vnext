@@ -8,6 +8,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  collegeId:string;currentUrl:string|null;canEdit:boolean;
 }){
@@ -136,7 +138,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   finally{setBusy(false);}
  }
  return <section aria-label="College logo upload" className="min-w-0 space-y-[var(--lms-space-3)]">
-  <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">College logo</h2>
+  <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">College logo</Heading>
   <p className="max-w-[75ch] text-sm leading-[22px] text-body">Choose a square logo, crop it, then select Save in the branding form. The current login logo stays active unless the branding save succeeds.</p>
   <p className="text-xs leading-5 text-muted-foreground">Legacy logo links are not imported as active storage objects. To migrate an older logo, choose the original image here, crop it and save; the new private upload and college branding lifecycle then take ownership.</p>
   {stagedBlob||stagedRemoval?<Alert tone="warning">{retryAfterBrandingSave?"Branding settings were saved, but the separate logo publication has not been confirmed. Retry publishing this logo below; the previous logo remains active until the server acknowledges the change.":"Unsaved logo "+(stagedRemoval?"removal":"replacement")+" is staged. Save the branding form to apply it, or leave this page to discard it. Your current logo is still live."}</Alert>:null}
@@ -146,7 +148,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   </Button>:null}
   {(savedUrl||(!removed&&currentUrl))?<div className="flex min-w-0 items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <Card as="div" className="w-fit shrink-0 p-2">
-    <img src={(savedUrl||currentUrl)!} alt="Current college logo" className="aspect-square w-20 max-w-full object-contain"/>
+    <Img src={(savedUrl||currentUrl)!} alt="Current college logo" className="aspect-square w-20 max-w-full object-contain"/>
    </Card>
    <p className="min-w-0 text-sm text-muted-foreground leading-[22px]">Current college logo</p>
   </div>:null}
@@ -159,7 +161,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
     <p className="text-sm font-semibold text-body">Logo crop and preview</p>
     <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] md:grid-cols-[208px_minmax(0,1fr)]">
       <div className="relative aspect-square w-full max-w-52 overflow-hidden rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface-subtle">
-        <img src={preview} alt="Selected logo crop preview" className="h-full w-full object-cover"
+        <Img src={preview} alt="Selected logo crop preview" className="h-full w-full object-cover"
           style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
       </div>
       <div className="grid min-w-0 max-w-[480px] gap-[var(--lms-space-3)]">

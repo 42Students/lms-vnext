@@ -206,7 +206,7 @@ export function AddLessonContentDrawer({
               "/quizzes/manage?lesson=" +
               encodeURIComponent(lessonId)
             }
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
             onClick={handleClose}
           >
             Open Quiz Builder
@@ -234,7 +234,7 @@ export function AddLessonContentDrawer({
               "/assignments/manage?lesson=" +
               encodeURIComponent(lessonId)
             }
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
             onClick={handleClose}
           >
             Open Assignment Builder

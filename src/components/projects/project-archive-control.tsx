@@ -63,7 +63,7 @@ export function ProjectArchiveControl({projectId,projectTitle,status,expectedUpd
    </Button>
    {open?<PopoverPanel label={archived?"Restore this workspace?":"Archive this workspace?"}
     onDismiss={dismiss}
-    className="absolute left-0 top-full z-40 mt-2 w-[340px] space-y-3 max-[767px]:w-[min(340px,calc(100vw_-_2rem))]">
+    className="absolute left-0 top-full z-(--lms-z-shell) mt-2 w-[340px] space-y-3 max-md:w-[min(340px,calc(100vw_-_2rem))]">
     <p className="text-sm font-semibold text-foreground">
      {archived?"Restore this workspace?":"Archive this workspace?"}
     </p>

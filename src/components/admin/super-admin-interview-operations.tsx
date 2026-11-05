@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 import {bookingConflicts,calendarMode,superAdminInterviewCsv,type SuperAdminCalendarRound}
  from "@/modules/admin-ui/super-admin-interview-operations-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 export function SuperAdminInterviewOperations({events,today,truncated=false}:{events:SuperAdminCalendarRound[];today:string;truncated?:boolean}){
  const [kind,setKind]=useState("ALL"),[status,setStatus]=useState("ALL");
  const [mode,setMode]=useState("ALL"),[department,setDepartment]=useState("ALL"),[conflictsOnly,setConflictsOnly]=useState(false);
@@ -48,7 +51,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
  const unique=(values:string[])=>[...new Set(values)].sort();
  const choices=(label:string,items:string[],value:string,change:(v:string)=>void)=>
   <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{label}
-   <Select className="min-h-11 min-[768px]:min-h-9" value={value}
+   <Select className="min-h-11 md:min-h-9" value={value}
     onChange={e=>change(e.target.value)}>
     <option value="ALL">All</option>{items.map(i=><option key={i} value={i}>{i}</option>)}
    </Select>
@@ -57,7 +60,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
  const inIst=(iso:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(iso));
  return <section aria-label="Interview operations" className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h2 className="font-semibold text-[var(--lms-heading)]">Interviews</h2>
+   <div><Heading level={2} className="text-[var(--lms-heading)]">Interviews</Heading>
     <p className="mt-1 text-xs text-muted-foreground">All companies · Confirmed appointments</p>
    </div>
    <Button variant="secondary" disabled={refreshPending} onClick={()=>startRefresh(()=>router.refresh())} type="button">{refreshPending?"Refreshing…":"↻ Refresh"}</Button>
@@ -113,9 +116,9 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
    }}>Clear filters</Button>
   </div>
   <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">{filtered.length} matching candidate interview bookings. Department filter uses the applicant’s currently active academic program; historical departments may be unrecorded.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
-  <a download="interviews.csv" href={filtered.length?"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv):undefined}
+  <ButtonLink variant="secondary" download="interviews.csv" href={filtered.length?"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv):undefined}
    onClick={e=>{if(!filtered.length){e.preventDefault();setExportError("No interviews match the selected filters. Clear filters to export.");}else setExportError("");}}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Export interviews.csv</a>
+   className="print:hidden">Export interviews.csv</ButtonLink>
   {filtered.length>500?<p role="status" className="text-sm text-muted-foreground leading-[22px]">Export includes the first 500 visible rounds. Narrow filters for the remaining records.</p>:null}
   {exportError?<p role="alert" className="border-l-2 border-error bg-error-subtle px-4 py-3 text-sm text-error leading-[22px]">{exportError}</p>:null}
   {!filtered.length?<p className="border-b border-border py-4">No interviews match these filters. Clear filters to see all appointments.</p>:
@@ -130,16 +133,16 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
       <span className={"inline-block rounded border border-border px-2 py-1 text-xs "+companyTone(row.companyName)}>{row.companyName}</span>
       <p className="text-xs text-body">{inIst(row.startsAt)} IST · {calendarMode(row)}</p>
       {row.venue?<p className="text-xs text-body">Venue: {row.venue}</p>:null}
-      {row.meetingUrl?<a href={row.meetingUrl} rel="noopener noreferrer"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline">Join online interview</a>:null}
+      {row.meetingUrl?<TextLink href={row.meetingUrl} rel="noopener noreferrer"
+        className="inline-flex min-h-11 items-center">Join online interview</TextLink>:null}
       <div className="flex flex-wrap gap-4">
        {row.jobId&&row.status==="SCHEDULED"?<SuperAdminInterviewEdit jobId={row.jobId} appointmentId={row.id} interviewers={interviewerChoices}/>:null}
        {row.jobId?<Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}
         aria-label={"View interview for "+(row.candidateName??"candidate")+" · "+(row.jobTitle??row.title)}
         className="inline-flex min-h-11 items-center font-semibold text-link underline">View</Link>:null}
-       <a download={"interview-"+row.id+".ics"} href={icsHref(row)}
+       <TextLink download={"interview-"+row.id+".ics"} href={icsHref(row)}
         aria-label={"Download calendar invitation for "+(row.candidateName??"candidate")+" · "+(row.jobTitle??row.title)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline">.ics</a>
+        className="inline-flex min-h-11 items-center">.ics</TextLink>
       </div>
      </li>)}
     </ul>
@@ -163,9 +166,9 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
       {row.jobId&&row.status==="SCHEDULED"?<SuperAdminInterviewEdit jobId={row.jobId} appointmentId={row.id} interviewers={interviewerChoices}/>:null}
       {row.jobId?<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 print:hidden"
        href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}>Open schedule</Link>:null}
-      <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 print:hidden"
+      <TextLink className="inline-flex min-h-11 items-center md:min-h-9 print:hidden"
        download={"interview-"+row.id+".ics"}
-       href={icsHref(row)}>.ics</a>
+       href={icsHref(row)}>.ics</TextLink>
      </div>},
     ]}
    /></div>

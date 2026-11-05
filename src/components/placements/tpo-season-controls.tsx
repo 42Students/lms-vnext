@@ -9,6 +9,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {TPO_SEASON_CREATE_REVIEW_COPY} from "@/modules/placements/tpo-season-write-model";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 type Season = {
   id: string;
@@ -68,9 +69,9 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
   }
   return (
     <section className="min-w-0 space-y-4 border-b border-border pb-5">
-      <h3 className="text-base font-semibold text-foreground">
+      <Heading level={3} size="base" className="text-foreground">
         {edit ? "Edit active season" : "Start new season"}
-      </h3>
+      </Heading>
       {active && !edit ? (
         <Alert tone="warning">An active season already exists. Close that season through the existing lifecycle workflow before creating another one.</Alert>
       ) : (

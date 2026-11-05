@@ -27,6 +27,7 @@ import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetim
 import {FacultyIstQuarterHourPicker} from "@/components/courses/faculty-ist-quarter-hour-picker";
 import {FACULTY_IST_NOTE,facultyIstQuarterHourIssue} from "@/modules/courses/faculty-ist-quarter-hour-model";
 import { facultyYouTubeLinkIssue,facultyLiveClassIssue } from "@/modules/courses/faculty-content-input-model";
+import { Heading } from "@/components/ui/heading";
 
 
 type Mode =
@@ -709,11 +710,11 @@ export function FacultyLessonAuthoring({
     <div className="mt-4 min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4 max-md:[&_button]:min-h-11">
       <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div>
-          <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">
+          <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">
             {audience === "OFFERING"
               ? "Add shared learning item"
               : "Add to this Section"}
-          </h2>
+          </Heading>
           <p className="mt-1 max-w-prose text-[13px] leading-5 text-muted-foreground">
             {audience === "OFFERING"
               ? "New items are DRAFT and shared across every Section Delivery in this Offering."
@@ -774,7 +775,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("ASSIGNMENT")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
+            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
             + Assignment · Full builder
           </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
             + Assignment
@@ -783,7 +784,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("QUIZ")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
+            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
             + Quiz · Full builder
           </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("QUIZ")}>
             + Quiz
@@ -799,8 +800,8 @@ export function FacultyLessonAuthoring({
             {error ? <Alert tone="error" role="alert" className="mb-4">{error}</Alert> : null}
             {pendingPublish?.mode===mode&&pendingPublish.lessonId===lessonId&&
               pendingPublish.deliveryId===deliveryId?
-              <div className="mb-4 flex flex-wrap items-center gap-3 rounded-md border border-amber-200 bg-amber-50 p-3">
-                <span className="text-sm font-semibold text-amber-900">
+              <div className="mb-4 flex flex-wrap items-center gap-3 rounded-md border border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] p-3">
+                <span className="text-sm font-semibold text-[color:var(--lms-warning-strong)]">
                   Draft saved. Publish can be retried without creating another item.
                 </span>
                 <Button type="submit" variant="secondary" size="sm" disabled={submitting}>
@@ -821,7 +822,7 @@ export function FacultyLessonAuthoring({
                 author cannot promote a class resource into a shared one.
               </span>
              </label>:null}
-            {mode==="ASSIGNMENT"?<h3 className="text-base font-semibold md:col-span-2">Assignment Details</h3>:null}
+            {mode==="ASSIGNMENT"?<Heading level={3} size="base" className="md:col-span-2">Assignment Details</Heading>:null}
             <div className="grid min-w-0 gap-4 md:grid-cols-2">
               <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 <FieldLabel>
@@ -959,7 +960,7 @@ export function FacultyLessonAuthoring({
 
             {mode === "ASSIGNMENT" ? (
               <div ref={submissionMethodsRef} className="mt-4 min-w-0">
-                <h3 className="mb-2 font-semibold">How Learners Can Submit</h3>
+                <Heading level={3} className="mb-2">How Learners Can Submit</Heading>
                 <FacultyAssignmentMethodPicker
                   methods={allowedAssignmentMethods}
                   onChange={setAllowedAssignmentMethods}
@@ -1004,13 +1005,13 @@ export function FacultyLessonAuthoring({
              </label>:null}
 
             {mode==="ASSIGNMENT"?<div className="mt-4 rounded border border-border p-3 text-sm" aria-label="Assignment review summary">
-              <h3 className="font-semibold">Review assignment before saving</h3>
+              <Heading level={3}>Review assignment before saving</Heading>
               <p>Submission methods: {allowedAssignmentMethods.join(", ") || "None selected"}</p>
               <ul className="mt-2 list-disc pl-5">
                 {assignmentResources.map((resource,index)=><li key={index}>{resource.title || resource.kind}</li>)}
               </ul>
             </div>:null}
-            {mode==="ASSIGNMENT"?<h3 className="mt-4 font-semibold">Assignment Resources</h3>:null}
+            {mode==="ASSIGNMENT"?<Heading level={3} className="mt-4">Assignment Resources</Heading>:null}
             {mode==="ASSIGNMENT"&&enableAssignmentResources&&deliveryId?
                <div ref={assignmentResourcesRef} className="min-w-0">
                  <FacultyAssignmentResourceDraftFields deliveryId={deliveryId}

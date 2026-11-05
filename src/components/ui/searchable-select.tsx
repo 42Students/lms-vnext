@@ -164,18 +164,18 @@ export function SearchableSelect({
       className={cx(clearable ? "pr-12" : "", className)} onChange={change} onFocus={focus} onBlur={blur} onKeyDown={keyDown} />
     {clearable && Boolean(visibleQuery) && !disabled && !readOnly
       ? <Button type="button" variant="ghost" size="icon-sm" aria-label="Clear selection"
-          className="absolute right-1 top-0 z-[1] !h-9 !w-9 !min-w-9 max-[767px]:!h-11 max-[767px]:!w-11"
+          className="absolute right-1 top-0 z-[1] !h-9 !w-9 !min-w-9 max-md:!h-11 max-md:!w-11"
           onClick={() => select("")}>×</Button> : null}
     {open && !disabled && !readOnly
       ? <PopoverListbox id={listId} label={String(props["aria-label"] ?? "Available options")}
           onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
-          className={cx("absolute left-0 z-[var(--lms-z-dropdown)] max-h-[min(18rem,50dvh)] w-full min-w-0 overflow-y-auto overscroll-contain !px-0 !pb-0 pt-[5px] !shadow-[0_14px_16px_rgba(0,0,0,0.04)]", openAbove ? "bottom-[calc(100%_+_5px)] top-auto" : "top-[calc(100%_+_5px)] bottom-auto")}>
+          className={cx("absolute left-0 z-[var(--lms-z-dropdown)] max-h-[min(18rem,50dvh)] w-full min-w-0 overflow-y-auto overscroll-contain !px-0 !pb-0 pt-[6px] !shadow-(--lms-elevation-2)", openAbove ? "bottom-[calc(100%_+_5px)] top-auto" : "top-[calc(100%_+_5px)] bottom-auto")}>
           {matches.length
             ? matches.map((option, index) =>
               <Button key={option.value} id={`${listId}-option-${index}`} type="button" variant="ghost" size="md" role="option"
                 aria-selected={option.value === visibleQuery} disabled={option.disabled} tabIndex={-1}
                 onPointerEnter={() => { if (!option.disabled) setActiveIndex(index); }}
-                className={"!flex !h-auto !py-3 !w-full !items-center !justify-start !rounded-none !border-0 !px-[10px] !text-left !text-[14px] !font-normal !leading-5 !whitespace-normal !break-words [overflow-wrap:anywhere] !shadow-none focus-visible:!outline-2 focus-visible:!outline-offset-2 focus-visible:!outline-[var(--lms-primary)] disabled:!opacity-50 motion-reduce:!transition-none !min-h-11 " + (option.value === visibleQuery ? "!bg-[var(--lms-primary)] !text-[var(--lms-on-primary)] enabled:hover:!bg-[var(--lms-primary)] enabled:hover:!text-[var(--lms-on-primary)]" : index === validActiveIndex ? "!bg-[color:var(--lms-success-surface)] !text-[var(--lms-body-text)] enabled:hover:!bg-[color:var(--lms-success-surface)]" : "!bg-transparent !text-[var(--lms-body-text)] enabled:hover:!bg-[color:var(--lms-success-surface)]")}
+                className={"!flex !h-auto !py-3 !w-full !items-center !justify-start !rounded-none !border-0 !px-[12px] !text-left !text-[14px] !font-normal !leading-5 !whitespace-normal !break-words [overflow-wrap:anywhere] !shadow-none focus-visible:!outline-2 focus-visible:!outline-offset-2 focus-visible:!outline-[var(--lms-primary)] disabled:!opacity-50 motion-reduce:!transition-none !min-h-11 " + (option.value === visibleQuery ? "!bg-[var(--lms-primary)] !text-[var(--lms-on-primary)] enabled:hover:!bg-[var(--lms-primary)] enabled:hover:!text-[var(--lms-on-primary)]" : index === validActiveIndex ? "!bg-[color:var(--lms-success-surface)] !text-[var(--lms-body-text)] enabled:hover:!bg-[color:var(--lms-success-surface)]" : "!bg-transparent !text-[var(--lms-body-text)] enabled:hover:!bg-[color:var(--lms-success-surface)]")}
                 onPointerDown={event => event.preventDefault()} onClick={() => select(option.value)}>
                 {option.label ?? option.value}
               </Button>)

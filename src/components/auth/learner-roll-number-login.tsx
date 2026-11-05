@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 
 type StartResult = { attemptId: string; maskedContact: string; expiresInSeconds: number };
 export function LearnerRollNumberLogin() {
@@ -79,6 +80,6 @@ export function LearnerRollNumberLogin() {
     <p className="text-xs text-muted-foreground">
       This option is enabled by your college. For other accounts use the standard login.
     </p>
-    <a href="/login" className="text-sm text-primary-text underline">Sign in with phone or email</a>
+    <TextLink href="/login" className="text-sm">Sign in with phone or email</TextLink>
   </section>;
 }

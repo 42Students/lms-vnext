@@ -85,7 +85,7 @@ export function MultiSelect({
     <div data-slot="multi-select-field" className={cx("min-w-0", className)}>
       <Select {...props} ref={bindRef} multiple disabled={disabled} aria-readonly={readOnly || undefined} aria-describedby={describedBy}
         value={value} defaultValue={defaultValue} size={rows} error={error}
-        data-slot="multi-select" className="aria-[readonly=true]:cursor-default [&_option:checked]:bg-[var(--lms-primary)] [&_option:checked]:text-white [&_option:disabled]:text-[var(--lms-neutral-400)] [&_option:hover]:bg-[color:var(--lms-success-surface)] max-[767px]:[&_option]:min-h-11" onChange={change} onKeyDown={keyDown}>
+        data-slot="multi-select" className="aria-[readonly=true]:cursor-default [&_option:checked]:bg-[var(--lms-primary)] [&_option:checked]:text-[color:var(--lms-on-primary)] [&_option:disabled]:text-[var(--lms-neutral-400)] [&_option:hover]:bg-[color:var(--lms-success-surface)] max-md:[&_option]:min-h-11" onChange={change} onKeyDown={keyDown}>
         {options.map(option => (
           <option key={option.value} value={option.value} disabled={option.disabled}>
             {typeof option.label === "string" || typeof option.label === "number" ? option.label : option.value}
@@ -100,14 +100,14 @@ export function MultiSelect({
               const displayLabel = typeof option?.label === "string" || typeof option?.label === "number"
                 ? String(option.label) : item;
               return (
-                <li key={item} className="inline-flex min-h-9 max-w-full items-center gap-1 rounded-[6px] border border-[var(--lms-neutral-200)] bg-[var(--lms-primary-subtle)] pl-2 text-[13px] leading-5 text-[var(--lms-body-text)] max-[767px]:min-h-11">
+                <li key={item} className="inline-flex min-h-9 max-w-full items-center gap-1 rounded-[6px] border border-[var(--lms-neutral-200)] bg-[var(--lms-primary-subtle)] pl-2 text-[13px] leading-5 text-[var(--lms-body-text)] max-md:min-h-11">
                   <span className="min-w-0 break-words">
                     {option?.label ?? item}
                   </span>
                   <Button type="button" variant="ghost" size="icon-sm"
                     disabled={!canRemove} aria-label={`Remove ${displayLabel}`}
                     onClick={() => remove(item)}
-                    className="!h-9 !w-9 !min-w-9 !rounded-[6px] !p-0 max-[767px]:!h-11 max-[767px]:!w-11 max-[767px]:!min-w-11">
+                    className="!h-9 !w-9 !min-w-9 !rounded-[6px] !p-0 max-md:!h-11 max-md:!w-11 max-md:!min-w-11">
                     <span aria-hidden="true">×</span>
                   </Button>
                 </li>

@@ -18,6 +18,7 @@ import {verificationQueueCardPresentation} from "@/modules/verification/queue-ca
 import {collegeVerificationLegacyCopy} from "@/modules/verification/college-legacy-verification-copy";
 import type {VerificationRecord} from "@/modules/profile-verification/domain";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 export type VerificationQueueCard = Pick<VerificationRecord,
  "learnerMembershipId"|"section"|"status"|"submittedAt"|"version"> & {
@@ -202,7 +203,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
     ]}/></div>:
    <ul className="min-w-0 divide-y divide-border border-y border-border">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 py-4">
-     <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.learnerName.trim()||"Student"}</h2>
+     <Heading level={2} size="base" className="break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{row.learnerName.trim()||"Student"}</Heading>
      {row.rollNumber?<p className="text-xs text-muted-foreground leading-[20px]">Roll no.: {row.rollNumber}</p>:null}
      <StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>{verificationQueueCardPresentation(row.status).state}</StatusBadge>
      {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}

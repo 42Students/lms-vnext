@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
+import { Heading } from "@/components/ui/heading";
 
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
@@ -48,7 +49,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
     ):
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
+        <Heading level={2} size="base" className="m-0 text-foreground">Needs attention</Heading>
         <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
         {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
           <label className="flex items-center gap-[6px]">Stale after
@@ -72,7 +73,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
     {showDriveSearch?<section className="min-w-0 space-y-3" aria-label="Active placement drives">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="m-0 text-base font-semibold text-foreground">Active drives ({operations.summary.activeDrives})</h2>
+          <Heading level={2} size="base" className="m-0 text-foreground">Active drives ({operations.summary.activeDrives})</Heading>
           <p className="mt-1 text-sm text-body">
             {operations.summary.totalJobs} drives including {operations.summary.closedJobs+operations.summary.draftJobs} closed/draft.
             The cards below show at most 60 recent published drives; All drives has the complete list.
@@ -107,7 +108,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
     </div>
     <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <div className="border-b border-border pb-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">Placement funnel</h2>
+        <Heading level={2} size="base" className="m-0 text-foreground">Placement funnel</Heading>
         <p className="mt-1 text-sm text-body">{operations.analytics.season ? `${operations.analytics.season.name} · durable season-to-date conversion` : "Start a placement season to establish a durable funnel baseline."}</p>
       </div>
       <SummaryStrip className="my-4" label="Placement funnel" steps={[
@@ -123,7 +124,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       ]} />
     </section>
     <section className="border-b border-border pb-6">
-      <div className="border-b border-border pb-3"><h2 className="m-0 text-base font-semibold text-foreground">Upcoming rounds</h2><p className="mt-1 text-sm text-body">Scheduled rounds across the active college.</p></div>
+      <div className="border-b border-border pb-3"><Heading level={2} size="base" className="m-0 text-foreground">Upcoming rounds</Heading><p className="mt-1 text-sm text-body">Scheduled rounds across the active college.</p></div>
       {operations.upcomingRounds.length === 0 ? <p className="m-0 px-5 py-6 text-sm text-muted-foreground">No future rounds are scheduled.</p> :
         <div className="divide-y divide-border">{operations.upcomingRounds.map(round =>
           <div key={round.roundId} className="flex min-w-0 flex-col gap-[var(--lms-space-2)] py-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
@@ -132,7 +133,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
           </div>)}</div>}
     </section>
     <section className="border-b border-border pb-6">
-      <div className="border-b border-border pb-3"><h2 className="m-0 text-base font-semibold text-foreground">All drive statuses</h2><p className="mt-1 text-sm text-body">Operational state for every non-archived placement job in this college.</p></div>
+      <div className="border-b border-border pb-3"><Heading level={2} size="base" className="m-0 text-foreground">All drive statuses</Heading><p className="mt-1 text-sm text-body">Operational state for every non-archived placement job in this college.</p></div>
       <div className="divide-y divide-border">{operations.jobs.map(item =>
         <div key={item.job.id} className="flex min-w-0 flex-col gap-[var(--lms-space-3)] py-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
           <div><div className="flex flex-wrap items-center gap-2"><p className="m-0 font-semibold text-foreground">{item.job.title}</p><StatusBadge tone={item.job.status === "PUBLISHED" ? "success" : item.job.status === "DRAFT" ? "warning" : "neutral"}>{item.job.status}</StatusBadge></div><p className="mt-1 text-sm text-body">{item.job.company.name} · {item.metrics.submittedApplications} applications · {item.metrics.roundCount} rounds</p></div>

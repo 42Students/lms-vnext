@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Heading } from "@/components/ui/heading";
 
 export type ProjectListItem = {
   id: string;
@@ -87,7 +88,7 @@ export function ProjectList({
     return (
       <section className="prototype-mentor-team-table" aria-label="Your teams">
         <div className="prototype-mentor-table-top">
-          <h2>Your teams</h2>
+          <Heading level={2}>Your teams</Heading>
           <span>{items.length} {items.length === 1 ? "team" : "teams"}</span>
         </div>
         <div className="prototype-mentor-table-head" aria-hidden="true">
@@ -204,9 +205,9 @@ export function ProjectList({
               <path d="m9 6 6 6-6 6"/>
             </svg>
           </div>
-          <h2 className="mt-2 line-clamp-2 break-words text-base font-semibold leading-6 text-foreground">
+          <Heading level={2} size="base" className="mt-2 line-clamp-2 break-words leading-6 text-foreground">
             {item.title}
-          </h2>
+          </Heading>
           <p className="mt-1 text-xs leading-5 text-body">
             {course} <span aria-hidden="true"> • </span> {mentor}
           </p>
@@ -240,12 +241,12 @@ export function ProjectList({
   }
 
   return (
-    <div className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"min-w-0 divide-y divide-border":"grid min-w-0 gap-4 min-[992px]:grid-cols-2 min-[1366px]:grid-cols-3"}>
+    <div className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"min-w-0 divide-y divide-border":"grid min-w-0 gap-4 lg:grid-cols-2 xl:grid-cols-3"}>
       {items.map((item) => (
         <Link
           key={item.id}
           href={item.href ?? basePath + "/" + item.id}
-          className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"group flex min-w-0 flex-col py-4 first:pt-0 last:pb-0 transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:py-5":"group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-200 hover:border-primary hover:bg-[rgba(38,186,199,0.045)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}
+          className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"group flex min-w-0 flex-col py-4 first:pt-0 last:pb-0 transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:py-5":"group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
@@ -258,9 +259,9 @@ export function ProjectList({
                   Project
                 </p>
               )}
-              <h2 className="mt-1 line-clamp-2 break-words text-lg font-semibold text-foreground">
+              <Heading level={2} size="lg" className="mt-1 line-clamp-2 break-words text-foreground">
                 {item.title}
-              </h2>
+              </Heading>
             </div>
             <div className="flex flex-wrap justify-end gap-1.5">
               <StatusBadge

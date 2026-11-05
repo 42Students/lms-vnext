@@ -10,7 +10,7 @@ export type ButtonGroupProps = ComponentPropsWithRef<"div"> & {
   label: string;
 };
 
-const buttonGroupBaseClass = "inline-flex max-w-full min-w-0 items-stretch isolate align-middle [&>[data-slot=button]+[data-slot=button]]:-ml-px [&>[data-slot=button]:first-child:not(:last-child)]:rounded-r-none [&>[data-slot=button]:last-child:not(:first-child)]:rounded-l-none [&>[data-slot=button]:not(:first-child):not(:last-child)]:rounded-none [&>[data-slot=button]:focus-visible]:z-10 max-[767px]:w-full max-[767px]:overflow-x-auto max-[767px]:overscroll-x-contain max-[767px]:scroll-px-1 max-[767px]:[&>[data-slot=button]]:min-h-11 max-[767px]:[&>[data-slot=button]]:shrink-0";
+const buttonGroupBaseClass = "inline-flex max-w-full min-w-0 items-stretch isolate align-middle [&>[data-slot=button]+[data-slot=button]]:-ml-px [&>[data-slot=button]:first-child:not(:last-child)]:rounded-r-none [&>[data-slot=button]:last-child:not(:first-child)]:rounded-l-none [&>[data-slot=button]:not(:first-child):not(:last-child)]:rounded-none [&>[data-slot=button]:focus-visible]:z-(--lms-z-raised) max-md:w-full max-md:overflow-x-auto max-md:overscroll-x-contain max-md:scroll-px-1 max-md:[&>[data-slot=button]]:min-h-11 max-md:[&>[data-slot=button]]:shrink-0";
 
 export function ButtonGroup({ label, className, children, ...props }: ButtonGroupProps) {
   return (

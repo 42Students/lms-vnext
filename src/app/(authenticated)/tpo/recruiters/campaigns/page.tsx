@@ -17,6 +17,7 @@ import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatc
 import {CAMPAIGN_DRAFT_UNAVAILABLE,CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 import {tpoCampaignHistoryTime,tpoCampaignHistoryStatus} from "@/modules/messaging/tpo-campaign-history-copy";
 import {TPO_CAMPAIGN_RECIPIENT_CAP_COPY,TPO_CAMPAIGN_PROVIDER_DISABLED_COPY} from "@/modules/messaging/tpo-campaign-legacy-compat";
+import { Heading } from "@/components/ui/heading";
 
 type PageProps = {searchParams:Promise<{page?:string|string[];purpose?:string|string[]}>};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
@@ -40,7 +41,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   <PageHeader title="Emails"
    description="Email campaigns from Engage. Sent counts mean provider acceptance, not confirmed delivery."
    actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-     <Link href="/tpo/recruiters/campaigns/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:w-auto md:min-h-9">New email campaign</Link>
+     <Link href="/tpo/recruiters/campaigns/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary sm:w-auto md:min-h-9">New email campaign</Link>
      <Dropdown mobileSheet align="end" label="More campaign history actions" trigger="More ···"><nav aria-label="Campaign history actions" className="min-w-48 space-y-1">
        <Link href="/tpo/recruiters" className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-link">Back to Engage</Link>
           <Link href={"/api/placements/tpo/campaigns/history/export"+(first(params.purpose)?"?purpose="+encodeURIComponent(first(params.purpose)!):"")}
@@ -56,7 +57,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
    <section aria-label="Email workspace overview" data-testid="tpo.campaigns.prototype-overview"
     className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
     <div className="flex flex-wrap items-center justify-between gap-3">
-     <div><h2 className="text-lg font-semibold text-foreground">Emails</h2>
+     <div><Heading level={2} size="lg" className="text-foreground">Emails</Heading>
       <p className="mt-1 text-sm text-body">Pick a campaign on the left to read its subject, content, and verified sending outcomes.</p>
      </div>
      <Link href="/tpo/recruiters/campaigns/new"
@@ -64,7 +65,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     </div>
     {recent?<div className="mt-6 space-y-3 border-t border-border pt-4">
      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Most recent saved campaign</p>
-     <h3 className="text-[20px] font-semibold text-foreground">{recent.title}</h3>
+     <Heading level={3} size="xl" className="text-foreground">{recent.title}</Heading>
      <p className="text-sm text-body">Subject: {recent.subject}</p>
      <p className="text-sm text-body">{recent.total_recipients} eligible at draft time · {recent.sent} provider accepted · {recent.failed} failed · {recent.skipped} skipped</p>
      <p className="text-xs text-muted-foreground">A provider acceptance receipt does not confirm that an email was opened or received.</p>
@@ -86,7 +87,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   <form role="search" aria-label="recruiters campaigns filters" method="get" action="/tpo/recruiters/campaigns" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
    <label className="min-w-0 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Purpose
     <Input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
-     placeholder="Filter by purpose" className="mt-[6px] block min-h-11 min-[768px]:min-h-9 border border-border px-3"/>
+     placeholder="Filter by purpose" className="mt-[6px] block min-h-11 md:min-h-9 border border-border px-3"/>
    </label>
    <Button variant="secondary" type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3 text-sm sm:w-auto md:min-h-9">Apply</Button>
    <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center justify-center text-sm text-link underline lms-inline-link md:min-h-9">Clear</Link>
@@ -95,7 +96,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   <section aria-label="Email campaigns" className="space-y-3 rounded-[12px] border border-border bg-surface p-4 md:p-5">
    <p className="text-sm text-body">{TPO_CAMPAIGN_RECIPIENT_CAP_COPY}</p>
    <div className="flex flex-wrap items-center justify-between gap-2">
-    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Emails sent from Engage</h2>
+    <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Emails sent from Engage</Heading>
     <StatusBadge tone={deliveryReady===true?"success":deliveryReady===false?"warning":"neutral"}>
       {deliveryReady===true?"Email ready":deliveryReady===false?"Email unavailable":"Readiness unknown"}
     </StatusBadge>
@@ -128,15 +129,15 @@ export default async function CampaignHistory({searchParams}:PageProps){
     </ul>}
    {deliveryReady!==true?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body leading-[22px]"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE} {TPO_CAMPAIGN_PROVIDER_DISABLED_COPY} <Link href="/tpo/recruiters/campaigns" className="font-semibold text-link underline">Check delivery readiness again</Link></p>:null}
   </section>
-  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery batch receipts</h2>
+  <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Delivery batch receipts</Heading>
   <p className="text-xs text-muted-foreground">Receipts below are an additional delivery ledger, separate from the campaign send history.</p>
   <p role="status" className="text-sm text-body leading-[22px]">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
   {result.rows.length ? <ol aria-label="recruiters campaigns entries" className="min-w-0 divide-y divide-border rounded-[12px] border border-border bg-surface px-4">
     {result.rows.map(row=><li key={row.id} className="min-w-0 py-3">
-      <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+      <Heading level={2} size="lg" className="break-words leading-[1.4] text-[var(--lms-heading)]">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline-offset-2 hover:underline">{row.purpose}</Link>
-      </h2>
+        className="inline-flex min-h-11 md:min-h-9 items-center text-link underline-offset-2 hover:underline">{row.purpose}</Link>
+      </Heading>
       <p className="mt-1 text-xs text-muted-foreground leading-5">{tpoCampaignHistoryTime(row.createdAt)} IST · {row.status}</p>
       <dl className="mt-3 grid grid-cols-2 gap-2 text-sm text-body">
         <div><dt>Total</dt><dd>{row.total}</dd></div>
@@ -147,8 +148,8 @@ export default async function CampaignHistory({searchParams}:PageProps){
     </li>)}
   </ol>:<p className="border-y border-border bg-transparent py-[var(--lms-space-5)] text-sm text-body leading-[22px]">No emails sent from Engage yet.</p>}
   <nav className="flex flex-wrap gap-3" aria-label="Campaign history pagination">
-    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
-    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
+    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
   </nav>
    </div>
   </details>

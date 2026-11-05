@@ -5,7 +5,7 @@
  */
 .tile {
   min-width: 0;
-  border: 1px solid rgba(38,186,199,.35) !important;
+  border: 1px solid color-mix(in srgb, var(--lms-primary) 35%, transparent) !important;
   border-radius: 8px !important;
   padding: 24px !important;
   background: var(--lms-primary-subtle) !important;
@@ -13,7 +13,7 @@
 }
 .tile > p:first-child {
   margin: 0 !important;
-  color: rgba(0,0,0,.45) !important;
+  color: color-mix(in srgb, var(--lms-black) 45%, transparent) !important;
   font-size: 12px !important;
   font-weight: 400 !important;
   line-height: 1.4 !important;

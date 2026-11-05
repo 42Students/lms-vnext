@@ -23,7 +23,7 @@ describe("chat-16 public routes, quiz entry and resilient loading surfaces",()=>
   expect(html).toContain("All Quizzes");
   expect(html).toContain("min-h-11");
   expect(html).toContain("px-4");
-  expect(html).toContain("min-[768px]:min-h-9");
+  expect(html).toContain("md:min-h-9");
   expect(html).toContain("Attempt workspace");
   expect(html).not.toContain("private student token");
  });

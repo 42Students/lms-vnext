@@ -20,6 +20,7 @@ import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {DrivePayCategoryField,readDrivePayCategoryFields} from "./drive-pay-category-field";
 import {isDrivePayCategory} from "@/modules/placements/drive-pay-category-model";
+import { Heading } from "@/components/ui/heading";
 type Draft=Awaited<ReturnType<typeof getTpoDriveEditState>>;
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
@@ -272,12 +273,12 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    setConfirmOpen(false);
   }
  }
- const cls="mt-2 min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[7px] text-[var(--lms-form-ink)] md:min-h-9";
+ const cls="mt-2 min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[8px] text-[var(--lms-form-ink)] md:min-h-9";
  return <>
  <header className="flex min-w-0 flex-wrap items-start justify-between gap-4 border-b border-[var(--lms-canvas-border)] pb-4">
   <div className="min-w-0">
    <p className="text-xs font-bold uppercase tracking-wide text-[var(--lms-neutral-400)]">Drive setup</p>
-   <h2 className="mt-1 text-lg font-semibold text-[var(--lms-heading)]">{job.status==="PUBLISHED"?"Update the live opportunity carefully":"Build the opportunity students will see"}</h2>
+   <Heading level={2} size="lg" className="mt-1 text-[var(--lms-heading)]">{job.status==="PUBLISHED"?"Update the live opportunity carefully":"Build the opportunity students will see"}</Heading>
    <p className="mt-1 text-sm text-body">Move from company and role details into pay, eligibility and rounds. The review rail stays visible while you work.</p>
   </div>
   <div className="min-w-20 text-right" role="status" aria-label="Setup progress">
@@ -286,7 +287,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   </div>
  </header>
  {job.recruiterOwned ? <div role="note"
-   className="space-y-1 border-l-[3px] border-info-border bg-info-subtle px-4 py-3 text-sm">
+   className="space-y-1 border-l-2 border-info-border bg-info-subtle px-4 py-3 text-sm">
    <p className="font-semibold">Recruiter-originated drive</p>
    <p className="text-body">
      This drive originated from a recruiter{job.recruiterOwnershipSource==="APPROVED_RECRUITER_REQUEST"
@@ -296,7 +297,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
      their separate audited workflows.
    </p>
  </div> : null}
- <div className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+ <div className="grid min-w-0 items-start gap-[20px] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
  <form onSubmit={submit} onChange={event=>{
   markDirty();setSaved(null);
   const field=event.target;
@@ -308,7 +309,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  }} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
   <section aria-label="Employer relationship" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3">
-   <h3 className="text-sm font-semibold text-foreground">Company</h3>
+   <Heading level={3} size="sm" className="text-foreground">Company</Heading>
    <p className="mt-1 text-base font-semibold text-foreground">{job.companyName??"Add the company"}</p>
    <p className="mt-1 text-xs leading-5 text-body">
     The selected employer relationship for this saved drive is read-only here.
@@ -322,7 +323,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   </section>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
   <section aria-label="Selection rounds preview" className="min-w-0 space-y-2 border-b border-border pb-3">
-   <h3 className="font-semibold text-sm text-foreground">Selection rounds</h3>
+   <Heading level={3} size="sm" className="text-foreground">Selection rounds</Heading>
    {job.rounds.length===0?<p className="text-xs text-body">No selection rounds configured.</p>:
     <ol className="space-y-1 text-xs text-body">{job.rounds.map(round=>
      <li key={round.id} className="break-words">
@@ -343,7 +344,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     their separate authorized editing workflows.</p>
   </section>
   <section aria-label="Job description attachment" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-   <h3 className="text-sm font-semibold text-foreground">Job description (PDF or Word)</h3>
+   <Heading level={3} size="sm" className="text-foreground">Job description (PDF or Word)</Heading>
    <p className="text-xs leading-5 text-body">Optional PDF, DOC or DOCX, up to 5 MB.
     A clean private object is required before learners can open a short-lived download.</p>
    <p role="status" className="text-xs text-body">
@@ -373,7 +374,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   </section>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Location (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
   <section aria-label="Drive job details" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
-   <h2 className="mb-3 font-semibold text-foreground">The drive</h2>
+   <Heading level={2} className="mb-3 text-foreground">The drive</Heading>
    <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Job type
      <Select name="employmentType" defaultValue={job.employmentType} className={cls}>
@@ -454,7 +455,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    </div>:<p role="status" className="text-xs text-muted-foreground">No college programs available; saved branch targeting is preserved.</p>}
   </fieldset>
   <section aria-label="Eligibility marks and passing years" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
-   <h2 className="text-base font-semibold text-foreground">Eligibility</h2>
+   <Heading level={2} size="base" className="text-foreground">Eligibility</Heading>
    <p className="text-xs leading-5 text-body">Marks follow the Students page: verified first; otherwise student-submitted values are flagged as not verified. Use verified marks only to require confirmed evidence.</p>
    <label className="flex min-h-11 items-center gap-3 text-sm font-semibold">
     <Checkbox name="verifiedMarksOnly" defaultChecked={job.verifiedMarksOnly} className="h-4 w-4 accent-primary"/>
@@ -549,7 +550,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    </p>:null}
   <div id="drive-save-actions" className="flex min-w-0 scroll-mt-20 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
    <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">{pending?"Saving…":"Save changes"}</Button>
-   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text underline sm:w-auto md:min-h-9"
+   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline sm:w-auto md:min-h-9"
     href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>
    {job.status==="DRAFT"?<Link
     href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"?publish=1#drive-lifecycle-publish"}
@@ -560,7 +561,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  </form>
  <aside aria-label="Drive setup review" className="min-w-0 space-y-4 lg:sticky lg:top-20">
   <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
-   <h2 className="mb-3 text-base font-semibold text-[var(--lms-heading)]">Setup review</h2>
+   <Heading level={2} size="base" className="mb-3 text-[var(--lms-heading)]">Setup review</Heading>
    <ol className="space-y-3 text-sm">
     <li className="flex items-start gap-3">
      <span aria-hidden="true" className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-xs font-bold">1</span>
@@ -590,7 +591,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    </ol>
   </section>
   <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
-   <h2 className="mb-2 font-semibold text-foreground">Who this reaches</h2>
+   <Heading level={2} className="mb-2 text-foreground">Who this reaches</Heading>
    <p className="text-sm text-body"><strong className="tabular-nums">{job.applicantCount}</strong> existing applicants</p>
     {reachBusy?<p role="status" className="mt-2 text-sm text-body">Calculating the saved eligibility policy…</p>:null}
     {reach?.kind==="READY"?<div className="mt-3 space-y-3">
@@ -636,7 +637,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     <p className="mt-2 text-xs leading-5 text-muted-foreground">Changes are audited. Applicant notices are sent only after you choose to notify on save.</p>
   </section>
   <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
-   <h2 className="mb-2 font-semibold text-foreground">Saved packages</h2>
+   <Heading level={2} className="mb-2 text-foreground">Saved packages</Heading>
     {job.roleOptions.length?<ul className="space-y-3 text-sm text-body">{job.roleOptions.map(role=>
      <li key={role.id} className="min-w-0 border-b border-border pb-2">
       <strong className="break-words text-foreground">{role.title}</strong>

@@ -10,6 +10,7 @@ import {TPO_QUICK_REPLIES,recruiterMessageDraftKey,shouldSendTpoRecruiterReplyKe
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {Textarea} from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
 export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnded=false,quote}:{
  threadId:string;unread:boolean;actorUserId:string;accessEnded?:boolean;quote?:string;
 }){
@@ -87,7 +88,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
  }
  return <section className="space-y-3 border-t border-border pt-4" aria-label="Reply to recruiter">
   {accessEnded?<p role="status" className="text-sm text-warning">Recruiter access ended. Sending is unavailable until access is restored.</p>:null}
-  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Reply</h2>
+  <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Reply</Heading>
   {quote?<Button type="button" variant="secondary" disabled={busy||accessEnded}
     className="min-h-11 md:min-h-9" onClick={()=>addQuickReply(quote)}>Quote change request</Button>:null}
   <Button type="button" variant="secondary" disabled={busy||accessEnded} className="min-h-11 md:min-h-9"
@@ -95,7 +96,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
   <div role="group" aria-label="Quick replies" className="flex min-w-0 flex-wrap gap-2">
    <p className="w-full text-xs font-bold uppercase tracking-wide text-muted-foreground">Quick replies</p>
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy||accessEnded}
-      className="min-h-11 md:min-h-9 shrink-0 rounded-[var(--lms-control-radius)] px-3 text-sm font-[650]"
+      className="min-h-11 md:min-h-9 shrink-0 rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold"
       onClick={()=>addQuickReply(reply)}>{reply}</Button>)}
    </div>
   <form aria-busy={busy} onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
@@ -153,7 +154,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
     </div>
     <section aria-label="Template preview" className="min-w-0 space-y-3">
      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{template?.group??"Draft wording"}</p>
-     <h3 className="font-semibold text-foreground">{template?.title??"Choose a template"}</h3>
+     <Heading level={3} className="text-foreground">{template?.title??"Choose a template"}</Heading>
      <p className="min-h-48 whitespace-pre-wrap rounded-lg bg-surface-secondary p-4 text-sm leading-6 text-foreground">
       {template?.text??"Select a template to preview it."}
      </p>

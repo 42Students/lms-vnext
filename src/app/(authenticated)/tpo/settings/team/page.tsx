@@ -27,6 +27,7 @@ import {
 import {
   getTpoPlacementTeam,
 } from "@/modules/placements/tpo-settings-people-service";
+import { Heading } from "@/components/ui/heading";
 
 function dutyDate(value: string) {
   // PostgreSQL DATE is rendered without constructing a client clock.
@@ -90,7 +91,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
         actions={
           <Link
             href="/tpo/settings/trusted"
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           >
             Trusted Companies
           </Link>
@@ -111,7 +112,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
       />
 
       {awayState.ready ? <section id="tpo-team-availability" aria-label="Team availability" className="min-w-0 space-y-3 border-b border-border pb-4">
-        <h2 className="text-base font-semibold text-foreground">Who is away</h2>
+        <Heading level={2} size="base" className="text-foreground">Who is away</Heading>
         <p className="text-sm text-body">Only verified away intervals for this placement team are shown.</p>
         {awayState.items.length ? <ul className="space-y-2 text-sm text-body">
           {sortedMembers.filter(member=>awayByMember.has(member.membershipId)).map(member=>{
@@ -127,9 +128,9 @@ export default async function TpoPlacementTeamPage({searchParams}: {
 
       {!sources.teamAssignmentsAvailable ? (
         <Alert tone="warning">
-          <h2 className="font-semibold text-foreground">
+          <Heading level={2} className="text-foreground">
             Faculty team assignments unavailable
-          </h2>
+          </Heading>
           <p className="mt-2 text-sm leading-6 text-body">
             The dedicated Placement Team assignment table is not
             registered in this database. TPO membership roles are
@@ -150,7 +151,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
       ) : null}
 
       <Disclosure title="Team totals" className="min-w-0" contentClassName="pt-3">
-      <section aria-label="Placement team summary" className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-5">
+      <section aria-label="Placement team summary" className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] md:grid-cols-2 lg:grid-cols-5">
         {[
           ["Distinct active members", String(summary.total)],
           ["TPO memberships", String(summary.tpoMemberships)],
@@ -175,7 +176,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
         ].map(([label, value]) => (
           <div
             key={label}
-            className="min-w-0 border-b border-[var(--lms-canvas-border)] px-4 py-4 last:border-b-0 min-[768px]:odd:border-r min-[768px]:odd:border-r-[var(--lms-canvas-border)] min-[768px]:last:border-r-0 min-[992px]:border-b-0 min-[992px]:border-r min-[992px]:border-r-[var(--lms-canvas-border)] min-[992px]:last:border-r-0"
+            className="min-w-0 border-b border-[var(--lms-canvas-border)] px-4 py-4 last:border-b-0 md:odd:border-r md:odd:border-r-[var(--lms-canvas-border)] md:last:border-r-0 lg:border-b-0 lg:border-r lg:border-r-[var(--lms-canvas-border)] lg:last:border-r-0"
           >
             <p className="text-xs font-semibold text-muted-foreground">
               {label}
@@ -197,9 +198,9 @@ export default async function TpoPlacementTeamPage({searchParams}: {
 
       <section id="tpo-team-management" className="border-t border-border">
         <div className="border-b border-border py-4">
-          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <Heading level={2} size="base" className="leading-[26px] text-foreground md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
             Active team memberships
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm leading-6 text-body">
             Only active college memberships belonging to active
             platform users are displayed. Student coordinator

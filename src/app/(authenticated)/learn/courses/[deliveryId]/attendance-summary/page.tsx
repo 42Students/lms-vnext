@@ -12,6 +12,7 @@ import { StatusBadge, attendanceStatusTone } from "@/components/ui/status-badge"
 import { getOwnLearnerCourseAttendanceHistory } from "@/modules/courses/learner-course-drilldown-service";
 import { learnerAttendanceMonthSchema } from "@/modules/courses/learner-course-drilldown-model";
 import { courseSectionDeliveryIdSchema } from "@/modules/courses/validation";
+import { Heading } from "@/components/ui/heading";
 
 const formatWhen = (value: Date) => new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium",
@@ -78,7 +79,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
       </details>
       <section className="border-b border-border py-4" aria-label="Threshold context">
         <div className="flex flex-wrap items-center gap-3">
-          <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Attendance threshold</h2>
+          <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Attendance threshold</Heading>
           <StatusBadge tone={attendance.overall?.percentage == null ? "neutral" :
             attendance.overall && attendance.overall.percentage !== null &&
               attendance.overall.percentage >= attendance.thresholdPercent
@@ -114,7 +115,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
             <article key={month.month} className="border-b border-border py-4 md:py-5">
               <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:gap-3">
                 <div>
-                  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{month.month}</h2>
+                  <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{month.month}</Heading>
                   <p className="mt-1 text-sm text-body leading-[22px]">
                     {month.present} present · {month.otherMarked} other marked ·
                     {" "}{month.notMarked} not marked · {month.scheduled} scheduled

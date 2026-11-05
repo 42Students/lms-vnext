@@ -237,7 +237,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
        </Button>
        {operation==="remove"?<PopoverPanel label="Confirm removal of template assignments"
         onDismiss={()=>{if(!pending)setOperation(null);}}
-        className="absolute bottom-full right-0 z-40 mb-2 w-[320px] max-w-[calc(100vw_-_2rem)] space-y-3">
+        className="absolute bottom-full right-0 z-(--lms-z-shell) mb-2 w-[320px] max-w-[calc(100vw_-_2rem)] space-y-3">
         <p className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
          Remove this template from {selected.length} selected colleges?
         </p>

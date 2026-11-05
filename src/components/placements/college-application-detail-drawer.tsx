@@ -11,6 +11,8 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {CollegeInterviewAppointments} from "./college-interview-appointments";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Event={from:string|null;to:string;reason:string|null;when:string;actorName?:string|null};
 type CandidateInterviews={
  rounds:Array<{id:string;name:string;status:string;kind:string}>;
@@ -299,7 +301,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
     {detail?<div className="mt-4 min-w-0 space-y-4">
       <div className="min-w-0 rounded-[8px] border border-[color:var(--lms-neutral-100)] px-4 pb-4 pt-2">
        <section className="border-b border-border py-3" aria-labelledby="application-candidate-heading">
-        <h3 id="application-candidate-heading" className="text-base font-semibold text-heading">Candidate</h3>
+        <Heading level={3} size="base" id="application-candidate-heading" className="text-heading">Candidate</Heading>
         <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-[11rem_minmax(0,1fr)] [&>dd]:break-words [&>dd]:[overflow-wrap:anywhere]">
          <dt className="font-semibold text-body">Learner Name</dt><dd>{detail.application.name||"-"}</dd>
          <dt className="font-semibold text-body">Email</dt><dd>{detail.application.email||"-"}</dd>
@@ -309,7 +311,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         </dl>
        </section>
        <section className="py-3" aria-labelledby="application-decision-heading">
-        <h3 id="application-decision-heading" className="text-base font-semibold text-heading">Status &amp; decision</h3>
+        <Heading level={3} size="base" id="application-decision-heading" className="text-heading">Status &amp; decision</Heading>
         <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-[11rem_minmax(0,1fr)] [&>dd]:break-words [&>dd]:[overflow-wrap:anywhere]">
          <dt className="font-semibold text-body">Current Status</dt>
          <dd>{detail.stage??detail.application.status}</dd>
@@ -339,8 +341,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        </section>
       </div>
       <section className="border-b border-border py-4">
-       <h3 className="text-base font-semibold text-heading">Documents &amp; notes</h3>
-       <h4 className="mt-3 font-semibold">Resume</h4>
+       <Heading level={3} size="base" className="text-heading">Documents &amp; notes</Heading>
+       <Heading level={4} className="mt-3">Resume</Heading>
        <p className="mt-2 text-sm text-body">{detail.resume.reason}</p>
        {privateResumeUrl ? (
         <Button variant="secondary" type="button"
@@ -352,7 +354,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </section>
       <section className="border-b border-border py-4">
        <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-semibold">Assessment Link</h3>
+        <Heading level={3}>Assessment Link</Heading>
         {canMoveToAssessment?<Button type="button" variant="secondary"
           onClick={openAssessment} disabled={saving||savingLetter}>
           Move to Assessment
@@ -360,8 +362,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        </div>
        {detail.jobAssessmentLink?.startsWith("https://")?<div className="mt-2 flex min-w-0 flex-wrap items-center gap-3 border border-warning/30 bg-warning/5 px-3 py-2 text-sm" role="note">
         <span className="font-semibold">Assessment Link:</span>
-        <a href={detail.jobAssessmentLink} rel="noopener noreferrer"
-         className="min-w-0 flex-1 break-all text-link underline">{detail.jobAssessmentLink}</a>
+        <TextLink href={detail.jobAssessmentLink} rel="noopener noreferrer"
+         className="min-w-0 flex-1 break-all">{detail.jobAssessmentLink}</TextLink>
         <Button variant="secondary" type="button" onClick={async()=>{
          try{await navigator.clipboard.writeText(detail.jobAssessmentLink!);
           setLinkNotice("Assessment link copied to clipboard");
@@ -371,14 +373,14 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         }}>Copy</Button>
        </div>:null}
        {detail.assessmentLink?.startsWith("https://")?<p className="mt-2 text-sm">
-        Saved assessment link: <a href={detail.assessmentLink}
-          rel="noopener noreferrer" className="break-all font-semibold text-link underline">
-          {detail.assessmentLink}</a>
+        Saved assessment link: <TextLink href={detail.assessmentLink}
+          rel="noopener noreferrer" className="break-all">
+          {detail.assessmentLink}</TextLink>
        </p>:null}
        {detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).length?
         <div className="mt-3 space-y-2">{detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).map(r=>
-          <p key={r.id} className="text-sm"><a href={r.testUrl!} 
-            rel="noreferrer noopener" className="font-semibold text-[var(--lms-teal-deep)] underline">{r.name} · Open assessment</a>
+          <p key={r.id} className="text-sm"><TextLink href={r.testUrl!} 
+            rel="noreferrer noopener" className="text-[var(--lms-teal-deep)]">{r.name} · Open assessment</TextLink>
             <span className="mt-1 block break-all text-xs text-muted-foreground">{r.testUrl}</span>
             <Button variant="secondary" type="button" onClick={async()=>{try{
               await navigator.clipboard.writeText(r.testUrl!);
@@ -393,13 +395,13 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </section>
       {linkNotice?<p role="status" className="text-sm text-body">{linkNotice}</p>:null}
       <section className="border-b border-border py-4">
-       <h3 className="font-semibold">Offer history</h3>
+       <Heading level={3}>Offer history</Heading>
        {detail.offers.length?<ul className="mt-2 divide-y divide-border border-y border-border text-sm">{detail.offers.map(o=>
         <li key={o.id} className="min-w-0 space-y-2 break-words py-3">
          <p>{o.status} · {when(o.issuedAt)}</p>
          {o.offerLetterUrl&&/^https:\/\//i.test(o.offerLetterUrl)?
-          <a href={o.offerLetterUrl} rel="noreferrer noopener"
-           className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:
+          <TextLink href={o.offerLetterUrl} rel="noreferrer noopener"
+           className="text-[var(--lms-teal-deep)]">View offer letter</TextLink>:
           o.offerLetterUrl?<p className="text-muted-foreground">Offer letter link unavailable (invalid URL)</p>:
           <p className="text-muted-foreground">No offer letter attached</p>}
          {o.offerLetterAttachedAt?<p className="text-xs text-muted-foreground">
@@ -422,7 +424,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         <p className="mt-2 text-sm text-body">No issued offers.</p>}
       </section>
       <section className="border-b border-border py-4">
-       <h4 className="font-semibold">Internal Notes</h4>
+       <Heading level={4}>Internal Notes</Heading>
        <p className="mt-1 text-xs text-muted-foreground">
         Visible only to the college placement team. Edits append a new version so the previous entry remains in history.
        </p>
@@ -451,7 +453,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
       </section>
       <section className="border-b border-border py-4" aria-label="Screening">
-       <h3 className="text-base font-semibold text-heading">Screening</h3>
+       <Heading level={3} size="base" className="text-heading">Screening</Heading>
        {detail.screening?<div className="mt-3 space-y-1 text-sm text-body">
         <p><strong>Current screening:</strong> {detail.screening.status}</p>
         {detail.screening.candidateMessage?<p className="whitespace-pre-wrap">Candidate feedback: {detail.screening.candidateMessage}</p>:null}
@@ -464,9 +466,9 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
           <span className="font-semibold">Recorded assessment score</span>
           <span className={"inline-flex rounded-full px-3 py-1 font-semibold tabular-nums "+
-           (detail.scoring.scorePercent>=70?"bg-violet-50 text-violet-700":
-             detail.scoring.scorePercent>=40?"bg-cyan-50 text-cyan-700":
-             "bg-slate-100 text-slate-700")}>
+           (detail.scoring.scorePercent>=70?"bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]":
+             detail.scoring.scorePercent>=40?"bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary)]":
+             "bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-text-body)]")}>
             {Math.round(detail.scoring.scorePercent)}%
             {detail.scoring.partial?" · Partial match":""}
           </span>
@@ -492,17 +494,17 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
 
       </section>
       <section className="border-b border-border py-4">
-       <h3 className="font-semibold">Interview scheduling</h3>
+       <Heading level={3}>Interview scheduling</Heading>
        <p className="mt-1 text-sm text-body">Schedule or edit an interview, record completed/no-show feedback and download calendar invitations. Candidate notifications are confirmed only when the delivery receipt is available.</p>
        <div className="mt-3 flex flex-wrap gap-3">
         <Button type="button" variant="secondary" onClick={()=>void openCandidateInterviews()}>
          Manage candidate interviews
         </Button>
-        <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
+        <TextLink href={basePath+"/jobs/"+encodeURIComponent(jobId)+
          (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
-         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9 text-sm">
+         className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] md:min-h-9 text-sm">
          Full interview schedule
-        </a>
+        </TextLink>
         <Button type="button" variant="secondary" disabled={interviewLoading}
           onClick={()=>void loadCandidateInterviews()}>
          {interviewLoading?"Loading interviews…":"Load calendar invitations"}
@@ -527,19 +529,19 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
            location:row.venue??row.meetingUrl}):null;
           return <div key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
            <span className="break-words">{round?.name??"Interview"} · {when(row.scheduledAt)}</span>
-           {calendar?<a download={"interview-"+row.id+".ics"}
+           {calendar?<TextLink download={"interview-"+row.id+".ics"}
             href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(calendar)}
             aria-label={"Download calendar invitation for "+title}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+            className="inline-flex min-h-11 items-center md:min-h-9">
             Download .ics
-           </a>:<span className="text-muted-foreground">Calendar invitation unavailable</span>}
+           </TextLink>:<span className="text-muted-foreground">Calendar invitation unavailable</span>}
           </div>;
          })}
         {!interviewData.interviews.some(row=>row.applicationId===applicationId&&row.status!=="CANCELLED")?
           <p className="text-sm text-muted-foreground">No booked candidate interviews to add to your calendar.</p>:null}
        </div>:null}
       </section>
-      <h3 className="mt-4 text-base font-semibold text-heading">History</h3>
+      <Heading level={3} size="base" className="mt-4 text-heading">History</Heading>
       {sections.map(section=><Disclosure key={section.label} title={section.label}
         className="border-b border-border py-2" contentClassName="pb-3">
         {historyError[section.label]||!section.available?
@@ -669,14 +671,14 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
     <div className="min-w-0 space-y-3">
      <iframe title={"Verified resume document for "+(detail?.application.name??"applicant")} src={privateResumeUrl}
       sandbox="allow-downloads" referrerPolicy="no-referrer" loading="lazy"
-      className="h-[58vh] w-full rounded-[var(--lms-control-radius)] border border-border bg-white" />
+      className="h-[58vh] w-full rounded-[var(--lms-control-radius)] border border-border bg-surface" />
      <p className="text-xs text-muted-foreground">
       If your browser cannot preview this file, use the secure link below.
      </p>
-     <a href={privateResumeUrl} rel="noopener noreferrer"
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+     <TextLink href={privateResumeUrl} rel="noopener noreferrer"
+      className="inline-flex min-h-11 items-center md:min-h-9">
       Open verified resume
-     </a>
+     </TextLink>
      <Button type="button" variant="secondary" onClick={()=>setResumePreviewOpen(false)}
       className="ml-2 min-h-11 md:min-h-9">Close preview</Button>
     </div>

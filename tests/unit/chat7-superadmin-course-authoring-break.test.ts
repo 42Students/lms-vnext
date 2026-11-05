@@ -21,7 +21,7 @@ describe("SA-academics-people-58 GR-COURSES-TENANT-02 authoring, stale tabs and 
   expect(authoring).toContain("key={contentKey}");
  });
  it("sanitizer removes all event handlers, SVG, javascript links and embeds while preserving plain readable markup",()=>{
-  const raw='<p onclick="alert(1)">Hi <strong style="color:red">team</strong><svg onload="steal()"><script>bad()</script></svg><a href="javascript:steal()">tap</a></p>';
+  const raw='<p onclick="alert(1)">Hi <strong style="color:var(--lms-error)">team</strong><svg onload="steal()"><script>bad()</script></svg><a href="javascript:steal()">tap</a></p>';
   const cleaned=sanitizeCourseDisplayHtml(raw);
   expect(cleaned).toContain("<p>Hi <strong>team</strong>");
   expect(cleaned).not.toContain("<svg ");

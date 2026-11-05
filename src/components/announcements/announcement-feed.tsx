@@ -1,5 +1,7 @@
 import { StatusBadge } from "@/components/ui/status-badge";
 import {MentorSourceNotificationRead} from "@/components/projects/mentor-source-notification-read";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 function trustedAnnouncementAction(url:string|undefined|null,label:string|undefined|null){
  if(!url||!label)return null;
  try{
@@ -61,12 +63,12 @@ export function AnnouncementFeed({
         className="space-y-3"
       >
         <div>
-          <h2
+          <Heading level={2} size="lg"
             id="college-announcements"
-            className="text-lg font-semibold text-[var(--lms-heading)]"
+            className="text-[var(--lms-heading)]"
           >
             College announcements
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
             Announcements are temporarily unavailable while the verified
             database rollout is pending.
@@ -86,12 +88,12 @@ export function AnnouncementFeed({
     >
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2
+          <Heading level={2} size="lg"
             id="college-announcements"
-            className="text-lg font-semibold text-[var(--lms-heading)]"
+            className="text-[var(--lms-heading)]"
           >
             College announcements
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
             Current announcements visible to your persisted college, role and
             class/program/department audience.
@@ -130,9 +132,9 @@ export function AnnouncementFeed({
                       {item.receiverType.replaceAll("_", " ")}
                     </span> : null}
                   </div>
-                  <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
+                  <Heading level={3} size="base" className="mt-2 text-[var(--lms-heading)]">
                     {item.title?.trim() || "Announcement"}
-                  </h3>
+                  </Heading>
                 </div>
                 <time
                   dateTime={announcementTimestamp(item.createdAt)?.toISOString()}
@@ -150,11 +152,11 @@ export function AnnouncementFeed({
                 {item.message?.trim() || "An announcement was shared with you."}
               </p>
               {trustedAnnouncementAction(item.buttonUrl,item.buttonLabel) ?
-                <a href={trustedAnnouncementAction(item.buttonUrl,item.buttonLabel)!.href}
+                <ButtonLink variant="secondary" href={trustedAnnouncementAction(item.buttonUrl,item.buttonLabel)!.href}
                   rel="noopener noreferrer"
-                  className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+                  className="mt-3">
                   {trustedAnnouncementAction(item.buttonUrl,item.buttonLabel)!.label} ↗
-                </a>:null}
+                </ButtonLink>:null}
             </article>
           ))}
         </div>

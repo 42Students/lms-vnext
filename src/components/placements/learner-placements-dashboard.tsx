@@ -10,6 +10,8 @@ import {learnerDashboardSafeFallback} from "@/modules/placements/learner-dashboa
 import {learnerDashboardDateLabel} from "@/modules/placements/learner-dashboard-date-label-model";
 import {learnerWaitingOnYou,type LearnerBookedConfirmation} from "@/modules/placements/learner-waiting-on-you-model";
 import {learnerPlacementHeroPriority} from "@/modules/placements/learner-dashboard-hero-priority-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -100,8 +102,8 @@ export function LearnerPlacementsDashboard({
   const eventHero=next?.label==="Next scheduled event"||
     next?.label==="Assessment coming up"||next?.label==="Interview coming up";
   const quietHero=next?.label==="All caught up"&&waitingOnYou.length===0&&!display.partial;
-  const heroStyle=offerHero?"border-amber-400 bg-amber-50 dark:bg-amber-950/20":
-    eventHero?"border-sky-400 bg-sky-50 dark:bg-sky-950/20":
+  const heroStyle=offerHero?"border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] dark:bg-[color:color-mix(in_srgb,var(--lms-warning-strong)_20%,transparent)]":
+    eventHero?"border-[color:var(--lms-primary)] bg-[color:var(--lms-primary-subtle)] dark:bg-[color:color-mix(in_srgb,var(--lms-heading)_20%,transparent)]":
     quietHero?"border-neutral-300 bg-surface-subtle":
     "border-primary bg-primary-subtle";
   return (
@@ -109,10 +111,10 @@ export function LearnerPlacementsDashboard({
       {completeFailure?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning/5 p-4 text-sm">
         <p className="font-semibold text-foreground">We could not load your placements</p>
         <p className="mt-1 text-body">Your data is safe. Check your connection and try again.</p>
-        <a href="/learn/my-placements?retry=1" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</a>
+        <TextLink href="/learn/my-placements?retry=1" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
       </div>:null}
       {next ? <section aria-labelledby="sp-next-title"
-        className={"min-w-0 border-l-4 px-4 py-5 md:px-6 md:py-6 "+heroStyle}>
+        className={"min-w-0 border-l-2 px-4 py-5 md:px-6 md:py-6 "+heroStyle}>
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="max-w-3xl">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
@@ -121,9 +123,9 @@ export function LearnerPlacementsDashboard({
             <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {legacyHeroEyebrow(next.label)}
             </p>
-            <h2 id="sp-next-title" className="mt-2 text-xl font-semibold text-foreground md:text-2xl">
+            <Heading level={2} size="xl" id="sp-next-title" className="mt-2 text-foreground md:text-2xl">
               {quietHero?"Nothing needs you right now":next.title}
-            </h2>
+            </Heading>
             <p className="mt-2 text-sm leading-6 text-body">
               {quietHero?"New drives open to you will show up here. Keep your profile and resume up to date so you are ready.":next.detail}
               {next.when ? ` · ${formatWhen(next.when)}` : ""}
@@ -154,7 +156,7 @@ export function LearnerPlacementsDashboard({
 
       <section aria-labelledby="learner-dashboard-waiting-heading" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 id="learner-dashboard-waiting-heading" className="text-lg font-semibold text-foreground">Waiting on you</h3>
+          <Heading level={3} size="lg" id="learner-dashboard-waiting-heading" className="text-foreground">Waiting on you</Heading>
 
         </div>
         {waitingOnYou.length?<ul className="mt-3 divide-y divide-border border-y border-border">{waitingOnYou.map(item=><li key={item.key}
@@ -176,7 +178,7 @@ export function LearnerPlacementsDashboard({
       <section aria-labelledby="sp-week-title"
         className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5">
         <header className="flex flex-wrap items-center justify-between gap-3">
-          <h3 id="sp-week-title" className="text-lg font-semibold text-foreground">Next 7 days</h3>
+          <Heading level={3} size="lg" id="sp-week-title" className="text-foreground">Next 7 days</Heading>
           <Link href="/learn/my-placements/calendar"
             className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
             Full schedule →
@@ -206,7 +208,7 @@ export function LearnerPlacementsDashboard({
 
       {onboarding.length>0 ? (
         <section className="border-b border-border pb-5" aria-label="First placement steps">
-          <h3 className="m-0 text-base font-semibold text-foreground">Get started with placements</h3>
+          <Heading level={3} size="base" className="m-0 text-foreground">Get started with placements</Heading>
           <p className="mt-1 text-sm text-body">These are useful starting points, not completed or verified milestones.</p>
           <ol className="mt-4 grid gap-3 md:grid-cols-3">
             {onboarding.map((step,index)=>(
@@ -222,7 +224,7 @@ export function LearnerPlacementsDashboard({
 
       <section aria-labelledby="learner-dashboard-stages-heading" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 id="learner-dashboard-stages-heading" className="text-base font-semibold text-foreground">Where your applications stand</h3>
+          <Heading level={3} size="base" id="learner-dashboard-stages-heading" className="text-foreground">Where your applications stand</Heading>
           <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">All applications →</Link>
         </div>
         {display.applications===0 ? <p role="status" className="mt-2 text-sm text-body">
@@ -302,9 +304,9 @@ export function LearnerPlacementsDashboard({
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="min-w-0 space-y-3 border-b border-border py-4 md:py-6" aria-labelledby="placement-attention-heading">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 id="placement-attention-heading" className="m-0 text-base font-semibold text-foreground">
+            <Heading level={3} size="base" id="placement-attention-heading" className="m-0 text-foreground">
               Needs attention
-            </h3>
+            </Heading>
             <StatusBadge tone={display.attention?.length ? "warning" : "neutral"}>
               {display.attentionTotal===null ? "Unknown" : display.attentionTotal ? `${display.attentionTotal} soon` : "All clear"}
             </StatusBadge>
@@ -347,9 +349,9 @@ export function LearnerPlacementsDashboard({
 
         <section className="min-w-0 space-y-3 border-b border-border py-4 md:py-6" aria-labelledby="placement-week-heading">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 id="placement-week-heading" className="m-0 text-base font-semibold text-foreground">
+            <Heading level={3} size="base" id="placement-week-heading" className="m-0 text-foreground">
               Next 7 days
-            </h3>
+            </Heading>
             <StatusBadge>{display.fullWeekEventCount===null ? "Unknown" : `${display.fullWeekEventCount} events`}</StatusBadge>
           </div>
           {display.fullWeekEventCount===0 ? <p role="status" className="text-sm text-body">No tests or interviews in the next 7 days. When the placement cell books you, it shows here and you get a notice.</p> : display.weekEvents===null ? (

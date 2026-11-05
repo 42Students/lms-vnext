@@ -5,6 +5,7 @@ import {Input} from "@/components/ui/input";
 import {DataTable} from "@/components/ui/data-table";
 import type {FacultyReportStudentRow} from "@/modules/courses/faculty-report-students";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 const avatarTints=[
  {bg:"var(--lms-primary-subtle)",fg:"var(--lms-button-primary)"},{bg:"var(--lms-purple-surface)",fg:"var(--lms-purple-text)"},
@@ -45,7 +46,7 @@ export function FacultyReportStudentTable({rows,title,emptyMessage="No learners 
  return <section aria-label={title} className="min-w-0 space-y-3">
   <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
    <div>
-    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
+    <Heading level={2} size="lg" className="text-[var(--lms-heading)]">{title}</Heading>
     <p role="status" aria-live="polite" className="mt-1 text-xs text-muted-foreground">
      {filtered.length} {filtered.length===1?"student":"students"} · Highest scores first
     </p>

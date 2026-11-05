@@ -11,6 +11,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoApplicantDetail} from "@/modules/placements/tpo-applicant-detail-service";
 import {listTpoApplicantNotes} from "@/modules/placements/applicant-notes-service";
 import {ApplicantNotesPanel} from "@/components/placements/applicant-notes-panel";
+import { Heading } from "@/components/ui/heading";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
 export default async function TpoApplicantDetailPage({params}:Params){
  const context=await getCurrentRequestContext();
@@ -33,18 +34,18 @@ export default async function TpoApplicantDetailPage({params}:Params){
   <PageHeader eyebrow="TPO · Applicant detail"
    title={data.application.student??"Name not recorded"}
    description={data.job.title+" · "+data.application.roleTitle}
-   actions={<Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">← Applicant pipeline</Link>}/>
+   actions={<Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)] md:w-auto">← Applicant pipeline</Link>}/>
   </div>
   <section className="border-b border-border pb-6">
-   <h2 className="font-semibold text-foreground">Application and screening</h2>
-   <dl className="mt-3 grid min-w-0 grid-cols-1 gap-x-6 min-[768px]:grid-cols-2">
+   <Heading level={2} className="text-foreground">Application and screening</Heading>
+   <dl className="mt-3 grid min-w-0 grid-cols-1 gap-x-6 md:grid-cols-2">
     {applicationFields.map(([label,value])=><div key={label} className="min-w-0 border-b border-border py-3">
        <dt className="text-xs font-semibold text-body">{label}</dt>
        <dd className="mt-1 break-words text-sm text-foreground">{value}</dd>
       </div>)}
    </dl>
    <Link href={"/tpo/students/"+data.application.membershipId+"/history"}
-    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">
+    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
     View student placement history →</Link>
   </section>
   {data.application.screeningUpdatedAt && canReviewApplicant(data.applicantStatus, data.screening) ?
@@ -58,7 +59,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
    {data.appliedRoundResults.length===0?<EmptyState title="No applied round outcomes recorded for this application."/>:
     <div className="mt-3 grid gap-3">{data.appliedRoundResults.map(r=>
      <article key={r.roundId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-      <h3 className="font-semibold text-foreground">{r.roundName}</h3>
+      <Heading level={3} className="text-foreground">{r.roundName}</Heading>
       <p className="mt-1 text-sm text-body">{r.kind} · {r.outcome} · Applied: {r.appliedAt?
        new Date(r.appliedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}):"Time not recorded"}</p>
      </article>)}</div>}
@@ -69,7 +70,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
    {data.offers.length===0?<EmptyState title="No persisted offer versions for this application."/>:
     <div className="mt-3 grid gap-3">{data.offers.map(offer=>
      <article key={offer.offerId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-      <h3 className="font-semibold text-foreground">{offer.roleTitle} · Version {offer.version}</h3>
+      <Heading level={3} className="text-foreground">{offer.roleTitle} · Version {offer.version}</Heading>
       <p className="mt-1 text-sm text-body">{offer.status} · Joining: {offer.joiningStatus??"Not confirmed"}
        {" · "}Annual CTC: {offer.annualCtcInr===null?"Not recorded":"₹"+offer.annualCtcInr.toLocaleString("en-IN")}</p>
       <p className="mt-1 text-xs text-body">Issued: {new Date(offer.issuedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})} IST</p>

@@ -48,6 +48,9 @@ import {
   type LearnerRoundBrowseFilters,
   type LearnerRoundTimeBucket,
 } from "@/modules/placements/learner-rounds-browse-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Kind = "ASSESSMENT" | "INTERVIEW";
 /** Legacy /schedule view aliases retain their original meaning. The combined
@@ -249,7 +252,7 @@ export function LearnerCareerRoundsWorkspace({
     const urgent = learnerRoundUrgency(round, nowMs);
     return urgent === "today" || urgent === "week";
   }).length;
-  const selectClass = "mt-1 min-h-11 min-[768px]:min-h-9";
+  const selectClass = "mt-1 min-h-11 md:min-h-9";
   const date = selected ? learnerRoundScheduledInstant(selected) : null;
   const meeting = externalLink(selected?.exception?.meetingUrl ?? selected?.meetingUrl ?? null);
   const mobileInterviewSummary=kind==="INTERVIEW"&&selected
@@ -432,9 +435,9 @@ export function LearnerCareerRoundsWorkspace({
       {kind==="ASSESSMENT"&&dueBucket==="past"&&pastReview&&pastReview.count>0 ? (
         <aside role="status" aria-label="Past scheduled assessments"
           className="min-w-0 border-b border-border py-4 md:py-6">
-          <h3 className="text-sm font-semibold text-foreground">
+          <Heading level={3} size="sm" className="text-foreground">
             {pastReview.count} assessment schedule{pastReview.count===1?"":"s"} passed
-          </h3>
+          </Heading>
           <p className="mt-2 text-sm text-body">{pastReview.notice}</p>
           <Link href="/learn/my-placements/assessments/results"
             className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
@@ -445,7 +448,7 @@ export function LearnerCareerRoundsWorkspace({
       {kind==="ASSESSMENT"&&dueBucket==="unscheduled"&&missingSchedule&&missingSchedule.count>0 ? (
         <aside role="status" aria-label="Assessments without a recorded date"
           className="min-w-0 border-b border-border py-4 md:py-6">
-          <h3 className="text-sm font-semibold text-foreground">{missingSchedule.count} assessment round{missingSchedule.count===1?"":"s"} without a recorded schedule</h3>
+          <Heading level={3} size="sm" className="text-foreground">{missingSchedule.count} assessment round{missingSchedule.count===1?"":"s"} without a recorded schedule</Heading>
           <p className="mt-2 text-sm text-body">{missingSchedule.notice}</p>
           {missingSchedule.missingLinkCount>0 ? (
             <p className="mt-2 text-xs text-muted-foreground">
@@ -461,7 +464,7 @@ export function LearnerCareerRoundsWorkspace({
           </p>
           <Button type="button" onClick={()=>{
             setFilters(defaults);setDueBucket("all");
-          }} variant="ghost" className="mt-2 min-h-11 min-[768px]:min-h-9 !text-[var(--lms-primary-text)] underline">
+          }} variant="ghost" className="mt-2 min-h-11 md:min-h-9 !text-[var(--lms-primary-text)] underline">
             Show linked interview
           </Button>
         </aside>
@@ -478,7 +481,7 @@ export function LearnerCareerRoundsWorkspace({
           </p>
           <Button type="button"
             onClick={() => { setFilters(defaults); setDueBucket("all"); setMissingLinkOnly(false); }}
-            variant="ghost" className="mt-3 min-h-11 min-[768px]:min-h-9 !text-[var(--lms-primary-text)] underline">
+            variant="ghost" className="mt-3 min-h-11 md:min-h-9 !text-[var(--lms-primary-text)] underline">
             Clear filters
           </Button>
         </div>
@@ -502,14 +505,14 @@ export function LearnerCareerRoundsWorkspace({
             href={selected
               ? "/learn/my-placements/applications?applicationId=" + encodeURIComponent(selected.applicationId)
               : "/learn/my-placements/applications"}
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-[650] text-primary-text md:w-auto"
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
           >View application</Link>
           {kind === "INTERVIEW" && selected ? (
             <Link
               href={"/learn/my-placements/interviews?applicationId=" +
                 encodeURIComponent(selected.applicationId) +
                 "&roundId=" + encodeURIComponent(selected.roundId)}
-              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-[650] text-primary-text md:w-auto"
+              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
             >
               Direct link
             </Link>
@@ -518,7 +521,7 @@ export function LearnerCareerRoundsWorkspace({
             <Link
               href={"/learn/my-placements?requestRoundId=" +
                 encodeURIComponent(selected.roundId) + "#round-reschedule"}
-              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-center text-sm font-[650] text-primary-text md:w-auto"
+              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
             >
               Request reschedule
             </Link>
@@ -563,7 +566,7 @@ export function LearnerCareerRoundsWorkspace({
             {rescheduleSummary ? (
               <section className="space-y-3 rounded-lg border border-primary bg-primary-subtle p-4"
                 aria-label="Approved reschedule summary">
-                <h3 className="text-sm font-semibold text-foreground">Approved schedule change</h3>
+                <Heading level={3} size="sm" className="text-foreground">Approved schedule change</Heading>
                 <dl className="grid gap-3 text-sm md:grid-cols-2">
                   <div><dt className="font-semibold text-body">Previous (IST)</dt>
                     <dd className="mt-1 text-foreground">{rescheduleSummary.previous}</dd></div>
@@ -573,7 +576,7 @@ export function LearnerCareerRoundsWorkspace({
                     <dd className="mt-1 text-foreground">{rescheduleSummary.location}</dd></div>
                 </dl>
                 <Button type="button" onClick={()=>void copyRescheduleSummary()}
-                  variant="secondary" className="min-h-11 min-[768px]:min-h-9 w-full md:w-auto">
+                  variant="secondary" className="min-h-11 md:min-h-9 w-full md:w-auto">
                   Copy schedule summary
                 </Button>
                 {copyStatus?<p role="status" className="text-xs text-body">{copyStatus}</p>:null}
@@ -586,21 +589,21 @@ export function LearnerCareerRoundsWorkspace({
             <div className="flex flex-wrap gap-3">
               {externalAssessment ? (
                 <Button type="button" onClick={()=>setConfirmExternalTest(externalAssessment.href)}
-                  variant="ghost" className="min-h-11 min-[768px]:min-h-9 !text-[var(--lms-primary-text)] underline underline-offset-4">
+                  variant="ghost" className="min-h-11 md:min-h-9 !text-[var(--lms-primary-text)] underline underline-offset-4">
                   Open employer assessment ↗
                 </Button>
               ) : null}
               {meeting ? (
-                <a href={meeting} rel="noopener noreferrer"
-                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
+                <TextLink href={meeting} rel="noopener noreferrer"
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
                   Open meeting ↗
-                </a>
+                </TextLink>
               ) : null}
             </div>
             {withdrawalTarget ? <LearnerInterviewWithdrawalRequest key={withdrawalTarget.applicationId+":"+withdrawalTarget.roundId+":"+withdrawalTarget.expectedUpdatedAt} withdrawalRequest={withdrawalTarget} />:null}
             {kind === "INTERVIEW" ? (
               <section className="min-w-0 border-t border-border pt-4">
-                <h3 className="text-sm font-semibold text-foreground">Save to your calendar</h3>
+                <Heading level={3} size="sm" className="text-foreground">Save to your calendar</Heading>
                 <p className="mt-1 text-sm leading-6 text-body">
                   Calendar exports use the recorded interview start and duration.
                   Event titles and descriptions are safely escaped and folded for calendar apps.
@@ -608,15 +611,15 @@ export function LearnerCareerRoundsWorkspace({
                   created until you import the file or confirm it with Google.
                 </p>
                 {interviewCalendar ? <div className="mt-3 flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap">
-                  <a download={interviewCalendar.filename}
+                  <ButtonLink variant="secondary" download={interviewCalendar.filename}
                     href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(interviewCalendar.ics)}
-                    className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-[650] text-primary-text md:w-auto">
+                    className="w-full md:w-auto">
                     Download .ics
-                  </a>
-                  <a href={interviewCalendar.googleUrl} rel="noopener noreferrer"
-                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)]">
+                  </ButtonLink>
+                  <ButtonLink variant="secondary" href={interviewCalendar.googleUrl} rel="noopener noreferrer"
+                    className="w-full sm:w-auto">
                     Add to Google Calendar ↗
-                  </a>
+                  </ButtonLink>
                 </div> : <p className="mt-2 text-sm text-muted-foreground">
                   Calendar export becomes available when the placement team records
                   both the interview time and duration.
@@ -625,7 +628,7 @@ export function LearnerCareerRoundsWorkspace({
             ) : null}
             {kind === "ASSESSMENT" ? (
               <section className="min-w-0 space-y-3 border-t border-border pt-4">
-                <h3 className="m-0 text-sm font-semibold text-foreground">Personal submission reminder</h3>
+                <Heading level={3} size="sm" className="m-0 text-foreground">Personal submission reminder</Heading>
                 <p className="text-sm leading-6 text-body">
                   This is only a reminder on this device. It is not sent to your employer or placement team
                   and does not confirm assessment completion, submission or a result.
@@ -660,11 +663,11 @@ export function LearnerCareerRoundsWorkspace({
         description="This opens an external provider in a new tab. Leaving the LMS does not submit or confirm an assessment."
         footer={<div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:justify-end">
           <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
-          {confirmExternalTest ? <a href={confirmExternalTest} rel="noopener noreferrer"
+          {confirmExternalTest ? <ButtonLink variant="primary" href={confirmExternalTest} rel="noopener noreferrer"
             onClick={()=>setConfirmExternalTest(null)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-on-primary sm:w-auto md:min-h-[var(--lms-control-height)]">
+            className="w-full sm:w-auto">
             Open external assessment ↗
-          </a>:null}
+          </ButtonLink>:null}
         </div>}>
         <p className="text-sm text-body">{externalAssessment?.notice??"Confirm the provider instructions before proceeding."}</p>
       </Dialog>

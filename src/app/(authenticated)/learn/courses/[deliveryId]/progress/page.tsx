@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getOwnLearnerCourseProgressBreakdown } from "@/modules/courses/learner-course-drilldown-service";
 import { courseSectionDeliveryIdSchema } from "@/modules/courses/validation";
+import { Heading } from "@/components/ui/heading";
 
 function tone(status: string): "success" | "warning" | "neutral" | "info" {
   if (status === "COMPLETED") return "success";
@@ -89,7 +90,7 @@ export default async function LearnerCourseProgressPage({
             <article key={lesson.id} className="border-b border-border py-4 md:py-6">
               <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
-                  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{lesson.name}</h2>
+                  <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{lesson.name}</Heading>
                   <p className="mt-1 text-sm text-body leading-[22px]">
                     {lesson.total === 0
                       ? "No published learning items"

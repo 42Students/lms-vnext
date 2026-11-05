@@ -9,6 +9,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getFacultyPublishedGradebookLearner} from
   "@/modules/courses/faculty-gradebook-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function FacultyLearnerGradebookPage({
   params,
@@ -41,7 +42,7 @@ export default async function FacultyLearnerGradebookPage({
       </p>}
     </section>
     <section aria-label="Published assessment breakdown" className="space-y-3">
-      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Assessment breakdown</h2>
+      <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Assessment breakdown</Heading>
       {data.assessments.length===0?
         <EmptyState title="No released assessment results"
           description="There are no published assignment or quiz result records for this Section."/>:
@@ -49,7 +50,7 @@ export default async function FacultyLearnerGradebookPage({
           {data.assessments.map(item=><li key={item.kind+":"+item.assessmentId}
             className="min-w-0 py-4">
             <Badge tone="neutral">{item.kind==="QUIZ"?"Quiz":"Assignment"}</Badge>
-            <h3 className="mt-1 break-words font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{item.title}</h3>
+            <Heading level={3} size="base" className="mt-1 break-words leading-[1.4] text-[var(--lms-heading)]">{item.title}</Heading>
             <p className="mt-2 text-sm text-body leading-[22px]">{item.status==="UNKNOWN"?
               "Score unknown — no published learner grade":
               "Published score: "+item.earned+" / "+item.possible+" ("+item.percent+"%)"}</p>

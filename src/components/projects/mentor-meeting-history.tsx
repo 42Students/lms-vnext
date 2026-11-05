@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {formatProjectIstDateTime} from "@/modules/projects/project-date-time-format-model";
 import {useEffect,useState} from "react";
+import { Heading } from "@/components/ui/heading";
 
 export type MentorMeetingHistoryItem={
  id:string;title:string;status:string;startsAt:string;
@@ -16,7 +17,7 @@ export function MentorMeetingHistory({meetings,projectId}:{meetings:readonly Men
  const [expanded,setExpanded]=useState(false);
  const visible=expanded?meetings:meetings.slice(0,PREVIEW);
  return <section className="mt-3 space-y-2 text-sm" aria-label="Meeting history">
-  <h4 className="font-semibold">Past meetings ({meetings.length})</h4>
+  <Heading level={4}>Past meetings ({meetings.length})</Heading>
   {meetings.length===0?<p className="text-muted-foreground">No past meetings yet.</p>:
     <ul className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {visible.map(item=><li key={item.id} className="py-[var(--lms-space-3)]">
@@ -74,7 +75,7 @@ export function MentorMeetingRevisionHistory({
   return ()=>controller.abort();
  },[projectId,meetingKey,page,reload]);
  return <section aria-label="Meeting edit history" className="min-w-0 space-y-2 border-t border-border pt-3 text-sm">
-  <h4 className="font-semibold">Meeting edit history</h4>
+  <Heading level={4}>Meeting edit history</Heading>
   <p className="text-xs text-muted-foreground">Changes to a meeting (not a list of past meetings). Revision data is visible only to authorized mentors in this project.</p>
   {loading?<p role="status">Loading meeting revisions…</p>:null}
   {error?<div role="alert" className="space-y-2">

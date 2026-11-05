@@ -8,6 +8,7 @@ import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 type ResponseBody={error?:string;version?:string};
 function saveError(body:ResponseBody){
@@ -35,7 +36,7 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
   }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-4 border-t border-border pt-5">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">SMS</h2>
+  <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">SMS</Heading>
   <p className="font-semibold text-sm leading-[22px]">Always sent (email and SMS), never counted against the limit</p>
   <div className="flex flex-wrap gap-2">{[
    "Round scheduled or changed","Offer released, expiring, expired or withdrawn",
@@ -44,12 +45,12 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
   <label className="block text-[13px] font-semibold print:hidden leading-4 text-[var(--lms-neutral-400)]">Monthly limit on optional SMS
    <Input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
-    className="mt-2 min-h-11 w-40 min-[768px]:min-h-9 print:hidden"/>
+    className="mt-2 min-h-11 w-40 md:min-h-9 print:hidden"/>
   </label>
   <p className="hidden text-sm print:block leading-[22px]">Optional SMS monthly limit: {value}</p>
   <p className="text-xs text-muted-foreground leading-[20px]">SMS used this month: unavailable until delivery usage is connected. Saving a limit does not enable SMS delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value||value<0||value>100000||!Number.isInteger(value)}
-   className="min-h-11 min-[768px]:min-h-9 print:hidden">Save</Button>
+   className="min-h-11 md:min-h-9 print:hidden">Save</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;
@@ -74,7 +75,7 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
   }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-4 border-t border-border pt-5">
-  <h2 className="hidden font-semibold print:block text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Email signature preview</h2>
+  <Heading level={2} size="base" className="hidden print:block leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Email signature preview</Heading>
   <label className="block text-[13px] font-semibold print:hidden leading-4 text-[var(--lms-neutral-400)]">Email signature
    <Textarea rows={3} maxLength={300} value={value} disabled={busy}
     placeholder={"Training and Placement Cell\nYour college's name"}
@@ -88,7 +89,7 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
   </div>
   <p className="text-xs text-muted-foreground print:hidden leading-[20px]">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value}
-   className="min-h-11 w-full min-[768px]:w-auto min-[768px]:min-h-9 print:hidden">Save</Button>
+   className="min-h-11 w-full md:w-auto md:min-h-9 print:hidden">Save</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;
@@ -116,7 +117,7 @@ export function TpoRecruiterApprovalEditor({initial,version}:{initial:boolean;ve
   finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-3 border-t border-border pt-5">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">How recruiters work with you</h2>
+  <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">How recruiters work with you</Heading>
   <label className="flex items-start gap-3 text-sm font-semibold">
    <Checkbox checked={approval} disabled={busy}
     onChange={event=>setApproval(event.target.checked)} className="mt-1 h-5 w-5"/>
@@ -124,7 +125,7 @@ export function TpoRecruiterApprovalEditor({initial,version}:{initial:boolean;ve
   </label>
   <p className="text-xs text-muted-foreground leading-[20px]">{approval?"On: a request waits for your approval before you set dates and publish it.":"Off: a request is approved as it arrives (unless the recruiter is still waiting for verification). You still set dates and publish."}</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===approval}
-   className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9 print:hidden">Save</Button>
+   className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden">Save</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;
@@ -152,18 +153,18 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
   finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-3 border-t border-border pt-5">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Recruiter access lasts</h2>
+  <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Recruiter access lasts</Heading>
   <label className="block text-[13px] print:hidden font-semibold leading-4 text-[var(--lms-neutral-400)]">Access granted to a recruiter lasts
    <Select value={[3,6,12,24].includes(months)?months:6}
     onChange={event=>setMonths(Number(event.target.value))} disabled={busy}
-    className="mt-2 min-h-11 min-[768px]:min-h-9">
+    className="mt-2 min-h-11 md:min-h-9">
     {[3,6,12,24].map(value=><option key={value} value={value}>{value} months</option>)}
    </Select>
   </label>
   <p className="hidden text-sm print:block leading-[22px]">New recruiter access duration: {months} months</p>
   <p className="text-xs text-muted-foreground leading-[20px]">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===months}
-   className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9 print:hidden">Save</Button>
+   className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden">Save</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
  </section>;

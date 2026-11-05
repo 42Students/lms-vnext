@@ -16,6 +16,7 @@ import {
 } from "@/modules/academics/semester-mutation-model";
 import { SEMESTER_COPY } from "@/modules/academics/semester-copy";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
+import { Heading } from "@/components/ui/heading";
 
 type ProgramOption = { id: string; name: string; code: string };
 type SemesterRow = {
@@ -123,7 +124,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
   return (
     <section aria-label={SEMESTER_COPY.createTitle}
       className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
-      <h2 className="font-semibold text-[var(--lms-heading)]">{SEMESTER_COPY.createTitle}</h2>
+      <Heading level={2} className="text-[var(--lms-heading)]">{SEMESTER_COPY.createTitle}</Heading>
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">
           Create a program before adding semesters.{" "}

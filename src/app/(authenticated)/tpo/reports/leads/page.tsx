@@ -27,6 +27,8 @@ import {
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementLeadsReport } from "@/modules/placements/report-extra-service";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -159,7 +161,7 @@ export default async function TpoLeadsReportPage({
 
 
       <section aria-label="Recruiter engagement by company" className="space-y-3">
-       <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
+       <Heading level={2} size="lg">Recruiter engagement by company</Heading>
        <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A drive counts as run only when it has a completed round in the selected season/drive. Zero means no completed round is recorded, not proof that nothing occurred.</p>
        <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
         {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
@@ -177,11 +179,11 @@ export default async function TpoLeadsReportPage({
        </form>
        <p className="text-xs text-muted-foreground">The company filter applies to this company table and its CSV only. Headline recruiter lead metrics, stage summaries and acquisition source totals remain college-wide.</p>
        {!companyFilter.valid?<Banner tone="error">This company is not in the authorized college report. Clear the company filter.</Banner>:null}
-       <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
+       <ButtonLink variant="secondary" href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
         ...(selectedCompanyId?{companyId:selectedCompanyId}:{}),
-       }).toString()} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link sm:w-auto md:min-h-9">Export company engagement CSV</a>
+       }).toString()} className="w-full sm:w-auto">Export company engagement CSV</ButtonLink>
        <ReportTable title="Engage and placement outcomes by company"
         headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
         rows={companyFilter.rows.map(row=>{

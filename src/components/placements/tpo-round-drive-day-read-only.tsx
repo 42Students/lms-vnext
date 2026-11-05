@@ -26,6 +26,8 @@ import type {
 import { TpoRoundResultRecorder } from "./tpo-round-result-recorder";
 import { TpoBulkRoundResultRecorder } from "./tpo-bulk-round-result-recorder";
 import {tpoDriveDayRoundLinks} from "@/modules/placements/tpo-drive-day-navigation-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type RoundData = Awaited<
   ReturnType<typeof getTpoRoundDriveDay>
@@ -368,7 +370,7 @@ export function TpoRoundDriveDayReadOnly({
       <section aria-label="Gate quick check-in" className="min-w-0 space-y-3 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold text-foreground">Gate check-in</h2>
+            <Heading level={2} size="base" className="text-foreground">Gate check-in</Heading>
             <p className="text-sm text-body">Find a candidate by exact roll number or an unambiguous prefix/suffix.</p>
           </div>
           <Button type="button" variant="secondary" disabled={locked||gateBusy||pasteBusy}
@@ -399,7 +401,7 @@ export function TpoRoundDriveDayReadOnly({
         {pasteFailure?<InlineNotice tone="error" message={pasteFailure} onDismiss={()=>setPasteFailure("")}/>:null}
         {data.rows.some(student=>student.attendance==="PRESENT")?
          <section aria-label="Here and waiting for a room" className="mt-4 border-t border-border pt-3">
-          <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Here and waiting</h3>
+          <Heading level={3} size="xs" className="uppercase tracking-wide text-muted-foreground">Here and waiting</Heading>
           <ul className="mt-2 divide-y divide-border text-sm">
            {data.rows.filter(student=>student.attendance==="PRESENT").slice(0,5).map(student=>
             <li key={student.applicationId} className="flex min-w-0 items-center justify-between gap-2 py-2">
@@ -413,7 +415,7 @@ export function TpoRoundDriveDayReadOnly({
          </section>:null}
       </section>
       {roomQueues.length>0?<section aria-label="Room queues" className="space-y-3 border-b border-border pb-4">
-        <h2 className="text-base font-semibold text-foreground">Room queues</h2>
+        <Heading level={2} size="base" className="text-foreground">Room queues</Heading>
         <p className="text-sm text-body">
           Call the next checked-in candidate for a room. A call records In interview
           with a fresh attendance check; candidates already in a room are excluded.
@@ -422,11 +424,11 @@ export function TpoRoundDriveDayReadOnly({
           {roomQueues.map(queue=><article key={queue.room}
             aria-label={"Panel room "+queue.room} className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-             <h3 className="break-words font-bold text-foreground">{queue.room}</h3>
+             <Heading level={3} className="break-words text-foreground">{queue.room}</Heading>
              <p className="text-xs text-muted-foreground">{queue.waiting} waiting · {queue.inside} in the room</p>
             </div>
             <div aria-label="In the room" className="space-y-3">
-             <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">In the room</h4>
+             <Heading level={4} size="xs" className="uppercase tracking-wide text-muted-foreground">In the room</Heading>
              {queue.inRoom.length?queue.inRoom.slice(0,3).map(student=><div key={student.applicationId}
                 className="min-w-0 rounded-lg border border-border p-3">
                <p className="break-words text-lg font-semibold text-foreground">{student.displayName}</p>
@@ -447,7 +449,7 @@ export function TpoRoundDriveDayReadOnly({
              </p>:null}
             </div>
             <section aria-label="Next up" className="min-w-0 space-y-2 border-t border-border pt-3">
-             <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Next up</h4>
+             <Heading level={4} size="xs" className="uppercase tracking-wide text-muted-foreground">Next up</Heading>
              <p className="break-words text-sm font-semibold text-foreground">
               {queue.next?queue.next.displayName+" · "+(queue.next.rollNumber??"Roll unavailable"):
                "No checked-in candidate waiting"}
@@ -467,9 +469,9 @@ export function TpoRoundDriveDayReadOnly({
       </section>:null}
       <section aria-label="Not here yet" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
        <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+        <Heading level={2} size="sm" className="uppercase tracking-wide text-muted-foreground">
          Not here yet · {data.counts.waiting}
-        </h2>
+        </Heading>
         <Link href={destinations.noShows} className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
          Review explicit absences
         </Link>
@@ -503,9 +505,9 @@ export function TpoRoundDriveDayReadOnly({
        Absent notifications are only confirmed when the attendance action reports successful delivery.
       </p>
       <section aria-label="Round progress">
-        <h2 className="mb-3 text-base font-semibold text-foreground">
+        <Heading level={2} size="base" className="mb-3 text-foreground">
           Applicant progress
-        </h2>
+        </Heading>
 
         <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4">
           {summary.slice(0,6).map(([label, count], index) => (
@@ -552,20 +554,19 @@ export function TpoRoundDriveDayReadOnly({
       </section>
 
       <nav aria-label="Round operational actions" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-center">
-        <Link href={destinations.results} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review round results →</Link>
+        <Link href={destinations.results} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review round results →</Link>
         <Link href={destinations.schedule} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Candidate schedule →</Link>
         <Link href={destinations.noShows} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review explicit no-shows →</Link>
-        <a href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        <ButtonLink variant="secondary" href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}>
           Export round attendance (CSV)
-        </a>
+        </ButtonLink>
       </nav>
       <p className="text-xs leading-5 text-muted-foreground">Current roster only; waiting and unmarked states remain explicit.</p>
 
       <section className="border-b border-border pb-6">
-        <h2 className="text-base font-semibold text-foreground">
+        <Heading level={2} size="base" className="text-foreground">
           Round details
-        </h2>
+        </Heading>
 
         <div className="mt-4 flex flex-wrap gap-2">
           <StatusBadge tone="info">
@@ -633,9 +634,9 @@ export function TpoRoundDriveDayReadOnly({
         className="overflow-hidden border-t border-border"
       >
         <div className="border-b border-border py-4">
-          <h2 className="text-base font-semibold text-foreground">
+          <Heading level={2} size="base" className="text-foreground">
             Applicants in this round
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Shortlisted applicants who reached this round
             under the existing previous-round progression

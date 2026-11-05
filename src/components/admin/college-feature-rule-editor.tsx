@@ -11,6 +11,7 @@ import {Alert} from "@/components/ui/alert";
 import {Disclosure} from "@/components/ui/disclosure";
 import {useToast} from "@/components/ui/toast";
 import {collegeRulePayload,isCollegeRuleDirty,collegeRuleReceipt,collegeRuleSelection,parseCollegeRuleRecheck,type CollegeModule,type CollegeChoice,type ObservedCollegeRule} from "@/modules/module-access/admin-college-rule-ui-model";
+import { TextLink } from "@/components/ui/text-link";
 export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked,effectiveEnabled=false,collegeLabel="selected college"}:{collegeId:string;module:CollegeModule;stored:ObservedCollegeRule;ancestorLocked:boolean;effectiveEnabled?:boolean;collegeLabel?:string}){
  const router=useRouter();
  const {showToast}=useToast();
@@ -148,7 +149,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
   }finally{savingRef.current=false;setBusy(false);}
  }
  return <section aria-label={"College feature policy for "+moduleLabel} aria-busy={busy||impactBusy} className="mt-3 min-w-0 space-y-3 border-t border-border pt-3 print:hidden">
-  {ancestorLocked?<Alert tone="warning">Locked by a broader policy. Only Inherit is available for cleanup. <a href="/admin/module-access" className="font-semibold text-primary-text underline">Open Module Access</a> to review the inherited rule.</Alert>:null}
+  {ancestorLocked?<Alert tone="warning">Locked by a broader policy. Only Inherit is available for cleanup. <TextLink href="/admin/module-access">Open Module Access</TextLink> to review the inherited rule.</Alert>:null}
   {feedback?<Alert tone={feedbackTone} role={feedbackTone==="error"?"alert":"status"}>
    <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
     <span>{feedback}</span>

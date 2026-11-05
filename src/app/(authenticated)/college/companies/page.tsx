@@ -19,6 +19,7 @@ import {
 } from "@/modules/placements/company-service";
 import { listCollegeCompanyDirectory } from "@/modules/placements/college-company-directory-service";
 import { parseCollegeCompaniesQuery, collegeCompaniesHref } from "@/modules/placements/college-company-directory-model";
+import { TextLink } from "@/components/ui/text-link";
 
 /** College-only employer relationships. Never render the Super Admin directory. */
 export default async function CollegeCompaniesPage({
@@ -77,8 +78,8 @@ export default async function CollegeCompaniesPage({
       <Link href="/college/placements/analytics" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-body hover:text-primary-text">Analytics</Link>
     </nav>
     <PageHeader title="Companies" description="Maintain each recruiting company once and reuse it across drives. Deleted records stay recoverable without cluttering the default working list."
-      actions={data.total>0?<a href={"/api/college/companies/export?"+exportParams.toString()}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Export CSV</a>
+      actions={data.total>0?<TextLink href={"/api/college/companies/export?"+exportParams.toString()}
+        className="inline-flex min-h-11 items-center md:min-h-9">Export CSV</TextLink>
         :<Button type="button" disabled variant="secondary">Export CSV</Button>} />
     <section aria-label="Company overview" className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-4">
       <StatTile label="Companies" value={activeCount??"Unavailable"}/>

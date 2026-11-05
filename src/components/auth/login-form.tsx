@@ -10,6 +10,7 @@ import {FRIENDLY_MESSAGES} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {safeReturnTo} from "@/lib/return-to";
 import {loginRetryWindowIst} from "@/modules/auth/login-retry-time-model";
+import { TextLink } from "@/components/ui/text-link";
 
 type Channel = "PHONE" | "EMAIL";
 
@@ -530,9 +531,9 @@ export function LoginForm({
           {recruiterEntry
             ? "Recruiters must use the college placement address listed in their invitation email. "
             : "This account may belong to another college. "}
-          <a href="https://42lms.com/login" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <TextLink href="https://42lms.com/login">
             Use the main sign-in page (42lms.com)
-          </a>
+          </TextLink>
         </p>
       ) : null}
       {notice ? (
@@ -589,7 +590,7 @@ export function LoginForm({
             aria-label="Sign in method"
             className="relative grid grid-cols-2 gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1"
           >
-            <span aria-hidden="true" className={"pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-6px)] rounded-lg bg-surface shadow-sm transition-transform duration-150 " +
+            <span aria-hidden="true" className={"pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-6px)] rounded-lg bg-surface shadow-sm transition-transform duration-[var(--lms-motion-fast)] " +
               (channel === "PHONE" ? "translate-x-[calc(100%+4px)]" : "")}/>
             {(["EMAIL", "PHONE"] as const).filter(value=>allowedChannels.includes(value)).map((value) => (
               <Button variant="ghost"
@@ -628,8 +629,8 @@ export function LoginForm({
                 }}
                 className={
                   channel === value
-                    ? "relative z-10 min-h-11 rounded-[var(--lms-control-radius)] !bg-transparent text-sm font-semibold text-primary-text shadow-none md:min-h-9 "
-                    : "relative z-10 min-h-11 rounded-[var(--lms-control-radius)] !bg-transparent text-sm font-medium text-body hover:text-primary-text md:min-h-9 "
+                    ? "relative z-(--lms-z-raised) min-h-11 rounded-[var(--lms-control-radius)] !bg-transparent text-sm font-semibold text-primary-text shadow-none md:min-h-9 "
+                    : "relative z-(--lms-z-raised) min-h-11 rounded-[var(--lms-control-radius)] !bg-transparent text-sm font-medium text-body hover:text-primary-text md:min-h-9 "
                 }
               >
                 {value === "PHONE" ? "Phone" : "Email"}
@@ -645,8 +646,8 @@ export function LoginForm({
               {channel === "PHONE" ? (legacySuperAdmin?"Mobile Number":"Mobile number") : "Email"}
             </span>
             <div className="relative">
-              {channel === "PHONE" ? <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 z-10 inline-flex items-center border-r border-border pr-3 text-sm font-semibold text-foreground">+91</span> : null}
-            <Input className={channel === "PHONE" ? "pl-[58px]" : undefined}
+              {channel === "PHONE" ? <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 z-(--lms-z-raised) inline-flex items-center border-r border-border pr-3 text-sm font-semibold text-foreground">+91</span> : null}
+            <Input className={channel === "PHONE" ? "pl-[60px]" : undefined}
               name="contact" ref={contactRef}
               aria-invalid={Boolean(contactError)}
               aria-describedby={contactError ? "login-contact-error" : undefined}
@@ -722,7 +723,7 @@ export function LoginForm({
               autoComplete="one-time-code"
               placeholder="Enter OTP"
               maxLength={6}
-              className="text-center text-lg tracking-[0.4em]"
+              className="text-center text-lg tracking-[.16em]"
               required
               autoFocus
             />
@@ -745,7 +746,7 @@ export function LoginForm({
                 autoComplete="off"
                 placeholder="123456"
                 maxLength={6}
-                className="text-center text-lg tracking-[0.4em]"
+                className="text-center text-lg tracking-[.16em]"
                 required
               />
             </label>
@@ -754,7 +755,7 @@ export function LoginForm({
           <p className="text-xs text-muted-foreground">The code is 4 to 6 digits. Codes expire after five minutes. You have up to five verification attempts; email resend limit is five.</p>
           {legacySuperAdmin?<label className="flex min-h-11 items-center gap-2 text-sm text-body">
            <Checkbox checked={acceptedTerms} onChange={event=>setAcceptedTerms(event.target.checked)}/>
-           <span>By clicking here, I agree to 42 LMS&apos; <a href="/assets/static/terms-and-conditions-view.html" rel="noopener noreferrer" className="text-primary-text underline">Terms &amp; Conditions</a>.</span>
+           <span>By clicking here, I agree to 42 LMS&apos; <TextLink href="/assets/static/terms-and-conditions-view.html" rel="noopener noreferrer">Terms &amp; Conditions</TextLink>.</span>
           </label>:null}
           <Button
             type="submit"
@@ -810,10 +811,9 @@ function LoginConsent() {
   return (
     <p className="text-xs leading-5 text-muted-foreground">
       By continuing, you agree to the{" "}
-      <a href="/assets/static/terms-and-conditions-view.html"
-        className="text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" rel="noopener noreferrer">Terms of Use</a>
+      <TextLink href="/assets/static/terms-and-conditions-view.html" rel="noopener noreferrer">Terms of Use</TextLink>
       {" "}and{" "}
-      <a href="/privacy-policy" className="text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Privacy Policy</a>.
+      <TextLink href="/privacy-policy">Privacy Policy</TextLink>.
     </p>
   );
 }

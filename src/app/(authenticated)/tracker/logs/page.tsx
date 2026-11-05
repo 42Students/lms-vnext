@@ -20,6 +20,7 @@ import {
 import { cloudLogPollConfigured, logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
 import { telegramAlertsConfigured } from "@/modules/log-alerts/telegram-notifier";
 import { knownErrorListSchema } from "@/modules/log-alerts/validation";
+import { TextLink } from "@/components/ui/text-link";
 
 function LockKeyhole({className = ""}: {className?: string}) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" width={26} height={26}
@@ -64,7 +65,7 @@ export default async function TrackerLogsPage({
       <PageHeader title="Logs access" description="Sign in with an authorized Super Admin account to view backend logs." />
       <p className="text-sm text-muted-foreground">Access is tied to a named account and its current permissions; the old shared password is no longer accepted.</p>
       <Link href="/login?next=%2Ftracker%2Flogs"
-        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)]">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)]">
         Sign in to view logs
       </Link>
     </section>;
@@ -157,8 +158,8 @@ export default async function TrackerLogsPage({
         <Alert tone="info">{newSinceLastVisit}{items.length === 40 ? "+" : ""} new tracked error {newSinceLastVisit === 1 ? "signature" : "signatures"} since your last review.</Alert>
       ) : null}
       <nav aria-label="Log tools" className="flex flex-wrap items-center gap-3 text-sm">
-        <a href="#known-errors" className="font-semibold text-primary-text underline">Known errors</a>
-        <a href="#telegram-alert-tools" className="font-semibold text-primary-text underline">Alert digest</a>
+        <TextLink href="#known-errors">Known errors</TextLink>
+        <TextLink href="#telegram-alert-tools">Alert digest</TextLink>
       </nav>
       <TrackerLiveLogsExplorer initialQuery={liveQuery} initialDetailId={typeof search.detail==="string"?search.detail.slice(0,1024):""} />
       {!pollingReady ? (

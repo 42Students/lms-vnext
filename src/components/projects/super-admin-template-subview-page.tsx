@@ -31,6 +31,8 @@ import {
 } from "@/modules/projects/template-subview-model";
 import { templateVersionComparisonHref } from "@/modules/projects/template-version-comparison-model";
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function formatDate(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -280,9 +282,9 @@ export async function SuperAdminTemplateSubviewPage({
             className="min-w-0 space-y-3"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+              <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
                 Sprints
-              </h2>
+              </Heading>
               <StatusBadge>
                 {sprints.length} total
               </StatusBadge>
@@ -305,9 +307,9 @@ export async function SuperAdminTemplateSubviewPage({
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h3 className="m-0 break-words text-base font-semibold text-foreground">
+                      <Heading level={3} size="base" className="m-0 break-words text-foreground">
                         {sprint.title}
-                      </h3>
+                      </Heading>
                       <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">
                         Key: {sprint.key}
                       </p>
@@ -362,9 +364,9 @@ export async function SuperAdminTemplateSubviewPage({
             className="min-w-0 space-y-3"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+              <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
                 Tasks
-              </h2>
+              </Heading>
               <StatusBadge>
                 {tasks.length} total
               </StatusBadge>
@@ -387,9 +389,9 @@ export async function SuperAdminTemplateSubviewPage({
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h3 className="m-0 break-words text-base font-semibold text-foreground">
+                      <Heading level={3} size="base" className="m-0 break-words text-foreground">
                         {task.title}
-                      </h3>
+                      </Heading>
                       <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">
                         Key: {task.key}
                       </p>
@@ -426,9 +428,9 @@ export async function SuperAdminTemplateSubviewPage({
 
                   {task.description ? (
                     <div className="mt-4">
-                      <h4 className="text-xs font-semibold text-muted-foreground">
+                      <Heading level={4} size="xs" className="text-muted-foreground">
                         Description
-                      </h4>
+                      </Heading>
                       <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
                         {task.description}
                       </p>
@@ -436,9 +438,9 @@ export async function SuperAdminTemplateSubviewPage({
                   ) : null}
 
                   <div className="mt-4">
-                    <h4 className="text-xs font-semibold text-muted-foreground">
+                    <Heading level={4} size="xs" className="text-muted-foreground">
                       Acceptance criteria
-                    </h4>
+                    </Heading>
                     <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
                       {task.acceptanceCriteria ||
                         "No acceptance criteria recorded."}
@@ -467,9 +469,9 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+              <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
                 Resources
-              </h2>
+              </Heading>
               <StatusBadge>
                 {resources.length} total
               </StatusBadge>
@@ -489,9 +491,9 @@ export async function SuperAdminTemplateSubviewPage({
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <h3 className="m-0 break-words text-base font-semibold text-foreground">
+                      <Heading level={3} size="base" className="m-0 break-words text-foreground">
                         {resource.title}
-                      </h3>
+                      </Heading>
                       <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">
                         Key: {resource.key}
                       </p>
@@ -523,14 +525,14 @@ export async function SuperAdminTemplateSubviewPage({
                   ) : null}
 
                   {resource.url ? (
-                    <a
+                    <TextLink
                       href={resource.url}
                      
                       rel="noopener noreferrer"
-                      className="mt-4 inline-flex min-h-11 md:min-h-9 items-center break-all text-sm font-semibold text-primary-text hover:underline"
+                      className="mt-4 inline-flex min-h-11 md:min-h-9 items-center break-all text-sm"
                     >
                       Open resource →
-                    </a>
+                    </TextLink>
                   ) : (
                     <p className="mt-4 text-xs text-muted-foreground leading-[20px]">
                       No resource URL recorded.
@@ -554,9 +556,9 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+              <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
                 Active college assignments
-              </h2>
+              </Heading>
               <StatusBadge>
                 {detail.assignedColleges.length}
               </StatusBadge>
@@ -602,9 +604,9 @@ export async function SuperAdminTemplateSubviewPage({
             className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+              <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
                 Template versions
-              </h2>
+              </Heading>
               <StatusBadge>
                 Version {detail.template.currentVersion}
               </StatusBadge>
@@ -633,9 +635,9 @@ export async function SuperAdminTemplateSubviewPage({
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h3 className="m-0 break-words text-base font-semibold text-foreground">
+                      <Heading level={3} size="base" className="m-0 break-words text-foreground">
                         Version {version.version} {isCurrent?<StatusBadge tone="info">Current</StatusBadge>:null}
-                      </h3>
+                      </Heading>
                       <p className="mt-1 text-sm text-muted-foreground">{version.changeNote?.trim()||originalEvent?.notes?.trim()||"—"}</p>
                       <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                         <time dateTime={(originalEvent?.changedAt??version.createdAt).toISOString()}>
@@ -681,7 +683,7 @@ export async function SuperAdminTemplateSubviewPage({
                     <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{version.summary}</p>
                   </div>:null}
 
-                  <dl className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+                  <dl className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                     <DetailField
                       label="Releases"
                       value={counts.releases}
@@ -703,7 +705,7 @@ export async function SuperAdminTemplateSubviewPage({
               );
             })}
             {legacyEvents.length>0?<section aria-label="Legacy template history" className="mt-5 space-y-3">
-              <h3 className="text-[16px] font-semibold">Legacy version events</h3>
+              <Heading level={3} size="base">Legacy version events</Heading>
               <p className="text-sm text-muted-foreground">Historic actions retain their original version number, action type and source snapshot. They are not editable vNext blueprint versions.</p>
               {legacyEvents.map(event=><details key={event.id} className="border-b border-border py-3">
                 <summary className="cursor-pointer font-semibold">

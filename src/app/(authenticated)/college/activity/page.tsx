@@ -16,6 +16,8 @@ import { listCollegeActivity } from "@/modules/activity/college-activity-service
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
 import {collegeActivityActor,collegeActivityItem,collegeActivityAction} from "@/modules/activity/college-activity-presentation";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -69,7 +71,7 @@ export default async function CollegeActivityPage({
     <Alert tone="error" title="Couldn't load activity">The college activity feed could not be refreshed. No audit history was modified.</Alert>
     <ErrorState title="Activity temporarily unavailable"
       description="Retry the same filters to load the latest recorded events."
-      action={<a href={collegeActivityHref(parsed.data)} className="font-semibold text-link underline underline-offset-4">Retry activity</a>} />
+      action={<TextLink href={collegeActivityHref(parsed.data)}>Retry activity</TextLink>} />
   </div>;
   const now = new Date();
   const groupedByDay=new Map<string,typeof data.groups>();
@@ -100,7 +102,7 @@ export default async function CollegeActivityPage({
             href={collegeActivityHref({...data.query,loaded:1,category:key==="IMPORTANT"||key==="EVERYTHING"?undefined:key,
               view:key==="EVERYTHING"?"EVERYTHING":"IMPORTANT",module:undefined,importance:undefined})}
             className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
-             (active?"bg-white text-[color:var(--lms-button-primary-hover)] shadow-sm":"text-[var(--lms-body-text)] hover:bg-white/70")}>
+             (active?"bg-surface text-[color:var(--lms-button-primary-hover)] shadow-sm":"text-[var(--lms-body-text)] hover:bg-[color:color-mix(in_srgb,var(--lms-white)_70%,transparent)]")}>
             {label}
           </Link>;
         })}
@@ -115,7 +117,7 @@ export default async function CollegeActivityPage({
           ] as const).map(([label,href])=><Link key={label} href={href}
             aria-current={collegeActivityHref(data.query)===href?"page":undefined}
             className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
-              (collegeActivityHref(data.query)===href?"bg-white text-[color:var(--lms-button-primary-hover)] shadow-sm":"text-[var(--lms-body-text)] hover:bg-white/70")}>
+              (collegeActivityHref(data.query)===href?"bg-surface text-[color:var(--lms-button-primary-hover)] shadow-sm":"text-[var(--lms-body-text)] hover:bg-[color:color-mix(in_srgb,var(--lms-white)_70%,transparent)]")}>
             {label}</Link>)}
         </nav>
         <CollegeActivityRefresh />
@@ -226,14 +228,14 @@ export default async function CollegeActivityPage({
         action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>} />:null}
       {[...groupedByDay.entries()].map(([day,groups])=>
         <section key={day} className="space-y-3" aria-label={"Activity on "+day}>
-          <h3 className="border-b border-[var(--lms-canvas-border)] pb-2 text-[var(--lms-font-base)] font-semibold text-[var(--lms-heading)]">{day}</h3>
+          <Heading level={3} className="border-b border-[var(--lms-canvas-border)] pb-2 text-[var(--lms-font-base)] text-[var(--lms-heading)]">{day}</Heading>
           <ol className="divide-y divide-[var(--lms-canvas-border)]">
             {groups.map(group=>{
               const item=group.latest;
-              return <li key={item.event.id} className={"grid min-w-0 grid-cols-[64px_minmax(0,1fr)] gap-3 border-l-[3px] py-3 pl-2 sm:grid-cols-[84px_minmax(0,1fr)] "+
-               (/(DELETED|REVOKED|SUSPENDED|REJECTED)/.test(item.event.eventType)?"border-l-rose-500":
-                /(RESTORED|APPROVED|CREATED)/.test(item.event.eventType)?"border-l-emerald-500":
-                /(CHANGED|UPDATED|PROMOTED)/.test(item.event.eventType)?"border-l-amber-500":"border-l-slate-300")}>
+              return <li key={item.event.id} className={"grid min-w-0 grid-cols-[64px_minmax(0,1fr)] gap-3 border-l-2 py-3 pl-2 sm:grid-cols-[84px_minmax(0,1fr)] "+
+               (/(DELETED|REVOKED|SUSPENDED|REJECTED)/.test(item.event.eventType)?"border-l-[color:var(--lms-error)]":
+                /(RESTORED|APPROVED|CREATED)/.test(item.event.eventType)?"border-l-[color:var(--lms-success)]":
+                /(CHANGED|UPDATED|PROMOTED)/.test(item.event.eventType)?"border-l-[color:var(--lms-icon-amber)]":"border-l-[color:var(--lms-neutral-300)]")}>
                 <time dateTime={item.event.occurredAt.toISOString()} className="pt-1 text-xs tabular-nums text-muted-foreground">{timeOnly(item.event.occurredAt)}</time>
                 <div className="min-w-0 space-y-2">
                 <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">

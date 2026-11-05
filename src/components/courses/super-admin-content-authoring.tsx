@@ -8,6 +8,7 @@ import {resolveSuperAdminAuthoringLesson} from "@/modules/courses/super-admin-se
 import { FacultyLessonAuthoring } from "@/components/courses/faculty-lesson-authoring";
 import { FacultyLessonVideoManager } from "@/components/courses/faculty-lesson-video-manager";
 import { Radio } from "@/components/ui/radio";
+import { Heading } from "@/components/ui/heading";
 
 type Lesson={id:string;name:string;courseName:string;courseCode:string;offeringId:string;nextContentSequence:number};
 type Section={id:string;offeringId:string;courseCode:string;courseName:string;sectionName:string};
@@ -119,7 +120,7 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
      </div>
     </Dialog>:
     <article className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-     <h2 className="text-lg font-semibold text-foreground">{heading}</h2>
+     <Heading level={2} size="lg" className="text-foreground">{heading}</Heading>
      {kind==="VIDEOS"?<fieldset className="flex flex-wrap gap-3" aria-label="Video type">
       <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
       <label className="inline-flex min-h-9 items-center gap-2 text-sm">

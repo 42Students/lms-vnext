@@ -20,6 +20,7 @@ import { facultyAssignmentCsvHref } from "@/modules/academics/college-faculty-as
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -159,7 +160,7 @@ export default async function CollegeFacultyAssignmentPage({
         </form>
       </FilterBar>
       <section className="min-w-0" aria-label="Teaching assignment roster">
-        <h2 className="mb-2 text-lg font-semibold text-[var(--lms-heading)]">Current teaching assignments</h2>
+        <Heading level={2} size="lg" className="mb-2 text-[var(--lms-heading)]">Current teaching assignments</Heading>
         <p className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm text-muted-foreground">
           {total} matching teaching assignment{total === 1 ? "" : "s"}
         </p>

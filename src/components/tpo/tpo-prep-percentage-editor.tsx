@@ -4,6 +4,7 @@ import {useRef,useState} from "react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Heading } from "@/components/ui/heading";
 export function TpoPrepPercentageEditor({initial,version}:{initial:number;version:string|null}){
  const router=useRouter(),[percent,setPercent]=useState(initial),[busy,setBusy]=useState(false);
  const [saved,setSaved]=useState(initial),[currentVersion,setCurrentVersion]=useState(version);
@@ -36,16 +37,16 @@ export function TpoPrepPercentageEditor({initial,version}:{initial:number;versio
   }
  }
  return <section className="space-y-3 border-t border-border pt-5">
-  <h3 className="text-lg font-semibold text-foreground">Readiness bar</h3>
+  <Heading level={3} size="lg" className="text-foreground">Readiness bar</Heading>
   <p className="text-sm text-body">A student needs average progress of at least this percentage in the selected preparation courses.</p>
   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Average progress required (%)
    <Input type="number" min={0} max={100} step={1} value={percent} disabled={busy}
     onChange={e=>setPercent(e.target.value===""?-1:Number(e.target.value))}
-    className="mt-1 min-h-11 w-full sm:w-28 min-[768px]:min-h-9"/>
+    className="mt-1 min-h-11 w-full sm:w-28 md:min-h-9"/>
   </label>
   <p className="text-xs text-muted-foreground">This threshold is applied to learner course-progress records when the selected preparation courses have published content. Unavailable records are not treated as a failed learner.</p>
   <Button type="button" disabled={busy||percent===saved||!Number.isInteger(percent)||percent<0||percent>100}
-   onClick={()=>void save()} className="min-h-11 w-full md:w-auto min-[768px]:min-h-9">Save changes</Button>
+   onClick={()=>void save()} className="min-h-11 w-full md:w-auto md:min-h-9">Save changes</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
  </section>;

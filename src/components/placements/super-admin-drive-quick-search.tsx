@@ -7,6 +7,8 @@ import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 export type QuickDrive = {
   id: string; title: string; companyName: string; status: string;
@@ -37,7 +39,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
       job.companyName.toLocaleLowerCase("en-IN").includes(pattern)));
   return <section aria-label="Find drives" className="space-y-3 border-b border-border pb-5">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Find a drive</h2>
+    <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Find a drive</Heading>
     <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">View all drives →</Link>
     </div>
     <div className="flex flex-wrap items-end gap-3">
@@ -56,7 +58,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
     <p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-5">
       Showing {Math.min(matching.length,60)} of {matching.length} matching drives in this {jobs.length}-drive sampled list. Use View all drives for the complete directory.
     </p>
-    {matching.length?<div className="grid min-w-0 gap-[var(--lms-space-4)] sm:grid-cols-2 min-[992px]:grid-cols-3 min-[1280px]:grid-cols-4">
+    {matching.length?<div className="grid min-w-0 gap-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {matching.slice(0,60).map(job=>{
         const logoFallback=job.companyName.trim().split(/\s+/).slice(0,2)
          .map(part=>part.charAt(0).toUpperCase()).join("")||"CO";
@@ -66,7 +68,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
         return <article key={job.id} className="group relative flex min-w-0 flex-col justify-between gap-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 transition hover:border-primary hover:shadow-sm focus-within:border-primary">
           <div className="flex min-w-0 items-start justify-between gap-3">
             <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle text-xs font-bold text-primary-text" aria-label={job.companyName+" logo"}>
-              {job.logoUrl?<img src={job.logoUrl} alt="" width={40} height={40} referrerPolicy="no-referrer" className="size-10 object-contain"/>:
+              {job.logoUrl?<Img src={job.logoUrl} alt="" width={40} height={40} referrerPolicy="no-referrer" className="size-10 object-contain"/>:
                <span aria-hidden="true">{logoFallback}</span>}
             </div>
             <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
@@ -78,11 +80,11 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
             </div>
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="break-words text-base font-semibold text-foreground">
+            <Heading level={3} size="base" className="break-words text-foreground">
               <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)} className="after:absolute after:inset-0 hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                {job.title}
               </Link>
-            </h3>
+            </Heading>
             <p className="mt-1 break-words text-sm text-body">{job.companyName}</p>
             <p className="mt-3 text-sm text-muted-foreground">{job.applicants} {job.applicants===1?"applicant":"applicants"}</p>
             {validDeadline?<p className={"mt-2 flex items-center gap-2 text-xs "+(expired?"text-error":"text-muted-foreground")}>
@@ -91,7 +93,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
               {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(deadline!)} IST
             </p>:null}
           </div>
-          <div className="relative z-10 flex min-w-0 flex-wrap items-center gap-3 border-t border-border pt-3 text-sm font-semibold">
+          <div className="relative z-(--lms-z-raised) flex min-w-0 flex-wrap items-center gap-3 border-t border-border pt-3 text-sm font-semibold">
             <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/applications"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Applications</Link>
             <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/settings"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Edit</Link>
             <details className="ml-auto max-w-full">
@@ -99,7 +101,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
                <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
                <span className="sr-only">More actions</span>
               </summary>
-              <div className="absolute right-0 z-20 mt-1 min-w-[240px] max-w-full space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 shadow-lg">
+              <div className="absolute right-0 z-(--lms-z-sticky-inline) mt-1 min-w-[240px] max-w-full space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 shadow-lg">
                 <SuperAdminDriveDuplicate jobId={job.id} title={job.title}/>
                 <SuperAdminDriveDeadline jobId={job.id} deadline={job.deadline??null}/>
               </div>
@@ -108,8 +110,8 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
         </article>;
       })}
     </div>:<div role="status" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
-       <h3 className="font-semibold text-foreground">{jobs.every(job=>job.status!=="PUBLISHED")&&filter==="ACTIVE"&&!pattern?
-        "No active drives yet":pattern?"No drives match your search":"No drives match this status"}</h3>
+       <Heading level={3} className="text-foreground">{jobs.every(job=>job.status!=="PUBLISHED")&&filter==="ACTIVE"&&!pattern?
+        "No active drives yet":pattern?"No drives match your search":"No drives match this status"}</Heading>
        <p className="text-sm text-body">{pattern?"Try a different search or clear the search field.":filter==="ACTIVE"?"Published drives will appear here once a drive is open.":"Use the full directory to find or create a drive."}</p>
        <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center font-semibold text-link underline">View all drives</Link>
     </div>}

@@ -22,7 +22,7 @@
   border-radius: 14px !important;
   background: var(--lms-white) !important;
   box-shadow: none !important;
-  transition: border-color 150ms cubic-bezier(.2,0,0,1),
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease),
     box-shadow 150ms cubic-bezier(.2,0,0,1),
     transform 150ms cubic-bezier(.2,0,0,1) !important;
 }
@@ -36,7 +36,7 @@
   margin-bottom: 12px;
   border-radius: 10px;
   color: var(--lms-teal-deep);
-  background: rgba(38,186,199,.1);
+  background: color-mix(in srgb, var(--lms-primary) 10%, transparent);
   font-size: 18px;
 }
 .tile > p:first-child {
@@ -55,7 +55,7 @@
   color: var(--lms-neutral-900) !important;
   font-size: 24px !important;
   font-weight: 600 !important;
-  line-height: 1.1 !important;
+  line-height: 1 !important;
   font-variant-numeric: tabular-nums;
 }
 .detail {
@@ -80,9 +80,9 @@
 }
 .link:hover .tile {
   transform: translateY(-1px);
-  border-color: rgba(14,124,135,.35) !important;
+  border-color: color-mix(in srgb, var(--lms-button-primary) 35%, transparent) !important;
   background: var(--lms-white) !important;
-  box-shadow: 0 2px 4px rgba(16,24,40,.04),0 4px 12px rgba(16,24,40,.06) !important;
+  box-shadow: var(--lms-elevation-2) !important;
 }
 .link:focus-visible {
   outline: none !important;
@@ -90,7 +90,7 @@
 .link:focus-visible .tile {
   outline: 2px solid var(--lms-teal-deep) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12) !important;
+  box-shadow: var(--lms-focus-ring) !important;
 }
 @media (max-width: 767px) {
   .snapshot { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }

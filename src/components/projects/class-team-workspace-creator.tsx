@@ -25,6 +25,9 @@ import {mayBeginClassTeamCreation} from "@/modules/projects/class-team-create-on
 import {canEditClassTeamPlanner} from "@/modules/projects/class-team-edit-guard-model";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
 import { Radio } from "@/components/ui/radio";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type ClassChoice = { id:string;name:string;code:string };
 type Learner = {membershipId:string;rollNumber:string;displayName:string};
@@ -415,10 +418,10 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   return <div className="min-w-0 space-y-4 md:space-y-5">
     <p className="text-sm text-body leading-[22px]">Choose one team, split a class into teams, or give each learner a workspace.</p>
     <nav aria-label="Workspace creation" className="flex flex-wrap items-center gap-2">
-      <a href={basePath} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Back to workspaces</a>
-      <a href={basePath+"/create"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+      <TextLink href={basePath} className="inline-flex min-h-11 items-center text-sm md:min-h-9">Back to workspaces</TextLink>
+      <ButtonLink variant="secondary" href={basePath+"/create"}>
         Single · Create workspace
-      </a>
+      </ButtonLink>
     </nav>
     {mode==="TEAMS"?<div className="border-l-2 border-info p-3 text-sm text-body" role="note">
       <strong>Split a class into teams.</strong> Pick a class and a team size, preview the teams, move anyone between teams, then create.
@@ -573,7 +576,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       <Button size="sm" variant="secondary" onClick={()=>setRosterRefreshKey(v=>v+1)}>Retry preflight</Button>
     </div>:null}
     {mode==="INDIVIDUAL"&&currentPreflight?<section aria-label="Before creating: one workspace per student" className="border-b border-border pb-5 text-sm">
-      <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Before creating: one workspace per student</h2>
+      <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Before creating: one workspace per student</Heading>
       <p>Class roster: {roster?.members.length??0} · Eligible students: {currentPreflight.eligible} · Already covered: {currentPreflight.alreadyCovered} · Duplicate roster entries: {currentPreflight.duplicates} · {currentPreflight.toCreate} to create</p>
       <div className="max-h-72 min-w-0 overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
         <DataTable
@@ -617,7 +620,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
     </section>:null}
     {groups.length>0?<div role="region" className="grid min-w-0 grid-cols-1 gap-3 xl:grid-cols-2" aria-label="Adjustable team preview">
       {groups.map((team,index)=><section key={index} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
-        <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{team.name} · {team.membershipIds.length}</h2>
+        <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{team.name} · {team.membershipIds.length}</Heading>
         <ul className="mt-2 space-y-2">{team.membershipIds.slice(0,
           groupRowLimits[index]??20).map(id=>{
           const learner=names.get(id);
@@ -656,8 +659,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
     {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
     {notice?<p role="status" className="text-sm leading-[22px]">{notice}</p>:null}
     {outcome&&mode==="INDIVIDUAL"?<section className="space-y-2 border-b border-border pb-5">
-      <h3 className="font-semibold">{outcomeRestored?
-        "Restored cohort creation outcome":"Latest cohort creation outcome"}</h3>
+      <Heading level={3}>{outcomeRestored?
+        "Restored cohort creation outcome":"Latest cohort creation outcome"}</Heading>
       {outcomeRestored?<p className="text-xs text-body">
         This report was kept for seven days on this device for the selected college.
       </p>:null}
@@ -681,8 +684,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
             {key:"learner",header:"Learner",mobilePriority:"primary",cell:row=>names.get(row.membershipId)?.displayName??row.membershipId},
             {key:"result",header:"Result",mobilePriority:"secondary",cell:row=>row.status==="CREATED"?"Created":"Already covered"},
             {key:"workspace",header:"Workspace",mobilePriority:"secondary",cell:row=>
-              row.projectId?<a href={basePath+"/"+encodeURIComponent(row.projectId)+"/summary"}
-               className="font-semibold text-link underline">{row.title??"Open workspace"}</a>:
+              row.projectId?<TextLink href={basePath+"/"+encodeURIComponent(row.projectId)+"/summary"}>{row.title??"Open workspace"}</TextLink>:
                row.title??"Existing workspace"},
             {key:"workspaceId",header:"Workspace ID",mobilePriority:"secondary",
               cell:row=><span className="break-all text-xs tabular-nums">{row.projectId??"—"}</span>},
@@ -745,7 +747,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         }}>Export detailed learner CSV</Button>
     </section>:null}
     {mode==="INDIVIDUAL"&&unconfirmedRows.length>0?<section className="space-y-3 border-y border-warning-border py-4">
-      <h3 className="font-semibold text-foreground">Learner creation results not confirmed</h3>
+      <Heading level={3} className="text-foreground">Learner creation results not confirmed</Heading>
       <p role="alert" className="text-sm text-body">
         These are not confirmed failures. The request may have succeeded before its response was lost.
         Refresh the preflight and check existing workspaces before retrying.
@@ -774,7 +776,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         }
       }}>Export unconfirmed results</Button>
     </section>:null}
-    <div className="sticky bottom-0 z-10 flex min-w-0 flex-col-reverse gap-3 border-t border-border bg-surface py-3 md:flex-row md:flex-wrap md:justify-end">
+    <div className="sticky bottom-0 z-(--lms-z-raised) flex min-w-0 flex-col-reverse gap-3 border-t border-border bg-surface py-3 md:flex-row md:flex-wrap md:justify-end">
       <Button variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto"
         disabled={pending} onClick={discard.requestClose}>Cancel</Button>
       <Button className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading||(mode==="INDIVIDUAL"&&!currentPreflight)} onClick={()=>void create()}>

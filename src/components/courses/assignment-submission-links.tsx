@@ -4,6 +4,8 @@ import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 
 import {useEffect,useState} from "react";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Link={id:string;kind:string;url:string;caption:string;sequence:number};
 function safeHref(value:string){
@@ -40,13 +42,13 @@ export function AssignmentSubmissionLinks({submissionId}:{submissionId:string}){
  if(error)return <Alert tone="error">{error}</Alert>;
  if(!links.length)return null;
  return <section aria-label="Submitted repository and website links" className="space-y-2">
-  <h4 className="text-sm font-semibold text-foreground">Submitted links</h4>
+  <Heading level={4} size="sm" className="text-foreground">Submitted links</Heading>
   <ul className="space-y-1">
    {links.map(link=><li key={link.id} className="text-sm">
-    {safeHref(link.url)?<a href={safeHref(link.url)!}
-      rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    {safeHref(link.url)?<TextLink href={safeHref(link.url)!}
+      rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-all md:min-h-9">
       {link.caption||link.url}
-    </a>:<span>Link unavailable</span>}
+    </TextLink>:<span>Link unavailable</span>}
     <Badge tone="neutral" className="ml-2">
       {link.kind==="REPOSITORY_LINK"?"Repository":"Website"}
     </Badge>

@@ -10,6 +10,7 @@ import {roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-mode
 import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 type Preview={ready:boolean;roundName?:string;staged:number;applied:number;
  outcomes:{PASS:number;FAIL:number;HOLD:number;ABSENT:number};destinations:{PASS:string;FAIL:string;HOLD:string;ABSENT:string};previewToken:string;
  rows:Array<{resultId:string;student:string;outcome:string;status:string;destination:string;rollNumber?:string|null;enteredBy?:string|null;reason?:string|null}>;
@@ -68,7 +69,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
   }catch(e){setError(e instanceof Error?e.message:"Results could not be applied");}finally{setBusy(false);}
  }
  return <section aria-labelledby="tpo-round-apply-title" className="space-y-3 border-b border-border pb-6">
-  <h2 id="tpo-round-apply-title" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Apply round results</h2>
+  <Heading level={2} size="base" id="tpo-round-apply-title" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Apply round results</Heading>
   <p className="text-sm text-body leading-[22px]">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void load()}
    >
@@ -77,7 +78,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     title={"Apply "+(preview.roundName??"round")+" results"}
     description="Review the results and choose whether to notify learners." className="!max-w-[900px]">
    <div role="region" aria-label="Round application preview" className="space-y-3">
-   <h3 className="font-semibold">Consequence preview</h3>
+   <Heading level={3}>Consequence preview</Heading>
    <p className="text-sm leading-[22px]">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
    <dl className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface text-sm sm:grid-cols-4">
     <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Cleared → {preview.destinations.PASS}</dt><dd className="font-semibold">{preview.outcomes.PASS}</dd></div>
@@ -123,7 +124,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    {!preview.ready?<Alert tone="warning">Complete this evaluation round before applying results.</Alert>:null}
    <div className="flex flex-wrap gap-3">
     <Button variant="primary" type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
-     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
+     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-primary-foreground">
      {notifyLearners?"Apply and notify":"Apply without notifying"} ({preview.staged})</Button>
     <Button variant="secondary" type="button" disabled={busy} onClick={()=>setPreview(null)}
      >Cancel</Button>

@@ -6,6 +6,7 @@ import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
+import { Heading } from "@/components/ui/heading";
 export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;userId:string;count:number}){
  const router=useRouter();
  const {run,pending:busy}=useGuardedAction();
@@ -75,7 +76,7 @@ export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;u
   </Button>
   {expanded?<section className="min-w-0 space-y-3" aria-label="Administrator active device sessions">
    <div className="flex flex-wrap items-center justify-between gap-2">
-    <h3 className="text-sm font-semibold">Active sessions</h3>
+    <Heading level={3} size="sm">Active sessions</Heading>
     <Button type="button" variant="secondary" disabled={loadingSessions}
      onClick={()=>void loadSessions()}>{loadingSessions?"Loading…":"Refresh"}</Button>
    </div>

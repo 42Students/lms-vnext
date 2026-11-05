@@ -8,6 +8,7 @@ import {Alert} from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {isVerifiedHrReplyReceipt,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
+import { Heading } from "@/components/ui/heading";
 /** Never carry a recruiter draft across two different employer-college threads. */
 export function RecruiterConversationReplyForm({threadId,quoteId,quoteLabel,historyAvailable=true}:{
  threadId:string;quoteId?:string|null;quoteLabel?:string|null;historyAvailable?:boolean;
@@ -106,7 +107,7 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel,histor
   }finally{submitPendingRef.current=false;setSending(false);}
  }
  return <form ref={formRef} onSubmit={submit} className="min-w-0 max-w-4xl space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
-  <h2 className="text-lg font-semibold leading-7 text-foreground">Reply to placement cell</h2>
+  <Heading level={2} size="lg" className="leading-7 text-foreground">Reply to placement cell</Heading>
   {selectedQuote?<div className="flex min-w-0 flex-wrap items-center gap-2 border-l-2 border-[var(--lms-primary)] bg-surface-secondary px-3 py-2 text-sm text-body">
     <span>Discussing change request: {quoteLabel??selectedQuote}</span>
     <Button type="button" size="sm" variant="secondary" disabled={sending} onClick={()=>setSelectedQuote(null)}>Remove quote</Button>
@@ -126,9 +127,9 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel,histor
     Conversation history could not be loaded. Reload this thread before sending a reply.
    </Alert>:null}
   {notice?<InlineNotice tone={notice.startsWith("Message was not sent")||notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
-  <div className="flex min-w-0 flex-col items-stretch gap-2 min-[768px]:flex-row min-[768px]:items-center">
+  <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:items-center">
   <Button type="submit" disabled={sending||!historyAvailable||!body.trim()||body.trim().length>4000}
-    loading={sending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
+    loading={sending} className="min-h-11 w-full md:min-h-9 md:w-auto">
    {sending?"Sending…":"Send reply"}
   </Button>
   <ConfirmDialog open={leaveHref!==null} onOpenChange={next=>{

@@ -2,6 +2,7 @@ import type { getSuperAdminDrivePipeline } from "@/modules/placements/super-admi
 import type {SuperAdminDriveAttention} from "@/modules/placements/super-admin-drive-attention-service";
 import Link from "next/link";
 import { Banner } from "@/components/ui/banner";
+import { Heading } from "@/components/ui/heading";
 
 type Pipeline = Awaited<ReturnType<typeof getSuperAdminDrivePipeline>>;
 
@@ -12,19 +13,19 @@ export function SuperAdminDrivePipeline({rows,attention=[],jobId}: {
  jobId?:string;
 }) {
  const warning=attention.length>0&&jobId?(
-  <section role="status" aria-label="Needs attention" className="border-l-4 border-amber-500 bg-amber-50 px-4 py-3 text-amber-950">
-   <h2 className="flex items-center gap-2 text-sm font-semibold">
+  <section role="status" aria-label="Needs attention" className="border-l-2 border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] px-4 py-3 text-[color:var(--lms-warning-strong)]">
+   <Heading level={2} size="sm" className="flex items-center gap-2">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"
      stroke="currentColor" fill="none" strokeWidth="1.8" strokeLinecap="round">
      <path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5m0 3h.01"/>
     </svg>
     Needs attention ({attention.reduce((sum,row)=>sum+row.count,0)})
-   </h2>
+   </Heading>
    <ul className="mt-2 grid gap-2 sm:grid-cols-2">
-    {attention.map(item=><li key={item.label} className="rounded border border-amber-200 bg-white/70 p-3 text-sm">
+    {attention.map(item=><li key={item.label} className="rounded border border-[color:var(--lms-icon-amber)] bg-[color:color-mix(in_srgb,var(--lms-white)_70%,transparent)] p-3 text-sm">
      <p className="flex flex-wrap items-center gap-2 font-semibold">
       {item.label}
-      <span className="rounded bg-amber-100 px-2 py-0.5 tabular-nums">{item.count}</span>
+      <span className="rounded bg-[color:var(--lms-gold-subtle)] px-2 py-0.5 tabular-nums">{item.count}</span>
      </p>
      <p className="mt-1">{item.details}</p>
      <Link className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline"
@@ -41,7 +42,7 @@ export function SuperAdminDrivePipeline({rows,attention=[],jobId}: {
  ):null;
   if(!rows)return <section className="space-y-2 border-b border-border pb-4" aria-label="Pipeline">
     {warning}
-    <h2 className="font-semibold">Pipeline</h2>
+    <Heading level={2}>Pipeline</Heading>
     <Banner tone="warning" role="alert">
       Could not load pipeline metrics. Drive details and actions remain available. Reload this drive to retry.
     </Banner>
@@ -50,7 +51,7 @@ export function SuperAdminDrivePipeline({rows,attention=[],jobId}: {
     aria-label="Drive pipeline snapshot">
     {warning}
     <div>
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Pipeline</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">Pipeline</Heading>
       <p className="mt-1 text-sm text-body leading-[22px]">
         Current application stages. Totals reflect persisted decisions, not estimates of completed rounds.
       </p>

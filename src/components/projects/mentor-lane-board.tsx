@@ -31,6 +31,8 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Alert} from "@/components/ui/alert";
 import {BoardColumn} from "@/components/ui/board-column";
 import { Input } from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
@@ -224,7 +226,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-link underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Back to project</Link>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
-   <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Board</h2>
+   <Heading level={2} size="lg" className="m-0 text-[var(--lms-heading)]">Board</Heading>
    <div className="flex flex-wrap items-center gap-2">
      {!readOnly?<MentorTaskCreate primary projectId={projectId}
        sprintId={creationDefault?.id??""}
@@ -243,12 +245,12 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   <div className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Release
     <Select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
-      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+      className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All releases</option>{releases.map(r=><option key={r.id} value={r.id}>{r.title}</option>)}
     </Select></label>
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint
     <Select data-slot="select" value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
-      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+      className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All sprints · {matching.length} matching tasks</option>
      {[...releases].sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id))
       .filter(item=>!release||item.id===release)
@@ -264,28 +266,28 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint scope
     <Select data-slot="select" value={scope} aria-label="Board sprint scope"
       onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
-      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
+      className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
       <option value="current">Current sprint + backlog</option>
       <option value="all">All sprints (full history)</option>
     </Select>
    </label>
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Priority
     <Select data-slot="select" value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
-     className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
+     className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
     </Select>
    </label>
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task type
     <Select data-slot="select" value={taskType} onChange={e=>{setTaskType(e.target.value);remember("taskType",e.target.value);}}
-     className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
+     className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">All types</option>
      {["STORY","BUG","CHORE","SPIKE"].map(type=><option key={type} value={type}>{type}</option>)}
     </Select>
    </label>
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Assignee
     <Select data-slot="select" value={assignee} onChange={e=>{setAssignee(e.target.value);remember("assignee",e.target.value);}}
-     className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
+     className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">Everyone</option><option value="UNASSIGNED">Unassigned</option>
      {members.filter(m=>m.role==="LEARNER").map(m=>
       <option key={m.membershipId} value={m.membershipId}>{m.displayName??"Learner"}</option>)}
@@ -293,7 +295,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    </label>
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Lane
     <Select data-slot="select" value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
-      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
+      className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
       <option value="">All lanes</option>
       <option value="BACKLOG">Backlog</option>
       {editable.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
@@ -350,7 +352,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     data-can-drop={!readOnly&&!busy&&editable.includes(lane.id as typeof editable[number])}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
-    <h3 className={"prototype-mentor-board-lane-heading "+styles["header"]}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h3>
+    <Heading level={3} className={"prototype-mentor-board-lane-heading "+styles["header"]}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></Heading>
     <ul className={styles["body"]}>{mentorLanePage(lane.tasks,laneLimits[lane.id]).items.map(task=>{
      const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
@@ -399,16 +401,16 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        <p className="mt-2 text-xs">Assigned to: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"}</p>
        <p className="mt-2 text-xs">Due: {task.dueDate??"No due date"} · Estimate: {task.estimatePoints??"—"}</p>
        <p className="text-xs">Task type: {task.taskType??"Not set"}</p>
-       <h4 className="mt-3 text-xs font-semibold">Submission</h4>
+       <Heading level={4} size="xs" className="mt-3">Submission</Heading>
        {taskSubmissions.filter(s=>s.taskId===task.id).slice(-3).map(item=>
         <div key={item.id} className="mt-1 text-xs">
           <span>{item.status} · version {item.version}</span>
-          {safeProjectExternalHref(item.submissionUrl)?<a href={safeProjectExternalHref(item.submissionUrl)!}
-            rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open submission link</a>:null}
+          {safeProjectExternalHref(item.submissionUrl)?<TextLink href={safeProjectExternalHref(item.submissionUrl)!}
+            rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center">Open submission link</TextLink>:null}
         </div>
        )}
        {!taskSubmissions.some(s=>s.taskId===task.id)?<p className="text-xs text-muted-foreground">No submission yet.</p>:null}
-       <h4 className="mt-3 text-xs font-semibold">Activity</h4>
+       <Heading level={4} size="xs" className="mt-3">Activity</Heading>
        <ul className="space-y-1">{taskActivity.filter(event=>event.subjectId===task.id).slice(0,8).map(event=>
          <li key={event.id} className="text-xs text-body">{event.summary} · {event.actorDisplayName??"System"} ·
            {" "+new Date(event.occurredAt).toLocaleDateString("en-IN")}</li>
@@ -492,7 +494,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <Button variant="secondary" type="button" onClick={()=>setSelected(focused.id)}
           aria-label={"Open complete task details for "+focused.title}>⋯</Button>
       </div>
-      <h3 aria-live="polite">{focused.title}</h3>
+      <Heading level={3} aria-live="polite">{focused.title}</Heading>
       <div className="prototype-mentor-board-detail-tags">
         <span>{focused.taskType??"Task"}</span>
         <span>{focused.priority.toLocaleLowerCase("en-IN")} priority</span>
@@ -517,10 +519,10 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         task={focused}
         editable={!readOnly&&editable.includes(focused.status as typeof editable[number])}/>
       {focused.approach?<div className="prototype-mentor-board-detail-block">
-        <h4>Their approach</h4><p>{focused.approach}</p>
+        <Heading level={4}>Their approach</Heading><p>{focused.approach}</p>
       </div>:null}
       {focused.blockerReason?<div className="prototype-mentor-board-detail-block is-blocked">
-        <h4>Blocked</h4><p>{focused.blockerReason}</p>
+        <Heading level={4}>Blocked</Heading><p>{focused.blockerReason}</p>
         <p>{blockerAges[focused.id]?.days===null||
           blockerAges[focused.id]?.days===undefined?
           "Blocker start time was not recorded.":
@@ -546,11 +548,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
           </Select>
         </label>:null}
       {latestEvidence?<div className="prototype-mentor-board-detail-block">
-        <h4>Most recent task submission</h4>
+        <Heading level={4}>Most recent task submission</Heading>
         <p>Version {latestEvidence.version} · {latestEvidence.status.replaceAll("_"," ")}</p>
         {safeProjectExternalHref(latestEvidence.submissionUrl)?
-         <a href={safeProjectExternalHref(latestEvidence.submissionUrl)!}
-           rel="noopener noreferrer">Open submitted evidence ↗</a>:
+         <TextLink href={safeProjectExternalHref(latestEvidence.submissionUrl)!}
+           rel="noopener noreferrer">Open submitted evidence ↗</TextLink>:
          <p>No safe evidence link recorded for this submission.</p>}
       </div>:null}
       {submittedReview&&focused?<div className="prototype-mentor-board-review-actions" aria-label="Review task submission">
@@ -569,7 +571,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <Button variant="bare" type="button" className="prototype-mentor-board-detail-more"
         onClick={()=>setSelected(focused.id)}>Open full task details →</Button>
       <div className="prototype-mentor-board-detail-block">
-        <h4>Comments and progress</h4>
+        <Heading level={4}>Comments and progress</Heading>
         <ProjectTaskComments key={focused.id} projectId={projectId} taskId={focused.id}
           updatedAt={new Date(focused.updatedAt).toISOString()} canPost={!readOnly}
          blockerReply={focused.status==="BLOCKED"}/>

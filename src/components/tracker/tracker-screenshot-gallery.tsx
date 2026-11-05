@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import { Img } from "@/components/ui/img";
 
 type Screenshot={
  id:string;originalFilename:string;contentType:string;sizeBytes:number;
@@ -22,7 +23,7 @@ export function TrackerScreenshotGallery({publicId,screenshots}:{
     onClick={()=>setSelected(index)}>
     <span className="block overflow-hidden rounded bg-muted">
      {/* eslint-disable-next-line @next/next/no-img-element */}
-     <img src={url(file)} alt={"Screenshot "+(index+1)+": "+file.originalFilename}
+     <Img src={url(file)} alt={"Screenshot "+(index+1)+": "+file.originalFilename}
       referrerPolicy="no-referrer" loading="lazy"
       className="aspect-video h-auto w-full object-contain"/>
     </span>
@@ -43,7 +44,7 @@ export function TrackerScreenshotGallery({publicId,screenshots}:{
    </div>}>
    {selected!==null&&screenshots[selected]?<div className="overflow-auto rounded bg-muted">
     {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img src={url(screenshots[selected])}
+    <Img src={url(screenshots[selected])}
       alt={"Full-size screenshot: "+screenshots[selected]!.originalFilename}
       referrerPolicy="no-referrer" className="mx-auto max-h-[72dvh] max-w-full object-contain"/>
    </div>:null}

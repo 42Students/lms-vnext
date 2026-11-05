@@ -13,11 +13,12 @@ import {useEffect,useId,useState} from "react";
 import {useRouter} from "next/navigation";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE,CAMPAIGN_DRAFT_UNAVAILABLE,
   tpoCampaignDraftSchema,previewTpoCampaignText} from "@/modules/messaging/tpo-campaign-draft-model";
+import { Heading } from "@/components/ui/heading";
 type SelectedAudiencePreview={
  selected:number;eligible:number;leftOut:number;unavailable:number;
  suppressed:{NO_EMAIL:number;UNSUBSCRIBED:number;BOUNCED:number;NOT_NOW:number;DUPLICATE:number};
 };
-const field="mt-1 min-h-11 w-full min-[768px]:min-h-9";
+const field="mt-1 min-h-11 w-full md:min-h-9";
 const SEGMENTS=[
  {value:"ALL_ELIGIBLE",label:"All eligible contacts"},
  {value:"NEW",label:"New recruiter leads"},
@@ -96,16 +97,16 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 md:p-6" aria-label="Campaign composer">
-  <h2 className="text-lg font-semibold text-foreground">{selectedLeadIds.length?"Email "+selectedLeadIds.length+" "+(selectedLeadIds.length===1?"recruiter":"recruiters"):"Write a campaign"}</h2>
+  <Heading level={2} size="lg" className="text-foreground">{selectedLeadIds.length?"Email "+selectedLeadIds.length+" "+(selectedLeadIds.length===1?"recruiter":"recruiters"):"Write a campaign"}</Heading>
   <p className="text-sm text-body">Step 1 of 2 · Write the email and review its eligible recipients. Save a draft, then open it to confirm sending. Nothing is sent from this form.</p>
   <p className="text-xs text-muted-foreground">Saving a draft is available even when sending is disabled. The Send action is only available after selecting eligible recipients and confirming a verified draft.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} aria-describedby={error?formErrorId:undefined} className="space-y-4">
    {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Draft for {selectedLeadIds.length} specifically selected recruiter contacts. Eligibility and suppression rules still apply; no email will be sent when saving.</p>:null}
    {selectedLeadIds.length?<section aria-label="Selected recruiter audience review" className="min-w-0 space-y-2 border-y border-border py-3 text-sm">
-    <h3 className="font-semibold">Selected recruiter audience</h3>
+    <Heading level={3}>Selected recruiter audience</Heading>
     {audienceStatus==="loading"?<p role="status">Checking selected contacts and suppression rules…</p>:null}
     {audienceStatus==="error"?<Alert tone="error"><p>Could not check selected contacts. No emails have been sent.</p>
-      <Button variant="ghost" type="button" className="mt-2 min-h-11 min-[768px]:min-h-9 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</Button>
+      <Button variant="ghost" type="button" className="mt-2 min-h-11 md:min-h-9 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</Button>
     </Alert>:null}
     {audienceStatus==="ready"&&audience?<div role="status" className="mt-2 space-y-1">
       <p><strong>{audience.eligible} potential recipients</strong> out of {audience.selected} selected · {audience.leftOut} left out.</p>
@@ -127,7 +128,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      onChange={e=>setSubject(e.target.value)}/>
    </label>
    <section aria-label="Email quick-start templates" className="space-y-2">
-    <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Quick-start email wording</h3>
+    <Heading level={3} size="xs" className="uppercase tracking-wide text-muted-foreground">Quick-start email wording</Heading>
     <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
      {TPO_CAMPAIGN_COMPOSE_PRESETS.map(preset=>
       <Button variant="bare" type="button" key={preset.id} onClick={()=>selectPreset(preset)}
@@ -178,10 +179,10 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     </div>
    </Disclosure>
    {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
-    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
+    className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
     Preview audience
    </Link>:<Link href="/tpo/recruiters"
-    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
+    className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
     Change selected recruiters in Engage
    </Link>}
    {!deliveryReady?<Alert tone="warning"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</Alert>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}

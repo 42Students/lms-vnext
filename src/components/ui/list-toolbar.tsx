@@ -46,7 +46,7 @@ export function ListToolbar({
   const exportControl = exportAction ?? (onExportClick ? <Button variant="secondary" size="sm" className={toolbarButtonClass} onClick={onExportClick}>Export</Button> : null);
   return <section data-slot="list-toolbar" data-active-filters={activeFilters} aria-label={label} className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
     <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
-      {search ? <div className="flex min-w-0 w-full flex-1 basis-[220px] items-center gap-[var(--lms-space-2)] min-[768px]:max-w-[220px]"><div className="min-w-0 flex-1">{search}</div>{searchAction}</div> : searchAction ?? null}
+      {search ? <div className="flex min-w-0 w-full flex-1 basis-[220px] items-center gap-[var(--lms-space-2)] md:max-w-[220px]"><div className="min-w-0 flex-1">{search}</div>{searchAction}</div> : searchAction ?? null}
       {filterControl || viewControl || columnControl || exportControl ? <div role="toolbar" aria-label={`${label} actions`}
         className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         {filterControl}{viewControl}{columnControl}{exportControl}

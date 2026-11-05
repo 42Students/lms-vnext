@@ -5,6 +5,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
+import { Heading } from "@/components/ui/heading";
 export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
  projectId:string;currentMembershipId:string|null;
  task:{id:string;status:string;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null};
@@ -57,7 +58,7 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
  }
  if(!mine)return <p className="mt-3 text-xs text-muted-foreground">Only the assigned learner can update this task.</p>;
  return <section aria-labelledby="learner-task-actions-heading" className="mt-[var(--lms-space-5)] min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-  <h3 id="learner-task-actions-heading" className="font-semibold">Task actions</h3>
+  <Heading level={3} id="learner-task-actions-heading">Task actions</Heading>
   {task.blockerReason?<p className="text-sm text-body">Blocker: {task.blockerReason}</p>:null}
   {canBlock?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What is blocking this task?
    <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}

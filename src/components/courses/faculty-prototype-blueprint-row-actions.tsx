@@ -74,7 +74,7 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
    ?<FacultyContentEditor item={selectedEditor.item} compact/>
    :<FacultyAssessmentEditor assessment={selectedEditor.item} compact/>}
   {archivePossible?<Button variant="bare" type="button"
-   className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-[color:var(--lms-border)] bg-white text-lg text-[color:var(--lms-text-body)] hover:border-[color:var(--lms-error-text)] hover:text-[color:var(--lms-error-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-button-primary)]"
+   className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-[color:var(--lms-border)] bg-surface text-lg text-[color:var(--lms-text-body)] hover:border-[color:var(--lms-error-text)] hover:text-[color:var(--lms-error-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-button-primary)]"
    aria-label={"Remove "+item.title} title={"Archive "+item.title}
    disabled={busy||unknown} onClick={()=>{setError(null);setConfirm(true);}}>×</Button>:null}
   <ConfirmDialog open={confirm}
@@ -83,9 +83,9 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
    description="Archive this lesson item for the assigned class? Learner work and historical records remain saved. This does not delete stored files."
    confirmLabel="Archive item" confirmVariant="danger" pending={busy}
    onConfirm={()=>void archive()}>
-   {error?<p role="alert" className="text-sm text-red-700">{error}</p>:null}
+   {error?<p role="alert" className="text-sm text-[color:var(--lms-error-text)]">{error}</p>:null}
   </ConfirmDialog>
-  {error&&!confirm?<p role="alert" className="max-w-44 text-xs text-red-700">{error}</p>:null}
+  {error&&!confirm?<p role="alert" className="max-w-44 text-xs text-[color:var(--lms-error-text)]">{error}</p>:null}
   {unknown?<Button variant="bare" type="button" className="text-xs font-semibold text-[color:var(--lms-button-primary)] underline"
    onClick={()=>window.location.reload()}>Reload to verify</Button>:null}
  </div>;

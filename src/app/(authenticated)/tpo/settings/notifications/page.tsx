@@ -24,6 +24,7 @@ import {
 import {
   getTpoMyNotifications,
 } from "@/modules/placements/tpo-my-notifications-service";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = {
   view?: string | string[];
@@ -72,7 +73,7 @@ export default async function TpoMyNotificationsPage({
           action={
             <Link
               href="/tpo/settings/notifications"
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
             >
               Clear filters
             </Link>
@@ -125,9 +126,9 @@ export default async function TpoMyNotificationsPage({
       <section className="border-t border-border">
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border py-4">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">
+            <Heading level={2} size="lg" className="text-foreground">
               My notification preferences
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm leading-6 text-body">
               These settings are displayed for your own user
               account and current college only.
@@ -178,9 +179,9 @@ export default async function TpoMyNotificationsPage({
 
       <Disclosure title="Notification history" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">
       <section className="border-t border-border pt-4">
-        <h2 className="text-lg font-semibold text-foreground">
+        <Heading level={2} size="lg" className="text-foreground">
           My notification history
-        </h2>
+        </Heading>
 
         <p className="mt-1 text-sm leading-6 text-body">
           Subjects use fixed module labels rather than stored
@@ -192,14 +193,14 @@ export default async function TpoMyNotificationsPage({
         <form
           action="/tpo/settings/notifications"
           method="get"
-          className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[1280px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]"
+          className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]"
         >
           <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-40 leading-4">
             Read status
             <Select
               name="view"
               defaultValue={query.view}
-              className="min-h-11 min-[768px]:min-h-9"
+              className="min-h-11 md:min-h-9"
             >
               {TPO_NOTIFICATION_VIEWS.map((view) => (
                 <option key={view} value={view}>
@@ -218,7 +219,7 @@ export default async function TpoMyNotificationsPage({
             <Select
               name="pageSize"
               defaultValue={String(pageSize)}
-              className="min-h-11 min-[768px]:min-h-9"
+              className="min-h-11 md:min-h-9"
             >
               <option value="25">25</option>
               <option value="50">50</option>
@@ -228,14 +229,14 @@ export default async function TpoMyNotificationsPage({
 
           <Button
             type="submit"
-            className="min-h-11 w-full min-[768px]:min-h-9 min-[1280px]:w-auto"
+            className="min-h-11 w-full md:min-h-9 xl:w-auto"
           >
             Apply
           </Button>
 
           <Link
             href="/tpo/settings/notifications"
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           >
             Clear filters
           </Link>
@@ -245,9 +246,9 @@ export default async function TpoMyNotificationsPage({
       <section className="space-y-3 border-t border-border pt-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">
+            <Heading level={2} size="lg" className="text-foreground">
               Notification records
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-muted-foreground">
               {matchedTotal === 0
                 ? "No matching notifications"
@@ -317,7 +318,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
               >
                 Previous
               </Link>
@@ -330,7 +331,7 @@ export default async function TpoMyNotificationsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-150 hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
               >
                 Next
               </Link>

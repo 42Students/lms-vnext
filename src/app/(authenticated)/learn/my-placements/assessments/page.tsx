@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerAssessmentBrowse,legacyLearnerAssessmentsRedirect } from "@/modules/placements/learner-assessment-browse-service";
 import { learnerRoundSearchQuerySchema } from "@/modules/placements/learner-round-search-query-model";
 import {learnerAssessmentDueBucketSchema} from "@/modules/placements/learner-assessment-due-buckets";
+import { Heading } from "@/components/ui/heading";
 
 export default async function LearnerPlacementAssessmentsPage({searchParams}: {
   searchParams:Promise<{applicationId?:string|string[];roundId?:string|string[];q?:string|string[];due?:string|string[]}>;
@@ -75,9 +76,9 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
       <details className="border-b border-border pb-3">
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Assessment submission guidance</summary>
         <Banner tone="info" className="mt-3">
-        <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" className="m-0 leading-[1.4] text-[var(--lms-heading)]">
           Submit assessments on the employer’s platform
-        </h2>
+        </Heading>
         <p className="mt-2 text-sm text-body leading-[1.6]">
           Opening an employer assessment link does not submit your attempt or
           confirm receipt. Complete the assessment using the provider’s

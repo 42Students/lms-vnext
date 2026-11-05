@@ -101,7 +101,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
       used.add(item.learnerMembershipId);return true;
     }).slice(0,20);
     setSequence(picks);setSequenceIndex(0);setSelected(picks[0]??null);
-   }} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
+   }} className="min-h-11 md:min-h-[var(--lms-control-height)]">
     Review one by one ({Math.min(20,new Set(candidates.map(row=>row.learnerMembershipId)).size)})
    </Button>
    <p role="status" className="self-center text-xs text-muted-foreground">Review one by one includes at most 20 learners from this page only. Use Next under Verification pages to review further requests. Review each learner once; any second section remains visible in the queue. Each decision keeps its own audit history.</p>
@@ -155,13 +155,13 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] sm:grid-cols-2 lg:flex lg:flex-wrap [&>button]:w-full lg:[&>button]:w-auto">
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
-     className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Select first 20 waiting</Button>
+     className="min-h-11 md:min-h-[var(--lms-control-height)]">Select first 20 waiting</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
-     className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Clear selection</Button>
+     className="min-h-11 md:min-h-[var(--lms-control-height)]">Clear selection</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setActionsOpen(false);setBulkAction("VERIFY");setAcknowledged(false);}}
-     className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Verify without opening</Button>
+     className="min-h-11 md:min-h-[var(--lms-control-height)]">Verify without opening</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setActionsOpen(false);setBulkAction("SEND_BACK");}}
-     className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Send back</Button>
+     className="min-h-11 md:min-h-[var(--lms-control-height)]">Send back</Button>
    </div>
    <ul className="max-h-44 space-y-2 overflow-y-auto">
     {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)}>
@@ -189,7 +189,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
       I have checked their documents by another method. Each verification will be recorded with my name.
      </label>}
     <Button variant="primary" type="button" disabled={bulkBusy||!applicable.length||bulkAction==="VERIFY"&&!acknowledged||bulkAction==="SEND_BACK"&&reason.trim().length<3}
-     onClick={()=>void submitBulk()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
+     onClick={()=>void submitBulk()} className="min-h-11 md:min-h-[var(--lms-control-height)]">
      {bulkBusy?"Processing…":"Confirm "+applicable.length+" selected"}
     </Button>
    </div>
@@ -197,7 +197,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    {bulkMessage?<p role={bulkFailed?"alert":"status"} className="text-sm">{bulkMessage}</p>:null}
   <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)]">
    <VerificationExportControl url="/api/admin/verification/export" filename={"verification-"+activeTab.toLowerCase()+".csv"} query={{...query,collegeId}}/>
-   <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Refresh</Button>
+   <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11 md:min-h-[var(--lms-control-height)]">Refresh</Button>
   </div>
   <nav aria-label="Verification pages" className="flex flex-wrap items-center gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] text-sm">
    <span>Showing {rows.length} of {truncated?"at least "+total:total} in this status{truncated?" (incomplete scan)":""}</span>

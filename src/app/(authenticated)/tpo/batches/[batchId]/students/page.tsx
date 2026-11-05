@@ -31,6 +31,8 @@ import {getTpoBatchStudentRegistrationView} from "@/modules/placements/tpo-batch
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { z } from "zod";
 import {parseBatchStudentSearchParams,batchStudentPageHref} from "@/modules/placements/tpo-batch-student-view-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export default async function BatchStudents({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{page?:string|string[];q?:string|string[];classId?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[];order?:string|string[]}>}){
@@ -128,10 +130,8 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <Disclosure title="Export" ariaLabel="Batch student exports"
    className="border-b border-border py-3 [&>summary]:min-h-11 [&>summary]:text-link">
   <div className="flex flex-wrap items-center gap-2 py-2">
-   <a href={batchStudentViewExportHref(batchId,result.page,filters)}
-    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export filtered current page CSV</a>
-   <a href={"/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/students/export?page="+result.page}
-    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export current page CSV (unfiltered)</a>
+   <ButtonLink variant="secondary" href={batchStudentViewExportHref(batchId,result.page,filters)}>Export filtered current page CSV</ButtonLink>
+   <ButtonLink variant="secondary" href={"/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/students/export?page="+result.page}>Export current page CSV (unfiltered)</ButtonLink>
   </div>
  </Disclosure>
  <p className="text-xs text-muted-foreground leading-5">Search, class, decision, source, registration and sort run against the full active batch roster before pagination.{result.matching!==null?" "+result.matching+" learners match these filters.":""}{result.rosterTruncated?" The roster is larger than the 2000-learner filter limit; narrow the search to see every match.":""}</p>
@@ -140,7 +140,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <p className="text-sm text-muted-foreground leading-[22px]">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
  <Disclosure title="Bulk changes · Import eligibility · Send a message · Add a note" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
  <p className="text-xs text-muted-foreground leading-5">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
- <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Download blank eligibility import CSV (this page)</a>
+ <ButtonLink variant="secondary" href={tpoEligibilityImportScaffoldHref(batchId,result.page)}>Download blank eligibility import CSV (this page)</ButtonLink>
  {finished?<Alert tone="info">This batch is finished. Eligibility decisions and import actions are read-only.</Alert>:<TpoBatchEligibilityImport batchId={batchId}/>}
 
  <section aria-label="Batch student follow-up actions" className="grid gap-2 lg:grid-cols-2">
@@ -201,7 +201,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  </div>
  <Disclosure title="Placement journey" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
  <section aria-label="Placement journey" className="space-y-3 border-b border-border pb-4">
-  <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Placement journey</h2>
+  <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Placement journey</Heading>
   <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-[var(--lms-canvas-border)] md:grid-cols-4">
    {([["Students",journey.total],["Eligible",journey.eligible],
       ["Invitation sent",batchScope.lifecycle?.invitedAt?"Yes":"Not yet"],
@@ -221,7 +221,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  </section>
  </Disclosure>
 
- {(result.page>1||result.hasMore)?<nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">Previous</Link>:null}
- {result.hasMore?<Link href={href(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">Next</Link>:null}</nav>:null}
+ {(result.page>1||result.hasMore)?<nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Previous</Link>:null}
+ {result.hasMore?<Link href={href(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Next</Link>:null}</nav>:null}
  </div>;
 }

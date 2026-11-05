@@ -9,6 +9,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {prepareSelectionImport,type SelectionImportCandidate,type SelectionImportEntry} from "@/modules/placements/tpo-selection-import-model";
+import { Heading } from "@/components/ui/heading";
 
 export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:SelectionImportCandidate[]}){
  const router=useRouter();const [entries,setEntries]=useState<SelectionImportEntry[]>([]);
@@ -56,7 +57,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
    ". Already recorded rows remain saved. Refresh before retrying.");}finally{importRef.current=false;setBusy(false);setConfirmOpen(false);}
  }
  return <section aria-labelledby="tpo-selection-import-title" className="min-w-0 space-y-3 border-b border-border pb-4">
-  <h2 id="tpo-selection-import-title" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Import the company&apos;s selection list</h2>
+  <Heading level={2} size="base" id="tpo-selection-import-title" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Import the company&apos;s selection list</Heading>
   <p className="text-sm text-body leading-[22px]">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
   <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Selection list (CSV)" accept=".csv,text/csv" maxBytes={2_000_000}

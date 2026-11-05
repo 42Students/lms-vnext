@@ -43,7 +43,7 @@ export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;l
  return <>
   <div className="flex min-w-0 w-full flex-col gap-2 sm:w-auto">
    <Button variant="secondary" type="button" disabled={pending}
-    className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 sm:w-auto md:min-h-9 transition-[background-color] duration-[200ms] ease-[ease] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] motion-reduce:transition-none"
+    className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 sm:w-auto md:min-h-9 transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] motion-reduce:transition-none"
     onClick={event=>{
       if(pending)return;
       const menu=event.currentTarget.closest("details");

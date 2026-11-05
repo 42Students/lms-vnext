@@ -5,6 +5,8 @@ import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import {Button} from "@/components/ui/button";
 import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 /** Preserve active query filters when navigating bounded academic hierarchy pages. */
 export function academicScopePageHref(baseHref: string, page: number): string | null {
  if (!isSafeInternalHref(baseHref) || !Number.isSafeInteger(page) || page<1) return null;
@@ -44,8 +46,8 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
  ];
  return <section aria-label="Academic scope inventory" className="mt-4 space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
-   <h3 className="font-semibold text-[var(--lms-heading)]">Academic hierarchy</h3>
-   <a href="#academic-module-rules" className="min-h-9 inline-flex items-center text-sm font-semibold text-primary-text underline">Edit inherited rules</a>
+   <Heading level={3} className="text-[var(--lms-heading)]">Academic hierarchy</Heading>
+   <TextLink href="#academic-module-rules" className="min-h-9 inline-flex items-center text-sm">Edit inherited rules</TextLink>
    <div className="flex flex-wrap gap-2 text-sm print:hidden">
     <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</Button>
     <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</Button>
@@ -61,9 +63,9 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
   {showPageStatus?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm print:hidden">
    <span>Academic hierarchy page {safePage} · {scopes.length} nodes on this page</span>
    {prevHref?<Link href={prevHref}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous hierarchy page</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous hierarchy page</Link>:null}
    {nextHref?<Link href={nextHref}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next hierarchy page</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next hierarchy page</Link>:null}
   </nav>:null}
  </section>;
 }

@@ -21,6 +21,8 @@ import {
   storageErrorMessage,validProjectResourceUploadGrant,PROJECT_FILE_LIMIT,
   type ProjectResourceFile,
 } from "@/modules/projects/project-resource-files-ui-model";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 type FileResponse={file:ProjectResourceFile};
 type FileListResponse={files:ProjectResourceFile[]};
@@ -233,7 +235,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
     }catch(error){problem(error);}finally{setBusy(false);}
   }
   return <section aria-labelledby={"project-files-"+projectId} className="min-w-0 space-y-4 border-b border-border pb-[var(--lms-space-4)] [overflow-wrap:anywhere]">
-    <h3 id={"project-files-"+projectId} className="m-0 text-base font-semibold text-[var(--lms-heading)]">Attached</h3>
+    <Heading level={3} size="base" id={"project-files-"+projectId} className="m-0 text-[var(--lms-heading)]">Attached</Heading>
     {canUpload&&<form onSubmit={upload} className="min-w-0 space-y-3 border-b border-border pb-4">
       <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor={"project-file-"+projectId}>Or upload a file</label>
       <Input ref={fileInputRef} id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
@@ -324,7 +326,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
             className="mt-3 space-y-3 border border-border p-3"
             aria-label={"Private file preview for "+file.title}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h4 className="font-semibold">Private preview · {file.title}</h4>
+              <Heading level={4}>Private preview · {file.title}</Heading>
               <Button type="button" variant="secondary" size="sm"
                 onClick={()=>setPreview(null)}>Close preview</Button>
             </div>
@@ -362,7 +364,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
               src={mentorPdfEmbedUrl(preview.url,pdfPage,pdfZoom)??undefined}
               sandbox="" loading="lazy" referrerPolicy="no-referrer"
               className="h-[29rem] w-full border border-border"/>:
-              <img src={preview.url} alt={"Preview of "+file.title}
+              <Img src={preview.url} alt={"Preview of "+file.title}
                 referrerPolicy="no-referrer" className="max-h-[29rem] max-w-full"
                 />}
             <p className="text-xs text-muted-foreground">

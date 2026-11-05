@@ -13,6 +13,7 @@ import {
 } from "@/modules/courses/faculty-gradebook-model";
 import {getFacultyPublishedGradebook} from "@/modules/courses/faculty-gradebook-service";
 import {CoursesServiceError} from "@/modules/courses/errors";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams={search?:string|string[];page?:string|string[]};
 
@@ -34,7 +35,7 @@ export default async function FacultyGradebookPage({
     <PageHeader title="Published gradebook" description="Invalid gradebook link or filters" />
     <Link href={parsed.success?
       facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
-      "/teacher/courses"} className="text-primary-text underline inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+      "/teacher/courses"} className="text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
       Return to the gradebook
     </Link>
   </section>;
@@ -52,7 +53,7 @@ export default async function FacultyGradebookPage({
           administrator to request a gradebook report. No grades have been changed.
         </p>
         <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)}
-          className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           Return to your course
         </Link>
       </section>;
@@ -103,16 +104,16 @@ export default async function FacultyGradebookPage({
     :<div className="min-w-0 divide-y divide-border border-y border-border">
       {filtered.items.map(row=><article key={row.membershipId}
         className="min-w-0 py-4">
-        <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">
+        <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">
           {row.displayName||row.email||"Unnamed learner"}
-        </h2>
+        </Heading>
         <p className="mt-1 text-xs text-muted-foreground leading-5">
           {row.rollNumber?"Roll "+row.rollNumber+" · ":""}
           {row.email??"No email on record"}
         </p>
         <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)+
           "/gradebook/"+encodeURIComponent(row.membershipId)}
-          className="mt-2 inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+          className="mt-2 inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           View published score breakdown →
         </Link>
         <div className="mt-3 grid min-w-0 grid-cols-2 gap-2 md:grid-cols-3">
@@ -137,11 +138,11 @@ export default async function FacultyGradebookPage({
       </span>
       <div className="flex gap-3">
         {filtered.page>1&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page-1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+          ...base,page:filtered.page-1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           Previous
         </Link>}
         {filtered.page<filtered.totalPages&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page+1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+          ...base,page:filtered.page+1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           Next
         </Link>}
       </div>

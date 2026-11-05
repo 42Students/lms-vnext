@@ -63,7 +63,7 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   const code=source("src/components/placements/placement-calendar-workspace.tsx");
   expect(code).toContain("overflow-x-auto overscroll-x-contain");
   expect(code).toContain("[mask-image:linear-gradient(to_right");
-  expect(code).toContain("min-[992px]:min-w-[56rem]");
+  expect(code).toContain("lg:min-w-[56rem]");
   expect(code).toContain("min-w-[42rem]");
   expect(code).toContain("tabIndex={0}");
   expect(code).not.toContain("transition-all");

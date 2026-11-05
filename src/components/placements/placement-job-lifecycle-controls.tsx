@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 type JobStatus =
   | "DRAFT"
@@ -202,7 +203,7 @@ export function PlacementJobLifecycleControls({
       <section className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <h2 className="m-0 text-sm font-semibold text-foreground">Opportunity lifecycle</h2>
+            <Heading level={2} size="sm" className="m-0 text-foreground">Opportunity lifecycle</Heading>
             <StatusBadge tone={tone(status)}>{status}</StatusBadge>
           </div>
           <p className="mt-1 max-w-prose text-xs leading-5 text-body">

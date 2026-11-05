@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
 import { usePathname } from "next/navigation";
 import { TrackerThemeToggle } from "./tracker-theme-toggle";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const pages = [
   {value: "issues", label: "Issues", href: "/tracker/issues"},
@@ -17,10 +18,10 @@ export function TrackerAdminNav() {
   const pathname = usePathname();
   return (
     <>
-    <a href="#tracker-content"
-      className="sr-only focus:not-sr-only focus:mb-2 focus:inline-flex focus:min-h-11 md:focus:min-h-9 focus:items-center focus:rounded-[var(--lms-control-radius)] focus:bg-surface focus:px-3 focus:font-semibold focus:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    <ButtonLink variant="secondary" href="#tracker-content"
+      className="sr-only focus:mb-2">
       Skip to content
-    </a>
+    </ButtonLink>
     <nav aria-label="Tracker sections" className="min-w-0 space-y-3 border-b border-border pb-3">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <Link href="/tracker" aria-label="42 Tracker home"

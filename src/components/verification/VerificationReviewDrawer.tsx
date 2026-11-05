@@ -17,6 +17,8 @@ import {verificationDecisionHistory} from "@/modules/verification/review-decisio
 import {verificationDecisionConfirmation} from "@/modules/verification/review-confirmation";
 import {canEditVerificationDecision} from "@/modules/verification/review-edit-guard";
 import type {VerificationQueueCard} from "./VerificationWorkspace";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type HistoryItem={id:string;action:string;actorKind:string;actorName:string|null;
  note:string|null;occurredAt:string;priorVersion:number;nextVersion:number};
@@ -104,9 +106,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
       })}
     </section>:null}
     <section className="rounded-[var(--lms-radius-card)] border border-border p-4">
-     <h3 className="flex flex-wrap items-center gap-2 font-semibold">{row.section==="EDUCATION"?"Education":"Identity"} <span className="text-xs font-normal text-muted-foreground">{detail.review.status.replaceAll("_"," ")}</span></h3>
+     <Heading level={3} className="flex flex-wrap items-center gap-2">{row.section==="EDUCATION"?"Education":"Identity"} <span className="text-xs font-normal text-muted-foreground">{detail.review.status.replaceAll("_"," ")}</span></Heading>
      {detail.review.decidedAt&&detail.review.status==="VERIFIED"?<p className="mt-1 text-sm text-muted-foreground">Verified by {(detail.review.history??[]).filter(item=>item.action==="VERIFIED").slice(-1)[0]?.actorName??"the college"} on {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(detail.review.decidedAt))}</p>:null}
-     <h4 className="mt-3 font-semibold">Submitted versus previously verified</h4>
+     <Heading level={4} className="mt-3">Submitted versus previously verified</Heading>
      <dl className="mt-3 min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{verificationSnapshotComparison(detail.review.submittedSnapshot,detail.review.verifiedSnapshot)
       .map(item=><div key={item.key} className="min-w-0 space-y-1 py-3">
        <dt className="break-words [overflow-wrap:anywhere] text-[14px] font-semibold text-[var(--lms-heading)]">{item.key}</dt><dd className="break-words [overflow-wrap:anywhere] text-[13px] leading-5">Submitted: {item.submitted}</dd>
@@ -116,7 +118,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     </section>
     {row.section==="EDUCATION"&&Array.isArray(detail.review.submittedSnapshot["education"])&&
       <section className="space-y-2">
-        <h3 className="font-semibold">Education</h3>
+        <Heading level={3}>Education</Heading>
         <DataTable
           caption="Submitted education records"
           rows={verificationEducationRows(detail.review.submittedSnapshot["education"])}
@@ -132,7 +134,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
         />
       </section>}
     <section className="rounded-[var(--lms-radius-card)] border border-border p-4">
-     <h3 className="font-semibold">{row.section==="EDUCATION"?"Education documents":"Identity documents"}</h3>
+     <Heading level={3}>{row.section==="EDUCATION"?"Education documents":"Identity documents"}</Heading>
      <p className="mt-1 text-xs text-muted-foreground">Private supporting documents require an authorized, signed link.</p>
      {detail.review.documents.some(doc=>doc.purpose==="RESUME")&&<p className="mb-2 text-sm font-semibold">
        Resume available: open the private signed link below.
@@ -140,8 +142,8 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      {detail.review.documents.length===0?<p className="text-sm text-muted-foreground">Not uploaded</p>:
       <ul className="mt-2 space-y-2">{detail.review.documents.map(doc=>
        <li key={doc.receiptId} className="break-words">
-        <a rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-words [overflow-wrap:anywhere] text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-         href={`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}/documents/${encodeURIComponent(doc.receiptId)}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`}>Open {doc.purpose==="RESUME"?"resume":doc.purpose==="MARKSHEET"?"marksheet":"document"} (private signed link)</a>
+        <TextLink rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-words [overflow-wrap:anywhere]"
+         href={`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}/documents/${encodeURIComponent(doc.receiptId)}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`}>Open {doc.purpose==="RESUME"?"resume":doc.purpose==="MARKSHEET"?"marksheet":"document"} (private signed link)</TextLink>
        </li>)}</ul>}
     </section>
     {detail.review.status==="SUBMITTED"||detail.review.status==="UPDATE_PENDING"?<>
@@ -151,7 +153,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
       <Button variant="secondary" type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("SEND_BACK")} className="min-h-11 w-full sm:min-h-[var(--lms-control-height)] sm:w-auto">Send back</Button>
      </div>
      {pendingAction==="VERIFY"&&<section aria-label="Confirm verification decision" className="w-full min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-3">
-      <h3 className="font-semibold">{verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
+      <Heading level={3}>{verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</Heading>
       <p className="break-words text-sm">{verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
        <Button variant="primary" type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="min-h-11 w-full sm:min-h-[var(--lms-control-height)] sm:w-auto">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</Button>
@@ -161,14 +163,14 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      {saving&&<p role="status">Saving decision…</p>}
     </>:<p className="text-sm">This request is already decided. No actions are available.</p>}
     <section className="space-y-4 border-t border-[var(--lms-canvas-border)] pt-4" aria-label="Previous decisions and history">
-      <h3 className="text-[14px] font-semibold text-[var(--lms-heading)]">Previous decisions and history</h3>
+      <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Previous decisions and history</Heading>
     <section className="min-w-0" aria-label="Previous verification decision">
-     <h3 className="font-semibold">Recorded decision history</h3>
+     <Heading level={3}>Recorded decision history</Heading>
      <p className="text-sm">Last decision: {verificationDecisionHistory(detail.review).decidedAt??"Not yet decided"}</p>
      <p className="mt-1 whitespace-pre-wrap break-words text-sm">Last reviewer note: {verificationDecisionHistory(detail.review).note??"No note recorded"}</p>
     </section>
     <section aria-label="Verification history" className="space-y-2 min-w-0">
-      <h3 className="font-semibold">History</h3>
+      <Heading level={3}>History</Heading>
       {detail.review.history?.length===0&&<p className="text-sm text-muted-foreground">No recorded verification events.</p>}
       <ol className="space-y-3 border-l border-border pl-4 text-sm">
         {(detail.review.history??[]).map(item=><li key={item.id} className="space-y-1">

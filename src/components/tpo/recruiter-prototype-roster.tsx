@@ -28,13 +28,13 @@ const prototypeStage:Record<TpoRecruiterLeadStage,string>={
  DRIVE_PLANNED:"Drive planned",RECRUITED:"Hired from you",NOT_NOW:"Paused",
 };
 const stageClass:Record<TpoRecruiterLeadStage,string>={
- NEW:"bg-slate-100 text-slate-700",
- CONTACTED:"bg-cyan-50 text-cyan-800",
- INVITED:"bg-indigo-50 text-indigo-700",
- JOINED:"bg-emerald-50 text-emerald-700",
- DRIVE_PLANNED:"bg-orange-50 text-orange-800",
- RECRUITED:"bg-emerald-50 text-emerald-700",
- NOT_NOW:"bg-gray-100 text-gray-600",
+ NEW:"bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-text-body)]",
+ CONTACTED:"bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary-hover)]",
+ INVITED:"bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]",
+ JOINED:"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]",
+ DRIVE_PLANNED:"bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]",
+ RECRUITED:"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]",
+ NOT_NOW:"bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-text-body)]",
 };
 
 /** Default six-column roster matches the actual 2026 prototype's structure.
@@ -50,7 +50,7 @@ export function TpoRecruiterPrototypeRoster({
   data-testid="tpo.recruiter.prototype-roster">
   <div className="overflow-x-auto">
    <Table className="min-w-[690px]">
-    <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+    <thead className="bg-[color:var(--lms-neutral-50)] text-xs font-bold uppercase tracking-wide text-muted-foreground">
      <tr>{TPO_RECRUITER_PROTOTYPE_COLUMNS.filter(column=>enabled.has(column.key)).map(column=>
        <th key={column.key} scope="col" className="border-b border-border px-3 py-3 font-bold">{column.label}</th>)}</tr>
     </thead>
@@ -70,7 +70,7 @@ export function TpoRecruiterPrototypeRoster({
        }
       }}
       className={"cursor-pointer border-b border-border last:border-0 focus-visible:outline-2 focus-visible:outline-primary-text "+
-       (focused?"bg-primary-subtle":"hover:bg-slate-50")}>
+       (focused?"bg-primary-subtle":"hover:bg-[color:var(--lms-neutral-50)]")}>
       {enabled.has("recruiter")?<td className="max-w-48 px-3 py-3">
        <div className="flex min-h-11 flex-col items-start justify-center gap-1 md:min-h-9">
         <Button variant="bare" type="button" onClick={()=>onSelect(lead.id)}
@@ -82,7 +82,7 @@ export function TpoRecruiterPrototypeRoster({
       {enabled.has("company")?<td className="max-w-32 break-words px-3 py-3 text-foreground">{lead.companyName??"Not recorded"}</td>:null}
       {enabled.has("stage")?<td className="px-3 py-3"><span className={"inline-block rounded-full px-2 py-1 text-xs font-bold "+stageClass[lead.stage]}>
        {prototypeStage[lead.stage]}</span></td>:null}
-      {enabled.has("next")?<td className={"max-w-40 px-3 py-3 font-semibold "+(next.lateDays>0?"text-red-700":"text-foreground")}>
+      {enabled.has("next")?<td className={"max-w-40 px-3 py-3 font-semibold "+(next.lateDays>0?"text-[color:var(--lms-error-text)]":"text-foreground")}>
        {next.label}</td>:null}
       {enabled.has("last")?<td className="px-3 py-3 text-body">{shortDate(lead.lastContactAt??null)}</td>:null}
       {enabled.has("owner")?<td className="max-w-32 break-words px-3 py-3 text-body">{lead.ownerName??"Nobody yet"}</td>:null}

@@ -10,6 +10,7 @@ import type { getCollegeDashboardPendingGrades } from "@/modules/admin-ui/colleg
 import type { getCollegeDashboardUnstaffedCourses } from "@/modules/admin-ui/college-dashboard-staffing-service";
 import type { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboard-setup-gaps-service";
 import type { getCollegeClosingQuizzes } from "@/modules/admin-ui/college-dashboard-quizzes-service";
+import { Heading } from "@/components/ui/heading";
 
 type Attendance = Awaited<ReturnType<typeof getCollegeDashboardAttendance>>;
 type Risk = Awaited<ReturnType<typeof getCollegeDashboardLowAttendance>>;
@@ -34,10 +35,10 @@ type AttentionCardProps = {
 function AttentionCard({title,icon,count,href,empty,children,shown,pending}:AttentionCardProps) {
   return <article className="flex min-h-[220px] min-w-0 flex-col rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface">
     <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--lms-canvas-border)] px-4 py-3">
-      <h3 className="flex items-center gap-2 text-[16px] font-semibold text-[var(--lms-heading)]">
+      <Heading level={3} size="base" className="flex items-center gap-2 text-[var(--lms-heading)]">
         <span aria-hidden="true" className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]">{icon}</span>
         {title}
-      </h3>
+      </Heading>
       {count !== null ? <span aria-label={count+" needing attention"} className="rounded-full bg-[var(--lms-primary-subtle)] px-2 py-0.5 text-[12px] font-semibold tabular-nums text-[var(--lms-primary-text)]">{count}</span> : null}
     </header>
     <div className="min-w-0 flex-1 px-4 py-3 text-[13px] leading-5 text-[var(--lms-body-text)]">
@@ -51,7 +52,7 @@ function AttentionCard({title,icon,count,href,empty,children,shown,pending}:Atte
             </Link> : null}</>}
       {pending ? <p role="status" className="mt-2 text-xs text-muted-foreground">Refreshing… showing last available results.</p> : null}
     </div>
-    <footer className="border-t border-[var(--lms-canvas-border)] px-4 py-2.5">
+    <footer className="border-t border-[var(--lms-canvas-border)] px-4 py-3">
       <Link href={href} className="inline-flex min-h-9 items-center text-[13px] font-semibold text-[var(--lms-primary-text)] hover:underline">
         View all <span aria-hidden="true" className="ml-1">→</span>
       </Link>
@@ -105,7 +106,7 @@ export function CollegeNeedsAttentionBoard({ collegeId, data, generatedAt }: {
   return <section aria-label="Needs attention" className="space-y-4">
     <div className="flex flex-wrap items-end justify-between gap-2">
       <div>
-        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Needs attention</h2>
+        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Needs attention</Heading>
         <p className="mt-1 text-xs text-muted-foreground">Updated {new Date(snapshot.generatedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST
           {risk ? " · Attendance threshold "+risk.threshold+"%" : ""}
         </p>

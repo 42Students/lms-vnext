@@ -12,6 +12,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPlacementSeasonSettings } from "@/modules/placements/tpo-settings-read-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function TpoPlacementSeasonSettingsPage() {
   const context = await getCurrentRequestContext();
@@ -46,7 +47,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
       <Disclosure title="Season totals" className="min-w-0" contentClassName="pt-3">
       <div
         aria-label="Season summary"
-        className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3"
+        className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3"
       >
         {[
           {
@@ -81,9 +82,9 @@ export default async function TpoPlacementSeasonSettingsPage() {
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+                  <Heading level={3} size="base" className="m-0 leading-[26px] text-[var(--lms-heading)] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
                     {season.name}
-                  </h3>
+                  </Heading>
                   <p className="mt-1 text-xs text-muted-foreground leading-5">
                     Code: {season.code}
                   </p>
@@ -101,7 +102,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
                 </StatusBadge>
               </div>
 
-              <dl className="mt-4 grid gap-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+              <dl className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div>
                   <dt className="text-xs font-semibold text-muted-foreground">
                     Start date

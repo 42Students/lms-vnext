@@ -16,6 +16,7 @@ import { SuperAdminDriveDeadline } from "@/components/placements/super-admin-dri
 import { SuperAdminDriveDuplicate } from "@/components/placements/super-admin-drive-duplicate";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AdminRetentionInlinePreview } from "@/components/placements/admin-retention-inline-preview";
+import { Heading } from "@/components/ui/heading";
 
 const secondaryActionClass =
   "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9";
@@ -69,7 +70,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
         <SuperAdminPlatformPlacementPolicy initial={policy} />
         {organizationJobs?.ok?<section aria-label="Organization placement jobs" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Organization drives · read-only</h2>
+            <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Organization drives · read-only</Heading>
             <span className="text-sm text-muted-foreground">{organizationJobs.data.matchingJobCount} jobs · {organizationJobs.data.fullTotals.totalApplications} applications</span>
           </div>
           <p className="text-sm text-body">
@@ -117,7 +118,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
         actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
           <Link
             href="/admin/placements/new"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary motion-safe:transition-colors motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary motion-safe:transition-colors motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           >
             New drive
           </Link>
@@ -126,7 +127,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
       />
       <SuperAdminPlacementOversightNav />
       <section aria-label="Placements policy" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Placements policy</h2>
+        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Placements policy</Heading>
         <p className="mt-1 text-xs text-muted-foreground">
           Platform-wide — clear the college selection in the header to edit.
         </p>
@@ -144,7 +145,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
 
       <section aria-label="Placement quick actions"
         className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-        <h2 className="font-semibold text-[var(--lms-heading)]">Quick actions</h2>
+        <Heading level={2} className="text-[var(--lms-heading)]">Quick actions</Heading>
         <p className="text-sm text-body">
           Use the student lookup, company directory, organization jobs and
           retention reports without opening a secondary menu.
@@ -158,7 +159,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
         staleDays={staleDays}
       />
       <section aria-label="Drive actions" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-        <h2 className="font-semibold text-[var(--lms-heading)]">Drive actions</h2>
+        <Heading level={2} className="text-[var(--lms-heading)]">Drive actions</Heading>
         <p className="mb-[var(--lms-space-3)] text-sm text-body">
           Open, duplicate or extend a published drive from this overview. All actions remain scoped to the selected college.
         </p>
@@ -191,7 +192,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
       </section>
       <AdminRetentionInlinePreview key={collegeId} collegeId={collegeId} />
       <section aria-label="Student placement lookup" className="min-w-0 border-b border-border pb-4">
-        <h2 className="mb-2 font-semibold text-foreground">Find a student's placement status</h2>
+        <Heading level={2} className="mb-2 text-foreground">Find a student's placement status</Heading>
         <form method="get" action="/admin/placements/student-lookup" role="search" className="flex min-w-0 flex-col items-end gap-2 sm:flex-row">
           <label className="grid min-w-0 w-full gap-1 text-sm text-body">Name, roll number or email
             <Input type="search" name="q" minLength={3} maxLength={150} required

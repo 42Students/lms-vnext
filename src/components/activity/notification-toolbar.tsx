@@ -65,18 +65,18 @@ export function NotificationToolbar({
   return (
     <div className={display==="mark-all"?"min-w-0":display==="filters"?"min-w-0":"min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4"}>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-      {display!=="mark-all"?<div className={segmented?"inline-flex max-w-full flex-wrap gap-0 overflow-hidden rounded-[8px] border border-border bg-[var(--lms-neutral-50)] p-[3px]":"flex min-w-0 flex-wrap gap-2"} role="group" aria-label="Notification filter">
+      {display!=="mark-all"?<div className={segmented?"inline-flex max-w-full flex-wrap gap-0 overflow-hidden rounded-[8px] border border-border bg-[var(--lms-neutral-50)] p-[4px]":"flex min-w-0 flex-wrap gap-2"} role="group" aria-label="Notification filter">
         <Link
           href={baseHref + "?view=all" + (selectedCategory&&selectedCategory!=="all"?"&"+categoryParam+"="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "all" ? "page" : undefined}
-          className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
+          className={`inline-flex min-h-11 md:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-[var(--lms-motion-fast)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           {allLabel}
         </Link>
         <Link
           href={baseHref + "?view=unread" + (selectedCategory&&selectedCategory!=="all"?"&"+categoryParam+"="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "unread" ? "page" : undefined}
-          className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
+          className={`inline-flex min-h-11 md:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-[var(--lms-motion-fast)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           Unread ({unreadCount})
         </Link>
@@ -84,7 +84,7 @@ export function NotificationToolbar({
       {display!=="filters"&&canMarkAll?<Button
         size="sm"
         variant="secondary"
-        className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
+        className="min-h-11 w-full md:min-h-9 md:w-auto"
         disabled={pending || unreadCount === 0}
         onClick={() => confirmMarkAll ? setConfirmOpen(true) : void markAllRead()}
       >

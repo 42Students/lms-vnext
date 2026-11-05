@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 export type PlacementRequestQueueItem = {
   id: string;
@@ -151,7 +152,7 @@ export function PlacementRequestQueue({
   }
 
   if (requests.length === 0) {
-    return <section aria-label="Learner requests" className="border-b border-border py-6"><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Learner requests</h2><p className="mt-2 text-sm text-muted-foreground leading-[22px]">No learner requests yet.</p></section>;
+    return <section aria-label="Learner requests" className="border-b border-border py-6"><Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Learner requests</Heading><p className="mt-2 text-sm text-muted-foreground leading-[22px]">No learner requests yet.</p></section>;
   }
 
   const openCount = requests.filter(
@@ -163,9 +164,9 @@ export function PlacementRequestQueue({
       <div className="border-b border-border pb-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+            <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
               Learner requests
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body leading-[22px]">
               Review exceptional requests here. Approving a request must apply its real domain effect atomically.
             </p>

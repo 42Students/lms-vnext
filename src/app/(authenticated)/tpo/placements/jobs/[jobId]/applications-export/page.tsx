@@ -10,6 +10,8 @@ import {getTpoDriveApplicationsExport} from "@/modules/placements/tpo-drive-appl
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function TpoApplicationsExportPage({params,searchParams}:{
  params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[]}>;
 }){
@@ -25,45 +27,44 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="TPO · Export applicants" title={result.job.title+" · Applications"}
    description="Read-only college-scoped export preview without internal screening notes."
-   actions={<div className="flex w-full flex-col items-stretch gap-2 min-[768px]:w-auto min-[768px]:flex-row min-[768px]:items-center">
-    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 w-full md:w-auto">← Applicants</Link>
-    <a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Download all matching CSV</a>
+   actions={<div className="flex w-full flex-col items-stretch gap-2 md:w-auto md:flex-row md:items-center">
+    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto">← Applicants</Link>
+    <ButtonLink variant="secondary" href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download>Download all matching CSV</ButtonLink>
    </div>}/>
-  <form method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+  <form method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
-    <Select name="stage" defaultValue={result.stage} className="block min-h-11 w-full min-[768px]:min-h-9">
+    <Select name="stage" defaultValue={result.stage} className="block min-h-11 w-full md:min-h-9">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
     </Select></label>
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
-    <Input type="search" name="search" defaultValue={result.search} maxLength={100} className="block min-h-11 w-full min-[768px]:min-h-9"/>
+    <Input type="search" name="search" defaultValue={result.search} maxLength={100} className="block min-h-11 w-full md:min-h-9"/>
    </label>
-   <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[992px]:w-auto">Preview filters</Button>
+   <Button type="submit" className="min-h-11 w-full md:min-h-9 lg:w-auto">Preview filters</Button>
    <details className="group col-span-full" open={result.flag !== "ALL" || result.channel !== "ALL" || result.eligibility !== "ALL" || result.sort !== "NEWEST" || result.submittedWithin !== "ALL"}>
     <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Applicant flags · Channel · Eligibility evidence · Order by · Submitted window</summary>
-    <div className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
+    <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applicant flags
-    <Select name="flag" defaultValue={result.flag} className="block min-h-11 w-full min-[768px]:min-h-9">
+    <Select name="flag" defaultValue={result.flag} className="block min-h-11 w-full md:min-h-9">
      <option value="ALL">Any flag</option><option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option><option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </Select></label>
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
-    <Select name="channel" defaultValue={result.channel} className="block min-h-11 w-full min-[768px]:min-h-9">
+    <Select name="channel" defaultValue={result.channel} className="block min-h-11 w-full md:min-h-9">
      <option value="ALL">All</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
     </Select></label>
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility evidence
-    <Select name="eligibility" defaultValue={result.eligibility} className="block min-h-11 w-full min-[768px]:min-h-9">
+    <Select name="eligibility" defaultValue={result.eligibility} className="block min-h-11 w-full md:min-h-9">
      <option value="ALL">All</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · missing evidence</option>
     </Select></label>
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
-    <Select name="sort" defaultValue={result.sort} className="block min-h-11 w-full min-[768px]:min-h-9">
+    <Select name="sort" defaultValue={result.sort} className="block min-h-11 w-full md:min-h-9">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner Name</option>
     </Select></label>
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
-    <Select name="submittedWithin" defaultValue={result.submittedWithin} className="block min-h-11 w-full min-[768px]:min-h-9">
+    <Select name="submittedWithin" defaultValue={result.submittedWithin} className="block min-h-11 w-full md:min-h-9">
      <option value="ALL">Any date</option><option value="LAST_7_DAYS">Last 7 × 24h</option>
      <option value="LAST_30_DAYS">Last 30 × 24h</option>
     </Select></label>
@@ -78,11 +79,11 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
   {result.rows.length===0?<EmptyState title="No persisted applications match these filters."/>:
    <section aria-label="Applicant export preview" className="divide-y divide-border border-y border-border">
     {result.rows.map(row=><article key={row.applicationId} className="min-w-0 py-4">
-     <h2 className="break-words font-semibold text-foreground">{row.studentName??"Name unavailable"}</h2>
+     <Heading level={2} className="break-words text-foreground">{row.studentName??"Name unavailable"}</Heading>
      <p className="break-words text-sm text-body">{row.roleTitle} · {row.status} · {row.screeningStatus??"Screening unavailable"}</p>
      <p className="mt-1 break-words text-xs text-body">Channel: {row.channel} · Submitted {new Date(row.submittedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})} IST</p>
      <details className="group mt-3 min-w-0"><summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-xs font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Academic evidence <span aria-hidden="true" className="ml-2">⌄</span></summary>
-     <dl className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-3 text-xs text-body min-[768px]:grid-cols-4">
+     <dl className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-3 text-xs text-body md:grid-cols-4">
       <div><dt>Roll number</dt><dd className="font-semibold text-foreground">{row.rollNumber??"Not recorded"}</dd></div>
       <div><dt>Batch</dt><dd className="font-semibold text-foreground">{row.batchName??"Not recorded"}</dd></div>
       <div><dt>Branch</dt><dd className="font-semibold text-foreground">{row.branchName??"Not recorded"}</dd></div>

@@ -164,7 +164,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     </label>
       </div>
     </details>
-    <div className="sticky bottom-0 z-10 flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 sm:col-span-2 md:flex-row md:flex-wrap md:items-center">
+    <div className="sticky bottom-0 z-(--lms-z-raised) flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 sm:col-span-2 md:flex-row md:flex-wrap md:items-center">
       <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">
         {pending?"Registering…":"Register student"}
       </Button>

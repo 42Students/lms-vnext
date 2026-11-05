@@ -64,7 +64,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
         {devices.map((device) => (
           <li
             key={device.id}
-            className="flex min-w-0 flex-col gap-3 py-4 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between"
+            className="flex min-w-0 flex-col gap-3 py-4 md:flex-row md:items-center md:justify-between"
           >
             <div className="min-w-0 flex-1">
               <p className="m-0 flex min-w-0 flex-wrap items-center gap-2 break-words text-sm font-semibold text-foreground">
@@ -80,7 +80,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
             </div>
             {device.current ? (
               <Button variant="secondary" size="sm" aria-label={"Sign out this device: "+device.label}
-                className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
+                className="min-h-11 w-full md:min-h-9 md:w-auto"
                 disabled={pending||busy!==null}
                 onClick={()=>ask("current","/api/auth/session","Logged out","Sign out this device")}>
                 Sign out this device
@@ -90,7 +90,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
                 variant="secondary"
                 size="sm"
                 aria-label={"Sign out device: "+device.label}
-                className="min-h-11 w-full justify-center min-[768px]:min-h-9 min-[768px]:w-auto"
+                className="min-h-11 w-full justify-center md:min-h-9 md:w-auto"
                 disabled={pending || busy!==null}
                 onClick={() =>
                   ask(
@@ -110,12 +110,12 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
 
       {others > 0 ? (
         <details className="border-t border-[var(--lms-canvas-border)] py-4">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Sign out everywhere else</summary>
-          <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 min-[768px]:items-start">
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Sign out everywhere else</summary>
+          <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 md:items-start">
           <Button
             variant="danger"
             size="sm"
-            className="min-h-11 w-full justify-center min-[768px]:min-h-9 min-[768px]:w-auto"
+            className="min-h-11 w-full justify-center md:min-h-9 md:w-auto"
             disabled={pending || busy!==null}
             onClick={() =>
               ask(
@@ -128,7 +128,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
           >
             {busy === "all" ? "Signing out…" : "Sign out everywhere else"}
           </Button>
-          <Button variant="danger" size="sm" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
+          <Button variant="danger" size="sm" className="min-h-11 w-full md:min-h-9 md:w-auto"
             disabled={pending||busy!==null}
             onClick={()=>ask("all-including-current","/api/auth/devices?scope=all",
               "All sessions revoked","Sign out all devices")}>

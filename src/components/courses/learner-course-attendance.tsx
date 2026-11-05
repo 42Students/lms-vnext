@@ -14,6 +14,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Alert } from "@/components/ui/alert";
 import { DataTable } from "@/components/ui/data-table";
 import type { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
+import { Heading } from "@/components/ui/heading";
 
 type AttendanceWorkspace = Awaited<
   ReturnType<typeof getLearnerAttendanceWorkspace>
@@ -277,7 +278,7 @@ export function LearnerCourseAttendance({
 
   return (
     <div className="space-y-5">
-      <h2 className="sr-only">Attendance</h2>
+      <Heading level={2} className="sr-only">Attendance</Heading>
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
@@ -366,10 +367,10 @@ export function LearnerCourseAttendance({
            summary.percentage>=threshold?"border-[var(--lms-success)] bg-[var(--lms-success-subtle)]":
            "border-[var(--lms-error)] bg-[var(--lms-error-subtle)]")}>
         <div className="grid grid-cols-2 gap-3">
-          <div><h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
+          <div><Heading level={3} size="sm" className="text-foreground">Attendance this month</Heading>
             <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
           </div>
-          <div><h3 className="text-sm font-semibold text-foreground">Attendance threshold</h3>
+          <div><Heading level={3} size="sm" className="text-foreground">Attendance threshold</Heading>
             <p className="mt-2 text-3xl font-semibold text-foreground">{threshold}%</p>
           </div>
         </div>
@@ -385,7 +386,7 @@ export function LearnerCourseAttendance({
         <span aria-hidden="true">◌</span> Loading attendance for {monthName}…
       </p>:null}
       <section aria-label="Attendance History" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h3 className="text-lg font-semibold text-foreground">Attendance History</h3>
+        <Heading level={3} size="lg" className="text-foreground">Attendance History</Heading>
         <p className="mt-1 text-sm text-muted-foreground">{monthName}</p>
       </section>
       {records.length === 0 ? (

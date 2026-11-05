@@ -16,6 +16,7 @@ import { StatTile } from "@/components/ui/stat-tile";
 import { ReportTable, reportNumber } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPlacedStudentsByBranch } from "@/modules/placements/tpo-placed-branch-service";
+import { ButtonLink } from "@/components/ui/button-link";
 type Search = { seasonId?: string | string[]; jobId?: string | string[] };
 function first(input: string | string[] | undefined) { return Array.isArray(input) ? input[0] : input; }
 export default async function TpoPlacedByBranchPage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -34,24 +35,24 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
     <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader eyebrow="TPO · Reports" title="Placed students by branch"
         description="Unique learners with accepted offers and confirmed joins by current branch and season."
-        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Reports</Link>{report.season ? <a
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Reports</Link>{report.season ? <ButtonLink variant="primary"
           href={"/api/placements/reports/placed-branch?" + csvParams}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
+          className="w-full sm:w-auto">
           Download CSV
-        </a> : null}</div>}
+        </ButtonLink> : null}</div>}
       />
       <form action="/tpo/reports/placed-branch" method="get"
         className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
           <Select name="seasonId" defaultValue={report.season?.id ?? ""}
-            className="mt-2 min-h-11 min-[768px]:min-h-9 w-full">
+            className="mt-2 min-h-11 md:min-h-9 w-full">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
           </Select>
         </label>
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive
           <Select name="jobId" defaultValue={report.selectedJobId ?? ""}
-            className="mt-2 min-h-11 min-[768px]:min-h-9 w-full">
+            className="mt-2 min-h-11 md:min-h-9 w-full">
             <option value="">All drives</option>
             {report.jobs.map((item) => <option key={item.id} value={item.id}>{item.companyName} · {item.title}</option>)}
           </Select>

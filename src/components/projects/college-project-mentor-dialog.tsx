@@ -10,6 +10,7 @@ import {Select} from "@/components/ui/select";
 import {useToast} from "@/components/ui/toast";
 import {apiFetch} from "@/lib/api-fetch";
 import {projectMutation} from "./project-api";
+import { TextLink } from "@/components/ui/text-link";
 
 type Mentor={membershipId:string;displayName:string|null;email:string|null};
 type ReassignOutcome={reassignedCount:number;skippedCount:number;failures:{projectId:string;code:string}[]};
@@ -115,7 +116,7 @@ export function CollegeProjectMentorDialog({projectId,collegeId,currentMentorNam
      Reassigning replaces the current mentor{currentMentorName?" ("+currentMentorName+")":""}:
      their meetings on this workspace are cancelled, their task assignments are cleared, and both the outgoing and incoming mentor are notified.
     </Banner>
-    <a href={"/college/projects/reassign-mentor?projectId="+encodeURIComponent(projectId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Use the bulk Reassign Mentor page</a>
+    <TextLink href={"/college/projects/reassign-mentor?projectId="+encodeURIComponent(projectId)} className="inline-flex min-h-11 items-center text-sm">Use the bulk Reassign Mentor page</TextLink>
     {confirming?<Banner tone="warning">Confirm the reassignment to {selectedMentor?.displayName??selectedMentor?.email??"the selected mentor"}. Cancelled meetings and unassigned tasks may need rescheduling or reassignment.</Banner>:null}
     {error?<Banner tone="error">{error}</Banner>:null}
     <div className="flex flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">

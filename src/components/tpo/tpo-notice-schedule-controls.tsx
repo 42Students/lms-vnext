@@ -21,13 +21,13 @@ export function TpoNoticeScheduleControls({count,enabled,minDateTime,deliveryRea
   </fieldset>
   {mode==="LATER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Schedule for (IST)
     <Input type="datetime-local" name="sendAt" required min={minDateTime}
-      className="min-h-11 min-[768px]:min-h-9"/>
+      className="min-h-11 md:min-h-9"/>
    </label>:null}
   {!deliveryReady?<p role="status" className="text-xs text-[var(--lms-warning-text)]">
    Sending and scheduling are paused until the delivery worker has been verified.
   </p>:null}
   <Button type="submit" disabled={!enabled||!deliveryReady}
-   className="min-h-11 w-full min-[768px]:min-h-9 md:w-auto">
+   className="min-h-11 w-full md:min-h-9 md:w-auto">
    {mode==="LATER"?"Schedule":"Send"} {count===null?"announcement":"to "+count+" members"}
   </Button>
  </div>;

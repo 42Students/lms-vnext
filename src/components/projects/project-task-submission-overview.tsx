@@ -5,6 +5,8 @@ import {Button} from "@/components/ui/button";
 import {EmptyState} from "@/components/ui/empty-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export type TaskSubmissionOverviewRow={
  id:string;taskTitle:string;submitter:string;version:number;
@@ -34,7 +36,7 @@ export function ProjectTaskSubmissionOverview({rows,metrics}:{
  return <section aria-label="Task submissions summary"
    className="space-y-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
    <header className="space-y-1">
-    <h3 className="text-base font-semibold text-foreground">Task submissions</h3>
+    <Heading level={3} size="base" className="text-foreground">Task submissions</Heading>
     <p className="text-sm text-body">Review recorded learner submission links without changing workflow state.</p>
    </header>
    <dl className="grid min-w-0 grid-cols-2 border-t border-border sm:grid-cols-4">
@@ -62,9 +64,9 @@ export function ProjectTaskSubmissionOverview({rows,metrics}:{
              item.status==="CHANGES_REQUESTED"?"warning":"info"}>
            {item.status.toLowerCase().replaceAll("_"," ")}</StatusBadge></span></td>
        <td className="px-2 py-3">{item.submissionUrl?
-        <a href={item.submissionUrl} rel="noopener noreferrer"
-         className="inline-flex min-h-9 items-center font-semibold text-link underline">
-         Open submission</a>:
+        <TextLink href={item.submissionUrl} rel="noopener noreferrer"
+         className="inline-flex min-h-9 items-center">
+         Open submission</TextLink>:
         <span className="text-body" title="This submission link is absent or is not a safe HTTP(S) address">Unavailable link</span>}</td>
        <td className="px-2 py-3">{item.submitter||"—"}</td>
        <td className="px-2 py-3 tabular-nums">{format(item.submittedAt)}</td>

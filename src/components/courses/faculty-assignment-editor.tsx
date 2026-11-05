@@ -21,6 +21,7 @@ import {facultyAssignmentMethodsLoadVersion,verifiedFacultyAssignmentMethodsResp
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
 import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning,facultyAssignmentPublishIssue,facultyAssignmentCanSaveDraft} from "@/modules/courses/faculty-assignment-editor-ui-model";
+import { Heading } from "@/components/ui/heading";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -156,8 +157,8 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{mutationLock.current=false;setPending(false);}
  }
- return <section className="min-w-0 space-y-[var(--lms-space-4)] max-[767px]:[&_button]:min-h-11">
-  <h2 className="text-base font-semibold text-[var(--lms-heading)]">Assignment authoring</h2>
+ return <section className="min-w-0 space-y-[var(--lms-space-4)] max-md:[&_button]:min-h-11">
+  <Heading level={2} size="base" className="text-[var(--lms-heading)]">Assignment authoring</Heading>
   <label className="grid max-w-2xl min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose draft or create new
    <Select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}
     className="text-base md:text-sm">

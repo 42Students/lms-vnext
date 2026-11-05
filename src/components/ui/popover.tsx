@@ -20,7 +20,7 @@ export const PopoverPanel = forwardRef<HTMLElement, PopoverPanelProps>(
     return <section {...rest} ref={ref} role="dialog" aria-modal={false} aria-label={label}
       onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && event.key === "Escape" && onDismiss) { event.preventDefault(); event.stopPropagation(); onDismiss(); } }}
       data-slot={dataSlot ?? "popover"}
-      className={cx("min-w-0 max-w-[calc(100vw_-_1.5rem)] break-words rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 shadow-[var(--lms-dropdown-shadow)] max-[767px]:rounded-[var(--lms-canvas-radius)] max-[767px]:p-4", className)}>
+      className={cx("min-w-0 max-w-[calc(100vw_-_1.5rem)] break-words rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 shadow-(--lms-dropdown-shadow) max-md:rounded-[var(--lms-canvas-radius)] max-md:p-4", className)}>
       {children}
     </section>;
   },
@@ -32,7 +32,7 @@ export type PopoverListboxProps = Omit<ComponentPropsWithoutRef<"div">, "role" |
   label: string;
   onDismiss?: () => void;
 };
-const listboxSurfaceClasses = "min-w-0 max-w-[calc(100vw_-_1.5rem)] max-h-[min(20rem,calc(100dvh_-_2rem))] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-0 py-[5px] shadow-[var(--lms-dropdown-shadow)] [&_[role=option]]:min-h-11 [&_[role=option]]:min-w-0 [&_[role=option]]:break-words [&_[role=option]]:px-3 [&_[role=option]]:py-2 [&_[role=option]:hover]:bg-[color:var(--lms-success-surface)] [&_a:hover]:bg-[color:var(--lms-success-surface)] [&_button:hover]:bg-[color:var(--lms-success-surface)]";
+const listboxSurfaceClasses = "min-w-0 max-w-[calc(100vw_-_1.5rem)] max-h-[min(20rem,calc(100dvh_-_2rem))] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-0 py-[6px] shadow-(--lms-dropdown-shadow) [&_[role=option]]:min-h-11 [&_[role=option]]:min-w-0 [&_[role=option]]:break-words [&_[role=option]]:px-3 [&_[role=option]]:py-2 [&_[role=option]:hover]:bg-[color:var(--lms-success-surface)] [&_a:hover]:bg-[color:var(--lms-success-surface)] [&_button:hover]:bg-[color:var(--lms-success-surface)]";
 export function PopoverListbox({ label, children, className, onDismiss, onKeyDown, ...props }: PopoverListboxProps) {
   function handleKey(event: KeyboardEvent<HTMLDivElement>) {
     onKeyDown?.(event);

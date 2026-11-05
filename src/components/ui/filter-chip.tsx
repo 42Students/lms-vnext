@@ -23,7 +23,7 @@ const tones={
 } as const;
 
 // Both button and link chips retain the same accessible 44px touch target at every breakpoint.
-const filterChipGeometry = "inline-flex min-h-11 max-w-full items-center justify-center rounded-[6px] border px-[12px] py-0 text-[12px] font-bold leading-[18px] md:px-[15px] md:py-[2px]";
+const filterChipGeometry = "inline-flex min-h-11 max-w-full items-center justify-center rounded-[6px] border px-[12px] py-0 text-[12px] font-bold leading-[18px] md:px-[16px] md:py-[2px]";
 
 export function FilterChip({
  className,children,tone="neutral",type="button",...props

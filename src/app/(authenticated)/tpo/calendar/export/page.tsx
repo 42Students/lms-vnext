@@ -12,6 +12,7 @@ import {
   todayIstDate, tpoCalendarExportQuerySchema,
 } from "@/modules/placements/tpo-calendar-export-model";
 import { getTpoCalendarRoundExport } from "@/modules/placements/tpo-calendar-export-service";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = { from?: string | string[]; to?: string | string[] };
 const first = (value: string | string[] | undefined) =>
@@ -66,10 +67,10 @@ export default async function TpoCalendarExportPage({
           : ""}
       </p>
       {result.rows.length === 0 ? <EmptyState title="No future scheduled rounds were found in this college for the chosen dates." description="Unscheduled, cancelled, completed and non-published drives are not inferred." action={<Link href="/tpo/calendar" className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">← TPO calendar</Link>}/> : null}
-      {result.rows.length>0?<a href={"/api/placements/tpo/calendar/export?" + params?.toString()}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 sm:w-auto">
+      {result.rows.length>0?<ButtonLink variant="primary" href={"/api/placements/tpo/calendar/export?" + params?.toString()}
+        className="w-full sm:w-auto">
         Download rounds CSV
-      </a>:null}
+      </ButtonLink>:null}
     </section> : null}
   </div>;
 }

@@ -13,6 +13,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {resolveBulkRoundLearnerTokens} from "@/modules/placements/tpo-bulk-round-result-model";
+import { Heading } from "@/components/ui/heading";
 
 type Row = {
   applicationId: string;
@@ -141,7 +142,7 @@ export function TpoBulkRoundResultRecorder({
   return (
     <section aria-labelledby="tpo-bulk-result-heading" className="min-w-0 space-y-4 border-b border-border pb-4">
       <div>
-        <h2 id="tpo-bulk-result-heading" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Bulk stage round results</h2>
+        <Heading level={2} size="base" id="tpo-bulk-result-heading" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Bulk stage round results</Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">
           Stage a common outcome for up to 25 applicants without an existing result.
           Each row is separately verified, transactionally stored and audited.
@@ -163,9 +164,9 @@ export function TpoBulkRoundResultRecorder({
             </label>
             <div className="flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
               <Button variant="secondary" type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
-                className="inline-flex min-h-11 w-full items-center justify-center px-4 font-[650] text-primary-text sm:w-auto md:min-h-9">Select first 25 unmarked</Button>
+                className="inline-flex min-h-11 w-full items-center justify-center px-4 font-semibold text-primary-text sm:w-auto md:min-h-9">Select first 25 unmarked</Button>
               <Button variant="secondary" type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
-                className="min-h-11 w-full px-4 font-[650] text-primary-text sm:w-auto md:min-h-9">Clear selection</Button>
+                className="min-h-11 w-full px-4 font-semibold text-primary-text sm:w-auto md:min-h-9">Clear selection</Button>
             </div>
             <Disclosure title="Paste application IDs from a spreadsheet" className="min-w-0 border-y border-border py-3">
               <p className="mt-2 text-xs text-body leading-[20px]">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
@@ -255,7 +256,7 @@ export function TpoBulkRoundResultRecorder({
               ((outcome !== "PASS" || failUnselected) && !message.trim()) ||
               pendingTotal > 25 ||
               (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1))}
-            className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 text-sm font-[650] disabled:opacity-50 sm:w-auto md:min-h-9 print:hidden"
+            className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold disabled:opacity-50 sm:w-auto md:min-h-9 print:hidden"
           >
             {busy ? "Staging..." : "Review and confirm staged results"}
           </Button>
@@ -283,7 +284,7 @@ export function TpoBulkRoundResultRecorder({
             document.body.appendChild(link);
             try { link.click(); }
             finally { link.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
-          }} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 font-[650] text-primary-text sm:w-auto md:min-h-9 print:hidden">
+          }} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text sm:w-auto md:min-h-9 print:hidden">
             Export per-learner staging report (CSV)
           </Button>
           <p className="font-semibold">Per-learner outcomes</p>

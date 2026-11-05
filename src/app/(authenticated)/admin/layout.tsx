@@ -4,6 +4,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {SuperAdminLegacyGroupTabs} from "@/components/admin/super-admin-legacy-group-tabs";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminLayout({
   children,
@@ -21,9 +22,9 @@ export default async function SuperAdminLayout({
       </Link>}/>
   </div>;
   return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)] print:space-y-0">
-    <a href="#super-admin-main" className="sr-only focus:not-sr-only focus:inline-flex focus:min-h-11 focus:items-center focus:rounded focus:bg-white focus:p-3 focus:font-semibold focus:text-link">
+    <TextLink href="#super-admin-main" className="sr-only">
       Skip to Super Admin content
-    </a>
+    </TextLink>
     <SuperAdminLegacyGroupTabs />
     <main id="super-admin-main" tabIndex={-1} className="min-w-0 scroll-mt-6 outline-none">
       {children}

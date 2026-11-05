@@ -24,6 +24,8 @@ import {recordedMentorStudentLead} from "@/modules/projects/mentor-student-lead-
 import {MentorPrototypePerformanceTable} from "./mentor-prototype-performance-table";
 import {MentorProjectFocusQueue} from "./mentor-project-focus-queue";
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
 type ProjectTask=Workspace["tasks"][number];
@@ -134,7 +136,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
         };
       })}/>
     <section className="prototype-mentor-chart-card" aria-label="Points per sprint">
-      <div className="prototype-mentor-card-title"><h2>Points per sprint · planned and done</h2>
+      <div className="prototype-mentor-card-title"><Heading level={2}>Points per sprint · planned and done</Heading>
         <span>From your recorded task estimates</span></div>
       {sprints.length?
         <div className="prototype-mentor-sprint-bars">
@@ -165,7 +167,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
     </section>
     <section className="prototype-mentor-chart-card" aria-label="Sprint carry-over history">
       <div className="prototype-mentor-card-title">
-        <h2>Historical carry-over · recorded sign-offs</h2>
+        <Heading level={2}>Historical carry-over · recorded sign-offs</Heading>
         <Link href={base+"?tab=performance"}>Team point history →</Link>
       </div>
       {planFacts.observedCompletedSprints>0?<>
@@ -186,7 +188,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
         Historical carry-over is not inferred from current tasks.</p>}
     </section>
     <section className="prototype-mentor-chart-card" aria-label="Release progress">
-      <div className="prototype-mentor-card-title"><h2>Release plan</h2>
+      <div className="prototype-mentor-card-title"><Heading level={2}>Release plan</Heading>
         {!readOnly&&workspace.project.status==="ACTIVE"?
           <MentorReleaseEditor projectId={workspace.project.id}/>:null}
         <Link href={base+"?tab=board&scope=all"}>Open full task history →</Link></div>
@@ -259,7 +261,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
       }):<p className="prototype-mentor-summary-empty">No releases have been recorded.</p>}
     </section>
     <section className="prototype-mentor-backlog-card">
-      <div className="prototype-mentor-card-title"><h2>Backlog · {backlog.length} tasks · {points(backlog)} pts</h2>
+      <div className="prototype-mentor-card-title"><Heading level={2}>Backlog · {backlog.length} tasks · {points(backlog)} pts</Heading>
         <Link href={base+"?tab=board&scope=all&lane=BACKLOG"}>Open on the board →</Link></div>
       <p>These tasks are not assigned to a sprint. Plan them using the release and sprint controls below.</p>
     </section>
@@ -299,7 +301,7 @@ export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{w
   };
   return <section className="prototype-mentor-team-overview" aria-label="Current project team">
     <div className="prototype-mentor-card-title">
-      <h2>The team · {students.length} students · {mentors.length} mentors</h2>
+      <Heading level={2}>The team · {students.length} students · {mentors.length} mentors</Heading>
       <div className="flex flex-wrap items-center gap-2">
         {!readOnly&&!workspace.project.teamGroupId?<AddProjectMemberControl
           projectId={workspace.project.id} learnerOnly={!canAddMentor}/>:null}
@@ -419,7 +421,7 @@ export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}
   const count=week?.count??recent.length;
   return <section className="prototype-mentor-activity-summary" aria-label="Recorded activity this week">
     <div className="prototype-mentor-card-title">
-      <h2>Project activity · last seven days</h2>
+      <Heading level={2}>Project activity · last seven days</Heading>
       <span>{count} {week?"recorded":"loaded"} {count===1?"event":"events"}</span>
     </div>
     <div className="prototype-mentor-activity-stat-row">
@@ -429,7 +431,7 @@ export function MentorPrototypeActivitySummary({workspace}:{workspace:Workspace}
       <div><strong>{otherEvents}</strong><span>Other events</span></div>
     </div>
     {full?<div role="group" aria-label="All recorded resource changes">
-      <h3 className="text-sm font-semibold">Resource changes · all recorded history</h3>
+      <Heading level={3} size="sm">Resource changes · all recorded history</Heading>
       <div className="prototype-mentor-activity-stat-row">
         <div><strong>{full.resources.changes}</strong><span>Changes</span></div>
         <div><strong>{full.resources.added}</strong><span>Added</span></div>
@@ -481,7 +483,7 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
   });
   return <section className="prototype-mentor-delivery-evidence" aria-label="Final submission evidence">
     <div className="prototype-mentor-card-title">
-      <h2>Final submission · evidence</h2>
+      <Heading level={2}>Final submission · evidence</Heading>
       <span>{latest?"Version "+latest.version:"Not submitted"}</span>
     </div>
     {latest?<div className="prototype-mentor-delivery-main">
@@ -499,13 +501,13 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         {latest.notes?<p className="prototype-mentor-delivery-notes">{latest.notes}</p>:null}
       </div>
       <div className="prototype-mentor-delivery-links">
-        {source?<a href={source} rel="noopener noreferrer">Source repository ↗</a>:null}
-        {demo?<a href={demo} rel="noopener noreferrer">Demo ↗</a>:null}
+        {source?<TextLink href={source} rel="noopener noreferrer">Source repository ↗</TextLink>:null}
+        {demo?<TextLink href={demo} rel="noopener noreferrer">Demo ↗</TextLink>:null}
         <Link href={base+"?tab=delivery"}>Review on this page ↓</Link>
       </div>
     </div>:<p className="prototype-mentor-summary-empty">No final submission has been recorded for this project yet.</p>}
     <section className="prototype-mentor-chart-card" aria-label="Final submission readiness">
-      <h3>Ready for review · recorded prerequisites</h3>
+      <Heading level={3}>Ready for review · recorded prerequisites</Heading>
       <ul className="prototype-mentor-overview-actions">
         {prechecks.map(item=><li key={item.key}>
           <strong>{item.state==="MET"?"✓":item.state==="PAST_TARGET"?"!":
@@ -535,7 +537,7 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         remain advisory; the submit action always rechecks the saved state.</p>
     </section>
     {previous?<section className="prototype-mentor-delivery-history">
-      <h3>Previous attempt · version {previous.version}</h3>
+      <Heading level={3}>Previous attempt · version {previous.version}</Heading>
       <p>{previous.status.replaceAll("_"," ")}</p>
       {previousFeedback?.feedback?<p>Previous reviewer feedback: {previousFeedback.feedback}</p>:
         <p>No reviewer feedback recorded for the previous attempt.</p>}
@@ -623,7 +625,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
             updatedAt:task.updatedAt.toISOString(),
             estimatePoints:task.estimatePoints}))}/>:null}
     <section className="prototype-mentor-chart-card">
-      <div className="prototype-mentor-card-title"><h2>Where they are</h2>
+      <div className="prototype-mentor-card-title"><Heading level={2}>Where they are</Heading>
         <span>{completed.length} of {live.length} recorded tasks done</span></div>
       <div className="prototype-mentor-health-summary">
         <strong>{progress}% of recorded tasks complete</strong>
@@ -636,7 +638,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
     </section>
     <section className="prototype-mentor-chart-card" aria-label="Signed-off sprint velocity">
       <div className="prototype-mentor-card-title">
-        <h2>Momentum · signed-off sprint results</h2>
+        <Heading level={2}>Momentum · signed-off sprint results</Heading>
         <Link href={base+"?tab=sprints"}>Sprint history →</Link>
       </div>
       <div className="prototype-mentor-health-summary">
@@ -677,7 +679,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
     </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title">
-        <h2>{active?"Sprint "+active.sequence+" · "+active.title:"Current sprint"}</h2>
+        <Heading level={2}>{active?"Sprint "+active.sequence+" · "+active.title:"Current sprint"}</Heading>
         <Link href={base+"?tab=board"}>Board →</Link>
       </div>
       <div className="prototype-mentor-status-grid">
@@ -691,7 +693,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
         </Link>)}
       </div>
       {blocked.length?<div className="prototype-mentor-overview-actions">
-        <h3>Recorded blockers · Sprint {active?.sequence}</h3>
+        <Heading level={3}>Recorded blockers · Sprint {active?.sequence}</Heading>
         {blocked.map(task=>{
           const age=workspace.mentorBlockedTaskAges[task.id];
           return <Link key={task.id}
@@ -708,7 +710,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
     </section>
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title">
-        <h2>Team · {active?"Sprint "+active.sequence:"No active sprint"}</h2>
+        <Heading level={2}>Team · {active?"Sprint "+active.sequence:"No active sprint"}</Heading>
         <Link href={base+"?tab=performance"}>All student performance →</Link>
       </div>
       {students.length?<ul className="prototype-mentor-overview-actions">
@@ -728,7 +730,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
       </ul>:<p className="prototype-mentor-summary-empty">No learners assigned yet.</p>}
     </section>
     <section className="prototype-mentor-chart-card">
-      <div className="prototype-mentor-card-title"><h2>Needs you on this project</h2></div>
+      <div className="prototype-mentor-card-title"><Heading level={2}>Needs you on this project</Heading></div>
       {attentionItems.length?<MentorProjectFocusQueue items={attentionItems}
         initialLater={initialLater}/>:<div className="prototype-mentor-overview-actions">
         {awaiting.length?<Link href={base+"?tab=board&lane=IN_REVIEW"}>
@@ -753,7 +755,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
       </div>}
     </section>
     <section className="prototype-mentor-chart-card">
-      <div className="prototype-mentor-card-title"><h2>Next meeting</h2>
+      <div className="prototype-mentor-card-title"><Heading level={2}>Next meeting</Heading>
         <Link href={base+"?tab=meetings"}>All meetings →</Link></div>
       {nextMeeting?<div className="prototype-mentor-overview-actions">
         <strong>{nextMeeting.title}</strong>
@@ -789,16 +791,16 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
           This is meeting attendance data, not invitation acceptance.</p>:null}
         {nextMeeting.agenda?<p>Agenda: {nextMeeting.agenda}</p>:<p>
           No meeting agenda recorded.</p>}
-        {safeProjectExternalHref(nextMeeting.meetingUrl)?<a
+        {safeProjectExternalHref(nextMeeting.meetingUrl)?<TextLink
           href={safeProjectExternalHref(nextMeeting.meetingUrl)!}
-          rel="noopener noreferrer">Join meeting ↗</a>:null}
+          rel="noopener noreferrer">Join meeting ↗</TextLink>:null}
         <Link href={base+"?tab=team#meeting-"+encodeURIComponent(nextMeeting.id)}>
           Open this meeting →
         </Link>
       </div>:<p className="prototype-mentor-summary-empty">No upcoming meeting recorded.</p>}
     </section>
     <section className="prototype-mentor-chart-card">
-      <div className="prototype-mentor-card-title"><h2>Latest project activity</h2>
+      <div className="prototype-mentor-card-title"><Heading level={2}>Latest project activity</Heading>
         <Link href={base+"?tab=activity"}>All activity →</Link></div>
       {recentActivity.length?recentActivity.map(update=>(
         <div key={update.id} className="prototype-mentor-overview-actions">
@@ -817,7 +819,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
       )):<p className="prototype-mentor-summary-empty">No project activity recorded yet.</p>}
     </section>
     <section className="prototype-mentor-chart-card">
-      <div className="prototype-mentor-card-title"><h2>Final submission</h2>
+      <div className="prototype-mentor-card-title"><Heading level={2}>Final submission</Heading>
         <Link href={base+"?tab=delivery"}>Open review →</Link></div>
       <div className="prototype-mentor-overview-actions">
         <p>{signedOff} of {workspace.sprints.length} recorded sprints signed off
@@ -855,22 +857,22 @@ export function MentorPrototypeProjectBrief({workspace,readOnly=false}:{workspac
   const dates=[workspace.project.startDate,workspace.project.endDate].filter(Boolean);
   return <section className="prototype-mentor-project-brief" aria-label="About this project">
     <div className="prototype-mentor-card-title">
-      <h2>About this project · what students see on their Overview</h2>
+      <Heading level={2}>About this project · what students see on their Overview</Heading>
       {!readOnly&&workspace.project.status==="ACTIVE"?
         <Link href="#mentor-project-brief-editor">Edit project brief ↓</Link>:null}
     </div>
     <div className="prototype-mentor-brief-body">
-      <div><h3>Goal</h3><p>{goal||description||"No project goal has been recorded."}</p></div>
-      {description&&description!==goal?<div><h3>Description</h3><p>{description}</p></div>:null}
-      <div><h3>Deliverables</h3>
+      <div><Heading level={3}>Goal</Heading><p>{goal||description||"No project goal has been recorded."}</p></div>
+      {description&&description!==goal?<div><Heading level={3}>Description</Heading><p>{description}</p></div>:null}
+      <div><Heading level={3}>Deliverables</Heading>
         {deliverables.length?<ol>{deliverables.map((item,index)=><li key={index}>{item}</li>)}</ol>
           :<p>No deliverables recorded.</p>}
       </div>
-      <div><h3>Done looks like</h3>
+      <div><Heading level={3}>Done looks like</Heading>
         {done.length?<ul>{done.map((item,index)=><li key={index}>{item}</li>)}</ul>
           :<p>No completion conditions recorded.</p>}
       </div>
-      {personas.length?<div><h3>Who it’s for</h3>
+      {personas.length?<div><Heading level={3}>Who it’s for</Heading>
         <ul>{personas.map((item,index)=><li key={index}>{item}</li>)}</ul>
       </div>:null}
       <dl>

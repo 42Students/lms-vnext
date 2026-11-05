@@ -129,7 +129,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
         aria-describedby={describedBy}
         aria-errormessage={error && !unavailable ? `${id}-error` : props["aria-errormessage"]}
         aria-required={required || undefined}
-        className="block min-h-9 max-[767px]:min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[14px] text-[var(--lms-form-ink)] file:mr-3 file:rounded-[var(--lms-radius-control)] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-3 file:py-2 file:text-sm file:font-semibold file:cursor-pointer file:transition-colors file:duration-150 hover:file:bg-[var(--lms-primary-subtle)] disabled:file:cursor-not-allowed disabled:file:opacity-50 file:text-[var(--lms-primary-text)] aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[var(--lms-error-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-invalid:focus-visible:outline-[var(--lms-error)] disabled:opacity-50 motion-reduce:transition-none" />}
+        className="block min-h-9 max-md:min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[14px] text-[var(--lms-form-ink)] file:mr-3 file:rounded-[var(--lms-radius-control)] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-3 file:py-2 file:text-sm file:font-semibold file:cursor-pointer file:transition-colors file:duration-[var(--lms-motion-fast)] hover:file:bg-[var(--lms-primary-subtle)] disabled:file:cursor-not-allowed disabled:file:opacity-50 file:text-[var(--lms-primary-text)] aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[var(--lms-error-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-invalid:focus-visible:outline-[var(--lms-error)] disabled:opacity-50 motion-reduce:transition-none" />}
     {helper ? <p id={`${id}-help`} className="text-[13px] leading-5 text-[var(--lms-body-text)]">{helper}</p> : null}
     {showSelectedFiles && selectedNames.length > 0 && !pickerUnavailable && !disabled
       ? <ul aria-label="Selected files" className="space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
@@ -137,7 +137,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
         </ul> : null}
     {showSelectedFiles && selectedNames.length > 0 && !unavailable
       ? <Button type="button" variant="ghost" size="sm" onClick={clearSelection}
-          className="!min-h-9 !px-2 max-[767px]:!min-h-11" aria-label="Remove selected files">
+          className="!min-h-9 !px-2 max-md:!min-h-11" aria-label="Remove selected files">
           Remove selected files
         </Button> : null}
     {showImagePreview && previewFile && previewUrl && !pickerUnavailable && !disabled
@@ -152,7 +152,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
     {percentage !== null && selectedNames.length > 0 && !pickerUnavailable && !disabled
       ? <div role="progressbar" aria-label={`${label} upload progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentage}
           className="h-2 w-full overflow-hidden rounded-full bg-[var(--lms-primary-light)]">
-          <div className="h-full rounded-full bg-[var(--lms-primary)] transition-[width] duration-150 motion-reduce:transition-none" style={{ width: `${percentage}%` }} />
+          <div className="h-full rounded-full bg-[var(--lms-primary)] transition-[width] duration-[var(--lms-motion-fast)] motion-reduce:transition-none" style={{ width: `${percentage}%` }} />
         </div> : null}
     {error && !unavailable ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error-text)]">{error}</p> : null}
     {fallback ? <div className="min-w-0 space-y-2">{fallback}</div> : null}

@@ -15,6 +15,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {Dialog} from "@/components/ui/dialog";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {useToast} from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;legacyField?:string|null;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdByName?:string|null;
@@ -132,7 +133,7 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
   {error?<InlineNotice tone="error" message={error}/>:null}
   {success?<InlineNotice tone="success" message={success}/>:null}
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h2 className="font-semibold text-[var(--lms-heading)]">Change requests</h2>
+   <Heading level={2} className="text-[var(--lms-heading)]">Change requests</Heading>
    <Button type="button" disabled={busy} onClick={()=>{setError("");setComposerOpen(true);}}>Request a change</Button>
   </div>
   <Dialog open={composerOpen} title="Request a change" dismissible={!busy}
@@ -144,14 +145,14 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
    }}>
    <div className="min-w-0 space-y-3">
    <p className="text-sm text-body leading-[22px]">Both sides can discuss, accept, answer or decline. Accepting a proposal applies the agreed value to the drive; answering a named field updates it too.</p>
-   <div className="grid gap-3 min-[768px]:grid-cols-2">
+   <div className="grid gap-3 md:grid-cols-2">
     {field&&field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">How
      <Select value={mode}
       onChange={e=>{setMode(e.target.value as "SUGGEST"|"ASK");setValue("");setFieldError("");}}
-      className="min-h-11 min-[768px]:min-h-9"><option value="SUGGEST">Propose</option><option value="ASK">Ask</option></Select></label>:null}
+      className="min-h-11 md:min-h-9"><option value="SUGGEST">Propose</option><option value="ASK">Ask</option></Select></label>:null}
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What should change
      <Select value={field} onChange={e=>{setField(e.target.value as typeof field);setValue("");setFieldError("");}}
-      className="min-h-11 min-[768px]:min-h-9">
+      className="min-h-11 md:min-h-9">
       <option value="">Choose a field</option>{fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
    </div>
    {field&&field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -159,14 +160,14 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
     {mode==="SUGGEST"&&field==="DEADLINE"?
       <Input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
        onFocus={e=>{e.currentTarget.min=minIstDateTime();}}
-       className="min-h-11 min-[768px]:min-h-9"/>:
+       className="min-h-11 md:min-h-9"/>:
      mode==="SUGGEST"&&["CTC","STIPEND","MIN_CGPA","PAY"].includes(field)?
       <Input type="number" min={0} max={field==="MIN_CGPA"?10:field==="CTC"?1000:undefined}
        step="0.01" value={value} onChange={e=>setValue(e.target.value)}
-       className="min-h-11 min-[768px]:min-h-9"/>:
+       className="min-h-11 md:min-h-9"/>:
      mode==="SUGGEST"&&(field==="WORK_MODE"||field==="JOB_TYPE")?
       <Select value={value} onChange={e=>setValue(e.target.value)}
-       className="min-h-11 min-[768px]:min-h-9">
+       className="min-h-11 md:min-h-9">
        <option value="">Choose an option</option>
        {(field==="WORK_MODE"?DRIVE_CHANGE_EDITOR_OPTIONS.WORK_MODE:
          DRIVE_CHANGE_EDITOR_OPTIONS.JOB_TYPE).map(option=>
@@ -175,13 +176,13 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
       <Textarea value={value} onChange={e=>{setValue(e.target.value);setFieldError("");}} minLength={2}
        maxLength={field==="ROLE_TITLE"||field==="LOCATION"?255:2000}
        rows={field==="DESCRIPTION"?5:3}
-       className="min-h-11 min-[768px]:min-h-9"/>}
+       className="min-h-11 md:min-h-9"/>}
     </label>:null}
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
     {field==="OTHER"?"Say what should change":"Why is this needed? (optional)"}
     <Textarea value={reason} onChange={e=>{setReason(e.target.value);setFieldError("");}}
      minLength={field==="OTHER"?3:undefined}
-     maxLength={1000} rows={2} className="min-h-11 min-[768px]:min-h-9"/></label>
+     maxLength={1000} rows={2} className="min-h-11 md:min-h-9"/></label>
    {fieldError?<p role="alert" className="text-xs text-error">{fieldError}</p>:null}
    <Button type="button" disabled={busy||!canSubmitRequest}
     onClick={()=>void send(createRequest)}
@@ -199,9 +200,9 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
   </ConfirmDialog>
   {(["COMPANY","TPO"] as const).map(proposer=><section key={proposer} className="space-y-3">
    <div className="flex flex-wrap items-center justify-between gap-2">
-    <h3 className="text-base font-semibold text-[var(--lms-heading)]">
+    <Heading level={3} size="base" className="text-[var(--lms-heading)]">
       {proposer==="COMPANY"?"Company requests":"Institutional requests (yours)"}
-    </h3>
+    </Heading>
     <span className="text-xs text-muted-foreground">{requests.filter(item=>item.proposerParty===proposer).length}</span>
    </div>
    {!requests.some(item=>item.proposerParty===proposer)?
@@ -211,7 +212,7 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
     requests.filter(item=>item.proposerParty===proposer).map(item=>
     <article id={"change-request-"+item.id} key={item.id} className="scroll-mt-24 space-y-3 border-b border-border py-5">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <h3 className="font-semibold">{LEGACY_DRIVE_CHANGE_FIELD_LABELS[item.field as keyof typeof LEGACY_DRIVE_CHANGE_FIELD_LABELS]??(item.legacyField??item.field).replaceAll("_"," ")} · {item.mode==="SUGGEST"?"propose":item.mode.toLowerCase()}</h3>
+      <Heading level={3}>{LEGACY_DRIVE_CHANGE_FIELD_LABELS[item.field as keyof typeof LEGACY_DRIVE_CHANGE_FIELD_LABELS]??(item.legacyField??item.field).replaceAll("_"," ")} · {item.mode==="SUGGEST"?"propose":item.mode.toLowerCase()}</Heading>
       <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status==="OPEN"?"Waiting":item.status==="DECLINED"||item.status==="REPLIED"?"Declined":item.status==="ANSWERED"?"Answered":item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
      {item.mode==="SUGGEST"?<p className="whitespace-pre-wrap break-words text-sm leading-[22px]">
@@ -249,12 +250,12 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
         <Input type="datetime-local" value={notes[item.id]??""}
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
          onFocus={e=>{e.currentTarget.min=minIstDateTime();}}
-         className="min-h-11 min-[768px]:min-h-9"/>:
+         className="min-h-11 md:min-h-9"/>:
        item.mode==="ASK"&&item.targetParty===party&&
         ["WORK_MODE","MODE","JOB_TYPE"].includes(item.legacyField??item.field)?
         <Select value={notes[item.id]??""}
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
-         className="min-h-11 min-[768px]:min-h-9">
+         className="min-h-11 md:min-h-9">
          <option value="">Choose an answer</option>
          {((item.legacyField??item.field)==="JOB_TYPE"?
            DRIVE_CHANGE_EDITOR_OPTIONS.JOB_TYPE:DRIVE_CHANGE_EDITOR_OPTIONS.WORK_MODE)
@@ -262,7 +263,7 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
         </Select>:
         <Textarea maxLength={2000} value={notes[item.id]??""}
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
-         rows={2} className="min-h-11 min-[768px]:min-h-9"/>}
+         rows={2} className="min-h-11 md:min-h-9"/>}
       </label>
       <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||!(notes[item.id]??"").trim()}

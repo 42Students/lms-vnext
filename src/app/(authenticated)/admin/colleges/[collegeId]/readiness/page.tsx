@@ -26,6 +26,7 @@ import {
 import type {
   CollegeReadinessStatus,
 } from "@/modules/colleges/readiness-model";
+import { Heading } from "@/components/ui/heading";
 
 function checkTone(
   status: CollegeReadinessStatus,
@@ -147,7 +148,7 @@ export default async function CollegeReadinessPage({
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white"
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]"
         >
           Recheck persisted readiness →
         </Link>
@@ -159,7 +160,7 @@ export default async function CollegeReadinessPage({
       <section aria-label="Domain and tenant readiness verdicts"
         className="grid gap-3 border-y border-border py-4 sm:grid-cols-2">
         <div className="min-w-0 space-y-2">
-          <h2 className="text-sm font-semibold">Domain login configuration</h2>
+          <Heading level={2} size="sm">Domain login configuration</Heading>
           <StatusBadge tone={readinessGates.domainLoginReady===null?"warning":
             readinessGates.domainLoginReady?"success":"error"}>
             {readinessGates.domainLoginReady===null?"Unknown":
@@ -172,7 +173,7 @@ export default async function CollegeReadinessPage({
           </p>
         </div>
         <div className="min-w-0 space-y-2">
-          <h2 className="text-sm font-semibold">Tenant setup completion</h2>
+          <Heading level={2} size="sm">Tenant setup completion</Heading>
           <StatusBadge tone={readinessGates.tenantSetupComplete===null?"warning":
             readinessGates.tenantSetupComplete?"success":"error"}>
             {readinessGates.tenantSetupComplete===null?"Incomplete evidence":
@@ -186,7 +187,7 @@ export default async function CollegeReadinessPage({
       </section>
       <section
         aria-label="Readiness summary"
-        className="grid gap-3 md:grid-cols-2 min-[1366px]:grid-cols-4"
+        className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
       >
         {[
           {
@@ -209,19 +210,19 @@ export default async function CollegeReadinessPage({
       </section>
 
       <section aria-label="Must fix before launch" className="min-w-0 space-y-3 border-t border-border pt-6">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Must fix before launch</h2>
+        <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Must fix before launch</Heading>
         {mustFix.length===0
           ?<p role="status" className="text-sm text-body">All persisted readiness checks pass. Runtime DNS, login, teaching and placement verification are still required before launch.</p>
           :<ul className="list-disc space-y-2 pl-6 text-sm text-body">
             {mustFix.map(check=><li key={check.id}>
               <span className="font-semibold">{check.label} — {check.status==="FAIL"?"Not ready":"Unverified"}</span>
               <p className="mt-1">{check.remediation}</p>
-              <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4"
+              <Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4"
                href={readinessRemediationLink(check.id,college.id)}>Fix or verify this requirement →</Link>
             </li>)}
           </ul>}
       </section>
-      <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Recommended setup</h2>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Recommended setup</Heading>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
         
         {recommended.length?<ul className="mt-3 list-disc space-y-2 pl-6 text-sm text-body">
           {recommended.map(item=><li key={item}>{item}</li>)}
@@ -231,9 +232,9 @@ export default async function CollegeReadinessPage({
       <section className="border-t border-border pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           
-          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
+          <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
             Go-live checks
-          </h2>
+          </Heading>
           <StatusBadge
             tone={overallTone(
               evaluation.overall,
@@ -246,16 +247,16 @@ export default async function CollegeReadinessPage({
 
         <form method="get" role="search" aria-label="Readiness check filters" className="mt-[var(--lms-space-4)] grid min-w-0 items-end gap-[8px] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
           <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-40">Show checks
-            <Select name="status" defaultValue={parsed.status} className="min-h-11 min-[768px]:min-h-9">
+            <Select name="status" defaultValue={parsed.status} className="min-h-11 md:min-h-9">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
             </Select>
           </label>
           <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-40">Setup area
-            <Select name="area" defaultValue={parsed.area} className="min-h-11 min-[768px]:min-h-9">
+            <Select name="area" defaultValue={parsed.area} className="min-h-11 md:min-h-9">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </Select>
-          </label><Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 md:w-auto">Filter</Button>
-          <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
+          </label><Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+          <Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
         </form>
         <p className="mt-2 text-xs text-muted-foreground">Showing {shownChecks.length} of {evaluation.checks.length} required checks; the overall verdict always uses all ten.</p>
         <p className="mt-2 text-sm leading-6 text-body">
@@ -278,10 +279,10 @@ export default async function CollegeReadinessPage({
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">
+                    <Heading level={3} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">
                       {index + 1}.{" "}
                       {check.label}
-                    </h3>
+                    </Heading>
 
                     <p className="mt-2 text-sm text-body">
                       {check.evidence}
@@ -300,7 +301,7 @@ export default async function CollegeReadinessPage({
                 {check.status !== "PASS" ? (
                   <p className="mb-0 mt-3 text-xs leading-5 text-muted-foreground">
                     Next step: {check.remediation}
-                    <Link href={readinessRemediationLink(check.id,college.id)} className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Open related setup →</Link>
+                    <Link href={readinessRemediationLink(check.id,college.id)} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Open related setup →</Link>
                   </p>
                 ) : null}
               </li>
@@ -309,7 +310,7 @@ export default async function CollegeReadinessPage({
         </ol>
       </section>
 
-      <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px]">Domain login readiness (legacy checks)</h2>}
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px]">Domain login readiness (legacy checks)</Heading>}
         className="min-w-0" contentClassName="space-y-3 pt-3 pb-4">
         <p className="text-sm text-body">Read-only persisted domain evidence, separate from the stricter operational go-live checklist. DNS and actual login must still be tested.</p>
         <dl className="grid gap-2 text-sm sm:grid-cols-2">
@@ -338,9 +339,9 @@ export default async function CollegeReadinessPage({
           {legacyDomainReadiness.recommendedActions.map(action=><li key={action}>{action}</li>)}
         </ul>:null}
       </Disclosure>
-      <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
           Additional setup evidence
-        </h2>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+        </Heading>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
         
 
         <p className="mt-2 text-sm leading-6 text-body">
@@ -380,9 +381,9 @@ export default async function CollegeReadinessPage({
         </dl>
       </Disclosure>
 
-      <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
           Readiness interpretation
-        </h2>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+        </Heading>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
 
         <p className="mt-2 text-sm leading-6 text-body">
           {evaluation.overall === "READY"
@@ -403,7 +404,7 @@ export default async function CollegeReadinessPage({
         </p>
       </Disclosure>
       <div className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export all persisted readiness checks (CSV) →</Link>
+      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Export all persisted readiness checks (CSV) →</Link>
       <p className="text-xs text-muted-foreground">Export includes all ten persisted checks even when the page filter hides some; runtime verification is not certified.</p>
       </div>
     </div>

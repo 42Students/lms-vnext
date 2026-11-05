@@ -9,6 +9,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getTpoJoiningTracker } from "@/modules/placements/tpo-joining-tracker-service";
 import { tpoJoiningTrackerQuerySchema } from "@/modules/placements/tpo-joining-tracker-model";
+import { Heading } from "@/components/ui/heading";
 
 export default async function TpoDriveJoiningPage({
   params,
@@ -68,7 +69,7 @@ export default async function TpoDriveJoiningPage({
               className="min-w-0 border-b border-border pb-4">
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.displayName}</h2>
+                  <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{item.displayName}</Heading>
                   <p className="mt-1 text-sm text-body leading-[22px]">{item.roleTitle}</p>
                   <Link
                     href={"/tpo/students/" + encodeURIComponent(item.membershipId) + "/history"}

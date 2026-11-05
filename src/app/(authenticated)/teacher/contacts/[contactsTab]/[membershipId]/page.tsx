@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-service";
 import { facultyContactRoleLabel,facultyContactDetailParamsSchema,facultyContactDetailHidden,facultyContactDirectoryQuery } from "@/modules/courses/faculty-contact-detail-model";
+import { Heading } from "@/components/ui/heading";
 
 export default async function FacultyContactDetailPage({
   params,searchParams,
@@ -35,13 +36,13 @@ export default async function FacultyContactDetailPage({
       </Link>} />
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
     <section className="min-w-0 border-b border-border pb-6">
-      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Public department</h2>
+      <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Public department</Heading>
       <p className="mt-3 text-sm text-body leading-[22px]">
         {contact.departmentName ?? "No department recorded"}
       </p>
     </section>
     <section className="min-w-0 border-b border-border pb-6">
-      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Current college roles</h2>
+      <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Current college roles</Heading>
       {contact.roles.length === 0
         ? <div role="status" className="mt-3 space-y-1 text-sm leading-5 text-body">
             <p className="font-semibold">No active roles recorded</p>

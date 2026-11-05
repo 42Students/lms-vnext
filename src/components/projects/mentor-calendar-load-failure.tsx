@@ -11,7 +11,7 @@ import { Banner } from "@/components/ui/banner";
 export function MentorCalendarLoadFailure({reason}:{reason?:"PROJECT_ACCESS_DENIED"|"UNKNOWN"}){
   const router=useRouter();
   return <div role="alert" aria-live="assertive"
-    className="rounded-[var(--lms-control-radius)] border-l-[3px] border-error bg-error-subtle p-4">
+    className="rounded-[var(--lms-control-radius)] border-l-2 border-error bg-error-subtle p-4">
     <Banner tone="error" action={<Button type="button" variant="secondary"
       onClick={()=>router.refresh()}>Retry</Button>}>
       {reason==="PROJECT_ACCESS_DENIED"?

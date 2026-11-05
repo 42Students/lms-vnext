@@ -12,6 +12,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 type Option = {
   id: string;
@@ -235,7 +236,7 @@ export function AcademicsCreatePanel({
 
   return (
     <section aria-label="Create academic records" className="grid min-w-0 items-start gap-x-[var(--lms-space-6)] gap-y-[var(--lms-space-4)] lg:grid-cols-2">
-      <Disclosure id="academic-create-period" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New academic period</h2>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
+      <Disclosure id="academic-create-period" title={<Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">New academic period</Heading>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
       <form
         onSubmit={createPeriod}
         aria-busy={pending}
@@ -325,7 +326,7 @@ export function AcademicsCreatePanel({
       </form>
       </Disclosure>
 
-      <Disclosure id="academic-create-program" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New program</h2>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
+      <Disclosure id="academic-create-program" title={<Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">New program</Heading>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
       <form
         onSubmit={createProgram}
         aria-busy={pending}
@@ -428,7 +429,7 @@ export function AcademicsCreatePanel({
       </form>
       </Disclosure>
 
-      <Disclosure id="academic-create-cohort" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New cohort / batch</h2>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
+      <Disclosure id="academic-create-cohort" title={<Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">New cohort / batch</Heading>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
       <form
         onSubmit={createCohort}
         aria-busy={pending}
@@ -577,7 +578,7 @@ export function AcademicsCreatePanel({
       </form>
       </Disclosure>
 
-      <Disclosure id="academic-create-section" title={<h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">New section</h2>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
+      <Disclosure id="academic-create-section" title={<Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">New section</Heading>} summaryClassName="!px-0" contentClassName="!pb-0" className="border-b border-[var(--lms-canvas-border)]">
       <form
         onSubmit={createSection}
         aria-busy={pending}

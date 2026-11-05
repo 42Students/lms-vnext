@@ -279,7 +279,7 @@ export function DateInput({
         aria-label={mode === "time" ? "Open time picker" : mode === "datetime-local" ? "Open date and time picker" : mode === "month" ? "Open month picker" : mode === "week" ? "Open week picker" : "Open date calendar"}
         aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? popupId : undefined}
         disabled={!enabled} onClick={toggle}
-        className="absolute right-1 top-0 !h-9 !w-9 !min-w-9 !rounded-[var(--lms-control-radius)] !border-0 !p-0 max-[767px]:!h-11 max-[767px]:!w-11">
+        className="absolute right-1 top-0 !h-9 !w-9 !min-w-9 !rounded-[var(--lms-control-radius)] !border-0 !p-0 max-md:!h-11 max-md:!w-11">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
           <rect x="3" y="5" width="18" height="16" rx="2" />
@@ -291,7 +291,7 @@ export function DateInput({
             onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
             onKeyDown={handleCalendarKey}
             data-slot={mode === "time" ? "legacy-time-picker" : mode === "datetime-local" ? "legacy-datetime-picker" : mode === "month" ? "legacy-month-picker" : mode === "week" ? "legacy-week-picker" : "legacy-date-calendar"}
-            className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] !rounded-[var(--lms-canvas-radius)] border border-[var(--lms-neutral-200)] bg-surface p-3 !shadow-[var(--lms-search-dropdown-shadow)] max-[767px]:fixed max-[767px]:inset-x-4 max-[767px]:bottom-[max(1rem,env(safe-area-inset-bottom))] max-[767px]:top-auto max-[767px]:max-h-[min(70dvh,30rem)] max-[767px]:!w-auto max-[767px]:overflow-y-auto max-[767px]:!p-2">
+            className="absolute right-0 top-[calc(100%_+_5px)] z-(--lms-z-overlay) w-[min(19rem,calc(100vw_-_2rem))] !rounded-[var(--lms-canvas-radius)] border border-[var(--lms-neutral-200)] bg-surface p-3 !shadow-(--lms-search-dropdown-shadow) max-md:fixed max-md:inset-x-4 max-md:bottom-[max(1rem,env(safe-area-inset-bottom))] max-md:top-auto max-md:max-h-[min(70dvh,30rem)] max-md:!w-auto max-md:overflow-y-auto max-md:!p-2">
             {mode !== "time"
               ? <div className="mb-3 flex items-center justify-between gap-2">
                   <Button type="button" variant="ghost" size="icon-sm"
@@ -311,7 +311,7 @@ export function DateInput({
                       const available = Array.from({ length: 60 }, (_, minute) => timeAllowed(hour, minute)).some(Boolean);
                       return <Button key={hour} data-picker-hour={hour} variant="ghost" type="button" size="sm" disabled={!available}
                         aria-pressed={draftHour === hour} onClick={() => setDraftHour(hour)}
-                        className="mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-[767px]:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
+                        className="mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
                         {pad2(hour)}
                       </Button>;
                     })}
@@ -322,7 +322,7 @@ export function DateInput({
                         disabled={!timeAllowed(draftHour, minute)}
                         aria-pressed={selected === `${pad2(draftHour)}:${pad2(minute)}`}
                         onClick={() => choose(`${pad2(draftHour)}:${pad2(minute)}`)}
-                        className="mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-[767px]:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
+                        className="mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
                         {pad2(minute)}
                       </Button>
                     ))}
@@ -337,12 +337,12 @@ export function DateInput({
                         !calendarStepAllowed(monthValue);
                       return <Button key={month} data-picker-month={index} type="button" variant="ghost" size="sm" disabled={Boolean(limited)}
                         aria-pressed={selected === monthValue} onClick={() => choose(monthValue)}
-                        className="!rounded-[6px] !border-0 !px-1 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-[767px]:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
+                        className="!rounded-[6px] !border-0 !px-1 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
                         {month.slice(0, 3)}
                       </Button>;
                     })}
                   </div>
-                : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End" className="min-w-0 text-center max-[767px]:gap-[2px] max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]">
+                : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End" className="min-w-0 text-center max-md:gap-[2px] max-md:[grid-template-columns:repeat(7,minmax(44px,1fr))]">
               {weekdayLabels.map(day => <span key={day} aria-hidden="true"
                 className={cx("py-1 text-[12px] font-semibold leading-[20px]",
                   day === "Su" ? "text-[var(--lms-calendar-sunday)]" : "text-[var(--lms-muted-text)]")}>
@@ -362,24 +362,24 @@ export function DateInput({
                   data-outside={outsideMonth}
                   data-sunday={!outsideMonth && day.getDay() === 0}
                   onClick={() => { if (mode === "datetime-local") setDraftDate(candidate); else choose(candidate); }}
-                  className="!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px] focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-[767px]:!min-h-11 max-[767px]:!h-11 data-[outside=true]:!text-[var(--lms-neutral-400)] data-[sunday=true]:!text-[var(--lms-calendar-sunday)] aria-[current=date]:!text-[var(--lms-primary-text)] aria-[current=date]:!underline aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
+                  className="!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px] focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 max-md:!h-11 data-[outside=true]:!text-[var(--lms-neutral-400)] data-[sunday=true]:!text-[var(--lms-calendar-sunday)] aria-[current=date]:!text-[var(--lms-primary-text)] aria-[current=date]:!underline aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
                   {day.getDate()}
                 </Button>;
               })}
             </CalendarGrid>}
             {mode === "datetime-local"
-              ? <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2 border-t border-[var(--lms-neutral-200)] pt-3 max-[767px]:flex-col max-[767px]:items-stretch">
+              ? <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2 border-t border-[var(--lms-neutral-200)] pt-3 max-md:flex-col max-md:items-stretch">
                   <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Time
                     <Input type="time" step={Number(props.step ?? 60)} value={draftTime}
                       min={dateTimeMin.slice(0, 10) === draftDate ? dateTimeMin.slice(11, 16) : undefined}
                       max={dateTimeMax.slice(0, 10) === draftDate ? dateTimeMax.slice(11, 16) : undefined}
                       onChange={event => setDraftTime(event.currentTarget.value)}
-                      className="max-[767px]:min-h-11" />
+                      className="max-md:min-h-11" />
                   </label>
                   <Button type="button" variant="primary" size="sm"
                     disabled={!canApplyDateTime} onClick={() => choose(dateTimeCandidate)}
-                    className="max-[767px]:min-h-11 max-[767px]:w-full">Apply</Button>
+                    className="max-md:min-h-11 max-md:w-full">Apply</Button>
                 </div> : null}
           </PopoverPanel> : null}
     </div>

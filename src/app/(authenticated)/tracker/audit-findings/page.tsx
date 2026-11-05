@@ -24,6 +24,7 @@ import {independentAuditGithubConfigured} from "@/modules/bug-tracker/independen
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 export const metadata={title:"Audit findings · 42 Tracker"};
 export default async function IndependentFindingsPage({searchParams}:{
@@ -132,7 +133,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    <Input type="hidden" name="view" value={parsed.view}/>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="Search title, summary, id, file"/></label>
-   <div className="flex min-w-0 items-center gap-3 max-[767px]:[&>button]:flex-1">
+   <div className="flex min-w-0 items-center gap-3 max-md:[&>button]:flex-1">
     <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">Per page
      <Select name="size" defaultValue={String(parsed.size??50)} aria-label="Findings per page" className="min-h-11 md:min-h-9">
       {[25,50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
@@ -185,7 +186,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
    <p className="mt-1 text-xs text-muted-foreground">Sync is an explicit, authorized POST requiring an active unscoped Super Admin, same-origin access, repository credentials and a verified import ledger. Viewing this page never triggers a sync.</p>
    {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">
-    <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
+    <Heading level={3}>Files the importer refused or flagged ({sync.refusedCount})</Heading>
     <DataTable columns={refusedColumns} rows={sync.refusedFiles}
      getRowKey={item=>item.path+" · "+item.reason} caption="Files the importer refused or flagged"
      empty={<EmptyState title="No import details" description="Review importer logs for the remaining details."/>}/>

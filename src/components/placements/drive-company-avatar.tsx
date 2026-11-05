@@ -1,6 +1,7 @@
 "use client";
 
 import {useEffect,useState} from "react";
+import { Img } from "@/components/ui/img";
 
 /** Legacy PlacementsCompanyAvatar colour/hash and 56px employer hero.
  * Only public HTTPS logo URLs are eligible for remote rendering. Broken
@@ -30,7 +31,7 @@ export function DriveCompanyAvatar({name,logoUrl}:{name:string;logoUrl:string|nu
   className="inline-flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border"
   style={{background:showLogo?"var(--lms-white)":palette.bg,color:palette.text,
    fontSize:18,fontWeight:600}}>
-  {showLogo&&logoUrl?<img src={logoUrl} alt={name} loading="lazy"
+  {showLogo&&logoUrl?<Img src={logoUrl} alt={name} loading="lazy"
     referrerPolicy="no-referrer" className="h-full w-full object-contain p-1"
     onError={()=>setFailed(true)}/>:initial}
  </span>;

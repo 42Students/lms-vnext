@@ -16,6 +16,8 @@ import {z} from "zod";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoRoundResultTable} from "@/modules/placements/tpo-round-result-table-service";
 import {tpoRoundResultViewSchema,filterTpoRoundResultRows} from "@/modules/placements/tpo-round-result-table-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Props={params:Promise<{jobId:string;roundId:string}>;searchParams:Promise<{q?:string|string[];status?:string|string[];outcome?:string|string[];role?:string|string[];page?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoRoundResultTablePage({params,searchParams}:Props){
@@ -61,7 +63,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    </div>)}
   </section>
   <TpoRoundApplyControl jobId={jobId} roundId={roundId}/>
-  <p className="text-sm text-body"><a href="#bulk-round-results" className="font-semibold text-link underline">Paste or select learner results ↓</a> · <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"} className="text-link underline">Round schedule and venue</Link></p>
+  <p className="text-sm text-body"><TextLink href="#bulk-round-results">Paste or select learner results ↓</TextLink> · <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"} className="text-link underline">Round schedule and venue</Link></p>
   <details id="bulk-round-results" open className="group min-w-0 border-b border-border pb-4">
     <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">
       Bulk stage round results · paste rolls / select outcomes <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
@@ -121,7 +123,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    <section className="min-w-0 max-h-[420px] divide-y divide-border overflow-y-auto overscroll-contain border-y border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]" role="region" aria-label="Round result entries, scrollable roster" aria-describedby="round-result-roster-scroll-hint" tabIndex={0}>
     {visibleRows.map(row=><article key={row.applicationId} className="min-w-0 py-[var(--lms-space-4)]">
      <div className="mb-3">
-      <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.student??"Name unavailable"}</h2>
+      <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{row.student??"Name unavailable"}</Heading>
       <p className="text-sm text-body leading-[22px]">{row.rollNumber?"Roll no. "+row.rollNumber+" · ":""}{row.role} · {row.resultStatus??"No result"} · {row.outcome??"No outcome"}</p>
       <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.applicationId)+"#applicant-detail"}
        aria-label={"Open applicant details for "+(row.student??"learner")}

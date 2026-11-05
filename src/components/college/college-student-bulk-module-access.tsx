@@ -7,6 +7,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Dialog} from "@/components/ui/dialog";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 type Student={membershipId:string;name:string;active:boolean};
 type Preview={membershipId:string;name:string;effective:boolean;
  winnerLevel:string;winnerLocked:boolean;
@@ -80,7 +81,7 @@ export function CollegeStudentBulkModuleAccess({students}:{
  }
  const all=active.length>0&&active.every(row=>selected.includes(row.membershipId));
  return <section aria-label="Bulk student module access" className="space-y-3 border-b border-border pb-4">
-   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Bulk module access</h2>
+   <Heading level={2} size="base" className="text-[var(--lms-heading)]">Bulk module access</Heading>
    <p className="text-xs leading-5 text-muted-foreground">Choose students on this college roster page, preview effective access, then Enable, Disable or Clear override / Inherit. Projects and Electives can be overridden per learner; Placements access remains a college-level policy.</p>
    <label className="flex min-h-11 items-center gap-2 text-sm">
      <Checkbox checked={all} disabled={busy} onChange={event=>

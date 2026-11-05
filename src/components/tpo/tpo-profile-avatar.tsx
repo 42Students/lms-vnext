@@ -3,6 +3,7 @@ import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import { Img } from "@/components/ui/img";
 
 type AvatarSnapshot = {preview:string|null;version:number};
 const endpoint="/api/placements/tpo/profile/avatar";
@@ -85,7 +86,7 @@ export function TpoProfileAvatar({name,initials}:{name:string;initials:string}){
  return <div className="min-w-0 shrink-0 space-y-2">
   <div className="relative h-[120px] w-[120px]">
    <div className="flex h-[120px] w-[120px] items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-[color:var(--lms-border)] bg-[color:var(--lms-primary-subtle)] text-[36px] font-semibold text-[color:var(--lms-button-primary-hover)]">
-    {preview?<img src={preview} alt={name+"'s profile photo"} referrerPolicy="no-referrer"
+    {preview?<Img src={preview} alt={name+"'s profile photo"} referrerPolicy="no-referrer"
       className="h-full w-full object-cover"
       onError={()=>{setPreview(null);setError("Could not load the current photo. Retry to refresh it.");}}/>:
       <span role="img" aria-label={name+"'s profile photo is unavailable"}>{initials}</span>}

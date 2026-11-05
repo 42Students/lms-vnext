@@ -14,6 +14,7 @@ import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 import {ProjectTemplateCatalogueSearch} from "@/components/projects/project-template-catalogue-search";
 import {ProjectTemplateCatalogueExport} from "@/components/projects/project-template-catalogue-export";
 import {projectTemplateSectionCounts} from "@/modules/projects/project-template-catalogue-model";
+import { Heading } from "@/components/ui/heading";
 
 const basePath="/college/projects/templates";
 const pageSize=10;
@@ -85,13 +86,13 @@ export default async function CollegeProjectTemplatesPage({
   <PageHeader title="Project templates"
    description="Pick a template to start a new project workspace."/>
   <ProjectAdminNav basePath="/college/projects" active="templates"/>
-  <p role="status" className="border-l-[3px] border-info-border bg-info-subtle px-3 py-2 text-sm text-body">
+  <p role="status" className="border-l-2 border-info-border bg-info-subtle px-3 py-2 text-sm text-body">
    Published project templates are assigned to this college by a Super Admin.
    Pick a template to create a workspace for your learners.
   </p>
   <section aria-label="Templates" className="min-w-0 space-y-3">
    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
-    <h2 className="text-lg font-semibold text-foreground">Templates</h2>
+    <Heading level={2} size="lg" className="text-foreground">Templates</Heading>
     <div className="flex min-w-0 w-full flex-wrap items-center gap-2 sm:w-auto">
      <ProjectTemplateCatalogueSearch initialQuery={q}/>
      <ProjectTemplateCatalogueExport rows={rows}/>

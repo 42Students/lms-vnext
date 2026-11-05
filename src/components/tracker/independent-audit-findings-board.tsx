@@ -12,6 +12,7 @@ import {Banner} from "@/components/ui/banner";
 import {IndependentFindingActions} from "@/components/tracker/independent-finding-actions";
 import {IndependentFindingCopyAction} from "@/components/tracker/independent-finding-copy-action";
 import {auditFindingHistoryActionLabel} from "@/modules/bug-tracker/audit-finding-source-event-model";
+import { Heading } from "@/components/ui/heading";
 
 type Finding=typeof db10AuditFindings.$inferSelect;
 type FindingEvent={id:string;action:string;toValue:unknown;note:string|null;createdAt:string;fromStatus:string|null;toStatus:string|null};
@@ -151,7 +152,7 @@ export function IndependentAuditFindingsBoard({rows,view}:{
      severity={current.severity} currentAssignee={current.assignee}
      candidates={detail?.similar.map(s=>({id:s.id,externalId:s.externalId,title:s.title}))??[]}
      onUpdated={()=>setRetry(value=>value+1)}/>
-    <section className="space-y-2"><h3 className="font-semibold">History</h3>
+    <section className="space-y-2"><Heading level={3}>History</Heading>
      {detail?.events.length?<ol className="divide-y divide-[var(--lms-canvas-border)]">
       {detail.events.map(event=><li key={event.id} className="py-2 text-sm">
        <strong>{auditFindingHistoryActionLabel(event.action,event.toValue)}</strong> · {istDate(event.createdAt)}

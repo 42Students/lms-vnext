@@ -12,6 +12,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 type Workspace = {
   id: string;
@@ -249,9 +250,9 @@ export function ProjectMentorReassignment({
   return (
     <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <section className="border-b border-border pb-5">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <Heading level={2} size="base" className="m-0 text-foreground">
           Select workspaces
-        </h2>
+        </Heading>
         <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
           <Button variant="secondary" type="button" disabled={pending || !matchingWorkspaces.length}
             onClick={() => setSelected(matchingWorkspaces.map(row => row.id))}
@@ -336,9 +337,9 @@ export function ProjectMentorReassignment({
       </section>
 
       <section className="border-b border-border pb-5">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <Heading level={2} size="base" className="m-0 text-foreground">
           Reassign to new mentor
-        </h2>
+        </Heading>
         <p className="mt-2 text-sm leading-6 text-body">
           The previous primary mentor is replaced for the selected workspaces.
           Existing co-mentors and reviewers remain, tasks assigned to the outgoing mentor
@@ -450,7 +451,7 @@ export function ProjectMentorReassignment({
       {result ? (
         <section className="border-b border-border pb-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="m-0 text-base font-semibold text-foreground">Last result</h2>
+            <Heading level={2} size="base" className="m-0 text-foreground">Last result</Heading>
             <Button size="sm" variant="secondary" onClick={()=>setResult(null)}>
               Dismiss results</Button>
           </div>

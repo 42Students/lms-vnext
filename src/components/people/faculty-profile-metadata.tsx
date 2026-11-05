@@ -11,6 +11,7 @@ import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation"
 import {facultyProfileActiveSearch,facultyProfileSearchAfterInsertion,facultyProfileSearchSummary} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultyMetadataDraft,facultyMetadataDraftIssue,facultyProfileMetadataMatches,removeFacultyMetadataDraftEntry} from "@/modules/people/faculty-profile-draft-actions";
+import { Heading } from "@/components/ui/heading";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
  initial:FacultyProfileDocument["metadata"];pending:boolean;
  onSave:(section:FacultySelfSection,value:FacultyProfileDocument["metadata"])=>Promise<void>;
@@ -32,11 +33,11 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
  }
  return <form id={facultyProfileAnchor("metadata")} aria-label="Additional metadata" onSubmit={submit}
   className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-  <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)] md:text-lg">Additional metadata</h2>
+  <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)] md:text-lg">Additional metadata</Heading>
   <p className="text-sm text-muted-foreground leading-[22px]">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>
   {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find metadata
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-     className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
+     className="mt-1 min-h-11 w-full md:min-h-9"/>
    </label>:null}
   {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
@@ -45,14 +46,14 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No metadata fields match. Clear the search to view all.</p>:null}
   {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] md:items-end">
    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Field {index+1}
-    <Input className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full min-w-0"
+    <Input className="mt-[var(--lms-space-2)] min-h-11 md:min-h-9 w-full min-w-0"
      maxLength={120} required disabled={pending} value={row.key} onChange={event=>edit(row.id,"key",event.target.value)}/>
    </label>
    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Value
-    <Input className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full min-w-0"
+    <Input className="mt-[var(--lms-space-2)] min-h-11 md:min-h-9 w-full min-w-0"
      maxLength={5000} disabled={pending} value={row.value} onChange={event=>edit(row.id,"value",event.target.value)}/>
    </label>
-   <Button variant="secondary" type="button" disabled={pending} className="min-h-11 min-[768px]:min-h-9 px-3"
+   <Button variant="secondary" type="button" disabled={pending} className="min-h-11 md:min-h-9 px-3"
     onClick={async()=>{if(!(await askConfirm("Remove metadata field "+row.key+" from this unsaved draft?")))return;
      setRows(current=>removeFacultyMetadataDraftEntry(current,row.id));setDirty(true);}}>
     Remove draft
@@ -61,7 +62,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   {dirty&&issue?<Alert tone="error">{issue}</Alert>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap [&>button]:w-full sm:[&>button]:w-auto">
-   <Button variant="secondary" type="button" disabled={pending||rows.length>=100} className="min-h-11 min-[768px]:min-h-9"
+   <Button variant="secondary" type="button" disabled={pending||rows.length>=100} className="min-h-11 md:min-h-9"
      onClick={async()=>{
      setRows(current=>[...current,{id:crypto.randomUUID(),key:"",value:""}]);
      setSearch(current=>facultyProfileSearchAfterInsertion(current));setDirty(true);
@@ -69,8 +70,8 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
    {dirty?<Button variant="secondary" type="button" disabled={pending} onClick={async()=>{
     if(!(await askConfirm("Discard unsaved metadata edits?")))return;
     setRows(restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));setDirty(false);setError(null);
-   }} className="min-h-11 min-[768px]:min-h-9 px-4">Discard unsaved metadata</Button>:null}
-   <Button variant="primary" type="submit" disabled={pending||!dirty||Boolean(issue)} className="min-h-11 min-[768px]:min-h-9 px-4">
+   }} className="min-h-11 md:min-h-9 px-4">Discard unsaved metadata</Button>:null}
+   <Button variant="primary" type="submit" disabled={pending||!dirty||Boolean(issue)} className="min-h-11 md:min-h-9 px-4">
     {pending?"Saving…":"Save metadata"}
    </Button>
   </div>

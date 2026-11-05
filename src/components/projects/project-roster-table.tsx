@@ -8,6 +8,7 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProjectMemberActions } from "./project-team-controls";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 export type ProjectRosterRow = {
   id: string;
@@ -48,7 +49,7 @@ export function ProjectRosterTable({ projectId, rows }: {
   const hasActions=rows.some(member=>member.canEdit);
   return <section aria-label="Team members" className="min-w-0 space-y-3">
     <div>
-      <h3 className="text-base font-semibold text-[var(--lms-heading)]">Team roster ({rows.length})</h3>
+      <Heading level={3} size="base" className="text-[var(--lms-heading)]">Team roster ({rows.length})</Heading>
       <p className="mt-1 text-sm text-body">Search, filter and compare task activity</p>
     </div>
     <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">

@@ -14,6 +14,8 @@ import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import {ownApplicationInterviewLinks} from "@/modules/placements/learner-application-interview-links-model";
 import {ownApplicationAssessmentLinks} from "@/modules/placements/learner-application-assessment-links-model";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 /** Cancellation detail is only shown when carried by a verified imported
  * posting. Absence is an explicit no-reason state, not a fabricated reason. */
@@ -97,7 +99,7 @@ export default async function LearnerPlacementApplicationsPage() {
 
       
       {rows.length>0?<section aria-label="Application cards" className="min-w-0 border-y border-border py-3">
-       <h2 className="mb-2 text-base font-semibold text-foreground">Your applications at a glance</h2>
+       <Heading level={2} size="base" className="mb-2 text-foreground">Your applications at a glance</Heading>
        <ul className="m-0 divide-y divide-border p-0">
         {rows.map(row=>{
          const logo=safeTpoBrandLogoUrl(row.company.logoPublicUrl);
@@ -116,7 +118,7 @@ export default async function LearnerPlacementApplicationsPage() {
           dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
          }).format(row.staffOptOutUntil)+" IST":null;
          return <li key={row.applicationId} className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-start">
-          {logo?<img src={logo} alt="" width={44} height={44}
+          {logo?<Img src={logo} alt="" width={44} height={44}
             referrerPolicy="no-referrer" className="h-11 w-11 shrink-0 rounded-[var(--lms-control-radius)] border border-border object-contain"/>
             :<span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle text-sm font-semibold text-muted-foreground">
               {row.company.name.slice(0,1).toUpperCase()}
@@ -158,7 +160,7 @@ export default async function LearnerPlacementApplicationsPage() {
 
       {!roundsRead.available ? <Alert tone="error">
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
-        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry round shortcuts</Link>
+        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry round shortcuts</Link>
       </Alert> : null}
       <Suspense fallback={<PageLoading label="Loading application filters" variant="row" count={8} />}>
         <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks}

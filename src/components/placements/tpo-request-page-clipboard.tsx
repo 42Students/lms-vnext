@@ -114,7 +114,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
      header:column.label,
      mobileLabel:column.label,
      mobilePriority:index===0?"primary" as const:"secondary" as const,
-     className:index===0?"md:sticky md:left-10 md:z-10 md:bg-surface":"",
+     className:index===0?"md:sticky md:left-10 md:z-(--lms-z-raised) md:bg-surface":"",
      cell:(row:TpoRequestClipboardRow)=>row[column.key]??"—",
     })),
    ]}

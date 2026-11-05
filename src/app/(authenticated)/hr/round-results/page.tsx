@@ -13,6 +13,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import {projectRecruiterRoundResults,recruiterResultTableHref,recruiterResultTableQuerySchema} from "@/modules/placements/recruiter-round-results-read-model";
+import { Heading } from "@/components/ui/heading";
 type Search={jobId?:string|string[];roundId?:string|string[];outcome?:string|string[]};
 export default async function HrRoundResultsPage({searchParams}:{searchParams:Promise<Search>}) {
  const context=await getCurrentRequestContext();
@@ -56,20 +57,20 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
    <PageHeader title="Round Results"
     description={workspace.company.name+" · "+workspace.college.name+" · "+workspace.job.title} />
-   <nav aria-label="Round review navigation" className="flex min-w-0 flex-col gap-x-5 gap-y-1 border-b border-border pb-3 text-sm min-[768px]:flex-row min-[768px]:items-center">
+   <nav aria-label="Round review navigation" className="flex min-w-0 flex-col gap-x-5 gap-y-1 border-b border-border pb-3 text-sm md:flex-row md:items-center">
      <Link href="/hr/round-results" className="inline-flex min-h-11 md:min-h-9 items-center font-medium text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Choose another drive</Link>
      <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open hiring rounds & staging</Link>
    </nav>
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="border-b border-border pb-4 md:pb-5">
-      <h2 className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">Choose round</h2>
+      <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Choose round</Heading>
       <Tabs className="mt-3" renderPanel={false} ariaLabel="Hiring rounds" value={selectedRound?.id??""}
         items={rounds.map(round=>({value:round.id,label:round.sequence+". "+round.name,
           href:recruiterResultTableHref({jobId:workspace.job.id,roundId:round.id})}))}/>
     </section>
     {results?<section className="space-y-4 border-b border-border pb-4 md:pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0"><h2 className="break-words font-semibold text-lg leading-7 text-[var(--lms-heading)]">{results.round.name}</h2>
+        <div className="min-w-0"><Heading level={2} size="lg" className="break-words leading-7 text-[var(--lms-heading)]">{results.round.name}</Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">{results.round.kind} · {counts?.all??0} eligible, shared candidates</p></div>
         <StatusBadge tone={results.round.status==="APPLIED"?"success":results.round.status==="STAGED"?"warning":"neutral"}>{results.round.status}</StatusBadge>
       </div>

@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { parseTpoAcademicImportCsv,parseTpoLegacyAcademicImportCsv,
   type TpoLegacyAcademicStagingRow } from "@/modules/placements/tpo-academic-preview-import-model";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type AcademicRow = ReturnType<typeof parseTpoAcademicImportCsv>[number];
 type AcademicWriteRow={
@@ -175,7 +176,7 @@ export function TpoAcademicImportWorkspace() {
       className="!max-w-[820px]" bodyClassName="max-h-[75dvh] space-y-3 overflow-y-auto">
       <p className="text-sm text-body">Match learners using their college roll numbers before importing CGPA, marks, backlogs, gaps or passing-year values. Verified corrections may include CGPA, marks, backlogs, gap years and passing year. Only selected matched learners are updated.</p>
       <details className="border-b border-border pb-3 text-sm text-muted-foreground">
-        <summary className="cursor-pointer py-2 text-[13px] font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Academic CSV requirements</summary><p>
+        <summary className="cursor-pointer py-2 text-[13px] font-semibold max-md:flex max-md:min-h-11 max-md:items-center">Academic CSV requirements</summary><p>
         Upload up to 5,000 rows of .xlsx or CSV for a scoped preview.
         Roll numbers are matched to active learners in this college, and
         ambiguous or duplicate rolls stay in Can't match. Verified imports
@@ -186,11 +187,11 @@ export function TpoAcademicImportWorkspace() {
       <p aria-label="Import with preview steps" className="text-xs text-muted-foreground print:hidden leading-[20px]">
         Choose file or paste rows → Preview matched and unmatched records → Confirm selected import.
       </p>
-      <a download="academic-import-template.csv"
+      <ButtonLink variant="secondary" download="academic-import-template.csv"
         href="data:text/csv;charset=utf-8,roll%2Ccgpa%2CtenthPct%2CtwelfthPct%2CugPct%2CgapYears%2CpassingYear%2Cbatch%2CactiveBacklogs%0A24A001%2C8.5%2C91%2C90%2C85%2C0%2C2026%2CBatch%202026%2C0%0A"
-        className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
+        className="print:hidden">
         Download a template
-      </a>
+      </ButtonLink>
       <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Drop a CSV or XLSX file here, or click to choose" accept=".csv,.xlsx,text/csv" maxBytes={10_000_000}
          disabled={busy} onFiles={files => void upload(files?.[0] ?? null)}/>
       <details className="border-t border-border pt-3 print:hidden"><summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">Or paste CSV rows</summary><label className="block min-w-0 text-[13px] font-semibold leading-4">Or paste CSV rows

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { fileStatusDescriptor, formatFileSize } from "@/modules/storage/ui-models";
 import { parseFileDownloadGrant, parseSubmissionFiles, storageApiError, type SubmissionFile } from "@/modules/courses/learner-storage-ui-model";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Obtain an expiration reference outside React render, on user initiation only. */
 function parseCurrentDownloadGrant(payload:unknown){
@@ -129,8 +130,8 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
         sandbox="allow-same-origin allow-downloads" referrerPolicy="no-referrer"
         loading="lazy" className="h-[520px] w-full rounded border border-border bg-surface"/>
       <p className="text-xs text-muted-foreground">
-        If the preview is unavailable, <a href={preview.url}
-          referrerPolicy="no-referrer" className="font-semibold text-primary-text underline">open this PDF</a>.
+        If the preview is unavailable, <TextLink href={preview.url}
+          referrerPolicy="no-referrer">open this PDF</TextLink>.
         This permission expires shortly.
       </p>
     </div>:null}

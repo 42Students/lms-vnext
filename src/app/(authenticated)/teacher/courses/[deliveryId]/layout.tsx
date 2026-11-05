@@ -9,6 +9,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseTabNavigation } from "@/components/courses/faculty-course-tab-navigation";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import { legacyFacultyCourseRouteIntent } from "@/modules/courses/faculty-course-navigation";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function FacultyCourseTabLayout({
   children,
@@ -40,10 +41,10 @@ export default async function FacultyCourseTabLayout({
       <PageHeader title="Course workspace"/>
       <ErrorState title="Could not load teacher course context"
         description="The course context could not be verified. Your assignment has not been assumed revoked."
-        action={<a href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+        action={<TextLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Retry
-        </a>}/>
+        </TextLink>}/>
     </div>;
   }
   const active = assignments.find((assignment) => assignment.deliveryId === deliveryId);

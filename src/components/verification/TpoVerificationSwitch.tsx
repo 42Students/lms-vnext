@@ -5,6 +5,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import { Heading } from "@/components/ui/heading";
 export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled:boolean;collegeId?:string}){
  const [enabled,setEnabled]=useState(initialEnabled);
  const [busy,setBusy]=useState(false);
@@ -26,7 +27,7 @@ export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled
  return <section aria-label="Placement-cell verification setting" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <div className="min-w-0 space-y-1">
-    <h2 className="font-semibold">The placement cell can verify profiles</h2>
+    <Heading level={2}>The placement cell can verify profiles</Heading>
     <p className="text-xs text-muted-foreground">Placement cell admins get this same page. Every decision is recorded with the name of who made it.</p>
    </div>
    <div className="flex items-center gap-2">

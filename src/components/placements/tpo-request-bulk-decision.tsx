@@ -11,6 +11,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {tpoRequestFailedRowsTsv} from "@/modules/placements/tpo-request-failed-rows-model";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
 
 type Row={id:string;studentName:string;requestType:string;expectedUpdatedAt:string;proofMissing?:boolean};
 const PROOF_SKIP_NOTE="No proof attached: open it to decide";
@@ -120,7 +121,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
  }
  return <section aria-label="Bulk request decisions" aria-busy={pending} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
-   <h2 className="min-w-0 text-[var(--lms-font-md)] font-semibold leading-[26px]">
+   <Heading level={2} className="min-w-0 text-[var(--lms-font-md)] leading-[26px]">
     <Button variant="ghost" type="button" aria-expanded={expanded} aria-controls={selectionId} disabled={pending}
      onClick={()=>setExpanded(value=>!value)}
      className="max-w-full">
@@ -129,7 +130,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
      </svg>
      Act on selected requests
     </Button>
-   </h2>
+   </Heading>
    <p role="status" className="min-w-0 text-[13px] leading-5 text-[var(--lms-body-text)]">
     {chosen.length} selected of {rows.length} waiting requests on this page.
    </p>

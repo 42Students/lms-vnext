@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Dialog} from "@/components/ui/dialog";
 import {apiFetch} from "@/lib/api-fetch";
+import { Heading } from "@/components/ui/heading";
 
 type Candidate={membershipId:string;displayName:string;hasTpoRole:boolean};
 const endpoint="/api/placements/tpo/settings/team";
@@ -38,7 +39,7 @@ export function TpoSettingsTeamManage({candidates,activeIds,available}:{
  }
  return <section className="space-y-3 border-b border-border pb-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h2 className="text-base font-semibold text-[var(--lms-heading)]">Manage placement team</h2>
+   <div><Heading level={2} size="base" className="text-[var(--lms-heading)]">Manage placement team</Heading>
     <p className="text-sm text-muted-foreground">Add an active faculty member or assign a TPO admin to this college’s placement team.</p></div>
    <Button type="button" disabled={!available} onClick={()=>{setOpen(true);setError("");}}>
     Add a team member
@@ -48,7 +49,7 @@ export function TpoSettingsTeamManage({candidates,activeIds,available}:{
   {success?<InlineNotice tone="success" message={success}/>:null}
   {open?<div role="dialog" aria-modal="true" aria-label="Add a team member"
     className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-   <h3 className="text-base font-semibold">Add a team member</h3>
+   <Heading level={3} size="base">Add a team member</Heading>
    <label className="block text-sm font-semibold" htmlFor="tpo-faculty-search">Faculty member</label>
    <Input id="tpo-faculty-search" value={query} disabled={busy} onChange={event=>{setQuery(event.target.value);setSelected("");}}
     placeholder="Search by name"/>

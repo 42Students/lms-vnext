@@ -6,6 +6,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 type Preferences = {
   preferredRoleTitles: string[];
@@ -162,9 +163,9 @@ export function LearnerPlacementPreferences({
   return (
     <section id="placement-job-preferences" className="scroll-mt-24 min-w-0 border-b border-border pb-5">
       <div className="border-b border-border py-4">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <Heading level={2} size="base" className="m-0 text-foreground">
           Opportunity preferences
-        </h2>
+        </Heading>
         <p className="mt-1 text-sm text-body">
           Tell the placement workspace what kinds of roles should surface first for you.
         </p>

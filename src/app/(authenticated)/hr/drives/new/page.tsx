@@ -170,8 +170,8 @@ export default async function RecruiterRequestDrivePage({
     </div>
     <nav className="min-w-0 space-y-2" aria-label="Recruiter drive links">
     <details className="min-w-0 border-t border-border pt-2">
-      <summary className="inline-flex min-h-11 w-full cursor-pointer items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:w-auto">More drive destinations</summary>
-      <div className="flex min-w-0 flex-col items-start gap-2 pb-2 min-[768px]:flex-row min-[768px]:flex-wrap">
+      <summary className="inline-flex min-h-11 w-full cursor-pointer items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">More drive destinations</summary>
+      <div className="flex min-w-0 flex-col items-start gap-2 pb-2 md:flex-row md:flex-wrap">
     <Link href={hrSentProposalsHref(collegeId)}
       className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 md:w-auto active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       View previously sent discussion proposals

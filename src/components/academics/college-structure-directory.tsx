@@ -25,6 +25,8 @@ import type {
 } from "@/modules/academics/college-structure-directory-service";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeClasses>>
@@ -56,7 +58,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         description={classes ? "Create class sections and manage their students, capacity and recurring sessions." :
           "Manage elective slots, course offerings and eligible students."}
         actions={<Link href="/college/academics"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Academic workspace
         </Link>}
       />
@@ -66,17 +68,16 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         aria-label={classes ? "Existing Classes/Sections" : "Elective slots"}>
         <header className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border p-4">
           <div>
-            <h2 className="text-base font-semibold text-foreground">
+            <Heading level={2} size="base" className="text-foreground">
               {classes ? "Existing Classes/Sections" : "Elective slots"}
-            </h2>
+            </Heading>
             <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")}
               {classes ? " classes" : " elective slots"}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <CollegeDirectoryRefresh />
-            {classes ? <a href={exportUrl}
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text"
-              aria-label="Export classes CSV">Export classes.csv</a> : null}
+            {classes ? <ButtonLink variant="secondary" href={exportUrl}
+              aria-label="Export classes CSV">Export classes.csv</ButtonLink> : null}
             {!classes && electiveOptions ? <CollegeSlotManager options={electiveOptions} /> : null}
           </div>
         </header>
@@ -386,7 +387,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               Filter
             </Button>
             {filtered ? <Link href={path}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               Clear
             </Link> : null}
           </div>

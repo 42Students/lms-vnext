@@ -13,6 +13,8 @@ import { createLearnerBoardTaskDialogNavigationGuard } from "@/modules/projects/
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useRouter } from "next/navigation";
 import { learnerBoardTaskHref, type LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export function LearnerBoardTaskDetailDialog({
   projectId, filters, task, sprintTitle, currentMembershipId, projectStatus, assigneeName, commentCount=0, submissionUrl=null,
@@ -61,35 +63,34 @@ export function LearnerBoardTaskDetailDialog({
       <div className="mt-[var(--lms-space-4)] flex min-w-0 justify-stretch sm:justify-end">
         <Link href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
           onClick={() => { navigatingRef.current.startNavigation(); }}
-          className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-center text-[14px] font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] sm:w-auto">Open task actions in Board</Link>
+          className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-center text-[14px] font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] sm:w-auto">Open task actions in Board</Link>
       </div>
-      <h3 className="mt-[var(--lms-space-5)] text-sm font-semibold">Submission</h3>
+      <Heading level={3} size="sm" className="mt-[var(--lms-space-5)]">Submission</Heading>
       <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-body">
         <span>{commentCount} comment{commentCount===1?"":"s"}</span>
         {safeProjectExternalHref(submissionUrl)?
-          <a href={safeProjectExternalHref(submissionUrl)??undefined} rel="noopener noreferrer"
-            className="text-primary-text underline">Submission link attached ↗</a>:null}
+          <TextLink href={safeProjectExternalHref(submissionUrl)??undefined} rel="noopener noreferrer">Submission link attached ↗</TextLink>:null}
       </div>
       {task.approach?<section className="mt-5" aria-label="Task approach">
-        <h3 className="font-semibold">Approach</h3>
+        <Heading level={3}>Approach</Heading>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.approach}</p>
       </section>:null}
       <section className="mt-5">
-        <h3 className="font-semibold">Details</h3>
+        <Heading level={3}>Details</Heading>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.description??"No task description provided."}</p>
       </section>
       <section className="mt-5">
-        <h3 className="font-semibold">Acceptance criteria</h3>
+        <Heading level={3}>Acceptance criteria</Heading>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.acceptanceCriteria??"No acceptance criteria recorded."}</p>
       </section>
       <section className="mt-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-        <h3 className="text-sm font-semibold">Done when</h3>
+        <Heading level={3} size="sm">Done when</Heading>
         <p className="mt-2 whitespace-pre-wrap text-sm text-body">{task.acceptanceCriteria || "No criteria recorded."}</p>
         {task.status === "BLOCKED" ? <p role="alert" className="mt-2 rounded-md border border-warning-border bg-warning-subtle p-2 text-sm">
           Blocked: {task.blockerReason || "No blocker note recorded."}
         </p> : null}
       </section>
-      <h3 className="mt-5 text-sm font-semibold">Comments</h3>
+      <Heading level={3} size="sm" className="mt-5">Comments</Heading>
       <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={task.updatedAt.toISOString()}
         canPost={projectStatus==="ACTIVE"&&Boolean(currentMembershipId)}/>

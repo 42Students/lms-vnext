@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 /** Six legacy-width table placeholders distinguish pending reads from empty success. */
 export default function DeletedWorkspacesLoading(){
@@ -10,7 +11,7 @@ export default function DeletedWorkspacesLoading(){
     Back to workspaces
    </Link>}/>
   <section aria-label="Deleted workspaces loading" role="status" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Deleted workspaces</h2>
+   <Heading level={2} size="base" className="text-[var(--lms-heading)]">Deleted workspaces</Heading>
    <p className="text-sm text-muted-foreground">Loading deleted workspaces…</p>
    <div className="min-w-0 overflow-x-auto">
     <Table className="min-w-[630px]">

@@ -56,12 +56,12 @@ export default async function TenantDirectory({searchParams}:{
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
     <Link href="/admin/domains"
-      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Domains</Link>
+      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-on-primary active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-on-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Domains</Link>
     <Link href="/admin/tenants/setup"
-      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Get this college ready to go live</Link>
+      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-on-primary active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-on-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Get this college ready to go live</Link>
     <TenantDirectoryCsvControl organizations={data.organizations} href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
     <Link href="/admin/tenants/create"
-      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Create an organization and its colleges
     </Link>
    </div>} />
@@ -77,7 +77,7 @@ export default async function TenantDirectory({searchParams}:{
     existing or archived tenants. Creating a college automatically selects its
     permitted safety scope before opening Launch setup.
   </Banner>
-  <form className="grid gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 xl:grid-cols-4">
+  <form className="grid gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search college, code, city or organization
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 md:min-h-9"/>

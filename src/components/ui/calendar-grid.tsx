@@ -14,7 +14,7 @@ export function CalendarGrid({
     <div
       data-slot="calendar-grid"
       className={cx(
-        "grid grid-cols-7 max-[767px]:overflow-x-auto max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]",
+        "grid grid-cols-7 max-md:overflow-x-auto max-md:[grid-template-columns:repeat(7,minmax(44px,1fr))]",
         variant === "hairline"
           ? "gap-px rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-200)]"
           : "gap-1",

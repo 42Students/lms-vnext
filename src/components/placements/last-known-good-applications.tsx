@@ -14,7 +14,7 @@ export function LastKnownGoodApplications({valid,retryHref,children}:{
  useEffect(()=>{if(valid)setSnapshot(children);},[valid,children]);
  if(valid||!snapshot)return <>{children}</>;
  return <section className="min-w-0 space-y-4" aria-label="Applications refresh failed">
-  <div role="alert" className="flex flex-wrap items-center gap-3 border-l-4 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+  <div role="alert" className="flex flex-wrap items-center gap-3 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
    <span>Unable to refresh applications. The previous page is shown below as outdated,
     read-only data and may have changed. Try again before taking any action.</span>
    <Link href={retryHref}
@@ -22,7 +22,7 @@ export function LastKnownGoodApplications({valid,retryHref,children}:{
     Retry applications
    </Link>
   </div>
-  <div inert className="min-w-0 opacity-75" aria-label="Outdated application snapshot">
+  <div inert className="min-w-0 opacity-80" aria-label="Outdated application snapshot">
    {snapshot}
   </div>
  </section>;

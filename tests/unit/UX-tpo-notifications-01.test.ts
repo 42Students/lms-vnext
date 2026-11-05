@@ -9,7 +9,7 @@ describe("UX-tpo-notifications-01 /tpo/notifications",()=>{
     // 44px on touch screens; legacy 36px controls are allowed only above
     // the tablet breakpoint and must not reduce the phone hit target.
     expect(source).toContain("min-h-11");
-    expect(source.replaceAll("md:min-h-9","").replaceAll("min-[768px]:min-h-9",""))
+    expect(source.replaceAll("md:min-h-9","").replaceAll("md:min-h-9",""))
       .not.toMatch(/\bmin-h-(?:9|10)\b/);
     expect(source).toMatch(/<PageHeader\b|<h1\b|redirect\(/);
   });

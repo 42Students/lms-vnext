@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {safeTpoFindResult, type TpoFindResult} from "@/components/shell/topbar/tpo-find-model";
+import { Heading } from "@/components/ui/heading";
 
 type Suggestion=TpoFindResult;
 const groups=["Recruiter Leads","Drives","Students","Companies"] as const;
@@ -56,7 +57,7 @@ export function TpoFourEntitySearch({initialQuery=""}:{initialQuery?:string}){
   </div>
   {term.length>=2&&!loading&&!error?<div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
     {groups.map(group=><section key={group} className="min-w-0 border border-border bg-surface p-3">
-      <h2 className="text-sm font-semibold text-foreground">{group}</h2>
+      <Heading level={2} size="sm" className="text-foreground">{group}</Heading>
       <ul className="mt-2 space-y-1 text-sm">
         {results.filter(item=>item.group===group).slice(0,5).map(item=><li key={item.href+item.label}>
           <Link href={item.href} className="inline-flex min-h-9 min-w-0 items-center break-words font-medium text-primary-text underline">

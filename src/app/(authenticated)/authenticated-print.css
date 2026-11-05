@@ -3,7 +3,7 @@
  * paper-template values. Keep G5 open until actual legacy output is compared.
  */
 @media print {
-  .lms-shell-frame { display:block !important; min-height:0 !important; background:white !important; }
+  .lms-shell-frame { display:block !important; min-height:0 !important; background:var(--lms-white) !important; }
   .lms-shell-frame [data-slot="legacy-sidebar"],
   .lms-shell-frame [aria-label="Application top bar"],
   .lms-shell-frame [data-slot="toast-stack"],
@@ -21,7 +21,7 @@
     display:block !important; width:100% !important; max-width:none !important;
     min-height:0 !important; overflow:visible !important;
     margin:0 !important; padding:0 !important; border:0 !important;
-    border-radius:0 !important; box-shadow:none !important; background:white !important;
+    border-radius:0 !important; box-shadow:none !important; background:var(--lms-white) !important;
   }
   .lms-shell-frame [data-slot="scroll-cue"],
   .lms-shell-frame [data-slot="scroll-cue"] > div,
@@ -56,7 +56,7 @@
 
   /* Preserve the existing TPO presentation report's document-only print behavior. */
   .lms-shell-frame [data-tpo-presentation-report] {
-    background:white !important;
+    background:var(--lms-white) !important;
     color:var(--lms-heading) !important;
   }
   .lms-shell-frame [data-tpo-presentation-report] [data-slot="page-header"] {

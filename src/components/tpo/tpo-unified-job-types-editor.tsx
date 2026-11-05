@@ -10,6 +10,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 export type EditableJobType = {
   id: string | null;
@@ -261,7 +262,7 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
       </div>
     </div>
     <section className="space-y-2">
-      <h3 className="text-sm font-semibold">Add a job type</h3>
+      <Heading level={3} size="sm">Add a job type</Heading>
       <div className="flex flex-wrap items-start gap-3">
         <div className="w-[220px] max-w-full">
           <Input aria-label="New job type" value={newName} maxLength={40}

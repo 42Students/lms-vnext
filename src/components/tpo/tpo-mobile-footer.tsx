@@ -26,7 +26,7 @@ export function TpoMobileFooter() {
     pathname === href || pathname.startsWith(href + "/"));
   return (
     <nav aria-label="TPO mobile footer"
-      className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid min-w-0 grid-cols-5 md:hidden">
+      className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-(--lms-z-shell) grid min-w-0 grid-cols-5 md:hidden">
       {links.map(link => {
         const active = link.label === "More" ? moreActive :
           pathname === link.href || pathname.startsWith(link.href + "/") ||

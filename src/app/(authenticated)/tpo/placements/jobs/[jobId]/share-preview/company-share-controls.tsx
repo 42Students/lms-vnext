@@ -13,6 +13,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Heading } from "@/components/ui/heading";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
 const SHARE_COLUMNS=[
  ["APPLICATION_ID","Applicant ID"],["NAME","Name"],["ROLL_NUMBER","Roll number"],
@@ -110,27 +111,27 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
  }
  return <section aria-label="Company applicant sharing"
    className="min-w-0 space-y-4 border-b border-border pb-4">
-  <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Share shortlisted applicants with a company</h2>
+  <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)]">Share shortlisted applicants with a company</Heading>
   <p className="text-sm text-body leading-[22px]">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
    have a maximum 90-day lifetime, use a separate six-digit code, and may be revoked immediately. Private notes stay excluded.</p>
   {!ready?<Alert tone="warning">
    External sharing is unavailable until its audited database migration is registered.
   </Alert>:<>
    <div className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2">
-    <label className="grid w-full min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Expires in days
+    <label className="grid w-full min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Expires in days
      <Select value={days} disabled={pending} onChange={event=>changeExpiry(event.target.value)}
       className="w-full">
       {[1,2,3,4,5,6,7,14,30,60,90].map(day=><option key={day} value={day}>{day}</option>)}
      </Select>
     </label>
-    <label className="grid w-full min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Please shortlist by
+    <label className="grid w-full min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Please shortlist by
      <Input type="date" value={shortlistBy} disabled={pending} onChange={event=>setShortlistBy(event.target.value)}
       />
     </label>
     <details className="group min-w-0 border-t border-border pt-3 sm:col-span-2">
       <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 py-2 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Columns to share ({selectedColumns.length} of 11 maximum) <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
       <fieldset className="min-w-0"><legend className="sr-only">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
-     <div className="grid min-w-0 gap-2 min-[768px]:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
+     <div className="grid min-w-0 gap-2 md:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
       <label key={key} className="inline-flex min-h-11 items-center gap-2 text-sm">
        <Checkbox checked={selectedColumns.includes(key)}
         disabled={pending||(!selectedColumns.includes(key)&&selectedColumns.length>=11)}
@@ -141,7 +142,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
       </fieldset>
     </details>
     <Button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
-     className="min-h-11 w-full min-[768px]:col-span-2 min-[768px]:w-auto min-[768px]:justify-self-end">
+     className="min-h-11 w-full md:col-span-2 md:w-auto md:justify-self-end">
      Create expiring link
     </Button>
    </div>
@@ -166,7 +167,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
      {link.audit.views} views · {link.audit.exports} CSV downloads
     </span>
     {!link.revokedAt?<Button type="button" variant="link" disabled={pending}
-     onClick={()=>setRevokeTarget(link.id)} className="min-h-11 w-full min-[768px]:ml-auto min-[768px]:w-auto md:min-h-9">Revoke</Button>:null}
+     onClick={()=>setRevokeTarget(link.id)} className="min-h-11 w-full md:ml-auto md:w-auto md:min-h-9">Revoke</Button>:null}
    </li>)}</ul>:<p className="text-sm text-body leading-[22px]">{companyShareEmptyMessage(status)}</p>}
   </>}
   <ConfirmDialog open={revokeTarget!==null} onOpenChange={open=>{if(!open)setRevokeTarget(null);}} pending={pending}

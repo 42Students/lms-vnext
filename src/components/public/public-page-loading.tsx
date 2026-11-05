@@ -4,6 +4,8 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import styles from "./public-screen.module.css";
+import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Keep the existing bounded loading recovery, but render it in the auth canvas. */
 export function PublicPageLoading({ label = "Loading your page..." }: { label?: string }) {
@@ -12,7 +14,7 @@ export function PublicPageLoading({ label = "Loading your page..." }: { label?: 
       <header className={`${styles.header} min-w-0`}>
         <Link href="/" className={styles.brand} aria-label="42LMS home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
+          <Img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
         </Link>
       </header>
       <div className={`${styles.center} min-w-0`}>
@@ -27,7 +29,7 @@ export function PublicPageLoading({ label = "Loading your page..." }: { label?: 
         <span>© {new Date().getFullYear()} 42LMS · JRSPF Technologies Pvt. Ltd.</span>
         <nav className={styles.footerLinks} aria-label="Footer">
           <Link href="/privacy-policy">Privacy</Link>
-          <a href="/assets/static/terms-and-conditions-view.html">Terms</a>
+          <TextLink href="/assets/static/terms-and-conditions-view.html">Terms</TextLink>
         </nav>
       </footer>
     </main>

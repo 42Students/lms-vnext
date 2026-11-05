@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterSelfProfile } from "@/modules/placements/recruiter-profile-service";
 import { getRecruiterSelfGrantOverview } from "@/modules/placements/recruiter-self-grants-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function HrProfilePage({ searchParams }: {
   searchParams?: Promise<{ collegeId?: string | string[] }>;
@@ -73,10 +74,10 @@ export default async function HrProfilePage({ searchParams }: {
 
       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,1fr)]">
        <div className="min-w-0">      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Your details</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Your details</Heading>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
         <details className="mt-2 min-w-0">
-          <summary className="flex min-h-11 cursor-pointer items-center text-xs font-semibold text-primary-text min-[768px]:min-h-9">About these details</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center text-xs font-semibold text-primary-text md:min-h-9">About these details</summary>
           <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</p>
           <p className="mt-2 max-w-2xl text-xs leading-5 text-muted-foreground">Edit your name, designation and optional mobile together, then choose Save changes. Your work email is how you sign in, so it can&apos;t be changed here.</p>
         </details>
@@ -104,12 +105,12 @@ export default async function HrProfilePage({ searchParams }: {
         className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6"
       >
         <div className="pb-2">
-          <h2
+          <Heading level={2} size="base"
             id="recruiter-current-grants"
-            className="text-base font-semibold text-[var(--lms-heading)]"
+            className="text-[var(--lms-heading)]"
           >
             College access
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
             This is a read-only view of your active
             college grants and employer relationships.
@@ -162,7 +163,7 @@ export default async function HrProfilePage({ searchParams }: {
       </section>
          
       <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Account</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Account</Heading>
         <dl className="mt-4 grid min-w-0 gap-4">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">College</dt>
@@ -181,12 +182,12 @@ export default async function HrProfilePage({ searchParams }: {
         aria-labelledby="recruiter-account-status"
         className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6"
       >
-        <h2
+        <Heading level={2} size="base"
           id="recruiter-account-status"
-          className="text-base font-semibold text-[var(--lms-heading)]"
+          className="text-[var(--lms-heading)]"
         >
           Recruiter account status
-        </h2>
+        </Heading>
         <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">

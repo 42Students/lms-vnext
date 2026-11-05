@@ -10,6 +10,7 @@ import {
   formatTpoBatchInviteSuccess,
   TPO_INVITATION_COPY,
 } from "@/modules/placements/tpo-batch-invitation-model";
+import { Heading } from "@/components/ui/heading";
 
 type Props = {
   batchId: string;
@@ -117,7 +118,7 @@ export function TpoBatchInvitationControl(props: Props) {
     const deadlinePassed = props.deadlinePassed;
     const sameDeadline = date === (props.deadline?.slice(0,10) ?? "");
     return <section aria-label="Registration deadline" className="min-w-0 space-y-3 border-y border-border py-4">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{deadlinePassed ? "Registration closed" : "Registration is open"}</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">{deadlinePassed ? "Registration closed" : "Registration is open"}</Heading>
       <label htmlFor={deadlineId} className="block text-sm font-semibold text-body">Register by</label>
       <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id={deadlineId} aria-label="Registration deadline" type="date"
         value={date} min={props.minDate} onChange={event => setDate(event.target.value)}
@@ -159,7 +160,7 @@ export function TpoBatchInvitationControl(props: Props) {
     </section>;
   }
   return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Invite batch">
-    <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</h2>
+    <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</Heading>
     <label className="block text-sm font-semibold text-body" htmlFor={invitationId}>{TPO_INVITATION_COPY.dateLabel}</label>
     <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id={invitationId} aria-label="Registration deadline" type="date" value={date} min={props.minDate}
       onChange={event => setDate(event.target.value)}

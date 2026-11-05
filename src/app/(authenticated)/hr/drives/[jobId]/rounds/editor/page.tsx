@@ -13,6 +13,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
+import { Heading } from "@/components/ui/heading";
 const KINDS=[["TALK","Discussion"],["TEST","Test"],["VENDOR_TEST","Vendor test"],["GD","Group discussion"],["INTERVIEW","Interview"]] as const;
 export default async function HrRoundsEditorPage({params}:{
  params:Promise<{jobId:string}>;
@@ -37,7 +38,7 @@ export default async function HrRoundsEditorPage({params}:{
    </nav>} />
   <section id="add-round" className="min-w-0 border-b border-border pb-4">
    <details open={rounds.length===0} className="min-w-0">
-    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[24px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Add a round</summary>
+    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] md:min-h-9 md:text-[24px] md:leading-[32px] lg:text-[var(--lms-font-3xl)] lg:leading-[40px] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Add a round</summary>
     <div className="mt-3 min-w-0">
    <form action={endpoint} method="post" className="grid min-w-0 gap-3 md:grid-cols-2">
     <Input type="hidden" name="action" value="CREATE"/>
@@ -57,15 +58,15 @@ export default async function HrRoundsEditorPage({params}:{
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (minutes)
      <Input name="durationMinutes" type="number" min={1} max={1440} className="w-full"/>
     </label>
-    <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 md:col-span-2 md:w-auto md:justify-self-start">Add round</Button>
+    <Button type="submit" className="min-h-11 w-full md:min-h-9 md:col-span-2 md:w-auto md:justify-self-start">Add round</Button>
    </form>
     </div>
    </details>
   </section>
   <section className="min-w-0 space-y-3">
-   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Current rounds ({rounds.length})</h2>
+   <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Current rounds ({rounds.length})</Heading>
    {rounds.length===0?<EmptyState title="No hiring rounds" description="This drive has no hiring rounds. Add a round using the form above."
-    action={<Link href="#add-round" className="inline-flex min-h-11 items-center text-primary-text underline min-[768px]:min-h-9">Add a round</Link>} />:null}
+    action={<Link href="#add-round" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Add a round</Link>} />:null}
    {rounds.length>0?<div className="hidden min-w-0 md:block">
     <HrRoundEditorGrid
      scopeKey={context.user.id+":"+jobId}
@@ -80,10 +81,10 @@ export default async function HrRoundsEditorPage({params}:{
    {rounds.map(round=><article id={"round-edit-"+round.id} key={round.id}
     className={"min-w-0 scroll-mt-24 space-y-2 border-b border-border py-4 "+
      (round.editable?"":"md:hidden")}>
-    <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between md:hidden"><h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{round.sequence}. {round.name}</h3>
+    <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between md:hidden"><Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{round.sequence}. {round.name}</Heading>
      <span className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone={round.status==="PENDING"?"warning":round.status==="COMPLETED"?"success":"neutral"}>{round.status}</StatusBadge></span></div>
     {round.editable?<details className="min-w-0">
-     <summary className="flex min-h-11 min-w-0 cursor-pointer items-center break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Change {round.sequence}. {round.name}</summary>
+     <summary className="flex min-h-11 min-w-0 cursor-pointer items-center break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Change {round.sequence}. {round.name}</summary>
      <form action={endpoint} method="post" className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
       <Input type="hidden" name="action" value="UPDATE"/><Input type="hidden" name="roundId" value={round.id}/>
       <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
@@ -100,7 +101,7 @@ export default async function HrRoundsEditorPage({params}:{
         <option value="">Not scheduled</option><option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
        </Select>
       </label>
-      <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 md:w-auto md:justify-self-start">Save changes</Button>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto md:justify-self-start">Save changes</Button>
      </form>
      </details>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
     {round.editable?<Link

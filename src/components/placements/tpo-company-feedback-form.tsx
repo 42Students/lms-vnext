@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Heading } from "@/components/ui/heading";
 
 export function TpoCompanyFeedbackForm({
   companyId,
@@ -55,7 +56,7 @@ export function TpoCompanyFeedbackForm({
 
   return (
     <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-      <h2 className="text-base font-semibold text-foreground">Record recruiter feedback</h2>
+      <Heading level={2} size="base" className="text-foreground">Record recruiter feedback</Heading>
       <p className="text-sm text-body">
         Internal note attached to an explicitly linked company contact. This does
         not send a message to the recruiter. Saving an activity moves a NEW CRM lead to CONTACTED.
@@ -77,7 +78,7 @@ export function TpoCompanyFeedbackForm({
       </label>
       {reviewing?<div role="group" aria-label="Review recruiter feedback" className="border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
         <p>Record this internal recruiter note? New CRM contacts become CONTACTED when an activity is logged.</p>
-        <Button type="button" variant="link" className="mt-2 min-h-11 max-[767px]:min-h-11" onClick={()=>setReviewing(false)}>Cancel review</Button>
+        <Button type="button" variant="link" className="mt-2 min-h-11 max-md:min-h-11" onClick={()=>setReviewing(false)}>Cancel review</Button>
       </div>:null}
       <Button type="button" disabled={busy || !leadId || note.trim().length < 3}
         onClick={() => void save()} className="w-full sm:w-auto"

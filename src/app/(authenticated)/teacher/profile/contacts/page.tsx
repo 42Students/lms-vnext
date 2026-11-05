@@ -5,6 +5,7 @@ import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact
 import {facultyProfileDocumentStorageReady} from "@/modules/people/faculty-profile-readiness";
 import {loadOwnFacultyProfileDocumentStaged} from "@/modules/people/faculty-profile-self.staged";
 import {FacultyContactEditor} from "@/components/people/faculty-contact-editor";
+import { Heading } from "@/components/ui/heading";
 
 export default async function FacultyOwnContactPage(){
  const context=await getCurrentRequestContext();
@@ -19,7 +20,7 @@ export default async function FacultyOwnContactPage(){
   description="Your registered contact numbers and email, with college-managed sign-in details."
   actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Profile</Link>}/>
  <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-6">
-  <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Registered identity contact</h2>
+  <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Registered identity contact</Heading>
   <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">
    <div><dt className="text-xs text-muted-foreground">Login email</dt>
     <dd className="mt-1 break-all text-sm leading-6 text-body">{data.loginEmail??"Not provided"}</dd></div>
@@ -29,7 +30,7 @@ export default async function FacultyOwnContactPage(){
   <p className="mt-3 text-xs text-muted-foreground leading-5">These identity fields are managed by your college and are not editable here.</p>
  </section>
  <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
-  <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Contacts</h2>
+  <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Contacts</Heading>
   {!editable?<p role="status" className="mt-2 text-sm text-body leading-[22px]">{data.reason}</p>:null}
   <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">
    <div><dt className="text-xs text-muted-foreground">Primary mobile</dt>

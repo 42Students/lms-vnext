@@ -13,6 +13,7 @@ import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 import {trySaveReportCsv} from "./report-interactive-table-download-model";
 import {reportTableCsv,reportTableTsv,type ReportCell} from "./report-interactive-table-export-model";
+import { Heading } from "@/components/ui/heading";
 
 type Cell=ReportCell;
 const stringValue=(value:Cell)=>value===null?"":String(value);
@@ -101,7 +102,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
        Close columns
       </Button>
       {headings.map((heading,index)=><label key={index}
-       className={"flex min-h-11 items-center gap-2 rounded-lg px-2 py-1 text-xs transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none "+
+       className={"flex min-h-11 items-center gap-2 rounded-lg px-2 py-1 text-xs transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none "+
         (!hidden.includes(index)&&hidden.length===headings.length-1
           ? "cursor-not-allowed opacity-50" : "hover:bg-primary-subtle active:bg-primary-subtle")}>
        <Checkbox checked={!hidden.includes(index)}
@@ -116,7 +117,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
      size="sm" className="min-h-11 md:min-h-9 print:hidden">Reset view</Button>
  </>);
  return <section className="space-y-3" aria-labelledby={headingId}>
-  <h2 id={headingId} className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{title}</h2>
+  <Heading level={2} size="base" id={headingId} className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">{title}</Heading>
   {rows.length===0?<EmptyState title="No report rows" description={emptyDescription}/>:<>
    <div data-report-toolbar className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-3">
     <label className="grid min-w-0 w-full max-w-xl gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search table
@@ -130,7 +131,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-5">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
-   <div data-report-toolbar className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-end gap-2 min-[768px]:hidden">
+   <div data-report-toolbar className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-end gap-2 md:hidden">
     <label className="grid flex-1 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sort rows by
      <Select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));

@@ -18,6 +18,8 @@ import { useToast } from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type ResultOutcome =
   | "PASS"
@@ -387,10 +389,10 @@ export function RecruiterResultControls({
             >
               <div className="border-b border-border pb-3">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <h2 className="m-0 text-base font-semibold text-foreground">
+                  <Heading level={2} size="base" className="m-0 text-foreground">
                     {round.sequence}.{" "}
                     {round.name}
-                  </h2>
+                  </Heading>
                   <StatusBadge
                     tone={
                       round.status ===
@@ -448,18 +450,18 @@ export function RecruiterResultControls({
                     : ""}
                 </p>
                 {round.meetingUrl ? (
-                  <a
+                  <TextLink
                     href={round.meetingUrl}
                     
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                    className="mt-2 inline-flex min-h-11 items-center text-xs md:min-h-9"
                   >
                     Open meeting →
-                  </a>
+                  </TextLink>
                 ) : null}
               </div>
 
-              {evaluative&&round.participants.length>0?<details className="hidden min-w-0 border-b border-border py-3 md:block"><summary className="min-h-9 cursor-pointer py-2 text-sm font-semibold max-[767px]:min-h-11">Round results overview</summary>
+              {evaluative&&round.participants.length>0?<details className="hidden min-w-0 border-b border-border py-3 md:block"><summary className="min-h-9 cursor-pointer py-2 text-sm font-semibold max-md:min-h-11">Round results overview</summary>
                 <RecruiterResultReviewGrid scopeKey={round.id}
                   rows={round.participants.map(person=>{
                     const draft=drafts[round.id+":"+person.applicationId];

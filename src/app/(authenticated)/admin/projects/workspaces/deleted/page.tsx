@@ -12,6 +12,7 @@ import {Pagination} from "@/components/ui/pagination";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 import {listPaginatedDeletedProjectWorkspaces} from "@/modules/projects/project-soft-delete-service";
+import { Heading } from "@/components/ui/heading";
 
 type Query={page?:string|string[];pageSize?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
@@ -68,7 +69,7 @@ export default async function DeletedAdminWorkspaceProjectsPage({
   <ProjectAdminNav basePath="/admin/projects" active="workspaces"/>
   {header}
   <section aria-label="Deleted workspaces" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-   <h2 className="mb-3 font-semibold text-[var(--lms-heading)]">Deleted workspaces</h2>
+   <Heading level={2} className="mb-3 text-[var(--lms-heading)]">Deleted workspaces</Heading>
    <Alert tone="error" title="Deleted workspaces could not be loaded">
     Could not load deleted workspaces. The selected college and filters have not changed.
     <Link href={deletedHref(parsed.page,parsed.pageSize)}
@@ -102,7 +103,7 @@ export default async function DeletedAdminWorkspaceProjectsPage({
   <ProjectAdminNav basePath="/admin/projects" active="workspaces"/>
   {header}
   <section aria-label="Deleted workspaces" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Deleted workspaces</h2>
+   <Heading level={2} size="base" className="text-[var(--lms-heading)]">Deleted workspaces</Heading>
    <DataTable columns={columns} rows={data.items} getRowKey={project=>project.id}
     caption="Deleted workspaces" mobileMode="scroll"
     className="min-w-0 [&_table]:min-w-[630px]"

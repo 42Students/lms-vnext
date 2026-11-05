@@ -5,6 +5,9 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Card } from "@/components/ui/card";
 import type { AdminCollegeBrandingPreview } from "@/modules/colleges/admin-branding-preview-model";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 
 function SignInStylePreview({
   branding,
@@ -19,11 +22,11 @@ function SignInStylePreview({
 
   const canvasStyle: CSSProperties = {
     backgroundColor: "var(--lms-primary-subtle)",
-    backgroundImage: "radial-gradient(circle at 14% 18%,rgba(10,124,136,.2),transparent 50%),radial-gradient(circle at 82% 84%,rgba(45,183,196,.18),transparent 55%)",
+    backgroundImage: "radial-gradient(circle at 14% 18%,color-mix(in srgb, var(--lms-button-primary) 20%, transparent),transparent 50%),radial-gradient(circle at 82% 84%,color-mix(in srgb, var(--lms-primary) 18%, transparent),transparent 55%)",
     ...(backgroundUrl
       ? {
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08)),url(" +
+            "linear-gradient(color-mix(in srgb, var(--lms-white) 8%, transparent),color-mix(in srgb, var(--lms-white) 8%, transparent)),url(" +
             JSON.stringify(backgroundUrl) +
             ")",
           backgroundSize: "cover",
@@ -39,13 +42,12 @@ function SignInStylePreview({
       style={{...canvasStyle,width:mobile?170:340,height:mobile?302:191,
         paddingTop:mobile?28:0,alignItems:mobile?"flex-start":"center"}}
     >
-      <div className="shrink-0 rounded-lg border border-[color:var(--lms-border)] bg-white p-[10px] shadow-md"
+      <div className="shrink-0 rounded-lg border border-[color:var(--lms-border)] bg-surface p-[12px] shadow-md"
         style={{width:mobile?138:128}}>
-        <div className="mb-[7px] flex items-center gap-[5px] border-b border-[color:var(--lms-border)] pb-[6px]">
+        <div className="mb-[8px] flex items-center gap-[6px] border-b border-[color:var(--lms-border)] pb-[6px]">
         {branding.logoUrl ? (
           // An existing pure helper has verified the public HTTPS logo URL.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Img
             src={branding.logoUrl}
             alt={branding.college.name + " logo"}
             className="h-4 w-4 shrink-0 object-contain"
@@ -104,7 +106,7 @@ export function CollegeBrandingPreview({
     <div className="min-w-0 space-y-6">
       <section aria-label="Stored branding preview" className="flex min-w-0 flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
         <div className="min-w-0 flex-1">
-          <h2 className="m-0 text-lg font-semibold leading-6 text-foreground">{branding.college.name} · Branding preview</h2>
+          <Heading level={2} size="lg" className="m-0 leading-6 text-foreground">{branding.college.name} · Branding preview</Heading>
           <p className="mt-1 text-sm text-body">Read-only college sign-in appearance for {branding.college.code}. No settings are modified.</p>
         </div>
         <StatusBadge tone={branding.brandingStored ? "success" : "neutral"}>
@@ -113,9 +115,9 @@ export function CollegeBrandingPreview({
       </section>
 
       <section className="border-t border-border pt-6">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <Heading level={2} size="base" className="m-0 text-foreground">
           College branding settings
-        </h2>
+        </Heading>
         <p className="mt-2 text-sm text-body">
           {branding.brandingStored
             ? "A college branding record exists. Individual unset or unsafe overrides use safe LMS defaults."
@@ -168,9 +170,9 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Support email</dt>
             <dd className="mt-1 text-body">
               {branding.supportEmail ? (
-                <a href={"mailto:" + branding.supportEmail} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                <TextLink href={"mailto:" + branding.supportEmail} className="lms-inline-link inline-flex min-h-11 items-center md:min-h-9">
                   {branding.supportEmail}
-                </a>
+                </TextLink>
               ) : "Not configured"}
             </dd>
           </div>
@@ -178,12 +180,12 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Support phone</dt>
             <dd className="mt-1 text-body">
               {branding.supportPhone ? (
-                <a
+                <TextLink
                   href={"tel:" + branding.supportPhone.replaceAll(/[ ()-]/g, "")}
-                  className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                  className="inline-flex min-h-11 items-center md:min-h-9"
                 >
                   {branding.supportPhone}
-                </a>
+                </TextLink>
               ) : "Not configured"}
             </dd>
           </div>
@@ -191,8 +193,8 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Terms</dt>
             <dd className="mt-1 text-body">
               {branding.termsUrl ? (
-                <a href={branding.termsUrl}
-                   className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open terms link</a>
+                <TextLink href={branding.termsUrl}
+                   className="inline-flex min-h-11 items-center md:min-h-9">Open terms link</TextLink>
               ) : "Not configured"}
             </dd>
           </div>
@@ -200,8 +202,8 @@ export function CollegeBrandingPreview({
             <dt className="font-semibold text-foreground">Privacy</dt>
             <dd className="mt-1 text-body">
               {branding.privacyUrl ? (
-                <a href={branding.privacyUrl}
-                   className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open privacy link</a>
+                <TextLink href={branding.privacyUrl}
+                   className="inline-flex min-h-11 items-center md:min-h-9">Open privacy link</TextLink>
               ) : "Not configured"}
             </dd>
           </div>
@@ -216,9 +218,9 @@ export function CollegeBrandingPreview({
       </section>
 
       <section aria-labelledby="branding-preview-title">
-        <h2 id="branding-preview-title" className="mb-2 text-base font-semibold text-foreground">
+        <Heading level={2} size="base" id="branding-preview-title" className="mb-2 text-foreground">
           Desktop and mobile sign-in style
-        </h2>
+        </Heading>
         <p className="mb-4 text-sm text-body">
           A compact approximation of the classic 42LMS sign-in layout. The real login page may use the selected college's saved public background and logo.
         </p>

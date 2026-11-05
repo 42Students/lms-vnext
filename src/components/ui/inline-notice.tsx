@@ -7,8 +7,8 @@ import { cx } from "@/lib/class-names";
 export type InlineNoticeProps = { tone: "error" | "success" | "info"; message: string; onDismiss?: () => void; successDismissMs?: number; role?: "alert" | "status" };
 
 const toneClasses = {
-  error: "border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
-  success: "border-[rgba(5,150,105,0.25)] bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
+  error: "border-[color-mix(in_srgb,var(--lms-error)_25%,transparent)] bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
+  success: "border-[color-mix(in_srgb,var(--lms-success)_25%,transparent)] bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
   info: "border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] text-[var(--lms-primary-text)]",
 } as const;
 
@@ -34,6 +34,6 @@ export function InlineNotice({ tone, message, onDismiss, successDismissMs = 5_00
     className={cx("flex min-w-0 items-start gap-3 rounded-[8px] border px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5", toneClasses[tone])}>
     <span className="min-w-0 flex-1 break-words">{message}</span>
     {onDismiss ? <Button type="button" variant="ghost" size="sm" onClick={onDismiss} aria-label="Dismiss notice"
-      className="min-w-11 shrink-0 px-2 text-[14px] font-[650] text-inherit underline enabled:hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Dismiss</Button> : null}
+      className="min-w-11 shrink-0 px-2 text-[14px] font-semibold text-inherit underline enabled:hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Dismiss</Button> : null}
   </div>;
 }

@@ -33,7 +33,7 @@ export function TpoMessagesTabs({selected}:{selected:MessagesTab}){
       aria-selected={selected===value}
       tabIndex={selected===value?0:-1}
       href={"/tpo/messages?tab="+value}
-      className={"inline-flex min-h-11 items-center border-b-[3px] px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 "+
+      className={"inline-flex min-h-11 items-center border-b-2 px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 "+
         (selected===value?"border-primary text-link":"border-transparent text-body hover:text-link")}>
       {value==="recruiters"?"Recruiters":"Team"}
     </Link>)}

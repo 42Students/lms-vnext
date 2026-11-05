@@ -8,6 +8,7 @@ import {Alert} from "@/components/ui/alert";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {getTpoPrepSelectionState} from "@/modules/placements/tpo-prep-selection-model";
+import { Heading } from "@/components/ui/heading";
 
 type PrepSaveResult={changed:boolean;updatedAt:string};
 export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choices:readonly {id:string;name:string;code:string}[];
@@ -52,24 +53,24 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
   }finally{submitting.current=false;setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 border-t border-border pt-4">
-  <h3 className="text-lg font-semibold text-foreground">Required preparation courses</h3>
+  <Heading level={3} size="lg" className="text-foreground">Required preparation courses</Heading>
   <p className="text-sm text-muted-foreground">Select active courses from this college only. TPO Students derives preparation support from saved learner course completions when published course evidence is available; missing progress remains unclassified.</p>
   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a preparation course
    <Input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
-    placeholder="Search course name or code" className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
+    placeholder="Search course name or code" className="mt-1 min-h-11 md:min-h-9 w-full"/>
   </label>
   <p className="text-xs text-muted-foreground">With none picked, nobody is marked as needing prep.</p>
   {missing.length>0?<Alert tone="warning">
    {missing.length} previously selected preparation course(s) are no longer active or available in this college.
    Remove the unavailable selections before saving; the existing policy has not been changed.
    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setSelected(current=>current.filter(id=>available.has(id)))}
-    className="mt-2 min-h-11 w-full sm:w-auto min-[768px]:min-h-9">Remove unavailable courses</Button>
+    className="mt-2 min-h-11 w-full sm:w-auto md:min-h-9">Remove unavailable courses</Button>
   </Alert>:null}
   <fieldset disabled={busy} className="min-w-0 max-h-72 overflow-y-auto border-t border-border">
    <legend className="text-sm">Courses used for readiness</legend>
    {choices.filter(course=>(course.name+" "+course.code).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))).length===0?<p role="status" className="px-3 py-4 text-sm text-muted-foreground">No preparation courses match your search.</p>:null}
    {choices.filter(course=>(course.name+" "+course.code).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))).map(course=>
-    <label key={course.id} className="flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center gap-2 border-b border-border px-3 text-sm hover:bg-surface-subtle focus-within:bg-primary-subtle">
+    <label key={course.id} className="flex min-h-11 md:min-h-9 min-w-0 items-center gap-2 border-b border-border px-3 text-sm hover:bg-surface-subtle focus-within:bg-primary-subtle">
      <Checkbox checked={selected.includes(course.id)} onChange={e=>{
       setSelected(current=>e.target.checked?current.includes(course.id)?current:[...current,course.id]:
        current.filter(id=>id!==course.id));
@@ -79,10 +80,10 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum completed courses
    <Input type="number" min={0} max={selected.length} value={minimum} disabled={busy}
     onChange={e=>setMinimum(Number(e.target.value))}
-    className="mt-1 min-h-11 min-[768px]:min-h-9 w-full sm:w-28"/>
+    className="mt-1 min-h-11 md:min-h-9 w-full sm:w-28"/>
   </label>
   <Button type="button" disabled={busy||!dirty||!valid} onClick={()=>void save()}
-   className="min-h-11 min-[768px]:min-h-9 w-full sm:w-auto">
+   className="min-h-11 md:min-h-9 w-full sm:w-auto">
    {busy?"Saving…":"Save readiness policy"}
   </Button>
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}

@@ -9,6 +9,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { apiFetch } from "@/lib/api-fetch";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { DEFAULT_ATTENDANCE_POLICY } from "@/modules/attendance/policy-validation";
+import { Heading } from "@/components/ui/heading";
 
 type PolicyValues = {
   eligibilityThresholdPercent: number;
@@ -91,7 +92,7 @@ export function CollegeAttendancePolicyForm({
     return <section aria-label="College attendance policy" className="min-w-0 max-w-[920px] space-y-4 border-b border-[var(--lms-canvas-border)] pb-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-[var(--lms-heading)]">College attendance policy</h2>
+          <Heading level={2} size="lg" className="text-[var(--lms-heading)]">College attendance policy</Heading>
           <p className="mt-1 text-sm text-muted-foreground">These attendance policy fields are read-only for College Admin.</p>
         </div>
         <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
@@ -120,9 +121,9 @@ export function CollegeAttendancePolicyForm({
       className="min-w-0 max-w-[920px] space-y-[var(--lms-space-4)] [overflow-wrap:anywhere]"
     >
       <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-        <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" className="m-0 text-[var(--lms-heading)]">
           College attendance policy
-        </h2>
+        </Heading>
         <p className="mt-2 max-w-[65ch] text-sm leading-[22px] text-body">
           These values are stored for this college.
           The eligibility threshold highlights low

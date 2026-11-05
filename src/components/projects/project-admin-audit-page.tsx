@@ -26,6 +26,7 @@ import { mayReadGlobalProjectAudit } from "@/modules/projects/admin-audit-access
 import {z} from "zod";
 import {getProjectResourceHistory} from "@/modules/projects/resource-history-service";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 /** Mirrors the legacy destructive/access-changing action keys. Count each
  * raw activity item, not distinct projects or condensed groups. */
@@ -469,7 +470,7 @@ export async function ProjectAdminAuditPage({
       </div>
       {resourceWorkspaceId?<section aria-label="Project resource audit trail"
         className="min-w-0 space-y-3 border-y border-border py-4">
-        <h2 className="text-base font-semibold text-foreground">Resource audit trail</h2>
+        <Heading level={2} size="base" className="text-foreground">Resource audit trail</Heading>
         <p className="text-sm text-body">Resource changes are independent of the project activity filters above. Each event is scoped to the selected workspace and college.</p>
         <p className="text-xs text-muted-foreground">This trail includes changes to resources even when the main audit action or date filters exclude them. Sensitive file URLs and private content are redacted.</p>
         {!resourceRead?.ok?<p role="alert" className="text-sm text-error">Resource audit unavailable. Retry this workspace filter.</p>:
@@ -497,11 +498,11 @@ export async function ProjectAdminAuditPage({
                   </summary>
                   <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
                     <div className="min-w-0">
-                      <h3 className="mb-2 text-xs font-semibold text-muted-foreground">Before</h3>
+                      <Heading level={3} size="xs" className="mb-2 text-muted-foreground">Before</Heading>
                       {auditDetailValue(event.beforeJson)}
                     </div>
                     <div className="min-w-0">
-                      <h3 className="mb-2 text-xs font-semibold text-muted-foreground">After</h3>
+                      <Heading level={3} size="xs" className="mb-2 text-muted-foreground">After</Heading>
                       {auditDetailValue(event.afterJson)}
                     </div>
                   </div>
@@ -531,7 +532,7 @@ export async function ProjectAdminAuditPage({
       </section>:null}
       <section aria-label="Change log" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-semibold text-foreground">Change log</h2>
+          <Heading level={2} size="base" className="text-foreground">Change log</Heading>
           <p role="status" className="text-xs text-body">{rawEvents.length} actions on this page</p>
         </div>
         {rawEvents.length===0?<p className="border-y border-border py-4 text-sm text-body">

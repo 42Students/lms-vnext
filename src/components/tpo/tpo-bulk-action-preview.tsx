@@ -4,6 +4,7 @@ import {Button} from "@/components/ui/button";
 
 import type { BulkPreviewRow, BulkOutcome } from "@/modules/placements/tpo-bulk-action-model";
 import { countBulkOutcomes } from "@/modules/placements/tpo-bulk-action-model";
+import { Heading } from "@/components/ui/heading";
 
 export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConfirm, actionLabel = "selected changes" }: {
   rows: readonly BulkPreviewRow[];
@@ -20,7 +21,7 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
       return groups;
     },{}));
   return <section aria-label="Bulk action preview" className="min-w-0 space-y-3 border-y border-border py-3 md:py-4">
-    <h3 className="font-semibold">Review bulk action: {actionLabel}</h3>
+    <Heading level={3}>Review bulk action: {actionLabel}</Heading>
     <p role="status" className="text-sm">{ready} ready; {rows.length - ready} skipped.</p>
     <ul className="max-h-72 min-w-0 divide-y divide-border overflow-y-auto overscroll-contain break-words text-sm print:max-h-none print:overflow-visible">
       {rows.map((row, i) => <li key={row.id + ":" + i} className="py-2">
@@ -29,7 +30,7 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
     </ul>
     {groupedSkipped.length>0?<Disclosure title={`Left out: ${rows.length-ready} grouped by reason`} className="border-t border-border py-3 text-sm">
       {groupedSkipped.map(([reason,names])=><div key={reason} className="mt-2">
-       <h3 className="font-medium">{reason} ({names.length})</h3>
+       <Heading level={3}>{reason} ({names.length})</Heading>
        <p className="break-words text-body">{names.join(", ")}</p>
       </div>)}
     </Disclosure>:null}

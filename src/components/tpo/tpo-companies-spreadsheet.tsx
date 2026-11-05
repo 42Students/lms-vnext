@@ -10,6 +10,8 @@ import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {safeTpoCompanyWebsiteUrl} from "@/modules/placements/tpo-safe-company-url";
 import {GridWorkspace} from "./grid/grid-workspace";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Desktop: the old LMS Quartz spreadsheet. Phone: its responsive list fallback.
  * Keep server-side company/lead authorization and paging unchanged. */
@@ -64,11 +66,11 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
       ?<StatusBadge tone="warning">CRM name only · not linked</StatusBadge>
        :<StatusBadge tone="success">Linked employer</StatusBadge>}
      {company.websiteUrl&&safeTpoCompanyWebsiteUrl(company.websiteUrl)
-      ?<a href={safeTpoCompanyWebsiteUrl(company.websiteUrl)!}
+      ?<TextLink href={safeTpoCompanyWebsiteUrl(company.websiteUrl)!}
         
         aria-label={"Visit "+company.name+" website (opens in a new tab)"}
-        className="lms-inline-link inline-flex min-h-11 md:min-h-9 min-w-0 items-center break-all text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        {company.websiteUrl}<span aria-hidden="true" className="ml-1">↗</span></a>
+        className="lms-inline-link inline-flex min-h-11 md:min-h-9 min-w-0 items-center break-all">
+        {company.websiteUrl}<span aria-hidden="true" className="ml-1">↗</span></TextLink>
       :company.websiteUrl?<span className="break-all text-xs text-muted-foreground">{company.websiteUrl}</span>:null}
      {company.companyId
       ?<Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
@@ -82,7 +84,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
   className="min-w-0 rounded-xl border border-border bg-surface p-4">
    <div className="flex items-start justify-between gap-2">
     <div className="min-w-0">
-     <h2 className="break-words text-lg font-bold text-foreground">{focused.name}</h2>
+     <Heading level={2} size="lg" className="break-words text-foreground">{focused.name}</Heading>
      <p className="mt-1 text-xs text-body">{focused.unlinkedLeadGroup?
       "CRM-only name · not linked to a verified employer":"College-linked employer"}</p>
     </div>
@@ -113,8 +115,8 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
      className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Open company page</Link>
    </nav>
    {focused.websiteUrl&&safeTpoCompanyWebsiteUrl(focused.websiteUrl)?
-    <a href={safeTpoCompanyWebsiteUrl(focused.websiteUrl)!}
-     className="mt-3 inline-flex min-h-11 items-center break-all text-sm text-link underline md:min-h-9">Company website</a>:null}
+    <TextLink href={safeTpoCompanyWebsiteUrl(focused.websiteUrl)!}
+     className="mt-3 inline-flex min-h-11 items-center break-all text-sm md:min-h-9">Company website</TextLink>:null}
  </aside>:<aside className="min-w-0 rounded-xl border border-border bg-surface p-4 text-sm text-body">
   <p>Choose a company in the table to see its summary.</p>
   <Button variant="bare" type="button" className="mt-2 min-h-11 font-semibold text-link underline"

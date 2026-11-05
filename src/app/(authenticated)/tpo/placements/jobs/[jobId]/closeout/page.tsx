@@ -6,6 +6,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getTpoDriveCloseout } from "@/modules/placements/tpo-drive-closeout-service";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function TpoDriveCloseoutPage({
   params,
@@ -34,13 +35,12 @@ export default async function TpoDriveCloseoutPage({
   return <div className="min-w-0 space-y-6">
     <PageHeader title={data.job.title+" · Close-out summary"}
       description={"Current persisted facts for a "+data.job.status.toLowerCase()+" drive. These numbers are not a finalized, immutable historical snapshot."}
-      actions={<div className="flex w-full flex-col items-stretch gap-2 min-[768px]:w-auto min-[768px]:flex-row min-[768px]:items-center">
-        <Link className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 w-full md:w-auto"
+      actions={<div className="flex w-full flex-col items-stretch gap-2 md:w-auto md:flex-row md:items-center">
+        <Link className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto"
           href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}>← Back to drive</Link>
-        <a href={"/api/placements/tpo/drives/" + encodeURIComponent(data.job.id) + "/closeout/export"}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Export CSV</a>
+        <ButtonLink variant="secondary" href={"/api/placements/tpo/drives/" + encodeURIComponent(data.job.id) + "/closeout/export"}>Export CSV</ButtonLink>
       </div>} />
-    <section aria-label="Close-out metrics" className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-x-6 border-y border-[var(--lms-canvas-border)] min-[1280px]:grid-cols-4">
+    <section aria-label="Close-out metrics" className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-x-6 border-y border-[var(--lms-canvas-border)] xl:grid-cols-4">
       {cells.map(([label, value]) => <div key={label}
         className="min-w-0 border-b border-[var(--lms-canvas-border)] px-1 py-4">
         <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</p>

@@ -9,6 +9,7 @@ import { StatTile } from "@/components/ui/stat-tile";
 import { Disclosure } from "@/components/ui/disclosure";
 import type {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import type {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
+import { Heading } from "@/components/ui/heading";
 type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const stages=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const;
@@ -61,8 +62,8 @@ export async function CollegeDriveAttentionBanner({jobId,attention}:{
    category==="LOW_CONVERSION"?candidate.stage==="APPLIED":false);
  const warningCount=flags.reduce((total,flag)=>total+flag.count,0);
 
- return <div className="min-w-0">{flags.length>0?<section aria-label="Drive needs attention" role="alert" className="rounded-[var(--lms-control-radius)] border border-amber-300 bg-amber-50 px-4 py-3 text-amber-950">
-    <h2 className="text-sm font-semibold">⚠ Needs attention ({warningCount})</h2>
+ return <div className="min-w-0">{flags.length>0?<section aria-label="Drive needs attention" role="alert" className="rounded-[var(--lms-control-radius)] border border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] px-4 py-3 text-[color:var(--lms-warning-strong)]">
+    <Heading level={2} size="sm">⚠ Needs attention ({warningCount})</Heading>
     <ul className="mt-3 space-y-3">{flags.map(flag=>{
       const rows=flaggedCandidates(flag.category);
       const stage=flag.category==="STALE_APPLIED"||flag.category==="LOW_CONVERSION"?"APPLIED":
@@ -73,10 +74,10 @@ export async function CollegeDriveAttentionBanner({jobId,attention}:{
       return <li key={flag.category}>
         <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">
           <Link href={flag.href} className="underline underline-offset-2">{title}</Link>
-          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs">{flag.count}</span>
+          <span className="rounded-full bg-[color:var(--lms-gold-subtle)] px-2 py-0.5 text-xs">{flag.count}</span>
         </div>
         {rows.length>0?<ul className="mt-1 space-y-1 pl-2">{rows.map(row=><li key={row.id}>
-          <Link className="inline-flex min-h-11 items-center text-sm underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-900 md:min-h-9"
+          <Link className="inline-flex min-h-11 items-center text-sm underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-warning-strong)] md:min-h-9"
             href={base+"/applications?stage="+stage+"&applicationId="+encodeURIComponent(row.id)}>
             {row.name||"Applicant"} — Review application →
           </Link>
@@ -103,7 +104,7 @@ export async function CollegeDrivePipelineOverview({jobId,data}:{
       ["Settings",base+"/settings"],
     ] as const).map(([label,href])=><Link key={href} href={href} role="tab"
       aria-selected={label==="Overview"} tabIndex={label==="Overview"?0:-1}
-      className={"inline-flex min-h-11 items-center border-b-[3px] px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
+      className={"inline-flex min-h-11 items-center border-b-2 px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
        (label==="Overview"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
       {label}
     </Link>)}
@@ -115,7 +116,7 @@ export async function CollegeDrivePipelineOverview({jobId,data}:{
     </Link>
   </div>
   <section className="space-y-3" aria-label="College application pipeline">
-   <h2 className="text-lg font-semibold">Pipeline</h2>
+   <Heading level={2} size="lg">Pipeline</Heading>
    <p className="text-xs text-muted-foreground leading-5">These are current registered College Admin application stages, not cumulative funnel conversions.</p>
    <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] md:grid-cols-3 xl:grid-cols-5">
     {stages.map(stage=><StatTile key={stage} href={base+"/applications?stage="+stage}

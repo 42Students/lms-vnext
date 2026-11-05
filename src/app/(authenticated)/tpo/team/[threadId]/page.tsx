@@ -26,6 +26,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import { Heading } from "@/components/ui/heading";
 /** User-facing acknowledgements belong to the interactive action controls,
  * not to this server-rendered conversation snapshot. Their verified response
  * outcomes map ADDED/OK/LEFT for participant/follow/mute/leave/topic actions
@@ -57,7 +58,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  if(result.status==="NOT_REGISTERED")return <div className="min-w-0 space-y-4">
    <PageHeader title="Conversations unavailable"/>
    <p role="status">Private messaging tables are not registered.</p>
-   <Link href="/tpo/team" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link lms-inline-link">Back to team</Link>
+   <Link href="/tpo/team" className="inline-flex min-h-11 md:min-h-9 items-center text-link lms-inline-link">Back to team</Link>
  </div>;
  const preferences=await getTpoTeamThreadPreferences(context,parsed.data);
  const asks=await listTpoTeamAsks(context,parsed.data).catch(()=>({status:"FAILED" as const,items:[]}));
@@ -82,7 +83,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  return <div className="min-w-0 space-y-4">
   <PageHeader title={result.thread.topic}
    description={"With "+result.thread.counterpartName+" · Private topic"}
-   actions={<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 w-full items-center justify-center text-link lms-inline-link sm:w-auto min-[768px]:min-h-9">All conversations</Link>}/>
+   actions={<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 w-full items-center justify-center text-link lms-inline-link sm:w-auto md:min-h-9">All conversations</Link>}/>
   <div className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3">
    <StatusBadge tone="neutral">Private topic</StatusBadge>
    <StatusBadge tone="info">2 participants</StatusBadge>
@@ -93,7 +94,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <TpoTeamOpenRead threadId={result.thread.id}/>
   <section aria-label="Participants" className="flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-border bg-surface px-3 py-2">
    <div className="min-w-0 space-y-1">
-    <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">People here</h2>
+    <Heading level={2} size="xs" className="uppercase tracking-wide text-muted-foreground">People here</Heading>
     <p className="text-sm text-body">You · {result.thread.counterpartName}</p>
    </div>
    <span className="text-xs text-muted-foreground">Private to the two members</span>
@@ -110,14 +111,14 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
-   <Button variant="secondary" type="submit" className="min-h-11 min-[768px]:min-h-9">
+   <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">
     Mark this conversation&apos;s alerts as read
    </Button>
   </form>
   </Disclosure>
   {result.messages.some(message=>message.decision&&!message.removed)?
    <aside aria-label="Decisions here" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
-    <h2 className="text-sm font-semibold">Decided:</h2>
+    <Heading level={2} size="sm">Decided:</Heading>
     {result.messages.filter(message=>message.decision&&!message.removed).slice(-5).map(message=>
      <Link key={message.id} href={"#team-message-"+message.id}
       className="block truncate text-sm text-link underline">{message.body}</Link>)}
@@ -133,8 +134,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     return <li id={"team-message-"+message.id} key={message.id} className="min-w-0">
      {showDay?<p className="my-3 text-center text-xs font-semibold text-muted-foreground">{day(message.createdAt)}</p>:null}
      <div className={own?
-      "ml-auto w-fit max-w-[94%] rounded-[var(--lms-control-radius)] rounded-br-sm border border-border bg-surface-secondary px-3 py-2 min-[768px]:max-w-[82%] min-[1024px]:max-w-[74%]":
-      "mr-auto w-fit max-w-[94%] rounded-[var(--lms-control-radius)] rounded-bl-sm border border-border bg-surface px-3 py-2 min-[768px]:max-w-[82%] min-[1024px]:max-w-[74%]"}>
+      "ml-auto w-fit max-w-[94%] rounded-[var(--lms-control-radius)] rounded-br-sm border border-border bg-surface-secondary px-3 py-2 md:max-w-[82%] lg:max-w-[74%]":
+      "mr-auto w-fit max-w-[94%] rounded-[var(--lms-control-radius)] rounded-bl-sm border border-border bg-surface px-3 py-2 md:max-w-[82%] lg:max-w-[74%]"}>
       <p className="text-xs text-muted-foreground">
        {own?"You":message.authorName?.trim()||"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
@@ -159,12 +160,12 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <span className="text-body">Page {result.page} of {result.pages}</span>
    {result.page < result.pages ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page+1)}
-    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
+    className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
     Older messages
    </Link> : null}
    {result.page > 1 ? <Link
     href={"/tpo/team/"+result.thread.id+"?page="+(result.page-1)}
-    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
+    className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
     Newer messages
    </Link> : null}
   </nav>

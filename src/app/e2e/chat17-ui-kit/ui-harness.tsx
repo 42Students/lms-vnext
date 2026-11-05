@@ -22,6 +22,7 @@ import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Tabs } from "@/components/ui/tabs";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { SuperAdminInterviewOperations } from "@/components/admin/super-admin-interview-operations";
+import { Heading } from "@/components/ui/heading";
 
 function UIKitTestSurface() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -39,11 +40,11 @@ function UIKitTestSurface() {
   const [inlineSaved, setInlineSaved] = useState(false);
   const { showToast } = useToast();
 
-  return <main className="mx-auto w-full max-w-5xl min-w-0 space-y-6 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 min-[768px]:p-[var(--lms-canvas-padding)] [&>section]:min-w-0 [&>section]:space-y-3 [&>section]:border-b [&>section]:border-[var(--lms-canvas-border)] [&>section]:pb-4 max-sm:[&_button]:min-h-11 max-sm:[&_button]:w-full">
+  return <main className="mx-auto w-full max-w-5xl min-w-0 space-y-6 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-[var(--lms-canvas-padding)] [&>section]:min-w-0 [&>section]:space-y-3 [&>section]:border-b [&>section]:border-[var(--lms-canvas-border)] [&>section]:pb-4 max-sm:[&_button]:min-h-11 max-sm:[&_button]:w-full">
     <PageHeader title="Chat-17 UI kit interaction harness" />
 
     <section aria-label="Modal fixture">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Modal fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Modal fixture</Heading>
       <Button onClick={() => setDialogOpen(true)}>Open harness dialog</Button>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}
         title="Harness confirmation" description="Keyboard focus and Back button test."
@@ -54,7 +55,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Pending destructive action fixture">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Pending destructive action fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Pending destructive action fixture</Heading>
       <Button variant="danger" onClick={() => setConfirmOpen(true)}>Review harness deletion</Button>
       <p className="max-w-prose break-words text-sm leading-6 text-body" data-testid="confirm-invocations">Confirmation requests: {confirmInvocations}</p>
       <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
@@ -73,7 +74,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Nested overlays fixture">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Nested overlays fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Nested overlays fixture</Heading>
       <Button variant="secondary" onClick={() => setDrawerOpen(true)}>Open harness drawer</Button>
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}
         title="Harness drawer" description="Nested history and focus test.">
@@ -90,7 +91,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Required field fixture">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Required field fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Required field fixture</Heading>
       <FormField id="harness-roll" label="Learner roll number" required
         helper="Enter a value before continuing.">
         {()=> <Input placeholder="Learner roll number"/>}
@@ -98,7 +99,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Tabs fixture">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Tabs fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Tabs fixture</Heading>
       <Tabs value={tab} ariaLabel="Harness tabs" onValueChange={setTab} items={[
         {value:"overview",label:"Overview",content:<p>Overview content</p>},
         {value:"locked",label:"Restricted",disabled:true,content:<p>Restricted data must not appear</p>},
@@ -107,7 +108,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Scroll fixture">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Scroll fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Scroll fixture</Heading>
       <Button variant="secondary" onClick={() => setWideScroll(value => !value)}>
         {wideScroll ? "Narrow scroll content" : "Widen scroll content"}
       </Button>
@@ -115,14 +116,14 @@ function UIKitTestSurface() {
         <ScrollCue axis="x" label="Harness horizontal overflow">
           <div className={wideScroll ? "w-[75rem] whitespace-nowrap p-3" : "w-28 whitespace-nowrap p-3"}>
             <span>Scroll position: first</span>
-            {wideScroll ? <span className="ml-[53.125rem]">Scroll position: last</span> : null}
+            {wideScroll ? <span className="ml-[10rem]">Scroll position: last</span> : null}
           </div>
         </ScrollCue>
       </div>
     </section>
 
     <section aria-label="Secondary child scroll fixture" className="w-full min-w-0 max-w-56 space-y-2">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Secondary child scroll fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Secondary child scroll fixture</Heading>
       <Button variant="secondary" onClick={()=>setSecondWide(value=>!value)}>
         {secondWide ? "Shrink second child" : "Grow second child"}
       </Button>
@@ -140,7 +141,7 @@ function UIKitTestSurface() {
       </div>}/>
 
     <section aria-label="Unavailable action and feedback fixture" className="space-y-3">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Unavailable action and feedback fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Unavailable action and feedback fixture</Heading>
       <DisabledReason reason="Assign a learner before submitting.">
         <Button disabled>Submit unassigned project</Button>
       </DisabledReason>
@@ -152,7 +153,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Upload fixture" className="space-y-2">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Upload fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Upload fixture</Heading>
       <Button variant="secondary" onClick={() => setPickerDisabled(value => !value)}>
         {pickerDisabled ? "Enable file selection" : "Disable file selection"}
       </Button>
@@ -165,7 +166,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Responsive private column fixture">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Responsive private column fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Responsive private column fixture</Heading>
       <DataTable caption="Project table privacy" empty={<p>No projects</p>}
         rows={[{id:"p1",title:"Mobile pilot",secret:"DESKTOP_ONLY_PRIVATE_REVIEW"}]}
         getRowKey={row => row.id}
@@ -181,7 +182,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Fail closed table fixture">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Fail closed table fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Fail closed table fixture</Heading>
       <DataTable caption="Restricted workspace security" empty="No projects"
         rows={[{id:"secure",name:"Secure workspace",review:"NEVER_SERIALIZE_PRIVATE_REVIEW"}]}
         getRowKey={row=>row.id} rowHref={()=>{throw new Error("detail route unavailable");}}
@@ -196,7 +197,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Interview grid fixture">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Interview grid fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Interview grid fixture</Heading>
       <SuperAdminInterviewOperations today="2026-10-18" events={[
         {id:"interview-a",roundId:null,jobId:null,jobTitle:"Engineer",title:"Technical interview",
           companyName:"Demo Company A",status:"SCHEDULED",kind:"TECHNICAL",
@@ -212,7 +213,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Loading timeout reset fixture" className="space-y-2">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Loading timeout reset fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Loading timeout reset fixture</Heading>
       <Button onClick={()=>setLoadingLabel(current=>
         current==="Loading projects A" ? "Loading projects B" : "Loading projects A")}>
         Switch loading request
@@ -221,7 +222,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Loading and disclosure fixture" className="space-y-3">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Loading and disclosure fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Loading and disclosure fixture</Heading>
       <Skeleton variant="row" count={2} label="Loading project workspace status"/>
       <Disclosure title="More workspace information">
         <p>Disclosed workspace details</p>
@@ -229,7 +230,7 @@ function UIKitTestSurface() {
     </section>
 
     <section aria-label="Toast fixture" className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
-      <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Toast fixture</h2>
+      <Heading level={2} size="base" className="m-0 mb-3 break-words leading-6 text-[var(--lms-heading)]">Toast fixture</Heading>
       <Button onClick={() => showToast({tone:"success",title:"Saved harness result"})}>
         Show success notice
       </Button>

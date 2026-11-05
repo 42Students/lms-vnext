@@ -16,6 +16,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {useToast} from "@/components/ui/toast";
 import {FriendlyFetchError} from "@/lib/api-fetch";
+import { Heading } from "@/components/ui/heading";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  priority:string;estimatePoints:number|null;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;
@@ -65,7 +66,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  return <section className="space-y-3 border-b border-border pb-5">
   <p className="text-xs text-muted-foreground">Task edits are individually version-checked. Reload after a conflict to avoid overwriting another editor.</p>
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h2 className="text-lg font-semibold">Product backlog</h2>
+   <div><Heading level={2} size="lg">Product backlog</Heading>
     <p className="mt-1 text-sm text-body">{backlog.length} backlog tasks</p>
    </div>
    <p className="text-sm text-body"><span className="font-semibold">Velocity</span> · {velocity} points completed</p>
@@ -107,7 +108,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         setError(stale?"Task plan changed. Reload the latest workspace before saving.":"Failed to update tasks");
       }
       finally{setBusy(false);}
-    }} className="grid gap-3 border-t border-border pt-3 min-[768px]:grid-cols-2">
+    }} className="grid gap-3 border-t border-border pt-3 md:grid-cols-2">
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title<Input required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
@@ -116,7 +117,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
       </Select></label>
-      <Disclosure title="Additional task details" className="min-w-0 min-[768px]:col-span-2" contentClassName="grid min-w-0 gap-3 pt-3 min-[768px]:grid-cols-2">
+      <Disclosure title="Additional task details" className="min-w-0 md:col-span-2" contentClassName="grid min-w-0 gap-3 pt-3 md:grid-cols-2">
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description<Textarea maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
@@ -145,12 +146,12 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
-      <label className="font-semibold min-[768px]:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">What&apos;s blocking this task?
+      <label className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">What&apos;s blocking this task?
         <Textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
       </Disclosure>
-      <div className="flex min-w-0 flex-col gap-2 md:flex-row min-[768px]:col-span-2"><Button variant="primary" type="submit"
+      <div className="flex min-w-0 flex-col gap-2 md:flex-row md:col-span-2"><Button variant="primary" type="submit"
         disabled={busy||!title.trim()||(points!==""&&
           (!Number.isInteger(Number(points))||Number(points)<0||Number(points)>1000))}
         className="min-h-11 w-full px-3 md:w-auto">Add task</Button>

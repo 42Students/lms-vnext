@@ -21,6 +21,8 @@ import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {ErrorState} from "@/components/ui/error-state";
 import {listAdminScopedPeople} from "@/modules/admin-ui/super-admin-scoped-people-service";
 import {getSuperAdminPeopleFilterOptions} from "@/modules/admin-ui/super-admin-people-filter-options";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 const statuses=["ALL","ACTIVE","SUSPENDED","ENDED"] as const;
 export default async function SuperAdminStudentsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -63,13 +65,13 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
-    {choices?<a href="#register-student-heading" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"><span aria-hidden="true">＋</span>Register students</a>:null}
-    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    {choices?<ButtonLink variant="primary" href="#register-student-heading"><span aria-hidden="true">＋</span>Register students</ButtonLink>:null}
+    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-on-primary active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-on-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
   <section aria-label="Student support and retention policy" className="min-w-0 border-b border-border pb-3 text-sm text-body">
-   <h2 className="font-semibold text-foreground">Account access and support</h2>
+   <Heading level={2} className="text-foreground">Account access and support</Heading>
    <p className="mt-1">The legacy Impersonate action is retired. This membership-based workspace does not exchange Super Admin tokens for a learner session or replace active session credentials. Use the student row's audited profile, history and membership controls for support.</p>
    <p className="mt-1">The legacy permanent Delete action is retired for learners with attendance, submissions, placement or audit records. Suspend or end college access instead; historical records remain available under their original identity.</p>
    <Link href="/admin/people" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Open audited membership controls</Link>
@@ -86,12 +88,12 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     </summary>
     <div className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] p-[var(--lms-space-4)] lg:grid-cols-2">
      <section aria-labelledby="register-student-heading" className="min-w-0 space-y-3 border-b border-border pb-4 lg:border-b-0 lg:border-r lg:pr-4">
-      <h2 id="register-student-heading" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Register New Student</h2>
+      <Heading level={2} size="base" id="register-student-heading" className="leading-6 text-[var(--lms-heading)]">Register New Student</Heading>
       <CollegeStudentRegisterForm choices={choices}/>
      </section>
      <section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 pb-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-       <h2 id="bulk-register-students-heading" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Bulk Register Students</h2>
+       <Heading level={2} size="base" id="bulk-register-students-heading" className="leading-6 text-[var(--lms-heading)]">Bulk Register Students</Heading>
        {historyUnavailable?<StatusBadge tone="warning">History unavailable</StatusBadge>:<SuperAdminStudentImportHistory runs={importRuns}/>}
       </div>
       <p className="text-sm leading-[22px] text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>

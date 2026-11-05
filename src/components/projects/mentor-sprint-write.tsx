@@ -15,6 +15,7 @@ import {mentorSprintDefaultReleaseId} from "@/modules/projects/mentor-sprint-ord
 import {mentorSprintPlanningDefaults,type MentorSprintPlanningRow} from "@/modules/projects/mentor-sprint-planning-defaults-model";
 import {MentorSprintBacklogPull,type MentorSprintBacklogChoice} from "./mentor-sprint-backlog-pull";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 /** Deliberate vNext granularity: each sprint mutation is a separate
  * version-checked transaction. A multi-sprint legacy Save plan is NOT atomic
@@ -105,7 +106,7 @@ export function MentorSprintCreate({
               setChosenReleaseId(choice);setTitle(proposal.title);
               setStartDate(proposal.startDate);setEndDate(proposal.endDate);
             }}
-            className="min-h-11 w-full min-[768px]:min-h-9">
+            className="min-h-11 w-full md:min-h-9">
             <option value="" disabled>Pick the release this sprint ships in</option>
             {releases.filter(release=>release.status!=="SHIPPED").map(release=>
               <option key={release.id} value={release.id}>{release.title}</option>)}
@@ -146,7 +147,7 @@ export function MentorSprintCreate({
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}
             placeholder="Acceptance criteria — e.g. API returns paginated results and integration tests pass"/></label>
-        <div className="grid min-w-0 gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] min-[768px]:grid-cols-3">
+        <div className="grid min-w-0 gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:grid-cols-3">
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start date
             <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End date
@@ -164,7 +165,7 @@ export function MentorSprintCreate({
     </Button>
     {inline ? (open ? <section aria-label="Create sprint"
       className="mt-3 min-w-0 space-y-4 border-y border-[var(--lms-canvas-border)] py-4">
-      <h4 className="text-base font-semibold text-foreground">Create sprint</h4>
+      <Heading level={4} size="base" className="text-foreground">Create sprint</Heading>
       <p className="text-sm text-body">
         Choose a release and enter an outcome-focused sprint plan.
       </p>

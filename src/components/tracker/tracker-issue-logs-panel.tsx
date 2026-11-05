@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {useState} from "react";
 import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import { Heading } from "@/components/ui/heading";
 
 type Item={id:string;time:string;event:string;message:string;path:string;requestId:string|null};
 type LogPage={configured:boolean;items:Item[];nextPageToken:string|null;anchorAt?:string};
@@ -38,7 +39,7 @@ export function TrackerIssueLogsPanel({publicId}:{publicId:string}){
     }finally{setBusy(false);}
   }
   return <section className="space-y-3 border-b border-border pb-5">
-    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Logs around this report</h2>
+    <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Logs around this report</Heading>
     <p className="text-sm text-body leading-[22px]">Find warnings and errors from the five minutes before and after the report.</p>
     <Button variant="secondary" type="button" disabled={busy} loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>void load()}
      >

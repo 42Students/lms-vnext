@@ -13,6 +13,7 @@ import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoBranchSeasonDashboard } from "@/modules/placements/tpo-branch-season-service";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function TpoBranchSeasonPage({
   searchParams,
@@ -37,13 +38,13 @@ export default async function TpoBranchSeasonPage({
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <Link href="/tpo/reports/by-branch" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← By Branch report</Link>
           {dashboard.season ? (
-          <a
+          <ButtonLink variant="primary"
             href={"/api/placements/tpo/reports/branch-season/export?seasonId=" +
               encodeURIComponent(dashboard.season.id)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="w-full sm:w-auto"
           >
             Export season CSV
-          </a>
+          </ButtonLink>
         ) : null}
         </div>}
       />
@@ -77,7 +78,7 @@ export default async function TpoBranchSeasonPage({
         <EmptyState title="No placement seasons are recorded for this college." description="No branch rate can be calculated."/>
       ) : (
         <>
-          <section className="grid gap-3 min-[768px]:grid-cols-2" aria-label="Season branch totals"><StatTile label="Distinct applicants (all application states)" value={dashboard.totalApplicants} className="min-h-[104px]" /><StatTile label="Distinct learners with currently accepted offers" value={dashboard.totalAcceptedLearners} className="min-h-[104px]" /></section>
+          <section className="grid gap-3 md:grid-cols-2" aria-label="Season branch totals"><StatTile label="Distinct applicants (all application states)" value={dashboard.totalApplicants} className="min-h-[104px]" /><StatTile label="Distinct learners with currently accepted offers" value={dashboard.totalAcceptedLearners} className="min-h-[104px]" /></section>
           {!dashboard.registrationAvailable ? (
             <Alert tone="warning">No migrated placement-pool registration table is available. Registered denominator and placement rate are unknown, not zero. The accepted-applicants / applicant ratio below is an explicitly different metric.</Alert>
           ) : null}

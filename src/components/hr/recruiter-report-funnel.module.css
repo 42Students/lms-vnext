@@ -11,7 +11,7 @@
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-@media (max-width: 860px) {
+@media (max-width: 767px) {
   .row { grid-template-columns: 90px minmax(0, 1fr); }
   .num { grid-column: 1 / -1; text-align: left; }
 }

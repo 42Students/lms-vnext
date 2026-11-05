@@ -31,6 +31,7 @@ import {
   learnerOfferViewSchema,
   type LearnerOfferView,
 } from "@/modules/placements/learner-offers-browse-model";
+import { Heading } from "@/components/ui/heading";
 
 const expiryTabs = [{id:"all",label:"All expiry states"},{id:"expired",label:"Issued, deadline passed"},{id:"undated",label:"Issued, no deadline recorded"}] as const;
 const joiningTabs = [
@@ -52,7 +53,7 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 ];
 
 // Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
-const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-5 text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-150 hover:border-[rgba(38,186,199,0.4)] hover:bg-[rgba(38,186,199,0.05)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-5 text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-[var(--lms-motion-fast)] hover:border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
 // Legacy mobile (<768px): one-line horizontally scrolling filter strip (SCSS:56-74).
 const placementFilterNavClass = "min-w-0 max-w-full flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
 
@@ -189,7 +190,7 @@ export default async function LearnerOffersPage({
       </Link>
 
       <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
-        <h2 className="text-[18px] font-semibold leading-6 text-[var(--lms-heading)]">My offers</h2>
+        <Heading level={2} size="lg" className="leading-6 text-[var(--lms-heading)]">My offers</Heading>
         <p className="mt-1 text-sm text-body">Your official placement offers and recorded joining outcomes.</p>
       </div>
 
@@ -218,14 +219,14 @@ export default async function LearnerOffersPage({
           <Input name="q" type="search" maxLength={80} defaultValue={searchTerm}
             placeholder="Employer or role" className="min-h-11 min-w-0" />
         </label>
-        <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text hover:bg-primary-subtle sm:w-auto md:min-h-9">Search</Button>
+        <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:w-auto md:min-h-9">Search</Button>
         {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
           className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Clear search</Link> : null}
       </form>
 
       {hasActiveFacets ? (
         <Link href={learnerOfferClearFiltersHref(view)}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-link-text)] underline md:min-h-9 hover:underline">
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)] underline md:min-h-9 hover:underline">
           Clear offer filters (keep selected status)
         </Link>
       ) : null}
@@ -247,7 +248,7 @@ export default async function LearnerOffersPage({
             <option value="company">Company A–Z</option>
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text hover:bg-primary-subtle md:min-h-9">Apply sort</Button>
+        <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Apply sort</Button>
       </form>
       <nav aria-label="Recorded joining outcome" className={placementFilterNavClass}>
         {joiningTabs.map(tab => (
@@ -300,7 +301,7 @@ export default async function LearnerOffersPage({
       ) : null}
       {expiringSoon > 0 && view !== "pending" ? (
         <Link href={learnerOfferStatusHref("pending",{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-link-text)] md:min-h-9 hover:underline">
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9 hover:underline">
           Review {expiringSoon} awaiting-response {expiringSoon===1?"offer":"offers"} with a deadline in 24 hours →
         </Link>
       ) : null}
@@ -312,7 +313,7 @@ export default async function LearnerOffersPage({
       {!requestRead.available ? <p role="alert" className="min-w-0 rounded-[8px] border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-warning-text)]">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
         <section role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-y border-border px-4 py-8 text-center text-sm leading-[1.5] text-body">
-          <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
+          <Heading level={2} size="base" className="text-foreground">{emptyState.title}</Heading>
           <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (
             <Link href="/learn/my-placements/offers"
@@ -324,15 +325,15 @@ export default async function LearnerOffersPage({
       ) : (
         <>
           {waitingOnPage.length>0?<section aria-labelledby="offers-waiting-heading" className="space-y-4">
-            <h2 id="offers-waiting-heading" className="text-lg font-semibold text-[var(--lms-heading)]">
+            <Heading level={2} size="lg" id="offers-waiting-heading" className="text-[var(--lms-heading)]">
               Needs your reply <span className="text-sm font-normal text-muted-foreground">({totalPending})</span>
-            </h2>
+            </Heading>
             {renderOffers(waitingOnPage)}
           </section>:null}
           {answeredOnPage.length>0?<section aria-labelledby="offers-earlier-heading" className="space-y-4">
-            <h2 id="offers-earlier-heading" className="text-lg font-semibold text-[var(--lms-heading)]">
+            <Heading level={2} size="lg" id="offers-earlier-heading" className="text-[var(--lms-heading)]">
               {waitingOnPage.length>0?"Earlier offers":"Your offers"}
-            </h2>
+            </Heading>
             {renderOffers(answeredOnPage)}
           </section>:null}
         </>
@@ -342,10 +343,10 @@ export default async function LearnerOffersPage({
         <Pagination label="Offer results pagination" page={paginated.page} pageCount={paginated.pages} hrefForPage={pageUrl} />
       </div> : null}
       <section aria-label="How offers work at your college" className="min-w-0 rounded-[12px] border border-border bg-surface p-4 md:p-5">
-        <h2 className="font-semibold text-foreground">How offers work at your college</h2>
+        <Heading level={2} className="text-foreground">How offers work at your college</Heading>
         <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
         {rulesRead.value?.policyView?<>
-          <h3 className="mt-4 text-sm font-semibold text-[var(--lms-heading)]">Where you stand:</h3>
+          <Heading level={3} size="sm" className="mt-4 text-[var(--lms-heading)]">Where you stand:</Heading>
           <p className="mt-2 text-sm text-body">{rulesRead.value.policyView.personal}</p>
           <details className="mt-3">
             <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link md:min-h-9">See all the rules</summary>

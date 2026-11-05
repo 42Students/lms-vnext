@@ -91,12 +91,12 @@ export function LearnerTopbarTools() {
             }
           }}
           placeholder={LEARNER_COURSE_SEARCH_PLACEHOLDER}
-          className="w-full min-w-0 min-[768px]:max-w-40 min-[992px]:max-w-52 min-[1280px]:max-w-72"
+          className="w-full min-w-0 md:max-w-40 lg:max-w-52 xl:max-w-72"
           autoComplete="off"
         />
         {open ? (
           <PopoverListbox id={resultId} label="Course search results" onDismiss={() => setOpen(false)}
-            className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[min(26rem,calc(100vw-2rem))] min-w-0 max-h-96 overflow-y-auto p-2"
+            className="absolute left-0 top-[calc(100%+0.5rem)] z-(--lms-z-overlay) w-[min(26rem,calc(100vw-2rem))] min-w-0 max-h-96 overflow-y-auto p-2"
           >
             {loadFailed?<div className="flex flex-wrap items-center gap-[var(--lms-space-2)] p-2"><InlineNotice tone="error" message="Could not load courses. Please try again." onDismiss={()=>setLoadFailed(false)}/>
               <Button type="button" variant="ghost" className="min-h-11 px-3 text-sm text-primary-text underline" disabled={loading}
@@ -110,7 +110,7 @@ export function LearnerTopbarTools() {
                     setOpen(false);
                     setQuery("");
                   }}
-                  className="block min-h-11 min-w-0 px-3 py-2.5 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary-text)]"
+                  className="block min-h-11 min-w-0 px-3 py-3 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary-text)]"
                 >
                   <p className="m-0 break-words text-sm font-semibold text-foreground">
                     {course.courseName}

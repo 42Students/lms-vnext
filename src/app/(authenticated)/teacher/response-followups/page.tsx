@@ -13,6 +13,7 @@ import {
 } from "@/modules/courses/faculty-response-followup-model";
 import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-followup-service";
 import {facultyFollowUpCsvHref} from "@/modules/courses/faculty-followup-export";
+import { Heading } from "@/components/ui/heading";
 
 type Params = Record<string,string|string[]|undefined>;
 
@@ -33,7 +34,7 @@ export default async function FacultyResponseFollowUpsPage({
     <PageHeader eyebrow="Faculty · Assessments" title="Response follow-ups"
       description="Published assessments past their due date with missing responses from learners in your current teaching Sections."
       actions={<Link href="/teacher/results"
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)] hover:underline">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:underline">
         Results overview
       </Link>} />
     <form action="/teacher/response-followups" method="get"
@@ -41,7 +42,7 @@ export default async function FacultyResponseFollowUpsPage({
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
-          className="min-h-11 max-[767px]:text-[16px] md:min-h-9" />
+          className="min-h-11 max-md:text-[16px] md:min-h-9" />
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
@@ -87,7 +88,7 @@ export default async function FacultyResponseFollowUpsPage({
         {data.total.toLocaleString("en-IN")} matching past-due published assessment{data.total === 1 ? "" : "s"}
       </p>
       <Link href={facultyFollowUpCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 py-2 text-sm font-[650] text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)] hover:underline">
+       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 py-2 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:underline">
         Export this page counts (no learner details)
       </Link>
     </div>
@@ -97,7 +98,7 @@ export default async function FacultyResponseFollowUpsPage({
       <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
         className="min-w-0 space-y-3 bg-transparent py-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
         <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div><h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.title}</h2>
+          <div><Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{item.title}</Heading>
             <p className="mt-1 text-sm text-body leading-[22px]">{item.courseName} · {item.sectionName} · {item.kind}</p>
           </div>
           <span className="text-sm font-semibold text-body">{item.missingCount} without a recorded response</span>

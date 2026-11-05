@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoLearnerParticipation } from "@/modules/placements/tpo-participation-service";
 import {tpoStudentJourneyLinks} from "@/modules/placements/tpo-student-journey-links-model";
+import { Heading } from "@/components/ui/heading";
 
 export default async function TpoLearnerParticipationPage({
   params,
@@ -46,9 +47,9 @@ export default async function TpoLearnerParticipationPage({
       />
 
       <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">
           Current participation
-        </h2>
+        </Heading>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <span className="text-sm text-body">Effective decision:</span>
           <StatusBadge
@@ -85,9 +86,9 @@ export default async function TpoLearnerParticipationPage({
       </nav>
 
       <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">
           Change learner-level eligibility
-        </h2>
+        </Heading>
         <p className="mt-2 mb-5 text-sm leading-[22px] text-body">
           Changes take effect for the learner&apos;s placement participation
           eligibility. A reason is required when marking ineligible.

@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 import type { ProjectTaskPlanRow } from "@/modules/projects/project-task-plan-model";
+import { Heading } from "@/components/ui/heading";
 
 type SourceTask = ProjectTaskPlanRow & {
   status: string;
@@ -131,7 +132,7 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
   return <section aria-label="Task plan editor" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
     <div>
       <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Work breakdown</p>
-      <h3 className="mt-1 text-base font-semibold text-foreground">Task plan</h3>
+      <Heading level={3} size="base" className="mt-1 text-foreground">Task plan</Heading>
       <p className="mt-1 text-sm leading-6 text-body">
         Keep each task small enough to own, link it to the right sprint,
         and make “done” explicit. Assignee, status and submission state are not changed here.

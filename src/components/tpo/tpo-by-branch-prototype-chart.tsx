@@ -16,7 +16,7 @@ export function TpoByBranchPrototypeChart({rows}:{
 }){
  const safe=rows.filter(row=>typeof row.departmentName==="string"&&row.departmentName.trim().length>0);
  const format=new Intl.NumberFormat("en-IN");
- return <figure aria-label="Placement rate by branch" className="min-w-0 rounded-xl border border-[color:var(--lms-border)] bg-white p-4 md:p-5"
+ return <figure aria-label="Placement rate by branch" className="min-w-0 rounded-xl border border-[color:var(--lms-border)] bg-surface p-4 md:p-5"
   data-testid="tpo.report.branch.chart">
   <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
    <figcaption className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">Placed, of registered students</figcaption>

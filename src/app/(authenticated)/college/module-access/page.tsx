@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { Banner } from "@/components/ui/banner";
+import { Heading } from "@/components/ui/heading";
 
 /** The legacy College Admin module-access entry stays within the college role
  * workspace; tenant-wide locks and global permissions stay with Super Admin.
@@ -23,7 +24,7 @@ export default async function CollegeModuleAccessPage() {
       overrides require an authorized Super Admin.
     </Banner>
     <section aria-label="College module access destinations" className="space-y-3 border-y border-[var(--lms-canvas-border)] py-4">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Module workspaces</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Module workspaces</Heading>
       <nav className="flex flex-wrap gap-4 text-sm">
         <Link href="/college/academics" className="min-h-11 inline-flex items-center font-semibold text-primary-text underline md:min-h-9">Academic setup</Link>
         <Link href="/college/projects" className="min-h-11 inline-flex items-center font-semibold text-primary-text underline md:min-h-9">Projects</Link>

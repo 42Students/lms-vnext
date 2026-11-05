@@ -18,6 +18,8 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 import {visibleInterviewConflictKinds,visibleInterviewConflictLabel} from "@/modules/placements/interview-visual-conflict-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 type Round={id:string;name:string;status:string;kind:string};
 type Candidate={applicationId:string;name:string|null;screening:string;departmentName?:string|null;rollNumber?:string|null};
 type Appointment={id:string;roundId:string;applicationId:string;status:string;scheduledAt:string;
@@ -328,7 +330,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  });
  return <section className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
-   <div><h2 className="text-lg font-semibold">Candidate interviews</h2>
+   <div><Heading level={2} size="lg">Candidate interviews</Heading>
     <p className="mt-1 text-sm text-body">Schedule, edit, cancel, mark Completed or No Show. Actions are audited and notify the learner.</p></div>
    <div className="flex flex-col gap-2 sm:flex-row">
     <Link href={appRoot} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
@@ -338,17 +340,16 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       onClick={()=>setShowConflictsOnly(value=>!value)} className="min-h-11 md:min-h-9">
       {showConflictsOnly?"Show all interviews":"Conflicts only ("+appointments.filter(hasConflict).length+")"}
     </Button>
-    <a download="interviews.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent("\uFEFF"+appointmentsCsv+"\r\n")}
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
+    <ButtonLink variant="secondary" download="interviews.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent("\uFEFF"+appointmentsCsv+"\r\n")}>
      Export CSV
-    </a>
+    </ButtonLink>
     <Button type="button" disabled={!available.length||!candidates.length}
      className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>open()}>Schedule interview</Button>
    </div>
   </div>
   {!available.length?<Banner tone="info">No pending or scheduled interview round is available. Set up a round before scheduling interviews.</Banner>:null}
   {!candidates.length?<Banner tone="info">No eligible candidate is available in this drive. Open Applications to review candidate screening and shortlisting before scheduling.</Banner>:null}
-  <div className="grid min-w-0 gap-3 min-[768px]:hidden" aria-label="Candidate interview cards">
+  <div className="grid min-w-0 gap-3 md:hidden" aria-label="Candidate interview cards">
    {visibleAppointments.map(row=>{
     const person=applicant(row.applicationId);
     const round=rounds.find(item=>item.id===row.roundId);
@@ -357,7 +358,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       <div className="min-w-0 flex-1">
        {companyName?<p className="text-xs font-semibold text-muted-foreground">{companyName}</p>:null}
        {jobTitle?<p className="text-xs text-body">{jobTitle}</p>:null}
-       <h3 className="mt-1 break-words text-base font-semibold">{person?.name??"Candidate"}</h3>
+       <Heading level={3} size="base" className="mt-1 break-words">{person?.name??"Candidate"}</Heading>
        {person?.departmentName?<p className="text-xs text-body">{person.departmentName}</p>:null}
       </div>
       <div className="flex flex-wrap gap-1">
@@ -374,9 +375,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      <div className="mt-3 flex flex-wrap gap-2">
       <Link href={applicationHref(row.applicationId)} aria-label={"View application for "+(person?.name??"candidate")+" in "+(jobTitle??"this placement drive")}
        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline">View application</Link>
-      {row.status!=="CANCELLED"?<a href={eventIcsHref(row)} download={"interview-"+row.id+".ics"}
-       aria-label={"Download calendar file for "+eventTitle(row)}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">↓ Download .ics</a>:null}
+      {row.status!=="CANCELLED"?<ButtonLink variant="secondary" href={eventIcsHref(row)} download={"interview-"+row.id+".ics"}
+       aria-label={"Download calendar file for "+eventTitle(row)}>↓ Download .ics</ButtonLink>:null}
       {row.status==="SCHEDULED"?<Button type="button" variant="secondary" disabled={busy} onClick={()=>open(row)}>Edit</Button>:null}
       {row.status==="CANCELLED"&&rounds.some(round=>round.id===row.roundId&&
         ["SCHEDULED","PENDING"].includes(round.status))?
@@ -394,7 +394,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <EmptyState title="No conflicting candidate interviews" description="No scheduling conflicts were found in the current filtered interview rows."/>:
     <EmptyState title="No candidate interviews" description="No interviews scheduled for this drive yet."/>):null}
   </div>
-  <div className="hidden min-[768px]:block">
+  <div className="hidden md:block">
   <DataTable<(typeof appointments)[number]>
     caption="Candidate interviews"
     rows={visibleAppointments}
@@ -430,16 +430,15 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
           <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] pb-2 md:flex-row md:flex-wrap">
      <Link href={applicationHref(row.applicationId)}
        aria-label={"View application for "+(applicant(row.applicationId)?.name??"candidate")+" in "+(jobTitle??"this placement drive")}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
+       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] underline md:min-h-9">
        View application
      </Link>
-     {row.status!=="CANCELLED"?<a download={"interview-"+row.id+".ics"}
-      href={eventIcsHref(row)} aria-label={"Download calendar file for "+eventTitle(row)}
-       className="inline-flex min-h-11 min-[768px]:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-[14px] font-[650] text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
+     {row.status!=="CANCELLED"?<ButtonLink variant="secondary" download={"interview-"+row.id+".ics"}
+      href={eventIcsHref(row)} aria-label={"Download calendar file for "+eventTitle(row)}>
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor"
         fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 11h18"/>
-      </svg>Download .ics</a>:null}
+      </svg>Download .ics</ButtonLink>:null}
      {row.status==="COMPLETED"?<Button type="button" variant="secondary"
       disabled={busy} onClick={()=>void openFeedback(row)}>Interview feedback</Button>:null}
      {row.status==="CANCELLED"&&rounds.some(round=>round.id===row.roundId&&
@@ -472,7 +471,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      {busy?"Saving…":editing?.status==="RESCHEDULE_REQUESTED"?"Apply new slot":editing?"Save changes":"Schedule Interview"}</Button>
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={closeSetup}>Cancel</Button>
    </>}>
-    <h3 className="sr-only">{editing?"Edit interview":"Schedule interview"}</h3>
+    <Heading level={3} className="sr-only">{editing?"Edit interview":"Schedule interview"}</Heading>
     {clonedFrom?<Banner tone="info" role="status">
       Reusing a cancelled interview. Choose a new date and time before scheduling; the cancelled record will not be changed.
     </Banner>:null}
@@ -593,7 +592,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       {feedbackExisting?"Close":"Cancel"}
     </Button>
    </>}>
-   {feedbackFor?<div className="rounded-[6px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-[14px] py-[10px] text-sm">
+   {feedbackFor?<div className="rounded-[6px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-[16px] py-[12px] text-sm">
      <strong>{applicant(feedbackFor.applicationId)?.name??"Candidate"}</strong>
      {jobTitle?<span className="text-muted-foreground"> · {jobTitle}</span>:null}
      <span className="text-muted-foreground"> · {(feedbackFor.interviewType??"Interview").charAt(0)+

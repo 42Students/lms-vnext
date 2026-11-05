@@ -4,6 +4,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
 import { COLLEGE_SETUP_GUIDE_COPY } from "@/modules/admin-ui/admin-dashboard-navigation";
 import type { collegeChecklistProjection } from "@/modules/admin-ui/college-setup-checklist-model";
+import { Heading } from "@/components/ui/heading";
 
 type Phases = ReturnType<typeof collegeChecklistProjection>;
 
@@ -14,7 +15,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
     <div className="mt-4 space-y-4">
     <div className="flex flex-wrap items-baseline justify-between gap-3">
       <div>
-        <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{COLLEGE_SETUP_GUIDE_COPY.heading}</h2>
+        <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{COLLEGE_SETUP_GUIDE_COPY.heading}</Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">{COLLEGE_SETUP_GUIDE_COPY.intro}</p>
       </div>
       <p className="text-sm text-muted-foreground leading-[22px]" aria-label="Setup steps containing persisted data">
@@ -25,7 +26,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
       {phases.map(phase => <section key={phase.title}
         className="border-t border-border pt-4">
-        <h3 className="text-base font-semibold text-[var(--lms-heading)]">{phase.title}</h3>
+        <Heading level={3} size="base" className="text-[var(--lms-heading)]">{phase.title}</Heading>
         <ul className="mt-3">
           {phase.steps.map(step => <ListRow key={step.key} title={step.label}
             detail={step.count > 0

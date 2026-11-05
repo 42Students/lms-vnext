@@ -9,6 +9,7 @@ import {Button} from "@/components/ui/button";
 import {Disclosure} from "@/components/ui/disclosure";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import type {TpoTimedDebarRow} from "@/modules/placements/tpo-timed-debar-view-model";
+import { Heading } from "@/components/ui/heading";
 const endpoint=(id:string)=>"/api/placements/tpo/students/"+encodeURIComponent(id)+"/debarments";
 type Pending={action:"DEBAR"}|{action:"LIFT";id:string};
 export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string;initial:TpoTimedDebarRow[]}){
@@ -67,7 +68,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
    {active.length>0?<p className="text-xs text-muted-foreground leading-[20px]">Lift the current debarment before creating another.</p>:null}
   </Disclosure>
   <div className="min-w-0 space-y-3">
-   <h3 className="font-semibold">Debarment history</h3>
+   <Heading level={3}>Debarment history</Heading>
    {rows.length===0?<p role="status" className="text-sm text-body leading-[22px]">No timed debarment is recorded for this student.</p>:null}
    {rows.map(row=><article key={row.id} className="min-w-0 space-y-2 border-b border-border py-3">
     <p className="break-words font-semibold">{row.active?"Active":"Ended"} · {row.reason}</p>

@@ -20,6 +20,7 @@ import { parseFacultyInboxQuery,normalizeFacultyLegacyInboxTab } from "@/modules
 import { facultyNotificationActionHref } from "@/modules/courses/faculty-notification-link-model";
 import { facultyNotificationsFallbackPath,requireFacultyNotificationsAccess } from "@/modules/activity/faculty-notifications-access";
 import { FacultyNotificationsRetry } from "./faculty-notifications-retry";
+import { Heading } from "@/components/ui/heading";
 
 const FACULTY_INBOX = "/teacher/notifications";
 
@@ -183,10 +184,10 @@ export default async function FacultyNotificationsPage({
           className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View all notifications</Link>
       </Alert>:null}
       <section aria-labelledby="faculty-feed-heading" className="min-w-0 space-y-4">
-        <h2 id="faculty-feed-heading" className="text-lg font-semibold text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" id="faculty-feed-heading" className="text-[var(--lms-heading)]">
           {scopeTab==="all"?"Notifications":scopeTab==="personal"?"Personal notifications":
             scopeTab.charAt(0).toUpperCase()+scopeTab.slice(1)+" notifications"}
-        </h2>
+        </Heading>
         {allEmpty?<p className="text-sm text-body">Announcements across college, department, and faculty will appear here.</p>:null}
         {view === "unread" && scopeTab !== "personal" && scopeTab !== "all" ?
           <p role="status" className="text-sm text-body">Announcements have no read status. Select All to view {scopeTab} announcements, or Personal for unread messages.</p> : null}

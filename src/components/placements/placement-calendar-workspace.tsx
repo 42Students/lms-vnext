@@ -47,6 +47,8 @@ import {tpoLegacyCalendarEventTitle,TPO_CALENDAR_SUBTITLE,TPO_EMPTY_AGENDA} from
 import { calendarDueAtToIstLocal } from "@/modules/placements/tpo-calendar-followup-model";
 import { placementRoundKinds } from "@/modules/placements/validation";
 import { TPO_CALENDAR_CHIP_CHOICES, filterTpoCalendarChipEvents, parseTpoCalendarChips, toggleTpoCalendarChip, tpoCalendarChipCount, type TpoCalendarChip } from "@/modules/placements/tpo-calendar-kind-chips";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
@@ -467,9 +469,9 @@ function CalendarEventCard({
           <p className="m-0 break-words text-xs font-semibold text-[var(--lms-muted-text)]">
             {event.companyName}
           </p>
-          <h3 className="mt-[var(--lms-space-1)] break-words text-base font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="base" className="mt-[var(--lms-space-1)] break-words text-[var(--lms-heading)]">
             {event.title}
-          </h3>
+          </Heading>
           {event.jobTitle ? (
             <p className="mt-1 text-sm text-body">
               {event.jobTitle}
@@ -520,12 +522,12 @@ function CalendarEventCard({
           →
         </Link>
       ) : null}
-      {ics?<a download={"interview-"+event.id+".ics"}
+      {ics?<ButtonLink variant="secondary" download={"interview-"+event.id+".ics"}
         href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(ics)}
         aria-label={"Download interview calendar event for "+event.title}
-        className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="mt-2">
         Download .ics
-      </a>:null}
+      </ButtonLink>:null}
       {audience === "TPO" && allowFollowupEditing &&
        event.kind === "FOLLOW_UP" && event.status === "OPEN" &&
        event.followupId ? (
@@ -837,7 +839,7 @@ export async function PlacementCalendarWorkspace({
        </p>:null}
       </section>:null}
       {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-4">
-       <h2 className="text-base font-semibold">Needs doing</h2>
+       <Heading level={2} size="base">Needs doing</Heading>
        <div className="grid min-w-0 gap-0 divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
         {([
           {focus:"OVERDUE" as const,label:"Follow-ups overdue",value:needsKnown?overdue.length:null},
@@ -854,9 +856,9 @@ export async function PlacementCalendarWorkspace({
        </div>
        {state.focus ? <div role="region" className="border-b border-border py-3" aria-label="Needs doing details">
          <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-sm font-semibold">
+          <Heading level={3} size="sm">
            {state.focus==="OVERDUE"?"Overdue follow-ups":state.focus==="BLOCKED"?"Rounds on blocked dates":"Busy day events"}
-          </h3>
+          </Heading>
           <Link href={calendarHref(basePath,audience,state,{focus:null})}
            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">
            Close
@@ -921,9 +923,9 @@ export async function PlacementCalendarWorkspace({
       <section className={isTpo?"border-b border-border pb-5 "+calendarStyles["tpoCommandBar"]:"border-b border-border pb-5"}>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="m-0 text-base font-semibold text-foreground">
+            <Heading level={2} size="base" className="m-0 text-foreground">
               Calendar controls
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-muted-foreground">
               Showing {dateLabel(window.from)} –{" "}
               {dateLabel(window.to)} · IST
@@ -1138,9 +1140,9 @@ export async function PlacementCalendarWorkspace({
         <div className="border-t border-border px-4 pb-4 pt-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="m-0 text-base font-semibold text-foreground">
+            <Heading level={2} size="base" className="m-0 text-foreground">
               Next scheduled
-            </h2>
+            </Heading>
             {summary.next ? (
               <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm text-body">
                 {summary.next.companyName} ·{" "}
@@ -1174,7 +1176,7 @@ export async function PlacementCalendarWorkspace({
 
       {isTpo&&state.view==="week"&&blockedEvents.length>0?<section
         aria-label="All-day blocked dates" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
-        <h2 className="text-sm font-semibold text-foreground">Blocked (exam) dates · All day</h2>
+        <Heading level={2} size="sm" className="text-foreground">Blocked (exam) dates · All day</Heading>
         <ul className="mt-2 flex flex-wrap gap-2">{blockedEvents.map(event=>
          <li key={event.id} className="rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 py-2 text-sm text-body">
           <strong>{dateLabel(placementCalendarDayKey(event.startsAt))} · Blocked</strong>
@@ -1197,7 +1199,7 @@ export async function PlacementCalendarWorkspace({
           aria-label={`${state.view} placement calendar`} tabIndex={0}
           className={"min-w-0 overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1rem),transparent_100%)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] "+(isTpo?calendarStyles["tpoMonthFrame"]:"")}
         >
-          <CalendarGrid variant="hairline" className={"min-w-[42rem] min-[992px]:min-w-[56rem] "+calendarStyles["calendarHairline"]}>
+          <CalendarGrid variant="hairline" className={"min-w-[42rem] lg:min-w-[56rem] "+calendarStyles["calendarHairline"]}>
             {[
               "Mon",
               "Tue",
@@ -1265,7 +1267,7 @@ export async function PlacementCalendarWorkspace({
                         <span className="block truncate">{eventTime(event.startsAt)}{event.status==="DONE"?" · Done":""}</span>
                         <span className="block truncate">{event.title}</span>
                        </summary>
-                       <div className="relative z-10 min-w-0 space-y-1 rounded-b-[var(--lms-control-radius)] border border-primary/20 bg-surface px-2 py-2 text-xs text-body">
+                       <div className="relative z-(--lms-z-raised) min-w-0 space-y-1 rounded-b-[var(--lms-control-radius)] border border-primary/20 bg-surface px-2 py-2 text-xs text-body">
                         <strong className="block break-words">{event.title}</strong>
                         <p className="break-words">{event.companyName} · {eventDateTime(event.startsAt)} IST</p>
                         {event.venue?<p className="break-words">Venue: {event.venue}</p>:null}
@@ -1302,11 +1304,11 @@ export async function PlacementCalendarWorkspace({
       >
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="m-0 text-base font-semibold text-foreground">
+            <Heading level={2} size="base" className="m-0 text-foreground">
               {state.view === "agenda"
                 ? "Agenda"
                 : "Events in visible period"}
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-muted-foreground">
               {loadedResponse
                 ? `${visibleEvents.length} matching event${visibleEvents.length === 1 ? "" : "s"}`
@@ -1338,12 +1340,12 @@ export async function PlacementCalendarWorkspace({
               key={group.day}
               className="space-y-3"
             >
-              <h3 className="m-0 border-b border-border pb-2 text-sm font-semibold text-foreground">
+              <Heading level={3} size="sm" className="m-0 border-b border-border pb-2 text-foreground">
                 {new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(group.day+"T12:00:00Z"))}
                 {group.day === today
                   ? " · Today"
                   : ""}
-              </h3>
+              </Heading>
               <div className="min-w-0 divide-y divide-border border-b border-border">
                 {group.events.map((event) => (
                   <CalendarEventCard

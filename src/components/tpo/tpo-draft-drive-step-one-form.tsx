@@ -186,7 +186,7 @@ export function TpoDraftDriveStepOneForm({
           disabled={pending} onChange={(event) => setDeadline(event.target.value)}/>
       </label>
       {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
-      {unknownCreate?<p role="alert" className="text-sm text-body leading-[22px]">Review <Link href="/tpo/placements/lifecycle" className="text-primary-text underline">Drives</Link> before creating again. <Button type="button" variant="link" className="min-h-11 max-[767px]:min-h-11" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</Button></p>:null}
+      {unknownCreate?<p role="alert" className="text-sm text-body leading-[22px]">Review <Link href="/tpo/placements/lifecycle" className="text-primary-text underline">Drives</Link> before creating again. <Button type="button" variant="link" className="min-h-11 max-md:min-h-11" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</Button></p>:null}
       <Button type="submit" disabled={pending || unknownCreate || !companyRelationshipId || jobTypesState !== "ready" || !jobTypeLabel}
         >
         {pending ? "Saving draft…" : "Review and save draft"}

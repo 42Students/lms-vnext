@@ -12,6 +12,8 @@ import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 import {TpoRequestDecisionControl} from "@/components/placements/tpo-request-decision-control";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
 const tabs:readonly Tab[]=["Profile","Placement","Requests","Notes","History"];
@@ -123,25 +125,25 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     }))}/>
    <div className="mt-4 min-w-0 space-y-5 text-sm">
     {tab==="Profile"?<>
-      <h3 className="font-semibold">Needs attention</h3>
+      <Heading level={3}>Needs attention</Heading>
       {attention.length?<ul className="list-disc space-y-1 pl-5 break-words">{attention.map(item=><li key={item}>{item}</li>)}</ul>
        :<p className="text-body">No attention flags derived from the current roster evidence.</p>}
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
-        <h3 className="font-semibold">Contact details</h3>
+        <Heading level={3}>Contact details</Heading>
         <p className="mt-1 text-xs text-muted-foreground">Contact stays masked until intentionally revealed by the placement officer. Phone is only available as last four digits here.</p>
         {!contactRevealed?<Button type="button" variant="secondary" onClick={()=>setContactRevealed(true)} className="mt-2 min-h-11 md:min-h-9">Reveal email</Button>:
           <div id={contactPanelId} role="group" aria-label="Revealed student email" className="mt-2 flex flex-wrap items-center gap-2">
             <span className="break-all text-sm">{student.email??"No email on record"}</span>
             {student.email?<><Button variant="secondary" type="button" onClick={()=>{
               void navigator.clipboard.writeText(student.email??"").then(()=>setContactNotice("Email copied")).catch(()=>setContactNotice("Copy failed; select the email manually."));
-            }}>Copy email</Button><a href={"mailto:"+encodeURIComponent(student.email)}
-              className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Email student</a></>:null}
+            }}>Copy email</Button><TextLink href={"mailto:"+encodeURIComponent(student.email)}
+              className="inline-flex min-h-11 items-center md:min-h-9">Email student</TextLink></>:null}
             <Button variant="ghost" type="button" onClick={()=>{setContactRevealed(false);setContactNotice("");}}>Hide</Button>
           </div>}
         {contactNotice==="Copy failed; select the email manually."?<p role="alert" className="text-xs text-muted-foreground">{contactNotice}</p>:contactNotice?<p role="status" className="text-xs text-muted-foreground">{contactNotice}</p>:null}
         <p className="mt-2 text-xs text-muted-foreground">Phone: {student.profileFacts?.phoneMasked??"Not recorded"}</p>
       </section>
-      <h3 className="border-t border-border pt-4 font-semibold">Academic marks</h3>
+      <Heading level={3} className="border-t border-border pt-4">Academic marks</Heading>
       <dl className="grid min-w-0 gap-2 sm:grid-cols-2">
         {([
           ["10th",student.tenthPct],["12th",student.twelfthPct],["Diploma",student.diplomaPct],
@@ -153,7 +155,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
             className="text-xs text-muted-foreground">{student.marksVerified?"Verified record":"Not independently verified"} · {label.startsWith("PG")?"Learner profile entry":"Entered/converted academic record"}</p>
         </div>)}
       </dl>
-      <h3 className="border-t border-border pt-4 font-semibold">Recorded learner facts</h3>
+      <Heading level={3} className="border-t border-border pt-4">Recorded learner facts</Heading>
       <dl className="grid min-w-0 grid-cols-1 gap-x-5 gap-y-0 md:grid-cols-2">
        {[
         ["Program",student.programName],["Branch",student.branchName],
@@ -172,7 +174,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         ["Offers waiting on their answer",student.offersAwaitingAnswer],
         ["Prep %","Not measured — open placement prep readiness"],
         ["Registration",student.registrationChoice??"Not recorded"],
-        ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-2.5">
+        ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-3">
         <dt className="break-words text-xs text-muted-foreground">{label}</dt><dd className="min-w-0 break-words font-semibold">{value}</dd>
        </div>)}
       </dl>
@@ -191,18 +193,18 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       </div>
     </>:null}
     {tab==="Placement"?<>
-      <h3 className="font-semibold">Placement journey</h3>
+      <Heading level={3}>Placement journey</Heading>
       <dl className="grid min-w-0 grid-cols-1 gap-x-5 gap-y-0 md:grid-cols-2">
        {[
         ["Participation",tpoStudentDisplayLabel(student.participationStatus)],["Applications",student.applicationCount],
         ["Active applications",student.activeApplicationCount],["Offers",student.offerCount],
         ["Accepted offers",student.acceptedOfferCount],["Best so far",student.bestCompany?
          student.bestCompany+": "+tpoStudentDisplayLabel(student.bestSoFar):tpoStudentDisplayLabel(student.bestSoFar)],
-        ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-2.5">
+        ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-3">
         <dt className="break-words text-xs text-muted-foreground">{label}</dt><dd className="min-w-0 break-words font-semibold">{value}</dd>
        </div>)}
       </dl>
-      <h3 className="font-semibold">Applications</h3>
+      <Heading level={3}>Applications</Heading>
       {detail&&!detail.applications?.length?<p>No recorded placement applications.</p>:null}
       {detail?.applications?.map(row=><div key={row.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-3">
         <span className="min-w-0 break-words [overflow-wrap:anywhere]">{row.title} · {row.status.replaceAll("_"," ")}</span>
@@ -216,7 +218,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     {error?<div role="alert" className="min-w-0 space-y-2"><InlineNotice tone="error" message={error}/>
      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void fetchDetail()}>Retry</Button></div>:null}
     {tab==="Requests"?<>
-      <h3 className="font-semibold">Requests</h3>
+      <Heading level={3}>Requests</Heading>
       {detail&&!detail.requests.length?<p>No placement requests recorded for this student.</p>:null}
       {detail?.requests.map(row=><article key={row.id} className="min-w-0 space-y-1 border-b border-border py-3">
         <p className="font-semibold">{row.type.replaceAll("_"," ")} · {row.status}</p>
@@ -230,7 +232,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 focus-visible:underline">Review student&apos;s requests</Link>
     </>:null}
     {tab==="Notes"?<>
-      <h3 className="font-semibold">Internal Notes</h3>
+      <Heading level={3}>Internal Notes</Heading>
       <TpoStudentNoteEditor key={student.membershipId} membershipIds={[student.membershipId]} afterSave={()=>void fetchDetail()}/>
       {detail?.studentNotes?.map(row=><article key={row.id} className="min-w-0 space-y-1 border-b border-border py-3">
        <p className="break-words [overflow-wrap:anywhere]">{row.note}</p><p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground">{when(row.createdAt)} · Author {row.authorUserId}</p>
@@ -246,7 +248,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       Most recent records shown; open the full Requests or History page for older entries.
     </p>:null}
     {tab==="History"?<>
-      <h3 className="font-semibold">Team and student activity</h3>
+      <Heading level={3}>Team and student activity</Heading>
       {detail&&!detail.teamHistory?.length?<p>No recorded team actions for this student.</p>:null}
       <ol className="space-y-2">{detail?.teamHistory?.map(row=><li key={row.id} className="min-w-0 border-b border-border py-3">
        <p className="break-words [overflow-wrap:anywhere] font-semibold">{row.summary}</p>

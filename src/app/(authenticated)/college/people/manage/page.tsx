@@ -23,6 +23,7 @@ import { listCollegePeopleWithRuntime } from "@/modules/people/runtime";
 import type { PersonMembershipView } from "@/modules/people/service";
 import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
+import { Heading } from "@/components/ui/heading";
 
 type Search = Record<string, string | string[] | undefined>;
 function collegePeopleManageHref(filter: CollegePeopleDirectoryFilter) {
@@ -134,7 +135,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       </nav>
     </details>
     <section className="min-w-0" aria-label="People filters">
-      <form action="/college/people/manage" method="get" role="search" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto_auto]" aria-label="Search people">
+      <form action="/college/people/manage" method="get" role="search" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto_auto]" aria-label="Search people">
         <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-44 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email or phone
           <Input name="q" type="search" maxLength={100} defaultValue={filter.q}
             />
@@ -164,7 +165,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       </form>
     </section>
     {showLearnerSearch?<section aria-label="Learner search" className="min-w-0 space-y-3">
-     <h2 className="text-base font-semibold text-foreground">Learner search</h2>
+     <Heading level={2} size="base" className="text-foreground">Learner search</Heading>
      {snapshot?<div className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-5">
       {snapshot.map(tile=><StatTile key={tile.label} label={tile.label} value={tile.value}/>)}
      </div>:null}
@@ -172,9 +173,9 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       <Alert tone="warning">Some learner search statistics couldn't be loaded. The college membership directory is still available.</Alert>:
       <p role="status" className="text-xs text-muted-foreground">Stats retrieved.</p>}
      <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
-      <h3 className="text-sm font-semibold text-foreground">
+      <Heading level={3} size="sm" className="text-foreground">
        {filter.q?"Matching learner suggestions":"First 15 learners"}
-      </h3>
+      </Heading>
       <p className="mt-1 text-xs text-muted-foreground">
        Scoped to the selected college. Choosing a suggestion filters the directory;
        it does not imply a popularity ranking or grant new access.

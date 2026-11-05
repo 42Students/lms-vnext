@@ -2,39 +2,39 @@
  * to the personal TPO activity feed; shared NotificationList unchanged. */
 .feed {
   min-width: 0;
-  padding: 6px 18px 18px;
+  padding: 6px 20px 20px;
   border: 1px solid var(--lms-header-border);
   border-radius: 14px;
   background: var(--lms-white);
-  box-shadow: 0 5px 20px rgba(26,45,72,.05);
+  box-shadow: var(--lms-elevation-3);
 }
 .feed section {
   min-width: 0;
   gap: 4px;
-  padding-top: 14px;
+  padding-top: 16px;
 }
 .feed section + section {
   margin-top: 6px;
   border-top: 1px solid var(--lms-header-border);
 }
 .feed section > h2 {
-  margin: 0 0 5px 12px;
+  margin: 0 0 6px 12px;
   color: var(--lms-text-muted);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: .07em;
+  letter-spacing: .08em;
   text-transform: uppercase;
 }
 .feed [data-slot="button"] {
   width: 100%;
   min-height: 44px;
-  padding: 11px 12px !important;
+  padding: 12px 12px !important;
   border: 1px solid transparent !important;
   border-radius: 10px !important;
   background: var(--lms-white) !important;
   box-shadow: none !important;
   text-align: left;
-  transition: border-color 150ms ease, background 150ms ease;
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease), background var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .feed [data-slot="button"]:hover:not(:disabled) {
   border-color: var(--lms-neutral-200) !important;
@@ -46,7 +46,7 @@
 }
 @media (max-width: 767px) {
   .feed { padding: 6px 12px 12px; }
-  .feed [data-slot="button"] { min-height: 44px; padding: 11px 12px !important; }
+  .feed [data-slot="button"] { min-height: 44px; padding: 12px 12px !important; }
 }
 @media (prefers-reduced-motion: reduce) {
   .feed [data-slot="button"] { transition: none; }

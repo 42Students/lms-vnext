@@ -14,6 +14,7 @@ import {useEffect,useMemo,useRef,useState} from "react";
 import {positionWeekEvents,type WeekGridEvent} from "@/modules/placements/tpo-week-grid-model";
 import {calendarLocalIstToOffset,calendarDueAtToIstLocal} from "@/modules/placements/tpo-calendar-followup-model";
 import {TpoCalendarMoveFollowup,type TpoCalendarLeadOption} from "./tpo-calendar-followup-actions";
+import { Heading } from "@/components/ui/heading";
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
@@ -156,16 +157,16 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  const height=(LAST-FIRST)*HEIGHT;
  return <section aria-label="TPO weekly time calendar" className="space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h2 className="font-semibold">Week · 7 AM to 9 PM IST</h2>
+   <Heading level={2}>Week · 7 AM to 9 PM IST</Heading>
    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-body-text)] sm:w-64 text-[var(--lms-neutral-400)]">Find an event
     <Input type="search" value={filter} onChange={e=>setFilter(e.target.value)} maxLength={100}
      placeholder="Company or event"/>
    </label>
   </div>
-  <details className="text-[13px] leading-5 text-[var(--lms-muted-text)]"><summary className="w-fit cursor-pointer font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">How to use this calendar</summary><p className="mt-[var(--lms-space-2)] max-w-prose">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p></details>
+  <details className="text-[13px] leading-5 text-[var(--lms-muted-text)]"><summary className="w-fit cursor-pointer font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] max-md:flex max-md:min-h-11 max-md:items-center">How to use this calendar</summary><p className="mt-[var(--lms-space-2)] max-w-prose">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p></details>
   <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] bg-surface focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] "+weekStyles["grid"]}>
    <div className={"grid min-w-[56rem] "+weekStyles["weekColumns"]}>
-    <div className={"sticky left-0 z-10 border-b border-r bg-surface "+weekStyles["corner"]}>IST</div>
+    <div className={"sticky left-0 z-(--lms-z-raised) border-b border-r bg-surface "+weekStyles["corner"]}>IST</div>
     {days.map(day=><div key={day} className={"border-b border-r text-center text-xs font-semibold "+weekStyles["dayHead"]}>
      {label(day)}{day===today?" · Today":""}{blocked.has(day)?" · Blocked":""}
     </div>)}
@@ -187,7 +188,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         event.preventDefault();const followupId=event.dataTransfer.getData("application/x-tpo-followup");
         if(followupId)void moveFollowup(followupId,day,FIRST+offset);
        }}
-       className={"absolute inset-x-0 z-0 border-b px-1 text-left focus-visible:z-20 "+weekStyles["slot"]}
+       className={"absolute inset-x-0 z-0 border-b px-1 text-left focus-visible:z-(--lms-z-sticky-inline) "+weekStyles["slot"]}
        style={{top:offset*HEIGHT,height:HEIGHT}}/>)}
       {day===today&&nowMinutes>=FIRST*60&&nowMinutes<=LAST*60?
        <div aria-label="Current time" className={"pointer-events-none absolute inset-x-0 border-t-2 "+weekStyles["nowLine"]}
@@ -206,7 +207,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
          aria-label={"Move follow-up: "+event.title} data-event-kind={event.kind}
          draggable onDragStart={dragEvent=>{dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId!);dragEvent.dataTransfer.effectAllowed="move";}}
          onClick={()=>setMove({id:event.followupId!,currentIst:calendarDueAtToIstLocal(new Date(event.startsAt))})}
-         style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles["event"]+" [min-height:44px] !max-w-none !rounded-[var(--lms-control-radius)]"}>{inner}</Button>:
+         style={position} className={"absolute z-(--lms-z-raised) overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles["event"]+" [min-height:44px] !max-w-none !rounded-[var(--lms-control-radius)]"}>{inner}</Button>:
        event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title} data-event-kind={event.kind}
         draggable={canCreate&&Boolean(event.followupId)}
         onDragStart={dragEvent=>{
@@ -214,10 +215,10 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
          dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId);
          dragEvent.dataTransfer.effectAllowed="move";
         }}
-        style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles["event"]}>{inner}</Link>:
-       <div key={event.id} data-event-kind={event.kind} style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles["event"]}>{inner}</div>;
+        style={position} className={"absolute z-(--lms-z-raised) overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles["event"]}>{inner}</Link>:
+       <div key={event.id} data-event-kind={event.kind} style={position} className={"absolute z-(--lms-z-raised) overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles["event"]}>{inner}</div>;
       })}
-      {offHours.length?<div className="absolute inset-x-0 bottom-0 z-20 space-y-1 border-t border-border bg-surface/95 p-1">
+      {offHours.length?<div className="absolute inset-x-0 bottom-0 z-(--lms-z-sticky-inline) space-y-1 border-t border-border bg-surface/95 p-1">
        {offHours.map(e=><p key={e.id} className="truncate text-xs min-w-0" title={e.title}>Outside displayed hours · {e.title}</p>)}
       </div>:null}
      </div>;

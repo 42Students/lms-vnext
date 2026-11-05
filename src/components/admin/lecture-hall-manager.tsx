@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { LECTURE_HALL_COPY, ROOM_TYPE_LABELS } from "@/modules/academics/lecture-hall-copy";
+import { Heading } from "@/components/ui/heading";
 
 function HallPlusIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>;}
 function HallEditIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16 4a2.8 2.8 0 0 1 4 4L9 19l-5 1 1-5L16 4Z"/></svg>;}
@@ -259,7 +260,7 @@ export function LectureHallManager({
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <section aria-labelledby="create-lecture-hall-heading" className="min-w-0 self-start rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
-          <h2 id="create-lecture-hall-heading" className="mb-[var(--lms-space-4)] text-base font-semibold text-foreground">{LECTURE_HALL_COPY.createTitle}</h2>
+          <Heading level={2} size="base" id="create-lecture-hall-heading" className="mb-[var(--lms-space-4)] text-foreground">{LECTURE_HALL_COPY.createTitle}</Heading>
           <form className="space-y-[var(--lms-space-4)]" onSubmit={(event) => { event.preventDefault(); save(true); }}>
             {createError ? <Banner tone="error">{createError}</Banner> : null}
             <div>
@@ -315,7 +316,7 @@ export function LectureHallManager({
           </form>
         </section>
         <section aria-label="Existing Lecture Halls / Rooms" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-          <h2 className="mb-[var(--lms-space-3)] text-base font-semibold text-foreground">Existing Lecture Halls / Rooms</h2>
+          <Heading level={2} size="base" className="mb-[var(--lms-space-3)] text-foreground">Existing Lecture Halls / Rooms</Heading>
           <div className="flex min-w-0 flex-wrap gap-2 print:hidden">
             <label htmlFor="hall-search" className="sr-only">Search halls</label>
             <Input id="hall-search" type="search" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Search halls" className="min-h-11 w-full md:min-h-9 md:w-44"/>
@@ -345,7 +346,7 @@ export function LectureHallManager({
               cell: (hall) => (
                 <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden md:justify-end">
                   <Link href={`${availabilityBase}/${hall.id}`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                     Availability
                   </Link>
                   <Button type="button" variant="ghost" size="sm" disabled={pending}

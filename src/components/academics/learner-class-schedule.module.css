@@ -16,7 +16,7 @@
   gap: 16px;
   margin-bottom: 16px;
   padding: 16px;
-  border: 1px solid rgba(38,186,199,.12);
+  border: 1px solid color-mix(in srgb, var(--lms-primary) 12%, transparent);
   border-radius: 12px;
   background: var(--lms-white);
 }
@@ -26,12 +26,12 @@
   justify-content: space-between;
   gap: 8px;
 }
-.upcomingHead > h2 { color: var(--lms-neutral-900); font-size: 14px; font-weight: 850; }
+.upcomingHead > h2 { color: var(--lms-neutral-900); font-size: 14px; font-weight: 700; }
 .upcomingHead > span {
   color: var(--lms-neutral-500);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: .02em;
+  font-weight: 700;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 .upcomingList {
@@ -44,7 +44,7 @@
   min-width: 0;
   border: 1px solid var(--lms-neutral-200);
   border-radius: 8px;
-  background: rgba(38,186,199,.035);
+  background: color-mix(in srgb, var(--lms-primary) 4%, transparent);
   padding: 12px;
 }
 .calendarCard {
@@ -86,23 +86,23 @@
   background: transparent !important;
   color: var(--lms-neutral-500) !important;
   cursor: pointer;
-  transition: color .2s ease, background .2s ease;
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease), background var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .arrow:hover:not(:disabled) {
   color: var(--lms-primary) !important;
-  background: rgba(38,186,199,.08) !important;
+  background: color-mix(in srgb, var(--lms-primary) 8%, transparent) !important;
 }
 .arrow:focus-visible { outline: 2px solid var(--lms-primary) !important; outline-offset: 2px !important; }
 .today {
   min-height: 44px !important;
   color: var(--lms-primary) !important;
   border-color: var(--lms-primary) !important;
-  transition: color .2s ease,border-color .2s ease,background .2s ease;
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease),border-color var(--lms-motion-fast) var(--lms-motion-ease),background var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .today:hover:not(:disabled) {
   color: var(--lms-primary-hover) !important;
   border-color: var(--lms-primary-hover) !important;
-  background: rgba(38,186,199,.08) !important;
+  background: color-mix(in srgb, var(--lms-primary) 8%, transparent) !important;
 }
 .period {
   margin: 0 8px;
@@ -137,7 +137,7 @@
 }
 .viewSelect:focus-visible,.courseSelect:focus-visible {
   border-color: var(--lms-primary) !important;
-  box-shadow: 0 0 0 2px rgba(38,186,199,.2) !important;
+  box-shadow: var(--lms-focus-ring) !important;
 }
 .filters {
   display: flex;
@@ -195,11 +195,11 @@
   font-size: 12px;
   color: var(--lms-neutral-900);
 }
-.monthDay:hover { background: rgba(38,186,199,.045); }
+.monthDay:hover { background: color-mix(in srgb, var(--lms-primary) 5%, transparent); }
 .monthDay:focus-visible { outline: 2px solid var(--lms-primary) !important; outline-offset: -2px !important; }
 .monthDay[aria-pressed="true"] {
-  background: rgba(38,186,199,.08);
-  box-shadow: inset 0 0 0 2px var(--lms-primary);
+  background: color-mix(in srgb, var(--lms-primary) 8%, transparent);
+  box-shadow: var(--lms-ring-inset-selected);
 }
 .monthDay[data-outside="true"] { background: var(--lms-topbar-search); color: var(--lms-neutral-400); }
 .monthDay[data-outside="true"]:hover { background: var(--lms-primary-subtle); }
@@ -250,7 +250,7 @@
   padding: 0 !important;
   cursor: pointer;
 }
-.emptyHour:hover { background: rgba(38,186,199,.04) !important; }
+.emptyHour:hover { background: color-mix(in srgb, var(--lms-primary) 4%, transparent) !important; }
 .emptyHour:focus-visible { outline: 2px solid var(--lms-primary) !important; outline-offset: -2px !important; }
 .eventCard {
   border-radius: 8px;
@@ -274,7 +274,7 @@
     border-radius: 12px 12px 0 0;
     border-right: 0;
     border-left: 0;
-    box-shadow: 0 -1px 0 0 var(--lms-neutral-200);
+    box-shadow: var(--lms-shadow-top);
   }
   /* Old mobile hid the toolbar because its mobile list supplied navigation.
    * vNext depends on this toolbar for date, filter and view changes: retain it

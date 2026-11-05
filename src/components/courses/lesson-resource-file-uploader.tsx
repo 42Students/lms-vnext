@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Alert} from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Heading } from "@/components/ui/heading";
 
 type FileMaterial={
  id:string;kind:string;title:string;originalName:string|null;uploadStatus:string;
@@ -181,7 +182,7 @@ export function LessonResourceFileUploader({
    onConfirm={()=>{if(pendingDelete&&!busy)void mutateMaterial(pendingDelete.id,"DELETE");}}/>
   {materials.filter(item=>item.kind==="FILE"&&["UPLOADING","VERIFYING"].includes(item.uploadStatus)).length?
    <div className="space-y-2 border-t border-border pt-3">
-    <h5 className="text-sm font-semibold">Pending file verification</h5>
+    <Heading level={5} size="sm">Pending file verification</Heading>
     {materials.filter(item=>item.kind==="FILE"&&["UPLOADING","VERIFYING"].includes(item.uploadStatus))
       .map(item=><div key={item.id} className="flex flex-wrap items-center gap-2 text-xs">
        <span className="min-w-0 flex-1 break-words">{item.title} · {item.uploadStatus==="VERIFYING"?"Scan pending":"Upload pending"}</span>
@@ -199,7 +200,7 @@ export function LessonResourceFileUploader({
    </div>)}
   {materials.filter(item=>item.uploadStatus!=="DELETED").length<20?
    <div className="space-y-2 border-t border-border pt-3">
-    <h5 className="text-sm font-semibold">Upload file material</h5>
+    <Heading level={5} size="sm">Upload file material</Heading>
     <p className="text-xs text-muted-foreground">PDF, Office, CSV, text, images or ZIP; up to 50 MB per file. Files remain private until scanned and verified.</p>
     <label className="grid gap-1 text-xs font-semibold">File
      <Input type="file" accept={extensions.map(extension=>"."+extension).join(",")} disabled={busy}

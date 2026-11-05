@@ -14,6 +14,8 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {parseTpoCompanyTeamDraft,tpoCompanyTeamDraftSendKey,type TpoCompanyTeamDraft} from "@/modules/placements/tpo-company-team-draft-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type TeamMessage={
  id:string;body:string;decision:boolean;authorMembershipId:string;authorName:string|null;
@@ -36,7 +38,7 @@ function formatTokens(body:string,members:TeamPayload["members"]){
   .map((chunk,i)=>{
     if(chunk.startsWith("@member:")){
       const name=members.find(m=>m.membershipId.toLowerCase()===chunk.slice(8).toLowerCase())?.name;
-      return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">@{name??"team member"}</span>;
+      return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">@{name??"team member"}</span>;
     }
     if(chunk.startsWith("#drive:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
       href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</Link>;
@@ -45,7 +47,7 @@ function formatTokens(body:string,members:TeamPayload["members"]){
     if(chunk.startsWith("#student:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
       href={"/tpo/students/"+encodeURIComponent(chunk.slice(9))+"/participation"}>{chunk}</Link>;
     if(chunk.startsWith("@")||chunk.startsWith("#"))
-      return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">{chunk}</span>;
+      return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">{chunk}</span>;
     return chunk;
   });
 }
@@ -143,7 +145,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    className="min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
   <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
    <div className="min-w-0 flex-1">
-    <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Team · {companyName}</h2>
+    <Heading level={2} size="base" className="break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Team · {companyName}</Heading>
     <p className="mt-1 text-xs text-body leading-[20px]">
      Only your placement team sees this. Recruiters and students never do.
     </p>
@@ -165,9 +167,9 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    {data.truncated?<Banner tone="warning">Showing the latest 100 messages. Earlier history remains stored.</Banner>:null}
    {data.messages.some(m=>m.decision&&!m.deletedAt)?<aside aria-label="Pinned company Team decisions"
      className="border-y border-[var(--lms-canvas-border)] py-3 text-sm">
-     <h3 className="font-semibold">Decided:</h3>
+     <Heading level={3}>Decided:</Heading>
      {data.messages.filter(m=>m.decision&&!m.deletedAt).slice(-5).map(m=>
-       <a key={m.id} href={"#company-team-"+m.id} className="lms-inline-link flex min-h-11 min-w-0 items-center break-words py-1 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">{m.body}</a>)}
+       <TextLink key={m.id} href={"#company-team-"+m.id} className="lms-inline-link flex min-h-11 min-w-0 items-center break-words py-1 md:min-h-9">{m.body}</TextLink>)}
    </aside>:null}
    {data.messages.length===0?<EmptyState title="Nothing here yet." description="Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date."/>:null}
    <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">

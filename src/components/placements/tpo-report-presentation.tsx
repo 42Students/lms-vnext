@@ -22,7 +22,7 @@ export function TpoReportPresentation(){
   }catch(cause){setError(cause instanceof Error?cause.message:"Presentation mode unavailable.");}
  }
  return <div className="inline-flex flex-wrap items-center gap-2">
-  <FilterChip type="button" className="min-h-11 min-[768px]:min-h-8 print:hidden" onClick={()=>void toggle()}
+  <FilterChip type="button" className="min-h-11 md:min-h-8 print:hidden" onClick={()=>void toggle()}
    aria-pressed={active}>
    {active?"Exit presentation view":"Presentation view"}
   </FilterChip>

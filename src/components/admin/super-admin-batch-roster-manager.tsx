@@ -75,7 +75,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
     {key:"class",header:"Current class",mobileLabel:"Current class",mobilePriority:"secondary",
      cell:row=><span className="break-words">{row.classId?labels.get(row.classId)??"Unknown":"Not assigned"}</span>},
     {key:"move",header:"Move to",mobileLabel:"Move to",mobilePriority:"action",cell:row=>
-     <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-2)] print:hidden min-[768px]:grid-cols-[minmax(0,1fr)_auto]">
+     <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-2)] print:hidden md:grid-cols-[minmax(0,1fr)_auto]">
       <Select aria-label={"Destination class for "+(row.name??"student")} value={destinations[row.learnerEnrollmentId]??""}
        onChange={event=>{setDestinations(current=>({...current,[row.learnerEnrollmentId]:event.target.value}));setError(null);}}
        disabled={Boolean(moving)||pendingRow!==null} className="min-h-11 w-full min-w-0 md:min-h-9">
@@ -86,7 +86,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
          {choice.name}{choice.capacity!==null&&choice.learnerCount>=choice.capacity?" · Full":""}
         </option>)}
       </Select>
-      <Button type="button" variant="secondary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
+      <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto"
        disabled={Boolean(moving)||pendingRow!==null||!destinations[row.learnerEnrollmentId]||destinations[row.learnerEnrollmentId]===row.classId}
        aria-label={"Move "+(row.name??row.roll??"student")+" to another class"}
        onClick={()=>{setError(null);setPendingRow(row);}}>{moving===row.learnerEnrollmentId?"Moving…":"Move"}</Button>

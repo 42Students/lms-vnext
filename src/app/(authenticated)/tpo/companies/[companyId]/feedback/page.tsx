@@ -10,6 +10,7 @@ import { TpoCompanyFeedbackForm } from "@/components/placements/tpo-company-feed
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoCompanyFeedback } from "@/modules/placements/tpo-company-feedback-service";
 import { tpoCompanyFeedbackQuerySchema } from "@/modules/placements/tpo-company-feedback-model";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = { page?: string | string[] };
 const dateFormat = new Intl.DateTimeFormat("en-IN", {
@@ -68,9 +69,9 @@ export default async function TpoCompanyFeedbackPage({
             <Disclosure title="Record recruiter feedback" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3"><TpoCompanyFeedbackForm companyId={companyId} contacts={data.contacts} /></Disclosure>
           )}
           <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
-            <h2 className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+            <Heading level={2} size="lg" className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] leading-[1.4] text-[var(--lms-heading)]">
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
-            </h2>
+            </Heading>
             {data.notes.length === 0 ? (
               <EmptyState title="No saved NOTE-type CRM activities appear on this page." description="Calls, meetings, external communications and unstored feedback are not inferred." action={<Link href={"/tpo/companies/"+encodeURIComponent(companyId)} className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">← Company details</Link>}/>
             ) : (

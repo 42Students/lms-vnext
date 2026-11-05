@@ -7,6 +7,7 @@ import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {DEFAULT_ATTENDANCE_POLICY} from "@/modules/attendance/policy-validation";
+import { Heading } from "@/components/ui/heading";
 export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresholdPercent,correctionWindowHours,maxCorrectionHours=168}:{
  collegeId:string;eligibilityThresholdPercent:number;correctionWindowHours:number;maxCorrectionHours?:number;
 }){
@@ -167,7 +168,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   return ()=>window.clearTimeout(timer);
  },[message,failed]);
  return <section aria-label="Attendance policy" className="min-w-0 max-w-3xl space-y-[var(--lms-space-3)] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-  <h2 className="font-semibold text-[var(--lms-heading)]">Attendance policy</h2>
+  <Heading level={2} className="text-[var(--lms-heading)]">Attendance policy</Heading>
   <div className="grid gap-4 md:grid-cols-2 print:hidden">
    <div className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"><label htmlFor="attendance-policy-hours">Late marking allowed for</label>
     <Input id="attendance-policy-hours" type="number" min={1} max={maxCorrectionHours} step={1} value={hours}

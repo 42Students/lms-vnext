@@ -6,6 +6,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {apiFetch} from "@/lib/api-fetch";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 type Entry={key:string;value:string;version:number};
 
@@ -40,7 +41,7 @@ export function OrganizationSettingsCleanup({organizationId,ready,entries}:{
  }
  return <section aria-label="Historical organization setting cleanup"
   className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-  <h2 className="font-semibold text-foreground">Organization settings · historical overrides</h2>
+  <Heading level={2} className="text-foreground">Organization settings · historical overrides</Heading>
   <p className="text-sm text-body">These unused organization keys do not affect running settings. No new ORG overrides can be created here. Deletion is audited and cannot be undone from this screen.</p>
   {!ready?<p role="status" className="text-sm text-warning-text">Historical organization setting storage is unavailable. Nothing was changed.</p>:
     entries.length===0?<p role="status" className="text-sm text-body">No stored organization-level overrides remain.</p>:

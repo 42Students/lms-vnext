@@ -11,6 +11,7 @@ import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation"
 import {LearnerVerificationSubmit} from "@/components/profile/learner-verification-submit";
 import {LearnerVerificationWithdraw} from "@/components/profile/learner-verification-withdraw";
 import {learnerVerificationDateLabel,learnerVerificationSubmissionDateFallback} from "@/modules/placements/learner-verification-date-model";
+import { Heading } from "@/components/ui/heading";
 
 const details = [
   { key: "education", section:"EDUCATION", heading: "Education", edit: "/learn/profile?section=education" },
@@ -54,7 +55,7 @@ export default async function LearnerVerificationPage() {
       </details>
     </section>
     <section aria-labelledby="own-private-receipts" className="border-t border-border pt-5">
-      <h2 id="own-private-receipts" className="text-base font-semibold text-[var(--lms-heading)]">Your saved private evidence receipts</h2>
+      <Heading level={2} size="base" id="own-private-receipts" className="text-[var(--lms-heading)]">Your saved private evidence receipts</Heading>
       <p className="mt-2 text-sm text-body">These counts describe private upload receipts and scan status, not verified documents or proof that a reviewer has accepted them. Rejected, revoked and expired receipts cannot be used for approval.</p>
       <ul className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
         {status.evidence.map(item=><li key={item.purpose} className="min-h-11 min-w-0 border-b border-[var(--lms-canvas-border)] py-3 md:py-4">
@@ -66,7 +67,7 @@ export default async function LearnerVerificationPage() {
     <div className="grid min-w-0 gap-4 md:grid-cols-2">{details.map(item => {
       const row = status[item.key];
       return <section key={item.key} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4 md:pt-6">
-        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{item.heading}</h2>
+        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">{item.heading}</Heading>
         <div className="mt-2"><StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":row.status==="NOT_SUBMITTED"?"neutral":"info"}>{row.status==="NOT_SUBMITTED"&&row.missing.length===0?
           "Ready to send":label[row.status]}</StatusBadge></div>
         {row.status==="NOT_SUBMITTED"&&row.missing.length===0?<p role="status" className="mt-2 text-xs text-body">Ready, but not submitted or verified. Use Send for review to request college verification.</p>:null}
@@ -94,7 +95,7 @@ export default async function LearnerVerificationPage() {
         </Banner>:null}
         {item.section==="EDUCATION"&&row.submittedEducation.length>0?<section className="mt-4 border-t border-border pt-3"
           aria-label="Education submitted for review">
-          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Education submitted for review</h3>
+          <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Education submitted for review</Heading>
           <ul className="mt-2 divide-y divide-border">{row.submittedEducation.map((entry,index)=><li key={index} className="space-y-1 py-3 text-sm text-body">
             <p className="font-semibold text-foreground">{entry.qualification||"Qualification not recorded"}</p>
             <p>{[entry.program,entry.specialization,entry.institution].filter(Boolean).join(" · ")||"Institution not recorded"}</p>
@@ -104,7 +105,7 @@ export default async function LearnerVerificationPage() {
         </section>:null}
         {item.section==="EDUCATION"&&currentEducation?<section className="mt-4 border-t border-border pt-3"
           aria-label="Current saved education compared with the submission">
-          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Current saved education (not automatically submitted)</h3>
+          <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Current saved education (not automatically submitted)</Heading>
           <p className="mt-1 text-xs text-muted-foreground">
             Compare these current fields with Education submitted for review above. Edits do not replace a submitted or approved snapshot until you send another review request.
           </p>
@@ -137,7 +138,7 @@ export default async function LearnerVerificationPage() {
         </p> : null}
         {row.missing.length>0?<section className="mt-4 min-w-0 border-t border-border pt-3"
           aria-label={"What is still missing for "+item.heading}>
-          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">What is still missing</h3>
+          <Heading level={3} size="sm" className="text-[var(--lms-heading)]">What is still missing</Heading>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-body">
             {row.missing.map(message=><li key={message}>{message}</li>)}
           </ul>

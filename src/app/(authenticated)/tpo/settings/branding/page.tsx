@@ -16,6 +16,8 @@ import {
   tpoBrandingOriginLabel,
   type TpoBrandingField,
 } from "@/modules/placements/tpo-branding-model";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +31,9 @@ function BrandColor({
   return (
     <div className="border-b border-border pb-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <h3 className="m-0 text-base font-semibold text-foreground">
+        <Heading level={3} size="base" className="m-0 text-foreground">
           {label}
-        </h3>
+        </Heading>
         <StatusBadge
           tone={
             field.source === "PERSISTED"
@@ -106,9 +108,9 @@ export default async function TpoPlacementBrandingPage() {
       <section className="border-t border-border pt-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">
+            <Heading level={2} size="lg" className="m-0 text-foreground">
               Current college branding
-            </h2>
+            </Heading>
             <p className="mt-2 text-sm leading-6 text-body">
               {branding.brandingSource === "PERSISTED"
                 ? "A college_branding row exists for your college. Individual blank fields still use their source defaults."
@@ -145,9 +147,9 @@ export default async function TpoPlacementBrandingPage() {
         className="border-t border-border pt-6"
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <Heading level={2} size="lg" className="m-0 text-foreground">
             Public college logo
-          </h2>
+          </Heading>
 
           <StatusBadge
             tone={
@@ -167,7 +169,7 @@ export default async function TpoPlacementBrandingPage() {
             {/* Same validated public HTTPS image pattern
                 used by the college sign-in page. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Img
               src={branding.logoPreviewUrl}
               alt={`${branding.collegeName} logo`}
               referrerPolicy="no-referrer"
@@ -195,12 +197,12 @@ export default async function TpoPlacementBrandingPage() {
         className="space-y-3 border-t border-border pt-6"
       >
         <div>
-          <h2
+          <Heading level={2} size="lg"
             id="placement-brand-colors"
-            className="m-0 text-lg font-semibold text-foreground"
+            className="m-0 text-foreground"
           >
             Brand colours
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm leading-6 text-body">
             Stored colours are displayed exactly
             as configured. Unset fields use the
@@ -209,7 +211,7 @@ export default async function TpoPlacementBrandingPage() {
           </p>
         </div>
 
-        <div className="grid min-w-0 gap-[var(--lms-space-4)] min-[768px]:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <BrandColor
             label="Primary colour"
             field={branding.primaryColor}
@@ -222,9 +224,9 @@ export default async function TpoPlacementBrandingPage() {
       </section>
 
       <section className="border-t border-border pt-4 text-sm leading-6 text-body">
-        <h2 className="m-0 text-sm font-semibold text-foreground">
+        <Heading level={2} size="sm" className="m-0 text-foreground">
           Source and scope
-        </h2>
+        </Heading>
 
         <p className="mt-2">
           The college name comes from the persisted

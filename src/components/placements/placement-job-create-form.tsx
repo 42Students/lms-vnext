@@ -25,6 +25,8 @@ import {tpoDriveStatusLabel} from "@/modules/placements/tpo-drive-lifecycle-list
 import {TPO_DRIVE_ROUND_PRESETS,isTpoRoundPresetKey,plannedTpoRoundRows,type TpoRoundPresetKey} from "@/modules/placements/tpo-drive-round-presets";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
@@ -1191,7 +1193,7 @@ export function PlacementJobCreateForm({
           ) : (
             <p className="m-0 text-sm font-semibold text-danger">
               No active placement season. Start one from Drives before creating a drive.
-              <a href={basePath+"/seasons"} className="ml-2 inline-flex font-semibold underline focus-visible:ring-2 focus-visible:ring-primary max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open placement seasons →</a>
+              <TextLink href={basePath+"/seasons"} className="ml-2 inline-flex max-md:inline-flex max-md:min-h-11 max-md:items-center">Open placement seasons →</TextLink>
             </p>
           )}
         </div>
@@ -1200,9 +1202,9 @@ export function PlacementJobCreateForm({
       </details>
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <Heading level={2} size="base" className="m-0 text-foreground">
             Employer
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Reuse college relationship memory or create a canonical employer relationship once.
           </p>
@@ -1293,14 +1295,14 @@ export function PlacementJobCreateForm({
               (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
               <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
               {selectedEmployer?.memory?<details className="min-w-0 border-t border-border py-3 text-sm"><summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9">Company Memory</summary><aside aria-label="Company Memory" className="pt-3 text-sm">
-                <h3 className="font-semibold text-foreground">Company Memory</h3>
+                <Heading level={3} className="text-foreground">Company Memory</Heading>
                 <p>{selectedEmployer.memory.pastDrives} past drives · {selectedEmployer.memory.joinedLearners} confirmed hires</p>
                 <p>Last drive: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
                 <p>Recent roles: {selectedEmployer.memory.recentRoles.join(", ")}</p>
                 {existingDrive?
                   <p role="alert" className="mt-2 font-semibold text-[var(--lms-gold-accent)]">
                     A drive for {selectedEmployer.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).{" "}
-                    <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open it</Link> before creating another.
+                    <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline max-md:inline-flex max-md:min-h-11 max-md:items-center">Open it</Link> before creating another.
                   </p>:null}
               </aside></details>:null}
             </div>
@@ -1347,7 +1349,7 @@ export function PlacementJobCreateForm({
                 <p className="font-semibold">This may already be {matchingEmployer.name}</p>
                 <p className="mt-1 text-xs text-body">Reuse the existing college employer to keep recruiter and drive history together.</p>
                 <Button variant="secondary" type="button" onClick={()=>{setCompanyRelationshipId(matchingEmployer.relationshipId);setCompanyMode("EXISTING");setCompanySearch("");}}
-                  className="mt-2 min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-3 font-[650] text-primary-text md:min-h-9">
+                  className="mt-2 min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-3 font-semibold text-primary-text md:min-h-9">
                   Use {matchingEmployer.name}
                 </Button>
               </div>:null}
@@ -1364,9 +1366,9 @@ export function PlacementJobCreateForm({
 
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <Heading level={2} size="base" className="m-0 text-foreground">
             The drive
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Create the learner-facing job opportunity and application window.
           </p>
@@ -1562,7 +1564,7 @@ export function PlacementJobCreateForm({
             </label>
             <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). A newly selected date defaults to 11:59 PM; you can change the time.</span>
             <Button variant="secondary" type="button" aria-controls="tpo-drive-application-deadline"
-              className="mt-2 inline-flex min-h-11 items-center text-sm font-[650] text-primary-text underline md:min-h-9"
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9"
               onClick={()=>{
                 const form=formRef.current;
                 const field=form?.elements.namedItem("applicationDeadline");
@@ -1585,7 +1587,7 @@ export function PlacementJobCreateForm({
       </section>
 
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]" aria-label="Pay packages">
-        <h2 className="m-0 border-b border-border pb-3 text-base font-semibold text-foreground">Pay packages</h2>
+        <Heading level={2} size="base" className="m-0 border-b border-border pb-3 text-foreground">Pay packages</Heading>
         <div className="grid min-w-0 gap-4 pt-4 sm:grid-cols-2 md:grid-cols-3">
 
           <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">Default package · main job role. Salary amounts are in LPA unless labelled otherwise.</p>
@@ -1694,7 +1696,7 @@ export function PlacementJobCreateForm({
       <details open className="min-w-0 border-b border-border pb-6">
         <summary className="min-h-11 cursor-pointer text-base font-semibold text-foreground md:min-h-9">Additional job details</summary>
         <div className="pt-3">
-          <h2 className="sr-only">Additional job details</h2>
+          <Heading level={2} className="sr-only">Additional job details</Heading>
           <p className="mt-1 text-sm text-body">Responsibilities, dates and preferences are informational. Only the eligibility policy below governs learner eligibility.</p>
         </div>
         <div className="grid gap-4 pt-4 sm:grid-cols-2">
@@ -1825,11 +1827,11 @@ export function PlacementJobCreateForm({
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
       </details>
-      <section className="min-w-0 border-b border-border border-l-[3px] border-l-primary pl-3 pb-[var(--lms-space-4)]">
+      <section className="min-w-0 border-b border-border border-l-2 border-l-primary pl-3 pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <Heading level={2} size="base" className="m-0 text-foreground">
             Eligibility · Target Audience
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Configure explainable numeric requirements now. Program/cohort scoping can remain empty when the opportunity is open across the college.
           </p>
@@ -1848,7 +1850,7 @@ export function PlacementJobCreateForm({
               Choose specific programs, batches and classes below to narrow the audience.
             </span>
           </label>
-          <div className="grid gap-4 min-[992px]:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             <fieldset className="min-w-0 border-t border-border px-0 py-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible programs
@@ -2054,7 +2056,7 @@ export function PlacementJobCreateForm({
       </section>
 
       <section aria-label="Skills the company wants" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-        <h2 className="mb-3 text-base font-semibold text-foreground">Skills the company wants</h2>
+        <Heading level={2} size="base" className="mb-3 text-foreground">Skills the company wants</Heading>
           <div className="grid gap-2 sm:col-span-2">
             <label htmlFor="drive-skills-input" className="text-sm font-semibold text-foreground">Skills the company wants</label>
             <p className="text-xs text-muted-foreground">Type a skill and press Enter. Applicants get a skill match, but skills never decide who can apply. Up to 30 skills, 50 characters each.</p>
@@ -2082,7 +2084,7 @@ export function PlacementJobCreateForm({
       </section>
 
       <section aria-label="Planned rounds" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-        <h2 className="font-semibold text-foreground">Rounds</h2>
+        <Heading level={2} className="text-foreground">Rounds</Heading>
         <label className="mt-3 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
           Round template
           <Select name="roundPreset" value={roundPreset}
@@ -2177,7 +2179,7 @@ export function PlacementJobCreateForm({
       </details>
       </fieldset>
       <aside aria-label="Setup review" className="sticky top-24 hidden rounded-xl border border-border bg-background p-4 lg:block">
-        <h2 className="m-0 text-base font-semibold text-foreground">Setup review</h2>
+        <Heading level={2} size="base" className="m-0 text-foreground">Setup review</Heading>
         <p className="mt-1 text-xs text-body">Your milestones remain visible as you build the opportunity.</p>
         <ol className="mt-4 space-y-4 border-l-2 border-border pl-4 text-sm">
           {["Company","The drive","Eligibility","Publish review"].map((label,index)=>(
@@ -2214,15 +2216,15 @@ export function PlacementJobCreateForm({
             value="review-publish"
             aria-label="Create draft and review before publication"
             disabled={pending || !activeSeason || uncertainCreate || loadingCopy}
-            className="w-full min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9"
+            className="w-full min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9"
           >
             Review &amp; publish
           </Button>
         </div>
       </section>
       {uncertainCreate?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
-        The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline">Review Drives</Link> before retrying.
-        <Button variant="secondary" type="button" className="mt-[var(--lms-space-2)] min-h-11 w-full font-[650] text-primary-text underline sm:ml-[var(--lms-space-3)] sm:mt-0 sm:w-auto md:min-h-9"
+        The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center focus-visible:underline">Review Drives</Link> before retrying.
+        <Button variant="secondary" type="button" className="mt-[var(--lms-space-2)] min-h-11 w-full font-semibold text-primary-text underline sm:ml-[var(--lms-space-3)] sm:mt-0 sm:w-auto md:min-h-9"
           onClick={()=>{try{localStorage.removeItem(uncertainKey);}catch{}setUncertainCreate(false);}}>
           I checked Drives — allow another attempt
         </Button>
@@ -2232,9 +2234,9 @@ export function PlacementJobCreateForm({
         clearedBackup.current=true;
         try{localStorage.removeItem(backupKey);}catch{}
         setRestoredBackup(false);
-      }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-[650] text-primary-text md:min-h-9">Discard saved browser backup</Button>:null}
+      }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text md:min-h-9">Discard saved browser backup</Button>:null}
       {partialJobId?<p role="alert" className="text-sm text-body">A draft exists. If setup did not finish, retry without changing the form or
-        <a className="ml-1 font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
+        <TextLink className="ml-1 max-md:inline-flex max-md:min-h-11 max-md:items-center" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</TextLink>.
         Do not submit a second drive.
       </p>:null}
       {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}

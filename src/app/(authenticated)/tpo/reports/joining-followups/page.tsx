@@ -16,6 +16,8 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Disclosure} from "@/components/ui/disclosure";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoJoiningFollowups} from "@/modules/placements/tpo-joining-followup-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 type Search={seasonId?:string|string[];state?:string|string[]};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoJoiningFollowupsPage({searchParams}:{searchParams:Promise<Search>}){
@@ -35,9 +37,9 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
    description="Accepted-offer joining evidence, pending confirmations and deferred dates."
    actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
      <Link href="/tpo/reports/joining-status" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Joining outcomes</Link>
-     {report.season?<a href={"/api/placements/reports/joining-followups?"+params.toString()}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto sm:min-h-9 text-sm font-[650] text-on-primary">
-    Export CSV</a>:null}
+     {report.season?<ButtonLink variant="primary" href={"/api/placements/reports/joining-followups?"+params.toString()}
+    className="w-full sm:w-auto">
+    Export CSV</ButtonLink>:null}
    </div>}/>
   <form action="/tpo/reports/joining-followups" method="get"
    className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
@@ -70,7 +72,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
     description="No accepted offers remain in the selected open state."/>:
     <section className="grid gap-3" aria-label="Pending and deferred joining offers">
      {report.rows.map(o=><article key={o.offerId} className="min-w-0 border-b border-border py-4">
-       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{o.companyName} · {o.roleTitle}</h2>
+       <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{o.companyName} · {o.roleTitle}</Heading>
        <p className="mt-1 text-sm text-body leading-[22px]">{o.candidateName??"Name not recorded"} · {o.jobTitle}</p>
        <p className="mt-1 text-sm text-body leading-[22px]">{o.joiningStatus??"PENDING"} · Joining date: {o.scheduledDate??"Not recorded"}</p>
        <Link href={"/tpo/placements/jobs/"+o.jobId+"/joining"}

@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getOwnLearnerApplicationCompany } from "@/modules/placements/learner-application-detail-service";
 import { placementApplicationIdSchema } from "@/modules/placements/validation";
+import { Heading } from "@/components/ui/heading";
 
 export default async function LearnerApplicationCompanyPage({
   params,
@@ -48,7 +49,7 @@ export default async function LearnerApplicationCompanyPage({
             {company.companyStatus.replaceAll("_", " ")}
           </StatusBadge></div>
       <section aria-label="What the company sees" className="border-b border-border py-4 md:py-6">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">What the company sees</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">What the company sees</Heading>
         <p className="mt-2 text-sm text-body">
           {company.companySharePreview.currentlyShared
             ?"Your submitted, shortlisted application is currently included in an active employer share."
@@ -66,7 +67,7 @@ export default async function LearnerApplicationCompanyPage({
         </p>
       </section>
       <section className="border-b border-border py-4 md:py-6">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Company and drive</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Company and drive</Heading>
         <dl className="mt-4 grid gap-4 text-sm md:grid-cols-2">
           <div>
             <dt className="font-semibold text-muted-foreground">Employer</dt>

@@ -122,7 +122,7 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
    </div>:null}
   </div>
   {message?<p role={message.ok?"status":"alert"} className={"mb-3 rounded-lg p-3 text-sm "+
-   (message.ok?"bg-green-50 text-green-800":"bg-red-50 text-red-800")}>{message.text}</p>:null}
+   (message.ok?"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success-strong)]":"bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-strong)]")}>{message.text}</p>:null}
   {outcomeUnknown?<Button variant="bare" type="button" className="faculty-proto-secondary mb-3"
    onClick={()=>window.location.reload()}>Reload lesson to verify saved order</Button>:null}
   <ol key={localVersion} className="divide-y divide-[color:var(--lms-neutral-100)]" aria-label="Lesson content order">
@@ -154,9 +154,9 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
        <span aria-hidden="true" className="text-[color:var(--lms-neutral-400)]">·</span>}
       {item.reorderable?<div className="flex gap-1">
        <Button variant="bare" type="button" disabled={!movable||idx===0} onClick={()=>move(idx,idx-1)}
-        aria-label={"Move "+item.title+" up"} className="min-h-8 min-w-7 text-xs text-[color:var(--lms-button-primary)] disabled:opacity-30">↑</Button>
+        aria-label={"Move "+item.title+" up"} className="min-h-8 min-w-7 text-xs text-[color:var(--lms-button-primary)] disabled:opacity-40">↑</Button>
        <Button variant="bare" type="button" disabled={!movable||idx===ordered.length-1} onClick={()=>move(idx,idx+1)}
-        aria-label={"Move "+item.title+" down"} className="min-h-8 min-w-7 text-xs text-[color:var(--lms-button-primary)] disabled:opacity-30">↓</Button>
+        aria-label={"Move "+item.title+" down"} className="min-h-8 min-w-7 text-xs text-[color:var(--lms-button-primary)] disabled:opacity-40">↓</Button>
       </div>:null}
      </div>
      <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[color:var(--lms-primary-subtle)] text-xs font-bold text-[color:var(--lms-button-primary)]">{glyph(item.kind)}</span>
@@ -166,7 +166,7 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
       <span className="faculty-proto-subtitle">{item.description??item.kind.replaceAll("_"," ").toLowerCase()}</span>
      </span>
      <span className={"shrink-0 rounded-full px-2 py-1 text-xs font-semibold "+
-       (item.scheduled?"bg-cyan-50 text-cyan-800":item.status==="PUBLISHED"?"bg-emerald-50 text-emerald-700":"bg-amber-50 text-amber-800")}>
+       (item.scheduled?"bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary-hover)]":item.status==="PUBLISHED"?"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]":"bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]")}>
       {item.scheduled?"Scheduled":item.status==="PUBLISHED"?"Live":item.status==="DRAFT"?"Draft":item.status}</span>
      <FacultyPrototypeBlueprintRowActions editor={item.editor??null} deliveryId={deliveryId}/>
     </li>;

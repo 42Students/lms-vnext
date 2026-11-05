@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
 import {CollegeFacultyCsvImport} from "@/components/college/college-faculty-csv-import";
+import { Heading } from "@/components/ui/heading";
 
 export default async function CollegeFacultyImportPage(){
   const context=await getCurrentRequestContext();
@@ -21,7 +22,7 @@ export default async function CollegeFacultyImportPage(){
         <CollegeFacultyCsvImport/>
       </section>
       <section aria-label="Registration guidance" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Before you register faculty</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Before you register faculty</Heading>
         <p className="text-sm text-body">Use the CSV template to prepare faculty details. Validate the file before registering. The preview shows valid and invalid rows independently.</p>
         <p className="text-sm text-body">Registrations create college-scoped faculty memberships. Correct failed rows and import again; successful rows are not rolled back.</p>
       </section>

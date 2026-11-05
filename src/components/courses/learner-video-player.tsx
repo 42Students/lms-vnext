@@ -14,6 +14,7 @@ import {
 } from "@/modules/courses/learner-storage-ui-model";
 import { formatDuration } from "@/modules/storage/ui-models";
 import { playbackGrantRefreshDelay, resumePositionForGrant } from "@/modules/courses/learner-video-grant-model";
+import { Heading } from "@/components/ui/heading";
 
 /**
  * The private media URL is never saved in component state or storage.
@@ -219,7 +220,7 @@ export function LearnerVideoPlayer({
     <header className="mb-4 flex min-w-0 flex-wrap items-center justify-between gap-2 md:mb-6">
      <div className="min-w-0">
       <p className="text-xs font-semibold text-muted-foreground">Video</p>
-      <h3 className="break-words text-base font-semibold text-foreground">{contentTitle?.trim()||"Lesson video"}</h3>
+      <Heading level={3} size="base" className="break-words text-foreground">{contentTitle?.trim()||"Lesson video"}</Heading>
       {contentAddedAt?<p className="text-xs text-muted-foreground">Added {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(contentAddedAt))}</p>:null}
      </div>
      {onEdit||onDelete?<div className="flex flex-wrap items-center gap-2">

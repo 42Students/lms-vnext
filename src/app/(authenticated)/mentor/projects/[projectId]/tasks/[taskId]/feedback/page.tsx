@@ -5,6 +5,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorTaskFeedback} from "@/modules/projects/mentor-task-feedback-service";
 import {mentorTaskFeedbackParamsSchema,taskFeedbackStatusLabel} from "@/modules/projects/mentor-task-feedback-model";
+import { Heading } from "@/components/ui/heading";
 export default async function Page({params}:{
  params:Promise<{projectId:string;taskId:string}>;
 }){
@@ -18,7 +19,7 @@ export default async function Page({params}:{
    :<ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.feedback.map(entry=><li key={entry.id}
     className="min-w-0 py-[var(--lms-space-4)]">
     <div className="flex flex-wrap items-center justify-between gap-2">
-     <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Version {entry.version} · <StatusBadge tone={entry.status==="APPROVED"?"success":entry.status==="REJECTED"?"error":"neutral"}>{taskFeedbackStatusLabel(entry.status)}</StatusBadge></h2>
+     <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Version {entry.version} · <StatusBadge tone={entry.status==="APPROVED"?"success":entry.status==="REJECTED"?"error":"neutral"}>{taskFeedbackStatusLabel(entry.status)}</StatusBadge></Heading>
      <span className="text-xs text-muted-foreground">
       {entry.reviewedAt?new Intl.DateTimeFormat("en-IN",{
        dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
@@ -28,7 +29,7 @@ export default async function Page({params}:{
     <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{entry.feedback}</p>
    </li>)}</ol>}
   <section role="status" className="border-b border-border pb-4">
-   <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Conversation thread unavailable</h2>
+   <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Conversation thread unavailable</Heading>
    <p className="mt-2 text-sm text-body leading-[22px]">
     The promoted Project schema stores one reviewer-feedback value per submission version.
     It has no task-comments or reply table. Do not enter new comments here; threaded

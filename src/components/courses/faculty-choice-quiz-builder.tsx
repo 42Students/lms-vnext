@@ -18,6 +18,7 @@ import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
 import {facultyAuthoringQuestionsFromResponse,facultyQuizShuffleSettingsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizCanRetryDetails,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion,facultyQuizReadErrorMessage,facultyQuizOptionRemovalPrompt,facultyQuizReadyToPublish}
  from "@/modules/courses/faculty-quiz-builder-model";
+import { Heading } from "@/components/ui/heading";
 type Option={id?:string;clientKey?:string;text:string;correct:boolean;sequence:number};
 let nextDraftOptionKey=0;
 const draftOptionKey=()=>`draft-option-${++nextDraftOptionKey}`;
@@ -220,8 +221,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{mutationInFlight.current=false;setPending(false);}
  }
- return <section className="min-w-0 w-full max-w-full space-y-4 max-[767px]:[&_button]:min-h-11">
-  <h2 className="text-base font-semibold text-[var(--lms-heading)]">Choice-question quiz builder</h2>
+ return <section className="min-w-0 w-full max-w-full space-y-4 max-md:[&_button]:min-h-11">
+  <Heading level={2} size="base" className="text-[var(--lms-heading)]">Choice-question quiz builder</Heading>
   <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a quiz
    <Input type="search" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}
@@ -237,7 +238,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
   {quizSearch.trim()&&visibleQuizzes.length===0?<EmptyState title="No matching quizzes" description="Clear the search to see all Section quizzes."/>:null}
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
-   <Button variant="secondary" type="button" onClick={()=>copyToNewDraft()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650]">Copy as new draft</Button>:null}
+   <Button variant="secondary" type="button" onClick={()=>copyToNewDraft()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</Button>:null}
   {!chosen?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
    <Select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full md:min-h-9">
@@ -269,12 +270,12 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
   <section aria-label="Quiz preview" className="min-w-0 border-b border-border pb-4">
    <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:justify-between">
     <div className="min-w-0">
-     <h3 className="text-sm font-semibold text-foreground">Preview Quiz</h3>
+     <Heading level={3} size="sm" className="text-foreground">Preview Quiz</Heading>
      <p className="text-xs text-muted-foreground">Read-only learner-style preview of the current questions. No answers are submitted.</p>
     </div>
     <Button variant="secondary" type="button" onClick={()=>setPreviewOpen(open=>!open)}
      aria-expanded={previewOpen} aria-controls="faculty-quiz-preview"
-     className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650]">
+     className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
      {previewOpen?"Hide preview":"Preview Quiz"}
     </Button>
    </div>
@@ -398,7 +399,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
        askConfirm("Discard unsaved Quiz metadata and retry loading the saved question bank?",()=>void choose(selected));return;
       }
       void choose(selected);}}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650] text-primary-text">
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text">
       Reload Quiz questions
     </Button> : null}
   {success?<Alert tone="success">{success}</Alert>:null}

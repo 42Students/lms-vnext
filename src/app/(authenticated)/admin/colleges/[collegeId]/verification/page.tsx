@@ -16,6 +16,7 @@ import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {verificationQueueFilters} from "@/modules/verification/queue-filters";
 import {requireSuperAdminVerificationCollege,VerificationAccessCheckError,SUPER_ADMIN_VERIFICATION_DENIED_COPY} from "@/modules/verification/super-admin-scope";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic="force-dynamic";
 export default async function AdminCollegeVerification({
@@ -57,7 +58,7 @@ export default async function AdminCollegeVerification({
   actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>;
  if(!parsed?.success)return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
   <ErrorState title="Invalid verification filters" description="Choose a valid set of verification filters."
-   action={<Link href={base} className="inline-flex min-h-11 items-center font-[650] text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Reset filters</Link>}/>
+   action={<Link href={base} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Reset filters</Link>}/>
  </div>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>;
  try{data=await listCollegeVerificationQueue(context,parsed.data,college.id);}
@@ -72,7 +73,7 @@ export default async function AdminCollegeVerification({
     description={e instanceof VerificationUnavailableError?
      "Verification storage is not yet available. No queue decisions can be made.":
      e instanceof VerificationQueueLimitError?"The verification queue exceeds its safe scan cap. Narrow server-side filters before reviewing.":"Could not load the queue. Retry without losing your selected filters."}
-    action={<Link className="inline-flex min-h-11 items-center font-[650] text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4" href={retryHref}>Retry</Link>}/>
+    action={<Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4" href={retryHref}>Retry</Link>}/>
   </div>;
  }
  const policyResult=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
@@ -83,7 +84,7 @@ export default async function AdminCollegeVerification({
  for(const [k,v] of Object.entries(data.filter)){if(v!==undefined&&v!==null)query[k]=String(v);}
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
    <section aria-label="Verification access" className="rounded border border-border p-4">
-    <h2 className="text-lg font-semibold">Verification settings</h2>
+    <Heading level={2} size="lg">Verification settings</Heading>
     <p className="mt-1 text-sm text-body">Super Admin may review the selected college's verification queue. The placement cell may verify profiles only when separately enabled below.</p>
     {!policyResult.ok?<ErrorState title="Could not load placement-cell verification settings"
      description="The latest setting is unverified. No change can be made until the policy read succeeds."

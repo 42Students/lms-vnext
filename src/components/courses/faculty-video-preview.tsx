@@ -35,7 +35,7 @@ export function FacultyVideoPreview({videoId,deliveryId}:{videoId:string;deliver
    if(result.thumbnailUrl)video.poster=result.thumbnailUrl;
    video.load();
    video.addEventListener("loadedmetadata",()=>{
-    if(previous>0&&Number.isFinite(video.duration)&&video.duration>1)video.currentTime=Math.min(previous,video.duration-1);
+    if(previous>0&&Number.isFinite(video.duration)&&video.duration>1)video.currentTime=Math.min(previous,video.duration-[var(--lms-motion-fast)]);
    },{once:true});
    setLoading(false);
    timeout=setTimeout(()=>{

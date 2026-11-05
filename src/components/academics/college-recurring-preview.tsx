@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DataTable } from "@/components/ui/data-table";
 import { apiFetch } from "@/lib/api-fetch";
+import { Heading } from "@/components/ui/heading";
 
 type Option = { id: string; name: string };
 type ClassOption = Option & { cohortName: string; periodStart: string; periodEnd: string; updatedAt: string };
@@ -170,7 +171,7 @@ export function CollegeRecurringPreview({
   return (
     <section className="min-w-0 space-y-[var(--lms-space-4)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><h2 className="text-lg font-semibold">Create recurring class schedule</h2>
+        <div><Heading level={2} size="lg">Create recurring class schedule</Heading>
          <p className="max-w-[75ch] text-sm text-body leading-[22px]">Choose a class and recurrence pattern, then preview the schedule. Preview does not create sessions. Confirmed execution rechecks every date and creates only conflict-free sessions.</p></div>
         <Button type="button" variant="secondary" disabled={pending} onClick={()=>dirty?setDiscardOpen(true):router.push("/college/classes")}>Cancel scheduling</Button>
       </div>
@@ -282,7 +283,7 @@ export function CollegeRecurringPreview({
         </>}
       </Alert> : null}
       {result ? <section aria-label="Schedule preview results" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Preview · {result.ready} clear, {result.blocked} blocked</h2>
+        <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Preview · {result.ready} clear, {result.blocked} blocked</Heading>
         <p className="max-w-prose text-sm text-muted-foreground leading-[22px]">{result.notice}</p>
         {previewChanged ? <Alert tone="warning">Schedule fields changed since the preview. Preview this pattern again before saving.</Alert> : null}
         {result.slots.some(slot=>slot.warnings?.length) ?

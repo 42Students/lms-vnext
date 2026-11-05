@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { parseFacultyReportsHubLocation, facultyReportHubHref } from "@/modules/courses/faculty-reports-hub-model";
 import { getFacultyReportsHub } from "@/modules/courses/faculty-reports-hub-service";
+import { Heading } from "@/components/ui/heading";
 
 type Search = { kind?: string | string[]; page?: string | string[] };
 const reportLink = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9";
@@ -41,7 +42,7 @@ export default async function FacultyReportsHubPage({
       actions={<Link href={root + "/home"} className={reportLink}>Section workspace</Link>} />
 
     <section aria-label="Assessment summary" className="min-w-0 space-y-3">
-      <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Assessment overview</h2>
+      <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Assessment overview</Heading>
       <dl className="grid grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {metrics.map(([title, value]) => <div key={title} className="min-w-0 py-4">
           <dt className="text-xs font-semibold leading-5 text-muted-foreground">{title}</dt>
@@ -53,14 +54,14 @@ export default async function FacultyReportsHubPage({
     <section aria-label="Other reports" className="min-w-0 space-y-3">
       <div className="grid min-w-0 gap-x-6 md:grid-cols-2">
         <div className="min-w-0 space-y-2 border-b border-[var(--lms-canvas-border)] py-4">
-          <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Attendance</h2>
+          <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Attendance</Heading>
           <p className="max-w-prose text-sm leading-[22px] text-body">
             {data.attendance.scheduled} scheduled sessions; {data.attendance.marked} marked. Unmarked attendance is unknown, not zero.
           </p>
           <Link href={root + "/attendanceDetail"} className={textLink}>Open attendance report →</Link>
         </div>
         <div className="min-w-0 space-y-2 border-b border-[var(--lms-canvas-border)] py-4">
-          <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Published gradebook</h2>
+          <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Published gradebook</Heading>
           <p className="max-w-prose text-sm leading-[22px] text-body">
             Published assessment counts are not a final grade. Individual published scores are shown only in the gradebook.
           </p>
@@ -70,7 +71,7 @@ export default async function FacultyReportsHubPage({
     </section>
 
     <section aria-labelledby="published-reports-heading" className="min-w-0 space-y-4">
-      <h2 id="published-reports-heading" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Published assessment reports</h2>
+      <Heading level={2} size="lg" id="published-reports-heading" className="leading-7 text-[var(--lms-heading)]">Published assessment reports</Heading>
       <form method="get" className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,16rem)_auto_auto] sm:items-end sm:justify-start">
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Assessment type
@@ -94,7 +95,7 @@ export default async function FacultyReportsHubPage({
           {data.health.items.map(item => <article key={item.kind + item.id}
             className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
             <div className="min-w-0 space-y-1">
-              <h3 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.title}</h3>
+              <Heading level={3} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{item.title}</Heading>
               <p className="text-sm leading-[22px] text-body">{item.kind} · {item.responded}/{item.eligible} recorded responses · {item.outstanding} not responded</p>
               <p className="text-xs leading-5 text-muted-foreground">Graded average: {item.averagePercent === null ? "Unknown" : item.averagePercent + "%"}</p>
             </div>

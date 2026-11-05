@@ -10,6 +10,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listTpoRecruiterProposedSlots} from "@/modules/placements/tpo-recruiter-slot-review-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function TpoRecruiterSlotReviewPage({params}:{
  params:Promise<{jobId:string}>;
@@ -38,7 +39,7 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
   {data.slots.length?<ol className="min-w-0 divide-y divide-border border-y border-border">{data.slots.map(slot=><li key={slot.id}
     className="min-w-0 py-4">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-      <h2 className="min-w-0 flex-1 break-words text-base font-semibold text-foreground">{slot.roundName}</h2>
+      <Heading level={2} size="base" className="min-w-0 flex-1 break-words text-foreground">{slot.roundName}</Heading>
       <Badge tone={slot.status==="BOOKED"?"success":slot.status==="OFFERED"?"warning":slot.status==="CANCELLED"?"neutral":"info"}>{slot.status==="PROPOSED"?"Not sent yet":
         slot.status==="OFFERED"?"Waiting for the placement cell":
         slot.status==="BOOKED"?"Reserved internally; confirm with placement cell":

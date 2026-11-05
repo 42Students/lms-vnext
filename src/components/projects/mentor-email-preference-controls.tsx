@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import type {MentorEmailPreferenceState} from
  "@/modules/projects/mentor-email-preference-model";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 export function MentorEmailPreferenceControls(props:MentorEmailPreferenceState){
  const router=useRouter();
@@ -36,7 +37,7 @@ export function MentorEmailPreferenceControls(props:MentorEmailPreferenceState){
  }
  return <section aria-label="Mentor email notification preferences"
    className="space-y-3 rounded-lg border border-border p-3">
-   <h3 className="text-sm font-semibold">Project email notifications</h3>
+   <Heading level={3} size="sm">Project email notifications</Heading>
    <label className="flex min-h-11 items-center gap-3 text-sm">
      <Checkbox checked={enabled} disabled={busy}
        onChange={event=>{setEnabled(event.target.checked);setMessage(null);}}

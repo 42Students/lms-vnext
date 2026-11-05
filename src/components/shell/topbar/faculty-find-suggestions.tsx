@@ -52,7 +52,7 @@ export function FacultyFindSuggestions({query,onOpen}:{
  return <section aria-label="Matching Faculty records" className="border-t border-[color:var(--lms-border)]">
   {!ready?<p role="status" className="px-3 py-3 text-xs text-[color:var(--lms-text-muted)]">Finding students, colleagues and courses…</p>:null}
   {ready&&state.error?<div className="flex items-center gap-3 px-3 py-3">
-   <p role="alert" className="flex-1 text-xs text-red-700">Find could not load your teaching records.</p>
+   <p role="alert" className="flex-1 text-xs text-[color:var(--lms-error-text)]">Find could not load your teaching records.</p>
    <Button size="sm" variant="link" type="button" onClick={()=>setRetry(x=>x+1)}>Retry</Button>
   </div>:null}
   {groups.map(group=>{

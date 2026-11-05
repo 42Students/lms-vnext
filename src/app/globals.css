@@ -12,6 +12,7 @@
 @import "../styles/prototype-portals.css";
 /* Old-LMS Mentor visual reference takes precedence over Mentor prototypes. */
 @import "../styles/mentor-legacy-shell.css";
+@import "../styles/motion.css";
 
 /*
  * LMS vNext color source of truth.
@@ -166,6 +167,16 @@
   --color-info: var(--lms-info);
 }
 
+/* Named utilities resolve to tokens so shadow-md, lg: etc. stay consistent everywhere. */
+@theme inline {
+  --breakpoint-lg: 992px;
+  --shadow: var(--lms-elevation-1);
+  --shadow-sm: var(--lms-shadow-sm);
+  --shadow-md: var(--lms-elevation-2);
+  --shadow-lg: var(--lms-elevation-3);
+  --shadow-xl: var(--lms-elevation-4);
+}
+
 /* Failsafe for existing legacy class pairs outside the audited component slice.
  * New code must use text-on-primary, enforced by UX source review. */
 .bg-primary.text-white,
@@ -244,78 +255,46 @@ summary,
 label {
   transition-property: color, background-color, border-color, box-shadow, opacity, transform, outline-color;
   transition-duration: var(--lms-motion-fast);
-  transition-timing-function: var(--lms-motion-ease);
+  transition-timing-function: var(--lms-motion-var(--lms-motion-ease));
 }
 dialog[open],
 [role="dialog"] {
-  animation: lms-overlay-in var(--lms-motion-base) var(--lms-motion-ease);
+  animation: lms-overlay-in var(--lms-motion-base) var(--lms-motion-var(--lms-motion-ease));
 }
 /* The dialog is positioned with translate(-50%, -50%). A transform-based
    entrance animation would briefly override centering and visibly jump. */
 dialog[data-slot="dialog"][open] {
-  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-ease);
+  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-var(--lms-motion-ease));
 }
 dialog::backdrop {
-  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-ease);
+  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-var(--lms-motion-ease));
 }
 details > summary + * {
-  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-ease);
+  animation: lms-fade-in var(--lms-motion-base) var(--lms-motion-var(--lms-motion-ease));
 }
-@keyframes lms-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes lms-overlay-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
+
 /* Scrollable error stacks need a visible edge cue even though scrollbar chrome is hidden. */
 .lms-toast-scroll-cue { mask-image: linear-gradient(to bottom, transparent 0, black 0.75rem, black calc(100% - 0.75rem), transparent 100%); }
 
 /* Scroll/motion kit. Duration and easing come from the signed-off tokens.
  * These transform/opacity animations do not animate layout or scroll positions. */
 dialog[data-slot="drawer"][open] {
-  animation: lms-drawer-in var(--lms-motion-base) var(--lms-motion-ease) both;
+  animation: lms-drawer-in var(--lms-motion-base) var(--lms-motion-var(--lms-motion-ease)) both;
 }
 /* Keep the desktop sheet's Tailwind -50% centering translation intact.
  * Only animate the inner panel; animating the dialog's translate property
  * would override its anchor and shift it away from the visual viewport center. */
 dialog[data-slot="bottom-sheet"][open] { animation: none; }
 dialog[data-slot="bottom-sheet"][open] > div {
-  animation: lms-sheet-content-in var(--lms-motion-base) var(--lms-motion-ease);
+  animation: lms-sheet-content-in var(--lms-motion-base) var(--lms-motion-var(--lms-motion-ease));
 }
 [data-slot="filter-bar"] [role="dialog"] {
-  animation: lms-sheet-in var(--lms-motion-base) var(--lms-motion-ease) both;
+  animation: lms-sheet-in var(--lms-motion-base) var(--lms-motion-var(--lms-motion-ease)) both;
 }
 [data-slot="toast-stack"] > section {
-  animation: lms-toast-in var(--lms-motion-base) var(--lms-motion-ease) both;
+  animation: lms-toast-in var(--lms-motion-base) var(--lms-motion-var(--lms-motion-ease)) both;
 }
-@keyframes lms-drawer-in {
-  from { opacity: 0; translate: 16px 0; }
-  to { opacity: 1; translate: 0 0; }
-}
-@keyframes lms-sheet-in {
-  from { opacity: 0; translate: 0 16px; }
-  to { opacity: 1; translate: 0 0; }
-}
-@keyframes lms-sheet-content-in {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes lms-toast-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
+
 [data-slot="skeleton"] .lms-skeleton-shimmer {
   position: relative;
   overflow: hidden;
@@ -326,10 +305,7 @@ dialog[data-slot="bottom-sheet"][open] > div {
   inset: 0;
   transform: translateX(-100%);
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--lms-surface) 68%, transparent), transparent);
-  animation: lms-skeleton-shimmer 1.5s linear infinite;
-}
-@keyframes lms-skeleton-shimmer {
-  to { transform: translateX(100%); }
+  animation: lms-skeleton-shimmer var(--lms-motion-slow) linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -406,11 +382,11 @@ body {
   color: var(--lms-heading);
   font-size: 30px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.4;
   letter-spacing: -.02em;
 }
 [data-slot="page-canvas"] h2 {
-  letter-spacing: -.012em;
+  letter-spacing: -.02em;
 }
 [data-slot="button"],
 [data-slot="pagination"] a,
@@ -419,9 +395,9 @@ body {
   border-radius: var(--lms-control-radius);
   font-family: inherit;
   font-size: 14px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 20px;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease), color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
 }
 [data-slot="button"]:is(:hover, :focus-visible),
 [data-slot="pagination"] a:is(:hover, :focus-visible) {
@@ -436,7 +412,7 @@ body {
 [data-slot="info-popover"] summary:focus-visible {
   outline: 2px solid var(--lms-primary-text);
   outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(26, 149, 161, .12);
+  box-shadow: var(--lms-focus-ring);
 }
 [data-slot="button"]:disabled {
   cursor: not-allowed;
@@ -461,16 +437,16 @@ body {
   font-weight: 400;
   letter-spacing: .2px;
   line-height: 20px;
-  transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease), background-color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 [data-slot="input"],
 [data-slot="select"] {
   min-height: var(--lms-control-height);
-  padding: 7px 12px;
+  padding: 8px 12px;
 }
 [data-slot="textarea"] {
   min-height: 112px;
-  padding: 10px 12px;
+  padding: 12px 12px;
 }
 [data-slot="input"]::placeholder,
 [data-slot="textarea"]::placeholder {
@@ -496,7 +472,7 @@ body {
 [data-slot="input"][aria-invalid="true"]:focus-visible,
 [data-slot="select"][aria-invalid="true"]:focus-visible,
 [data-slot="textarea"][aria-invalid="true"]:focus-visible {
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, .2);
+  box-shadow: var(--lms-focus-ring-error);
   outline-color: var(--lms-error);
 }
 input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot="radio"] {
@@ -512,7 +488,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   min-height: 22px;
   min-width: 90px;
   border-radius: 6px;
-  padding: 2px 15px;
+  padding: 2px 16px;
   font-size: 12px;
   font-weight: 700;
   line-height: 18px;
@@ -536,7 +512,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="tabs"] nav > a,
 [data-slot="tabs"] nav > span {
   min-height: 36px;
-  border-bottom-width: 3px;
+  border-bottom-width: 2px;
   padding: 8px 0 12px;
   font-size: 13px;
   font-weight: 600;
@@ -572,7 +548,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   color: var(--lms-heading);
   font-size: 18px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 [data-slot="dialog"] header,
 [data-slot="dialog"] footer,
@@ -580,7 +556,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="drawer"] footer {
   border-color: var(--lms-canvas-border);
 }
-[data-slot="drawer"] { box-shadow: -4px 0 24px rgba(0,0,0,.12); }
+[data-slot="drawer"] { box-shadow: var(--lms-shadow-drawer-start); }
 [data-slot="toast-stack"] > section {
   border-radius: 12px;
   background: var(--lms-white);
@@ -615,7 +591,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 }
 [data-slot="data-table"] thead { background: var(--lms-table-header); }
 [data-slot="data-table"] th {
-  padding: 0 16px 11px;
+  padding: 0 16px 12px;
   background: var(--lms-table-header);
   color: var(--lms-neutral-400);
   font-size: 12px;
@@ -762,7 +738,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   background: var(--lms-white);
   box-shadow: var(--lms-overlay-shadow);
 }
-@media (min-width: 1024px) {
+@media (min-width: 992px) {
   main#lms-main-content {
     max-width: none;
     padding: 32px 24px 24px;
@@ -848,7 +824,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   padding: 6px 16px;
   font-size: 12px;
   line-height: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  box-shadow: var(--lms-elevation-1);
 }
 [data-slot="data-table"] th,
 [data-slot="table"] th { color: var(--lms-neutral-400); }
@@ -884,6 +860,12 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   --lms-z-below: -1;
   --lms-z-base: 0;
   --lms-z-raised: 10;
+  --lms-z-sticky-inline: 20;
+  --lms-z-sticky-header: 30;
+  --lms-z-shell: 40;
+  --lms-z-overlay: 50;
+  --lms-z-popover: 60;
+  --lms-z-popover-high: 70;
   --lms-z-dropdown: 100;
   --lms-z-sticky: 200;
   --lms-z-drawer: 500;
@@ -905,6 +887,15 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   --lms-elevation-2: 0 2px 4px rgba(16,24,40,.04), 0 4px 12px rgba(16,24,40,.06);
   --lms-elevation-3: 0 4px 8px rgba(16,24,40,.04), 0 12px 24px rgba(16,24,40,.08);
   --lms-elevation-4: 0 8px 16px rgba(16,24,40,.06), 0 24px 48px rgba(16,24,40,.10);
+  --lms-focus-ring: 0 0 0 3px color-mix(in srgb, var(--lms-primary-text) 15%, transparent);
+  --lms-focus-ring-error: 0 0 0 3px color-mix(in srgb, var(--lms-error) 20%, transparent);
+  --lms-ring-inset-subtle: inset 0 0 0 1px color-mix(in srgb, var(--lms-button-primary) 33%, transparent);
+  --lms-ring-inset-selected: inset 0 0 0 2px var(--lms-primary);
+  --lms-accent-bar-start: inset 3px 0 0 var(--lms-primary);
+  --lms-shadow-drawer-start: -4px 0 24px color-mix(in srgb, var(--lms-black) 12%, transparent);
+  --lms-shadow-drawer-end: 4px 0 24px color-mix(in srgb, var(--lms-black) 12%, transparent);
+  --lms-shadow-edge-start: -4px 0 6px -5px color-mix(in srgb, var(--lms-black) 20%, transparent);
+  --lms-shadow-top: 0 -4px 12px color-mix(in srgb, var(--lms-black) 8%, transparent);
   --lms-shadow-sm: 0 1px 2px rgba(0,0,0,.04);
   --lms-shadow-md: 0 2px 6px rgba(0,0,0,.06);
   --lms-card-hover-shadow: 0 4px 12px rgba(0,0,0,.08);
@@ -929,9 +920,9 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 :where([data-slot="button"],[data-slot="dropdown-root"] > summary,[data-slot="menu"] [role="menuitem"]):focus-visible {
   outline: var(--lms-outline-width) solid var(--lms-primary-text);
   outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(26,149,161,.12);
+  box-shadow: var(--lms-focus-ring);
 }
-[data-slot="button"]:active:not(:disabled) { transition-duration: 150ms; }
+[data-slot="button"]:active:not(:disabled) { transition-duration: var(--lms-motion-fast); }
 [data-slot="button"][aria-busy="true"] { cursor: progress; }
 [data-slot="input"]:disabled,
 [data-slot="select"]:disabled,
@@ -944,7 +935,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="select"]:not(:disabled):focus-visible,
 [data-slot="textarea"]:not(:disabled):focus-visible {
   border-color: var(--lms-primary);
-  box-shadow: 0 0 0 2px rgba(38,186,199,.15);
+  box-shadow: var(--lms-focus-ring);
 }
 /* Invalid controls keep the old LMS red halo even after the shared teal-focus rule. */
 [data-slot="input"][aria-invalid="true"]:not(:disabled):focus-visible,
@@ -952,7 +943,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="textarea"][aria-invalid="true"]:not(:disabled):focus-visible {
   border-color: var(--lms-error);
   outline-color: var(--lms-error);
-  box-shadow: 0 0 0 2px rgba(239,68,68,.2);
+  box-shadow: var(--lms-focus-ring-error);
 }
 
 /* Menu dropdowns and search popovers are different old LMS overlay types:
@@ -990,8 +981,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   font-size: 13px;
   font-weight: 600;
   line-height: 16px;
-  padding: 0 0 13px;
-  border-bottom-width: 3px;
+  padding: 0 0 12px;
+  border-bottom-width: 2px;
   border-radius: 0;
 }
 [data-slot="tabs"] :is([role="tab"],nav > a):is(:hover,:focus-visible) {
@@ -1014,7 +1005,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 }
 [data-slot="data-table"] tbody tr,
 [data-slot="table"] tbody tr {
-  transition: background-color 150ms ease;
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 @media (min-width: 640px) {
   [data-slot="data-table"] td { padding: 12px 16px; }
@@ -1030,7 +1021,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="bottom-sheet"] { box-shadow: var(--lms-elevation-4); }
 [data-slot="drawer"] { box-shadow: var(--lms-drawer-shadow); }
 /* Legacy navigation drawer casts its shadow to the right: antddesign.scss:414-415. */
-[data-slot="drawer"][data-side="left"] { box-shadow: 4px 0 16px rgba(0, 0, 0, 0.12); }
+[data-slot="drawer"][data-side="left"] { box-shadow: var(--lms-shadow-drawer-end); }
 [data-slot="drawer"]::backdrop { background: rgba(30,54,63,.1); }
 [data-slot="dialog"] :is(header,footer),
 [data-slot="drawer"] :is(header,footer),
@@ -1114,7 +1105,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 @media (min-width: 768px) {
   [data-slot="page-canvas"][data-authenticated-canvas="true"] { min-height: calc(100dvh - 116px); }
 }
-@media (min-width: 1024px) {
+@media (min-width: 992px) {
   [data-slot="page-canvas"][data-authenticated-canvas="true"] { min-height: calc(100dvh - 132px); }
 }
 
@@ -1172,7 +1163,7 @@ body {
 [data-slot="input-group"]:focus-within,
 [data-slot="multi-select"]:focus-visible { outline: 2px solid rgba(38,186,199,.65); outline-offset: 2px; }
 [data-slot="file-upload"] [aria-invalid="true"]:focus-visible,
-[data-slot="multi-select"][aria-invalid="true"]:focus-visible { border-color: var(--lms-error); outline-color: var(--lms-error); box-shadow: 0 0 0 2px rgba(239,68,68,.2); }
+[data-slot="multi-select"][aria-invalid="true"]:focus-visible { border-color: var(--lms-error); outline-color: var(--lms-error); box-shadow: var(--lms-focus-ring-error); }
 
 /* Old LMS responsive forms: the desktop control is 36px, touch controls >=44px. */
 @media (max-width: 767px) {
@@ -1199,7 +1190,6 @@ body {
 [data-slot="range-slider"] input[type="range"] { accent-color: var(--lms-primary); }
 [data-slot="file-dropzone"]:focus-within { border-color: var(--lms-primary); }
 
-
 /* Chat-17: loading remains branded while disabled prevents duplicate submits.
    Legacy components___antddesign.scss:153-185, TPO shell spec:23. */
 [data-slot="button"][data-loading="true"],
@@ -1223,13 +1213,11 @@ body {
   pointer-events: none;
 }
 
-
 /* components___antddesign.scss:134-137; native option rendering varies by UA. */
 [data-slot="multi-select"] option:checked {
   background-color: var(--lms-primary);
   color: var(--lms-white);
 }
-
 
 /* components___variables.scss:148-157 ($ssm=767px, $smd=991px). */
 [data-slot="form-grid"][data-gap="sm"] { gap: var(--lms-space-2); }
@@ -1244,7 +1232,6 @@ body {
 }
 [data-slot="form-grid"] > * { min-width: 0; }
 
-
 /* old-lms-shell-spec.md:23-24: 9px radius, 36px desktop shell buttons. */
 [data-slot="button-group"] > [data-slot="button"] {
   border-radius: 0;
@@ -1255,7 +1242,6 @@ body {
 [data-slot="button-group"] > [data-slot="button"]:last-child { border-radius: 0 var(--lms-control-radius) var(--lms-control-radius) 0; }
 [data-slot="button-group"] > [data-slot="button"]:only-child { border-radius: var(--lms-control-radius); }
 [data-slot="button-group"] > [data-slot="button"]:focus-visible { position: relative; z-index: 1; }
-
 
 [data-slot="split-button"] > [data-slot="button"]:first-child { border-radius: var(--lms-control-radius) 0 0 var(--lms-control-radius); }
 [data-slot="split-button"] > [data-slot="button"] + [data-slot="button"] {
@@ -1276,7 +1262,6 @@ body {
   }
 }
 
-
 /* components___antddesign.scss:171-174, keyboard only.
    Keep the measured shell button geometry unchanged. */
 [data-slot="button"][data-variant="primary"]:focus-visible {
@@ -1294,13 +1279,13 @@ body {
 :where([role="button"]):focus-visible {
   outline: 2px solid var(--lms-primary-text);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(26,149,161,.12);
+  box-shadow: var(--lms-focus-ring);
 }
 @media (hover: none) {
   :where([role="button"]):active {
     transform: scale(.98);
-    opacity: .9;
-    transition: transform 50ms ease, opacity 50ms ease;
+    opacity: 1;
+    transition: transform var(--lms-motion-fast) var(--lms-motion-ease), opacity var(--lms-motion-fast) var(--lms-motion-ease);
   }
 }
 

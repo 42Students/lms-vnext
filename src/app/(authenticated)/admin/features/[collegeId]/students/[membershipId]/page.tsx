@@ -8,6 +8,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-trace-service";
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
 import {StudentRuleEditor} from "@/components/admin/student-rule-editor";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 export default async function SuperAdminStudentRules({params}:{params:Promise<{collegeId:string;membershipId:string}>}){
  const {collegeId,membershipId}=await params;
@@ -28,7 +29,7 @@ export default async function SuperAdminStudentRules({params}:{params:Promise<{c
   <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {studentRuleCards(student.modules).map(rule=><article key={rule.module} className="min-w-0 py-[var(--lms-space-4)]">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-      <h2 className="font-semibold text-[var(--lms-heading)]">{rule.label}</h2>
+      <Heading level={2} className="text-[var(--lms-heading)]">{rule.label}</Heading>
       <p className="text-sm text-body">Stored: {rule.state}{rule.locked?" · Locked":""}</p>
     </div>
     <p className="mt-2 max-w-3xl break-words text-xs text-muted-foreground">{rule.consequence}</p>

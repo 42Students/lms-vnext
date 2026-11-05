@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {mentorOverviewEditSchema} from "@/modules/projects/mentor-overview-edit-model";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 export function MentorProjectAboutEditor({project}:{project:{
  id:string;summary:string|null;dueLabel:string|null;blocker:string|null;
  nextAction:string|null;updatedAt:Date|string;
@@ -39,7 +40,7 @@ export function MentorProjectAboutEditor({project}:{project:{
     {editing?"Close editor":"Edit details"}
   </Button>
   {editing?<div className="mt-3 space-y-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-   <h3 className="font-semibold">Edit about this project</h3>
+   <Heading level={3}>Edit about this project</Heading>
    {([
     {label:"About this project",value:summary,change:setSummary,max:4000},
     {label:"Due date or milestone",value:dueLabel,change:setDueLabel,max:160},

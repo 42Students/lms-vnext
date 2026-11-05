@@ -54,7 +54,7 @@ export default async function TpoCalendarPage({
     <Alert tone="error">
       Enter a valid day, calendar view, event kind and company filter. No events were queried.
     </Alert>
-    <Link href="/tpo/calendar" className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center text-link underline lms-inline-link">Reset calendar filters</Link>
+    <Link href="/tpo/calendar" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-link underline lms-inline-link">Reset calendar filters</Link>
   </div>;
   return (
     <div className="min-w-0 space-y-4">

@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeDrives } from "@/modules/placements/college-drive-read-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function CollegePlacementsPage({searchParams}:{
   searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -117,13 +118,13 @@ export default async function CollegePlacementsPage({searchParams}:{
         <Link href="/college/placements" className="ml-2 font-semibold text-link underline">Retry</Link>
       </Alert>:null}
       <section aria-label="Needs attention" className="min-w-0 space-y-2">
-       <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Needs attention</h2>
+       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Needs attention</Heading>
        {attention?<div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] p-3">
         <CollegeDriveAttentionCards data={attention}/>
        </div>:null}
       </section>
       <section aria-label="Active drives" className="min-w-0 space-y-3">
-        <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Active drives</h2>
+        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Active drives</Heading>
         <form method="get" role="search" aria-label="Search active drives"
           className="flex min-w-0 flex-wrap items-end gap-2 sm:justify-between">
           <label className="grid min-w-0 w-full gap-1 text-sm font-semibold sm:w-[240px]">
@@ -165,8 +166,8 @@ export default async function CollegePlacementsPage({searchParams}:{
         </p>:null}
       </section>
       <nav aria-label="Placement workspaces" className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
-      <Link href="/college/placements/interviews" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[rgba(38,186,199,0.07)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Interviews</Link>
-      <Link href="/college/placements/drives" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[rgba(38,186,199,0.07)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)</Link>
+      <Link href="/college/placements/interviews" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Interviews</Link>
+      <Link href="/college/placements/drives" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)</Link>
       </nav>
 
       <CollegeRetentionInlinePreview/>

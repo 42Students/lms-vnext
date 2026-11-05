@@ -19,6 +19,8 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {TPO_BUILTIN_JOB_TYPES} from "@/modules/placements/tpo-builtin-job-types";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type ApplicationMode =
   | "INTERNAL"
@@ -700,7 +702,7 @@ export function PlacementDraftEditForm({
           </label>
         </div>
         <section aria-labelledby="draft-important-dates" className="min-w-0 space-y-3 border-t border-border pt-4">
-          <h3 id="draft-important-dates" className="text-sm font-semibold">Important dates</h3>
+          <Heading level={3} size="sm" id="draft-important-dates">Important dates</Heading>
           <p className="text-xs text-muted-foreground">Other milestones (e.g. Screening round, Technical round) — optional. These appear on the Interview Calendar (admin) and Career Calendar (learners).</p>
           {dateRows.map(row=><div key={row.id} className="grid min-w-0 gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
             <label className="text-[13px] font-semibold">Label
@@ -762,7 +764,7 @@ export function PlacementDraftEditForm({
             className={inputClass}/>
           </label>
           <div className="sm:col-span-2 space-y-2 border-t border-border pt-3">
-            <h4 className="text-sm font-semibold">Custom eligibility rules</h4>
+            <Heading level={4} size="sm">Custom eligibility rules</Heading>
             <p className="text-xs text-muted-foreground">Add display-only rules (e.g. Work permit, Experience). These do not gate applications. Max 20.</p>
             {ruleRows.map(row=><div key={row.id} className="grid min-w-0 gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
               <label className="text-[13px] font-semibold">Label
@@ -1018,12 +1020,12 @@ export function PlacementDraftEditForm({
             onClick={()=>{if(dirty)setCancelConfirm(true);else{discardDraftChanges();router.push(detailBase+"/overview");}}}>
             Cancel
           </Button>
-          <a href="#drive-lifecycle-publish"
+          <TextLink variant="bare" href="#drive-lifecycle-publish"
            aria-disabled={dirty}
            className={"ml-0 mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:ml-3 md:min-h-9 "+
             (dirty?"pointer-events-none opacity-50":"")}>
             Publish now (review required)
-          </a>
+          </TextLink>
           {dirty?<p className="mt-1 text-xs text-muted-foreground">Save draft changes before publishing; the publish workflow rechecks eligible learners and requires confirmation.</p>:null}
         </div>
         {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}

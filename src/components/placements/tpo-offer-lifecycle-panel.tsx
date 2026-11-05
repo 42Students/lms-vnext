@@ -14,6 +14,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { canRecordTpoOfferAction, parseTpoOfferExpiryIstInput, TPO_OFFER_REASON_PRESETS, TPO_OFFER_ACTIONS, type TpoOfferAction } from "@/modules/placements/tpo-offer-lifecycle-model";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type CandidateOffer = {
   id: string;
@@ -102,7 +103,7 @@ export function TpoOfferLifecyclePanel({
   return (
     <section className="space-y-4 border-b border-border pb-6" aria-label="TPO verified offer lifecycle">
       <div>
-        <h3 className="text-base font-semibold text-[var(--lms-heading)]">Verified offer lifecycle</h3>
+        <Heading level={3} size="base" className="text-[var(--lms-heading)]">Verified offer lifecycle</Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">
           Record an expiry extension, evidence-backed learner response, joining
           confirmation or employer withdrawal for up to 200 offers.
@@ -285,7 +286,7 @@ function TpoOfferLetterAttachment({jobId,choices}:{
  }
  if(attachable.length===0)return null;
  return <section aria-label="Attach offer letter" className="mt-5 space-y-3 border-t border-border pt-4">
-  <h4 className="text-sm font-semibold text-[var(--lms-heading)]">Attach offer letter</h4>
+  <Heading level={4} size="sm" className="text-[var(--lms-heading)]">Attach offer letter</Heading>
   <p className="text-xs text-body">Use a permanent HTTPS reference supplied by the company.
    The selected-college TPO must record evidence. Private offer-letter files
    already stored through signed uploads are not replaced here.</p>

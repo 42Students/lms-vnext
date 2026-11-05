@@ -11,6 +11,9 @@ import { DataTable } from "@/components/ui/data-table";
 import { facultyRosterCsv, facultyRosterFileName } from "@/modules/courses/faculty-roster-export";
 import {Dialog} from "@/components/ui/dialog";
 import {sortFacultyRosterByRollThenName,facultyRosterPhotoPreview,facultyRosterMetrics} from "@/modules/courses/faculty-roster-display-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { Img } from "@/components/ui/img";
 
 export type FacultyCourseRosterLearner = {
   membershipId: string;
@@ -24,10 +27,10 @@ export type FacultyCourseRosterLearner = {
 
 const PAGE_SIZE = 25;
 const AVATAR_TINTS=[
- "bg-amber-100 text-amber-800","bg-sky-100 text-sky-800",
- "bg-emerald-100 text-emerald-800","bg-violet-100 text-violet-800",
- "bg-rose-100 text-rose-800","bg-indigo-100 text-indigo-800",
- "bg-teal-100 text-teal-800","bg-orange-100 text-orange-800",
+ "bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]","bg-[color:var(--lms-info-blue-surface)] text-[color:var(--lms-info-text)]",
+ "bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]","bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]",
+ "bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-strong)]","bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple-text)]",
+ "bg-[color:var(--lms-success-surface)] text-[color:var(--lms-button-primary-hover)]","bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]",
 ] as const;
 function avatarTint(learner:FacultyCourseRosterLearner){
  let n=0;
@@ -136,14 +139,14 @@ export function FacultyCourseRoster({
   return (
     <div className="min-w-0 space-y-6">
       <header className="min-w-0 space-y-1">
-        <h2 className="text-2xl font-semibold leading-8 text-[var(--lms-heading)]">Class list</h2>
+        <Heading level={2} size="2xl" className="leading-8 text-[var(--lms-heading)]">Class list</Heading>
         <p className="text-sm text-muted-foreground">Students enrolled in {sectionName}.</p>
       </header>
       <div className="flex flex-wrap items-center gap-2" aria-label="Class roster metrics">
         {[
-          [learners.length+" students","bg-blue-50 text-blue-800","students"],
-          [rollLabel,"bg-amber-50 text-amber-800","roll"],
-          [contactLabel,"bg-emerald-50 text-emerald-800","contacts"],
+          [learners.length+" students","bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-info-blue)]","students"],
+          [rollLabel,"bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]","roll"],
+          [contactLabel,"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]","contacts"],
         ].map(([text,tint,id])=><span key={id}
           className={"inline-flex items-center gap-2 rounded-[var(--lms-radius-full)] border border-border px-3 py-2 text-sm font-semibold "+tint}>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
@@ -232,14 +235,14 @@ export function FacultyCourseRoster({
                   </div>
                 </div>},
               {key:"phone",header:"Phone",mobilePriority:"secondary" as const,
-                cell:(learner)=>learner.phoneE164?<a href={`tel:${learner.phoneE164}`}
-                  className="inline-flex min-h-11 items-center break-all font-semibold text-[var(--lms-link-text)] md:min-h-9"
-                  aria-label={`Call ${nameOf(learner)}`}>{phoneLabel(learner.phoneE164)}</a>:
+                cell:(learner)=>learner.phoneE164?<TextLink href={`tel:${learner.phoneE164}`}
+                  className="inline-flex min-h-11 items-center break-all md:min-h-9"
+                  aria-label={`Call ${nameOf(learner)}`}>{phoneLabel(learner.phoneE164)}</TextLink>:
                   <span className="text-muted-foreground">No number</span>},
               {key:"email",header:"Email",mobilePriority:"secondary" as const,
-                cell:(learner)=>learner.email?<a href={`mailto:${learner.email}`}
-                  className="inline-flex min-h-11 items-center break-all font-semibold text-[var(--lms-link-text)] md:min-h-9"
-                  aria-label={`Email ${nameOf(learner)}`}>{learner.email}</a>:
+                cell:(learner)=>learner.email?<TextLink href={`mailto:${learner.email}`}
+                  className="inline-flex min-h-11 items-center break-all md:min-h-9"
+                  aria-label={`Email ${nameOf(learner)}`}>{learner.email}</TextLink>:
                   <span className="text-muted-foreground">No email</span>},
             ]}
           />
@@ -277,7 +280,7 @@ export function FacultyCourseRoster({
         {...(preview ? {description:"Roll "+(preview.rollNumber||"not assigned")} : {})}
         className="max-w-[360px] w-[calc(100%_-_32px)]">
         {preview&&facultyRosterPhotoPreview(preview.photoDownloadUrl)?
-          <img src={facultyRosterPhotoPreview(preview.photoDownloadUrl)!}
+          <Img src={facultyRosterPhotoPreview(preview.photoDownloadUrl)!}
             alt={"Profile photograph of "+nameOf(preview)}
             className="mx-auto max-h-[60vh] max-w-full rounded-[var(--lms-control-radius)] object-contain"/>:
           <div className="space-y-3 text-center">

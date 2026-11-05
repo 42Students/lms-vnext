@@ -16,6 +16,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { PlacementBulkOfferWithdraw } from "./placement-bulk-offer-withdraw";
 import { TpoOfferLifecyclePanel } from "./tpo-offer-lifecycle-panel";
+import { Heading } from "@/components/ui/heading";
 
 type OfferStatus =
   | "ISSUED"
@@ -326,9 +327,9 @@ export function PlacementOfferControls({
   return (
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3">
-        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+        <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
           Offers & joining
-        </h2>
+        </Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">
           Issue offers only after every evaluative round has a confirmed pass. Learners accept or decline; the placement team records joining outcomes.
         </p>

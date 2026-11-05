@@ -1,4 +1,5 @@
 import type {AdminLearnerProfileSection} from "@/modules/people/admin-learner-profile-sections-model";
+import { Heading } from "@/components/ui/heading";
 
 /** Legacy ProfileSectionsPanel sections in a read-only scoped Super Admin view.
  * A profile document's private identifiers never leave the server projection. */
@@ -6,9 +7,9 @@ export function AdminLearnerProfileSections({name,sections}:{
  name:string;sections:readonly AdminLearnerProfileSection[];
 }){
  return <section aria-label={"Profile — "+name} className="min-w-0 space-y-3 border-t border-border pt-4">
-  <h2 className="text-[18px] font-semibold leading-7 text-[var(--lms-heading)]">
+  <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">
    {"Profile — "+name}
-  </h2>
+  </Heading>
   <p className="text-sm text-body">
    Selected-college learner profile · Read only. Sensitive identity and private file
    details are available only through their separately authorized workflows.

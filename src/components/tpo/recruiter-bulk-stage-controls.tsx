@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 type LeadChoice = {
   id: string;
@@ -159,7 +160,7 @@ export function RecruiterBulkStageControls({
       aria-label="Bulk recruiter lead stage actions"
     >
       <div>
-        <h2 className="font-semibold text-foreground">Bulk lead stage updates</h2>
+        <Heading level={2} className="text-foreground">Bulk lead stage updates</Heading>
         <p className="mt-1 text-xs text-muted-foreground">
           Select up to 100 filtered contacts. Manual stage is distinct from
           recruiter conversion; joined and unsubscribed leads remain eligible for staff updates.
@@ -250,10 +251,10 @@ export function RecruiterBulkStageControls({
         </>
       )}
       </div>
-      {error ? <p role="alert" className="rounded-[8px] border border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{error}</p> : null}
+      {error ? <p role="alert" className="rounded-[8px] border border-[color-mix(in_srgb,var(--lms-error)_25%,transparent)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{error}</p> : null}
       {results.length ? (
         <section aria-live="polite">
-          <h3 className="font-semibold text-foreground">Per-lead results</h3>
+          <Heading level={3} className="text-foreground">Per-lead results</Heading>
           {runAuditId?<p className="mt-1 text-xs text-muted-foreground">Audited batch: <code>{runAuditId}</code></p>:null}
           {undoRunId?<div className="mt-3 rounded-lg border border-border p-3 text-sm">
            <p>Undo this audited batch within five minutes. Undo is rejected if any changed lead has since been edited.</p>

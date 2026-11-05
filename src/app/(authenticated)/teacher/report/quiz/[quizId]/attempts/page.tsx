@@ -12,6 +12,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/ui/empty-state";
 import { facultyQuizAttemptsQuerySchema,facultyQuizAttemptSearchSchema,facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
 import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-attempts-service";
+import { Heading } from "@/components/ui/heading";
 
 type Query={deliveryId?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[];view?:string|string[]};
 export default async function FacultyQuizAttemptPage({
@@ -43,7 +44,7 @@ export default async function FacultyQuizAttemptPage({
     <PageHeader eyebrow="Faculty · Quiz Report" title="Individual Quiz attempts"
       description={data.quiz.title+" · "+data.quiz.sectionName}
       actions={<Link href={back}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
         Full Quiz report
       </Link>} />
     <section className="min-w-0 border-b border-border py-4">
@@ -88,7 +89,7 @@ export default async function FacultyQuizAttemptPage({
       <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Search learner attempts
         <Input type="search" name="q" defaultValue={data.query.q} maxLength={120}
-          placeholder="Learner Name" className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] w-full max-[767px]:text-[16px]" />
+          placeholder="Learner Name" className="min-h-11 md:min-h-[var(--lms-control-height)] w-full max-md:text-[16px]" />
       </label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">Search</Button>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,"",data.query.view)}
@@ -99,7 +100,7 @@ export default async function FacultyQuizAttemptPage({
     : <ol className="divide-y divide-border border-y border-border">{data.items.map(item=>
       <li key={item.id} className="min-w-0 py-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-          <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.learnerName}</h2>
+          <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{item.learnerName}</Heading>
           <span className="text-sm text-body">Attempt {item.attemptNumber}</span>
         </div>
         <p className="mt-2 text-sm text-body leading-[22px]">

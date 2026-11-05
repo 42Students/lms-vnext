@@ -27,6 +27,7 @@ import {
 } from "@/modules/placements/recruiter-company-reports-service";
 import {buildRecruiterReportFunnel} from "@/modules/placements/recruiter-company-funnel-model";
 import {hrCompanyReportPageSignals} from "@/modules/placements/hr-report-page-signals-model";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = {
   collegeId?: string | string[];
@@ -67,7 +68,7 @@ export default async function RecruiterCompanyReportsPage({
 
   if (!parsed.success) {
     return (
-      <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
+      <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
         <PageHeader
           title="Company & Team"
           description="Read-only, college-scoped employer hiring metrics."
@@ -79,7 +80,7 @@ export default async function RecruiterCompanyReportsPage({
           action={
             <Link
               href="/hr/company/reports"
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
             >
               Clear filters
             </Link>
@@ -110,7 +111,7 @@ export default async function RecruiterCompanyReportsPage({
 
   if (report.status !== "READY") {
     return (
-      <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
+      <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
         <PageHeader
           title="Company & Team"
           description="Choose one college to view your employer's authorized hiring reports. Reports from different college relationships are never combined."
@@ -123,9 +124,9 @@ export default async function RecruiterCompanyReportsPage({
           />
         ) : (
           <section className="border-b border-border pb-6">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
+            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
               Choose a college
-            </h2>
+            </Heading>
 
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {report.choices.map((grant) => (
@@ -177,11 +178,11 @@ export default async function RecruiterCompanyReportsPage({
   );
 
   return (
-    <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="Company & Team"
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
-        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:gap-4 max-[767px]:flex-col max-[767px]:items-stretch">
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:gap-4 max-md:flex-col max-md:items-stretch">
           <Link href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
             className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Export report CSV
@@ -211,7 +212,7 @@ export default async function RecruiterCompanyReportsPage({
       ]} />
 
       <section aria-label="All your drives at this college" className="border-b border-border pb-4 md:pb-6">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">All your drives at this college</h2>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">All your drives at this college</Heading>
         <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">
           {buildRecruiterReportFunnel(report.funnel)
@@ -227,14 +228,14 @@ export default async function RecruiterCompanyReportsPage({
       </section>
 
       <details className="min-w-0 border-b border-border pb-4 md:pb-6" open={query.status !== "ALL" || pageSize !== 25}>
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[24px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] md:min-h-9 md:text-[24px] md:leading-[32px] lg:text-[var(--lms-font-3xl)] lg:leading-[40px]">
           Drive report filters
         </summary>
 
         <form
           method="get"
           action="/hr/company/reports"
-          className="mt-4 flex min-w-0 flex-col items-stretch gap-3 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-end"
+          className="mt-4 flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-end"
         >
           <Input
             type="hidden"
@@ -288,7 +289,7 @@ export default async function RecruiterCompanyReportsPage({
       </details>
 
       <details className="min-w-0 border-b border-border pb-4 md:pb-6">
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[24px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Current page hiring totals</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] md:min-h-9 md:text-[24px] md:leading-[32px] lg:text-[var(--lms-font-3xl)] lg:leading-[40px]">Current page hiring totals</summary>
         <p className="mt-1 text-xs text-muted-foreground">
           Totals cover only the visible authorized drive rows on this page, not every company drive.
           Outstanding means currently issued offers; these counts may represent multiple offer versions.
@@ -301,9 +302,9 @@ export default async function RecruiterCompanyReportsPage({
 
       <section className="min-w-0 space-y-3">
         <div>
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
+          <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
             Hiring activity by drive
-          </h2>
+          </Heading>
 
           <p className="mt-1 text-sm text-body">
             {matchedTotal === 0
@@ -354,7 +355,7 @@ export default async function RecruiterCompanyReportsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-body hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
               >
                 Previous
               </Link>
@@ -368,7 +369,7 @@ export default async function RecruiterCompanyReportsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-body hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
               >
                 Next
               </Link>

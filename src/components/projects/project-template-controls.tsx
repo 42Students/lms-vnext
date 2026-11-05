@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import { templateAssignmentRevocationNotice } from "@/modules/projects/template-college-availability-model";
 import {projectTemplateGlobalActions} from "@/modules/projects/template-global-actions-model";
 import { projectMutation } from "./project-api";
+import { TextLink } from "@/components/ui/text-link";
 
 export function CreateProjectTemplateControl() {
   const router = useRouter();
@@ -198,7 +199,7 @@ export function CreateProjectTemplateControl() {
             />
           </label>
           </details>
-          <div className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-4 md:grid-cols-2 min-[992px]:grid-cols-3">
+          <div className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-4 md:grid-cols-2 lg:grid-cols-3">
             <label>
               <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
                 Release
@@ -448,12 +449,12 @@ export function ProjectTemplateActions({
           <p id={templateId+"-publish-blocker"} role="status" className="text-xs text-warning-text">
             {overviewDirty?"Save your overview changes before publishing.": "Publishing requires "+
             missing.join(", ")+". "}
-            {missing.includes("deliverables")?<a className="ml-1 underline"
-              href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/overview"}>Edit overview</a>:null}
-            {missing.includes("sprints")?<a className="ml-1 underline"
-              href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/sprints"}>Add sprints</a>:null}
-            {missing.includes("tasks")?<a className="ml-1 underline"
-              href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/tasks"}>Add tasks</a>:null}
+            {missing.includes("deliverables")?<TextLink className="ml-1"
+              href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/overview"}>Edit overview</TextLink>:null}
+            {missing.includes("sprints")?<TextLink className="ml-1"
+              href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/sprints"}>Add sprints</TextLink>:null}
+            {missing.includes("tasks")?<TextLink className="ml-1"
+              href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/tasks"}>Add tasks</TextLink>:null}
           </p>:null}
         {allowGlobalActions && lifecycle.canUnpublish ? (
           <Button

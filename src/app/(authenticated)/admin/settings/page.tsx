@@ -26,6 +26,8 @@ import {
 import {
   getSuperAdminPlatformSettings,
 } from "@/modules/platform-settings/service";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic = "force-dynamic";
 
@@ -101,7 +103,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
         actions={<Link href="/admin/settings/auth"
-          className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Authentication and privileged access checklist →</Link>}
+          className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Authentication and privileged access checklist →</Link>}
       />
 
       <section aria-label="Tenant Settings overview" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
@@ -109,7 +111,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <p className="text-sm font-semibold text-body">Runtime configuration</p>
           <span className="rounded-full border border-[var(--lms-primary)] bg-primary-subtle px-3 py-1 text-xs font-semibold text-primary-text">{scopeLabel}</span>
         </div>
-        <h2 className="mt-1 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Settings with explicit execution scope</h2>
+        <Heading level={2} size="lg" className="mt-1 break-words leading-7 text-[var(--lms-heading)]">Settings with explicit execution scope</Heading>
         <p className="text-sm leading-6 text-body">These values are not an inheritance tree: each backend reader asks for one exact scope. The page therefore keeps platform and college settings separate and blocks new organization-level values that nothing consumes.</p>
         <dl className="mt-3 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 md:grid-cols-3 md:divide-x md:divide-y-0">
           <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Documented controls</dt><dd className="mt-2 break-words text-xl font-semibold tabular-nums leading-7 text-[var(--lms-heading)]">{documentedControls}</dd></div>
@@ -140,7 +142,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       </section>
 
       <section aria-label="Tenant setting scope modes" className="border-b border-border pb-4">
-        <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Setting scope</h2>
+        <Heading level={2} size="sm" className="text-[var(--lms-heading)]">Setting scope</Heading>
         <p className="mt-2 text-sm leading-6 text-body">
           Choose which settings scope to inspect. Switching views never changes the active college or authorizes another organization's data.
         </p>
@@ -218,22 +220,22 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           </Select>
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-        <Link href="/admin/settings" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+        <Link href="/admin/settings" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
       </form>
       {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."
         action={<Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-full md:w-auto md:min-h-9">Clear filters</Link>}/> : null}
       {sections.length ? <nav
         aria-label="Settings sections"
-        className="flex min-w-0 gap-[var(--lms-tab-gap)] min-[1600px]:gap-[40px] overflow-x-auto border-b border-[var(--lms-canvas-border)] pb-0"
+        className="flex min-w-0 gap-[var(--lms-tab-gap)] xl:gap-[40px] overflow-x-auto border-b border-[var(--lms-canvas-border)] pb-0"
       >
         {sections.map((section) => (
-          <a
+          <TextLink variant="bare"
             key={section.id}
             href={`#${section.id}`}
-            className="relative inline-flex min-h-11 min-[768px]:min-h-[29px] shrink-0 items-center justify-center whitespace-nowrap border-0 px-0 pb-[13px] pt-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 after:transition-[width,opacity] after:duration-200 hover:text-[var(--lms-primary-text)] hover:after:w-full hover:after:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:after:transition-none"
+            className="relative inline-flex min-h-11 md:min-h-[29px] shrink-0 items-center justify-center whitespace-nowrap border-0 px-0 pb-[12px] pt-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 after:transition-[width,opacity] after:duration-[var(--lms-motion-fast)] hover:text-[var(--lms-primary-text)] hover:after:w-full hover:after:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:after:transition-none"
           >
             {section.title}
-          </a>
+          </TextLink>
         ))}
       </nav> : null}
 
@@ -245,12 +247,12 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           className="space-y-4 scroll-mt-8"
         >
           <div>
-            <h2
+            <Heading level={2} size="lg"
               id={`${section.id}-heading`}
-              className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]"
+              className="m-0 break-words leading-7 text-[var(--lms-heading)]"
             >
               {section.title}
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm leading-6 text-body">
               {section.description}
             </p>

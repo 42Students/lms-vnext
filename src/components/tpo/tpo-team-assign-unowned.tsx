@@ -7,6 +7,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { apiFetch } from "@/lib/api-fetch";
+import { Heading } from "@/components/ui/heading";
 
 type Member = { membershipId: string; displayName: string };
 
@@ -68,9 +69,9 @@ export function TpoTeamAssignUnowned({
 
   return (
     <section aria-label="Assign unowned placement work" className="min-w-0 space-y-3 border-t border-border pt-4">
-      <h2 className="text-base font-semibold leading-6 text-foreground">
+      <Heading level={2} size="base" className="leading-6 text-foreground">
         Nobody owns {drives} drives and {companies} companies
-      </h2>
+      </Heading>
       <p className="max-w-3xl text-sm leading-6 text-body">
         Give the unassigned active drives and company relationships to one placement team member.
         Work with an owner is not moved.

@@ -34,6 +34,10 @@ import {
   OfferingActions,
   TeachingAssignmentActions,
 } from "./admin-course-actions";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { Img } from "@/components/ui/img";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Workspace = Awaited<
   ReturnType<typeof getAdminCourseWorkspace>
@@ -106,12 +110,12 @@ export function AdminCourseOverview({
        const safeCover=parsed.success?parsed.data:null;
        return <div className="h-[35px] w-[50px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
         {safeCover?
-          <a href={safeCover}
+          <TextLink variant="bare" href={safeCover}
             aria-label={"Preview "+(course.name?.trim()||"Untitled course")+" cover"}
             className="block h-full w-full focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]">
-            <img src={safeCover} alt={(course.name?.trim()||"Untitled course")+" cover"}
+            <Img src={safeCover} alt={(course.name?.trim()||"Untitled course")+" cover"}
               width={50} height={35} loading="lazy" className="h-full w-full object-cover"/>
-          </a>:
+          </TextLink>:
           <span role="img" aria-label="Course preview unavailable"
             className="flex h-full items-center justify-center text-muted-foreground">
             <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none"
@@ -530,7 +534,7 @@ export function AdminCourseOverview({
 
       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
       <div id="create-course" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-      <h2 className="mb-3 text-lg font-semibold text-foreground">Create New Course</h2>
+      <Heading level={2} size="lg" className="mb-3 text-foreground">Create New Course</Heading>
       {!workspace.academicStructureAvailable?<Alert tone="warning" role="alert">
         Academic structure could not be loaded. The course directory remains available, but course creation is disabled until the data is verified. Refresh this page to retry.
       </Alert>:workspace.departments.length===0?<Alert tone="warning" role="status">
@@ -558,9 +562,9 @@ export function AdminCourseOverview({
 
       <section className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <Heading level={2} size="lg" className="m-0 text-foreground">
             {COLLEGE_COURSES_COPY.existingTitle}
-          </h2>
+          </Heading>
         </div>
         {catalogue && catalogueQuery ? <FilterBar title="Filters"
           activeCount={Number(Boolean(catalogueQuery.q)) + Number(catalogueQuery.sort !== "NAME_ASC")}
@@ -588,10 +592,10 @@ export function AdminCourseOverview({
             </label>
             <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:flex-row md:flex-wrap md:col-span-2">
               <Button type="submit" className="min-h-11 w-full md:hidden">Filter</Button>
-              <a href={courseBasePath.startsWith("/admin/") ? "/api/admin/courses/catalogue/export" + collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export", "") : collegeCourseCatalogueExportHref(catalogueQuery)} download="courses.csv"
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">
+              <ButtonLink variant="secondary" href={courseBasePath.startsWith("/admin/") ? "/api/admin/courses/catalogue/export" + collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export", "") : collegeCourseCatalogueExportHref(catalogueQuery)} download="courses.csv"
+                className="md:w-auto">
                 Export courses.csv
-              </a>
+              </ButtonLink>
               <Link href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses", courseBasePath)}
                 className="inline-flex min-h-11 items-center justify-center px-[var(--lms-space-3)] text-sm text-body hover:text-primary-text md:min-h-9">Refresh</Link>
               <Link href={courseBasePath} className="inline-flex min-h-11 items-center justify-center px-[var(--lms-space-3)] text-sm text-body hover:text-primary-text md:min-h-9">Clear</Link>
@@ -638,9 +642,9 @@ export function AdminCourseOverview({
 
       <Disclosure title="Course Offerings" className="min-w-0 border-t border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
         <div>
-          <h2 className="sr-only">
+          <Heading level={2} className="sr-only">
             Course Offerings
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Cohort + Academic Period Course
             instances.
@@ -658,9 +662,9 @@ export function AdminCourseOverview({
 
       <Disclosure title="Section Deliveries" className="min-w-0 border-t border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
         <div>
-          <h2 className="sr-only">
+          <Heading level={2} className="sr-only">
             Section Deliveries
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Exact Offering-to-Section teaching
             boundaries.
@@ -678,9 +682,9 @@ export function AdminCourseOverview({
 
       <Disclosure title="Teaching Assignments" className="min-w-0 border-t border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
         <div>
-          <h2 className="sr-only">
+          <Heading level={2} className="sr-only">
             Teaching Assignments
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Active Faculty ownership for each
             Section Delivery.

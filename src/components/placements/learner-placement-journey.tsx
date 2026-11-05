@@ -3,6 +3,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {ownApplicationJobHref} from "@/modules/placements/learner-application-job-link-model";
 import {learnerApplicationCardActivity} from "@/modules/placements/learner-application-card-activity-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export type LearnerPlacementJourneyItem = {
   applicationId: string;
@@ -143,9 +145,9 @@ export function LearnerPlacementJourney({
     return (
       <section aria-labelledby="learner-journey-heading" className="space-y-3">
         <div>
-          <h2 id="learner-journey-heading" className="m-0 text-base font-semibold text-foreground">
+          <Heading level={2} size="base" id="learner-journey-heading" className="m-0 text-foreground">
             My placement journey
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Applications, screening decisions and applied round results will appear here.
           </p>
@@ -161,20 +163,20 @@ export function LearnerPlacementJourney({
   return (
     <section aria-labelledby="learner-journey-heading" className="space-y-3">
       <div>
-        <h2 id="learner-journey-heading" className="m-0 text-base font-semibold text-foreground">
+        <Heading level={2} size="base" id="learner-journey-heading" className="m-0 text-foreground">
           My placement journey
-        </h2>
+        </Heading>
         <p className="mt-1 text-sm text-body">
           One view of your applications, screening state and confirmed round outcomes.
         </p>
       </div>
       <section aria-labelledby="learner-journey-summary" className="space-y-3 border-b border-border pb-5">
-        <h3 id="learner-journey-summary" className="text-base font-semibold text-foreground">Where your applications stand</h3>
+        <Heading level={3} size="base" id="learner-journey-summary" className="text-foreground">Where your applications stand</Heading>
         <p className="text-sm text-body">Your recorded application and selection progress. Future rounds only appear after your placement team records them.</p>
         <div className="grid min-w-0 gap-3 md:grid-cols-2">
           {items.map(item=>(
-            <a key={item.applicationId} href={"#placement-application-"+encodeURIComponent(item.applicationId)}
-              className="block min-h-11 min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-[var(--lms-primary)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-[var(--lms-control-height)]">
+            <TextLink variant="bare" key={item.applicationId} href={"#placement-application-"+encodeURIComponent(item.applicationId)}
+              className="block min-h-11 min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:shadow-(--lms-elevation-1) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-[var(--lms-control-height)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="min-w-0 break-words text-sm font-semibold text-foreground">{item.companyName} · {item.jobTitle}</span>
                 <StatusBadge tone={item.applicationStatus==="WITHDRAWN"||item.screening.status==="REJECTED"?"error":"info"}>
@@ -190,7 +192,7 @@ export function LearnerPlacementJourney({
                   </li>
                 ))}
               </ol>
-            </a>
+            </TextLink>
           ))}
         </div>
       </section>
@@ -206,9 +208,9 @@ export function LearnerPlacementJourney({
                 <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   {item.companyName}
                 </p>
-                <h3 className="mt-1 break-words text-lg font-semibold text-foreground">
+                <Heading level={3} size="lg" className="mt-1 break-words text-foreground">
                   {item.jobTitle}
-                </h3>
+                </Heading>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Applied{" "}
                   {formatWhen(
@@ -270,7 +272,7 @@ export function LearnerPlacementJourney({
             {item.screening
               .candidateMessage ? (
               <div className="mt-4 rounded-lg border border-border bg-muted px-4 py-3">
-                <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                <p className="m-0 text-xs font-semibold uppercase tracking-[.05em] text-muted-foreground">
                   Placement team
                 </p>
                 <p className="mt-1 text-sm leading-6 text-body">
@@ -284,7 +286,7 @@ export function LearnerPlacementJourney({
 
             {scheduledRounds.some(round=>round.applicationId===item.applicationId) ? (
               <section aria-label="Your selection process" className="mt-4 rounded-lg border border-border p-3">
-                <h4 className="font-semibold text-foreground">Selection process</h4>
+                <Heading level={4} className="text-foreground">Selection process</Heading>
                 <p className="mt-1 text-xs text-body">Scheduled rounds and your individual booking are different records.</p>
                 <ol className="mt-3 space-y-2">
                   {scheduledRounds.filter(round=>round.applicationId===item.applicationId).map(round=>(

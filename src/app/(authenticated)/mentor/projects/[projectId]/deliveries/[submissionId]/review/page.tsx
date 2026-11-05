@@ -4,6 +4,8 @@ import {PageHeader} from "@/components/ui/page-header";
 import {Disclosure} from "@/components/ui/disclosure";
 import {getMentorDeliveryVersion} from "@/modules/projects/mentor-delivery-version-service";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export default async function MentorDeliveryVersionPage({params}:{
   params:Promise<{projectId:string;submissionId:string}>;
 }){
@@ -23,7 +25,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         Review overview
       </Link>}/>
     <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Registered review decision</h2>
+      <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Registered review decision</Heading>
       <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Submission state</dt>
           <dd className="mt-1 text-sm font-semibold">{v.status}</dd></div>
@@ -50,9 +52,9 @@ export default async function MentorDeliveryVersionPage({params}:{
           <dd className="mt-1 text-sm">{v.reviewedAt?format(v.reviewedAt):"No review date recorded"}</dd></div>
         </dl>
       </Disclosure>
-      <h3 className="mt-6 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Learner submission summary</h3>
+      <Heading level={3} className="mt-6 text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">Learner submission summary</Heading>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{v.summary||"No summary recorded"}</p>
-      <h3 className="mt-6 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Recorded reviewer feedback</h3>
+      <Heading level={3} className="mt-6 text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">Recorded reviewer feedback</Heading>
       {v.feedback?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
         {v.feedback}</p>:
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">
@@ -60,19 +62,19 @@ export default async function MentorDeliveryVersionPage({params}:{
         </p>}
     </section>
     <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Learner notes</h2>
+      <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Learner notes</Heading>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
         {v.notes||"No learner notes were attached to this version."}
       </p>
     </section>
     <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Submitted source and demo links</h2>
+      <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Submitted source and demo links</Heading>
       <div className="mt-3 flex flex-wrap gap-3">
         {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
           {label:"Demo",href:safeProjectExternalHref(v.demoUrl)}]).map(item=>
-            item.href?<a key={item.label} href={item.href}
-              rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
-              Open {item.label.toLowerCase()} link ↗</a>:null)}
+            item.href?<TextLink key={item.label} href={item.href}
+              rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
+              Open {item.label.toLowerCase()} link ↗</TextLink>:null)}
         {!safeProjectExternalHref(v.sourceUrl)&&!safeProjectExternalHref(v.demoUrl)?
           <p className="text-sm text-muted-foreground leading-[22px]">No valid source or demo URL.</p>:null}
       </div>
@@ -86,8 +88,8 @@ export default async function MentorDeliveryVersionPage({params}:{
         const href=typeof entry.url==="string" ? safeProjectExternalHref(entry.url) : null;
         return <li key={index} className="py-[var(--lms-space-3)] text-sm">
           <span className="break-words font-semibold">{name}</span> · {kind}
-          {href?<a href={href} rel="noopener noreferrer"
-            className="ml-2 inline-flex min-h-11 max-w-full items-center break-all text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">Open link ↗</a>:null}
+          {href?<TextLink href={href} rel="noopener noreferrer"
+            className="ml-2 inline-flex min-h-11 max-w-full items-center break-all md:min-h-9">Open link ↗</TextLink>:null}
           {kind==="File"&&typeof entry["fileId"]==="string"?
             <span className="ml-2 text-muted-foreground">Uploaded file recorded</span>:null}
         </li>;

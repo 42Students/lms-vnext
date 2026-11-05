@@ -11,6 +11,7 @@ import {
   COLLEGE_AT_A_GLANCE_ICONS,
   COLLEGE_AT_A_GLANCE_CARD_CLASS,
 } from "@/modules/admin-ui/college-dashboard-cards-model";
+import { Heading } from "@/components/ui/heading";
 
 type Cards = Awaited<ReturnType<typeof getCollegeDashboardCards>>["cards"];
 
@@ -43,7 +44,7 @@ export function CollegeDashboardCards({ cards }: { cards: Cards }) {
   });
   return <section className="space-y-4" aria-label={COLLEGE_AT_A_GLANCE_HEADING}>
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 className="text-xl font-semibold text-foreground">{COLLEGE_AT_A_GLANCE_HEADING}</h2>
+      <Heading level={2} size="xl" className="text-foreground">{COLLEGE_AT_A_GLANCE_HEADING}</Heading>
       <Button type="button" variant="secondary" disabled={pending} onClick={refresh}
        className="min-h-11 md:min-h-9">{pending?"Refreshing…":"Retry / Refresh"}</Button>
     </div>

@@ -10,6 +10,7 @@ import { useState } from "react";
 import {
   afterCollegeOptions,AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES, type AfterCollegeOutcome,
 } from "@/modules/placements/tpo-after-college-model";
+import { Heading } from "@/components/ui/heading";
 
 type Entry = { outcome: AfterCollegeOutcome; expectedVersion: string };
 type Row = { membershipId: string; displayName: string };
@@ -88,7 +89,7 @@ export function TpoAfterCollegeBulkEditor({
 
   return <section aria-label="After college bulk actions"
     className="space-y-3 border-t border-border pt-5">
-    <h2 className="text-lg font-semibold leading-6">After college · Bulk update</h2>
+    <Heading level={2} size="lg" className="leading-6">After college · Bulk update</Heading>
     <details className="border-b border-border pb-3 text-sm text-muted-foreground"><summary className="cursor-pointer py-2 text-[13px] font-semibold">How bulk updates work</summary><p>
       Select students on this page, choose their outcome, preview the count and confirm.
       Changes are recorded for reporting and can be undone while no other editor has updated them.

@@ -11,6 +11,7 @@ import {CollegeServiceError} from "@/modules/colleges/service";
 import {readAdminCollegeSignInPolicy} from "@/modules/colleges/admin-signin-policy-service";
 import {CollegeSigninMethodForm} from "@/components/admin/college-signin-method-form";
 import {collegeIdSchema} from "@/modules/colleges/validation";
+import { Heading } from "@/components/ui/heading";
 
 export default async function CollegeSignInMethods({params}:{params:Promise<{collegeId:string}>}){
   const context=await getCurrentRequestContext();
@@ -47,7 +48,7 @@ export default async function CollegeSignInMethods({params}:{params:Promise<{col
    actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>
   <section aria-label="Sign-in" className="min-w-0 max-w-3xl space-y-[var(--lms-space-4)] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Sign-in</h2>
+   <Heading level={2} size="base" className="text-[var(--lms-heading)]">Sign-in</Heading>
    <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/signin"}
     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Reload</Link>
   </div>

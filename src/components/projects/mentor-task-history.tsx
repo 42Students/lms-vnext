@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
+import { Heading } from "@/components/ui/heading";
 
 type HistoryEvent={id:string;eventType:string;summary:string;
  occurredAt:string;actorDisplayName:string|null};
@@ -46,7 +47,7 @@ export function MentorTaskHistory({projectId,taskId}:{
  }
  return <section className="prototype-mentor-board-detail-block"
   aria-label="Complete recorded task activity">
-  <h4>Task history</h4>
+  <Heading level={4}>Task history</Heading>
   {!loaded?<Button type="button" size="sm" variant="secondary" disabled={busy}
     loading={busy} onClick={()=>void load()}>
     Load recorded task history

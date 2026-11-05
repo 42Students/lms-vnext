@@ -21,6 +21,8 @@ import {
 import {
   getAdminOfferingLearningWorkspace,
 } from "@/modules/courses/admin-offering-learning-workspace";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export async function AdminOfferingLearningPage({
   context,
@@ -56,8 +58,8 @@ export async function AdminOfferingLearningPage({
     Lessons couldn&apos;t be loaded. Internal Server Error. Your changes have not been made.
    </Alert>
    <Link href={backHref} className="font-semibold text-primary-text underline">Back to Courses</Link>
-   <a href={retryHref}
-    className="ml-3 font-semibold text-primary-text underline">Retry</a>
+   <TextLink href={retryHref}
+    className="ml-3">Retry</TextLink>
   </div>;
   const [rosterResult,sectionPreviewResult]=await Promise.allSettled([
    listOfferingTeachingOverview(context,offeringId),
@@ -92,13 +94,13 @@ export async function AdminOfferingLearningPage({
         }
       />
       <AdminOfferingSectionTabs home={<div className="space-y-4">
-       <h2 className="text-lg font-semibold text-foreground">Home</h2>
+       <Heading level={2} size="lg" className="text-foreground">Home</Heading>
        {displayResult.failed?<Alert tone="warning" role="alert" title="Server Notification">
         Course Home content couldn&apos;t be loaded. Internal Server Error.
-        <a href={retryHref+"#course-home"} className="ml-2 font-semibold underline">Retry</a>
+        <TextLink href={retryHref+"#course-home"} className="ml-2">Retry</TextLink>
        </Alert>:null}
        {display?<section aria-label="In this Course" className="space-y-3 border-b border-border pb-4">
-        <h3 className="text-base font-semibold text-foreground">In this Course</h3>
+        <Heading level={3} size="base" className="text-foreground">In this Course</Heading>
         {display.introductionText?<p className="whitespace-pre-wrap text-sm text-body">{display.introductionText}</p>:null}
         {display.bodyHtml?<div className="prose max-w-none text-sm text-body"
           dangerouslySetInnerHTML={{__html:display.bodyHtml}}/>:null}
@@ -114,17 +116,17 @@ export async function AdminOfferingLearningPage({
        </Disclosure>:
         <AdminCourseDisplayEditor courseId={workspace.offering.courseId} enabled={false} initial={null}/>}
       </div>} syllabus={<div className="space-y-4">
-       <h2 className="text-lg font-semibold text-foreground">Syllabus</h2>
+       <Heading level={2} size="lg" className="text-foreground">Syllabus</Heading>
        <AdminOfferingLearningOverview workspace={workspace}/>
        {roster?<AdminOfferingTeachersPanel roster={roster}
         academicPeriodName={workspace.offering.academicPeriodName}/>:
         <Alert tone="warning" role="alert">Faculty assignments couldn&apos;t be loaded.
-         <a className="ml-2 font-semibold underline" href={retryHref+"#course-syllabus"}>Retry</a>
+         <TextLink className="ml-2" href={retryHref+"#course-syllabus"}>Retry</TextLink>
         </Alert>}
        {sectionPreview?<AdminOfferingSectionPreview data={sectionPreview}/>:
         <Alert tone="warning" role="alert" title="Server Notification">
          Sections couldn&apos;t be loaded, so you&apos;re seeing shared content only.
-         <a className="ml-2 font-semibold underline" href={retryHref+"#course-syllabus"}>Retry</a>
+         <TextLink className="ml-2" href={retryHref+"#course-syllabus"}>Retry</TextLink>
         </Alert>}
       </div>}/>
     </div>

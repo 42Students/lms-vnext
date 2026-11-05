@@ -17,6 +17,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {getTpoAfterCollegeReport} from "@/modules/placements/tpo-after-college-report-service";
 import {AFTER_COLLEGE_LABELS,AFTER_COLLEGE_OUTCOMES} from "@/modules/placements/tpo-after-college-model";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 type Raw=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -40,7 +41,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  return <div data-tpo-presentation-report className="min-w-0 space-y-4">
   <PageHeader title="After college"
    description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."
-   actions={<><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">← All reports</Link>{data.available?<a href={"/api/placements/tpo/reports/after-college?"+query.toString()} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">Download CSV</a>:null}</>}/>
+   actions={<><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">← All reports</Link>{data.available?<ButtonLink variant="secondary" href={"/api/placements/tpo/reports/after-college?"+query.toString()} className="w-full md:w-auto">Download CSV</ButtonLink>:null}</>}/>
   {!data.available?<Alert tone="warning">After-college outcomes storage is unavailable. This page does not infer destinations.</Alert>:<>
    <form method="get" className="grid min-w-0 gap-3 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] lg:items-end">
     <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch

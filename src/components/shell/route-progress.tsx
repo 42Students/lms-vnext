@@ -91,7 +91,7 @@ export function RouteProgress() {
         </span>
         {stalled ? <div className="lms-legacy-loader-recovery min-w-0">
           <p>Still loading…</p>
-          <Button type="button" variant="secondary" className="w-full min-[768px]:w-auto" onClick={()=>window.location.reload()}>Reload</Button>
+          <Button type="button" variant="secondary" className="w-full md:w-auto" onClick={()=>window.location.reload()}>Reload</Button>
         </div> : null}
       </div>
     </div>;

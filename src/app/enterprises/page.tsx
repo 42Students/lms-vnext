@@ -1,5 +1,6 @@
 import type {Metadata} from "next";
 import {MarketingLayout,MarketingHero,MarketingFeatureGrid,MarketingCta} from "@/components/marketing/marketing-layout";
+import { Heading } from "@/components/ui/heading";
 const SITE="https://42lms.com";
 const CANONICAL=SITE+"/enterprises";
 const DESCRIPTION="Build stronger workforces with structured learning, applied projects, evidence of skills and connected recruiting workflows for companies and colleges.";
@@ -46,11 +47,11 @@ export default function EnterprisesPage(){
    dangerouslySetInnerHTML={{__html:JSON.stringify(jsonLd).replace(/</g,"\\u003c")}} />
   <MarketingHero eyebrow="For Enterprises" title="Build High-Performing Workforces"
     description="Build practical capabilities through structured learning, projects, assessments and campus recruiting workflows—without unbuilt AI or external-system integration promises."/>
-  <section aria-labelledby="enterprises-audience-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-white px-5 py-14 min-[768px]:py-20">
-   <div className="mx-auto grid max-w-[1180px] items-start gap-10 min-[992px]:grid-cols-[1.2fr_.8fr]">
+  <section aria-labelledby="enterprises-audience-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-surface px-5 py-14 md:py-20">
+   <div className="mx-auto grid max-w-[1180px] items-start gap-10 lg:grid-cols-[1.2fr_.8fr]">
     <div className="min-w-0">
-     <p className="text-xs font-bold uppercase tracking-[0.13em] text-[var(--lms-primary-text)]">For Enterprises</p>
-     <h2 id="enterprises-audience-heading" className="mt-3 text-[clamp(1.5rem,3vw,2.125rem)] font-semibold leading-tight text-[var(--lms-heading)]">Learning and recruiting connected to real work</h2>
+     <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">For Enterprises</p>
+     <Heading level={2} id="enterprises-audience-heading" className="mt-3 text-[clamp(1.5rem,3vw,2.125rem)] leading-tight text-[var(--lms-heading)]">Learning and recruiting connected to real work</Heading>
      <p className="mt-4 max-w-[67ch] text-base leading-7 text-[var(--lms-body-text)]">Give teams a clear way to learn, practice, document outcomes and collaborate with campus placement cells.</p>
      <ul className="mt-6 grid gap-3 text-sm leading-6 text-[var(--lms-body-text)]">
       {[
@@ -66,24 +67,24 @@ export default function EnterprisesPage(){
      </ul>
     </div>
     <aside aria-label="Enterprise outcomes" className="min-w-0 rounded-[18px] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] p-6">
-     <h3 className="text-lg font-semibold text-[var(--lms-heading)]">Outcomes</h3>
-     <ul className="mt-5 flex flex-wrap gap-2.5">
+     <Heading level={3} size="lg" className="text-[var(--lms-heading)]">Outcomes</Heading>
+     <ul className="mt-5 flex flex-wrap gap-3">
       {["Higher Productivity","Faster Onboarding","Better Knowledge Retention",
        "Stronger Workforce Capabilities","Improved Business Performance"].map(label=>
-       <li key={label} className="rounded-full border border-[var(--lms-canvas-border)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--lms-primary-text)]">{label}</li>)}
+       <li key={label} className="rounded-full border border-[var(--lms-canvas-border)] bg-surface px-4 py-2 text-sm font-semibold text-[var(--lms-primary-text)]">{label}</li>)}
      </ul>
      <p className="mt-5 text-xs leading-5 text-[var(--lms-body-text)]">These are potential organizational outcomes, not measured guarantees.</p>
     </aside>
    </div>
   </section>
-  <section aria-labelledby="enterprise-integrations-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-[var(--lms-primary-subtle)] px-5 py-14 min-[768px]:py-20">
+  <section aria-labelledby="enterprise-integrations-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-[var(--lms-primary-subtle)] px-5 py-14 md:py-20">
    <div className="mx-auto max-w-[1180px] space-y-5">
-    <h2 id="enterprise-integrations-heading" className="text-[clamp(1.5rem,3vw,2.125rem)] font-semibold text-[var(--lms-heading)]">Connected learning and hiring workflows</h2>
+    <Heading level={2} id="enterprise-integrations-heading" className="text-[clamp(1.5rem,3vw,2.125rem)] text-[var(--lms-heading)]">Connected learning and hiring workflows</Heading>
     <p className="max-w-[75ch] text-sm leading-6 text-[var(--lms-body-text)]">42 LMS workflows are available inside the platform. External GitHub, Slack, Teams, CRM and ERP integration is not advertised as a live feature.</p>
     <ul className="flex flex-wrap gap-3">
      {["Assessments","Assignments","Projects","Interviews","Courses","Learner profiles",
       "Candidate verification","Placement drives","Offers","Placement reporting"].map(label=>
-      <li key={label} className="rounded-full border border-[var(--lms-canvas-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--lms-heading)]">{label}</li>)}
+      <li key={label} className="rounded-full border border-[var(--lms-canvas-border)] bg-surface px-4 py-3 text-sm font-semibold text-[var(--lms-heading)]">{label}</li>)}
     </ul>
    </div>
   </section>

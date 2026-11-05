@@ -8,6 +8,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {courseBulkSelectionFilterKey} from "@/modules/courses/course-bulk-selection-scope-model";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 type Course={id:string;name:string};
 type Report={
  selectedCourses:number;matchedLessons:number;matchedContents:number;
@@ -100,7 +101,7 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
    className="min-w-0 space-y-3 border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div>
-    <h3 className="font-semibold text-heading">Visible to students</h3>
+    <Heading level={3} className="text-heading">Visible to students</Heading>
     <p className="mt-1 text-xs text-muted-foreground">
      Select courses on the catalogue pages, then Show or Hide them for students.
      Off hides the selected courses and their published lessons from students. The course records remain active for staff.

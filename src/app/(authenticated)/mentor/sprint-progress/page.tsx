@@ -15,6 +15,7 @@ import {
   mentorSprintProgressHref, mentorSprintProgressQuerySchema,
 } from "@/modules/projects/mentor-sprint-progress-model";
 import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
+import { Heading } from "@/components/ui/heading";
 
 type Params = { order?:string|string[];taskAttention?:string|string[];projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -119,7 +120,7 @@ export default async function MentorSprintProgressPage({
       : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
         <article key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <div><h2 className="break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{item.title}</h2>
+            <div><Heading level={2} className="break-words text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">{item.title}</Heading>
               <p className="mt-1 text-sm text-body leading-[22px]">{item.projectTitle} · {item.releaseTitle}</p>
             </div>
             <span className="text-xs font-semibold text-body">{item.status}</span>

@@ -41,6 +41,7 @@ import {
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
 import { collegeRoleDirectoryExportHref } from "@/modules/people/college-role-directory-export";
 import {collegeLearnerVerificationHref} from "@/modules/verification/admin-links";
+import { Heading } from "@/components/ui/heading";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -201,14 +202,14 @@ export async function CollegeRoleDirectoryWorkspace({
           </div>
         ) : (
           <Link href="/college/students/register"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-[650] text-white hover:bg-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Register students
           </Link>
         )}
       />
 
       {kind === "LEARNER" ? <div className="min-w-0 space-y-2">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Registered Students</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Registered Students</Heading>
         <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
           <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-primary-text)] md:min-h-9">
             Register students
@@ -248,7 +249,7 @@ export async function CollegeRoleDirectoryWorkspace({
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">People Directory</Link>
       </nav> : null}
       {kind === "FACULTY" ? <div className="space-y-2">
-        <h2 className="text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Registered Faculty</h2>
+        <Heading level={2} className="text-[var(--lms-font-lg)] text-[var(--lms-heading)]">Registered Faculty</Heading>
         <Link href="/college/faculty-assignment"
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Faculty Assignment →</Link>
       </div> : null}
@@ -288,7 +289,7 @@ export async function CollegeRoleDirectoryWorkspace({
         </p>
       </section>
       <section className="min-w-0 border-t border-border pt-4" aria-label={title + " directory filters"}>
-        <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
+        <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 lg:grid-cols-4">
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             {collegeDirectorySearchHint(kind)}
             <CollegeRoleDirectoryAutocomplete
@@ -375,7 +376,7 @@ export async function CollegeRoleDirectoryWorkspace({
               First 100 distinct types shown.
             </span> : null}
           </label> : null}
-          <Disclosure title="Advanced filters" className="min-w-0 md:col-span-2 min-[992px]:col-span-4" defaultOpen={collegeRoleDirectoryHasActiveFilters(kind,result.filter)}>
+          <Disclosure title="Advanced filters" className="min-w-0 md:col-span-2 lg:col-span-4" defaultOpen={collegeRoleDirectoryHasActiveFilters(kind,result.filter)}>
             <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Platform account
@@ -585,7 +586,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.filter.page > 1 ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page - 1 })}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[44px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
             >
               Previous
             </Link>
@@ -593,7 +594,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.filter.page < result.totalPages ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page + 1 })}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[44px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
             >
               Next
             </Link>

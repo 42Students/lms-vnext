@@ -12,7 +12,7 @@
   font-size: 30px;
   font-weight: 600;
   line-height: 1.25;
-  letter-spacing: -0.025em;
+  letter-spacing: -.02em;
 }
 .lms-college-portal :is(
   input[type="text"], input[type="search"], input[type="email"],
@@ -27,7 +27,7 @@
 .lms-college-portal :is(a, button)[class~="bg-primary"] {
   color: var(--lms-on-primary);
   background-color: var(--lms-button-primary);
-  font-weight: 650;
+  font-weight: 600;
   font-size: 14px;
 }
 @media (min-width: 768px) {

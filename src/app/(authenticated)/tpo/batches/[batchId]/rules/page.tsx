@@ -7,6 +7,7 @@ import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs
 import { TpoBatchDecisionControl } from "@/components/tpo/tpo-batch-decision-control";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getLegacyCompatibleBatchDetails } from "@/modules/placements/tpo-batch-legacy-detail-service";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 export default async function BatchRules({params}:{params:Promise<{batchId:string}>}){
  const {batchId}=await params;
@@ -22,7 +23,7 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
   </p>}
 
  {!ready?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm leading-[22px]">Batch rules are temporarily unavailable. You can review other batch details and try again.</p>:
- <section aria-labelledby="section-participation-policy" className="border-b border-[var(--lms-canvas-border)] py-4"><h2 id="section-participation-policy" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Participation policy</h2>
+ <section aria-labelledby="section-participation-policy" className="border-b border-[var(--lms-canvas-border)] py-4"><Heading level={2} size="lg" id="section-participation-policy" className="leading-[1.4] text-[var(--lms-heading)]">Participation policy</Heading>
  <dl className="mt-3 grid min-w-0 gap-3 text-sm sm:grid-cols-3"><div><dt className="font-semibold">Registration deadline</dt><dd>{batchRuleDate(lifecycle?.registrationDeadline)}</dd></div>
  <div><dt className="font-semibold">Invited</dt><dd>{batchRuleDate(lifecycle?.invitedAt)}</dd></div>
  <div><dt className="font-semibold">Finished</dt><dd>{lifecycle?.finishedAt?batchRuleDate(lifecycle.finishedAt):"Still accepting placements"}</dd></div></dl>

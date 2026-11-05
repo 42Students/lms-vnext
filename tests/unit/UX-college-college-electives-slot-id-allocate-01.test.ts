@@ -10,7 +10,7 @@ it("UX-college-college-electives-slot-id-allocate-01 provides keyboard-scrolling
  expect(selection).toContain("<DataTable");
  expect(table).toContain('<ScrollCue axis="x"');
  expect(table).toContain("md:first:sticky md:first:left-0");
- expect(table).toContain("md:first:z-10");
+ expect(table).toContain("md:first:z-(--lms-z-raised)");
  expect(scroll).toContain("tabIndex={edges.scrollable ? 0 : -1}");
  expect(scroll).toContain("role={edges.scrollable");
  expect(scroll).toContain('focus-visible:outline-[var(--lms-primary-text)]');

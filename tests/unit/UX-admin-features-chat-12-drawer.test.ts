@@ -7,7 +7,7 @@ describe("UX-admin-features-chat-12-drawer",()=>{
   expect(source).toContain("onOpenChange={open=>{if(!open)close();}}");
   expect(source).not.toContain('role="dialog"');
   expect(source).not.toContain("onKeyDown=");
-  expect(source).not.toContain("fixed inset-0 z-50");
+  expect(source).not.toContain("fixed inset-0 z-(--lms-z-overlay)");
   expect(source).toContain("Recheck access after a change");
  });
 });

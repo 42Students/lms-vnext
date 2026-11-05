@@ -4,6 +4,7 @@ import {useEffect,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {Button} from "@/components/ui/button";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 type StaffingRow={
  courseId:string;courseName:string;totalClasses:number;
@@ -37,7 +38,7 @@ export function CollegeTermStaffingReport({termId}:{termId:string}){
  const loading=state?.termId!==termId||!state;
  const result=state?.status==="ready"&&state.termId===termId?state.result:null;
  return <section aria-label="Semester staffing gaps" className="min-w-0 space-y-3 border-t border-border pt-4">
-  <h3 className="text-base font-semibold text-foreground">Faculty staffing by class</h3>
+  <Heading level={3} size="base" className="text-foreground">Faculty staffing by class</Heading>
   <p className="text-sm text-body">Mapped courses are checked against every class in the program, even when no delivery has been created. Current active-delivery warnings above remain a separate measure.</p>
   {loading?<p role="status" className="text-sm text-body">Checking faculty assignments for program classes…</p>:null}
   {!loading&&state?.status==="error"?<div role="alert" className="space-y-2 text-sm text-error">

@@ -20,6 +20,7 @@ import {getDb} from "@/db/client";
 import {colleges} from "@/db/schema";
 import {eq} from "drizzle-orm";
 import { SuperAdminTemplatePreviewControl } from "@/components/admin/super-admin-template-preview-control";
+import { Heading } from "@/components/ui/heading";
 
 export default async function SuperAdminProjectTemplateDetailPage({
   params,searchParams,
@@ -158,7 +159,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
       />
       <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)] lg:gap-6">
         <section aria-labelledby="template-basic-info" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4 sm:pb-5">
-          <h2 id="template-basic-info" className="text-base font-semibold text-[var(--lms-heading)]">Basic info</h2>
+          <Heading level={2} size="base" id="template-basic-info" className="text-[var(--lms-heading)]">Basic info</Heading>
           <dl className="mt-3 divide-y divide-[var(--lms-canvas-border)] text-sm">
             {([["Name",detail.template.title],["Slug",detail.template.slug],
               ["Summary",detail.template.summary??"Not given"],
@@ -170,7 +171,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
           </dl>
         </section>
         <section aria-labelledby="template-lifecycle" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4 sm:pb-5 lg:border-l lg:pl-6">
-          <h2 id="template-lifecycle" className="text-base font-semibold text-[var(--lms-heading)]">Lifecycle settings</h2>
+          <Heading level={2} size="base" id="template-lifecycle" className="text-[var(--lms-heading)]">Lifecycle settings</Heading>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <StatusBadge tone={detail.template.status==="PUBLISHED"?"success":detail.template.status==="ARCHIVED"?"neutral":"warning"}>{detail.template.status}</StatusBadge>
             <StatusBadge>Version {detail.template.currentVersion}</StatusBadge>
@@ -192,20 +193,20 @@ export default async function SuperAdminProjectTemplateDetailPage({
         </section>
       </div>
       <section aria-labelledby="template-overview-content" className="min-w-0 space-y-3">
-        <h2 id="template-overview-content" className="text-base font-semibold text-[var(--lms-heading)]">Overview content</h2>
+        <Heading level={2} size="base" id="template-overview-content" className="text-[var(--lms-heading)]">Overview content</Heading>
         {detail.currentVersion ? <ProjectTemplateView blueprint={detail.currentVersion.blueprint}/> :
           <div role="status" className="border-b border-border py-5 text-sm text-muted-foreground">
             No preview available. The current template version could not be resolved.
           </div>}
       </section>
       <section aria-labelledby="template-submission" className="border-b border-[var(--lms-canvas-border)] pb-4">
-        <h2 id="template-submission" className="text-base font-semibold text-[var(--lms-heading)]">Submission</h2>
+        <Heading level={2} size="base" id="template-submission" className="text-[var(--lms-heading)]">Submission</Heading>
         <p className="mt-2 text-sm text-body">Submission requirements and deliverables are shown with the authorized current version above. Existing workspaces keep their materialized version.</p>
       </section>
       <section className="border-b border-border py-5">
-        <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" className="m-0 leading-[1.4] text-[var(--lms-heading)]">
           Version history
-        </h2>
+        </Heading>
         <div className="mt-3 space-y-2">
           {detail.versions.length === 0 ? <p className="text-sm text-muted-foreground">No version history recorded.</p> : null}
           {detail.versions.map((version) => (

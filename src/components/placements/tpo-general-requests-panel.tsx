@@ -12,6 +12,8 @@ import {tpoGeneralRequestCanApprove} from "@/modules/placements/tpo-general-requ
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Request={id:string;kind:string;status:string;reason:string;payload:Record<string,unknown>;
  studentName:string|null;version:string;requestedAt:string;decidedAt:string|null;decisionNote:string|null};
 function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
@@ -22,8 +24,8 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
     <dt className="text-xs text-muted-foreground">{item.label}</dt>
     <dd className="break-words font-medium">{item.value}</dd>
    </div>)}</dl>:null}
-  {detail.proofUrl?<a href={detail.proofUrl} rel="noopener noreferrer" referrerPolicy="no-referrer"
-   className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:underline">{detail.proofLabel}</a>:
+  {detail.proofUrl?<TextLink href={detail.proofUrl} rel="noopener noreferrer" referrerPolicy="no-referrer"
+   className="inline-flex min-h-11 items-center">{detail.proofLabel}</TextLink>:
    detail.requiresProof?<InlineNotice tone="error" message={detail.proofIssue??"No proof attached"}/>:null}
  </div>;
 }
@@ -89,7 +91,7 @@ export function TpoGeneralRequestsPanel(){
  const pendingRows=rows.filter(row=>row.status==="PENDING");
  const approveSupported=tpoGeneralRequestCanApprove;
  return <section aria-label="Other student requests" className="space-y-3 border-b border-border pb-5">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Other student requests · {total} matching</h2>
+  <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Other student requests · {total} matching</Heading>
   <p className="text-sm leading-[22px]">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
   <div className="flex flex-wrap items-end gap-3">
    <label className="grid min-w-40 gap-1 text-sm font-semibold">View requests
@@ -140,7 +142,7 @@ export function TpoGeneralRequestsPanel(){
   <TpoGeneralRequestsBulkDecision rows={pendingRows} onReviewed={load} disabled={loading||stale||pending}/>
   {loading&&!rows.length?<p role="status" className="py-4 text-sm text-body leading-[22px]">Loading other student requests…</p>:!rows.length?<EmptyState title={status==="PENDING"?"No waiting requests.":"No requests in this view."}/>:
    <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[min(70vh,44rem)] min-h-0 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="min-w-0 py-3 text-sm">
-    <h3 className="break-words font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
+    <Heading level={3} className="break-words">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</Heading>
     <p className="break-words text-body">{row.reason}</p>
     <p className="text-xs leading-[20px]">{row.status.replaceAll("_"," ")}
      {" · "}Asked <time dateTime={row.requestedAt}>

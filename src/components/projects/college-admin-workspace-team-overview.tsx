@@ -1,4 +1,5 @@
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Heading } from "@/components/ui/heading";
 
 type Member={membershipId:string;role:string;isPrimary:boolean;displayName:string|null};
 type Task={assigneeMembershipId:string|null};
@@ -22,7 +23,7 @@ export function CollegeAdminWorkspaceTeamOverview({members,tasks}:{
  return <section aria-label="Team at a glance" className="min-w-0 space-y-3">
   <div>
    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Team at a glance</p>
-   <h3 className="mt-1 text-lg font-semibold text-[var(--lms-heading)]">Ownership and workload in one view</h3>
+   <Heading level={3} size="lg" className="mt-1 text-[var(--lms-heading)]">Ownership and workload in one view</Heading>
    <p className="mt-1 text-sm text-body">Use the roster below to spot students without assigned work, confirm mentor ownership, and understand who is actively carrying the project.</p>
   </div>
   <div className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-4">

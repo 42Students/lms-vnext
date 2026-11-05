@@ -12,6 +12,8 @@ import { getTpoRoundDriveDay } from "@/modules/placements/tpo-round-drive-day-se
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { placementRoundIdSchema } from "@/modules/placements/validation";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function TpoNoShowReportPage({
   params,
@@ -59,21 +61,20 @@ export default async function TpoNoShowReportPage({
           " · Only explicitly marked ABSENT attendance is counted as no-show."}
         actions={
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-            <a
+            <ButtonLink variant="primary"
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows/export"}
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
             >
               Export explicit no-shows CSV
-            </a>
+            </ButtonLink>
             <details className="min-w-0 sm:relative">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground marker:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">
                 Attendance export
               </summary>
-              <div className="mt-2 bg-surface sm:absolute sm:right-0 sm:z-20 sm:w-64 sm:rounded-[var(--lms-control-radius)] sm:border sm:border-border sm:p-2 sm:shadow-sm">
-                <a href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-                  className="inline-flex min-h-11 w-full items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              <div className="mt-2 bg-surface sm:absolute sm:right-0 sm:z-(--lms-z-sticky-inline) sm:w-64 sm:rounded-[var(--lms-control-radius)] sm:border sm:border-border sm:p-2 sm:shadow-sm">
+                <ButtonLink variant="secondary" href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
+                  className="w-full">
                   Export complete attendance CSV
-                </a>
+                </ButtonLink>
               </div>
             </details>
             <Link href={roundHref}
@@ -114,7 +115,7 @@ export default async function TpoNoShowReportPage({
       ) : null}
       <section className="min-w-0">
         <div className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-          <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Explicitly absent learners</h2>
+          <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Explicitly absent learners</Heading>
           <p className="mt-1 text-sm text-body">
             Based on persisted ABSENT marks among current, progression-eligible round applicants.
           </p>

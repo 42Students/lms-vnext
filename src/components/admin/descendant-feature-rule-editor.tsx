@@ -71,7 +71,7 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
  }
  return <div className="mt-4 flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-end">
   <label className="grid min-w-0 w-full flex-1 gap-[6px] md:min-w-48 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic scope
-   <Select className="min-h-11 min-[768px]:min-h-9" value={scopeKey}
+   <Select className="min-h-11 md:min-h-9" value={scopeKey}
     onChange={e=>selectScope(e.target.value)}>
     <option value="">Select Department, Program, Batch or Class</option>
     {scopes.map(item=><option key={item.scopeType+":"+item.scopeId} value={item.scopeType+":"+item.scopeId}>
@@ -80,13 +80,13 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
    </Select>
   </label>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module
-   <Select className="min-h-11 min-[768px]:min-h-9" value={module}
+   <Select className="min-h-11 md:min-h-9" value={module}
     onChange={e=>{selectionRevision.current++;setModule(e.target.value as "projects"|"placements"|"electives");setStored(undefined);setMessage("");}}>
     <option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
    </Select>
   </label>
-  <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto min-[768px]:min-h-9" disabled={!scope||busy} onClick={()=>void recheck()}>{busy?"Rechecking…":"Recheck"}</Button>
-  <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto min-[768px]:min-h-9"
+  <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9" disabled={!scope||busy} onClick={()=>void recheck()}>{busy?"Rechecking…":"Recheck"}</Button>
+  <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
    disabled={busy} onClick={()=>{selectionRevision.current++;setStored(undefined);setMessage("");router.refresh();}}>Refresh</Button>
   <div className="flex w-full flex-wrap gap-2" role="group" aria-label="Academic scope hierarchy">
    <Button type="button" size="sm" variant="secondary" disabled={expanded||scopes.length===0} onClick={()=>setExpanded(true)}>Expand all</Button>
@@ -110,12 +110,12 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
    {shadowed?<p role="status" className="w-full text-sm text-warning-text">Effective rule: locked by a higher-level scope (global, organization, college or academic parent). Unlock the winning ancestor scope before editing this descendant.</p>:null}
    {scope?<p className="w-full text-xs text-muted-foreground">Selected scope: {scope.label} · {scope.studentsInScope} active learners. Changes may affect the entire selected scope.</p>:null}
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored rule
-   <Select value={choice} disabled={busy||shadowed||placementCellControlled} className="min-h-11 min-[768px]:min-h-9" onChange={e=>setChoice(e.target.value)}>
+   <Select value={choice} disabled={busy||shadowed||placementCellControlled} className="min-h-11 md:min-h-9" onChange={e=>setChoice(e.target.value)}>
     <option value="INHERIT">Inherit</option><option value="ON">On</option><option value="OFF">Off</option>
    </Select></label>
-   <label className="flex min-h-11 min-[768px]:min-h-9 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Checkbox checked={locked} disabled={choice==="INHERIT"||busy||shadowed||placementCellControlled} onChange={e=>setLocked(e.target.checked)}/>Lock (Super Admin only)</label>
+   <label className="flex min-h-11 md:min-h-9 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Checkbox checked={locked} disabled={choice==="INHERIT"||busy||shadowed||placementCellControlled} onChange={e=>setLocked(e.target.checked)}/>Lock (Super Admin only)</label>
    <p className="w-full text-xs text-muted-foreground">Inherit removes the stored override and follows the nearest unlocked parent rule. On and Off store an explicit rule. A locked ancestor always wins over descendant settings.</p>
-   <Button type="button" className="min-h-11 min-[768px]:min-h-9" disabled={busy||shadowed||placementCellControlled} onClick={()=>void save()}>Save rule</Button>
+   <Button type="button" className="min-h-11 md:min-h-9" disabled={busy||shadowed||placementCellControlled} onClick={()=>void save()}>Save rule</Button>
   </>}
   {message&&<p role="status" className="w-full text-sm text-body leading-[22px]">{message}</p>}
   {scopes.length>=500&&<p className="w-full text-sm text-warning-text leading-[22px]">This page displays up to 500 academic scopes. Open the next hierarchy page to edit later scopes.</p>}

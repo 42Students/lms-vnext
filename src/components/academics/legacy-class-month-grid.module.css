@@ -51,7 +51,7 @@
 }
 .navLink:hover {
   color: var(--lms-primary);
-  background: rgba(38,186,199,.08);
+  background: color-mix(in srgb, var(--lms-primary) 8%, transparent);
 }
 .navLink:focus-visible {
   outline: 2px solid var(--lms-primary-text);
@@ -102,7 +102,7 @@
 .day[data-outside="true"] { background: var(--lms-neutral-50); }
 .day[data-today="true"] {
   background: var(--lms-primary-subtle);
-  box-shadow: inset 0 0 0 2px rgba(38,186,199,.45);
+  box-shadow: var(--lms-ring-inset-selected);
 }
 .dayNumber {
   display: block;
@@ -118,14 +118,14 @@
 .dayEvent {
   min-width: 0;
   margin: 2px 4px;
-  padding: 6px 10px 6px 8px;
+  padding: 6px 12px 6px 8px;
   border: 1px solid var(--lms-neutral-200);
-  border-left: 3px solid var(--lms-primary);
+  border-left: 2px solid var(--lms-primary);
   border-radius: 6px;
   background: var(--lms-primary-subtle);
   color: var(--lms-neutral-900);
   font-size: 12px;
-  line-height: 1.35;
+  line-height: 1.4;
   overflow-wrap: anywhere;
 }
 .dayEvent:hover {
@@ -155,7 +155,7 @@
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .02em;
+  letter-spacing: 0;
   text-align: center;
 }
 .mobileDay {
@@ -173,7 +173,7 @@
 .mobileCount {
   margin-top: 4px;
   border-radius: 8px;
-  background: rgba(38,186,199,.10);
+  background: color-mix(in srgb, var(--lms-primary) 10%, transparent);
   color: var(--lms-teal-deep);
   padding: 2px 4px;
   font-size: 12px;
@@ -187,14 +187,14 @@
   .nav { width: 100%; justify-content: space-between; }
   .navLink { min-height: 44px; }
   .grid { min-width: 0; }
-  .weekday { padding: 4px; font-size: 12px; letter-spacing: .02em; }
+  .weekday { padding: 4px; font-size: 12px; letter-spacing: 0; }
   .day { min-height: 44px; padding: 4px; }
   .dayNumber { font-size: 12px; }
   .dayEvent { padding: 4px; margin: 2px 0; }
   .mobileWeekday { font-size: 12px; }
   .mobileDay { min-height: 44px; }
 }
-@media (min-width: 768px) and (max-width: 1099px) {
+@media (min-width: 768px) and (max-width: 991px) {
   .grid { min-width: 0; }
   .scroll { scrollbar-width: thin; }
 }

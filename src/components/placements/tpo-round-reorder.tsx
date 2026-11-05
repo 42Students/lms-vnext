@@ -5,6 +5,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {moveRound} from "@/modules/placements/tpo-round-reorder-model";
 import {useUnsavedDriveGuard} from "./use-unsaved-drive-guard";
+import { Heading } from "@/components/ui/heading";
 
 type Round={id:string;name:string;sequence:number;status:string};
 export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
@@ -38,7 +39,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
   finally{setBusy(false);}
  }
  return <section aria-label="Reorder rounds" className="border-b border-border pb-6">
-  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Round order</h2>
+  <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Round order</Heading>
   <p className="mt-1 text-sm text-body leading-[22px]">Drag by the handle or use Move up / Move down. Save the order before you continue.</p>
   {!readiness.allowed?<InlineNotice tone="info" message={readiness.reason??"Round order changes are unavailable."}/>:null}
   <ol className="mt-3 divide-y divide-border border-y border-border">{ids.map((id,index)=>{

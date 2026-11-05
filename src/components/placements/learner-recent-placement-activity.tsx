@@ -2,6 +2,7 @@ import Link from "next/link";
 import type {
   LearnerRecentPlacementEvent,
 } from "@/modules/placements/learner-recent-placement-activity-model";
+import { Heading } from "@/components/ui/heading";
 
 function formatIst(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -22,9 +23,9 @@ export function LearnerRecentPlacementActivity({
       className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="recent-placement-activity" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <Heading level={2} size="base" id="recent-placement-activity" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
           Recent placement activity
-        </h2>
+        </Heading>
         <Link href="/learn/my-placements/applications"
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
           My applications →

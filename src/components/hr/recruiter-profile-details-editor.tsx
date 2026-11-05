@@ -153,16 +153,16 @@ export function RecruiterProfileDetailsEditor({initialName,initialFirstName,init
    <p className="font-semibold">Recruiter contact details</p>
    {dirty?<span role="status" className="inline-flex w-fit items-center rounded-full border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] px-3 py-1 text-xs font-semibold text-warning-text">Unsaved changes</span>:null}
   </div>
-  <div className="grid min-w-0 gap-4 min-[768px]:grid-cols-2">
+  <div className="grid min-w-0 gap-4 md:grid-cols-2">
    {([["firstName","First name"],["lastName","Last name"],["title","Designation"],["phone","Mobile"]] as const).map(([key,label])=>
-    <label key={key} className={`grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] ${key==="title"||key==="phone"?"min-[768px]:col-span-2":""}`}>
+    <label key={key} className={`grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] ${key==="title"||key==="phone"?"md:col-span-2":""}`}>
      {label}{key==="lastName"?<span className="ml-1 text-xs font-normal">(optional)</span>:null}
      <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
       value={form[key]} required={key==="firstName"} pattern={key==="phone"?"[+0-9() .-]*":undefined}
       aria-invalid={Boolean(fieldErrors[key])} aria-describedby={fieldErrors[key]?`recruiter-profile-${key}-error`:undefined}
       disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?32:key==="title"?150:100}
       onChange={e=>update(key,e.target.value)}
-      className="min-h-11 w-full min-[768px]:min-h-9"/>
+      className="min-h-11 w-full md:min-h-9"/>
      {key==="phone"?<span className="text-xs font-normal text-muted-foreground">
        Optional. Enter 10 digits, +91, or a leading 0. Spaces and hyphens are accepted.
       </span>:null}
@@ -174,13 +174,13 @@ export function RecruiterProfileDetailsEditor({initialName,initialFirstName,init
    <Button type="button" variant="secondary" disabled={busy}
      onClick={()=>router.refresh()}>Retry contact details</Button>
   </div>:null}
-  <div className="flex min-w-0 flex-col gap-2 border-t border-border pt-4 min-[768px]:flex-row min-[768px]:items-center">
+  <div className="flex min-w-0 flex-col gap-2 border-t border-border pt-4 md:flex-row md:items-center">
     <Button type="submit" loading={busy} disabled={busy||!dirty}
-      className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
+      className="min-h-11 w-full md:min-h-9 md:w-auto">
       {busy?"Saving…":"Save changes"}</Button>
   </div>
   {feedback==="Profile saved"
-    ? <div role="status" className="fixed right-6 top-20 z-50 rounded-lg border border-[var(--lms-success)] bg-surface px-4 py-3 text-sm font-semibold text-success shadow-md">✓ Profile saved</div>
+    ? <div role="status" className="fixed right-6 top-20 z-(--lms-z-overlay) rounded-lg border border-[var(--lms-success)] bg-surface px-4 py-3 text-sm font-semibold text-success shadow-md">✓ Profile saved</div>
     : feedback ? <Alert tone="error" title="Profile was not saved"><span aria-hidden="true">!</span> {feedback}</Alert> : null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"

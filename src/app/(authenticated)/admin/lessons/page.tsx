@@ -22,6 +22,8 @@ import { listCollegeLessons } from "@/modules/courses/college-learning-directory
 import { adminLearningHref, adminLessonStats } from "@/modules/courses/admin-learning-read-model";
 import {parseSuperAdminLearningQuery} from "@/modules/admin-ui/super-admin-learning-query-model";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function SuperAdminLessonsPage({
   searchParams,
@@ -40,7 +42,7 @@ export default async function SuperAdminLessonsPage({
   if (!parsed.success||!validPageSize||!validAllCourses) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
-      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-[650] text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
@@ -60,7 +62,7 @@ export default async function SuperAdminLessonsPage({
     <ErrorState title="Lessons unavailable"
       description="The lesson directory could not be loaded. Your filters have not changed."
       action={<Link href={adminLearningHref("LESSONS",parsed.data)}
-        className="inline-flex min-h-11 items-center font-[650] text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading lessons</Link>} />
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading lessons</Link>} />
   </div>;
   const data=dataResult.value;
   const hasCourseSelection=Boolean(data.query.courseCode)||allCourses;
@@ -96,7 +98,7 @@ export default async function SuperAdminLessonsPage({
     
     <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
       <aside aria-label="Create New Lesson" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-        <h2 className="mb-4 text-lg font-semibold text-foreground">Create New Lesson</h2>
+        <Heading level={2} size="lg" className="mb-4 text-foreground">Create New Lesson</Heading>
         {pathsResult.status==="fulfilled"?<SuperAdminLessonCreate paths={paths}/>:
           <Alert tone="warning" role="alert">Courses could not be loaded.{" "}
             <Link href={selectedScopeHref(data.query)} className="font-semibold underline">Retry</Link>
@@ -109,17 +111,17 @@ export default async function SuperAdminLessonsPage({
       <section aria-label="Lessons table" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
         {/* Right-hand legacy Lessons card: the toolbar and table share one surface. */}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-foreground">Lessons</h2>
+          <Heading level={2} size="lg" className="text-foreground">Lessons</Heading>
           <div className="flex flex-wrap items-center gap-2">
             <Link href={selectedScopeHref(data.query)}
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Refresh</Link>
-            {hasCourseSelection?<a download="lessons.csv" href={"/api/admin/lessons/export?"+new URLSearchParams({
+            {hasCourseSelection?<ButtonLink variant="secondary" download="lessons.csv" href={"/api/admin/lessons/export?"+new URLSearchParams({
               q:data.query.q,status:data.query.status,
               ...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),
               ...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})
-            }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+            }).toString()}>
               Export lessons.csv
-            </a>:<span className="text-xs text-muted-foreground">
+            </ButtonLink>:<span className="text-xs text-muted-foreground">
               Choose a course to export
             </span>}
           </div>

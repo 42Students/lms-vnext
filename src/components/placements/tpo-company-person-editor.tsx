@@ -6,6 +6,7 @@ import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Heading } from "@/components/ui/heading";
 
 type Person = {
   id: string;
@@ -74,7 +75,7 @@ export function TpoCompanyPersonEditor({
 
   return (
     <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-      <h2 className="text-base font-semibold text-foreground">Add or edit contact person</h2>
+      <Heading level={2} size="base" className="text-foreground">Add or edit contact person</Heading>
       <p className="text-sm text-body">
         Only contacts explicitly linked to this company appear. Email is required and
         must be unique in this college; only non-joined, non-unsubscribed contacts are editable.

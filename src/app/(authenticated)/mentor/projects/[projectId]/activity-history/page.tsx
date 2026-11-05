@@ -16,6 +16,7 @@ import {
 } from "@/modules/projects/mentor-project-activity-model";
 import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
+import { Heading } from "@/components/ui/heading";
 
 type Params={importance?:string|string[];view?:string|string[];window?:string|string[];order?:string|string[];page?:string|string[];pageSize?:string|string[];meetingKey?:string|string[];meetingPage?:string|string[]};
 
@@ -62,7 +63,7 @@ export default async function MentorProjectActivityHistoryPage({
       </section> : <>
       <FilterBar title="Filters"><form method="get" role="search" aria-label="Recorded project activity filters"
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
-        className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full"}>
+        className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0 max-md:[&_label]:w-full"}>
         <div className="grid min-w-0 w-full items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event importance
           <Select name="importance" defaultValue={data.query.importance}
@@ -166,7 +167,7 @@ export default async function MentorProjectActivityHistoryPage({
       {data.query.view==="MEETINGS" ? <section aria-label={PROJECT_MEETING_HISTORY_TITLE}
         className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{PROJECT_MEETING_HISTORY_TITLE}</h2>
+          <Heading level={2} size="lg" className="text-[var(--lms-heading)]">{PROJECT_MEETING_HISTORY_TITLE}</Heading>
           <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=meetings"}
             className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Back to meetings</Link>
         </div>
@@ -212,13 +213,13 @@ export default async function MentorProjectActivityHistoryPage({
                   Changed fields: {item.changedFields.join(", ")}</p>:null}
                 <div className="grid min-w-0 gap-3 md:grid-cols-2">
                   <div className="min-w-0">
-                    <h3 className="font-semibold">Before</h3>
+                    <Heading level={3}>Before</Heading>
                     <pre className="mt-1 max-h-52 overflow-auto whitespace-pre-wrap break-words rounded border border-border p-3 text-xs">
                       {item.before?JSON.stringify(item.before,null,2):"Not recorded"}
                     </pre>
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-semibold">After</h3>
+                    <Heading level={3}>After</Heading>
                     <pre className="mt-1 max-h-52 overflow-auto whitespace-pre-wrap break-words rounded border border-border p-3 text-xs">
                       {item.after?JSON.stringify(item.after,null,2):"Not recorded"}
                     </pre>

@@ -16,6 +16,8 @@ import type {
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { CollegeDirectoryPageSize } from "@/components/academics/college-directory-page-size";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeSemesters>>
@@ -50,21 +52,20 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
           </Link>
         </>}
       />
-      <div className="grid min-w-0 grid-cols-1 items-start gap-6 min-[1200px]:grid-cols-24">
-        <div className="min-w-0 min-[1200px]:col-span-10">
+      <div className="grid min-w-0 grid-cols-1 items-start gap-6 xl:grid-cols-24">
+        <div className="min-w-0 xl:col-span-10">
           {prepend ? <section aria-label="Batch actions" className="min-w-0">{prepend}</section> : null}
           {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
         </div>
-        <section className="min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface min-[1200px]:col-span-14"
+        <section className="min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface xl:col-span-14"
           aria-label={semesters ? "Existing Semesters" : "Existing Batches"}>
           <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
-            <h2 className="text-base font-semibold text-foreground">
+            <Heading level={2} size="base" className="text-foreground">
               {semesters ? "Semesters" : "Existing Batches"}
-            </h2>
-            <a href={academicDirectoryHref(data.kind,data.query)} aria-label={"Refresh " + title.toLowerCase()}
-              className="inline-flex min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-muted">
+            </Heading>
+            <ButtonLink variant="secondary" href={academicDirectoryHref(data.kind,data.query)} aria-label={"Refresh " + title.toLowerCase()}>
               <span aria-hidden="true">↻</span> Refresh
-            </a>
+            </ButtonLink>
           </header>
       <FilterBar title="Filters"
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -75,7 +76,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
         </label>}
         action={<Button type="submit" form="college-academic-directory-filters" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>}>
         <section aria-label={title + " filters"} className="min-w-0">
-        <form id="college-academic-directory-filters" action={path} method="get" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
+        <form id="college-academic-directory-filters" action={path} method="get" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-4">
           <label className="grid max-w-[200px] gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
@@ -110,7 +111,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
             </Select>
           </label>
           <Disclosure title={"More filters"} className="col-span-full border-t border-border pt-3">
-            <div className="mt-3 grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
+            <div className="mt-3 grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
           {data.kind === "BATCHES" ? (
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Recorded current term

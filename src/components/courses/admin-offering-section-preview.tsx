@@ -6,6 +6,8 @@ import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Preview=Awaited<ReturnType<typeof listOfferingSectionPreview>>;
 function ItemList({items}:{items:readonly {
@@ -30,7 +32,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
   aria-label="Section course content">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
    <div className="space-y-1">
-    <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Lessons</h2>
+    <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Lessons</Heading>
     <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">
      {data.selected?"What the selected class can see, including shared lessons and section-specific items.":"All content in this course (every section)"}
     </p>
@@ -47,7 +49,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
     </Select>
    </form>:null}
   </div>
-  {data.invalid?<Alert tone="error">The selected Section is unavailable for this Course Offering. <a href="#section-content" className="font-semibold underline">Retry</a></Alert>:null}
+  {data.invalid?<Alert tone="error">The selected Section is unavailable for this Course Offering. <TextLink href="#section-content">Retry</TextLink></Alert>:null}
   {data.truncated?<Alert tone="info">
     The class picker shows the first 200 active sections. To inspect a class outside this list, use its authorized delivery ID below.
     <form method="get" className="mt-2 flex flex-wrap items-center gap-2">
@@ -65,20 +67,20 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
     ? "The student-visible summary is scoped to this Section and publication flags only. It does not represent a specific learner's enrollment, release conditions or progress, and does not expose private file, video or meeting URLs."
     : "All content is grouped by lesson. Section-specific items may be visible only to students in their assigned class; shared items are listed once."}</Alert>
    {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 border-b border-border py-4">
-    <h3 className="flex min-w-0 flex-wrap items-center gap-2 font-semibold text-foreground">{lesson.name}
+    <Heading level={3} className="flex min-w-0 flex-wrap items-center gap-2 text-foreground">{lesson.name}
      <StatusBadge tone={lesson.visibleToStudents?"success":"neutral"}>{lesson.visibleToStudents?"Lesson visible":"Lesson hidden"}</StatusBadge>
-    </h3>
+    </Heading>
     <div className="space-y-1 rounded-[var(--lms-control-radius)] border border-border p-3" aria-label="Student-visible items">
-     <h4 className="text-sm font-semibold text-foreground">Published items visible in this Section</h4>
+     <Heading level={4} size="sm" className="text-foreground">Published items visible in this Section</Heading>
      {!lesson.visibleToStudents || lesson.lessonStatus!=="ACTIVE" ? <p className="text-xs text-muted-foreground">This lesson is not currently visible to learners.</p> : null}
      <ItemList items={[...lesson.contents,...lesson.assignments,...lesson.quizzes].filter(item=>item.studentVisible)}/>
      <p className="text-xs text-muted-foreground">Item titles only · secure media and per-learner checks remain in the learner workspace.</p>
     </div>
-    <div className="space-y-1"><h4 className="text-sm font-semibold text-foreground">Videos, Resources and Live Classes ({lesson.contents.length})</h4>
+    <div className="space-y-1"><Heading level={4} size="sm" className="text-foreground">Videos, Resources and Live Classes ({lesson.contents.length})</Heading>
      <ItemList items={lesson.contents}/></div>
-    <div className="space-y-1"><h4 className="text-sm font-semibold text-foreground">Assignments ({lesson.assignments.length})</h4>
+    <div className="space-y-1"><Heading level={4} size="sm" className="text-foreground">Assignments ({lesson.assignments.length})</Heading>
      <ItemList items={lesson.assignments}/></div>
-    <div className="space-y-1"><h4 className="text-sm font-semibold text-foreground">Quizzes ({lesson.quizzes.length})</h4>
+    <div className="space-y-1"><Heading level={4} size="sm" className="text-foreground">Quizzes ({lesson.quizzes.length})</Heading>
      <ItemList items={lesson.quizzes}/></div>
    </div>)}
    {!data.lessons.length?<p className="text-sm text-muted-foreground">No Lessons have been created for this offering.</p>:null}

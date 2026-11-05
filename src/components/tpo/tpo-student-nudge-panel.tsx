@@ -14,6 +14,7 @@ import {
  tpoStudentNudgeTemplates,tpoStudentNudgeLabels,
  tpoStudentNudgeInputSchema,type TpoStudentNudgeTemplate,
 } from "@/modules/placements/tpo-student-nudge-send-model";
+import { Heading } from "@/components/ui/heading";
 
 type Row={id:string;label:string;registered:boolean|null};
 export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
@@ -54,7 +55,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
  if(!rows.length)return null;
  return <section aria-label="Send a message to students"
   className="min-w-0 space-y-3 border-y border-border py-4">
-  <h2 className="font-semibold">Send a message</h2>
+  <Heading level={2}>Send a message</Heading>
   <p className="text-sm text-body">Choose up to 25 learners on this page. Messages are delivered in-app and audited.</p>
   <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm">
    <Checkbox checked={validSelected.length===Math.min(rows.length,25)}

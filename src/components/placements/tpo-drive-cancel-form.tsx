@@ -10,6 +10,7 @@ import type { TpoDriveCancelImpact } from "@/modules/placements/tpo-drive-cancel
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import { Heading } from "@/components/ui/heading";
 
 const CANCEL_REASONS = [
   "Company withdrew",
@@ -74,11 +75,11 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
 
   return (
     <form onSubmit={(e) => void submit(e)} className="min-w-0 space-y-4 border-b border-border pb-6">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Review consequences</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Review consequences</Heading>
       <p className="max-w-prose text-sm text-body leading-[22px]">
         Cancelling stops new applications. Open applicants are marked Not selected and notified, pending or scheduled rounds are cancelled, and issued offers are withdrawn. Pending withdrawal requests are settled, the recruiter is notified when linked, and accepted offers remain valid. History is retained.
       </p>
-      <dl className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-x-6 border-t border-border min-[768px]:grid-cols-4">
+      <dl className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-x-6 border-t border-border md:grid-cols-4">
         {rows.map(([label, n]) => (
           <div key={label} className="min-w-0 border-b border-border px-1 py-4">
             <dt className="text-xs text-body">{label}</dt>
@@ -112,7 +113,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 maxLength={1000}
                 rows={3}
                 disabled={pending}
-                className="min-h-11 w-full min-[768px]:min-h-9"
+                className="min-h-11 w-full md:min-h-9"
               />
             </label>
             <p className="text-xs text-body leading-[20px]">Students see the reason. You can choose a reason above or write your own.</p>
@@ -125,7 +126,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
           </label>
-          <Button variant="primary" type="submit" disabled={pending || !reviewed} className="min-h-11 w-full px-5 min-[768px]:min-h-9 min-[768px]:w-auto">
+          <Button variant="primary" type="submit" disabled={pending || !reviewed} className="min-h-11 w-full px-5 md:min-h-9 md:w-auto">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </Button>
     </form>

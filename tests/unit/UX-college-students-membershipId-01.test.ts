@@ -7,6 +7,6 @@ describe("/college/students/[membershipId] UX",()=>{
  it("UX-college-students-detail-02 preserves the new accessible state and responsive contract",()=>{
   expect(source).toContain('<Select name="status"');
   expect(source).toContain('<Button type="submit"');
-  expect(source).toContain('max-[767px]:flex-col');
+  expect(source).toContain('max-md:flex-col');
  });
 });

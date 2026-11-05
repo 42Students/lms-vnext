@@ -11,6 +11,7 @@ import { CollegeSlotManager } from "@/components/electives/college-slot-manager"
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeElectiveSlotDetail({params}:{
   params: Promise<{slotId: string}>;
@@ -54,8 +55,7 @@ export default async function CollegeElectiveSlotDetail({params}:{
     return <div className="space-y-4"><PageHeader title="Elective slot" />
       <ErrorState title="Could not refresh this elective slot"
         description="The previous list is still available. Retry loading this slot without losing your directory filters."
-        action={<><a href={"/college/electives/" + encodeURIComponent(slotId)}
-          className="font-semibold text-link underline">Retry</a>{back}</>} /></div>;
+        action={<><TextLink href={"/college/electives/" + encodeURIComponent(slotId)}>Retry</TextLink>{back}</>} /></div>;
   }
   if (!slot) notFound();
   const options = slot.status === "ACTIVE"
@@ -73,8 +73,7 @@ export default async function CollegeElectiveSlotDetail({params}:{
     {options ? <CollegeSlotManager options={options} row={slot} /> :
       slot.status === "ACTIVE" ? <ErrorState title="Could not load elective options"
         description="Retry options before editing this slot."
-        action={<a href={"/college/electives/" + encodeURIComponent(slotId)}
-          className="font-semibold text-link underline">Retry options</a>} /> : null}
+        action={<TextLink href={"/college/electives/" + encodeURIComponent(slotId)}>Retry options</TextLink>} /> : null}
     <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/allocate"}
       className="inline-flex min-h-9 items-center font-semibold text-link underline">Eligible students</Link>
   </div>;

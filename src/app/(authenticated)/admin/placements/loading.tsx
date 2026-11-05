@@ -1,5 +1,6 @@
 import {PageHeader} from "@/components/ui/page-header";
 import {Skeleton} from "@/components/ui/skeleton";
+import { Heading } from "@/components/ui/heading";
 
 export default function Loading(){
  return <section className="min-w-0 space-y-5" aria-busy="true">
@@ -11,7 +12,7 @@ export default function Loading(){
    </div>)}
   </div>
   <section className="space-y-3 border-t border-border pt-4" aria-label="Loading three attention items">
-   <h2 className="text-base font-semibold">Needs doing</h2>
+   <Heading level={2} size="base">Needs doing</Heading>
    <Skeleton variant="row" count={3} label="Loading placement attention items"/>
   </section>
  </section>;

@@ -13,6 +13,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
 import {CollegeAdminLifecycleAction} from "@/components/admin/college-admin-lifecycle-action";
 import {listCollegeAdminSessionTargetsPage} from "@/modules/colleges/admin-session-service";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic="force-dynamic";
 export default async function CollegeAdministratorsPage({params,searchParams}:{
@@ -63,7 +64,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
     </div>
    </div>}/>
   <section aria-label="Create administrator" className="min-w-0 space-y-3 rounded border border-border p-4">
-   <h2 className="font-semibold">Add College Admin or TPO</h2>
+   <Heading level={2}>Add College Admin or TPO</Heading>
    <p className="text-sm text-body">Choose the account type. New accounts are always scoped to the college shown above.</p>
    <div className="flex flex-wrap gap-3"><PersonOnboardDialog collegeId={collegeId} forcedRole="COLLEGE_ADMIN"/>
     <PersonOnboardDialog collegeId={collegeId} forcedRole="TPO"/></div>
@@ -77,7 +78,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
    <Link href={baseHref+(role==="ALL"?"":"?role="+role)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">↻ Reload administrators</Link>
   </div>
   <section aria-label="College administrator directory" className="min-w-0 border-t border-border pt-[var(--lms-space-4)]">
-   <h2 className="mb-3 font-semibold">College Admin and TPO accounts</h2>
+   <Heading level={2} className="mb-3">College Admin and TPO accounts</Heading>
    <p className="mb-3 text-sm text-muted-foreground" role="status">
      Showing {pageItems.length} of {data.total} college administrators · Page {page} of {pageCount}
    </p>

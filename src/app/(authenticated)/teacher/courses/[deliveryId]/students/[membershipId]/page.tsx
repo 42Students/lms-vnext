@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable } from "@/components/ui/data-table";
 import { getFacultyStudentDetail } from "@/modules/courses/faculty-student-detail-service";
+import { Heading } from "@/components/ui/heading";
 
 function dateText(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -39,7 +40,7 @@ export default async function FacultyStudentDetailPage({
         </div>)}
     </section>
     <section className="min-w-0 space-y-3">
-      <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Course attendance</h2>
+      <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Course attendance</Heading>
       <div className="grid grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
           ["Present", data.summary.present], ["Absent", data.summary.absent],
@@ -54,7 +55,7 @@ export default async function FacultyStudentDetailPage({
       </p>
     </section>
     <section className="space-y-3">
-      <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Session history</h2>
+      <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Session history</Heading>
       {data.sessions.length === 0
         ? <EmptyState title="No scheduled sessions"
             description="No scheduled class sessions exist for this Course delivery." />

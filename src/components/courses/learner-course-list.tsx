@@ -30,6 +30,7 @@ import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course
 import { learnerCourseMatchesProgress, type LearnerCourseProgressFilter } from "@/modules/courses/learner-course-progress-filter-model";
 import { learnerCourseMatchesTermState, type LearnerCourseTermState } from "@/modules/courses/learner-course-term-state-model";
 import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/courses/learner-course-sort-model";
+import { Heading } from "@/components/ui/heading";
 
 
 const PAGE_SIZE = 48;
@@ -42,7 +43,7 @@ function LearnerCourseCardSurface({
   blockedReason: string | null;
   children: ReactNode;
 }) {
-  const baseClass = "group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--lms-canvas-border)] bg-surface text-sm transition-transform duration-150 hover:-translate-y-0.5";
+  const baseClass = "group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--lms-canvas-border)] bg-surface text-sm transition-transform duration-[var(--lms-motion-fast)] hover:-translate-y-0.5";
   if (blockedReason) {
     return <div role="group" aria-disabled="true" aria-label={"Course unavailable: " + blockedReason}
       title={blockedReason} className={baseClass + " cursor-not-allowed"}>
@@ -61,7 +62,7 @@ function LearnerMetricPopover({title,children}:{title:string;children:ReactNode}
   <summary className="inline-flex min-h-9 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-primary-text marker:hidden hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
    {title} <span className="ml-2 text-muted-foreground" aria-hidden="true">⌄</span>
   </summary>
-  <div className="absolute left-0 top-full z-30 mt-1 w-[min(20rem,calc(100vw-3rem))] max-w-[calc(100vw-3rem)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm shadow-lg">
+  <div className="absolute left-0 top-full z-(--lms-z-sticky-header) mt-1 w-[min(20rem,calc(100vw-3rem))] max-w-[calc(100vw-3rem)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm shadow-lg">
    {children}
   </div>
  </details>;
@@ -318,7 +319,7 @@ export function LearnerCourseList({
                 </Button>
                 {filtersOpen ? (
                   <div id={filtersId} role="group" aria-label="Course filters"
-                    className="absolute right-0 top-full z-30 mt-2 w-[min(22rem,calc(100vw-3rem))] rounded-xl border border-border bg-surface p-4 shadow-lg">
+                    className="absolute right-0 top-full z-(--lms-z-sticky-header) mt-2 w-[min(22rem,calc(100vw-3rem))] rounded-xl border border-border bg-surface p-4 shadow-lg">
                     <label className="grid gap-2 text-sm font-semibold">
                       Semester
                       <Select value={selectedPeriodId}
@@ -375,7 +376,7 @@ export function LearnerCourseList({
               </div>
             ) : null}
             <div className="relative w-full min-w-48 md:w-56">
-              <span className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-muted-foreground" aria-hidden="true">
+              <span className="pointer-events-none absolute left-3 top-1/2 z-(--lms-z-raised) -translate-y-1/2 text-muted-foreground" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
                 </svg>
@@ -443,7 +444,7 @@ export function LearnerCourseList({
                 <article key={row.course.deliveryId} aria-disabled="true"
                   className="rounded-xl border border-warning bg-surface p-4 sm:p-5">
                   <StatusBadge tone="warning">Unavailable</StatusBadge>
-                  <h2 className="mt-3 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.unavailableLabel}</h2>
+                  <Heading level={2} size="base" className="mt-3 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{row.unavailableLabel}</Heading>
                   <p className="mt-2 text-sm text-body leading-[22px]">{row.course.courseName || "Course name unavailable"}</p>
                   <p className="mt-3 text-sm text-muted-foreground leading-[22px]">This course cannot be opened right now. Other courses remain available.</p>
                 </article>
@@ -451,9 +452,9 @@ export function LearnerCourseList({
               return (
                 <Fragment key={row.course.deliveryId}>
                   {startsElectiveGroup ? (
-                    <h2 className="col-span-full mb-1 mt-2 text-lg font-semibold text-[var(--lms-heading)]">
+                    <Heading level={2} size="lg" className="col-span-full mb-1 mt-2 text-[var(--lms-heading)]">
                       Electives
-                    </h2>
+                    </Heading>
                   ) : null}
                   <div className="min-w-0" data-testid="learner.courses.card.wrap">
                     <LearnerCourseCardSurface
@@ -467,9 +468,9 @@ export function LearnerCourseList({
                         />
                       </div>
                       <div className="flex flex-1 flex-col gap-2 p-6">
-                        <h2 className="m-0 line-clamp-2 text-base font-semibold leading-[1.4] text-[var(--lms-heading)]">
+                        <Heading level={2} size="base" className="m-0 line-clamp-2 leading-[1.4] text-[var(--lms-heading)]">
                           {row.course.courseName}
-                        </h2>
+                        </Heading>
                         {elective ? (
                           <div>
                             <StatusBadge tone="info">{row.course.electiveSlotName?.trim() || "Elective"}</StatusBadge>

@@ -13,6 +13,7 @@ import {addMentorMeetingAction,editMentorMeetingAction,
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Heading } from "@/components/ui/heading";
 
 type Fields=Partial<MentorMeetingFacilitation>;
 
@@ -61,7 +62,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
     onClick={()=>{setFacilitation(initial);setError("");setEditing(true);}}>
     Edit attendance, retrospective and action items
   </Button>:<>
-   <h4 className="font-semibold">Edit completed meeting record</h4>
+   <Heading level={4}>Edit completed meeting record</Heading>
    {([
      ["notes","Meeting notes"],["wentWell","Went well"],
      ["retroDidntGoWell","Didn't go well"],["improve","Could improve"],

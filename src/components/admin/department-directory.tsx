@@ -16,6 +16,8 @@ import {
   type DepartmentDirectoryRow,
 } from "@/modules/admin-ui/department-directory";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function countText(value:number|null|undefined){return value==null?"—":String(value);}
 function usageChip(label:string,value:number|null|undefined){
@@ -49,7 +51,7 @@ export function DepartmentDirectory({
   return (
     <section className="min-w-0 space-y-[var(--lms-space-3)]" aria-label={DEPARTMENT_COPY.existingTitle}>
       <div className="-mx-4 -mt-1 flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] px-4 pb-4 print:hidden">
-        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">{DEPARTMENT_COPY.existingTitle}</h2>
+        <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">{DEPARTMENT_COPY.existingTitle}</Heading>
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <div className="relative min-w-0 w-full sm:w-[220px]">
             <label htmlFor="department-directory-search" className="sr-only">Search departments</label>
@@ -60,10 +62,9 @@ export function DepartmentDirectory({
               className="absolute right-2 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:text-foreground">×</Button>:
               <span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">⌕</span>}
           </div>
-          {filtered.length?<a href={exportHref} download="departments.csv"
-            className="inline-flex min-h-11 items-center justify-center gap-1 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+          {filtered.length?<ButtonLink variant="secondary" href={exportHref} download="departments.csv">
             <span aria-hidden="true">↓</span> Export CSV
-          </a>:<Button size="sm" variant="secondary" disabled>Export CSV</Button>}
+          </ButtonLink>:<Button size="sm" variant="secondary" disabled>Export CSV</Button>}
           <Button type="button" variant="secondary" size="sm" loading={refreshing} disabled={refreshing}
             onClick={()=>startRefresh(()=>router.refresh())} title="Reload the selected college's departments">
             <span aria-hidden="true">↻</span> {refreshing?"Refreshing…":"Refresh"}

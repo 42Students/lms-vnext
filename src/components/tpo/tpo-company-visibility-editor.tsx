@@ -8,6 +8,7 @@ import {Button} from "@/components/ui/button";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
+import { Heading } from "@/components/ui/heading";
 const labels={
  showCgpaExact:"Show the exact UG % (off shows a band such as 75-80%)",
  showTenthTwelfth:"Show 10th and 12th / diploma %",
@@ -40,7 +41,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
   finally{setBusy(false);}
  }
  return <section aria-label="Edit company visibility" className="space-y-3 border-t border-border pt-5">
-  <h3 className="font-semibold">What companies see</h3>
+  <Heading level={3}>What companies see</Heading>
   <p className="text-xs text-muted-foreground">Your choices are saved in the college&apos;s sharing policy. Individual recruiter rights, consent and export permissions remain separate safeguards.</p>
 
   <div role="group" aria-label="Company sharing switches" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-3 sm:px-4">
@@ -48,7 +49,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
    <span className="min-w-0 flex-1 break-words">{label}</span>
    <span className="relative inline-flex h-6 w-11 shrink-0 items-center">
     <Checkbox role="switch" aria-label={label} disabled={busy}
-      className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+      className="peer absolute inset-0 z-(--lms-z-raised) h-full w-full cursor-pointer opacity-0"
       checked={values[key as keyof Choice]}
       onChange={e=>setValues(current=>({...current,[key]:e.target.checked}))}/>
     <span aria-hidden="true" className="h-6 w-11 rounded-full border border-border bg-muted transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-disabled:opacity-50"/>
@@ -61,7 +62,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
       <span className="min-w-0 flex-1 break-words">{label}</span>
    <span className="relative inline-flex h-6 w-11 shrink-0 items-center">
     <Checkbox role="switch" aria-label={label} disabled={busy}
-      className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+      className="peer absolute inset-0 z-(--lms-z-raised) h-full w-full cursor-pointer opacity-0"
       checked={values[key as keyof Choice]}
       onChange={event=>setValues(current=>({...current,[key]:event.target.checked}))}/>
     <span aria-hidden="true" className="h-6 w-11 rounded-full border border-border bg-muted transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-disabled:opacity-50"/>

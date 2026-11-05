@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getFacultySessionCoverage } from "@/modules/courses/faculty-session-coverage-service";
+import { Heading } from "@/components/ui/heading";
 
 const backLinkClass = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9";
 const dateFormat = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" });
@@ -34,7 +35,7 @@ export default async function FacultySessionCoveragePage({
     </section>
 
     <section className="min-w-0 space-y-3" aria-label="Persisted session history">
-      <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Recent scheduled sessions</h2>
+      <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Recent scheduled sessions</Heading>
       {data.shown.length === 0
         ? <EmptyState title="No scheduled sessions" description="No persisted class sessions were found for this authorized Section." />
         : <ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">

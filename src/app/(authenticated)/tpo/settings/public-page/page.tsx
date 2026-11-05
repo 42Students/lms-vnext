@@ -15,6 +15,7 @@ import {getTpoPublicPlacementPublication} from "@/modules/placements/public-page
 import {getPublicPlacementStatistics} from "@/modules/placements/public-page/read-service";
 import {readOptionalPublicPlacementData} from "@/modules/placements/public-page/optional-read-model";
 import {publicPlacementSettingState} from "@/modules/placements/public-page/publication-view-model";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 
 export default async function PublicPlacementSettingsPage({
@@ -42,7 +43,7 @@ export default async function PublicPlacementSettingsPage({
    {value.ready?<p className="mt-3 text-sm text-muted-foreground">
       Active consented placement cohort: {view.populationCount??"Unavailable"}
     </p>:null}
-   <h2 className="text-base font-semibold text-foreground">{view.enabled?"Placements page is on":"Placements page is off"}</h2>
+   <Heading level={2} size="base" className="text-foreground">{view.enabled?"Placements page is on":"Placements page is off"}</Heading>
    {value.ready?<TpoPublicPlacementToggle enabled={view.enabled} canEnable={view.canEnable}/>:
     <Alert tone="warning">
      Public placement settings storage is unavailable until the registered migration is ready. No publication preference was changed.
@@ -54,14 +55,14 @@ export default async function PublicPlacementSettingsPage({
     </Alert>:null}
    <TpoPublicPlacementContentEditor initial={content}/>
    <section aria-label="Numbers to show preview" className="mt-5 min-w-0 space-y-3 border-t border-border pt-4">
-    <h2 className="text-base font-semibold text-foreground">Numbers to show · live preview</h2>
+    <Heading level={2} size="base" className="text-foreground">Numbers to show · live preview</Heading>
    <section aria-label="Published placement preview" className="min-w-0 space-y-3">
     <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
     {!view.enabled?<Alert tone="info">Publication is off; this preview does not make any statistics public.</Alert>:null}
     {view.enabled&&!published?<Alert tone="warning">{preview?.available?"Not enough data yet. There is no current published snapshot to preview. Figures remain withheld.":"The published preview could not be loaded. Figures remain withheld."}</Alert>:null}
     {published?<p className="text-xs text-muted-foreground">Published as of {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(published.publishedAt))}.</p>:null}
     {published&&content.about?<p className="whitespace-pre-wrap text-sm text-body">{content.about}</p>:null}
-    <div className="grid gap-3 min-[768px]:grid-cols-2">
+    <div className="grid gap-3 md:grid-cols-2">
      {content.metricKeys.flatMap(key=>{
  const value=formatPublicPlacementMetric(key,{population:published?.population??null,
    placed:published?.placed??null,offers:published?.offers??null,
@@ -73,7 +74,7 @@ export default async function PublicPlacementSettingsPage({
     </div>
    </section>
    </section>
-   <Link href="/placements" className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-[13px] sm:w-auto sm:justify-start font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
+   <Link href="/placements" className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-[13px] sm:w-auto sm:justify-start font-semibold text-[var(--lms-link-text)] underline md:min-h-9">
      Open public placements page
    </Link>
   </section>

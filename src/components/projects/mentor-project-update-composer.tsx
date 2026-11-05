@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {projectMutation} from "./project-api";
 import { Textarea } from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
 
 export function MentorProjectUpdateComposer({projectId,readOnly}:{
   projectId:string;readOnly:boolean;
@@ -30,7 +31,7 @@ export function MentorProjectUpdateComposer({projectId,readOnly}:{
   return <form onSubmit={submit} className="prototype-mentor-update-composer"
     aria-label="Post project update">
     <div className="prototype-mentor-card-title">
-      <h2>Post an update</h2><span>Visible in this project’s activity and overview</span>
+      <Heading level={2}>Post an update</Heading><span>Visible in this project’s activity and overview</span>
     </div>
     <label htmlFor={"mentor-project-update-"+projectId} className="sr-only">
       Tell the team something

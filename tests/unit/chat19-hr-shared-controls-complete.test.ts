@@ -11,11 +11,11 @@ describe("NORTH-STAR chat-19 shared HR controls",()=>{
   for(const name of hrComponents){
    const content=source("src/components/hr/"+name+".tsx");
    const native=content.match(/<(?:button|input|select|textarea)\b[^>]*>/g)??[];
+   expect(native,name).toHaveLength(0);
    if(name==="hr-drive-draft-form"){
-    expect(native).toHaveLength(1);
-    expect(native[0]).toContain('type="file"');
-    expect(native[0]).toContain('accept=".pdf,.doc,.docx');
-   }else expect(native,name).toHaveLength(0);
+    // The file picker is the shared Input, not a raw <input>.
+    expect(content).toMatch(/<Input[^>]*type="file"[^>]*accept="\.pdf,\.doc,\.docx/);
+   }
   }
  });
  it("keeps all 22 canonical HR pages on shared interactive controls",()=>{

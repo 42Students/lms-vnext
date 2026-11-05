@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { collegeCompanyDraftPayload } from "@/modules/placements/college-company-create-model";
+import { Heading } from "@/components/ui/heading";
 
 /** COL-placements-14: create or reuse a canonical company and attach a
  * college-specific relationship. Editing a shared global identity stays
@@ -127,7 +128,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
   <Dialog open={open} onOpenChange={value=>{if(!value)requestClose();else setOpen(true);}}
     title="Add Company"
     description="Link a canonical company identity with this college."
-    className="max-w-[560px] max-[767px]:!max-h-[100dvh] max-[767px]:!rounded-t-[var(--lms-canvas-radius)]"
+    className="max-w-[560px] max-md:!max-h-[100dvh] max-md:!rounded-t-[var(--lms-canvas-radius)]"
     footer={<>
       <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}>Cancel</Button>
       <Button form={formId} variant="primary" type="submit" disabled={pending}>
@@ -136,7 +137,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
     </>}>
    <form id={formId} onSubmit={submit}
      className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] sm:grid-cols-2">
-    <h3 className="font-semibold text-foreground sm:col-span-2">Identity</h3>
+    <Heading level={3} className="text-foreground sm:col-span-2">Identity</Heading>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company name
       <Input required minLength={2} maxLength={150} placeholder="e.g. Infosys Limited" value={name}
         aria-invalid={Boolean(fieldErrors.name)}
@@ -156,7 +157,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
         placeholder="example.com" className={field}/>
       {fieldErrors.primaryDomain?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.primaryDomain}</span>:null}
     </label>
-    <h3 className="font-semibold text-foreground sm:col-span-2">Contact</h3>
+    <Heading level={3} className="text-foreground sm:col-span-2">Contact</Heading>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Contact person
       <Input value={contactPersonName} maxLength={150} placeholder="Recruiter contact name"
         onChange={e=>setContactPersonName(e.target.value)} className={field}/>
@@ -175,7 +176,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
         className={field}/>
       {fieldErrors.contactPhone?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.contactPhone}</span>:null}
     </label>
-    <h3 className="font-semibold text-foreground sm:col-span-2">Internal</h3>
+    <Heading level={3} className="text-foreground sm:col-span-2">Internal</Heading>
     <div className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 sm:col-span-2">
       <label className="grid min-w-0 gap-2 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
         Internal notes

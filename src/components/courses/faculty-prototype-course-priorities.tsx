@@ -2,6 +2,7 @@ import Link from "next/link";
 import type {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
 import type {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import type {CourseDisplayContentView} from "@/modules/courses/course-display-service";
+import { Heading } from "@/components/ui/heading";
 
 type Signals=Awaited<ReturnType<typeof getFacultyCourseHomeSignals>>|null;
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
@@ -81,15 +82,15 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
   {label:"Behind (under 30% progress)",value:behind===null?"—":String(behind)+" students",href:base+"/students"},
  ];
  const description=display?.introductionText?.trim()||course.courseDescription?.trim()||null;
- return <div className="grid min-w-0 items-start gap-[18px] xl:grid-cols-[minmax(0,1fr)_307px]">
+ return <div className="grid min-w-0 items-start gap-[20px] xl:grid-cols-[minmax(0,1fr)_307px]">
   <section aria-label="Needs you" className="faculty-proto-task-list min-w-0">
-   <h2 className="border-b border-[color:var(--lms-border)] px-5 py-4 text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">
+   <Heading level={2} size="xs" className="border-b border-[color:var(--lms-border)] px-5 py-4 uppercase tracking-wide text-[color:var(--lms-text-muted)]">
     Needs you · <span>{course.sectionName}</span>
-   </h2>
+   </Heading>
    {priorities.map(item=><article key={item.id}
      className="flex min-h-[67px] flex-wrap items-center justify-between gap-4 border-b border-[color:var(--lms-neutral-100)] px-5 py-4 last:border-b-0">
     <div className="min-w-0 flex-1">
-     <h3 className="text-sm font-bold leading-5 text-[color:var(--lms-heading)]">{item.title}</h3>
+     <Heading level={3} size="sm" className="leading-5 text-[color:var(--lms-heading)]">{item.title}</Heading>
      <p className="faculty-proto-subtitle">{item.detail}</p>
     </div>
     <Link className={(item.urgent||item.id==="attendance"?"faculty-proto-action":"faculty-proto-secondary")+" shrink-0"}
@@ -102,16 +103,16 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
   <aside aria-label="Course summary" className="grid min-w-0 gap-4">
    <section className="rounded-xl border border-[color:var(--lms-border)] p-5">
     <div className="flex items-center justify-between gap-2">
-     <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">About this course</h2>
+     <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">About this course</Heading>
      <Link href={base+"/home?advanced=1#course-details"}
       className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 text-xs">Details</Link>
     </div>
-    <h3 className="mt-3 text-sm font-bold text-[color:var(--lms-heading)]">{course.courseName}</h3>
+    <Heading level={3} size="sm" className="mt-3 text-[color:var(--lms-heading)]">{course.courseName}</Heading>
     <p className="faculty-proto-subtitle line-clamp-3">{description??"No course description has been provided."}</p>
     <p className="faculty-proto-subtitle mt-2">{summary.lessons} lessons · {course.credits===null?"Credits not set":course.credits+" credits"} · {course.academicPeriodName}</p>
    </section>
    <section className="rounded-xl border border-[color:var(--lms-border)] px-5 py-4">
-    <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">How the class is doing</h2>
+    <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">How the class is doing</Heading>
     <dl className="mt-2 divide-y divide-[color:var(--lms-neutral-100)]">
      {rows.map(row=><div key={row.label} className="flex items-center justify-between gap-3 py-3 text-sm">
       <dt className="min-w-0 text-[color:var(--lms-heading)]">{row.label}</dt>

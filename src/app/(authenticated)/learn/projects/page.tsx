@@ -177,7 +177,7 @@ export default async function LearnerProjectsPage({
         emptyDescription={emptyState.description}
       />
 
-      <div className="min-w-0 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:justify-center min-[768px]:[&_a]:min-h-9">
+      <div className="min-w-0 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:justify-center md:[&_a]:min-h-9">
         <ProjectParticipantPagination
           basePath="/learn/projects"
           query={query}

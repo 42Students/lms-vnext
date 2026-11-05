@@ -10,6 +10,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useEffect,useId,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
+import { Heading } from "@/components/ui/heading";
 type Selection={journeyState?:string;branchId?:string;batchId?:string;search?:string;
  pageSize:number;columns?:string};
 type View={id:string;name:string;query:Selection;pinned:boolean;createdAt:string;
@@ -77,7 +78,7 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
   }}>
    Saved student views</Button>:null}
   {open?<div id={viewsPanelId} role="region" aria-label="Saved student views" className="w-full min-w-0 max-w-4xl space-y-4 border-y border-border py-4">
-   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Saved views</h2>
+   <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Saved views</Heading>
    {busy&&!deleteTarget?<p role="status" className="text-sm text-body leading-[22px]">Loading saved views…</p>:null}
    {pins.length?<div role="group" aria-label="Pinned student views" className="flex min-w-0 flex-wrap gap-2"><strong className="w-full text-sm">Pinned</strong>
     {pins.map(view=><Button className="min-h-11 w-full break-words sm:w-auto md:min-h-9" variant="secondary" key={view.id} type="button" disabled={busy} onClick={()=>void use(view)}

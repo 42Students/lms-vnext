@@ -9,6 +9,7 @@ import { SubjectEventHistory } from "@/components/activity/subject-event-history
 import { ActivityServiceError } from "@/modules/activity/errors";
 import { getActivityEventDetail } from "@/modules/activity/service";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
+import { Heading } from "@/components/ui/heading";
 
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
@@ -117,7 +118,7 @@ export default async function ActivityDetailPage({
       </div>
 
       <section className="space-y-3">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Event context</h2>
+        <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Event context</Heading>
         {Object.keys(event.metadata).length === 0 ? (
           <p className="border-t border-border pt-4 text-sm text-muted-foreground">
             This event has no structured context.

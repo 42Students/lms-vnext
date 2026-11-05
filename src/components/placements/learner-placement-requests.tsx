@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { apiFetch,FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
+import { Heading } from "@/components/ui/heading";
 
 /** Legacy seven-option vocabulary. Keep specialized vNext request payload
  * shapes separate: Withdrawal needs an application, Extension an offer; the
@@ -378,9 +379,9 @@ export function LearnerPlacementRequests({
       <div className="border-b border-border py-4">
         <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+            <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
               New request
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body leading-[22px]">
               Ask for schedule or offer exceptions without silently changing shared placement data. Approved requests apply their effect atomically.
             </p>
@@ -642,9 +643,9 @@ export function LearnerPlacementRequests({
 
       {requests.length > 0 ? (
         <div className="border-t border-border py-5">
-          <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="sm" className="m-0 text-[var(--lms-heading)]">
             Request history
-          </h3>
+          </Heading>
           <div className="mt-3 divide-y divide-border border-y border-border">
             {requests.map((item) => (
               <article

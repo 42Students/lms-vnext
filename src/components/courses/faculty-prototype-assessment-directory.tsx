@@ -58,7 +58,7 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
    </nav>
    <label className="sr-only" htmlFor="faculty-assessment-course">Filter by course</label>
    <Select id="faculty-assessment-course" value={course} onChange={e=>setCourse(e.target.value)}
-    className="min-h-11 min-w-48 rounded-lg border border-[color:var(--lms-border)] bg-white px-3 text-sm">
+    className="min-h-11 min-w-48 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm">
     <option value="all">All courses</option>
     {courses.map(section=><option value={section.deliveryId} key={section.deliveryId}>{section.label}</option>)}
    </Select>
@@ -75,14 +75,14 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
     return <tr key={item.key}>
      <td><Link href={item.editorHref} className="font-semibold text-[color:var(--lms-heading)] hover:underline">
       <span className={"mr-2 rounded-full px-2 py-0.5 text-xs font-bold "+(item.kind==="Assignment"?
-       "bg-cyan-50 text-[color:var(--lms-button-primary)]":"bg-violet-50 text-violet-700")}>{item.kind}</span>
+       "bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary)]":"bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]")}>{item.kind}</span>
       {item.title}</Link></td>
      <td><span className="block text-sm">{item.courseCode}</span>
       <span className="faculty-proto-subtitle">{item.sectionName}</span></td>
      <td>{dateLabel(item.dueAt)}</td>
      <td>{item.handedIn}{item.eligible===null?"":" of "+item.eligible}</td>
      <td><span className={"rounded-full px-2 py-1 text-xs font-semibold "+(draft?
-      "bg-amber-50 text-amber-800":pending?"bg-red-50 text-red-700":"bg-green-50 text-green-700")}>{status}</span></td>
+      "bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]":pending?"bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-text)]":"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success-strong)]")}>{status}</span></td>
      <td><div className="flex justify-end gap-2">
       <Link href={primary} className="faculty-proto-action !min-h-9 !px-3 !py-1.5">{action}</Link>
       <Link href={item.reportHref} className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5">Report</Link>

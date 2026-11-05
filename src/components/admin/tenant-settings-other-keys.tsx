@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LEGACY_TENANT_SETTING_MAP } from "@/modules/platform-settings/legacy-setting-specs";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 type Entry = {key:string;value:string;version:number};
 const KEY_PATTERN = /^[A-Za-z][A-Za-z0-9._-]*$/;
@@ -80,7 +81,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
  return <section aria-label="Other stored keys" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
    <div className="min-w-0">
-    {showHeading?<h3 className="font-semibold">Other stored keys</h3>:null}
+    {showHeading?<Heading level={3}>Other stored keys</Heading>:null}
     <p className="text-xs text-body">{others.length} key(s)</p>
    </div>
    <Button ref={addTriggerRef} variant="secondary" type="button" disabled={!ready||busy}

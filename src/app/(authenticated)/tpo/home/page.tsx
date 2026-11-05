@@ -29,6 +29,7 @@ import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-serv
 import {listPlacementCalendarEvents} from "@/modules/placements/placement-calendar-service";
 import {placementCalendarDayKey} from "@/modules/placements/placement-calendar-model";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
+import { Heading } from "@/components/ui/heading";
 function TpoHomeRowIcon({kind}:{kind:TpoHomeLegacyRow["key"]}) {
  const common={stroke:"currentColor",fill:"none",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const};
  return <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" className="shrink-0 text-[var(--lms-muted-text)]" {...common}>
@@ -239,13 +240,13 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
  <details className="min-w-0 rounded-xl border border-border bg-surface" data-testid="tpo.home.other-tools">
   <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-heading">Other placement tools and indicators</summary>
   <div className="space-y-4 border-t border-[color:var(--lms-neutral-100)] p-4">
- <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] min-[992px]:items-start md:gap-6">
- <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 min-[768px]:p-6">
-  <h2 className="text-xs font-bold uppercase leading-[18px] tracking-[.11em] text-[var(--lms-primary-text)]">Next up</h2>
+ <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start md:gap-6">
+ <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
+  <Heading level={2} size="xs" className="uppercase leading-[18px] tracking-[.08em] text-[var(--lms-primary-text)]">Next up</Heading>
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
    <p className="text-sm text-muted-foreground">{next.text}</p>
-   <Link href={next.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto motion-reduce:transition-none">{next.action}</Link>
+   <Link href={next.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-semibold text-[var(--lms-on-primary)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto motion-reduce:transition-none">{next.action}</Link>
   </div>:<div className="mt-3 space-y-1">
    <p className="font-semibold text-[var(--lms-heading)]">Nothing is waiting on you.</p>
    <p className="text-sm leading-6 text-muted-foreground">New requests, results and replies show up here first.</p>

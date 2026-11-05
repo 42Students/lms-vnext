@@ -14,6 +14,9 @@ import {learnerDriveDeadlineUrgency} from "@/modules/placements/learner-drive-de
 import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
 import {LearnerSaveDriveButton} from "@/components/placements/learner-save-drive-button";
 import {Textarea} from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -248,11 +251,11 @@ function OwnResumePreview({applicationId}:{applicationId:string}){
        <p className="p-5 text-sm text-body">
          A preview is not available for this file format. Open the authorized document instead.
        </p>}
-     {grant?<a href={grant.url} rel="noopener noreferrer"
+     {grant?<TextLink href={grant.url} rel="noopener noreferrer"
        referrerPolicy="no-referrer"
-       className="inline-flex min-h-11 items-center px-5 text-sm font-semibold text-primary-text underline">
+       className="inline-flex min-h-11 items-center px-5 text-sm">
        Open secure resume in a new tab →
-     </a>:null}
+     </TextLink>:null}
    </Dialog>
  </div>;
 }
@@ -591,13 +594,13 @@ function JobActions({
       ) : null}
       {externalAvailable ? (
         <>
-          <a
+          <ButtonLink variant="secondary"
             href={safeExternalUrl!}
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle sm:w-auto md:min-h-9"
+            className="w-full sm:w-auto"
           >
             Open employer form
-          </a>
+          </ButtonLink>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
             size="sm"
             variant="secondary"
@@ -652,7 +655,7 @@ function JobActions({
           </dl>
           <Button type="button" variant="link" aria-expanded={showSharedDetails} aria-controls={"learner-shared-details-"+item.roleOption.id}
             onClick={()=>setShowSharedDetails(open=>!open)}
-            className="max-md:min-h-11 font-[650] text-primary-text underline">
+            className="max-md:min-h-11 font-semibold text-primary-text underline">
             {showSharedDetails?"Hide what gets shared":"What exactly gets shared?"}
           </Button>
           {showSharedDetails?<ul id={"learner-shared-details-"+item.roleOption.id} className="list-disc space-y-2 pl-5 text-sm text-body">
@@ -754,7 +757,7 @@ export function LearnerPlacementJobs({
   return (
     <div className="grid min-w-0 gap-4">
       {grouped.map(([driveId,roles]) => (
-        <article key={driveId} className="relative min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-5 py-4 shadow-[var(--lms-elevation-1)]"
+        <article key={driveId} className="relative min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-5 py-4 shadow-(--lms-elevation-1)"
           aria-label={roles[0]?.job.title ?? "Placement drive"}>
           <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px] bg-[var(--lms-primary)]" />
           <div className="divide-y divide-border/60">
@@ -793,13 +796,13 @@ export function LearnerPlacementJobs({
                   {!item.canApply&&!item.application?<StatusBadge tone="warning">Not open to you</StatusBadge>:null}
                   {item.deadlinePassed?<StatusBadge tone="neutral">Applications closed</StatusBadge>:null}
                 </div>
-                <h2 className="m-0 break-words text-lg font-semibold leading-snug text-foreground">
+                <Heading level={2} size="lg" className="m-0 break-words leading-[1.4] text-foreground">
                   <Link href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery)??"/learn/my-placements/jobs"}
                     aria-label={"View "+item.roleOption.title+" at "+item.company.name}
                     className="text-link underline-offset-2 hover:underline focus-visible:underline">
                     {item.roleOption.title}
                   </Link>
-                </h2>
+                </Heading>
                 <p className="m-0 break-words text-sm text-body">
                   {item.company.name}
                   {roleCount>1?" · "+roleCount+" role options":""}
@@ -808,11 +811,11 @@ export function LearnerPlacementJobs({
                 {item.job.description?<p className="line-clamp-2 break-words text-sm leading-6 text-body">
                   {item.job.description}
                 </p>:null}
-                {jobDescriptionUrl?.startsWith("https://")?<a href={jobDescriptionUrl}
+                {jobDescriptionUrl?.startsWith("https://")?<TextLink href={jobDescriptionUrl}
                   rel="noopener noreferrer" referrerPolicy="no-referrer"
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+                  className="inline-flex min-h-11 items-center text-sm md:min-h-9">
                   View job description ↗
-                </a>:null}
+                </TextLink>:null}
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
               {bookmarkActionsEnabled?<LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>:
@@ -853,7 +856,7 @@ export function LearnerPlacementJobs({
             {failedChecks.length > 0 ||
             missingChecks.length > 0 ? (
               <div className="mt-4 min-w-0 border-t border-border pt-3">
-                <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                <p className="m-0 text-xs font-semibold uppercase tracking-[.05em] text-muted-foreground">
                   Eligibility evidence
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">

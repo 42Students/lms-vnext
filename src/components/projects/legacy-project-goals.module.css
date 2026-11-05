@@ -7,7 +7,7 @@
   overflow-wrap: anywhere;
   color: var(--lms-body-text);
   font-size: 16px;
-  line-height: 1.75;
+  line-height: 1.6;
 }
 .deliverables {
   display: grid;
@@ -29,6 +29,6 @@
   color: var(--lms-body-text);
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.55;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }

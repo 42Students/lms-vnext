@@ -9,6 +9,7 @@ import {
  listSuperAdminContentSectionOptions,listSuperAdminSectionSyllabus,
 } from "@/modules/courses/super-admin-content-directory-service";
 import { SuperAdminSectionSyllabusOrder } from "@/components/courses/super-admin-section-syllabus-order";
+import { Heading } from "@/components/ui/heading";
 
 export default async function AdminSectionSyllabusOrderPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -64,9 +65,9 @@ export default async function AdminSectionSyllabusOrderPage({searchParams}:{
   {loadFailed?<ErrorState title="Syllabus unavailable"
     description="Could not load the class syllabus; no saved order was changed."/>:null}
   {syllabus?<section className="space-y-4" aria-label="Class syllabus">
-   <h2 className="text-base font-semibold text-foreground">
+   <Heading level={2} size="base" className="text-foreground">
     {selected?.courseCode} · {selected?.courseName} · {selected?.sectionName}
-   </h2>
+   </Heading>
    {syllabus.truncated?<Banner tone="warning">
     More than 500 content entries exist. Reordering is disabled until this class is reduced to a supported size.
    </Banner>:null}

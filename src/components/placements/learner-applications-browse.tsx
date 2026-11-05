@@ -37,6 +37,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Tabs } from "@/components/ui/tabs";
 import { Pagination } from "@/components/ui/pagination";
 import {Textarea} from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
 
 const PAGE_SIZE = 20;
 const viewOptions=[
@@ -243,7 +244,7 @@ export function LearnerApplicationsBrowse({
       {attention.rows.length>0 ? (
         <section aria-labelledby="learner-application-screening-title"
           className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3 md:py-4">
-          <h2 id="learner-application-screening-title" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Application screening updates</h2>
+          <Heading level={2} size="base" id="learner-application-screening-title" className="leading-[26px] text-foreground md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">Application screening updates</Heading>
           <p className="mt-1 text-sm text-body">
             {attention.shortlistedCount} shortlisted · {attention.underReviewCount} under review.
             These are saved placement-team stages, not application deadlines.
@@ -255,7 +256,7 @@ export function LearnerApplicationsBrowse({
                   <strong className="break-words text-foreground">{row.title}</strong>
                   <span className="ml-2 text-xs text-muted-foreground">{row.detail}</span>
                 </span>
-                <Link href={row.href} className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
+                <Link href={row.href} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
                   View application →
                 </Link>
               </li>
@@ -271,11 +272,11 @@ export function LearnerApplicationsBrowse({
       <section aria-label="Application list filters" className="border-t border-border pt-4">
         <Button variant="ghost" type="button" aria-controls="learner-app-filters" aria-expanded={mobileOpen}
           onClick={()=>setMobileOpen(open=>!open)}
-          className="flex min-h-11 w-full items-center justify-between gap-3 text-left min-[768px]:hidden">
+          className="flex min-h-11 w-full items-center justify-between gap-3 text-left md:hidden">
           <span>{mobileOpen?"Hide application filters":learnerApplicationMobileSummary(filters)}</span>
           <span aria-hidden="true">{mobileOpen?"−":"+"}</span>
         </Button>
-        <div id="learner-app-filters" className={(mobileOpen?"block":"hidden")+" space-y-4 min-[768px]:block"}>
+        <div id="learner-app-filters" className={(mobileOpen?"block":"hidden")+" space-y-4 md:block"}>
         <Tabs ariaLabel="Application stage views" renderPanel={false} controlledOnly
           value={view}
           onValueChange={(next) => updateQuery({ view: next })}
@@ -298,7 +299,7 @@ export function LearnerApplicationsBrowse({
             label: (stageKey === "all" ? "All screening stages" : humanize(stageKey)) + " (" + count + ")",
           }))} />
         </Disclosure>
-        <div className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+        <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Company or role
             <Input type="search" value={search}
@@ -349,7 +350,7 @@ export function LearnerApplicationsBrowse({
         {(search || view!=="all" || filters.stage!=="all" || sort!=="activity") ? (
           <Button variant="ghost" type="button"
             onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
-            className="min-h-[var(--lms-control-height)] max-[767px]:min-h-11">
+            className="min-h-[var(--lms-control-height)] max-md:min-h-11">
             Clear filters
           </Button>
         ):null}
@@ -366,7 +367,7 @@ export function LearnerApplicationsBrowse({
           <div className="border-t border-border py-4">
             <p className="text-sm text-body">You haven't applied to a drive yet. Browse drives open to you.</p>
             <Link href="/learn/my-placements/jobs"
-              className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
+              className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
               Browse available drives →
             </Link>
           </div>
@@ -377,7 +378,7 @@ export function LearnerApplicationsBrowse({
              "No applications are in progress right now.":view==="completed"?
              "No finished applications yet.":"No applications match these filters."}</p>
           <Button variant="ghost" type="button" onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
-            className="mt-3 min-h-[var(--lms-control-height)] max-[767px]:min-h-11">
+            className="mt-3 min-h-[var(--lms-control-height)] max-md:min-h-11">
             View all applications
           </Button>
         </div>
@@ -397,9 +398,9 @@ export function LearnerApplicationsBrowse({
         className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-5 [&_dd]:min-w-0 [&_dd]:break-words [&_dd]:[overflow-wrap:anywhere]">
         <div className="flex min-w-0 items-center justify-between gap-3">
           <div>
-            <h2 className="break-words text-lg font-semibold text-foreground">
+            <Heading level={2} size="lg" className="break-words text-foreground">
               {selected.companyName} · {selected.jobTitle}
-            </h2>
+            </Heading>
             <p className="text-sm text-muted-foreground">Your application history and confirmed outcome</p>
           </div>
           <Button type="button" variant="ghost" aria-expanded={true}
@@ -411,16 +412,16 @@ export function LearnerApplicationsBrowse({
             <>
               {ownApplicationJobHref(selected.jobId) ? <Link
                 href={ownApplicationJobHref(selected.jobId)!}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text">
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
                 View drive
               </Link> : null}
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}`}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto"
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto"
               >Application detail</Link>
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/history`}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto"
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto"
               >
                 Full history
               </Link>
@@ -445,10 +446,10 @@ export function LearnerApplicationsBrowse({
             </Button>
           ) : null}
           <Link href={selectedAssessment?.href??"/learn/my-placements/assessments"}
-            className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto">
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto">
             {selectedAssessment?"Open this assessment":"Assessments"}
           </Link>
-          <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto">
+          <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto">
             {selectedInterview?"Open this interview":"Interviews"}
           </Link>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => {setDefaultCollapsed(true);updateQuery({applicationId:null});}}>Got it</Button>
@@ -460,7 +461,7 @@ export function LearnerApplicationsBrowse({
               <p>{(selected as WithdrawalGrantItem).cancelledReason
                  ?"The placement cell said: "+(selected as WithdrawalGrantItem).cancelledReason
                  :"Review placement cell notices for any published reason. Your saved application history remains available."}</p>
-              <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-primary-text underline focus-visible:underline">College notices</Link>
+              <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-primary-text underline focus-visible:underline">College notices</Link>
             </div>:selected.driveStatus==="CLOSED"?<p role="status" className="border-b border-[var(--lms-canvas-border)] py-3 text-sm text-body">This drive has closed. Previously recorded results remain visible.</p>:null}
             {selected.mayStaffOptOut && selected.staffOptOutUntil &&
               selected.staffOptOutUntil.getTime()>Date.now() ?
@@ -485,8 +486,8 @@ export function LearnerApplicationsBrowse({
             </dl>
             <section aria-label="Selection process" className="min-w-0 border-t border-border pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="font-semibold text-foreground">Selection process</h3>
-                <Link href="/learn/my-placements/schedule" className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">See in schedule</Link>
+                <Heading level={3} className="text-foreground">Selection process</Heading>
+                <Link href="/learn/my-placements/schedule" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">See in schedule</Link>
               </div>
               <ol className="mt-3 space-y-2 text-sm text-body">
                 {scheduledRounds.filter(round=>round.applicationId===selected.applicationId)
@@ -506,10 +507,10 @@ export function LearnerApplicationsBrowse({
             </section>
             <section aria-label="Application milestones" className="min-w-0 border-t border-border pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-sm font-semibold text-foreground">Recent recorded milestones</h3>
+                <Heading level={3} size="sm" className="text-foreground">Recent recorded milestones</Heading>
                 <Link href={"/learn/my-placements/applications/"+
                   encodeURIComponent(selected.applicationId)+"/history"}
-                  className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
                   Full saved history →
                 </Link>
               </div>
@@ -530,12 +531,12 @@ export function LearnerApplicationsBrowse({
             {selected.screening.candidateMessage&&
                !(selected.offerStatus==="DECLINED"&&selected.screening.candidateMessage.startsWith("Offer declined by candidate")) ? (
               <section className="min-w-0 border-t border-border pt-4 text-sm text-body">
-                <h3 className="font-semibold text-foreground">Placement team feedback</h3>
+                <Heading level={3} className="text-foreground">Placement team feedback</Heading>
                 <p className="mt-2 whitespace-pre-wrap">{selected.screening.candidateMessage}</p>
               </section>
             ):null}
             <section className="space-y-3">
-              <h3 className="text-sm font-semibold text-foreground">Round history</h3>
+              <Heading level={3} size="sm" className="text-foreground">Round history</Heading>
               {selected.results.length ? selected.results
                 .slice().sort((a,b)=>a.roundSequence-b.roundSequence)
                 .map((result)=>(

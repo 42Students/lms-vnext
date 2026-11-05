@@ -202,7 +202,7 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
    <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9"
      aria-label="Dismiss stale audit warning" onClick={()=>setStaleDismissed(true)}>Dismiss</Button>
   </div>:null}
-  <div className="grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] px-3 py-[13px] sm:grid-cols-2 lg:grid-cols-3">
+  <div className="grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] px-3 py-[12px] sm:grid-cols-2 lg:grid-cols-3">
    <label className="min-w-0 flex-1 text-[13px] md:flex-none">What happened
     <Input value={what} onChange={event=>setWhat(event.target.value)} type="search"
      maxLength={120} className="mt-1 block w-full min-w-0" />

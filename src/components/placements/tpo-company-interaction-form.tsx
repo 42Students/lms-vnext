@@ -11,6 +11,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Heading } from "@/components/ui/heading";
 
 export function TpoCompanyInteractionForm({
   companyId,
@@ -80,7 +81,7 @@ export function TpoCompanyInteractionForm({
 
   return (
     <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Record a contact interaction</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Record a contact interaction</Heading>
       <p className="text-sm text-body leading-[22px]">
         This records an internal CRM event, not a delivered call, email or message.
         All entries are permanent, actor-attributed history. No contact stage changes.
@@ -122,7 +123,7 @@ export function TpoCompanyInteractionForm({
       </label>
       {reviewing?<div role="group" aria-label="Review company interaction" className="border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
         <p>{interactionConfirmationSummary({type,contactName:contacts.find(c=>c.id===leadId)?.name??"contact"})}</p>
-        <Button type="button" variant="link" className="mt-2 min-h-11 max-[767px]:min-h-11" onClick={()=>setReviewing(false)}>Cancel review</Button>
+        <Button type="button" variant="link" className="mt-2 min-h-11 max-md:min-h-11" onClick={()=>setReviewing(false)}>Cancel review</Button>
       </div>:null}
       <Button type="button" onClick={() => void submit()} disabled={busy || !leadId || note.trim().length < 3}
         className="w-full sm:w-auto">

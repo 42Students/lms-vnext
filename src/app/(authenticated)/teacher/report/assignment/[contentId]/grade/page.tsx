@@ -7,6 +7,7 @@ import {FacultySubmissionFileReview} from "@/components/courses/faculty-submissi
 import {assignmentFilesRuntimeEnabled} from "@/modules/courses/assignment-file-readiness";
 import {facultyAssignmentReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import {facultyGradingSelectedSubmission} from "@/modules/courses/faculty-grading-selection-model";
+import { Heading } from "@/components/ui/heading";
 
 type Params={deliveryId?:string;student?:string;filter?:string};
 export default async function FacultyAssignmentGradePage({params,searchParams}:{
@@ -58,7 +59,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
       style={filter===item.key?{color:"var(--lms-button-primary)",background:"var(--lms-primary-subtle)",borderColor:"var(--lms-button-primary)"}:undefined}>{item.label} {item.count}</Link>)}
     </nav>
     <ol className="divide-y divide-[color:var(--lms-neutral-100)]">
-     {visible.map(row=><li key={row.id} className={"border-l-[3px] "+(row.id===selected?.id?"border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border-transparent")}>
+     {visible.map(row=><li key={row.id} className={"border-l-2 "+(row.id===selected?.id?"border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border-transparent")}>
       <Link className="flex min-h-16 items-center gap-3 px-4 py-3 no-underline" href={href(filter,row.id)}>
        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--lms-primary-subtle)] text-xs font-bold text-[color:var(--lms-button-primary)]">
         {(row.learnerDisplayName?.trim().split(/\s+/).map(part=>part[0]??"").slice(0,2).join("")??"ST").toUpperCase()}
@@ -66,11 +67,11 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
        <span className="min-w-0 flex-1"><strong className="block truncate text-sm text-heading">{row.learnerDisplayName??row.learnerEmail??"Student"}</strong>
         <span className="faculty-proto-subtitle">{stamp(row.submittedAt)} IST</span></span>
        <span className={"shrink-0 rounded-full px-2 py-1 text-xs font-bold "+
-        (row.gradingStatus==="GRADED"?"bg-emerald-50 text-emerald-700":"bg-red-50 text-red-700")}>
+        (row.gradingStatus==="GRADED"?"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]":"bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-text)]")}>
         {row.gradingStatus==="GRADED"?String(row.pointsAwarded??0)+"/"+assignment.maxPoints:"To grade"}</span>
       </Link>
      </li>)}
-     {(filter==="missing"||filter==="all")?missingLearners.map(row=><li key={row.membershipId} className="border-l-[3px] border-l-transparent px-4 py-4 text-sm">
+     {(filter==="missing"||filter==="all")?missingLearners.map(row=><li key={row.membershipId} className="border-l-2 border-l-transparent px-4 py-4 text-sm">
       <strong>{row.displayName??"Student"}</strong> · Missing submission
      </li>):null}
     </ol>
@@ -79,7 +80,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
    <div className="min-w-0 overflow-hidden rounded-xl border border-[color:var(--lms-border)]">
     {selected&&filter!=="missing"?<>
      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[color:var(--lms-border)] px-5 py-5">
-      <div><h2 className="text-lg font-bold text-heading">{selected.learnerDisplayName??"Student"}</h2>
+      <div><Heading level={2} size="lg" className="text-heading">{selected.learnerDisplayName??"Student"}</Heading>
        <p className="faculty-proto-subtitle">Handed in {stamp(selected.submittedAt)} IST · {selected.gradingStatus==="GRADED"?"Graded":"To grade"}</p></div>
       <nav aria-label="Submission navigation" className="flex shrink-0 gap-2">
        {previous?<Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
@@ -99,7 +100,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
         <p className="faculty-proto-subtitle">No preview is available for this submission. Use the grading editor to see supported submission details.</p>}
      </div>
      <div className="px-5 py-5">
-      <h3 className="text-sm font-bold text-heading">Grade and student feedback</h3>
+      <Heading level={3} size="sm" className="text-heading">Grade and student feedback</Heading>
       <p className="faculty-proto-subtitle mt-1">Open the verified grading editor to enter a score, save privately, or publish it to the learner.</p>
       <FacultyPrototypeInlineGrader key={selected.id+":"+selected.version}
        submission={{

@@ -11,6 +11,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {collegeLiveClassQuerySchema,liveClassSearchParams} from "@/modules/courses/college-live-classes-model";
 import {listCollegeContentAggregate} from "@/modules/courses/college-content-aggregate-service";
 import {collegeContentCsvHref} from "@/modules/courses/college-content-export-model";
+import { Heading } from "@/components/ui/heading";
 export default async function CollegeLiveClassesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>
 }){
@@ -32,16 +33,16 @@ export default async function CollegeLiveClassesPage({searchParams}:{
      visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>} />
   <div className="grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-2">
    <section aria-label="Schedule live class" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-4">
-    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Schedule a live class</h2>
+    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Schedule a live class</Heading>
     <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} existingPage={authoring.existingPage}
       existingFilters={authoring.existingFilters}/>
     <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,...(data.from !== undefined ? {from:data.from} : {}),...(data.to !== undefined ? {to:data.to} : {})})}
-      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
       Export live-class schedule CSV (UTC)
     </Link>
    </section>
    <section aria-label="Existing content" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-4">
-    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Existing Content</h2>
+    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Existing Content</Heading>
     <CollegeLiveClassesDirectory data={data} showHeader={false}/>
    </section>
   </div>

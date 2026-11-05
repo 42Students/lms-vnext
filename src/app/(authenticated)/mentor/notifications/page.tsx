@@ -28,6 +28,7 @@ import {MentorUnifiedNotificationFeed} from
 import {sortMentorUnifiedNotifications,type MentorUnifiedNotification}
   from "@/modules/projects/mentor-unified-notification-model";
 import {mentorAttentionKindSchema,mentorAttentionProjectSchema,mentorAttentionOrderSchema,selectMentorAttention,mentorAttentionProjectOptions} from "@/modules/projects/mentor-attention-kind-model";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
@@ -82,7 +83,7 @@ async function MentorNotificationsContent({
   const attentionOrder=mentorAttentionOrderSchema.safeParse(first(raw.attentionOrder)??"RECENT");
   if (!parsed.success||!kind.success||!projectId.success||!attentionOrder.success) return <section role="alert" className="min-w-0 max-w-full space-y-3">
     <PageHeader title="Invalid notification filters" />
-    <Link href={MENTOR_INBOX} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Return to newest notifications</Link>
+    <Link href={MENTOR_INBOX} className="inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Return to newest notifications</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -214,14 +215,14 @@ async function MentorNotificationsContent({
       Unread shows the loaded personal, project-attention and college-announcement sources with a saved recipient read state. Older paginated sources may have additional items.
     </p>:null}
     {failedSources.length ? <Alert tone={allRelevantFailed?"error":"warning"} role="alert">
-      <h2 className="m-0 text-[var(--lms-font-md)] font-semibold leading-6 text-[var(--lms-heading)]">
+      <Heading level={2} className="m-0 text-[var(--lms-font-md)] leading-6 text-[var(--lms-heading)]">
         {allRelevantFailed?"We couldn't load your notifications.":"Some notification sources are unavailable"}
-      </h2>
+      </Heading>
       <p className="mt-1 text-sm text-body leading-[22px]">
         {allRelevantFailed?"No verified notification source could be loaded.":`Could not load: ${failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.`}
       </p>
       <Link href={retryHref}
-        className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Retry sources</Link>
+        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Retry sources</Link>
     </Alert> : null}
     {allSourcesEmpty?<div role="status" className="flex items-center gap-3 border-b border-border py-6">
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
@@ -256,29 +257,29 @@ async function MentorNotificationsContent({
     <div className="prototype-mentor-notifications-columns">
       <div className="prototype-mentor-notifications-feed">
     {(selectedPill==="subs"||selectedPill==="meet"||selectedPill==="tasks")&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
-      <h2 id="mentor-attention" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
+      <Heading level={2} size="lg" id="mentor-attention" className="leading-7 text-[var(--lms-heading)]">
         Project attention ({shownAlerts.length} of {alerts.length})
-      </h2>
+      </Heading>
       <form method="get" action={MENTOR_INBOX} role="search" aria-label="Mentor attention filters"
         className="grid min-w-0 items-end gap-3 border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto_auto]">
         <input type="hidden" name="pill" value={selectedPill}/>
         <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}
-            className="min-h-11 max-w-full min-[768px]:min-h-9">
+            className="min-h-11 max-w-full md:min-h-9">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </Select>
         </label>
         <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Attention order
           <Select name="attentionOrder" defaultValue={attentionOrder.data}
-            className="min-h-11 min-[768px]:min-h-9">
+            className="min-h-11 md:min-h-9">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
           </Select>
         </label>
         <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Attention type
           <Select name="kind" defaultValue={kind.data}
-            className="min-h-11 min-[768px]:min-h-9">
+            className="min-h-11 md:min-h-9">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>
             <option value="STALLED">Stalled</option>
             <option value="REQUESTED">Meeting requests</option>
@@ -292,7 +293,7 @@ async function MentorNotificationsContent({
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter attention
         </Button>
-        {attentionFiltered?<Link href={MENTOR_INBOX+"?pill="+selectedPill} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+        {attentionFiltered?<Link href={MENTOR_INBOX+"?pill="+selectedPill} className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form>
       {!projectAccess?.projects.enabled
         ? <p role="status" className="border-b border-border pb-4 text-sm text-body leading-[22px]">
@@ -307,7 +308,7 @@ async function MentorNotificationsContent({
                 className="block min-h-11 min-w-0 py-4 transition md:min-h-[var(--lms-control-height)]">
                 <Link href={alert.href} className="block min-h-11 rounded focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{alert.title}</h3>
+                  <Heading level={3} className="min-w-0 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{alert.title}</Heading>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
                     ["REVIEW","REQUESTED","TASK_REVIEW","TASK_BLOCKED",
                       "SPRINT_SIGN_OFF","UNASSIGNED_NEXT"].includes(alert.kind) ? "warning" : "info"}>
@@ -330,7 +331,7 @@ async function MentorNotificationsContent({
 
       </div>
       <aside className="prototype-mentor-notifications-about" aria-label="What you are notified about">
-        <h2>What you’re told about</h2>
+        <Heading level={2}>What you’re told about</Heading>
         <dl>
           <div><dt>Final submissions</dt><dd>In-app; external email delivery not verified</dd></div>
           <div><dt>Meeting requests</dt><dd>In-app; external email delivery not verified</dd></div>

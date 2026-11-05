@@ -6,6 +6,7 @@ import {mentorUnifiedSearchQuery,mentorSearchPageSchema,searchMentorWorkspacePag
   "@/modules/projects/mentor-unified-search-service";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type Params={q?:string|string[];page?:string|string[]};
 export default async function MentorSearchPage({searchParams}:{
@@ -45,8 +46,8 @@ export default async function MentorSearchPage({searchParams}:{
       if(!matching.length)return null;
       return <section key={kind} className="prototype-mentor-search-results"
         aria-label={kind+" search results"}>
-        <h2>{kind==="Project"?"Teams and projects":kind==="Task"?"Tasks":
-          kind==="Student"?"Students":"Resources"} · {matching.length}</h2>
+        <Heading level={2}>{kind==="Project"?"Teams and projects":kind==="Task"?"Tasks":
+          kind==="Student"?"Students":"Resources"} · {matching.length}</Heading>
         <ul>{matching.map(row=><li key={row.key}><Link href={row.href}>
           <strong>{mentorSearchHighlightParts(row.title,parsed?.success?parsed.data:"")
              .map((part,index)=>part.highlight?

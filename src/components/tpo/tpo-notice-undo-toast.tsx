@@ -32,7 +32,7 @@ export function TpoNoticeUndoToast({id,version,createdAt,recipientCount=null}:{
   " "+(recipients===1?"student.":"students.");
  const createdMs=Date.parse(createdAt);
  if(!Number.isFinite(createdMs)||undone)return null;
- if(now===null)return <p role="status" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-l-4 border-info bg-surface px-4 py-3 text-[14px] leading-5 text-body shadow-[var(--lms-toast-shadow)]">{sentLabel} Undo is available for 30 seconds.</p>;
+ if(now===null)return <p role="status" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-l-2 border-info bg-surface px-4 py-3 text-[14px] leading-5 text-body shadow-(--lms-toast-shadow)">{sentLabel} Undo is available for 30 seconds.</p>;
  const remaining=Math.max(0,30000-(now-createdMs));
  if(!Number.isFinite(remaining)||remaining<=0)return null;
  return <ToastAction tone="info" title={sentLabel+" Undo send ("+Math.ceil(remaining/1000)+"s remaining)."}>

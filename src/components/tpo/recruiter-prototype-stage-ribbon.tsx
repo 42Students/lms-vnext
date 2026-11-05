@@ -29,7 +29,7 @@ export function TpoRecruiterPrototypeStageRibbon({
      return <Button variant="bare" key={value} type="button" onClick={()=>onSelect(value)}
       aria-pressed={active} aria-label={label+": "+count}
       className={"flex min-h-[72px] flex-col items-start justify-center gap-1 border-r border-border px-3 py-2 text-left last:border-r-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary-text "+
-       (active?"border-b-[3px] border-b-primary bg-primary-subtle":"border-b-[3px] border-b-transparent hover:bg-primary-subtle")}>
+       (active?"border-b-2 border-b-primary bg-primary-subtle":"border-b-2 border-b-transparent hover:bg-primary-subtle")}>
        <strong className="text-[20px] font-bold leading-6 text-foreground">{count}</strong>
        <span className="text-xs leading-4 text-body">{label}</span>
       </Button>;

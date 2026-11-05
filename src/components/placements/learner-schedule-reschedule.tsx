@@ -80,25 +80,25 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Why can't you make it?
     <span className="ml-2 text-xs font-normal text-muted-foreground">Reason (3–900 characters)</span>
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
-      className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"/></label>
+      className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[color-mix(in_srgb,var(--lms-primary)_15%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"/></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Times that work for you (optional)
     <Textarea rows={2} maxLength={200} value={preferredTimes} onChange={e=>setPreferredTimes(e.target.value)}
      className="mt-1 min-h-20 w-full" placeholder="e.g. Any time after 2 PM on 16 Oct"/>
    </label>
    <label className="text-sm">Preferred date and time (required for an approved new booking)
     <DateInput required mode="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[color-mix(in_srgb,var(--lms-primary)_15%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
     <Select value={nextMode} onChange={e=>setNextMode(e.target.value as typeof mode)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[color-mix(in_srgb,var(--lms-primary)_15%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Online</option>
     </Select></label>
    {nextMode==="ON_CAMPUS"?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Suggested venue
     <Input required value={nextVenue} maxLength={500} onChange={e=>setNextVenue(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>:
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[color-mix(in_srgb,var(--lms-primary)_15%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>:
     <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Suggested meeting URL
      <Input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>}
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[color-mix(in_srgb,var(--lms-primary)_15%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>}
    {requestReason.length>900?<p role="alert" className="text-xs text-error">Reason and preferred times must stay within 900 characters.</p>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    <div className="flex flex-wrap items-center justify-end gap-2">

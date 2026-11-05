@@ -15,6 +15,8 @@ import Link from "next/link";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 import {tpoFollowupContactLinks} from "@/modules/placements/tpo-followup-queue-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type DueRow = {
   id: string;
@@ -143,7 +145,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         {data.leads.length === 0 ? (
           <p className="mt-3 text-sm text-body">
             There are no eligible recruiter leads to schedule. Add a recruiter lead first.
-            {" "}<Link href="/tpo/recruiters" className="font-semibold text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline">Open recruiter leads</Link>
+            {" "}<Link href="/tpo/recruiters" className="font-semibold text-link underline max-md:inline-flex max-md:min-h-11 max-md:items-center focus-visible:underline">Open recruiter leads</Link>
           </p>
         ) : (
           <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
@@ -177,9 +179,9 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
       </Disclosure>
       <section className="min-w-0 border-b border-border">
         <div className="border-b border-border py-4">
-          <h2 className="text-base font-semibold text-foreground">
+          <Heading level={2} size="base" className="text-foreground">
             {data.window==="DUE"?"Follow-ups due":"Upcoming follow-ups"} ({data.total})
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             {data.window==="DUE"?"Open tasks due now or earlier.":"Open tasks scheduled from now through the next seven days."}
             This is a 25-row page of the selected ownership and date window, not a college-wide total.
@@ -200,8 +202,8 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       Due {displayDate(row.dueAt)} {row.overdue?<StatusBadge tone="warning">Overdue</StatusBadge>:null}
                     </p>
                     {row.canContact?<div className="mt-2 flex flex-wrap gap-3 text-sm font-semibold">
-                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="lms-inline-link inline-flex min-h-11 items-center text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Call recruiter ↗</a>:null}
-                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp!} className="lms-inline-link inline-flex min-h-11 items-center text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Open WhatsApp ↗</a>:null}
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<TextLink href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="lms-inline-link inline-flex min-h-11 items-center md:min-h-9">Call recruiter ↗</TextLink>:null}
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp?<TextLink href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp!} className="lms-inline-link inline-flex min-h-11 items-center md:min-h-9">Open WhatsApp ↗</TextLink>:null}
                     </div>:null}
                   </div>
                   <Button variant="secondary" type="button" disabled={pending}
@@ -210,7 +212,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       setActiveId(activeId === row.id ? null : row.id);
                       setDoneNote(""); setOutcome("CONTACTED");
                     }}
-                    className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-foreground sm:w-auto md:min-h-9">
+                    className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground sm:w-auto md:min-h-9">
                     {activeId === row.id ? "Cancel" : "Record outcome and Done"}
                   </Button>
                 </div>

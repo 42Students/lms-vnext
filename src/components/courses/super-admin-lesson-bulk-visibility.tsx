@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { apiFetch } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
+import { Heading } from "@/components/ui/heading";
 
 type Lesson = {
  id:string;name:string;courseName:string;contentCount:number;
@@ -76,7 +77,7 @@ export function SuperAdminLessonBulkVisibility({
  }
  return <section aria-label="Lesson bulk visibility"
   className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-  <h3 className="mb-2 text-sm font-semibold text-body">Bulk lesson visibility</h3>
+  <Heading level={3} size="sm" className="mb-2 text-body">Bulk lesson visibility</Heading>
   <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
    <p role="status" className="text-sm text-muted-foreground">
     {selectedInScope.length} selected · {lessons.length} lessons on this page

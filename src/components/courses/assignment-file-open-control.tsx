@@ -12,6 +12,8 @@ import {
   parseFileDownloadGrant, parseSubmissionFiles, storageApiError,
   type SubmissionFile,
 } from "@/modules/courses/learner-storage-ui-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Submitted files are discovered through the new private-file API. Signed URLs
  * are used once on demand, never put in React state or persistent storage. */
@@ -163,9 +165,9 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
       })}
     </ul> : null}
     <dialog ref={dialog} aria-label={`Preview ${previewTitle}`} onClose={closePreview}
-      className="fixed inset-0 m-auto max-h-[92dvh] w-[min(960px,96vw)] max-w-none rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-0 text-foreground shadow-xl backdrop:bg-black/60">
+      className="fixed inset-0 m-auto max-h-[92dvh] w-[min(960px,96vw)] max-w-none rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-0 text-foreground shadow-xl backdrop:bg-[color:color-mix(in_srgb,var(--lms-black)_60%,transparent)]">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
-       <h2 className="min-w-0 break-words text-base font-semibold">Preview: {previewTitle}</h2>
+       <Heading level={2} size="base" className="min-w-0 break-words">Preview: {previewTitle}</Heading>
        <Button type="button" variant="secondary" size="sm" onClick={closePreview}
          className="min-h-11 md:min-h-9">Close</Button>
       </div>
@@ -174,10 +176,10 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
        <iframe ref={previewFrame} title="PDF Viewer" onError={()=>setPreviewFailed(true)}
          referrerPolicy="no-referrer" className="h-[min(65dvh,720px)] w-full border border-border bg-surface"/>
        <p className="text-sm text-muted-foreground">Unable to display the document inline?</p>
-       <a ref={fallbackLink} href={undefined} rel="noopener noreferrer"
-         referrerPolicy="no-referrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">
+       <TextLink ref={fallbackLink} href={undefined} rel="noopener noreferrer"
+         referrerPolicy="no-referrer" className="inline-flex min-h-11 items-center md:min-h-9">
         Open / Download
-       </a>
+       </TextLink>
       </div>
     </dialog>
     {error ? <div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">

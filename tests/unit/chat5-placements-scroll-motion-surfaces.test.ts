@@ -64,7 +64,7 @@ describe("chat-5 placements scroll and motion surface contracts",()=>{
  it("UX-placements-scroll-motion-07 retains a sticky IST time gutter in a horizontal calendar",()=>{
   const calendar=load("tpo-week-hour-calendar.tsx");
   expect(calendar).toContain("Recruiter follow-up weekly calendar, scroll horizontally for more days");
-  expect(calendar).toContain("sticky left-0 z-10");
+  expect(calendar).toContain("sticky left-0 z-(--lms-z-raised)");
   expect(calendar).toContain("overscroll-x-contain");
  });
  it("UX-placements-scroll-motion-11 retains candidate as a sticky, labeled row identifier",()=>{

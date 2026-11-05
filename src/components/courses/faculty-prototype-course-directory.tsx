@@ -80,11 +80,11 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
    <label className="sr-only" htmlFor="faculty-course-search">Search courses</label>
    <Input id="faculty-course-search" type="search" value={q}
     onChange={event=>setQ(event.target.value)} placeholder="Search courses"
-    className="h-11 w-full rounded-lg border border-[color:var(--lms-border)] bg-white px-4 text-sm sm:w-56"
+    className="h-11 w-full rounded-lg border border-[color:var(--lms-border)] bg-surface px-4 text-sm sm:w-56"
    />
    <label className="sr-only" htmlFor="faculty-course-period">Academic period</label>
    <Select id="faculty-course-period" value={period}
-    className="min-h-11 min-w-48 rounded-lg border border-[color:var(--lms-border)] bg-white px-3 text-sm"
+    className="min-h-11 min-w-48 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm"
     onChange={event=>{setPeriod(event.target.value);setKind("All");}}>
     <option value="all">All academic periods</option>
     {periods.map(([id,name])=><option key={id} value={id}>{name}</option>)}
@@ -108,7 +108,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
       {course.classLinks.map((link,index)=><span key={link.deliveryId}><Link
        className="text-[color:var(--lms-heading)] hover:text-[color:var(--lms-button-primary)] hover:underline" href={"/teacher/courses/"+encodeURIComponent(link.deliveryId)+"/home"}>{link.name}</Link>{index<course.classLinks.length-1?",":""}</span>)}
      </div></td>
-     <td><span className={"rounded-full px-2.5 py-1 text-xs font-semibold "+(course.toGrade>0?"bg-red-50 text-red-700":course.drafts>0?"bg-amber-50 text-amber-800":"bg-emerald-50 text-emerald-800")}>
+     <td><span className={"rounded-full px-3 py-1 text-xs font-semibold "+(course.toGrade>0?"bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-text)]":course.drafts>0?"bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]":"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]")}>
        {course.toGrade>0?course.toGrade+" to grade":course.drafts>0?course.drafts+" to publish":"Nothing waiting"}
      </span></td>
      <td>{course.classLinks.length===1?<Link className="text-sm text-[color:var(--lms-heading)] hover:text-[color:var(--lms-button-primary)] hover:underline" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/attendanceDetail"}>{course.attendancePossible>0?Math.round(course.attendancePresent*100/course.attendancePossible)+"% this month":"Not recorded"}</Link>

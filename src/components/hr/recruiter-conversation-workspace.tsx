@@ -5,6 +5,7 @@ import {RecruiterConversationReadControl} from "./recruiter-conversation-read-co
 import {RecruiterConversationLiveRefresh} from "./recruiter-conversation-live-refresh";
 import type {readRecruiterThreadMessages} from "@/modules/placements/tpo-messaging-service";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type InboxRow={id:string;jobId:string|null;jobTitle:string;unread:number;
  preview:{text:string}|null;lastMessageAt:Date|null;createdAt:Date};
@@ -76,13 +77,13 @@ export function RecruiterConversationWorkspace({
       {rows.map(row=><li key={row.id}><Link
        href={base+"&thread="+encodeURIComponent(row.id)+(q?"&q="+encodeURIComponent(q):"")}
        aria-current={row.id===selected?.id?"page":undefined}
-       className={"flex min-h-16 items-start gap-2 border-l-[3px] px-3 py-3 hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-[-2px] "+
+       className={"flex min-h-16 items-start gap-2 border-l-2 px-3 py-3 hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-[-2px] "+
         (row.id===selected?.id?"border-primary bg-primary-subtle":"border-transparent")}>
        <span className="min-w-0 flex-1">
         <strong className="block truncate text-sm text-foreground">{row.jobId?row.jobTitle:"General"}</strong>
         <span className="mt-1 block truncate text-xs text-muted-foreground">{row.preview?.text??"No messages yet"}</span>
        </span>
-       {row.unread>0?<span className="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold text-white"
+       {row.unread>0?<span className="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-[color:var(--lms-error)] px-1 text-xs font-bold text-on-primary"
         aria-label={row.unread+" unread messages"}>{row.unread}</span>:null}
       </Link></li>)}
      </ol>:<p className="p-4 text-sm text-muted-foreground">{q?
@@ -96,7 +97,7 @@ export function RecruiterConversationWorkspace({
    <section aria-label="Selected conversation" className="flex min-h-[30rem] min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-surface">
     {selected?<><header className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
      <div className="min-w-0">
-      <h2 className="break-words text-lg font-bold text-foreground">{selected.jobId?selected.jobTitle:"General"}</h2>
+      <Heading level={2} size="lg" className="break-words text-foreground">{selected.jobId?selected.jobTitle:"General"}</Heading>
       <p className="text-xs text-muted-foreground">{selected.jobId?"Hiring drive":"General"} · Placement cell</p>
      </div>
      <Link href={selected.jobId?"/recruiter/drives/"+encodeURIComponent(selected.jobId)+"?tab=discussion":

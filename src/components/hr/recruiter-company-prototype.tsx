@@ -5,6 +5,9 @@ import {recruiterTeamCapabilityLabels} from "@/modules/placements/recruiter-team
 import {recruiterCompanyHiringDisplay} from "@/modules/placements/recruiter-company-unified-prototype-model";
 import type {RecruiterReportRow} from "@/modules/placements/recruiter-company-reports-model";
 import styles from "./recruiter-company-prototype.module.css";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 type TeamMember={userId:string;displayName:string|null;email:string|null;title:string|null;isYou:boolean;capabilities:readonly string[]};
 type Choice={collegeId:string;collegeName:string};
 export function RecruiterCompanyPrototype({
@@ -37,18 +40,18 @@ export function RecruiterCompanyPrototype({
     <div className={styles.left}>
      <section className={styles.panel} aria-label="Your company">
       <div className={styles.sectionHead}>
-       <h2 className={styles.eyebrow}>YOUR COMPANY</h2>
+       <Heading level={2} className={styles.eyebrow}>YOUR COMPANY</Heading>
        <span className={styles.muted}>Verified changes require placement-cell review</span>
       </div>
       <div className={styles.companyRow}>
-       {logoUrl?<img src={logoUrl} alt="" className={styles.logo} width={58} height={58}/>:
+       {logoUrl?<Img src={logoUrl} alt="" className={styles.logo} width={58} height={58}/>:
         <span className={styles.logo}>{companyName.slice(0,1).toUpperCase()}</span>}
        <div><strong className={styles.companyName}>{companyName}</strong>
         <p className={styles.muted}>{industry||"Industry not recorded"}</p></div>
       </div>
       <dl className={styles.facts}>
         <div><dt>Name</dt><dd>{companyName}</dd></div>
-        <div><dt>Website</dt><dd>{safeWebsite?<a href={safeWebsite} rel="noreferrer">{safeWebsite}</a>:website||"Not recorded"}</dd></div>
+        <div><dt>Website</dt><dd>{safeWebsite?<TextLink href={safeWebsite} rel="noreferrer">{safeWebsite}</TextLink>:website||"Not recorded"}</dd></div>
         <div><dt>About</dt><dd>{about?.trim()||"Not recorded"}</dd></div>
         <div><dt>Hiring for</dt><dd>{hiringFor.length?hiringFor.join(", "):"No currently published roles at this college"}</dd></div>
         <div><dt>Work email domains</dt><dd>{domains.length?domains.map(value=>"@"+value.replace(/^@/,"")).join(", "):"Not recorded"}</dd></div>
@@ -57,7 +60,7 @@ export function RecruiterCompanyPrototype({
       <RecruiterCompanyChangeRequest companyName={companyName} collegeId={collegeId} kind="PROFILE"/>
      </section>
      <section className={styles.panel} aria-label="Your team">
-      <div className={styles.sectionHead}><h2 className={styles.eyebrow}>YOUR TEAM AT {collegeName.toLocaleUpperCase("en-IN")} · {team.length}</h2>
+      <div className={styles.sectionHead}><Heading level={2} className={styles.eyebrow}>YOUR TEAM AT {collegeName.toLocaleUpperCase("en-IN")} · {team.length}</Heading>
        <Link href={"/hr/conversations?collegeId="+encodeURIComponent(collegeId)} className={styles.link}>
         Request an invite ›
        </Link>
@@ -82,7 +85,7 @@ export function RecruiterCompanyPrototype({
      </section>
     </div>
     <section className={styles.panel} aria-label="Your hiring at this college">
-      <div className={styles.sectionHead}><h2 className={styles.eyebrow}>YOUR HIRING AT {collegeName.toLocaleUpperCase("en-IN")}</h2>
+      <div className={styles.sectionHead}><Heading level={2} className={styles.eyebrow}>YOUR HIRING AT {collegeName.toLocaleUpperCase("en-IN")}</Heading>
        <Link href={reportHref} className={styles.link}>Full report ›</Link>
       </div>
       {!reportAvailable?<p role="alert" className={styles.muted}>Hiring metrics could not be verified. Open Full report to retry; unavailable counts are not zero.</p>:
@@ -98,7 +101,7 @@ export function RecruiterCompanyPrototype({
       </p>:null}
       <div className={styles.exports}>
         <Link className={styles.export} href={reportHref}>See detailed hiring report</Link>
-        {reportAvailable?<a className={styles.export} href={csvHref}>Download as CSV</a>:null}
+        {reportAvailable?<TextLink variant="bare" className={styles.export} href={csvHref}>Download as CSV</TextLink>:null}
       </div>
     </section>
    </div>

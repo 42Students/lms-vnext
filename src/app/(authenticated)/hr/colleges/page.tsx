@@ -8,6 +8,9 @@ import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import {Alert} from "@/components/ui/alert";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 
 const PER_PAGE=12;
 /** The dedicated legacy Colleges directory is scoped to this recruiter and
@@ -49,9 +52,9 @@ export default async function HrCollegesPage({searchParams}:{
      ?(details[index] as PromiseFulfilledResult<Awaited<ReturnType<typeof recruiterCollegeCardDetail>>>).value:null;
     return <article key={grant.id} className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] py-5">
      <div className="flex min-w-0 items-center gap-3">
-      {detail?.logoUrl?<img src={detail.logoUrl} alt="" width={48} height={48} className="size-12 shrink-0 rounded border border-border object-contain"/>:
+      {detail?.logoUrl?<Img src={detail.logoUrl} alt="" width={48} height={48} className="size-12 shrink-0 rounded border border-border object-contain"/>:
        <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded border border-border bg-muted text-lg font-semibold">{info.collegeName.slice(0,1)}</span>}
-      <div className="min-w-0"><h2 className="break-words text-lg font-semibold text-[var(--lms-heading)]">{info.collegeName}</h2>
+      <div className="min-w-0"><Heading level={2} size="lg" className="break-words text-[var(--lms-heading)]">{info.collegeName}</Heading>
        <p className="text-xs text-body">{info.collegeCode?"College code: "+info.collegeCode:"College code unavailable"} · Verified recruiter access</p>
       </div>
      </div>
@@ -63,7 +66,7 @@ export default async function HrCollegesPage({searchParams}:{
         <span className="flex flex-wrap gap-2">{detail.branches.map(value=><span key={value} className="rounded border border-border px-2 py-1 text-xs">{value}</span>)}</span>}</dd></div>
        <div className="sm:col-span-2"><dt className="font-semibold">Placement-cell contact</dt>
         <dd>{detail.tpoContact?detail.tpoContact.name:"No TPO contact available"}
-         {detail.tpoContact?.email?<> · <a href={"mailto:"+detail.tpoContact.email} className="text-primary-text underline">{detail.tpoContact.email}</a></>:null}</dd>
+         {detail.tpoContact?.email?<> · <TextLink href={"mailto:"+detail.tpoContact.email}>{detail.tpoContact.email}</TextLink></>:null}</dd>
        </div>
       </dl>:<Alert tone="warning">College details are temporarily unavailable. Refresh to retry; missing values are not zero.</Alert>}
      {detail?.errors.length?<p role="status" className="text-xs text-muted-foreground">Could not load: {detail.errors.join(", ")}. Refresh to retry.</p>:null}

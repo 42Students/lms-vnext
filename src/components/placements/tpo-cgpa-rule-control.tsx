@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useToast} from "@/components/ui/toast";
 import type {CgpaRule} from "@/modules/profile-verification/academic-marks";
+import { Heading } from "@/components/ui/heading";
 
 const OPTIONS:[
  CgpaRule,string
@@ -43,7 +44,7 @@ export function TpoCgpaRuleControl({initialRule}:{initialRule:CgpaRule}){
   finally{lock.current=false;setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 border-t border-border pt-4" aria-label="CGPA percentage conversion">
-  <h3 className="text-base font-semibold text-foreground">CGPA to percentage rule</h3>
+  <Heading level={3} size="base" className="text-foreground">CGPA to percentage rule</Heading>
   <p className="text-sm text-body">Choose how a CGPA becomes a comparable percentage.
    Changing the rule recalculates verified percentages; original marks stay unchanged.</p>
   <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end">

@@ -3,6 +3,8 @@ import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Purpose="AADHAAR"|"PAN";
 type Grant={objectKey:string;uploadUrl:string;requiredHeaders:Record<string,string>};
 type Saved={saved:boolean;version:number;receiptId:string;kind:Purpose};
@@ -106,7 +108,7 @@ export function FacultyIdentityEvidenceEditor({
  const entries=[{kind:"AADHAAR" as const,label:"Aadhaar evidence",id:aadhaarReceiptId},
    {kind:"PAN" as const,label:"PAN evidence",id:panReceiptId}];
  return <section aria-label="Private identity evidence" className="space-y-3 border-t border-border pt-3">
-  <h3 className="text-sm font-semibold">Private identity evidence</h3>
+  <Heading level={3} size="sm">Private identity evidence</Heading>
   <p className="text-xs text-muted-foreground">
    Upload your own PDF or image. Files are private, security-scanned and available
    only through a short-lived authorized link. Do not paste Aadhaar or PAN numbers
@@ -133,10 +135,10 @@ export function FacultyIdentityEvidenceEditor({
      onClick={()=>setRevokeKind(item.kind)}>Remove evidence</Button>
    </div>:null}
    {readLink?.kind===item.kind&&readLink.expiresAt>Date.now()?
-    <a href={readLink.href} rel="noopener noreferrer"
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+    <TextLink href={readLink.href} rel="noopener noreferrer"
+      className="inline-flex min-h-11 items-center text-sm">
       Open verified document (expires soon)
-    </a>:null}
+    </TextLink>:null}
   </div>)}
   {checking?<Button type="button" variant="secondary" disabled={blocked}
     onClick={()=>void finish()}>Confirm {checking.kind==="PAN"?"PAN":"Aadhaar"} evidence after scan</Button>:null}

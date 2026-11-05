@@ -8,6 +8,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {FacultyAssignmentReview} from "./faculty-assignment-review";
+import { Heading } from "@/components/ui/heading";
 
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 
@@ -134,7 +135,7 @@ export function CollegeAssignmentReview({
   {status==="PUBLISHED"&&gradedLearners===0?<p role="status" className="text-xs text-muted-foreground">Nothing graded yet</p>:null}
   {bulkBusy?<Alert tone="info" role="status">Publishing graded submissions for this assignment. {progress}</Alert>:null}
   {breakdown?<section aria-label="Grade publication results" className="rounded border border-border p-3">
-   <h3 className="text-sm font-semibold">Grade publication results</h3>
+   <Heading level={3} size="sm">Grade publication results</Heading>
    <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
     {([["Published",breakdown.published],["Skipped (ungraded)",breakdown.skippedUngraded],
       ["Already published",breakdown.alreadyPublished],["Failed",breakdown.failed]] as const).map(([label,value])=>
@@ -142,7 +143,7 @@ export function CollegeAssignmentReview({
        <dd className="text-lg font-semibold tabular-nums">{value}</dd></div>)}
    </dl>
    {failureDetails.length?<div className="mt-3 border-t border-border pt-3">
-    <h4 className="font-semibold">Could not publish</h4>
+    <Heading level={4}>Could not publish</Heading>
     <ol className="mt-2 list-inside list-decimal space-y-1 text-sm text-body">
      {failureDetails.map((item,index)=><li key={index}>Submission {index+1}: {item.reason}</li>)}
     </ol>

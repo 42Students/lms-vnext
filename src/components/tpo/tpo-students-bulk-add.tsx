@@ -22,6 +22,7 @@ import {
   buildTpoStudentsBulkPayload,
   formatTpoStudentsBulkOutcome,
 } from "@/modules/placements/tpo-students-bulk-add-model";
+import { Heading } from "@/components/ui/heading";
 
 type Learner = {
   membershipId: string;
@@ -192,9 +193,9 @@ export function TpoStudentsBulkAdd({
   return (
     <section id="student-bulk-add" className="min-w-0 space-y-4 border-y border-border py-4">
       <div>
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">
           Add selected students to a drive
-        </h2>
+        </Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">
           Select up to 200 learners from this filtered roster, including other pages.
           The server rechecks each selected college membership, drive and role.
@@ -320,7 +321,7 @@ export function TpoStudentsBulkAdd({
       {error&&!confirmOpen ? <InlineNotice tone="error" message={error}/> : null}
       {results.length > 0 ? (
         <div aria-live="polite" className="space-y-2">
-          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Per-learner result</h3>
+          <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Per-learner result</Heading>
           <ul className="max-h-60 min-w-0 divide-y divide-border overflow-auto border-y border-border text-sm">
             {results.map((result) => (
               <li key={result.membershipId} className="flex min-w-0 flex-wrap gap-2 px-2 py-3">

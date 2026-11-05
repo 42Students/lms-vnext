@@ -16,7 +16,7 @@ import { topbarInitials } from "./portal-config";
 import { ChevronIcon } from "./icons";
 import style from "./topbar.module.css";
 
-const avatarTriggerClass = `${style.avatar} max-[767px]:!min-h-11 max-[767px]:!min-w-11`;
+const avatarTriggerClass = `${style.avatar} max-md:!min-h-11 max-md:!min-w-11`;
 const accountMenuClass = `${style.menu} !min-h-0`;
 
 export function TopbarAccountMenu({

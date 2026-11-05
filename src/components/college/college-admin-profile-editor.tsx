@@ -11,6 +11,10 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { CollegeOwnProfileInput } from "@/modules/people/college-admin-profile-edit-service";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type VersionedCollegeProfile=CollegeOwnProfileInput&{profileDocumentVersion:number};
 const fieldStyle = "min-h-11 w-full md:min-h-9";
@@ -127,7 +131,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   }
   function cardHeader(section:ProfileSection,title:string){
     return <header className="-mx-4 -mt-4 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-t-[var(--lms-canvas-radius)] border-b border-[color:var(--lms-border-strong)] bg-[color:var(--lms-info-blue-surface)] px-4 py-3">
-      <h2 className="font-semibold text-[var(--lms-heading)]">{title}</h2>
+      <Heading level={2} className="text-[var(--lms-heading)]">{title}</Heading>
       <Button variant="secondary" type="button" disabled={saving||readOnly}
         onClick={()=>editSection(section)}
         aria-label={(editableSection===section?"Finish editing ":"Edit ")+title}
@@ -275,15 +279,15 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
       className="min-w-0 space-y-6">
       <div className="flex min-w-0 flex-wrap items-center gap-4 border-b border-border pb-4">
         {profile.photoUrl ? (
-          <img src={profile.photoUrl} alt={profile.displayName + " profile photo"} referrerPolicy="no-referrer"
+          <Img src={profile.photoUrl} alt={profile.displayName + " profile photo"} referrerPolicy="no-referrer"
             className="h-16 w-16 shrink-0 rounded-lg border border-border bg-muted object-cover" />
         ) : null}
         <div className="min-w-0 flex-1 space-y-1">
           <p className="break-words text-lg font-semibold text-foreground">{profile.displayName}</p>
           <p className="break-words text-sm text-muted-foreground">{profile.roleTitle || "College Admin"} · {college || "Your college"}</p>
           {profile.photoUrl ? (
-            <a href={profile.photoUrl} rel="noreferrer"
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">View profile photo</a>
+            <TextLink href={profile.photoUrl} rel="noreferrer"
+              className="inline-flex min-h-11 items-center text-sm md:min-h-9">View profile photo</TextLink>
           ) : null}
         </div>
       </div>
@@ -294,10 +298,10 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
           ["personal", "Personal Details"], ["social", "Social Profiles"],
           ["address", "Address"], ["contacts", "Contacts"],
         ].map(([key, label]) => (
-          <a key={key} href={"#" + key}
-            className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-medium text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          <ButtonLink variant="secondary" key={key} href={"#" + key}
+            className="min-w-0">
             {label}
-          </a>
+          </ButtonLink>
         ))}
       </nav>
 
@@ -414,7 +418,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
 
       </div>
 
-      <div role="status" aria-live="polite" className="sticky bottom-0 z-10 flex min-w-0 flex-col justify-end gap-3 border-t border-border bg-surface py-3 md:flex-row md:items-center">
+      <div role="status" aria-live="polite" className="sticky bottom-0 z-(--lms-z-raised) flex min-w-0 flex-col justify-end gap-3 border-t border-border bg-surface py-3 md:flex-row md:items-center">
         {error || saved ? (
           <div className="min-w-0 flex-1 space-y-2">
             {error && <Alert tone="error">{error}</Alert>}

@@ -46,6 +46,7 @@ import {TpoRecruiterPrototypeRoster,TPO_RECRUITER_PROTOTYPE_COLUMNS,type TpoRecr
 import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import boardStyles from "./recruiter-board-theme.module.css";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import { Heading } from "@/components/ui/heading";
 
 type Lead = {
   id: string;
@@ -214,7 +215,7 @@ function friendlyError(status: number, payload: { error?: string }) {
 
 const inputStyle = "min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground md:min-h-9";
 const buttonStyle = "inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] disabled:cursor-not-allowed disabled:opacity-50";
-const primaryStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-[650] text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
+const primaryStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
 
 export function RecruiterLeadsWorkspace({
   collegeId,
@@ -921,7 +922,7 @@ export function RecruiterLeadsWorkspace({
             </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
               className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-4">
-                            <h3 className="col-span-full mt-2 border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Pipeline</h3>
+                            <Heading level={3} size="sm" className="col-span-full mt-2 border-b border-border pb-2 text-[var(--lms-heading)]">Pipeline</Heading>
               <label className="text-sm">Status
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={statusFilter}
                   onChange={e=>updateFilter("status",e.target.value)}>
@@ -945,7 +946,7 @@ export function RecruiterLeadsWorkspace({
                    <option key={item} value={item}>{item==="ALL"?"All invites":inviteLabel(item)}</option>)}
                 </Select>
               </label>
-              <h3 className="col-span-full mt-2 border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Timing</h3>
+              <Heading level={3} size="sm" className="col-span-full mt-2 border-b border-border pb-2 text-[var(--lms-heading)]">Timing</Heading>
               <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Next follow-up
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={nextFilter}
                   onChange={e=>updateFilter("nextFollowup",e.target.value)}>
@@ -977,7 +978,7 @@ export function RecruiterLeadsWorkspace({
                   <option value="EARLIER">Earlier</option>
                 </Select>
               </label>
-              <h3 className="col-span-full mt-2 border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Contact</h3>
+              <Heading level={3} size="sm" className="col-span-full mt-2 border-b border-border pb-2 text-[var(--lms-heading)]">Contact</Heading>
               <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation
                 <Input className={inputStyle+" mt-1.5 min-w-0"} value={designationFilter}
                   placeholder="Search designation" maxLength={100}
@@ -1002,7 +1003,7 @@ export function RecruiterLeadsWorkspace({
                    .sort().map(name=><option key={name} value={name}>{name.replaceAll("_"," ")}</option>)}
                 </Select>
               </label>
-              <h3 className="col-span-full mt-2 border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Company</h3>
+              <Heading level={3} size="sm" className="col-span-full mt-2 border-b border-border pb-2 text-[var(--lms-heading)]">Company</Heading>
               <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyFilter}
                   onChange={e=>updateFilter("company",e.target.value)}>
@@ -1267,7 +1268,7 @@ export function RecruiterLeadsWorkspace({
                      column==="NOT_NOW"?"Requires a recorded reason":
                      "Automatically set by invitation and placement activity"}
                   </p>
-                  <h2 className={"mb-3 font-semibold "+boardStyles["columnTitle"]}>{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
+                  <Heading level={2} className={"mb-3 font-semibold "+boardStyles["columnTitle"]}>{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</Heading>
                   <div className="space-y-2">
                     {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
                       <div key={lead.id} className={"p-3 hover:bg-surface-secondary "+boardStyles["leadCard"]}
@@ -1298,7 +1299,7 @@ export function RecruiterLeadsWorkspace({
                            <div role="group" aria-label={"Update "+(lead.name||"recruiter")} className="mt-2 min-w-0 space-y-2 break-words [overflow-wrap:anywhere]">
                              <RecruiterInlineStage lead={lead} onUpdated={()=>void load()} />
                              <RecruiterInlineOwner lead={lead} onUpdated={()=>void load()} />
-                             <Link className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-control-radius)] px-3 text-[var(--lms-teal-deep)] underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                             <Link className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-control-radius)] px-3 text-[var(--lms-teal-deep)] underline hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
                                href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
                              <Button variant="ghost" type="button" className="min-h-11 w-full justify-center md:min-h-9"
                                onClick={event=>{
@@ -1340,7 +1341,7 @@ export function RecruiterLeadsWorkspace({
             <Button variant="secondary" type="button" className={buttonStyle} disabled={checking || !(form.email || form.phone)}
               onClick={() => void checkContact()}>{checking ? "Checking…" : "Check for existing contact"}</Button>
             {duplicate ? <p role="alert" className="text-sm text-foreground leading-[22px]">
-              Contact already exists: <Link className="underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center md:min-h-[var(--lms-control-height)]" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
+              Contact already exists: <Link className="underline max-md:inline-flex max-md:min-h-11 max-md:items-center md:min-h-[var(--lms-control-height)]" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
             </p> : null}
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company *<Input className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
               value={form.companyName} onChange={e => field("companyName", e.target.value)}
@@ -1376,7 +1377,7 @@ export function RecruiterLeadsWorkspace({
                 placeholder="What should the placement cell do next?"/>
             </label>
             </details>
-            {reviewingCreate?<div role="status" className="border-l-[3px] border-primary bg-primary-subtle p-3 text-sm">
+            {reviewingCreate?<div role="status" className="border-l-2 border-primary bg-primary-subtle p-3 text-sm">
               <p>Confirm: Create recruiter lead for <strong>{form.name.trim()}</strong> at <strong>{form.companyName.trim()}</strong>?
                 This saves a new college contact and records an auditable creation event.
               </p>

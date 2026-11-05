@@ -18,6 +18,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { listColleges } from "@/modules/colleges/service";
 import { formatCollegeHeaderDate } from "@/modules/admin-ui/college-dashboard-cards-model";
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
+import { Heading } from "@/components/ui/heading";
 
 export default async function CollegeOverviewPage() {
   const context = await getCurrentRequestContext();
@@ -29,7 +30,7 @@ export default async function CollegeOverviewPage() {
       Admin not assigned to a college. Some features are limited. Contact your administrator.
     </Alert>
     <section aria-label="Quick Actions" className="space-y-2 border-t border-border pt-3">
-      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Quick Actions</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)]">Quick Actions</Heading>
       <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
         Choose an available workspace
       </Link>
@@ -78,7 +79,7 @@ export default async function CollegeOverviewPage() {
     <div className="min-w-0 max-w-full space-y-[var(--lms-space-6)]">
       <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.dashboard}/>
       <section aria-label="College greeting" className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border pb-5">
-        <h2 className="m-0 text-[24px] font-semibold leading-tight text-[var(--lms-heading)]">{college.name||"Your college"}</h2>
+        <Heading level={2} size="2xl" className="m-0 leading-tight text-[var(--lms-heading)]">{college.name||"Your college"}</Heading>
         <p className="m-0 text-sm font-medium text-muted-foreground">{formatCollegeHeaderDate(new Date())}</p>
       </section>
       <CollegeNeedsAttentionBoard collegeId={college.id} generatedAt={new Date().toISOString()} data={{

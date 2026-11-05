@@ -15,6 +15,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { CollegeTermStaffingReport } from "./college-term-staffing-report";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage, parseTermCourseCreditsDraft } from "@/modules/academics/college-term-mapping-model";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 type MappingRead = {
   terms: readonly { id: string; name: string; termNumber: number; programId: string; programName: string; departmentId: string; isActive: boolean }[];
@@ -295,7 +296,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
   return <section className="min-w-0 space-y-4 border-t border-border pt-4">
     <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
     <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-    <h2 className="text-lg font-semibold text-foreground">Assign Courses to Semester</h2>
+    <Heading level={2} size="lg" className="text-foreground">Assign Courses to Semester</Heading>
     {!data.terms.length?<Alert tone="info">No programs found. <Link href={programsHref}
       className="font-semibold text-primary-text underline">Go to Programs</Link></Alert>:null}
     <div className="flex flex-wrap items-center justify-between gap-2">
@@ -385,9 +386,9 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
     </section>
     <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-foreground">{selectedTerm
+        <Heading level={2} size="lg" className="text-foreground">{selectedTerm
           ? "Courses in "+(selectedTerm.name||"Semester "+selectedTerm.termNumber)
-          : "Select a Semester to View Courses"}</h2>
+          : "Select a Semester to View Courses"}</Heading>
         <Button type="button" variant="secondary" disabled={pending || refreshing || !termId} loading={refreshing}
           aria-label="Refresh semester courses"
           onClick={() => { setError(null); setFieldErrors({}); setRefreshing(true); setNotice("Refreshing semester courses…"); router.refresh(); }}>

@@ -18,6 +18,8 @@ import {
   TPO_LEAD_CSV_MAX_ROWS,
   type TpoLeadImportRowResult,
 } from "@/modules/placements/tpo-lead-csv-import-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const template = "name,email,phone,companyName,designation,source\r\n" +
   "Example Recruiter,recruiter@example.org,,Example Company,HR,REFERRAL\r\n";
@@ -171,14 +173,14 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
                 </p>
             </div>
-            <details className="border-b border-border pb-3 text-sm text-body"><summary className="cursor-pointer py-2 font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Import steps</summary><p aria-label="Recruiter import steps" className="text-xs text-muted-foreground leading-[20px]">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p></details>
-            <a
+            <details className="border-b border-border pb-3 text-sm text-body"><summary className="cursor-pointer py-2 font-semibold max-md:flex max-md:min-h-11 max-md:items-center">Import steps</summary><p aria-label="Recruiter import steps" className="text-xs text-muted-foreground leading-[20px]">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p></details>
+            <ButtonLink variant="secondary"
               download="recruiter-leads-template.csv"
               href={"data:text/csv;charset=utf-8," + encodeURIComponent(template)}
-              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden"
+              className="print:hidden"
             >
               Download CSV template
-            </a>
+            </ButtonLink>
             <FileUpload ref={fileRef} className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Choose CSV or Excel file" maxBytes={10_000_000}
               accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               disabled={busy} onFiles={files => void chooseFile(files?.[0])}/>
@@ -226,7 +228,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                         onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/> Include</label>},
                     ]}/>
                 </ScrollCue>
-                {reviewReady&&!result ? <p role="status" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body leading-[22px]">
+                {reviewReady&&!result ? <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body leading-[22px]">
                   Import {newRows} recruiter lead row(s) from {fileName}. {preview.invalid} invalid row(s) will be skipped. Existing contacts will be reported as duplicates. Each created lead receives an audit entry.
                 </p>:null}
                 {!result ? (
@@ -265,7 +267,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                 </Button>
                 </div>
                 {copyNotice?<p role="status" aria-live="polite" className="text-xs text-body leading-[20px]">{copyNotice}</p>:null}
-                <h3 className="font-semibold text-[var(--lms-heading)]">Import results</h3>
+                <Heading level={3} className="text-[var(--lms-heading)]">Import results</Heading>
                 <p className="text-sm text-body leading-[22px]">
                   {result.counts.created} created, {result.counts.duplicate} duplicate,
                   {" "}{result.counts.invalid} invalid, {result.counts.skipped??0} skipped. {result.counts.total} rows processed.

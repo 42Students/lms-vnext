@@ -33,7 +33,7 @@ export function TpoQuickCreate({ collegeId }: { collegeId: string }) {
         {link.label}
       </Link>)}
       <hr className={style.menuDivider}/>
-      <div className="min-w-0 [&>button]:!min-h-11 [&>button]:!px-[11px]">
+      <div className="min-w-0 [&>button]:!min-h-11 [&>button]:!px-[12px]">
         <TpoNewFollowupModal collegeId={collegeId}/>
       </div>
     </nav>

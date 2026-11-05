@@ -23,7 +23,7 @@ export function TrackerQuickReportLauncher(){
   window.addEventListener("keydown",onKey);return ()=>window.removeEventListener("keydown",onKey);
  },[open]);
  return <>
-  <Button variant="primary" className="fixed right-4 z-40 min-h-11 max-w-[calc(100vw-2rem)] whitespace-normal text-center shadow-[var(--lms-overlay-shadow)] sm:right-5 md:min-h-9" type="button" aria-haspopup="dialog" aria-keyshortcuts="Alt+B"
+  <Button variant="primary" className="fixed right-4 z-(--lms-z-shell) min-h-11 max-w-[calc(100vw-2rem)] whitespace-normal text-center shadow-(--lms-overlay-shadow) sm:right-5 md:min-h-9" type="button" aria-haspopup="dialog" aria-keyshortcuts="Alt+B"
    style={{bottom:"calc(max(1rem, env(safe-area-inset-bottom)) + var(--lms-mobile-footer-clearance, 0px))"}}
    onClick={show}
    >

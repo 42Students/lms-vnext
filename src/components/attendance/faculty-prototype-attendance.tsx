@@ -9,6 +9,8 @@ import type {FacultyAttendanceWorkspaceData} from "./faculty-attendance-workspac
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type AttendanceMark="PRESENT"|"ABSENT";
 type Session=FacultyAttendanceWorkspaceData["sessions"][number];
@@ -141,7 +143,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
    </div>
   </div>
   {view==="month"?<section className="rounded-xl border border-[color:var(--lms-border)] p-5">
-   <h2 className="text-base font-bold text-[color:var(--lms-heading)]">{monthLabel(new Date().toISOString())} attendance</h2>
+   <Heading level={2} size="base" className="text-[color:var(--lms-heading)]">{monthLabel(new Date().toISOString())} attendance</Heading>
    <p className="faculty-proto-subtitle mt-1">Review the scheduled classes and open one to mark or correct its attendance.</p>
    {sessions.some(s=>monthLabel(s.startsAt)===monthLabel(new Date().toISOString()))?null:
     <p role="status" className="faculty-proto-subtitle mt-3">No class sessions scheduled for this month.</p>}
@@ -152,21 +154,21 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
     <Link className="faculty-proto-link" href={selectedHref(s.id)}>
      {s.attendanceStatus==="MARKED"?"Review marks":"Mark attendance"}</Link>
    </li>)}</ol>
-   <a className="faculty-proto-link mt-3 inline-block" href="#faculty-attendance-editor">Open detailed monthly report below</a>
+   <TextLink variant="bare" className="faculty-proto-link mt-3 inline-block" href="#faculty-attendance-editor">Open detailed monthly report below</TextLink>
   </section>:!selected?
   <div className="rounded-xl border border-[color:var(--lms-border)] p-6">
-   <h2 className="text-base font-bold">No class session scheduled yet</h2>
+   <Heading level={2} size="base">No class session scheduled yet</Heading>
    <p className="faculty-proto-subtitle mt-1">Schedule a class from the full attendance workspace.</p>
-   <a className="faculty-proto-link mt-2 inline-block" href="#faculty-attendance-editor">Open attendance tools</a>
+   <TextLink variant="bare" className="faculty-proto-link mt-2 inline-block" href="#faculty-attendance-editor">Open attendance tools</TextLink>
   </div>:
   <div className="overflow-hidden rounded-xl border border-[color:var(--lms-border)]">
    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[color:var(--lms-border)] p-4">
-    <div><h2 className="text-base font-bold text-[color:var(--lms-heading)]">{sessionLabel(selected.startsAt)} · {selected.location??"Room not assigned"}</h2>
+    <div><Heading level={2} size="base" className="text-[color:var(--lms-heading)]">{sessionLabel(selected.startsAt)} · {selected.location??"Room not assigned"}</Heading>
      <p className="faculty-proto-subtitle mt-1">{markedPresent} present, {markedAbsent} absent, {unmarked} not marked</p></div>
     <div className="flex flex-wrap gap-2">
      <label className="sr-only" htmlFor="faculty-attendance-search">Find a student by name</label>
      <Input id="faculty-attendance-search" value={search} onChange={e=>setSearch(e.target.value)}
-      placeholder="Find a student by name" className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-white px-3 text-sm"/>
+      placeholder="Find a student by name" className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm"/>
      <Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>setMarks(new Map(scopeRecords.map(s=>[s.membershipId,"PRESENT" as const])))}
       disabled={!writable||!scopeRecords.length}>Mark everyone present</Button>
      <Link className="faculty-proto-secondary" href={base+"?sessionId="+encodeURIComponent(selected.id)+"&schedule=1#faculty-attendance-scheduling"}>Schedule a class</Link>
@@ -187,8 +189,8 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
       {(["PRESENT","ABSENT"] as const).map(option=><Button variant="bare" key={option} type="button"
        onClick={()=>setMark(student.membershipId,option)} disabled={!writable}
        aria-pressed={mark===option} className={"faculty-proto-pill min-h-11 px-3 "+
-        (mark===option?(option==="PRESENT"?"!border-green-500 !bg-green-50 !text-green-700":
-         "!border-red-500 !bg-red-50 !text-red-700"):"")}>
+        (mark===option?(option==="PRESENT"?"!border-[color:var(--lms-success-strong)] !bg-[color:var(--lms-success-surface)] !text-[color:var(--lms-success-strong)]":
+         "!border-[color:var(--lms-error)] !bg-[color:var(--lms-error-surface)] !text-[color:var(--lms-error-text)]"):"")}>
         {option==="PRESENT"?"Present":"Absent"}</Button>)}
      </div>
     </li>;
@@ -203,8 +205,8 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
       onChange={e=>setCorrectionReason(e.target.value)} maxLength={500}
       className="mt-1 w-full rounded-lg border border-[color:var(--lms-border)] p-3 text-sm" placeholder="What changed in the recorded attendance?"/>
     </div>:null}
-   {error?<p role="alert" className="m-4 rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>:null}
-   {success?<p role="status" className="m-4 rounded-lg bg-green-50 p-3 text-sm text-green-800">{success}</p>:null}
+   {error?<p role="alert" className="m-4 rounded-lg bg-[color:var(--lms-error-surface)] p-3 text-sm text-[color:var(--lms-error-strong)]">{error}</p>:null}
+   {success?<p role="status" className="m-4 rounded-lg bg-[color:var(--lms-success-surface)] p-3 text-sm text-[color:var(--lms-success-strong)]">{success}</p>:null}
    {timing!=="OPEN"?<p className="faculty-proto-subtitle px-4 pb-3">
     {timing==="NOT_STARTED"?"Marking opens when the class starts.":"Faculty attendance correction window is closed; contact your college administrator."}
    </p>:null}
@@ -218,11 +220,11 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
     </div>
    </footer>
   </div>}
-  {confirming&&selected?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+  {confirming&&selected?<div className="fixed inset-0 z-(--lms-z-overlay) flex items-center justify-center bg-[color:color-mix(in_srgb,var(--lms-black)_40%,transparent)] p-4">
    <div role="alertdialog" aria-modal="true" aria-labelledby="faculty-attendance-confirm-title"
-    className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-    <h2 id="faculty-attendance-confirm-title" className="text-lg font-bold text-[color:var(--lms-heading)]">
-     {selected.attendanceStatus==="MARKED"?"Confirm attendance correction":"Submit attendance?"}</h2>
+    className="w-full max-w-md rounded-xl bg-surface p-6 shadow-xl">
+    <Heading level={2} size="lg" id="faculty-attendance-confirm-title" className="text-[color:var(--lms-heading)]">
+     {selected.attendanceStatus==="MARKED"?"Confirm attendance correction":"Submit attendance?"}</Heading>
     <p className="faculty-proto-subtitle my-3">Save {markedPresent} present and {markedAbsent} absent marks for the complete roster?
      {selected.attendanceStatus==="MARKED"?" This creates an audited correction.":""}</p>
     <div className="flex justify-end gap-2">

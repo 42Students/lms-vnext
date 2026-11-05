@@ -13,6 +13,8 @@ import {useEffect,useRef,useState} from "react";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
 import {FacultyLessonVideoManager} from "./faculty-lesson-video-manager";
 import { Radio } from "@/components/ui/radio";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;contentType:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number;visibleToStudents:boolean};
@@ -518,7 +520,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    <Button variant="bare" type="button" className="mt-2 font-semibold text-link underline" onClick={()=>router.refresh()}>Retry missing options</Button>
   </div>:null}
   <div className="flex flex-wrap items-center gap-3">
-   <h2 className={kind==="LIVE_CLASS"||kind==="RESOURCE"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Videos":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
+   <Heading level={2} className={kind==="LIVE_CLASS"||kind==="RESOURCE"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Videos":kind==="RESOURCE"?"Resources":"Live Classes"}</Heading>
    <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
     onClick={fresh} className="w-full md:w-auto">{text}</Button>
   </div>
@@ -541,7 +543,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       {editorFields}
     </Dialog> :
     <section aria-label="Add Content" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-      <h3 className="mb-3 font-semibold">Add Content</h3>
+      <Heading level={3} className="mb-3">Add Content</Heading>
       {editorFields}
     </section>:null}
   <ConfirmDialog open={saveConfirmOpen} onOpenChange={setSaveConfirmOpen}
@@ -635,11 +637,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      onBlur={()=>applyExistingFilters({existingSearch:listQuery.trim()})}
      onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applyExistingFilters({existingSearch:listQuery.trim()});}}}
      placeholder="Content title, Lesson or Course code"
-     className="min-h-11 min-[768px]:min-h-9 max-w-2xl rounded border border-border bg-background p-2"/>
+     className="min-h-11 md:min-h-9 max-w-2xl rounded border border-border bg-background p-2"/>
    </label>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course
     <Select value={listCourseId} onChange={event=>{setListCourseId(event.target.value);setListLessonId("");setListSectionId("");applyExistingFilters({existingCourse:event.target.value,existingLesson:"",existingSection:""});}}
-      className="min-h-11 min-[768px]:min-h-9 max-w-2xl rounded border border-border bg-background p-2">
+      className="min-h-11 md:min-h-9 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">All courses</option>
      {[...new Map(lessons.map(lesson=>[lesson.offeringId,
        {id:lesson.offeringId,name:lesson.courseCode+" · "+lesson.course}])).values()]
@@ -648,7 +650,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </label>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Lesson
     <Select value={listLessonId} onChange={event=>{setListLessonId(event.target.value);setListSectionId("");applyExistingFilters({existingLesson:event.target.value,existingSection:""});}}
-     className="min-h-11 min-[768px]:min-h-9 max-w-2xl rounded border border-border bg-background p-2">
+     className="min-h-11 md:min-h-9 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">All Lessons</option>
      {lessons.filter(row=>!listCourseId||row.offeringId===listCourseId).map(row=>
        <option key={row.id} value={row.id}>{row.courseCode} · {row.name}</option>)}
@@ -657,7 +659,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Section
     <Select value={listSections.some(row=>row.deliveryId===listSectionId)?listSectionId:""}
      onChange={e=>{setListSectionId(e.target.value);applyExistingFilters({existingSection:e.target.value});}}
-     className="min-h-11 min-[768px]:min-h-9 max-w-2xl rounded border border-border bg-background p-2">
+     className="min-h-11 md:min-h-9 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">Showing every section&apos;s content together</option>
      {listSections.map(row=><option key={row.deliveryId} value={row.deliveryId}>
       {row.sectionName} ({row.sectionCode})</option>)}
@@ -694,9 +696,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        </div>},
       {key:"students",header:"Students",cell:item=>item.visibleToStudents?"Visible":"Hidden"},
       {key:"content",header:"Content",cell:item=>item.externalUrl?
-       <a className="text-link underline" href={item.externalUrl} rel="noopener noreferrer">
+       <TextLink href={item.externalUrl} rel="noopener noreferrer">
         {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}
-       </a>:"—"},
+       </TextLink>:"—"},
       {key:"actions",header:"Action",mobilePriority:"action",cell:item=>
        <div className="flex flex-wrap gap-2">
         {kind==="RESOURCE"&&materialsEnabled&&item.contentType===kind?<Button size="sm" type="button" variant="ghost"

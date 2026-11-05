@@ -8,6 +8,7 @@ import {PageBackLink} from "@/components/ui/page-back-link";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic="force-dynamic";
 
@@ -50,7 +51,7 @@ export default async function TenantResolvePreviewPage({
      The host is not currently registered to an active and verified college.
     </Alert>:result?.status==="TENANT"?
     <section aria-label="Resolved tenant" className="space-y-3 border-t border-border pt-4">
-     <h2 className="font-semibold text-foreground">Verified host resolves to a college</h2>
+     <Heading level={2} className="text-foreground">Verified host resolves to a college</Heading>
      <dl className="grid min-w-0 gap-2 text-sm text-body">
       <div><dt className="font-semibold">Host</dt><dd className="break-all">{result.tenant.host}</dd></div>
       <div><dt className="font-semibold">College ID</dt><dd className="break-all">{result.tenant.collegeId}</dd></div>

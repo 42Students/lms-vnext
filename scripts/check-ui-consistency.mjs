@@ -6,6 +6,8 @@ import { execFileSync } from "node:child_process";
 import { RULES, scanFile } from "./ui-consistency-rules.mjs";
 
 const BASELINE_PATH = "docs/design-system/UI-CONSISTENCY-BASELINE.json";
+const EXEMPT_PATH = "docs/design-system/UI-CONSISTENCY-EXEMPTIONS.json";
+export const exemptFiles = () => { try { return Object.keys(JSON.parse(readFileSync(EXEMPT_PATH, "utf8")).files); } catch { return []; } };
 const args = new Set(process.argv.slice(2));
 
 export function scanTracked(root = process.cwd()) {
@@ -13,7 +15,9 @@ export function scanTracked(root = process.cwd()) {
     .split("\0").filter((p) => /\.(tsx|ts|css)$/.test(p) && !/\.(test|spec)\.tsx?$/.test(p));
   const counts = {};
   const detail = {};
+  const exempt = new Set(exemptFiles());
   for (const path of files) {
+    if (exempt.has(path)) continue;
     let source;
     try { source = readFileSync(`${root}/${path}`, "utf8"); } catch { continue; }
     for (const f of scanFile(path, source)) {

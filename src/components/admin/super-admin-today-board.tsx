@@ -4,6 +4,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {SUPER_ADMIN_TODAY_LABELS,type SuperAdminTodayMetrics} from "@/modules/colleges/admin-today-attention-model";
+import { Heading } from "@/components/ui/heading";
 
 /** Scope comes exclusively from the parent dashboard's authenticated server
  * read. Refresh re-executes that read; it never accepts a client college ID. */
@@ -34,10 +35,10 @@ function AttentionCard({item,loading,failed}:{item:Metric;loading:boolean;failed
  return <article aria-busy={loading} className="min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-border bg-surface shadow-none"
   style={{borderTop:"3px solid "+tone}}>
   <div className="flex min-w-0 items-center justify-between gap-2 border-b border-border px-4 py-3">
-   <h3 className="flex min-w-0 items-center gap-2 text-sm font-semibold text-[var(--lms-heading)]">
+   <Heading level={3} size="sm" className="flex min-w-0 items-center gap-2 text-[var(--lms-heading)]">
     <span className="inline-flex shrink-0" style={{color:tone}}><LegacyAttentionIcon kind={item.icon}/></span>
     {item.title}
-   </h3>
+   </Heading>
    {!loading&&!failed&&item.count!==null?<span aria-label={item.count+" "+item.title}
     className="inline-flex min-w-7 items-center justify-center rounded-full bg-[var(--lms-neutral-100)] px-2 py-1 text-sm font-semibold tabular-nums text-[var(--lms-heading)]">
     {item.count}
@@ -137,7 +138,7 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
  }
  return <section aria-label="Needs attention" className="min-w-0 space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Today</h2>
+   <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Today</Heading>
    <Button type="button" variant="ghost" size="sm" disabled={refreshing}
     onClick={refresh} loading={refreshing}>
     <svg aria-hidden="true" width={15} height={15} viewBox="0 0 24 24"
@@ -162,7 +163,7 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
    {metrics.map(item=><AttentionCard key={item.title} item={item}
     loading={refreshing} failed={!data||item.count===null}/>)}
   </div>
-  {allClear?<p role="status" className="flex items-center gap-2 rounded-md border border-[rgba(5,150,105,0.3)] bg-[var(--lms-success-subtle)] p-3 text-sm text-[var(--lms-success)]">
+  {allClear?<p role="status" className="flex items-center gap-2 rounded-md border border-[color-mix(in_srgb,var(--lms-success)_30%,transparent)] bg-[var(--lms-success-subtle)] p-3 text-sm text-[var(--lms-success)]">
    <CheckIcon/> Nothing needs you right now.
   </p>:null}
   <p className="text-xs text-muted-foreground">

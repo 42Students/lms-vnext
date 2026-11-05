@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function employerWebsiteHost(url:string|null){
  if(!url)return null;
@@ -341,9 +343,9 @@ export function PlacementEmployerRelationships({
   return (
     <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <div className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
-        <h2 className="sr-only text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] font-semibold text-[var(--lms-heading)]">
+        <Heading level={2} size="base" className="sr-only leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
           Companies
-        </h2>
+        </Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">
           Maintain each recruiting company once and reuse it across drives.
           {" "}A company is kept once across colleges by its website or company email domain: add at least one of them.
@@ -418,8 +420,7 @@ export function PlacementEmployerRelationships({
                 </div>
                 <div role="cell" className="min-w-0 break-all text-sm">
                   {item.websiteUrl ?
-                    <a href={item.websiteUrl} rel="noopener noreferrer"
-                      className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                    <TextLink href={item.websiteUrl} rel="noopener noreferrer">
                       <span className="inline-flex items-center gap-1">
                        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"
                         fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -427,7 +428,7 @@ export function PlacementEmployerRelationships({
                        </svg>
                        Visit <span className="sr-only">{item.name} website</span>
                       </span>
-                    </a> : <span className="text-muted-foreground">—</span>}
+                    </TextLink> : <span className="text-muted-foreground">—</span>}
                 </div>
                 <div role="cell" className="text-sm text-body">{item.drives??"—"}</div>
                 <div role="cell" className="text-sm text-body">
@@ -648,7 +649,7 @@ export function PlacementEmployerRelationships({
             </div>
             <div className="space-y-3 border-t border-[var(--lms-canvas-border)] pt-4 text-sm">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 className="font-semibold text-foreground">College contact and internal notes</h3>
+                <Heading level={3} className="text-foreground">College contact and internal notes</Heading>
                 {!historyEditing && historyData.company.relationshipStatus === "ACTIVE" ? (
                   <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9"
                     onClick={() => { setHistorySaveError(null); setHistoryEditing(true); }}>

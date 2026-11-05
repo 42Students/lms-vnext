@@ -9,6 +9,8 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { LMS_BRANDING_DEFAULT_HEX, LMS_BRANDING_PLACEHOLDER_HEX } from "@/components/ui/branding-color-tokens";
 import { useToast } from "@/components/ui/toast";
 import { safeTpoBrandLogoUrl } from "@/modules/placements/tpo-branding-model";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 export type BrandingFormValues = {
   logoUrl: string | null;
@@ -271,7 +273,7 @@ export function CollegeBrandingForm({
         className="min-w-0 space-y-[var(--lms-space-4)] print:hidden"
       >
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-          <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Look and feel</h2>
+          <Heading level={2} size="lg" className="m-0 text-[var(--lms-heading)]">Look and feel</Heading>
           <Button type="button" variant="secondary" size="sm" disabled={!collegeId||saving||fetching}
             onClick={()=>void reloadBranding()} aria-label="Reload branding">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
@@ -298,7 +300,7 @@ export function CollegeBrandingForm({
           Unsaved branding changes. Leaving or switching pages may discard your edits.
         </p> : null}
         <section aria-label="Logo" className="min-w-0 space-y-2">
-          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Logo</h3>
+          <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Logo</Heading>
           <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">
             Shown at the top of the sign-in card, next to the college name. Without a logo, the college’s initials are shown in the brand colour. Square image works best.
             Choose a square image at least 200 × 200 pixels in the college logo cropper above; the cropped upload is staged until Save succeeds.
@@ -312,7 +314,7 @@ export function CollegeBrandingForm({
           {errors["logoUrl"]?<Alert tone="error">{errors["logoUrl"]}</Alert>:null}
         </section>
         <div className="space-y-3" aria-label="Login preview">
-          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Preview</h3>
+          <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Preview</Heading>
           <div role="group" aria-label="Preview device" className="inline-flex rounded-md border border-border bg-surface p-1">
             {(["desktop","mobile"] as const).map(mode=>
               <Button key={mode} type="button" size="sm"
@@ -330,13 +332,13 @@ export function CollegeBrandingForm({
              "radial-gradient(ellipse 45% 40% at 52% 50%, color-mix(in srgb, var(--lms-button-primary) 13%, transparent), transparent 70%), radial-gradient(ellipse 75% 70% at 50% 48%, color-mix(in srgb, var(--lms-primary) 25%, transparent), color-mix(in srgb, var(--lms-primary-light) 10%, transparent) 45%, transparent 75%), var(--lms-neutral-50)",
              maxWidth:"100%"}}
             className="mx-auto sm:mx-0">
-            <div style={{width:previewDesktop?128:138,padding:10,borderRadius:8,
+            <div style={{width:previewDesktop?128:138,padding: 12,borderRadius:8,
               background:"var(--lms-white)",border:"1px solid var(--lms-border)",
-              boxShadow:"0 6px 16px -8px rgba(16,24,40,.25)"}}>
-              <div className="flex items-center gap-[5px] border-b border-[color:var(--lms-border)] pb-[6px] mb-[7px]">
-                {previewLogoUrl?<img src={previewLogoUrl} width={16} height={16}
+              boxShadow: "var(--lms-elevation-2)"}}>
+              <div className="flex items-center gap-[6px] border-b border-[color:var(--lms-border)] pb-[6px] mb-[8px]">
+                {previewLogoUrl?<Img src={previewLogoUrl} width={16} height={16}
                   alt="Logo preview" className="h-4 w-4 object-contain" referrerPolicy="no-referrer"/>:
-                  <span className="inline-block h-4 w-4 rounded bg-[color:color-mix(in_srgb,var(--lms-button-primary)_13%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--lms-button-primary)_33%,transparent)]"
+                  <span className="inline-block h-4 w-4 rounded bg-[color:color-mix(in_srgb,var(--lms-button-primary)_13%,transparent)] shadow-(--lms-ring-inset-subtle)"
                     aria-label={collegeName.slice(0,2).toUpperCase()+" initials fallback"}/>}
                 <span className="h-[5px] w-[50px] rounded-sm bg-[color:var(--lms-heading)]"/>
               </div>
@@ -357,7 +359,7 @@ export function CollegeBrandingForm({
           </svg>
           Save
         </Button>:null}
-        <h3 className="text-base font-semibold text-[var(--lms-heading)]">Additional appearance settings</h3>
+        <Heading level={3} size="base" className="text-[var(--lms-heading)]">Additional appearance settings</Heading>
         <p className="text-xs text-muted-foreground">These optional values are stored for tenant presentation but do not change the fixed 42LMS teal login preview.</p>
 
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">

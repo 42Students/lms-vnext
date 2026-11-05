@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { PUBLIC_RECRUIT_COPY,publicRecruitThanks } from "@/modules/placements/public-enquiry/public-copy";
 import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-college-join-model";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 const control="w-full";
 export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;enabled:boolean}){
@@ -88,10 +89,10 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
  }
  return <section className="mt-6 w-full max-w-[760px] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-sm sm:p-6"
   aria-labelledby="public-recruit-from-us-title">
-  <h2 id="public-recruit-from-us-title" className="text-xl font-semibold text-foreground">{PUBLIC_RECRUIT_COPY.heading}</h2>
+  <Heading level={2} size="xl" id="public-recruit-from-us-title" className="text-foreground">{PUBLIC_RECRUIT_COPY.heading}</Heading>
   {done?<div role="status" className="mt-6 flex flex-col items-center gap-3 py-8 text-center">
     <span aria-hidden="true" className="inline-flex size-16 items-center justify-center rounded-full border-2 border-success text-3xl text-success">✓</span>
-    <h3 className="font-semibold">{PUBLIC_RECRUIT_COPY.thankYou}</h3>
+    <Heading level={3}>{PUBLIC_RECRUIT_COPY.thankYou}</Heading>
     <p className="text-sm text-body">{publicRecruitThanks(collegeName)}</p>
    </div>:!enabled||unavailable?<div role="alert"
       className="mt-4 flex items-start gap-3 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle px-4 py-3 text-sm text-body">

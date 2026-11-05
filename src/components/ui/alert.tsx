@@ -8,9 +8,9 @@ export type AlertProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
 };
 const tones = {
   info: "border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] text-[var(--lms-primary-text)]",
-  success: "border-[rgba(5,150,105,0.25)] bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
+  success: "border-[color-mix(in_srgb,var(--lms-success)_25%,transparent)] bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
   warning: "border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] text-[var(--lms-warning-text)]",
-  error: "border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
+  error: "border-[color-mix(in_srgb,var(--lms-error)_25%,transparent)] bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
 } as const;
 
 export function Alert({ tone = "info", title, className, children, role, ...props }: AlertProps) {

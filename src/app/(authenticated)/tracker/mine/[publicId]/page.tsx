@@ -9,6 +9,8 @@ import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {getMyTrackerReport,listMyTrackerReportHistory,listMyTrackerReportScreenshots} from "@/modules/bug-tracker/reporter-service";
 import {TrackerAdminError} from "@/modules/bug-tracker/admin-errors";
 import {trackerPublicIdSchema} from "@/modules/bug-tracker/admin-validation";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function MyTrackerReportDetail({
   params,
@@ -58,25 +60,25 @@ export default async function MyTrackerReportDetail({
         <div><dt className="font-semibold text-muted-foreground">Section</dt><dd>{report.section || "—"}</dd></div>
         <div><dt className="font-semibold text-muted-foreground">Environment</dt><dd>{report.environment}</dd></div>
       </dl>
-      <h2 className="mt-4 text-base font-semibold text-[var(--lms-heading)]">Description</h2>
+      <Heading level={2} size="base" className="mt-4 text-[var(--lms-heading)]">Description</Heading>
       <p className="mt-2 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{report.description}</p>
       {report.evidenceLink?.startsWith("https://") ? <p className="mt-3 text-sm">
-        <a href={report.evidenceLink} rel="noopener noreferrer" className="font-semibold text-link underline">Open linked evidence</a>
+        <TextLink href={report.evidenceLink} rel="noopener noreferrer">Open linked evidence</TextLink>
       </p> : null}
       <p className="mt-3 text-xs text-muted-foreground">Reported: <time dateTime={report.createdAt.toISOString()}>{report.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</time></p>
     </section>
     <section className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
-      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Screenshots ({screenshots.length})</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)]">Screenshots ({screenshots.length})</Heading>
       {screenshotsResult.status==="rejected"?<Banner tone="warning" role="alert">
-        Screenshots could not be loaded. <a href={"/tracker/mine/"+encodeURIComponent(publicId)} className="font-semibold text-link underline">Retry screenshots</a>
+        Screenshots could not be loaded. <TextLink href={"/tracker/mine/"+encodeURIComponent(publicId)}>Retry screenshots</TextLink>
       </Banner>:screenshots.length===0 ? <p className="text-sm text-muted-foreground">No screenshots attached.</p> :
         <TrackerScreenshotGallery publicId={publicId} screenshots={screenshots}/>}
       <p className="text-xs text-muted-foreground">Preview links are issued only after checking your report ownership and the private file scan.</p>
     </section>
     <section className="space-y-3">
-      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Activity</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)]">Activity</Heading>
       {historyResult.status==="rejected"?<Banner tone="warning" role="alert">
-        Activity could not be loaded. <a href={"/tracker/mine/"+encodeURIComponent(publicId)} className="font-semibold text-link underline">Retry activity</a>
+        Activity could not be loaded. <TextLink href={"/tracker/mine/"+encodeURIComponent(publicId)}>Retry activity</TextLink>
       </Banner>:history.length===0?<p className="text-sm text-muted-foreground">No status changes yet.</p>:
         <ol className="space-y-3">{history.map(row=><li key={row.id} className="border-b border-border pb-3 text-sm">
           <span className="font-semibold">{row.type}</span>

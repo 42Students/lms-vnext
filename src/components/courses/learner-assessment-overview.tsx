@@ -47,6 +47,8 @@ import { learnerAssessmentFiltersActive } from "@/modules/courses/learner-assess
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
 import { learnerAssessmentSubmittedLinkHref } from "@/modules/courses/learner-assessment-submitted-link-model";
 import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type AssignmentResource = {
   id: string;
@@ -508,9 +510,9 @@ export function LearnerAssessmentOverview({
                         {state.label}
                       </StatusBadge>
                     </div>
-                    <h2 className="mt-2 break-words text-base font-semibold text-foreground">
+                    <Heading level={2} size="base" className="mt-2 break-words text-foreground">
                       {item.title}
-                    </h2>
+                    </Heading>
                     <p className="mt-1 text-sm text-body">
                       {item.courseName} ·{" "}
                       {item.lessonName}
@@ -565,7 +567,7 @@ export function LearnerAssessmentOverview({
                     ) : (
                       <Link
                         href={href}
-                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgba(38,186,199,0.35)] md:w-auto"
+                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[color-mix(in_srgb,var(--lms-primary)_35%,transparent)] md:w-auto"
                       >
                         {state.action}
                       </Link>
@@ -601,12 +603,12 @@ export function LearnerAssessmentOverview({
             <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto text-sm"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto text-sm"
             >
               Open in Learning Path
             </Link>
             <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto text-sm">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto text-sm">
               Full assignment details
             </Link>
             </div>
@@ -634,9 +636,9 @@ export function LearnerAssessmentOverview({
             </div>
 
             <section aria-label="Instructions and resources" className="space-y-3">
-              <h3 className="m-0 text-sm font-semibold text-foreground">
+              <Heading level={3} size="sm" className="m-0 text-foreground">
                 Instructions & resources
-              </h3>
+              </Heading>
               {selectedAssignment.description ? (
                 <article className="rounded-[var(--lms-control-radius)] border border-border p-3">
                   <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -667,10 +669,10 @@ export function LearnerAssessmentOverview({
                         <span className="text-xs text-muted-foreground">File preview is unavailable right now.</span>
                       ) : null}
                       {isFile && downloadHref ? (
-                        <a href={downloadHref} rel="noopener noreferrer"
-                          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+                        <TextLink href={downloadHref} rel="noopener noreferrer"
+                          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
                           Download
-                        </a>
+                        </TextLink>
                       ) : null}
                     </div>
                     {resource.kind === "INSTRUCTIONS" && resource.text ? (
@@ -704,9 +706,9 @@ export function LearnerAssessmentOverview({
               <section className="min-w-0 space-y-3 border-t border-border pt-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h3 className="m-0 text-sm font-semibold text-foreground">
+                    <Heading level={3} size="sm" className="m-0 text-foreground">
                       Your submission
-                    </h3>
+                    </Heading>
                     <p className="mt-1 text-xs text-muted-foreground">This is what you submitted for this assignment.</p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       Submitted {formatDate(selectedAssignment.submittedAt)}

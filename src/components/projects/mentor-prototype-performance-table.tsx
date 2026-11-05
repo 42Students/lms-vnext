@@ -13,6 +13,7 @@ import {mentorPointStack} from "@/modules/projects/mentor-point-stack-model";
 import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
 import {mentorSprintPointSparkline} from "@/modules/projects/mentor-member-points-sparkline-model";
 import { Select } from "@/components/ui/select";
+import { Heading } from "@/components/ui/heading";
 
 type Student={id:string;name:string;label:string};
 type FormerStudent={id:string;name:string};
@@ -108,7 +109,7 @@ export function MentorPrototypePerformanceTable({
   return <div className="prototype-mentor-performance">
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title prototype-mentor-performance-filter-bar">
-        <h2>Who did what</h2>
+        <Heading level={2}>Who did what</Heading>
         <label>In
           <Select value={range} onChange={event=>setRange(event.target.value)}>
             <option value="all">All (current task records)</option>
@@ -223,7 +224,7 @@ export function MentorPrototypePerformanceTable({
       </div>
       {studentRows.some(row=>row.insights.length>0)?<div
         className="prototype-mentor-performance-intro" aria-label="Worth a look">
-        <h3>Worth a look · recorded workload signals</h3>
+        <Heading level={3}>Worth a look · recorded workload signals</Heading>
         <ul>{studentRows.flatMap(row=>row.insights.map(signal=>
           <li key={row.student.id+":"+signal.code}>
             <strong>{row.student.name}</strong>: {signal.description}
@@ -234,7 +235,7 @@ export function MentorPrototypePerformanceTable({
     </section>
     <section className="prototype-mentor-backlog-card">
       <div className="prototype-mentor-card-title">
-        <h2>Unassigned work · {unassignedCount} tasks</h2>
+        <Heading level={2}>Unassigned work · {unassignedCount} tasks</Heading>
         <span>{unassignedPoints} estimated points</span>
       </div>
       <p>Use the assignment controls below to allocate current unassigned tasks.

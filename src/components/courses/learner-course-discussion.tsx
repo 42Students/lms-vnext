@@ -25,6 +25,7 @@ import {
   reconcileLatestDiscussionPage,
 } from "./learner-course-discussion-model";
 import {Textarea} from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
 
 type DiscussionCursor = { beforeCreatedAt: string; beforeId: string };
 
@@ -514,12 +515,12 @@ export function LearnerCourseDiscussion({
 
   return (
     <div className="min-w-0 space-y-4">
-      {operationToast?<div role="alert" className="fixed bottom-5 left-1/2 z-50 w-[min(92vw,28rem)] -translate-x-1/2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm text-error shadow-lg">
+      {operationToast?<div role="alert" className="fixed bottom-5 left-1/2 z-(--lms-z-overlay) w-[min(92vw,28rem)] -translate-x-1/2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm text-error shadow-lg">
         {operationToast}
       </div>:null}
-      <h2 className="sr-only">Discussions</h2>
+      <Heading level={2} className="sr-only">Discussions</Heading>
       {!moderate&&pinned ? (
-        <section className="flex min-w-0 items-start gap-2.5 rounded-[12px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-[14px] py-3">
+        <section className="flex min-w-0 items-start gap-3 rounded-[12px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-[16px] py-3">
           <span className="mt-0.5 shrink-0 text-[var(--lms-primary-text)]"><DiscussionPinIcon filled /></span>
           <div className="min-w-0 flex-1">
           <p className="break-words text-sm font-semibold text-foreground">{pinned.messageText}</p>
@@ -582,7 +583,7 @@ export function LearnerCourseDiscussion({
         >
           {scopeUnavailable ? (
             <div className="flex min-h-64 flex-col items-center justify-center gap-2 p-4 text-center">
-              <h3 className="text-base font-semibold text-foreground">Discussion unavailable</h3>
+              <Heading level={3} size="base" className="text-foreground">Discussion unavailable</Heading>
               <p className="max-w-md text-sm text-body">
                 This course is not linked to one of your classes yet, so there is no discussion to show.
               </p>
@@ -594,9 +595,9 @@ export function LearnerCourseDiscussion({
             </div>
           ) : loadError && messages.length === 0 ? (
             <div className="flex min-h-64 flex-col items-center justify-center text-center">
-              <h3 className="m-0 text-base font-semibold text-foreground">
+              <Heading level={3} size="base" className="m-0 text-foreground">
                 We could not load this discussion.
-              </h3>
+              </Heading>
               <p className="mt-2 text-sm text-body">
                 Check your connection and try again.
               </p>
@@ -607,7 +608,7 @@ export function LearnerCourseDiscussion({
           ) : messages.length === 0 ? (
             moderate && canPost ? (
               <div className="flex min-h-64 flex-col items-center justify-center gap-4 p-4 text-center">
-                <h3 className="text-base font-semibold text-foreground">Start the conversation</h3>
+                <Heading level={3} size="base" className="text-foreground">Start the conversation</Heading>
                 <p className="text-sm text-body">Learners are far more likely to post once someone else has. Try a welcome note or this week's focus.</p>
                 <div className="grid w-full min-w-0 gap-2 sm:flex sm:flex-wrap sm:justify-center">
                   <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9"
@@ -659,10 +660,10 @@ export function LearnerCourseDiscussion({
                     key={row.key}
                     className={moderate
                      ? "group grid min-w-0 grid-cols-[36px_minmax(0,1fr)_auto] items-start gap-3 break-words px-4 py-3 "+
-                       (row.item.pinned?"bg-[color:var(--lms-gold-subtle)]":"bg-white hover:bg-[color:var(--lms-neutral-50)]")
+                       (row.item.pinned?"bg-[color:var(--lms-gold-subtle)]":"bg-surface hover:bg-[color:var(--lms-neutral-50)]")
                      : `group grid max-w-full min-w-0 grid-cols-[36px_minmax(0,1fr)_auto] items-start gap-3 break-words rounded-[12px] px-3 py-2
                       ${row.grouped ? "mt-0" : "mt-4"}
-                      ${row.item.isMine ? "bg-[color:var(--lms-primary-subtle)] hover:bg-[color:var(--lms-primary-subtle)]" : "bg-white hover:bg-[color:var(--lms-neutral-50)]"}`}
+                      ${row.item.isMine ? "bg-[color:var(--lms-primary-subtle)] hover:bg-[color:var(--lms-primary-subtle)]" : "bg-surface hover:bg-[color:var(--lms-neutral-50)]"}`}
                   >
                     {row.grouped?<span aria-hidden="true" className="w-8 shrink-0"/>:
                       <span aria-hidden="true" title={row.item.senderRole}
@@ -725,12 +726,12 @@ export function LearnerCourseDiscussion({
         </div>
 
         {scrollEdges.top?<span aria-hidden="true" data-scroll-fade="top"
-          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-5 bg-gradient-to-b from-surface to-transparent"/>:null}
+          className="pointer-events-none absolute inset-x-0 top-0 z-(--lms-z-raised) h-5 bg-gradient-to-b from-surface to-transparent"/>:null}
         {scrollEdges.bottom?<span aria-hidden="true" data-scroll-fade="bottom"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-5 bg-gradient-to-t from-surface to-transparent"/>:null}
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-(--lms-z-raised) h-5 bg-gradient-to-t from-surface to-transparent"/>:null}
         {unseenCount===0 && learnerDiscussionMobileJumpVisible(atBottom,unseenCount,messages.length) ? (
           <Button type="button" onClick={()=>scrollToBottom()}
-            variant="secondary" className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-11 -translate-x-1/2 shadow-md md:hidden">
+            variant="secondary" className="absolute bottom-[10.5rem] left-1/2 z-(--lms-z-raised) min-h-11 -translate-x-1/2 shadow-md md:hidden">
             Jump to latest
           </Button>
         ) : null}
@@ -738,7 +739,7 @@ export function LearnerCourseDiscussion({
           <Button
             type="button"
             onClick={() => scrollToBottom()}
-            className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-11 -translate-x-1/2 shadow-md md:min-h-9"
+            className="absolute bottom-[10.5rem] left-1/2 z-(--lms-z-raised) min-h-11 -translate-x-1/2 shadow-md md:min-h-9"
           >
             ↓ {unseenCount} new {unseenCount === 1 ? "message" : "messages"}
           </Button>
@@ -751,7 +752,7 @@ export function LearnerCourseDiscussion({
               ? "Students can post questions here anytime — you'll see them appear in real time."
               : "Have a doubt about anything in this course? Feel free to ask here."}
           </p>
-          {postNeedsReadback?<div role="alert" className="w-full rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+          {postNeedsReadback?<div role="alert" className="w-full rounded-lg border border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] p-3 text-sm text-[color:var(--lms-warning-strong)]">
             Check the latest messages before posting this draft again.
             <Button type="button" size="sm" variant="secondary" className="mt-2 min-h-11 md:min-h-9"
               onClick={()=>window.location.reload()}>Reload discussions to verify</Button>

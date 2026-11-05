@@ -7,6 +7,7 @@ import {getTpoPrepReadiness,listTpoPrepCourses} from "@/modules/placements/tpo-c
 import {tpoPrepConfigSchema} from "@/modules/placements/tpo-configuration-model";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {buildTpoPreparationCoursePlan} from "@/modules/placements/tpo-preparation-course-plan-model";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 export default async function TpoPreparationCoursePlan(){
  const ctx=await getCurrentRequestContext();
@@ -28,7 +29,7 @@ export default async function TpoPreparationCoursePlan(){
     <p role="status" className="text-sm leading-[22px]">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
     {plan.unresolved>0?<Alert tone="warning">{plan.unresolved} configured course reference(s) are not in this bounded active catalog; their availability is unknown.</Alert>:null}
     {plan.courses.length===0?<EmptyState title="No active preparation courses in the configured subset."/>:<ul className="min-w-0 divide-y divide-border border-y border-border">{plan.courses.map(course=><li key={course.id} className="flex min-w-0 flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-      <h2 className="min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{course.name}</h2><p className="shrink-0 text-xs text-muted-foreground leading-[20px]">{course.code}</p>
+      <Heading level={2} size="base" className="min-w-0 break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{course.name}</Heading><p className="shrink-0 text-xs text-muted-foreground leading-[20px]">{course.code}</p>
     </li>)}</ul>}
   </>}
   </div>;

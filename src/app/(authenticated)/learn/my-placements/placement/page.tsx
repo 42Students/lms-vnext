@@ -14,6 +14,8 @@ import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-o
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import {learnerPlacementCellOfferEmptyMessage} from "@/modules/placements/learner-placement-cell-offer-empty-model";
 import { getOwnLearnerPlacementRulesView } from "@/modules/placements/learner-placement-rules-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function LearnerPlacementCellPage({
  searchParams,
@@ -33,11 +35,11 @@ export default async function LearnerPlacementCellPage({
   const requestWorkspace=requestRead.value;
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <h2 className="text-lg font-semibold text-foreground">Placement cell</h2>
+      <Heading level={2} size="lg" className="text-foreground">Placement cell</Heading>
        <p className="text-sm text-body">Your registration, requests and college placement rules, plus offers, round schedules and notices.</p>
       <nav aria-label="Placement cell sections" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-[var(--lms-canvas-border)] pb-3">
         {([["Registration","#registration"],["Your requests","#requests"],["Placement rules","#rules"],["Offers","#my-offers"],["Schedule","#schedule"],["Notices","#notices"]] as const).map(([label,href])=>
-          <a key={href} href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{label}</a>)}
+          <ButtonLink variant="secondary" key={href} href={href}>{label}</ButtonLink>)}
       </nav>
 
       {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
@@ -54,7 +56,7 @@ export default async function LearnerPlacementCellPage({
       {!requestRead.available ? <Alert tone="warning" role="alert">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry requests</Link></Alert> : null}
       <section id="requests" className="scroll-mt-24 min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6" aria-labelledby="placement-requests-heading">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
-          <h2 id="placement-requests-heading" className="text-lg font-semibold text-[var(--lms-heading)]">Your requests</h2>
+          <Heading level={2} size="lg" id="placement-requests-heading" className="text-[var(--lms-heading)]">Your requests</Heading>
           <Link href="/learn/my-placements/support" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Request history →</Link>
         </div>
         <p className="text-sm text-body">All types of placement requests are tracked in My support-request history. Application, round and offer requests appear below alongside the other request form.</p>
@@ -71,7 +73,7 @@ export default async function LearnerPlacementCellPage({
         />
       </section>
       <section id="rules" className="scroll-mt-24 min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
-        <h2 className="border-b border-[var(--lms-canvas-border)] pb-3 text-lg font-semibold text-[var(--lms-heading)]">Placement rules</h2>
+        <Heading level={2} size="lg" className="border-b border-[var(--lms-canvas-border)] pb-3 text-[var(--lms-heading)]">Placement rules</Heading>
         {rulesRead.available && rulesRead.value?.policyView ? (
           <div className="mt-3 min-w-0 space-y-2">
             <p className="text-sm leading-6 text-body">{rulesRead.value.policyView.personal}</p>
@@ -91,14 +93,14 @@ export default async function LearnerPlacementCellPage({
         <Link href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Read placement rules</Link>
       </section>
       <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
-        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Need help with a placement decision?</h2>
+        <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">Need help with a placement decision?</Heading>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
         <Link href="/learn/my-placements/support" className="mr-4 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">My support-request history →</Link>
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Read placement rules →</Link>
       </section>
       {offerRows.length===0 ? (
         <section aria-labelledby="learner-official-offers-heading" className="border-b border-border pb-6">
-          <h2 id="learner-official-offers-heading" className="text-base font-semibold text-[var(--lms-heading)]">Official offers</h2>
+          <Heading level={2} size="base" id="learner-official-offers-heading" className="text-[var(--lms-heading)]">Official offers</Heading>
           <p className="mt-2 text-sm text-body">{learnerPlacementCellOfferEmptyMessage(offerRows.length)}</p>
           <Link href="/learn/my-placements/applications"
             className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
@@ -119,7 +121,7 @@ export default async function LearnerPlacementCellPage({
         acceptedDisputableUntil:row.offer.acceptedDisputableUntil?.toISOString()??null, joining: row.joining ? { status: row.joining.status as "PENDING" | "JOINED" | "DID_NOT_JOIN" | "DEFERRED", joiningDate: row.joining.joiningDate, reason: row.joining.reason } : null }))} />}
       <section id="schedule" aria-labelledby="placement-schedule-heading" className="scroll-mt-24 min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
-          <h2 id="placement-schedule-heading" className="text-lg font-semibold text-[var(--lms-heading)]">Your schedule</h2>
+          <Heading level={2} size="lg" id="placement-schedule-heading" className="text-[var(--lms-heading)]">Your schedule</Heading>
           <Link href="/learn/my-placements/schedule" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">View all rounds →</Link>
         </div>
         {!requestRead.available?<p role="status" className="text-sm text-body">Schedule details cannot be verified right now. Open the full schedule to retry.</p>:
@@ -139,7 +141,7 @@ export default async function LearnerPlacementCellPage({
       </section>
       <section id="notices" aria-labelledby="placement-notices-heading" className="scroll-mt-24 min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
-          <h2 id="placement-notices-heading" className="text-lg font-semibold text-[var(--lms-heading)]">Notices and placement alerts</h2>
+          <Heading level={2} size="lg" id="placement-notices-heading" className="text-[var(--lms-heading)]">Notices and placement alerts</Heading>
           <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Read all college notices →</Link>
         </div>
         <p className="text-sm leading-6 text-body">College-wide notices are published in Announcements. Personal alerts are separate and may include attendance or placement-status changes.</p>

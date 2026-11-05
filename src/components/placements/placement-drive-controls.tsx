@@ -17,6 +17,8 @@ import { useToast } from "@/components/ui/toast";
 import { PlacementCandidateEvidenceEditor } from "./placement-candidate-evidence-editor";
 import type { TpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
 import {projectTpoRoundFacts} from "@/modules/placements/tpo-round-facts-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type RoundKind =
   | "TALK"
@@ -811,9 +813,9 @@ export function PlacementDriveControls({
         <div className="border-b border-border pb-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="m-0 text-base font-semibold text-foreground">
+              <Heading level={2} size="base" className="m-0 text-foreground">
                 Screening queue
-              </h2>
+              </Heading>
               <p className="mt-1 text-sm text-body">
                 Candidate-facing messages stay separate from internal review notes.
               </p>
@@ -886,7 +888,7 @@ export function PlacementDriveControls({
                       ] ? (
                         <>
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                            <span className="text-xs font-semibold uppercase tracking-[.05em] text-muted-foreground">
                               Eligibility
                             </span>
                             <StatusBadge
@@ -1198,9 +1200,9 @@ export function PlacementDriveControls({
         <div className="border-b border-border pb-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="m-0 text-base font-semibold text-foreground">
+              <Heading level={2} size="base" className="m-0 text-foreground">
                 Evaluation plan
-              </h2>
+              </Heading>
               <p className="mt-1 text-sm text-body">
                 One atomic round plan; it locks as soon as execution starts.
               </p>
@@ -1425,9 +1427,9 @@ export function PlacementDriveControls({
 
       <section className="space-y-4">
         <div>
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <Heading level={2} size="base" className="m-0 text-foreground">
             Round operations & results
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Stage results first. Applying a staged result is the explicit step that advances candidate progression.
           </p>
@@ -1442,10 +1444,10 @@ export function PlacementDriveControls({
                       String(scheduleWarnings.unknown) + " unassessable round(s) in this drive."
                     : "No persisted venue overlap was proven for the current drive within the assessed upcoming window. This is not schedule clearance."}
               {" "}
-              <a href="/tpo/placements/schedule-conflicts?days=90"
-                className="font-semibold text-primary-text hover:underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              <TextLink href="/tpo/placements/schedule-conflicts?days=90"
+                className="max-md:inline-flex max-md:min-h-11 max-md:items-center">
                 Review college venue conflicts →
-              </a>
+              </TextLink>
               <p className="mt-1 text-xs text-muted-foreground">
                 Persisted on-campus schedules only; unsaved form edits, student conflicts
                 and dates outside the next 90 days are not assessed. Recheck after saving.
@@ -1468,9 +1470,9 @@ export function PlacementDriveControls({
                     Round {round.sequence} ·{" "}
                     {humanize(round.kind)}
                   </p>
-                  <h3 className="mt-1 text-lg font-semibold text-foreground">
+                  <Heading level={3} size="lg" className="mt-1 text-foreground">
                     {round.name}
-                  </h3>
+                  </Heading>
                 </div>
                 <StatusBadge
                   tone={
@@ -1492,18 +1494,18 @@ export function PlacementDriveControls({
                 <div><dt className="text-xs text-body">Mode</dt><dd>{facts.mode}</dd></div>
                 <div><dt className="text-xs text-body">When</dt><dd>{facts.when}</dd></div>
                 <div><dt className="text-xs text-body">Venue or meeting link</dt><dd className="break-words">{round.mode==="VIRTUAL"&&round.meetingUrl?
-                  <a href={round.meetingUrl} rel="noopener noreferrer" className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open meeting link</a>:facts.place}</dd></div>
+                  <TextLink href={round.meetingUrl} rel="noopener noreferrer" className="max-md:inline-flex max-md:min-h-11 max-md:items-center">Open meeting link</TextLink>:facts.place}</dd></div>
                 <div><dt className="text-xs text-body">Students in this round</dt>
-                  <dd><a className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                  <dd><TextLink className="max-md:inline-flex max-md:min-h-11 max-md:items-center"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(data.jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}>
-                    {facts.students} · see who</a></dd>
+                    {facts.students} · see who</TextLink></dd>
                 </div>
                 <div><dt className="text-xs text-body">Results</dt><dd>{facts.results}</dd></div>
                 <div><dt className="text-xs text-body">Results expected by</dt><dd>{facts.due}</dd></div>
                 {facts.duration!=null?<div><dt className="text-xs text-body">Duration</dt><dd>{facts.duration} minutes</dd></div>:null}
                 {facts.platform?<div><dt className="text-xs text-body">Test platform</dt><dd>{facts.platform}</dd></div>:null}
                 {facts.testUrl?<div><dt className="text-xs text-body">Test link</dt><dd>
-                  <a className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" rel="noopener noreferrer" href={facts.testUrl}>Open test</a>
+                  <TextLink className="max-md:inline-flex max-md:min-h-11 max-md:items-center" rel="noopener noreferrer" href={facts.testUrl}>Open test</TextLink>
                 </dd></div>:null}
                 {facts.bring?<div className="sm:col-span-2"><dt className="text-xs text-body">What to bring</dt><dd>{facts.bring}</dd></div>:null}
               </dl>

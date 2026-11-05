@@ -60,7 +60,7 @@ export function SessionResponseGuard() {
   }, []);
   return accessRevoked ? (
     <div role="alert"
-      className="fixed bottom-4 left-4 z-[90] max-w-sm rounded-md border border-border bg-surface p-3 text-sm text-primary-text shadow-md">
+      className="fixed bottom-4 left-4 z-(--lms-z-dropdown) max-w-sm rounded-md border border-border bg-surface p-3 text-sm text-primary-text shadow-md">
       Access changed. Switch to an authorized workspace or refresh this page.
       <Button variant="bare" type="button" onClick={()=>setAccessRevoked(false)}
         className="ml-2 font-semibold underline">Dismiss</Button>

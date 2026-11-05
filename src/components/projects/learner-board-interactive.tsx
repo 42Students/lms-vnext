@@ -16,6 +16,7 @@ import {LearnerDeleteOwnTask} from "./learner-own-task-controls";
 import {canLearnerMoveOwnTask} from "@/modules/projects/learner-task-status-policy";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerBoardTaskHref,type LearnerTaskBoardUrlFilters} from "@/modules/projects/learner-board-task-detail-model";
+import { Heading } from "@/components/ui/heading";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;templateKey:string;
  updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null};
 type Sprint={id:string;status:string;title:string};
@@ -120,9 +121,9 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
       onDragOver={event=>{if(statuses.includes(lane.id as EditableStatus))event.preventDefault()}}
       onDrop={event=>drop(event,lane.id)}
       >
-     <h2 className={styles["header"]}>
+     <Heading level={2} className={styles["header"]}>
       <span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge>
-     </h2>
+     </Heading>
      <ul className={styles["body"]}>{lane.tasks.map(task=>{
       const own=membershipId!==null&&task.assigneeMembershipId===membershipId;
       const editable=!readOnly&&own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);

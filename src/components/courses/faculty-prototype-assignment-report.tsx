@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {facultyReportCsvHref} from "@/modules/courses/faculty-report-csv-request";
 import type {getFacultyAssignmentReport} from "@/modules/courses/faculty-assessment-report-service";
+import { Heading } from "@/components/ui/heading";
 
 type Report=Awaited<ReturnType<typeof getFacultyAssignmentReport>>;
 const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
@@ -56,13 +57,13 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
    </nav>
   </header>
   <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{values.map(item=><div key={item.label}
-   className="rounded-xl border border-[color:var(--lms-border)] px-[18px] py-4">
+   className="rounded-xl border border-[color:var(--lms-border)] px-[20px] py-4">
    <dt className="faculty-proto-subtitle">{item.label}</dt>
-   <dd className="mt-1 text-2xl font-extrabold text-[color:var(--lms-heading)] tabular-nums">{item.value}</dd>
+   <dd className="mt-1 text-2xl font-bold text-[color:var(--lms-heading)] tabular-nums">{item.value}</dd>
   </div>)}</dl>
   <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-   <section className="rounded-xl border border-[color:var(--lms-border)] px-[18px] py-5">
-    <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">Score distribution</h2>
+   <section className="rounded-xl border border-[color:var(--lms-border)] px-[20px] py-5">
+    <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">Score distribution</Heading>
     {metrics.graded? <div className="mt-4 flex min-h-[158px] items-end gap-2" role="img"
      aria-label={distribution.map(bucket=>bucket.label+": "+bucket.count).join(", ")}>
      {[...distribution].reverse().map(bucket=><div className="flex min-w-0 flex-1 flex-col items-center"
@@ -74,20 +75,20 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
      </div>)}
     </div>:<p className="faculty-proto-subtitle mt-5">No graded submissions yet.</p>}
    </section>
-   <section className="rounded-xl border border-[color:var(--lms-border)] px-[18px] py-5">
-    <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">When they handed in</h2>
+   <section className="rounded-xl border border-[color:var(--lms-border)] px-[20px] py-5">
+    <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">When they handed in</Heading>
     <dl className="mt-2 divide-y divide-[color:var(--lms-neutral-100)]">{summary.map(item=><div key={item.label}
      className="flex items-center justify-between py-3 text-sm">
      <dt className="text-[color:var(--lms-text-body)]">{item.label}</dt>
      <dd className={"font-semibold tabular-nums "+(item.label==="Late"&&item.value!==0?
-       "text-red-700":"text-[color:var(--lms-heading)]")}>{item.value}</dd>
+       "text-[color:var(--lms-error-text)]":"text-[color:var(--lms-heading)]")}>{item.value}</dd>
     </div>)}</dl>
     {report.rosterUnavailable?<p className="faculty-proto-subtitle">The roster is unavailable; missing counts cannot be calculated.</p>:null}
    </section>
   </div>
   <section className="overflow-hidden rounded-xl border border-[color:var(--lms-border)]">
-   <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--lms-border)] px-[18px] py-4">
-    <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">Student scores</h2>
+   <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--lms-border)] px-[20px] py-4">
+    <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">Student scores</Heading>
     <Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
      href={csvHref}>Download as spreadsheet</Link>
    </header>
@@ -99,9 +100,9 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
       const href=gradeHref+"&student="+encodeURIComponent(item.id);
       return <tr key={item.id}>
        <td>{item.learnerDisplayName?.trim()||"Student"}</td>
-       <td>{graded?<span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-800">
+       <td>{graded?<span className="rounded-full bg-[color:var(--lms-success-surface)] px-2 py-1 text-xs font-bold text-[color:var(--lms-success)]">
         {item.pointsAwarded} / {assignment.maxPoints}</span>:
-        <span className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-700">To grade</span>}</td>
+        <span className="rounded-full bg-[color:var(--lms-error-surface)] px-2 py-1 text-xs font-bold text-[color:var(--lms-error-text)]">To grade</span>}</td>
        <td>{dayLabel(item.submittedAt)}</td>
        <td className="text-right"><Link className={(graded?"faculty-proto-secondary":"faculty-proto-action")+
         " !min-h-9 !px-3 !py-1.5 !text-xs"} href={href}>{graded?"Open":"Grade"}</Link></td>
@@ -109,7 +110,7 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
      })}
      {!report.rosterUnavailable?missingLearners.map(student=><tr key={"missing-"+student.membershipId}>
       <td>{student.displayName?.trim()||"Student"}</td>
-      <td><span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-[color:var(--lms-text-muted)]">Missing</span></td>
+      <td><span className="rounded-full bg-[color:var(--lms-neutral-100)] px-2 py-1 text-xs font-bold text-[color:var(--lms-text-muted)]">Missing</span></td>
       <td>—</td>
       <td className="text-right"><Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
        href={"/teacher/courses/"+encodeURIComponent(assignment.deliveryId)+"/students/"+

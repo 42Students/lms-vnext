@@ -143,11 +143,11 @@ export function LearnerSkillCatalogInput({value,onChange,disabled=false,showPopu
      :"Failed to search. Please try again."}
   </p>:null}
   {popupOpen&&resultsReady&&visibleItems.length>0?<PopoverListbox id={id+"-choices"} label="Suggested skills"
-    className="absolute left-0 top-full z-[var(--lms-z-dropdown)] mt-[var(--lms-space-2)] max-h-[400px] w-full min-w-0 overflow-y-auto shadow-[var(--lms-elevation-3)]" onDismiss={() => {setPopupOpen(false);setActiveIndex(-1);}}>
+    className="absolute left-0 top-full z-[var(--lms-z-dropdown)] mt-[var(--lms-space-2)] max-h-[400px] w-full min-w-0 overflow-y-auto shadow-(--lms-elevation-3)" onDismiss={() => {setPopupOpen(false);setActiveIndex(-1);}}>
     <ul className="m-0 divide-y divide-[var(--lms-canvas-border)] list-none p-0">
     {visibleItems.map((item,index)=><li id={id+"-choice-"+index} key={item.id} role="option" aria-selected={activeIndex===index||item.displayName===value} className="min-h-11">
       {listSection(index)?<p aria-hidden="true" className="border-b border-border bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground">{listSection(index)}</p>:null}
-      <Button type="button" variant="ghost" className="!min-h-11 w-full min-w-0 justify-start !rounded-none !px-[var(--lms-space-3)] !py-[var(--lms-space-2)] text-left text-[13px] !transition-[background-color] !duration-[200ms] !ease-in-out hover:!bg-[var(--lms-primary-subtle)]"
+      <Button type="button" variant="ghost" className="!min-h-11 w-full min-w-0 justify-start !rounded-none !px-[var(--lms-space-3)] !py-[var(--lms-space-2)] text-left text-[13px] !transition-[background-color] !duration-[var(--lms-motion-fast)] !ease-[var(--lms-motion-ease)] hover:!bg-[var(--lms-primary-subtle)]"
        onClick={()=>choose(item)}>
        <span aria-hidden="true" className="mr-2 text-xs">{!value.trim()&&index<recentCount?"◷":!value.trim()?"♨":"⌕"}</span>
        <span className="min-w-0 flex-1 truncate">{item.displayName}</span>

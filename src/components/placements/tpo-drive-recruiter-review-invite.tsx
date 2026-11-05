@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Alert} from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 type Preview={jobTitle:string;companyName:string;verifiedDomain:string|null;canInvite:boolean;
  publicLinkAvailable:boolean};
@@ -55,7 +56,7 @@ export function TpoDriveRecruiterReviewInvite({jobId}:{jobId:string}){
  }
  return <section className="space-y-3 border-b border-border pb-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h2 className="text-base font-semibold text-foreground">Recruiter review</h2>
+   <div><Heading level={2} size="base" className="text-foreground">Recruiter review</Heading>
     <p className="text-sm text-body">Invite the company's reviewer before resolving requested drive changes.</p>
    </div>
    <Button type="button" variant="secondary" onClick={()=>void show()}>Invite the recruiter to review</Button>

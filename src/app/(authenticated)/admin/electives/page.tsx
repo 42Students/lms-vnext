@@ -18,6 +18,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {adminElectiveQuerySchema} from "@/modules/electives/admin-directory-model";
 import {listSuperAdminElectives} from "@/modules/electives/admin-directory-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic="force-dynamic";
 // Server-side listing defaults to 20 rows per page.
@@ -197,7 +198,7 @@ export default async function SuperAdminElectivesPage({
   {selected?<section id="selected-slot" aria-label={"Selected elective slot "+selected.name}
    className="scroll-mt-20 space-y-4 border-t border-border pt-5">
    <div className="flex flex-wrap items-center justify-between gap-3">
-    <div><h2 className="text-lg font-semibold text-heading">{selected.name}</h2>
+    <div><Heading level={2} size="lg" className="text-heading">{selected.name}</Heading>
      <p className="text-sm text-body">{selected.programName} · Semester {selected.semesterNumber}</p>
     </div>
     <Link href={link(current)} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Close details</Link>

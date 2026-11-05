@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Heading } from "@/components/ui/heading";
 
 type Learner={membershipId:string;name:string;rollNumber:string|null};
 
@@ -47,7 +48,7 @@ export function CollegeCourseRetakeAction({learners,offeringId,deliveryId,course
   }
   return <section className="min-w-0 space-y-3 border-b border-border pb-4 print:hidden"
     aria-label="Start next course attempt">
-    <h2 className="font-semibold text-foreground">Start next attempt</h2>
+    <Heading level={2} className="text-foreground">Start next attempt</Heading>
     <p className="text-sm text-muted-foreground">
       Select a learner in the chosen Class and Course. Starting another attempt resets recorded content progress
       without deleting any previous attempt history.

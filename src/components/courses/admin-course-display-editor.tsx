@@ -12,6 +12,8 @@ import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { apiFetch } from "@/lib/api-fetch";
 import {courseThumbnailUrlSchema} from "@/modules/courses/validation";
 import type {LegacyCourseMetadataField} from "@/modules/courses/legacy-course-metadata-preview";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 type CourseMetadata = {
  id:string;name:string;code:string;shortTitle:string|null;
@@ -277,9 +279,9 @@ export function AdminCourseDisplayEditor({
     return (
       <section className="min-w-0" aria-label="Course Home content">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <h3 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="base" className="m-0 text-[var(--lms-heading)]">
             Course Home content
-          </h3>
+          </Heading>
           <StatusBadge tone="warning">Migration pending</StatusBadge>
         </div>
         <p className="mt-2 max-w-prose break-words text-sm leading-[22px] text-body">
@@ -295,9 +297,9 @@ export function AdminCourseDisplayEditor({
     <section className="min-w-0" aria-label="Course Home content" aria-busy={pending}>
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="base" className="m-0 text-[var(--lms-heading)]">
             Course Home content
-          </h3>
+          </Heading>
           <p className="mt-1 max-w-prose text-xs leading-5 text-muted-foreground">
             Shared public Course overview.
           </p>
@@ -399,7 +401,7 @@ export function AdminCourseDisplayEditor({
             </span>
           </label>
           <div className="min-w-0 space-y-3">
-            <h4 className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Course image</h4>
+            <Heading level={4} size="sm" className="text-[var(--lms-neutral-400)]">Course image</Heading>
             <p className="text-xs leading-5 text-muted-foreground">
               Choose a JPEG, PNG or WebP image up to 5 MiB. Upload directly to private storage,
               then check the receipt before it appears in the course.
@@ -439,7 +441,7 @@ export function AdminCourseDisplayEditor({
             {thumbnailUrl.trim()&&!thumbnailIssue?(
               <div className="min-w-0 space-y-2">
                 {/* The active private route never leaks a bucket/object key or signed URL. */}
-                <img src={thumbnailUrl.trim()} width={240} height={140}
+                <Img src={thumbnailUrl.trim()} width={240} height={140}
                   alt="Course thumbnail preview" loading="lazy"
                   className="max-h-40 max-w-full rounded-[var(--lms-control-radius)] border border-border object-contain"/>
                 <div className="flex flex-wrap items-center gap-2">

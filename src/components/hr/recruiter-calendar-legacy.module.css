@@ -29,7 +29,7 @@
    * Setting display:grid here would outrank .hidden at <=860px, duplicating
    * the mobile agenda and causing horizontal overflow. */
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
   padding-bottom: 6px;
 }
@@ -54,7 +54,7 @@
 }
 .day[data-today="true"] {
   border-color: var(--lms-info-blue);
-  box-shadow: inset 0 0 0 1px var(--lms-info-blue);
+  box-shadow: var(--lms-ring-inset-subtle);
 }
 .day[data-outside="true"] {
   background: var(--lms-neutral-50);
@@ -108,7 +108,7 @@
 /* At <=1099px the route renders occupied-day articles instead of a
  * seven-column grid; the hidden CalendarGrid must never create a horizontal
  * 1110px overflow region beneath those mobile articles. */
-@media (max-width: 1099px) {
+@media (max-width: 991px) {
   .board[data-slot="calendar-grid"] {
     grid-template-columns: minmax(0, 1fr);
   }

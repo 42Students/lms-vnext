@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {useState,type KeyboardEvent} from "react";
 import {tpoBatchShortcut,tpoBatchVisibleSelection,tpoBatchSelectedClipboard}
  from "@/modules/placements/tpo-batch-keyboard-actions-model";
+import { ButtonLink } from "@/components/ui/button-link";
 type Row={id:string;name:string;rollNumber?:string|null};
 export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonly Row[];downloadHref?:string}){
  const [selected,setSelected]=useState<string[]>([]);
@@ -46,7 +47,7 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
     className="min-h-11 px-3 md:min-h-9">Clear selection</Button>
    <Button variant="secondary" type="button" disabled={!valid.length} onClick={()=>void copy()}
     className="min-h-11 px-3 md:min-h-9">Copy selected</Button>
-   {downloadHref?<a href={downloadHref} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export filtered page CSV</a>:null}
+   {downloadHref?<ButtonLink variant="secondary" href={downloadHref}>Export filtered page CSV</ButtonLink>:null}
   </div>
   <label className="flex min-h-11 items-center gap-2 text-sm">
    <Checkbox checked={rows.length>0&&valid.length===rows.length}

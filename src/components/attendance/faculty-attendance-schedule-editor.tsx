@@ -11,6 +11,7 @@ import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {localDateTimeInput,validateFacultyScheduleWindow,facultyScheduleInstants} from
   "@/modules/attendance/faculty-schedule-editor-model";
+import { Heading } from "@/components/ui/heading";
 
 type Session={
   id:string;title:string;startsAt:string;endsAt:string;
@@ -90,7 +91,7 @@ export function FacultyAttendanceScheduleEditor({
   return <section aria-label="Faculty attendance session scheduling"
     className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
     <div className="min-w-0 space-y-1">
-      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Schedule an attendance session</h2>
+      <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Schedule an attendance session</Heading>
       <p className="m-0 max-w-prose text-[13px] leading-5 text-muted-foreground">
         Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
         Only sessions you scheduled and have not marked for attendance can be rescheduled.

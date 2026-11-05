@@ -11,6 +11,7 @@ import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.modul
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
 import { tpoScheduleConflictsQuerySchema } from "@/modules/placements/tpo-schedule-conflicts-model";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = { days?: string | string[] };
 const dateTime = new Intl.DateTimeFormat("en-IN", {
@@ -72,7 +73,7 @@ export default async function TpoScheduleConflictsPage({
           </Select>
         </label>
         <Button variant="primary" type="submit"
-          className="w-full min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:w-auto">
+          className="w-full min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary sm:w-auto">
           Apply
         </Button>
       </form>
@@ -94,7 +95,7 @@ export default async function TpoScheduleConflictsPage({
       </p>
       <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <div className="border-b border-[var(--lms-canvas-border)] pb-3">
-          <h2 className="text-lg font-semibold text-foreground">Confirmed venue/time overlaps</h2>
+          <Heading level={2} size="lg" className="text-foreground">Confirmed venue/time overlaps</Heading>
         </div>
         {data.conflicts.length === 0 ? (
           <EmptyState title="No overlapping on-campus venue bookings could be proven among the assessed rounds. This does not certify the whole schedule as conflict-free."/>
@@ -121,7 +122,7 @@ export default async function TpoScheduleConflictsPage({
       </section>
       <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <div className="border-b border-[var(--lms-canvas-border)] pb-3">
-          <h2 className="text-lg font-semibold text-foreground">Cannot fully assess</h2>
+          <Heading level={2} size="lg" className="text-foreground">Cannot fully assess</Heading>
         </div>
         {data.unassessable.length === 0 ? (
           <p className="py-4 text-sm text-body">

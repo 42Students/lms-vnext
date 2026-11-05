@@ -43,13 +43,13 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
      cannot be resumed automatically; copy the details into a new request before
      clearing the old browser data.
    </p>:null}
-   <div className="mt-3 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-center">
+   <div className="mt-3 flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
    <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
     Continue
    </Link>
    {hasDraft?<Button variant="ghost" type="button"
-    className="min-h-11 w-full text-primary-text underline underline-offset-4 min-[768px]:min-h-9 min-[768px]:w-auto"
+    className="min-h-11 w-full text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto"
     onClick={()=>{setError("");setConfirmDiscard(true);}}>Discard saved draft</Button>:null}
    </div>
    <ConfirmActionDialog open={confirmDiscard}

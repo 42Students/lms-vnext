@@ -15,7 +15,7 @@ export default function CollegeContactsError({ reset }: { error: Error & { diges
   },[]);
   return <>
     {noticeVisible?<div role="status" aria-live="polite"
-      className="fixed bottom-5 right-5 z-50 w-[min(calc(100vw-2.5rem),25rem)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-lg">
+      className="fixed bottom-5 right-5 z-(--lms-z-overlay) w-[min(calc(100vw-2.5rem),25rem)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-lg">
       <strong className="block text-sm text-foreground">Couldn't load contacts</strong>
       <p className="mt-1 text-sm text-body">Something went wrong on our end. Please refresh the page or try again shortly.</p>
     </div>:null}

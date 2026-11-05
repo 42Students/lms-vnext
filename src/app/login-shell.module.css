@@ -26,7 +26,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(241, 244, 249, .82);
+  background: color-mix(in srgb, var(--lms-neutral-100) 82%, transparent);
 }
 .mobileBackdrop { display: none; }
 .brandHeader {
@@ -42,7 +42,7 @@
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  gap: 11px;
+  gap: 12px;
 }
 .legacyLogo {
   display: block;
@@ -69,8 +69,8 @@
 .wordmark {
   color: var(--auth-ink);
   font-size: 24px;
-  font-weight: 750;
-  letter-spacing: -.055em;
+  font-weight: 700;
+  letter-spacing: -.02em;
   line-height: 1;
 }
 .wordmarkAccent { color: var(--auth-primary); }
@@ -93,7 +93,7 @@
 .card {
   width: min(100%, 468px);
   min-width: 0;
-  padding: 40px 42px 38px;
+  padding: 40px 44px 40px;
   border: 1px solid var(--auth-border);
   border-radius: var(--lms-canvas-radius, 12px);
   background: var(--lms-surface, var(--lms-white));
@@ -105,7 +105,7 @@
   font-family: inherit;
   font-size: 30px;
   font-weight: 600;
-  letter-spacing: -.035em;
+  letter-spacing: -.02em;
   line-height: 40px;
 }
 .card :global(.login-form > p) {
@@ -124,12 +124,12 @@
   min-height: 40px;
   border-radius: 8px;
   color: var(--auth-body);
-  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease), background-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
 }
  .card :global([role="tab"][aria-selected="true"]) {
   background: var(--lms-surface, var(--lms-white));
   color: var(--auth-primary);
-  box-shadow: 0 1px 4px rgba(23, 32, 51, .10);
+  box-shadow: var(--lms-elevation-1);
 }
 .card :global(label span:first-child) { color: var(--auth-ink); }
 .card :global(input[name="contact"]), .card :global(input[name="code"]),
@@ -140,17 +140,17 @@
   border: 1px solid var(--lms-border);
   border-radius: 10px;
   background: var(--lms-surface, var(--lms-white));
-  padding: 15px 10px;
+  padding: 16px 12px;
   height: auto;
   color: var(--lms-input-text, var(--lms-black));
   font-size: 14px;
   line-height: 20px;
   letter-spacing: .2px;
-  transition: border-color .2s ease, box-shadow .2s ease;
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .card :global(input:focus-visible) {
   border-color: var(--auth-primary);
-  box-shadow: 0 0 0 2px rgba(38, 186, 199, .15);
+  box-shadow: var(--lms-focus-ring);
   outline: 2px solid var(--auth-primary);
   outline-offset: 1px;
 }
@@ -162,17 +162,17 @@
   background: var(--auth-primary);
   color: var(--lms-on-primary, var(--lms-white));
   font-size: 14px;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 20px;
   box-shadow: none;
-  transition: background-color .15s ease, box-shadow .15s ease;
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .card :global(button[type="submit"]:hover:not(:disabled)) { background: color-mix(in srgb, var(--auth-primary) 90%, var(--lms-black)); }
 .card :global(button[type="submit"]:focus-visible) {
-  outline: 3px solid rgba(10, 124, 136, .25);
+  outline: 3px solid color-mix(in srgb, var(--lms-button-primary) 25%, transparent);
   outline-offset: 2px;
 }
-.card :global(button[type="submit"]:disabled) { opacity: .55; cursor: not-allowed; }
+.card :global(button[type="submit"]:disabled) { opacity: .6; cursor: not-allowed; }
 .card :global(button:not([type="submit"])):focus-visible,
 .footer a:focus-visible {
   outline: 2px solid var(--auth-primary);
@@ -185,19 +185,19 @@
 .card :global(button:not([type="submit"]):not([role="tab"])),
 .card :global(a) { color: var(--auth-primary); }
 .card :global(button:disabled:not([type="submit"])) { color: var(--lms-neutral-400, var(--lms-neutral-400)); }
-.status { margin-bottom: 16px; border-radius: var(--lms-control-radius, 9px); padding: 14px 16px; font-size: 14px; line-height: 22px; }
+.status { margin-bottom: 16px; border-radius: var(--lms-control-radius, 9px); padding: 16px 16px; font-size: 14px; line-height: 22px; }
 .statusWarning { border: 1px solid var(--lms-gold-subtle); background: var(--lms-gold-subtle); color: var(--lms-warning-strong); }
 .statusError { border: 1px solid var(--lms-error-surface); background: var(--lms-error-surface); color: var(--lms-error-strong); }
-.statusTitle { margin: 0 0 4px; font-weight: 650; }
+.statusTitle { margin: 0 0 4px; font-weight: 600; }
 .statusMessage { margin: 0; overflow-wrap: anywhere; }
-.statusLink { display: inline-block; margin-top: 12px; color: var(--auth-primary); font-weight: 650; text-decoration: underline; }
+.statusLink { display: inline-block; margin-top: 12px; color: var(--auth-primary); font-weight: 600; text-decoration: underline; }
 .footer {
   z-index: 1;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 10px 20px;
+  gap: 12px 20px;
   padding: 20px clamp(24px, 5vw, 72px) 28px;
   color: var(--lms-muted-text, var(--lms-text-muted));
   font-size: 12px;
@@ -207,21 +207,21 @@
 .footer a { color: var(--auth-body); text-decoration: none; }
 .footer a:hover { color: var(--auth-primary); text-decoration: underline; }
 @media (max-width: 767px) {
-  .brandHeader { padding: 20px 22px; }
-  .brandRow { gap: 9px; }
+  .brandHeader { padding: 20px 24px; }
+  .brandRow { gap: 8px; }
   .wordmark { font-size: 20px; }
   .collegeBrand { width: 100%; justify-content: flex-start; }
   .collegeName { flex: 1; }
-  .center { align-items: start; padding: 28px 14px 36px; }
+  .center { align-items: start; padding: 28px 16px 36px; }
   .card { padding: 24px 20px; border-radius: 12px; }
   .card :global(.login-form[data-step="code"] form > div:has(> button)) { min-width: 0; }
-  .footerLinks { gap: 10px 16px; }
+  .footerLinks { gap: 12px 16px; }
   .card :global(button[type="submit"]) { min-height: var(--lms-touch-target, 44px); }
   .card :global([role="tab"]) { min-height: var(--lms-touch-target, 44px); }
   .card :global(.login-form > h2) { font-size: 24px; line-height: 36px; }
   .desktopBackdrop { display: none; }
   .mobileBackdrop { display: block; }
-  .footer { padding: 16px 22px 24px; }
+  .footer { padding: 16px 24px 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .card :global(button), .card :global(input), .card :global([role="tab"]) { transition: none; }
@@ -230,11 +230,11 @@
 /* Exact legacy SCSS error and disabled field colors. The active keyboard outline remains visible. */
 .card :global(input[aria-invalid="true"]) {
   border-color: var(--lms-error);
-  background: rgba(239, 68, 68, .06);
+  background: color-mix(in srgb, var(--lms-error) 6%, transparent);
 }
 .card :global(input[aria-invalid="true"]:focus-visible) {
   border-color: var(--lms-error);
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, .2);
+  box-shadow: var(--lms-focus-ring-error);
   outline-color: var(--lms-error);
 }
 .card :global(input::placeholder) { color: var(--lms-neutral-400); opacity: 1; }
@@ -250,7 +250,7 @@
   text-align: center;
   font-size: 18px;
   font-weight: 600;
-  letter-spacing: .35em;
+  letter-spacing: .16em;
   font-variant-numeric: tabular-nums;
   padding-left: 16px;
   padding-right: 12px;
@@ -280,12 +280,12 @@
 }
 .card :global(.login-form p[role="status"]),
 .card :global(.login-form div[role="status"]) { line-height: 22px; }
-@media (max-width: 400px) {
+@media (max-width: 639px) {
   .card :global(.login-form[data-step="code"] form > div) { row-gap: 8px; }
   .card :global(.login-form[data-step="code"] input[name="code"]),
   .card :global(.login-form[data-step="code"] input[name="secondCode"]) {
     font-size: 16px;
-    letter-spacing: .3em;
+    letter-spacing: .16em;
   }
 }
 
@@ -293,7 +293,7 @@
    keyboard entry target without adding another card or layout landmark. */
 .skipLink {
   position: fixed;
-  z-index: 20;
+  z-index: var(--lms-z-sticky-inline);
   top: max(12px, env(safe-area-inset-top, 0px));
   left: 16px;
   transform: translateY(-160%);
@@ -341,7 +341,7 @@
   left: 12px;
   bottom: 17px;
   border-right: 1px solid var(--auth-border);
-  padding-right: 10px;
+  padding-right: 12px;
   color: var(--auth-ink);
   font-size: 14px;
   font-weight: 600;
@@ -363,10 +363,10 @@
   .viewport .center { width: 100%; }
   .card { width: 100%; }
 }
-@media (max-width: 375px) {
+@media (max-width: 639px) {
   .brandHeader { padding-inline: 16px; }
   .center { padding-inline: 12px; }
-  .card { padding: 22px 16px; }
+  .card { padding: 24px 16px; }
   .footer { padding-inline: 16px; }
 }
 

@@ -11,6 +11,7 @@ import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "./college-learner-progress-report.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Heading } from "@/components/ui/heading";
 
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
 
@@ -36,7 +37,7 @@ export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Resul
     offeringId:chosenOfferingId,deliveryId:chosenDeliveryId,
   }).toString();
  return <section className="min-w-0 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-  {showHeading?<h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Course Progress</h2>:null}
+  {showHeading?<Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Course Progress</Heading>:null}
   <div role="note" className="flex items-start gap-3 border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] p-4 text-sm leading-6 text-body">
    <span aria-hidden="true" className="text-xl">ⓘ</span>
    <p>Measured work only: videos watched to the end, assignments submitted, and quizzes attempted.

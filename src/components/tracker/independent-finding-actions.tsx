@@ -12,6 +12,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {FINDING_STATUSES,FINDING_SEVERITIES} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {FINDING_COMMIT_REPOS} from "@/modules/bug-tracker/independent-finding-actions-model";
 import {canTransitionIndependentFinding,type IndependentFindingStatus} from "@/modules/bug-tracker/independent-finding-transition-model";
+import { Heading } from "@/components/ui/heading";
 type Action="STATUS"|"SEVERITY"|"ASSIGNEE"|"DUPLICATE"|"FIX_COMMIT"|"COMMENT";
 export function IndependentFindingActions({externalId,version,status,severity,currentAssignee,candidates=[],onUpdated}:{externalId:string;version:number;status:string;severity:string;currentAssignee:string|null;candidates?:readonly {id:string;externalId:string;title:string}[];onUpdated?:()=>void}){
  const router=useRouter(),lock=useRef(false);
@@ -86,7 +87,7 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
   finally{lock.current=false;setPending(false);}
  }
  return <section className="min-w-0 max-w-3xl space-y-3 border-b border-border pb-4" aria-label="Finding actions">
-  <h2 className="font-semibold text-foreground">Update finding</h2>
+  <Heading level={2} className="text-foreground">Update finding</Heading>
   <div className="grid min-w-0 gap-3 md:grid-cols-2">
   <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
    <Select value={action} disabled={pending} onChange={e=>{setAction(e.target.value as Action);setError(null);setConfirmOpen(false);}}

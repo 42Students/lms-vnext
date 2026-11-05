@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import {tpoCalendarFollowupSuccess,tpoCalendarFollowupError,type TpoFollowupAction} from "@/modules/placements/tpo-calendar-followup-messages";
 import { calendarLocalIstToOffset } from "@/modules/placements/tpo-calendar-followup-model";
+import { Heading } from "@/components/ui/heading";
 
 export type TpoCalendarLeadOption = {
   id: string;
@@ -101,7 +102,7 @@ export function TpoCalendarCreateFollowup({
 
   return (
     <section aria-label="Create recruiter follow-up" className="border-t border-border pt-4">
-      <h2 className="m-0 text-base font-semibold text-foreground">Create recruiter follow-up</h2>
+      <Heading level={2} size="base" className="m-0 text-foreground">Create recruiter follow-up</Heading>
       <p className="mt-1 text-sm text-body">
         Schedule for an existing recruiter lead. Enter the due date and time in IST.
       </p>
@@ -144,7 +145,7 @@ export function TpoCalendarCreateFollowup({
             <Input name="note" maxLength={500} className={inputClass} />
           </label>
           <div className="flex items-end">
-            <Button type="submit" disabled={busy || !leadId} className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">
+            <Button type="submit" disabled={busy || !leadId} className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
               {busy ? "Saving…" : "Create follow-up"}
             </Button>
           </div>

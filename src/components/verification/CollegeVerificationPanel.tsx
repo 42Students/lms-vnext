@@ -31,6 +31,7 @@ import {parseCollegeBulkReviewReceipt} from "@/modules/verification/bulk-respons
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
+import { Heading } from "@/components/ui/heading";
 export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,truncated=false,batchChoices,branchChoices,classChoices,programChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
  activeTab:VerificationTab;initialKind:"ALL"|"EDUCATION"|"IDENTITY";page:number;total:number;hasMore:boolean;pageSize:number;
@@ -124,7 +125,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   <PageHeader title="Profile verification" description={collegeVerificationLegacyCopy.subtitle}/>
 
   <section aria-label="Placement cell verification settings" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-4 py-4">
-   <h2 className="text-base font-semibold text-heading">The placement cell can verify profiles</h2>
+   <Heading level={2} size="base" className="text-heading">The placement cell can verify profiles</Heading>
    <p className="mt-1 text-sm text-body">Allow authorized TPO reviewers to verify student education and identity information. Your college permission policy still controls each decision.</p>
    <div className="mt-3"><TpoVerificationSwitch key={String(tpoCanVerify)} initialEnabled={tpoCanVerify}/></div>
   </section>
@@ -136,7 +137,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </section>
   {reviewFeedback&&<Banner tone="info">{reviewFeedback}</Banner>}
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Review one by one" className="min-w-0 space-y-2 border-y border-[var(--lms-canvas-border)] py-3">
-    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Review one by one</h2>
+    <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Review one by one</Heading>
     <p className="text-sm leading-[22px]">Each student&apos;s values next to their documents, with Verify and Send back. The next one opens by itself.</p>
     <Button variant="primary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={bulkBusy} onClick={()=>{
       setSequential({keys:queueKeys,index:0});setSelected(selectable[0]??null);setReviewFeedback("");
@@ -174,7 +175,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <Dialog open={bulkAction!==null} onOpenChange={next=>{if(!next&&!bulkBusy)resetBulkFeedback();}}
      dismissible={!bulkBusy} title={bulkAction==="VERIFY"?"Verify without opening":"Send back selected requests"}>
     {bulkAction&&<div className="min-w-0 space-y-3 max-h-[75vh] overflow-y-auto py-2">
-    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
+    <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Preview {bulkAction==="VERIFY"?"verify":"send back"}</Heading>
     <p className="text-sm leading-[22px]">{preview?.eligible.length??0} eligible and {preview?.skipped.length??0} skipped. This is a local preview only; the server will recheck each document, role and row version.</p>
     <ul className="max-h-48 min-w-0 space-y-1 overflow-y-auto overscroll-contain text-[13px] leading-[22px]" aria-label="Selected review candidates">
      {preview?.eligible.map(item=><li key={item.key} className="break-words">{item.name} · {item.section} · version {item.version}</li>)}
@@ -202,7 +203,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
       onClick={()=>void executeBulk("SEND_BACK",bulkReason)} >
       {bulkBusy?"Sending decisions…":"Confirm send back selected"}</Button>}
     {bulkAction==="VERIFY"&&<>
-     <h3 className="font-semibold text-[16px] leading-[24px] text-[var(--lms-heading)]">Verify without opening</h3>
+     <Heading level={3} size="base" className="leading-[24px] text-[var(--lms-heading)]">Verify without opening</Heading>
      <p className="text-sm leading-[22px]">Only do this when you have checked these students&apos; documents another way (for example against the college&apos;s own records). Each one is recorded with your name.</p>
      <label className="flex items-start gap-2 text-sm">
        <Checkbox checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}/>
@@ -226,7 +227,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    onReview={row=>setSelected(row)}/>
   </div>
   {bulkResult&&<section aria-label="Bulk review outcome" role="status" className="space-y-2 border-y border-[var(--lms-canvas-border)] py-3">
-   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Bulk review results</h2>
+   <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Bulk review results</Heading>
    <p className="text-sm leading-[22px]">{bulkResult.summary.succeeded} of {bulkResult.summary.attempted} succeeded; {bulkResult.summary.failed} could not be decided. Review the individual outcomes below.</p>
    <ul className="space-y-1 text-sm leading-[22px]">{bulkResult.labels.map(result=><li key={result.key}>
     {result.label} · {result.section}: {result.message}

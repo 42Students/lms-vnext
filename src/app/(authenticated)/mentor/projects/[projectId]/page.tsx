@@ -23,6 +23,7 @@ import {MentorPrototypeSprintPlan,MentorPrototypeTeamOverview,MentorPrototypePer
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
+import { Heading } from "@/components/ui/heading";
 
 
 export default async function MentorProjectPage({
@@ -175,7 +176,7 @@ export default async function MentorProjectPage({
               className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Overview</Link>
           </p>
         : <section aria-label="Current project section" className="sr-only">
-            <h2>{breadcrumbTab[selectedTab??"overview"]??"Overview"}</h2>
+            <Heading level={2}>{breadcrumbTab[selectedTab??"overview"]??"Overview"}</Heading>
             <p>{subtitles[selectedTab??"overview"]}</p>
           </section>}
       {selectedTab==="overview" ? <><MentorPrototypeProjectOverview workspace={workspace}

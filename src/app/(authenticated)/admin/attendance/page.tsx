@@ -14,6 +14,7 @@ import {
   getAdminAttendanceOptions,
   AdminAttendanceOptionsLookupError,
 } from "@/modules/attendance/admin-service";
+import { Heading } from "@/components/ui/heading";
 
 function currentMonth() {
   return new Intl.DateTimeFormat("en-CA", {
@@ -58,7 +59,7 @@ export default async function SuperAdminAttendancePage({
       <PageHeader title="Attendance" description="Attendance oversight for the selected college."/>
       <ErrorState title="Invalid attendance month"
         description="Choose a month in YYYY-MM format and retry."
-        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white w-full md:w-auto justify-center">Reset month filter</Link>}/>
+        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] w-full md:w-auto justify-center">Reset month filter</Link>}/>
     </div>;
   }
   const optionsResult=await getAdminAttendanceOptions(context,collegeId)
@@ -152,7 +153,7 @@ export default async function SuperAdminAttendancePage({
         description="Review monthly attendance by class and course, correct recent records, and export the same grid shown on screen."
       />
       <section aria-label="Attendance policy" className="space-y-2 border-b border-border pb-4">
-        <h2 className="font-semibold text-foreground">Attendance policy</h2>
+        <Heading level={2} className="text-foreground">Attendance policy</Heading>
         <p className="text-sm text-body">Late marking allowed for
           <strong>{" "+options.policy.correctionWindowHours+" hours"}</strong>
           {" · "}Minimum attendance

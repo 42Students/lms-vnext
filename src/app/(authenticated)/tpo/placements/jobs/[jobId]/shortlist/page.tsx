@@ -10,6 +10,8 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { tpoShortlistQuerySchema } from "@/modules/placements/tpo-shortlist-model";
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = { page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -59,8 +61,8 @@ export default async function TpoDriveShortlistPage({
         actions={<>
           <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Drive workspace</Link>
-          <a href={"/api/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist/export"}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Export shortlist CSV</a>
+          <ButtonLink variant="secondary" href={"/api/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist/export"}
+            className="w-full sm:w-auto">Export shortlist CSV</ButtonLink>
         </>}
       />
       <Link
@@ -76,7 +78,7 @@ export default async function TpoDriveShortlistPage({
         comments are not exported.
       </p>
       <section aria-label="Current shortlist entries" className="min-w-0 space-y-3">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Current shortlist</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Current shortlist</Heading>
       <DataTable<(typeof data.rows)[number]> caption="Current shortlist"
         rows={data.rows} getRowKey={item=>item.applicationId}
         empty={<EmptyState title="No currently shortlisted submitted applications appear on this page. A previously shortlisted learner may have withdrawn or changed screening state." />}

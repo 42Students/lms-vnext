@@ -20,6 +20,7 @@ import {
   shiftAttendanceCalendarMonth,
 } from "@/modules/attendance/learner-attendance-calendar-model";
 import { getOwnLearnerAttendanceCalendar } from "@/modules/attendance/learner-attendance-calendar-service";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic = "force-dynamic";
 type Params = {month?:string|string[];deliveryId?:string|string[];status?:string|string[]};
@@ -73,7 +74,7 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text transition-colors duration-150 motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Attendance detail
       </Link>} />
     <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
@@ -125,7 +126,7 @@ export default async function LearnerAttendanceCalendarPage({
       <div className={monthStyles["toolbar"]}>
         <Link href={previous} aria-label="Previous month"
           className={monthStyles["navLink"]}>← Previous</Link>
-        <h2 className={monthStyles["period"]}>{monthLabel}</h2>
+        <Heading level={2} className={monthStyles["period"]}>{monthLabel}</Heading>
         <Link href={next} aria-label="Next month"
           className={monthStyles["navLink"]}>Next →</Link>
       </div>
@@ -153,7 +154,7 @@ export default async function LearnerAttendanceCalendarPage({
       </CalendarGrid>
     </section>
     <section aria-label="Attendance class entries" className="min-w-0 space-y-3">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Class details</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Class details</Heading>
       {data.rows.length===0
         ? <EmptyState title="No recorded classes match"
             description={data.hasAnyRecords
@@ -163,7 +164,7 @@ export default async function LearnerAttendanceCalendarPage({
           {data.rows.map(row=><li key={row.id}
             className="min-w-0 py-[var(--lms-space-3)]">
             <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:justify-between">
-              <h3 className="font-semibold text-[var(--lms-heading)]">{row.title}</h3>
+              <Heading level={3} className="text-[var(--lms-heading)]">{row.title}</Heading>
               <StatusBadge tone={statusTone[row.status]??"neutral"}>
                 {statusNames[row.status]??row.status}
               </StatusBadge>

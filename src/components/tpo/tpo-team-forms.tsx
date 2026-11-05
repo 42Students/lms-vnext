@@ -12,6 +12,7 @@ import {tpoTeamFormErrorMessage} from "@/modules/placements/tpo-team-form-feedba
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {buildTpoTeamFormData} from "@/modules/placements/tpo-team-form-payload";
+import { Heading } from "@/components/ui/heading";
 
 type Member={membershipId:string;displayName:string};
 async function postForm(url:string,values:Record<string,string|readonly string[]>){
@@ -95,7 +96,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   finally{pending.current=false;setBusy(false);}
  }
  return <form onSubmit={event=>void create(event)} className="mt-4 grid gap-3 border-t border-border pt-4">
-  <h3 className="font-semibold text-foreground">Start a placement team conversation</h3>
+  <Heading level={3} className="text-foreground">Start a placement team conversation</Heading>
   <label className="grid gap-[6px] text-[13px] font-semibold">Conversation type
    <Select value={kind} disabled={busy} onChange={event=>{
     setKind(event.target.value as typeof kind);setAdditional([]);setContextId("");createKey.current=null;
@@ -246,7 +247,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId,kind,mentionMembers=[
  }
  return <form onSubmit={event=>{event.preventDefault();void send();}}
   className="space-y-3 border-b border-border py-4">
-  <h2 className="font-semibold text-foreground">Reply privately</h2>
+  <Heading level={2} className="text-foreground">Reply privately</Heading>
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
    <Textarea required value={body} maxLength={4000} rows={4} disabled={busy}
     onChange={event=>changeBody(event.target.value)}
@@ -274,7 +275,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId,kind,mentionMembers=[
     </label>)}
    </div>
   </details>:null}
-  <label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
+  <label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm transition-colors duration-[var(--lms-motion-fast)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
    <Checkbox checked={markDecision} disabled={busy}
     onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>
    Mark as decision

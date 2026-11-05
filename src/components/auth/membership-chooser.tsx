@@ -12,6 +12,7 @@ import { Radio } from "@/components/ui/radio";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
+import { Heading } from "@/components/ui/heading";
 
 function roleLabel(roles: readonly string[]) {
   return roles
@@ -121,7 +122,7 @@ export function MembershipChooser({
           {error}
         </p>
       ) : null}
-      <h2 className="text-lg font-semibold">Choose where to sign in</h2>
+      <Heading level={2} size="lg">Choose where to sign in</Heading>
       {active.length===0?<p role="status" className="text-sm text-body">
         No active college memberships. Suspended memberships cannot be selected.
       </p>:null}

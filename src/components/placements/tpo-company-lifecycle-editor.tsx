@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Heading } from "@/components/ui/heading";
 
 type Company = {
   name: string; status: string; isTrusted: boolean;
@@ -54,7 +55,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
 
   return (
     <section className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-4">
-      <h2 className="text-lg font-semibold text-foreground">Manage college relationship</h2>
+      <Heading level={2} size="lg" className="text-foreground">Manage college relationship</Heading>
       <p className="text-sm text-body">
         This company&apos;s global name and domain are shared across colleges and cannot
         be edited here. Only your college&apos;s trust and archive state can change.

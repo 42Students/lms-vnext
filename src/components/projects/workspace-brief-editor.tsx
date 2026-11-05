@@ -9,6 +9,7 @@ import {projectMutation} from "./project-api";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {workspaceBriefSchema,publishedWorkspaceBriefError,type WorkspaceBrief}
  from "@/modules/projects/workspace-brief-model";
+import { Heading } from "@/components/ui/heading";
 
 type Draft={goal:string;description:string;deliverables:string;conditions:string;personas:string};
 function fromBrief(value:WorkspaceBrief):Draft{
@@ -131,11 +132,11 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
  return <section aria-label="Project brief" className="min-w-0 space-y-4 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div>
-    <h2 className="text-lg font-semibold text-foreground">Project brief</h2>
+    <Heading level={2} size="lg" className="text-foreground">Project brief</Heading>
     <p className="mt-3 text-xs font-semibold uppercase tracking-[0.08em] text-body">Learner & mentor view</p>
-    <h3 className="mt-1 text-base font-semibold text-foreground">
+    <Heading level={3} size="base" className="mt-1 text-foreground">
      Make the project understandable before anyone opens the board.
-    </h3>
+    </Heading>
     <p className="mt-2 text-sm leading-6 text-body">
      This content becomes the shared “About this project” reference for the team.
      Keep it outcome-focused, concrete and easy to scan.
@@ -149,7 +150,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
   </div>
   {open?<div className="space-y-5">
    <section className="space-y-2 border-t border-border pt-4" aria-labelledby={headingId+"-goal"}>
-    <h4 id={headingId+"-goal"} className="text-sm font-semibold text-foreground">Goal</h4>
+    <Heading level={4} size="sm" id={headingId+"-goal"} className="text-foreground">Goal</Heading>
     <p className="text-xs text-body">Why the project exists, who it serves and what success should look like.</p>
     <label className="block text-xs font-semibold text-body">
      Project goal / description
@@ -169,7 +170,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
    </section>
    <div className="grid min-w-0 gap-5 lg:grid-cols-2">
     <section className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-labelledby={headingId+"-deliverables"}>
-     <h4 id={headingId+"-deliverables"} className="text-sm font-semibold text-foreground">Deliverables</h4>
+     <Heading level={4} size="sm" id={headingId+"-deliverables"} className="text-foreground">Deliverables</Heading>
      <p className="text-xs text-body">The concrete outputs the team is expected to produce.</p>
      <label className="block text-xs font-semibold text-body">Deliverables
       <Textarea ref={deliverablesRef} className={textClass} rows={7}
@@ -186,7 +187,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
      </label>
     </section>
     <section className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-labelledby={headingId+"-dod"}>
-     <h4 id={headingId+"-dod"} className="text-sm font-semibold text-foreground">Definition of done</h4>
+     <Heading level={4} size="sm" id={headingId+"-dod"} className="text-foreground">Definition of done</Heading>
      <p className="text-xs text-body">
       The project-level conditions that mean the work is genuinely complete.
      </p>
@@ -202,7 +203,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
     </section>
    </div>
    <section className="space-y-2 border-t border-border pt-4" aria-labelledby={headingId+"-personas"}>
-    <h4 id={headingId+"-personas"} className="text-sm font-semibold text-foreground">Personas & ownership</h4>
+    <Heading level={4} size="sm" id={headingId+"-personas"} className="text-foreground">Personas & ownership</Heading>
     <p className="text-xs text-body">Explain the working roles students can take and what each one owns.</p>
     <label className="block text-xs font-semibold text-body">Personas
      <Textarea ref={personasRef} className={textClass} rows={4} value={draft.personas}

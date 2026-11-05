@@ -33,7 +33,7 @@ function tabAccessibleLabel(item: TabItem) {
 function tabLabel(item: TabItem) {
   const count = tabCount(item);
   return <><span>{item.label}</span>{count !== null ?
-    <span aria-hidden="true" className="tabular-nums text-[12px] leading-4 font-semibold text-current opacity-75">{count}</span> : null}</>;
+    <span aria-hidden="true" className="tabular-nums text-[12px] leading-4 font-semibold text-current opacity-80">{count}</span> : null}</>;
 }
 
 export function tabNextEnabled(items: readonly Pick<TabItem, "disabled">[], current: number, direction: 1 | -1) {
@@ -69,12 +69,12 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
     buttons.current[target]?.focus();
   }
   const pillTabClass = "inline-flex min-h-11 md:min-h-[32px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 py-1 text-[13px] leading-4 font-semibold transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] disabled:opacity-50";
-  const pillActiveClass = "bg-[var(--lms-primary)] text-white";
+  const pillActiveClass = "bg-[var(--lms-primary)] text-[color:var(--lms-on-primary)]";
   const pillInactiveClass = "text-[var(--lms-neutral-400)] hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-canvas-muted)]";
 
   return (
     <div className={cx("min-w-0", className)} data-slot="tabs">
-      {(renderPanel || controlledOnly) ? <ScrollCue axis="x" label={`${ariaLabel} tabs`}><div role="tablist" aria-orientation="horizontal" aria-label={ariaLabel} className={variant === "pills" ? "flex min-w-max gap-1" : "flex min-w-max gap-[var(--lms-tab-gap)] min-[1600px]:gap-[40px] border-b border-[var(--lms-canvas-border)] pb-0"}>
+      {(renderPanel || controlledOnly) ? <ScrollCue axis="x" label={`${ariaLabel} tabs`}><div role="tablist" aria-orientation="horizontal" aria-label={ariaLabel} className={variant === "pills" ? "flex min-w-max gap-1" : "flex min-w-max gap-[var(--lms-tab-gap)] xl:gap-[40px] border-b border-[var(--lms-canvas-border)] pb-0"}>
         {items.map((item, index) => (
           <button key={item.value} ref={node => { buttons.current[index] = node; }}
             id={`${id}-tab-${index}`} type="button" role="tab"
@@ -88,15 +88,15 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
             onClick={() => { if (interactive && item.value !== selected?.value) onValueChange?.(item.value); }}
             className={variant === "pills"
               ? cx(pillTabClass, index === activeIndex ? pillActiveClass : pillInactiveClass)
-              : "inline-flex min-h-11 md:min-h-[29px] shrink-0 items-center justify-center gap-2 whitespace-nowrap border-0 border-transparent text-[var(--lms-neutral-400)] hover:bg-transparent hover:!text-[var(--lms-primary-text)] aria-selected:!text-[var(--lms-primary-text)] relative after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 aria-selected:after:w-full aria-selected:after:opacity-100 after:transition-[width,opacity] after:duration-200 after:ease-in-out motion-reduce:after:transition-none px-0 pb-[13px] pt-0 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-[13px] leading-4 font-semibold focus-visible:rounded-t-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] disabled:opacity-50"}>
+              : "inline-flex min-h-11 md:min-h-[29px] shrink-0 items-center justify-center gap-2 whitespace-nowrap border-0 border-transparent text-[var(--lms-neutral-400)] hover:bg-transparent hover:!text-[var(--lms-primary-text)] aria-selected:!text-[var(--lms-primary-text)] relative after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 aria-selected:after:w-full aria-selected:after:opacity-100 after:transition-[width,opacity] after:duration-[var(--lms-motion-fast)] after:ease-[var(--lms-motion-ease)] motion-reduce:after:transition-none px-0 pb-[12px] pt-0 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none text-[13px] leading-4 font-semibold focus-visible:rounded-t-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] disabled:opacity-50"}>
             {tabLabel(item)}
           </button>
         ))}
-      </div></ScrollCue> : <ScrollCue axis="x" label={`${ariaLabel} navigation`}><nav aria-label={ariaLabel} className={variant === "pills" ? "flex min-w-max gap-1" : "flex min-w-max gap-[var(--lms-tab-gap)] min-[1600px]:gap-[40px] border-b border-[var(--lms-canvas-border)] pb-0"}>
-        {items.map(item => item.disabled || !item.href || !isSafeInternalHref(item.href) ? <span key={item.value} aria-disabled="true" aria-label={tabAccessibleLabel(item)} className={variant === "pills" ? cx(pillTabClass, "opacity-50 cursor-not-allowed", pillInactiveClass) : "inline-flex min-h-11 md:min-h-[29px] items-center gap-2 whitespace-nowrap border-0 px-0 pb-[13px] pt-0 text-[13px] leading-4 font-semibold text-[var(--lms-body-text)] opacity-60"}>{tabLabel(item)}</span> : <Link key={item.value} href={item.href} aria-label={tabAccessibleLabel(item)} aria-current={item.value === value ? "page" : undefined}
+      </div></ScrollCue> : <ScrollCue axis="x" label={`${ariaLabel} navigation`}><nav aria-label={ariaLabel} className={variant === "pills" ? "flex min-w-max gap-1" : "flex min-w-max gap-[var(--lms-tab-gap)] xl:gap-[40px] border-b border-[var(--lms-canvas-border)] pb-0"}>
+        {items.map(item => item.disabled || !item.href || !isSafeInternalHref(item.href) ? <span key={item.value} aria-disabled="true" aria-label={tabAccessibleLabel(item)} className={variant === "pills" ? cx(pillTabClass, "opacity-50 cursor-not-allowed", pillInactiveClass) : "inline-flex min-h-11 md:min-h-[29px] items-center gap-2 whitespace-nowrap border-0 px-0 pb-[12px] pt-0 text-[13px] leading-4 font-semibold text-[var(--lms-body-text)] opacity-60"}>{tabLabel(item)}</span> : <Link key={item.value} href={item.href} aria-label={tabAccessibleLabel(item)} aria-current={item.value === value ? "page" : undefined}
             className={variant === "pills"
               ? cx(pillTabClass, item.value === value ? pillActiveClass : pillInactiveClass)
-              : "inline-flex min-h-11 md:min-h-[29px] shrink-0 items-center justify-center gap-2 whitespace-nowrap border-0 border-transparent text-[var(--lms-neutral-400)] hover:bg-transparent hover:!text-[var(--lms-primary-text)] aria-[current=page]:!text-[var(--lms-primary-text)] relative after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 aria-[current=page]:after:w-full aria-[current=page]:after:opacity-100 after:transition-[width,opacity] after:duration-200 after:ease-in-out motion-reduce:after:transition-none px-0 pb-[13px] pt-0 text-[13px] leading-4 font-semibold focus-visible:rounded-t-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}>
+              : "inline-flex min-h-11 md:min-h-[29px] shrink-0 items-center justify-center gap-2 whitespace-nowrap border-0 border-transparent text-[var(--lms-neutral-400)] hover:bg-transparent hover:!text-[var(--lms-primary-text)] aria-[current=page]:!text-[var(--lms-primary-text)] relative after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 aria-[current=page]:after:w-full aria-[current=page]:after:opacity-100 after:transition-[width,opacity] after:duration-[var(--lms-motion-fast)] after:ease-[var(--lms-motion-ease)] motion-reduce:after:transition-none px-0 pb-[12px] pt-0 text-[13px] leading-4 font-semibold focus-visible:rounded-t-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}>
               {tabLabel(item)}</Link>)}
       </nav></ScrollCue>}
       {renderPanel ? <section id={`${id}-panel`} role="tabpanel" tabIndex={0} aria-labelledby={activeIndex >= 0 ? `${id}-tab-${activeIndex}` : undefined} className="min-w-0 pt-[var(--lms-space-4)]">{selected?.content}</section> : null}

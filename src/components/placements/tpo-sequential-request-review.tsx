@@ -3,6 +3,7 @@ import {useState} from "react";
 import {TpoRequestDecisionControl} from "./tpo-request-decision-control";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Heading } from "@/components/ui/heading";
 
 type Row={
  id:string;studentName:string;requestType:string;reason:string;
@@ -30,7 +31,7 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
   }
  }
  return <section aria-label="Review one by one" className="space-y-3 border-b border-border pb-6">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Review one by one</h2>
+  <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Review one by one</Heading>
   {!sequence.length?<Button variant="secondary" type="button" disabled={!requests.length} onClick={()=>{
    setSequence(requests.map(item=>item.id));setPosition(0);setDecided(0);setMessage("");
   }} >

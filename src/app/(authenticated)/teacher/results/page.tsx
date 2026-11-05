@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { parseFacultyResultsSearchParams, facultyResultsHref, facultyRecordedResponseRate, facultyResultsEmptyState } from "@/modules/courses/faculty-results-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
 import {facultyResultsCsvHref} from "@/modules/courses/faculty-results-export";
+import { Heading } from "@/components/ui/heading";
 
 type Search = Record<string,string|string[]|undefined>;
 
@@ -34,11 +35,11 @@ export default async function FacultyAssessmentResultsPage({
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Link href="/teacher/response-followups"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
           Response follow-ups
         </Link>
         <Link href="/teacher/allAssignments"
-          className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
           All Assignments
         </Link>
       </div>} />
@@ -46,7 +47,7 @@ export default async function FacultyAssessmentResultsPage({
       className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
       <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-          className="max-[767px]:text-[16px]"
+          className="max-md:text-[16px]"
           placeholder="Assessment, course code or Section" />
       </label>
       <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
@@ -104,7 +105,7 @@ export default async function FacultyAssessmentResultsPage({
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
       <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
        Export this page CSV (no learner names)
       </Link>
     </div>
@@ -116,7 +117,7 @@ export default async function FacultyAssessmentResultsPage({
             className="min-w-0 py-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.title}</h2>
+                <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{item.title}</Heading>
                 <p className="mt-1 text-sm text-body leading-[22px]">{item.courseName} · {item.sectionName} · {item.kind}</p>
               </div>
               <StatusBadge tone={item.status==="PUBLISHED"?"success":"warning"}>{item.status}</StatusBadge>

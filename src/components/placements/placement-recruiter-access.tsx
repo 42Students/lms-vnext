@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Heading } from "@/components/ui/heading";
 
 export type RecruiterRelationshipChoice = {
   relationshipId: string;
@@ -174,9 +175,9 @@ export function PlacementRecruiterAccess({
   return (
     <section className="min-w-0 border-b border-border pb-4">
       <div className="border-b border-border pb-3">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
           Recruiter access
-        </h2>
+        </Heading>
         <p className="mt-1 break-words text-sm text-body leading-[22px]">
           Grant an existing canonical account access to one exact employer relationship. Recruiters never become college members.
         </p>

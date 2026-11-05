@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
+import { Heading } from "@/components/ui/heading";
 type Drive={id:string;title:string;status:string;companyName:string};
 type Preview={eligible:number;ignored:number;excluded:number;pendingLettersWithdrawn:number};
 type Result={updated:number;skipped:number;results:{jobId:string;status:string;reason:string}[]};
@@ -49,7 +50,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
       onClick={()=>{setSelected([]);setPreview(null);setResult(null);}}>Clear selection</Button>
   </div>:null}
   <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-   <h2 className="sr-only">Bulk drives</h2>
+   <Heading level={2} className="sr-only">Bulk drives</Heading>
    <label className="flex min-h-11 items-center gap-[6px] text-sm">
     <Checkbox disabled={!eligible.length||busy}
      checked={eligible.length>0&&eligible.every(row=>selected.includes(row.id))}

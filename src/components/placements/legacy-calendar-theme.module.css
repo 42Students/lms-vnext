@@ -22,7 +22,7 @@
 }
 .calendarCurrentDay {
   /* $activeCalendarDayColor: var(--lms-primary), variables.scss:272 */
-  box-shadow: inset 0 0 0 2px var(--lms-primary);
+  box-shadow: var(--lms-ring-inset-selected);
 }
 .calendarDay:focus-visible {
   outline: 2px solid var(--lms-primary);
@@ -39,16 +39,16 @@
   border: 1px solid var(--lms-header-border) !important;
   border-radius: 14px;
   background: var(--lms-white);
-  padding: 16px 18px;
-  box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+  padding: 16px 20px;
+  box-shadow: var(--lms-elevation-3);
 }
 .tpoMonthFrame {
   overflow: hidden;
   border: 1px solid var(--lms-header-border) !important;
   border-radius: 14px !important;
   background: var(--lms-white);
-  padding: 10px 14px 14px;
-  box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+  padding: 12px 16px 16px;
+  box-shadow: var(--lms-elevation-3);
 }
 @media (max-width: 991px) {
   .tpoCommandBar { min-width: 0; }
@@ -58,8 +58,8 @@
  * lms2-fe@prod-2026/_tpo-calendar.scss:349-385.
  */
 @media (max-width: 767px) {
-  .tpoCommandBar { padding: 13px; }
-  .tpoMonthFrame { padding-inline: 13px; }
+  .tpoCommandBar { padding: 12px; }
+  .tpoMonthFrame { padding-inline: 12px; }
   .tpoViewSwitch {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -78,7 +78,7 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     width: 100%;
-    gap: 10px;
+    gap: 12px;
   }
   .tpoNavigationRow > a {
     display: flex;

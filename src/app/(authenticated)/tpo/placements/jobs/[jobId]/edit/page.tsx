@@ -12,6 +12,8 @@ import {listPlacementRoleOptions} from "@/modules/placements/role-option-service
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveEditState} from "@/modules/placements/tpo-drive-edit-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -37,7 +39,7 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
     actions={<div className="flex flex-wrap items-center gap-2">
       <StatusBadge tone={job.editable?"info":"neutral"}>{job.status==="DRAFT"?"Draft":job.status==="PUBLISHED"?"Live":job.status}</StatusBadge>
       <PageBackLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)} label="Open drive page"/>
-      {job.editable?<a href="#drive-save-actions" className="inline-flex min-h-11 items-center rounded border border-primary bg-primary px-3 text-sm font-semibold text-on-primary md:min-h-9">Save changes</a>:null}
+      {job.editable?<ButtonLink variant="primary" href="#drive-save-actions">Save changes</ButtonLink>:null}
       {job.status==="DRAFT"?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"?publish=1#drive-lifecycle-publish"} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">Review &amp; publish</Link>:null}
     </div>}/>
   {job.editable?<TpoDriveEditForm job={job}/>:<section aria-label="Read-only drive history" className="space-y-4">
@@ -59,13 +61,13 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
     <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Create drive</Link>
    </section>}
   {job.status==="DRAFT"&&job.editable?<section aria-label="Named pay packages" className="space-y-3 border-t border-border pt-4">
-   <h2 className="text-base font-semibold text-foreground">Pay packages</h2>
+   <Heading level={2} size="base" className="text-foreground">Pay packages</Heading>
    <p className="text-sm text-body">Add, edit or remove separately named role packages before publishing.
     The primary role remains linked to the job form above.</p>
    <PlacementRoleOptions jobId={job.id} jobStatus={job.status} roles={roles}/>
   </section>:null}
   <section aria-label="Other drive settings" className="space-y-2 border-t border-border pt-4">
-   <h2 className="text-base font-semibold text-foreground">Company, eligibility and rounds</h2>
+   <Heading level={2} size="base" className="text-foreground">Company, eligibility and rounds</Heading>
    <p className="text-sm text-muted-foreground">
      Core job details are edited above. Additional settings remain in the audited drive workspace; changing them does not silently amend submitted applications.
    </p>

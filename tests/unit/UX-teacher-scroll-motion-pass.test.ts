@@ -15,7 +15,7 @@ describe("Faculty scroll and motion cues",()=>{
   expect(s).toContain('<Table scrollLabel="Faculty attendance monthly grid"');
   const table=read("src/components/ui/table.tsx");
   expect(table).toContain('<ScrollCue axis="x" label={scrollLabel');
-  expect(s).toContain('className="sticky left-0 z-10 bg-surface px-3 py-3 text-left"');
+  expect(s).toContain('className="sticky left-0 z-(--lms-z-raised) bg-surface px-3 py-3 text-left"');
   expect(s).toContain('aria-label="Attendance legend"');
   expect(s).toContain('<StatusBadge tone="success">P = Present</StatusBadge>');
   expect(s).toContain('<StatusBadge tone="error">A = Absent</StatusBadge>');

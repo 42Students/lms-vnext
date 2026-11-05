@@ -33,7 +33,7 @@ export function LearnerPlacementsTabs({
   )?.href ?? "/learn/my-placements";
 
   return (
-    <div aria-busy={swiping} className={"min-w-0 motion-safe:transition-opacity motion-safe:duration-150 "+(swiping?"opacity-70":"opacity-100")} onTouchStart={event=>{
+    <div aria-busy={swiping} className={"min-w-0 motion-safe:transition-opacity motion-safe:duration-[var(--lms-motion-fast)] "+(swiping?"opacity-70":"opacity-100")} onTouchStart={event=>{
         const touch=event.touches[0];
         const scroller=event.currentTarget.querySelector<HTMLElement>('[data-slot="scroll-cue"][data-axis="x"] > div');
         touchStart.current=touch?{x:touch.clientX,y:touch.clientY,scrollLeft:scroller?.scrollLeft??0,scroller}:null;

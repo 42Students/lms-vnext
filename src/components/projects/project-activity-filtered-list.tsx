@@ -16,6 +16,7 @@ import {mentorFewestRecordedContributors} from "@/modules/projects/mentor-week-c
 import {mentorActivityMatchesDateFilters,mentorActivityIstDayKey}
  from "@/modules/projects/mentor-activity-date-filter-model";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;subjectType?:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
@@ -434,9 +435,9 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
       {filtered.map((event,index)=><Fragment key={event.id}>
         {mentorWeekSummary&&(index===0||
           eventIstDay(filtered[index-1]!.occurredAt)!==eventIstDay(event.occurredAt))?
-          <h3 className="border-b border-border pt-4 text-sm font-semibold text-foreground">
+          <Heading level={3} size="sm" className="border-b border-border pt-4 text-foreground">
             {eventIstDay(event.occurredAt)}
-          </h3>:null}
+          </Heading>:null}
         <article aria-posinset={index+1} aria-setsize={filtered.length}
          className="border-b border-border py-4">
        <div className="flex flex-wrap items-start justify-between gap-3">

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {learnerGalleryConfirmationError} from "@/modules/profile-verification/learner-image-gallery-parity-model";
+import { Img } from "@/components/ui/img";
 
 type Image = { id: string; imageId: string | number; displayOrder: number; isActive: boolean };
 export function LearnerImageGallery({ membershipId }: { membershipId?: string }) {
@@ -136,7 +137,7 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
               >Remove</Button> : null}
           </div>
           {preview?.id === image.id ?
-            <img className="mt-2 max-h-56 w-full rounded object-contain" src={preview.url}
+            <Img className="mt-2 max-h-56 w-full rounded object-contain" src={preview.url}
               alt={"Profile image " + (image.displayOrder + 1)} referrerPolicy="no-referrer" /> : null}
         </li>)}
       </ul>}

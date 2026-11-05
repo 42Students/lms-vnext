@@ -23,6 +23,7 @@ import {
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type Search = Record<string, string | string[] | undefined>;
 function first(value: string | string[] | undefined) {
@@ -131,7 +132,7 @@ export default async function CollegeBatchPromotionPage({
       <Link href="/college/batch-promotion" className="ml-2 font-semibold text-link underline">Retry</Link>
     </Alert>:null}
     <section aria-label="College batch directory" className="min-w-0 space-y-3">
-      <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Batch Promotion</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Batch Promotion</Heading>
       <form action="/college/batch-promotion" method="get" aria-label="Filter batches" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="grid min-w-[180px] flex-1 gap-2 text-sm font-semibold text-body">Program
           <Select name="programId" defaultValue={parsed.data.programId??""}>
@@ -190,7 +191,7 @@ export default async function CollegeBatchPromotionPage({
       </div>
     </section>
     <section className="min-w-0 pt-[var(--lms-space-2)]">
-      <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 items-end gap-[var(--lms-space-3)] max-[767px]:[&_label]:w-full md:grid-cols-2 min-[992px]:grid-cols-4">
+      <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 items-end gap-[var(--lms-space-3)] max-md:[&_label]:w-full md:grid-cols-2 lg:grid-cols-4">
         <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Program
           <Select name="programId" defaultValue={parsed.data.programId ?? ""}
@@ -236,7 +237,7 @@ export default async function CollegeBatchPromotionPage({
     ) : (
       <>
         <section className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]" aria-label="Promotion preview">
-          <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] font-semibold leading-7 text-[var(--lms-heading)]">{preview.batch.name}</h2>
+          <Heading level={2} className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] leading-7 text-[var(--lms-heading)]">{preview.batch.name}</Heading>
           <p className="min-w-0 break-words text-sm leading-5 text-body">Program: {preview.batch.programName} · Batch status: {preview.batch.status}</p>
           <p className="text-sm text-body">
             Semester {preview.batch.currentTermNumber ?? "—"} of {preview.batch.durationTerms}.
@@ -254,7 +255,7 @@ export default async function CollegeBatchPromotionPage({
           </p>
           {preview.blockers.length ? (
             <Alert tone="error" className="space-y-2">
-              <h3 className="m-0 text-[var(--lms-font-md)] font-semibold leading-6 text-[var(--lms-heading)]">Batch blockers</h3>
+              <Heading level={3} className="m-0 text-[var(--lms-font-md)] leading-6 text-[var(--lms-heading)]">Batch blockers</Heading>
               <ul className="list-inside list-disc space-y-[var(--lms-space-2)] text-sm leading-5 text-body">
                 {preview.blockers.map(blocker => <li key={blocker}>
                   {blocker==="NEXT_TERM_NO_MAPPED_COURSES"?<>
@@ -290,7 +291,7 @@ export default async function CollegeBatchPromotionPage({
             ) : null}
         </section>
         <section aria-label="Learner-level preview" className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-          <h2 className="m-0 pb-[var(--lms-space-3)] text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Learner blockers</h2>
+          <Heading level={2} className="m-0 pb-[var(--lms-space-3)] text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Learner blockers</Heading>
           <DataTable rows={preview.learners} getRowKey={learner=>learner.membershipId} caption="Learner blockers"
             columns={[
               {key:"name",header:"Learner",mobilePriority:"primary",cell:learner=>learner.name},

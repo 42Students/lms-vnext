@@ -7,6 +7,7 @@ import {
   SUPER_ADMIN_COLLEGE_LINKS,
   SUPER_ADMIN_COLLEGE_QUICK_ACTIONS,
 } from "@/modules/admin-ui/admin-dashboard-navigation";
+import { Heading } from "@/components/ui/heading";
 
 /** Legacy admin dashboard quick actions use this LMS icon/color palette. The
  * small SVGs are local so neither a new dependency nor an icon font is needed. */
@@ -101,10 +102,10 @@ function ActionLink({
     {subtitle ? <span className="min-w-0 text-xs text-muted-foreground">{subtitle}</span> : null}
   </>;
   const classes=mode==="quick"
-    ? "flex min-h-24 min-w-0 items-center gap-3 rounded-[8px] border border-border bg-surface p-4 text-left transition-[border-color,transform,box-shadow] duration-150 hover:-translate-y-px hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-col sm:justify-center sm:p-6 sm:text-center"
+    ? "flex min-h-24 min-w-0 items-center gap-3 rounded-[8px] border border-border bg-surface p-4 text-left transition-[border-color,transform,box-shadow] duration-[var(--lms-motion-fast)] hover:-translate-y-px hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-col sm:justify-center sm:p-6 sm:text-center"
     : mode==="setup"
-    ? "flex min-h-20 min-w-0 items-center gap-3 rounded-[8px] border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-150 hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2"
-    : "flex min-h-28 min-w-0 items-center gap-4 rounded-[8px] border border-border bg-surface p-5 transition-[border-color,transform,box-shadow] duration-150 hover:-translate-y-px hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2";
+    ? "flex min-h-20 min-w-0 items-center gap-3 rounded-[8px] border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-[var(--lms-motion-fast)] hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+    : "flex min-h-28 min-w-0 items-center gap-4 rounded-[8px] border border-border bg-surface p-5 transition-[border-color,transform,box-shadow] duration-[var(--lms-motion-fast)] hover:-translate-y-px hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2";
   if (!href) {
     return <div aria-disabled="true" className={classes+" cursor-not-allowed opacity-60"}>
       {content}
@@ -116,7 +117,7 @@ function ActionLink({
 /** The sidebar's /college landing and the cross-role /dashboard use the same legacy actions. */
 export function CollegeAdminQuickActions() {
   return <section aria-label="Quick Actions" className="space-y-3">
-    <h2 className="m-0 text-lg font-semibold text-foreground">Quick Actions</h2>
+    <Heading level={2} size="lg" className="m-0 text-foreground">Quick Actions</Heading>
     <div className="grid min-w-0 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {COLLEGE_ADMIN_QUICK_ACTIONS.map(item=>(
         <ActionLink key={item.key} label={item.label} href={item.href}/>
@@ -133,7 +134,7 @@ export function CollegeAdminDashboardActions() {
         {COLLEGE_SETUP_GUIDE_COPY.collapseLabel}
       </summary>
       <section aria-label="Setup Guide" className="space-y-4 pt-4">
-        <h2 className="text-lg font-semibold text-foreground">{COLLEGE_SETUP_GUIDE_COPY.heading}</h2>
+        <Heading level={2} size="lg" className="text-foreground">{COLLEGE_SETUP_GUIDE_COPY.heading}</Heading>
         <p className="text-sm text-body">{COLLEGE_SETUP_GUIDE_COPY.intro}</p>
         {COLLEGE_ADMIN_SETUP_PHASES.map((phase,phaseIndex)=>(
           <section key={phase.title} className="space-y-3 border-b border-border pb-5" aria-label={phase.title}>
@@ -141,7 +142,7 @@ export function CollegeAdminDashboardActions() {
               <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-sm font-semibold text-primary-text">
                 {phaseIndex+1}
               </span>
-              <h3 className="m-0 text-base font-semibold text-foreground">{phase.title}</h3>
+              <Heading level={3} size="base" className="m-0 text-foreground">{phase.title}</Heading>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
               {phase.steps.map((step,stepIndex)=>(
@@ -162,7 +163,7 @@ export function SuperAdminGlobalDashboardActions() {
   return <section aria-label="Platform quick links" className="space-y-4">
     <header className="space-y-2">
       <p className="m-0 text-xs font-bold uppercase tracking-wider text-primary-text">Platform operations</p>
-      <h2 className="m-0 text-xl font-semibold text-foreground">Choose the level you need to operate at.</h2>
+      <Heading level={2} size="xl" className="m-0 text-foreground">Choose the level you need to operate at.</Heading>
       <p className="m-0 text-sm text-body">
         Start with a platform-wide control below, or select a college in the header to switch this dashboard into that college&apos;s operational view.
       </p>
@@ -182,7 +183,7 @@ export function SuperAdminGlobalDashboardActions() {
 /** College selection scopes actions; never replace it with a separate role workspace. */
 export function SuperAdminCollegeDashboardActions() {
   return <section aria-label="Selected college quick actions" className="space-y-3">
-    <h2 className="m-0 text-lg font-semibold text-foreground">Quick Actions</h2>
+    <Heading level={2} size="lg" className="m-0 text-foreground">Quick Actions</Heading>
     <p className="text-sm text-body">These pages enforce the college selected in the Super Admin scope selector.</p>
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {SUPER_ADMIN_COLLEGE_QUICK_ACTIONS.map(item=>(

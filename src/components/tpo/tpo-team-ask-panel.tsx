@@ -10,6 +10,7 @@ import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
+import { Heading } from "@/components/ui/heading";
 type Ask={
  id:string;title:string;status:string;dueAt:string|null;doneNote:string|null;
  askerMembershipId:string;assigneeMembershipId:string;
@@ -112,7 +113,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
   finally{pending.current=false;setBusy(false);}
  }
  return <section aria-label="Asks here" className="min-w-0 space-y-3 border-t border-border pt-4">
-  <h2 className="font-semibold">Asks here</h2>
+  <Heading level={2}>Asks here</Heading>
   <p className="text-xs text-muted-foreground">Ask one teammate to do something, with an optional due date.</p>
   <Disclosure title="New ask" defaultOpen={items.length===0} className="border-t border-border" contentClassName="px-2 pb-3">
   <form onSubmit={event=>void create(event)} className="grid min-w-0 gap-3">

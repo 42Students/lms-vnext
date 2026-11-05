@@ -6,6 +6,7 @@ import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {parseRecruiterPrivateReviewReceipt,isConfirmedRecruiterPrivateReview,
  type RecruiterPrivateReviewReceipt} from "@/modules/placements/recruiter-private-rating-receipt-model";
+import { Heading } from "@/components/ui/heading";
 type Review=RecruiterPrivateReviewReceipt;
 const empty:Review={rating:null,note:"",updatedAt:null};
 type PrivateRatingEditorProps={jobId:string;applicationId:string};
@@ -69,7 +70,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
  const dirty=rating!==saved.rating||note!==saved.note;
  return <form onSubmit={event=>void save(event)}
   className="mt-6 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
-  <h4 className="font-semibold text-foreground">Your private rating</h4>
+  <Heading level={4} className="text-foreground">Your private rating</Heading>
   <p className="text-xs text-body">Only you can read or change this rating and note.</p>
   <label className="grid gap-2 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Your rating
    <Select value={rating===null?"":String(rating)} disabled={!ready||pending}

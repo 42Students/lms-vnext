@@ -10,6 +10,7 @@ import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
 import { Radio } from "@/components/ui/radio";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 type UnfinishedTask={id:string;title:string;status:string;updatedAt:string};
 
@@ -89,7 +90,7 @@ export function MentorSprintSignOff({
           </Link>
         </div>:null}
         {carried.length?<div>
-          <h3>Unfinished · where will these go?</h3>
+          <Heading level={3}>Unfinished · where will these go?</Heading>
           <p>Choose where each unfinished task goes. All choices are saved with the sprint
             sign-off in one transaction.</p>
           <ul>{carried.map(task=><li key={task.id} className="prototype-mentor-carry-task">

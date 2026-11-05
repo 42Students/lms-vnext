@@ -13,8 +13,8 @@ describe("College Admin narrow-screen academic setup",()=>{
   const table=src("src/components/ui/data-table.tsx");
   const scroll=src("src/components/ui/scroll-cue.tsx");
   expect(academic).toContain("grid min-w-0 grid-cols-1");
-  expect(academic).toContain("min-[768px]:grid-cols-2");
-  expect(academic).toContain("min-[992px]:grid-cols-4");
+  expect(academic).toContain("md:grid-cols-2");
+  expect(academic).toContain("lg:grid-cols-4");
   for(const component of [semester,batch,classes]){
    expect(component).toContain("grid min-w-0 grid-cols-1");
    expect(component).toContain("min-h-11");

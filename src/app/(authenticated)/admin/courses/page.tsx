@@ -18,6 +18,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {AdminCoursesLastGood} from "@/components/courses/admin-courses-last-good";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[];pageSize?:string|string[];create?:string|string[]}>}) {
   const context =
@@ -89,9 +90,9 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         )}
         <section aria-label="Read-only authorized course catalogue"
           className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-          <h2 className="text-lg font-semibold text-foreground">
+          <Heading level={2} size="lg" className="text-foreground">
             {context.adminScope?.organizationId?"Organization course catalogue":"Platform course catalogue"}
-          </h2>
+          </Heading>
           <p className="text-sm text-body">Read-only courses from authorized active colleges.
             Select a college in the header to create or edit courses. This view never changes your active scope.</p>
           <form action="/admin/courses" method="get" className="flex flex-wrap gap-2">
@@ -158,7 +159,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       ]}
     />
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
-      action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+      action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const {catalogueQuery,duplicateCourseId,openCreateCourse}=parsed;
   const workspaceResult=await getAdminCourseWorkspace(context,collegeId)

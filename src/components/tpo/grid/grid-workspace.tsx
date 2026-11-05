@@ -13,6 +13,7 @@ import {TpoGridFilterPanel,type TpoFilterField} from "@/components/tpo/tpo-grid-
 import {chosenTpoGridColumns,exportTpoGridCsv,tpoGridExportColumns,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {legacyGridExportFilename,legacySavedViewExportFilename} from "@/modules/placements/grid-export-filename";
 import {gridClipboardTsv} from "./grid-export";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
 type GridWorkspaceProps<Row>={
@@ -239,7 +240,7 @@ export function GridWorkspace<Row>({
     onClick={()=>onExportXlsx(selectedPage.length>0)}>
     Export {selectedPage.length?"selected":"visible"} Excel
    </Button>:null}
-   {xlsxHref?<a href={xlsxHref} aria-label={"Export "+(selectedPage.length?"selected":"visible")+" rows to Excel"} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-link lms-inline-link">Export selected XLSX</a>:null}
+   {xlsxHref?<ButtonLink variant="secondary" href={xlsxHref} aria-label={"Export "+(selectedPage.length?"selected":"visible")+" rows to Excel"}>Export selected XLSX</ButtonLink>:null}
    <span className="text-xs text-muted-foreground">Exports contain only rows on this page{selectedPage.length?" that are selected":""}; server-side Excel uses existing permissions.</span>
   </div>:null}
   {pasteOpen&&selection&&rollOf?<div id={id+"-paste"} className="space-y-2">

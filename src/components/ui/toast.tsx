@@ -69,9 +69,9 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
     }}
     tabIndex={toasts.length > 0 ? 0 : -1}
     style={bounds}
-    className="lms-toast-scroll-cue pointer-events-auto fixed inset-x-4 z-[1000] flex w-[calc(100vw_-_2rem)] min-w-0 max-w-[min(420px,calc(100vw_-_32px))] flex-col gap-[var(--lms-space-2)] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:inset-x-auto sm:right-4 sm:w-[min(420px,calc(100vw_-_32px))]">
+    className="lms-toast-scroll-cue pointer-events-auto fixed inset-x-4 z-(--lms-z-toast) flex w-[calc(100vw_-_2rem)] min-w-0 max-w-[min(420px,calc(100vw_-_32px))] flex-col gap-[var(--lms-space-2)] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:inset-x-auto sm:right-4 sm:w-[min(420px,calc(100vw_-_32px))]">
     {toasts.map(toast => <section key={toast.id} role={toast.tone === "error" ? "alert" : "status"}
-      className={cx("min-w-0 shrink-0 rounded-[var(--lms-canvas-radius)] border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[toast.tone])}>
+      className={cx("min-w-0 shrink-0 rounded-[var(--lms-canvas-radius)] border border-l-2 bg-surface px-4 py-3 text-foreground shadow-(--lms-toast-shadow)", toneClasses[toast.tone])}>
       <div className="flex items-start gap-[var(--lms-space-3)]">
         <span aria-hidden="true" className={cx("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[toast.tone])} />
         <div className="min-w-0 flex-1">
@@ -80,7 +80,7 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
         </div>
         <Button variant="ghost" type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
           onClick={() => onDismiss(toast.id)}
-          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"><OverlayCloseIcon /></Button>
+          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"><OverlayCloseIcon /></Button>
       </div>
     </section>)}
   </div>;
@@ -238,11 +238,11 @@ export function ToastAction({ title, children, tone = "info" }: {
   tone?: ToastTone;
 }) {
   return <div data-slot="toast-action" role={tone === "error" ? "alert" : "status"}
-    className={cx("flex min-w-0 flex-col items-stretch gap-3 rounded-[var(--lms-canvas-radius)] sm:flex-row sm:flex-wrap sm:items-center sm:justify-between border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[tone])}>
+    className={cx("flex min-w-0 flex-col items-stretch gap-3 rounded-[var(--lms-canvas-radius)] sm:flex-row sm:flex-wrap sm:items-center sm:justify-between border border-l-2 bg-surface px-4 py-3 text-foreground shadow-(--lms-toast-shadow)", toneClasses[tone])}>
     <div className="flex min-w-0 items-center gap-3">
       <span aria-hidden="true" className={cx("h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[tone])} />
       <p className="min-w-0 break-words text-sm text-[var(--lms-body-text)] leading-[22px]">{title}</p>
     </div>
-    <div className="min-w-0 max-[639px]:w-full max-[639px]:[&>*]:w-full sm:shrink-0">{children}</div>
+    <div className="min-w-0 max-sm:w-full max-sm:[&>*]:w-full sm:shrink-0">{children}</div>
   </div>;
 }

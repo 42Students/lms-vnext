@@ -38,7 +38,7 @@ describe("SA-tenants-modules-BRAND-06 public college-branding output hygiene",()
  });
  it("drops malformed legacy stored CSS, email headers and phone markup per field",()=>{
   const current=sanitizePublicCollegeBranding({...valid,
-   primaryColor:"rgb(1,2,3)",supportEmail:"admin@college.example\r\nBcc:x",
+   primaryColor:"var(--lms-black)",supportEmail:"admin@college.example\r\nBcc:x",
    supportPhone:"<script>alert(1)</script>",
   });
   expect(current.primaryColor).toBeNull();

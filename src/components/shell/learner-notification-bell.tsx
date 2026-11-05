@@ -11,6 +11,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 import {learnerNotificationTarget} from "@/modules/activity/learner-notification-inbox-model";
+import { Heading } from "@/components/ui/heading";
 type Due={key:string;title:string;body:string;href:string;dueAt:string};
 type Row={notification:{id:string;title:string;body:string;actionHref:string|null;
  readAt:string|null;createdAt:string};event:{module:string}};
@@ -90,14 +91,14 @@ export function LearnerNotificationBell(){
  </>;
  const panelBody=<>
    {error?<div className="min-w-0 space-y-2 border-b border-border pb-3"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
-    <Button variant="ghost" type="button" className="w-full min-h-11 min-[768px]:w-auto text-sm text-primary-text underline" loading={loading} disabled={loading} onClick={()=>void refresh()}>Retry notifications</Button>
+    <Button variant="ghost" type="button" className="w-full min-h-11 md:w-auto text-sm text-primary-text underline" loading={loading} disabled={loading} onClick={()=>void refresh()}>Retry notifications</Button>
    </div>:null}
    {loading&&!everLoaded?<div data-learner-notification-state="" role="status"><GracefulPageLoading/></div>:null}
    {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground leading-[20px]">Showing the last successful notifications.</p>:null}
    {loading&&everLoaded?<p role="status" className="px-4 py-2 text-xs text-muted-foreground leading-[20px]">Refreshing notifications…</p>:null}
    {items.length===0&&!error&&!loading?<TopbarNotificationEmpty title="No notifications yet"/>:null}
    {due.length>0?<section aria-labelledby="learner-bell-due-heading" className="mt-3">
-    <h3 id="learner-bell-due-heading" className="text-sm font-semibold text-[var(--lms-heading)]">Assignments due within 48 hours</h3>
+    <Heading level={3} size="sm" id="learner-bell-due-heading" className="text-[var(--lms-heading)]">Assignments due within 48 hours</Heading>
     <ul className="mt-2 space-y-2">
      {due.slice(0,3).map(item=><li key={item.key}>
       <Link href={item.href} onClick={()=>setOpen(false)}
@@ -129,15 +130,15 @@ export function LearnerNotificationBell(){
   <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" unread":"Notifications, no unread items"}
     aria-haspopup="dialog" aria-expanded={open} aria-controls={open?(mobile?"lms-learner-mobile-notifications":"lms-learner-notifications"):undefined}
     onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
-    className="relative inline-flex h-11 w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
+    className="relative inline-flex h-11 w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
     <span aria-hidden="true">🔔</span>
-    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-topbar-unread)] px-1 text-xs font-bold leading-none text-white">
+    {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-topbar-unread)] px-1 text-xs font-bold leading-none text-[color:var(--lms-on-primary)]">
      {count>99?"99+":count}</span>:null}
   </Button>
   {open ? mobile ? <Drawer id="lms-learner-mobile-notifications" open={open} onOpenChange={setOpen} title="Notifications" className={style.learnerNotificationDrawer} bodyClassName={style.learnerNotificationDrawerBody} footer={panelFooter}>{panelBody}</Drawer> : <PopoverPanel id="lms-learner-notifications" label="Notifications" aria-busy={loading} className={style.learnerNotificationPopover}
   onDismiss={()=>{setOpen(false);trigger.current?.focus();}}>
    <div className="flex items-center justify-between">
-    <h2 id="learner-notification-title" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Notifications</h2>
+    <Heading level={2} size="base" id="learner-notification-title" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Notifications</Heading>
     <Button variant="ghost" type="button" onClick={()=>{setOpen(false);trigger.current?.focus();}}
       className="min-h-11 px-2 text-sm text-primary-text">Close</Button>
    </div>

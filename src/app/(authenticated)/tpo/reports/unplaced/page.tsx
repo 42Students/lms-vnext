@@ -26,6 +26,7 @@ import {getTpoUnplacedLastApplications} from "@/modules/placements/tpo-unplaced-
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -123,7 +124,7 @@ export default async function TpoUnplacedReportPage({
           <TpoReportPresentation/>
           <Link href="/tpo/reports" className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">All reports</Link>
           <Link href={tpoUnplacedStudentsHref({...(batchId ? {batchId} : {}),...(branchId ? {branchId} : {})})} className="inline-flex min-h-11 items-center rounded border border-primary px-3 text-sm font-semibold text-link md:min-h-9">Act on them on Students</Link>
-          {permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">Download filtered CSV</a>:null}
+          {permittedBatch&&permittedBranch?<ButtonLink variant="secondary" href={filteredExportHref}>Download filtered CSV</ButtonLink>:null}
         </div>}
       />
 
@@ -132,17 +133,17 @@ export default async function TpoUnplacedReportPage({
        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
-        <Select name="batchId" defaultValue={batchId??""} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
+        <Select name="batchId" defaultValue={batchId??""} className="min-h-11 md:min-h-[var(--lms-control-height)]">
          <option value="">All current batches</option>
          {(batches?.batches??[]).map(b=><option key={b.id} value={b.id}>{b.name}</option>)}
         </Select></label>
        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Branch
-        <Select name="branchId" defaultValue={branchId??""} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
+        <Select name="branchId" defaultValue={branchId??""} className="min-h-11 md:min-h-[var(--lms-control-height)]">
          <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
         </Select></label>
-       <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">Filter</Button>
+       <Button type="submit" className="min-h-11 w-full md:min-h-[var(--lms-control-height)] md:w-auto">Filter</Button>
       </form>
-      {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link min-[768px]:min-h-[var(--lms-control-height)]">Clear batch and branch</Link>:null}
+      {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link md:min-h-[var(--lms-control-height)]">Clear batch and branch</Link>:null}
       {batchesUnavailable?<Alert tone="warning">
         Could not load batches. The report remains available without batch-specific filtering.
         <Link href="/tpo/reports/unplaced" className="ml-2 text-link underline">Retry batches</Link>

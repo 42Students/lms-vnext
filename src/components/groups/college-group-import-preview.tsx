@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type ImportResult = {
   requested: number; added: number; waitlisted: number; errors: number;
@@ -145,20 +147,20 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       {error ? <Alert tone="error">{error}</Alert> : null}
     </form>
     {result ? <section aria-label="Student group CSV validation report" className="min-w-0 space-y-3">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">
         Dry run: {result.ready} ready, {result.blocked} blocked, {result.total} examined
-      </h2>
+      </Heading>
       <p role="status" className="text-sm text-body">Preview only. No memberships have been changed. Confirm import to apply the validated rows.</p>
       {result.warning ? <Alert tone="warning">{result.warning}</Alert> : null}
       {!imported && result.ready > 0 ? <Button type="button" loading={pending}
         disabled={pending || reading} onClick={confirm}>
         Confirm import of {result.ready} eligible learner{result.ready===1?"":"s"}
       </Button> : null}
-      <a href={"data:text/csv;charset=utf-8," + encodeURIComponent(result.errorCsv)}
+      <TextLink href={"data:text/csv;charset=utf-8," + encodeURIComponent(result.errorCsv)}
         download="group-import-validation-errors.csv"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        className="inline-flex min-h-11 items-center md:min-h-9">
         Download safe error CSV
-      </a>
+      </TextLink>
       {result.rows.length === 0 ? <EmptyState title="No learner rows" description="No learner rows were supplied."/> : (
         <div className="max-h-[35rem] min-w-0 overflow-auto border-y border-border">
           <DataTable<Result["rows"][number]>
@@ -174,16 +176,16 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       )}
     </section> : null}
     {imported ? <section aria-label="Confirmed group import results" className="min-w-0 space-y-3">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">
         Import complete: {imported.requested} requested, {imported.added} added, {imported.waitlisted} waitlisted, {imported.errors} errors
-      </h2>
+      </Heading>
       <Alert tone={imported.errors?"warning":"success"}>
         {imported.requested} learner rows processed. Each membership was rechecked when written.
       </Alert>
-      {imported.errors > 0 ? <a href={"data:text/csv;charset=utf-8,"+encodeURIComponent(imported.errorCsv)}
-        download="group-import-errors.csv" className="inline-flex min-h-11 items-center font-semibold text-link underline">
+      {imported.errors > 0 ? <TextLink href={"data:text/csv;charset=utf-8,"+encodeURIComponent(imported.errorCsv)}
+        download="group-import-errors.csv" className="inline-flex min-h-11 items-center">
         Download import errors
-      </a> : null}
+      </TextLink> : null}
       <div className="max-h-[35rem] min-w-0 overflow-auto border-y border-border">
         <DataTable<ImportResult["results"][number]>
           caption="Confirmed group membership import"
@@ -197,7 +199,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       </div>
     </section> : null}
     <section aria-label="Manual group member import" className="min-w-0 space-y-3 border-t border-border pt-4">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Add learners by ID or roll number</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Add learners by ID or roll number</Heading>
       <p className="text-sm text-body">Enter up to 2,000 values, one per line or separated by commas.
         Only active learners of this college can be added.</p>
       <label className="block space-y-2 text-sm font-semibold">Identifier type
@@ -216,11 +218,11 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <Button type="button" loading={pending} disabled={pending||!manualText.trim()}
         onClick={confirmManual}>Confirm manual import</Button>
       {manualResult ? <div className="min-w-0 space-y-3">
-        <h3 className="font-semibold">Manual import: {manualResult.requested} requested, {manualResult.added} added, {manualResult.waitlisted} waitlisted, {manualResult.errors} errors</h3>
-        {manualResult.errors>0?<a href={"data:text/csv;charset=utf-8,"+encodeURIComponent(manualResult.errorCsv)}
-          download="manual-group-import-errors.csv" className="inline-flex min-h-11 items-center font-semibold text-link underline">
+        <Heading level={3}>Manual import: {manualResult.requested} requested, {manualResult.added} added, {manualResult.waitlisted} waitlisted, {manualResult.errors} errors</Heading>
+        {manualResult.errors>0?<TextLink href={"data:text/csv;charset=utf-8,"+encodeURIComponent(manualResult.errorCsv)}
+          download="manual-group-import-errors.csv" className="inline-flex min-h-11 items-center">
           Download errors
-        </a>:null}
+        </TextLink>:null}
         <DataTable<ImportResult["results"][number]>
           caption="Manual group import results"
           empty={<EmptyState title="No results" description="No imported rows were returned."/>}

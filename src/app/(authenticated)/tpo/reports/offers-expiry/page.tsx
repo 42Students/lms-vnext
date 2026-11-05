@@ -14,6 +14,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoOfferExpiryWatchlist } from "@/modules/placements/tpo-offer-expiry-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 type Query = { days?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoOffersExpiryPage({ searchParams }: { searchParams: Promise<Query> }) {
@@ -27,10 +29,10 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
     <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
-        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Reports</Link>{process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-[650] text-on-primary">
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Reports</Link>{process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" ? <ButtonLink variant="primary" href={"/api/placements/tpo/offers/expiry?days=" + data.days}
+          className="w-full sm:w-auto">
           Export CSV
-        </a> : null}</div>}
+        </ButtonLink> : null}</div>}
       />
       {process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED" ? (
         <Alert tone="warning">CSV export is unavailable until the DB09 verification gate is enabled.</Alert>
@@ -63,11 +65,11 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
         <section aria-label="Expiring offer records" className="grid gap-3">
           {data.rows.map((row) => (
             <article key={row.offerId} className="min-w-0 border-b border-border py-4">
-              <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
-                  <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+                  <Heading level={2} size="lg" className="break-words leading-[1.4] text-[var(--lms-heading)]">
                     {row.companyName} · {row.roleTitle}
-                  </h2>
+                  </Heading>
                   <p className="mt-1 text-sm text-body leading-[22px]">
                     {row.jobTitle} · {row.candidateName ?? "Student name not recorded"}
                   </p>
@@ -76,7 +78,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
                   </p>
                 </div>
                 <Link href={"/tpo/placements/jobs/" + row.jobId}
-                  className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:underline">
+                  className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:underline">
                   Open drive
                 </Link>
               </div>

@@ -44,7 +44,7 @@ export function LearnerProjectMobileFilters({query}:{query:ProjectParticipantLis
   }
   const label="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]";
   return (
-    <section className="min-w-0 space-y-2 min-[768px]:hidden" aria-label="Project search and filters">
+    <section className="min-w-0 space-y-2 md:hidden" aria-label="Project search and filters">
       <form ref={form} method="get" action="/learn/projects"
         onChange={submitFilters} aria-busy={searchPending}
         className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">

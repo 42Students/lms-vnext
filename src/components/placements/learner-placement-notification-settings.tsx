@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 type Choices={notifyMatchingJobs:boolean;notifyApplicationUpdates:boolean};
 
@@ -53,9 +54,9 @@ export function LearnerPlacementNotificationSettings({initial}:{
 
   return <section aria-labelledby="placement-notification-title"
     className="border-b border-[var(--lms-canvas-border)] pb-6">
-    <h2 id="placement-notification-title" className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+    <Heading level={2} size="base" id="placement-notification-title" className="leading-[26px] text-[var(--lms-heading)] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
       Placement notification choices
-    </h2>
+    </Heading>
     <p className="mt-2 text-sm leading-6 text-body">
       These choices apply only to placement opportunity matching and application
       updates. Essential college, academic and security messages are not controlled here.
@@ -66,7 +67,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
     </nav>
     <p className="mt-3 text-xs text-body">Legacy placement alerts are split into matching opportunities and application updates. Application updates include submitted, shortlisted, selected, rejected, waitlisted, offer issued and joining-status changes; academic and security notices remain independently enabled.</p>
     <div className="mt-4 divide-y divide-border border-t border-border">
-      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(matching?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(matching?"bg-primary-subtle":"hover:bg-surface-subtle")}>
         <Checkbox checked={matching} onChange={e=>setMatching(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Matching opportunities</span>
@@ -74,7 +75,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
             Choose whether to receive matching placement-job notifications.
           </span></span>
       </label>
-      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(updates?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(updates?"bg-primary-subtle":"hover:bg-surface-subtle")}>
         <Checkbox checked={updates} onChange={e=>setUpdates(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Application updates</span>

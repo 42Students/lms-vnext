@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import { Button } from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 export function LearnerApplicationResumeLink({applicationId}:{applicationId:string}){
  const [state,setState]=useState<{
   status:"IDLE"|"LOADING"|"READY"|"ABSENT"|"ERROR";
@@ -28,10 +29,9 @@ export function LearnerApplicationResumeLink({applicationId}:{applicationId:stri
  }
  return <span className="mt-1 block text-xs">
   {state.status==="READY"&&state.url
-   ?<a href={state.url}
-     className="font-semibold text-primary-text underline">
+   ?<TextLink href={state.url}>
       View scanned application resume (temporary private link) ↗
-    </a>
+    </TextLink>
    :<Button variant="bare" type="button" onClick={()=>void load()}
       disabled={state.status==="LOADING"}
       className="min-h-11 text-left font-semibold text-primary-text underline">

@@ -12,6 +12,7 @@ import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manag
 import {tpoCompanyAuditKindSchema,tpoCompanyAuditHref,tpoCompanyAuditExportHref} from "@/modules/placements/company-share/audit-kind-model";
 import {companyShareAuditPageHref} from "@/modules/placements/company-share/audit-page-model";
 import {parseCompanyShareAuditQuery} from "@/modules/placements/company-share/audit-query-model";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  params:Promise<{jobId:string}>;
@@ -43,7 +44,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
   <PageHeader title="Company-share access history"
    actions={<>
     <Link href={back} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">Back to company-share preview</Link>
-    {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">Export access history CSV</a>:null}
+    {result.ready?<ButtonLink variant="secondary" href={tpoCompanyAuditExportHref(jobId,kind)} className="w-full md:w-auto">Export access history CSV</ButtonLink>:null}
    </>}/>
   <Tabs ariaLabel="Company-share event filters" value={kind} renderPanel={false}
    items={tpoCompanyAuditKindSchema.options.map(option=>({
@@ -68,7 +69,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
    {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold sm:w-auto text-[var(--lms-teal-deep)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
    {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
-    className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] underline sm:w-auto min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+    className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
   </nav>:null}
  </div>;
 }

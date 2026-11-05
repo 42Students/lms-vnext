@@ -21,6 +21,7 @@ import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verifi
 import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verification-live-refresh";
 import { LearnerDefaultResumePicker } from "@/components/profile/learner-default-resume-picker";
 import { listLearnerDefaultResumes } from "@/modules/placements/learner-default-resume-service";
+import { Heading } from "@/components/ui/heading";
 
 type ProfileParams={section?:string|string[]};
 function ProfileLoading() {
@@ -91,7 +92,7 @@ async function LearnerProfileContent({
       <LearnerVerificationLiveRefresh/>
       <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-[var(--lms-heading)]">Profile verification</h2>
+          <Heading level={2} className="text-[var(--lms-heading)]">Profile verification</Heading>
           <Badge  tone="neutral">
             {verification&&["VERIFIED","UPDATE_PENDING"].includes(verification.education.status)&&
               ["VERIFIED","UPDATE_PENDING"].includes(verification.identity.status)
@@ -127,7 +128,7 @@ async function LearnerProfileContent({
 
       <section aria-label="Private evidence receipts" className="min-w-0 border-b border-border pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-[var(--lms-heading)]">Private identity, marksheet and resume receipts</h2>
+          <Heading level={2} className="text-[var(--lms-heading)]">Private identity, marksheet and resume receipts</Heading>
           <Link href="/learn/profile/verification"
             className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
             Review receipts and verification →
@@ -171,13 +172,13 @@ async function LearnerProfileContent({
         <Banner tone="warning">Default resume choices are temporarily unavailable. No resume was selected.</Banner>}
       {sectionNotice ? <Banner tone="warning">{sectionNotice}</Banner> : null}
       <section aria-label="Academic identity" className="min-w-0 border-b border-border pb-4">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Academic identity</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Academic identity</Heading>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
         {!academicRecovery.available ? <Banner tone="info" className="mt-3">
           <p>Program couldn't load. Your saved profile remains available; no missing enrollment has been inferred.</p>
           <LearnerProfileAcademicRetry />
         </Banner> : academic?.enrollment ? (
-          <dl className="mt-4 grid min-w-0 gap-3 text-sm min-[768px]:grid-cols-2 min-[1280px]:grid-cols-3">
+          <dl className="mt-4 grid min-w-0 gap-3 text-sm md:grid-cols-2 xl:grid-cols-3">
             <div>
               <dt className="font-semibold text-muted-foreground">Program</dt>
               <dd className="mt-1 text-foreground">{academic.enrollment.program}
@@ -212,10 +213,10 @@ async function LearnerProfileContent({
       </Link>
       </nav>
       <section aria-label="Verification status" className="min-w-0 border-b border-border pb-4">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Education and identity verification</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Education and identity verification</Heading>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
         {verification?<div className="mt-4 space-y-3">
-          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">What is still missing</h3>
+          <Heading level={3} size="sm" className="text-[var(--lms-heading)]">What is still missing</Heading>
           {missing.length?<ul className="list-disc space-y-1 pl-6 text-sm text-body">
             {missing.map(row=><li key={row.section+row.message}>
               <strong>{row.section}:</strong> {row.message}
@@ -234,7 +235,7 @@ async function LearnerProfileContent({
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View my verification status →</Link>
       </section>
       <section aria-label="Coding profiles" className="min-w-0 border-b border-border pb-6">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Coding platform profiles</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Coding platform profiles</Heading>
         <p className="mt-1 text-sm text-body">Saved GitHub and coding-platform links are learner-authored, not verified skill evidence.</p>
         {learnerSavedCodingProfiles(profile.profileDocument).length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">No valid coding-platform links saved yet.</p>

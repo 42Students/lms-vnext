@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import { Heading } from "@/components/ui/heading";
 export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}: {
   jobId: string; applicationId: string; expectedUpdatedAt: string;
 }) {
@@ -59,7 +60,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
   }
   return <form onKeyDown={shortcuts} onSubmit={event => void submit(event)}
     className="min-w-0 space-y-4 border-b border-border pb-6">
-    <h3 className="font-semibold text-foreground">Review application</h3>
+    <Heading level={3} className="text-foreground">Review application</Heading>
     <label className="grid min-w-0 gap-2 text-[13px] text-[var(--lms-neutral-400)]">Decision
       <Select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
         <option value="SHORTLISTED">Shortlist</option>
@@ -95,7 +96,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
     {error ? <InlineNotice tone="error" message={error}/> : null}
     {saved ? <InlineNotice tone="success" message="Decision saved. Refresh the applicant list to see its current stage."/> : null}
     <Button variant="primary" type="submit" loading={pending} disabled={pending || saved || !reviewed || note.trim().length<10}
-      className="min-h-11 w-full px-4 min-[768px]:min-h-9 min-[768px]:w-auto">
+      className="min-h-11 w-full px-4 md:min-h-9 md:w-auto">
       {pending ? "Saving…" : saved ? "Decision saved" : "Review and confirm decision"}
     </Button>
   </form>;

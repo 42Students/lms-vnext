@@ -22,6 +22,8 @@ import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import {collegeCourseDuplicatePrefill} from "@/modules/courses/college-course-duplicate-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Option = { id: string; name: string; code?: string };
 type CohortOption = Option & {
@@ -466,10 +468,10 @@ export function AdminCourseCreatePanel({
   return (
     <section aria-label="Course setup workflow" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)]">
       <nav aria-label="Course setup steps" className="flex min-w-0 flex-nowrap gap-[var(--lms-space-3)] overflow-x-auto whitespace-nowrap border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm">
-       <a href="#setup-course" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">1. Create Course</a>
-       <a href="#setup-offering" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">2. Course Offering</a>
-       <a href="#setup-delivery" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">3. Section Delivery</a>
-       <a href="#setup-faculty" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">4. Assign Course Faculty</a>
+       <TextLink href="#setup-course" className="inline-flex shrink-0 min-h-11 items-center md:min-h-9">1. Create Course</TextLink>
+       <TextLink href="#setup-offering" className="inline-flex shrink-0 min-h-11 items-center md:min-h-9">2. Course Offering</TextLink>
+       <TextLink href="#setup-delivery" className="inline-flex shrink-0 min-h-11 items-center md:min-h-9">3. Section Delivery</TextLink>
+       <TextLink href="#setup-faculty" className="inline-flex shrink-0 min-h-11 items-center md:min-h-9">4. Assign Course Faculty</TextLink>
       </nav>
       <p role="status" className="border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm text-body leading-[22px]">
        {nextSetupStep==="COURSE"?"Start by creating or choosing a Course.":
@@ -479,14 +481,14 @@ export function AdminCourseCreatePanel({
         "Teaching assignment saved. The Course setup flow is complete."}
       </p>
       <form id="setup-course" noValidate onSubmit={createCourse} className="scroll-mt-24 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{COLLEGE_COURSES_COPY.createTitle}</h2>
+        <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{COLLEGE_COURSES_COPY.createTitle}</Heading>
         {departments.length===0?<p role="status" className="mt-3 text-sm text-body leading-[22px]">
           No departments in this college yet. Create a department before adding a course.{" "}
           <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
         </p>:null}
         {copy?<div role="status" aria-live="polite" className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}” — review the copy before creating it.</strong>
-          <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
             onClick={()=>{setCopyAnnouncement(false);router.replace(courseBasePath);}}>Cancel copy</Button>
           <p className="w-full text-xs text-muted-foreground leading-[20px]">Copy of {copy.name}. Review the unique course code and display metadata. The new course will not inherit learners, offerings, or permissions.</p>
           {copyAnnouncement?<p className="sr-only">Course metadata copied. The course name is ready to edit.</p>:null}
@@ -577,8 +579,8 @@ export function AdminCourseCreatePanel({
                   onError={()=>setCoverPreviewBroken(true)}
                   className="h-[100px] w-[180px] rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle object-cover"/>
                 <div className="flex flex-wrap gap-2">
-                  <a href={safeCourseCoverHref(coverUrl)!} rel="noopener noreferrer"
-                    className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">View full image</a>
+                  <TextLink href={safeCourseCoverHref(coverUrl)!} rel="noopener noreferrer"
+                    className="inline-flex min-h-9 items-center text-xs">View full image</TextLink>
                   <Button type="button" size="sm" variant="secondary" onClick={()=>{
                     setCoverUrl("");setCoverPreviewBroken(false);setCreateErrors(old=>{const updated={...old};delete updated.coverUrl;return updated;});
                   }}>Remove image</Button>
@@ -648,7 +650,7 @@ export function AdminCourseCreatePanel({
       </form>
 
       <form id="setup-offering" onSubmit={createOffering} className="scroll-mt-24 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">New Course Offering</h2>
+        <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">New Course Offering</Heading>
         <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Place a Course into one Cohort and Academic Period.</p>
         <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
           <div className="md:col-span-2">
@@ -694,7 +696,7 @@ export function AdminCourseCreatePanel({
       </form>
 
       <form id="setup-delivery" onSubmit={createDelivery} className="scroll-mt-24 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Add Section Delivery</h2>
+        <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Add Section Delivery</Heading>
         <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Connect an Offering to an exact Section. Only structurally compatible Sections are shown.</p>
         <div className="mt-4 grid gap-3">
           <div>
@@ -718,7 +720,7 @@ export function AdminCourseCreatePanel({
       </form>
 
       <form id="setup-faculty" onSubmit={assignTeacher} className="scroll-mt-24 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Assign Course Faculty</h2>
+        <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Assign Course Faculty</Heading>
         <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Assign an active Faculty Membership to one exact Section Delivery.</p>
         <div className="mt-4 grid gap-3">
           <div>

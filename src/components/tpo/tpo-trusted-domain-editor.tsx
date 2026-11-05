@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
  const router=useRouter();
  const [domain,setDomain]=useState(""),[busy,setBusy]=useState(false),[status,setStatus]=useState("");
@@ -34,7 +35,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
   finally{setBusy(false);}
  }
  return <section aria-label="Manage trusted email domains" className="min-w-0 space-y-3 border-t border-border pt-4">
-  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Explicit trusted email domains</h2>
+  <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Explicit trusted email domains</Heading>
   <p className="text-xs text-muted-foreground leading-[20px]">Free-mail addresses cannot be trusted. Trust never replaces verification or recruiter access checks.</p>
   <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)] sm:items-end">
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Domain
@@ -48,7 +49,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
   <ul className="divide-y divide-border">{domains.map(item=><li key={item} className="flex min-h-12 min-w-0 flex-col items-stretch gap-2 py-2 sm:flex-row sm:items-center sm:justify-between">
    <span className="break-all text-sm">@{item}</span>
    <Button type="button" disabled={busy} onClick={()=>setReview({action:"REMOVE",value:item})}
-    variant="secondary" className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9">Stop trusting</Button>
+    variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Stop trusting</Button>
   </li>)}</ul>
   {domains.length===0?<EmptyState title="No explicit trusted domains."/>:null}
   <ConfirmDialog open={review!==null}

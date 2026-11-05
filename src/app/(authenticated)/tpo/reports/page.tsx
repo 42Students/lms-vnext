@@ -21,6 +21,7 @@ import {
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
 import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards} from "@/modules/placements/tpo-report-gallery-filter-model";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -212,17 +213,17 @@ export default async function TpoReportsPage({
     return <div className="min-w-0 space-y-6">
       <PageHeader title="Reports" description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} />
       <Alert tone="error">
-        <h2 className="text-base font-semibold">The headline numbers could not be loaded.</h2>
+        <Heading level={2} size="base">The headline numbers could not be loaded.</Heading>
         <p className="mt-2 text-sm text-body">Previously loaded figures cannot be verified in this request. The report links remain available.</p>
         <Link href={retryHref} className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry headline numbers</Link>
       </Alert>
       {visibleGroups.length === 0 ? <EmptyState title="No matching reports" description="Clear filters to see the full report directory." /> : null}
       {visibleGroups.map(group => <section key={group.heading} className="space-y-3 border-b border-border pb-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{group.eyebrow}</p><h2 className="text-lg font-semibold">{group.heading}</h2>
+        <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{group.eyebrow}</p><Heading level={2} size="lg">{group.heading}</Heading>
         <p className="text-sm text-body">{group.description}</p>
         <div className="grid gap-3 sm:grid-cols-2">
           {group.cards.map(card => <Link key={card.path} href={card.path} className="group block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2">
-            <div className="flex items-start justify-between gap-3"><h3 className="font-semibold text-link">{card.title}</h3><span aria-hidden="true" className="text-link transition-transform group-hover:translate-x-1">→</span></div>
+            <div className="flex items-start justify-between gap-3"><Heading level={3} className="text-link">{card.title}</Heading><span aria-hidden="true" className="text-link transition-transform group-hover:translate-x-1">→</span></div>
             <p className="mt-2 text-sm text-body">{card.description}</p>
           </Link>)}
         </div>
@@ -242,7 +243,7 @@ export default async function TpoReportsPage({
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           >
             Open management view
           </Link>
@@ -291,7 +292,7 @@ export default async function TpoReportsPage({
          {heading:"YOUR SAVED VIEWS",links:[
           ["Manage report filters","/tpo/reports","Saved report scopes below"]]},
         ] as const).map(group=><section key={group.heading} className="min-w-0 rounded-xl border border-border bg-surface px-4 py-4">
-         <h2 className="mb-2 text-xs font-bold tracking-[.07em] text-body">{group.heading}</h2>
+         <Heading level={2} size="xs" className="mb-2 tracking-[.08em] text-body">{group.heading}</Heading>
          <ul className="divide-y divide-[color:var(--lms-neutral-100)]">{group.links.map(([label,path,detail])=>
           <li key={path+label}><Link href={reportHref(path,workspace)}
            className="flex min-h-11 min-w-0 items-center justify-between gap-3 py-2 hover:text-[var(--lms-primary-text)]">
@@ -305,7 +306,7 @@ export default async function TpoReportsPage({
        <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-heading">Advanced reporting, filters and full report catalogue</summary>
        <div className="space-y-6 border-t border-border p-4">
       <nav aria-label="Placement journey" className="space-y-3 border-y border-border py-4">
-       <h2 className="text-lg font-semibold">Placement journey</h2>
+       <Heading level={2} size="lg">Placement journey</Heading>
        <p className="text-sm text-body">The college&apos;s placement journey: {workspace.report.metrics.offers} {workspace.report.metrics.offers===1?"offer":"offers"} made. Click any number for its report.</p>
        <ol className="grid min-w-0 items-center gap-2 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]" role="group" aria-label="Placement journey steps and gaps">
         <li className="min-w-0">
@@ -390,10 +391,10 @@ export default async function TpoReportsPage({
       {visibleGroups.map((group) => (
         <section key={group.heading} className="space-y-3">
           <div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">{group.eyebrow}</p>
-            <h2 className="text-lg font-semibold text-foreground">
+            <p className="mb-1 text-xs font-bold uppercase tracking-[.05em] text-muted-foreground">{group.eyebrow}</p>
+            <Heading level={2} size="lg" className="text-foreground">
               {group.heading}
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm leading-6 text-body">
               {group.description}
             </p>
@@ -407,7 +408,7 @@ export default async function TpoReportsPage({
                   {card.path==="/tpo/reports/placement-summary"?
                    <p className="mb-1 text-xs font-bold uppercase tracking-wide text-link">Start here</p>:null}
                   <div className="flex items-start justify-between gap-3">
-                   <h3 className="font-semibold text-[var(--lms-heading)]">{card.title}</h3>
+                   <Heading level={3} className="text-[var(--lms-heading)]">{card.title}</Heading>
                    <svg aria-hidden="true" className="size-4 shrink-0 text-link transition-transform group-hover:translate-x-1"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                      <path d="M5 12h14m-6-6 6 6-6 6"/>

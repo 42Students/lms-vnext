@@ -12,6 +12,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {tenantCreationScopeRequest} from "@/modules/colleges/admin-tenant-create-handoff";
+import { Heading } from "@/components/ui/heading";
 
 export type OrganizationOption = {
   id: string;
@@ -151,7 +152,7 @@ export function CollegeCreateForm({
       aria-busy={pending}
       className="grid min-w-0 max-w-[640px] gap-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)] print:hidden"
     >
-      <h3 className="text-lg font-semibold text-[var(--lms-heading)]">Create New College</h3>
+      <Heading level={3} size="lg" className="text-[var(--lms-heading)]">Create New College</Heading>
       <div>
         <label
           htmlFor="college-organization"
@@ -205,7 +206,7 @@ export function CollegeCreateForm({
           Unique ID / Code
           <details className="group relative ml-2 inline-block align-middle text-xs font-normal">
            <summary className="inline-flex min-h-11 min-w-11 cursor-help list-none items-center justify-center rounded-full text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9" aria-label="Unique ID / Code help"><span aria-hidden="true" className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-border">?</span></summary>
-           <p className="absolute left-0 top-full z-20 mt-1 w-[min(320px,80vw)] rounded-lg border border-border bg-surface p-3 text-xs font-normal leading-5 text-body shadow-lg">
+           <p className="absolute left-0 top-full z-(--lms-z-sticky-inline) mt-1 w-[min(320px,80vw)] rounded-lg border border-border bg-surface p-3 text-xs font-normal leading-5 text-body shadow-lg">
             A short, permanent code for this college — shown in switchers and menus (e.g. “ROLE • NSRIT”). It’s separate from the web address you’ll add next, though people often reuse the same word for both. Once set, avoid changing it — other parts of the system reference it by this code, not by the college’s display name.
            </p>
           </details>
@@ -227,7 +228,7 @@ export function CollegeCreateForm({
       </div>
       <div className="space-y-3">
        <Disclosure title="Address details (optional)" className="border-b border-border pb-4">
-        <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">
+        <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
          {([
           ["City",city,setCity,128],["State",state,setState,128],
           ["Address",addressLine1,setAddressLine1,255],["Address line 2",addressLine2,setAddressLine2,255],

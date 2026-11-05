@@ -5,6 +5,7 @@ import {projectMutation} from "./project-api";
 import {mentorCriteriaLines,toggleMentorCriterion} from
  "@/modules/projects/mentor-task-criteria-model";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 export function MentorTaskCriteriaChecklist({projectId,task,editable}:{
  projectId:string;editable:boolean;
@@ -34,7 +35,7 @@ export function MentorTaskCriteriaChecklist({projectId,task,editable}:{
   }finally{setBusy(false);}
  }
  return <div className="prototype-mentor-board-detail-block">
-  <h4>Acceptance criteria</h4>
+  <Heading level={4}>Acceptance criteria</Heading>
   {lines.length?<ul className="space-y-2">
    {lines.map(line=><li key={line.index}>
      {line.checkable?<label className="flex items-start gap-2">

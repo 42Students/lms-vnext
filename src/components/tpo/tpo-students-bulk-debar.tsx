@@ -13,6 +13,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {validateTpoBulkDebarDraft} from "@/modules/placements/tpo-bulk-debar-model";
 import {mapTpoBulkBounded} from "@/modules/placements/tpo-bulk-bounded-execution";
+import { Heading } from "@/components/ui/heading";
 type Learner={id:string;name:string;debarred:boolean};
 type DebarRow={id:string;active:boolean};
 type Result={id:string;name:string;status:"saved"|"skipped"|"failed";detail:string};
@@ -83,7 +84,7 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
   }).catch(()=>setError("The batch did not finish. Review the per-student results before trying again."));
  }
  return <section aria-label="Bulk student debarment" className="min-w-0 space-y-3 border-y border-border py-4">
-  <h2 className="font-semibold">Debar or lift selected students</h2>
+  <Heading level={2}>Debar or lift selected students</Heading>
   <p className="text-sm">Uses the same students selected in the roster. Each student is checked and updated separately. Existing applications are not deleted.</p>
   <p role="status" aria-live="polite" className="min-w-0 break-words text-sm text-body">
    {picked.length} selected · {unselectedCount} unselected from this visible roster.

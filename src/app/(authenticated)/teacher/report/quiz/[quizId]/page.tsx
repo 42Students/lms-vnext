@@ -22,6 +22,8 @@ import { getFacultyQuizReport } from "@/modules/courses/faculty-assessment-repor
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {CoursesServiceError} from "@/modules/courses/errors";
 import { facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function FacultyQuizReportPage({
   params,
@@ -66,8 +68,7 @@ export default async function FacultyQuizReportPage({
       <PageHeader title="Quiz report" />
       <ErrorState title="Couldn't load this quiz's report. Please try again."
         description="Your report is temporarily unavailable. No results have been changed."
-        action={<a href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
-          className="font-semibold text-primary-text underline">Retry report</a>} />
+        action={<TextLink href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}>Retry report</TextLink>} />
     </section>;
   }
   const {
@@ -121,8 +122,8 @@ export default async function FacultyQuizReportPage({
         </div>} />
       {report.rosterUnavailable ? <Banner tone="warning" role="status">
         Couldn't load the student roster. Scores from authorized attempts remain visible, but the not-attempted list is unavailable.
-        <a href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
-          className="ml-2 font-semibold text-primary-text underline">Retry roster</a>
+        <TextLink href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
+          className="ml-2">Retry roster</TextLink>
       </Banner> : null}
       <dl aria-label="Quiz report summary" className="grid min-w-0 grid-cols-2 divide-x divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
@@ -179,9 +180,9 @@ export default async function FacultyQuizReportPage({
       </div>
 
       <section aria-labelledby="section-score-distribution" className="border-b border-border py-4">
-        <h2 id="section-score-distribution" className="text-lg font-semibold text-foreground">
+        <Heading level={2} size="lg" id="section-score-distribution" className="text-foreground">
           Score distribution
-        </h2>
+        </Heading>
         {metrics.submittedLearners===0?<p role="status" className="mt-3 text-sm text-muted-foreground leading-[22px]">
           No graded scores to chart yet.
         </p>:null}
@@ -218,9 +219,9 @@ export default async function FacultyQuizReportPage({
       </section>
 
       <section aria-labelledby="section-question-accuracy" className="border-b border-border py-4">
-        <h2 id="section-question-accuracy" className="text-lg font-semibold text-foreground">
+        <Heading level={2} size="lg" id="section-question-accuracy" className="text-foreground">
           Question accuracy
-        </h2>
+        </Heading>
         <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
           Worst-answered first.
         </p>
@@ -273,9 +274,9 @@ export default async function FacultyQuizReportPage({
       }))} />
 
       <section aria-labelledby="section-not-attempted" className="border-b border-border py-4">
-        <h2 id="section-not-attempted" className="text-lg font-semibold text-foreground">
+        <Heading level={2} size="lg" id="section-not-attempted" className="text-foreground">
           Not attempted
-        </h2>
+        </Heading>
         {notAttemptedLearners.length === 0 ? (
           <p className="mt-3 text-sm text-body leading-[22px]">
             Every currently eligible learner has at least one attempt.
@@ -297,7 +298,7 @@ export default async function FacultyQuizReportPage({
       </section>
 
       <section aria-labelledby="section-review-individual-attempts" className="border-b border-border py-4">
-        <h2 id="section-review-individual-attempts" className="text-lg font-semibold text-foreground">Review individual attempts</h2>
+        <Heading level={2} size="lg" id="section-review-individual-attempts" className="text-foreground">Review individual attempts</Heading>
         <p className="mt-1 text-sm text-body">Inspect submitted answers and manage results visibility for this Section.</p>
         <FacultyQuizReview
           quizId={quiz.id}

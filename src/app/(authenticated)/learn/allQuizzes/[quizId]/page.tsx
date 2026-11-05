@@ -11,6 +11,7 @@ import { getMyQuizAttempts } from "@/modules/courses/quiz-attempt-service";
 import {
   learnerAttemptResultLabel, learnerQuizAttemptDateLabel, learnerQuizQuestionAwardLabel, learnerQuizSelectedAnswerMessage, ownQuizHistorySelection,
 } from "@/modules/courses/learner-quiz-history-model";
+import { Heading } from "@/components/ui/heading";
 
 type Props={
   params:Promise<{quizId:string}>;
@@ -50,7 +51,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
     <PageBackLink href="/learn/allQuizzes" label="All Quizzes"/>
     <PageHeader title={quiz.title} />
     <section aria-labelledby="quiz-attempt-history-heading" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
-      <h2 id="quiz-attempt-history-heading" className="text-base font-semibold text-[var(--lms-heading)]">Attempt history</h2>
+      <Heading level={2} size="base" id="quiz-attempt-history-heading" className="text-[var(--lms-heading)]">Attempt history</Heading>
       <p className="mt-2 max-w-prose text-sm leading-[22px] text-body">
         Attempts are recorded against your current college membership. Results appear only after Faculty publishes them.
       </p>
@@ -58,7 +59,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
         Not attempted · No quiz attempt is recorded for you in this course.
       </p> : <ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {attempts.map(attempt=><li key={attempt.id} className="flex min-w-0 flex-col gap-[var(--lms-space-2)] py-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <div className="min-w-0 flex-1"><h3 className="text-sm font-semibold text-[var(--lms-heading)]">Attempt {attempt.attemptNumber}</h3>
+          <div className="min-w-0 flex-1"><Heading level={3} size="sm" className="text-[var(--lms-heading)]">Attempt {attempt.attemptNumber}</Heading>
           <p className="mt-1 text-xs text-muted-foreground">{date(attempt.submittedAt)}</p>
           <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={attempt.resultsVisible?"success":"neutral"}>{attempt.resultsVisible?"Results published":"Results pending"}</StatusBadge>{learnerAttemptResultLabel(attempt)}</p></div>
           <Link href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
@@ -71,7 +72,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
     </section>
     {selected ? <section className="min-w-0 space-y-3 border-b border-border pb-[var(--lms-space-4)]">
       <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Attempt {selected.attemptNumber} result</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Attempt {selected.attemptNumber} result</Heading>
         <Link href={historyUrl} className="inline-flex min-h-11 w-full items-center justify-center text-sm text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Close detail</Link>
       </div>
       <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-body leading-[1.6]"><StatusBadge tone={selected.resultsVisible?"success":"neutral"}>{selected.resultsVisible?"Published":"Not published"}</StatusBadge>{learnerAttemptResultLabel(selected)}</p>
@@ -80,9 +81,9 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
       ) : <div className="min-w-0 divide-y divide-border border-y border-border">
         {selected.answers.map((answer,index)=><article key={answer.id}
           className="min-w-0 py-[var(--lms-space-4)]">
-          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="sm" className="text-[var(--lms-heading)]">
             Question {index+1}: {answer.prompt}
-          </h3>
+          </Heading>
           <p className="mt-2 max-w-prose text-sm leading-[22px] text-body">
             {learnerQuizQuestionAwardLabel(answer.pointsAwarded??null,answer.pointsPossible)}
           </p>

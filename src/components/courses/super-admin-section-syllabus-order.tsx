@@ -4,6 +4,7 @@ import type {KeyboardEvent,PointerEvent} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Banner } from "@/components/ui/banner";
+import { Heading } from "@/components/ui/heading";
 
 type SyllabusItem={id:string;title:string;contentType:string};
 export function SuperAdminSectionSyllabusOrder({
@@ -113,7 +114,7 @@ export function SuperAdminSectionSyllabusOrder({
  return <section className="min-w-0 space-y-3 border border-border bg-surface p-4"
    aria-label={"Syllabus order for "+lessonName}>
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h3 className="font-semibold text-foreground">{lessonName}</h3>
+   <Heading level={3} className="text-foreground">{lessonName}</Heading>
    <span className="text-xs text-muted-foreground">{items.length} content item(s)</span>
   </div>
   <p id={hintId} className="text-xs text-muted-foreground">Drag ⠿ with mouse or touch, or focus the handle and press Space to pick up, arrow keys to move, Space to drop, Escape to cancel. Up/Down buttons are available as well.</p>

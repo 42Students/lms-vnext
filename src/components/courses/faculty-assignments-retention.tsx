@@ -6,6 +6,7 @@ import {Alert} from "@/components/ui/alert";
 import {PageHeader} from "@/components/ui/page-header";
 import type {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {FacultyAssessmentOverview} from "./faculty-assessment-overview";
+import { Heading } from "@/components/ui/heading";
 
 type Overview=Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
 type Snapshot={overview:Overview;filesEnabled:boolean};
@@ -33,11 +34,11 @@ export function FacultyAssignmentsFailure({reset}:{reset:()=>void}){
    <Alert tone="error">Couldn&apos;t load assignments. Check your connection and try again.</Alert>}
   <Button type="button" onClick={reset}>Retry</Button>
   {previous?<section aria-label="Previous assignments" className="space-y-2">
-    <h2 className="font-semibold text-body">Previously loaded assignments (read only)</h2>
+    <Heading level={2} className="text-body">Previously loaded assignments (read only)</Heading>
     <div className="divide-y divide-border border-y border-border">
      {previous.overview.assignments.map(item=><article key={item.deliveryId+":"+item.id}
        className="grid min-w-0 gap-1 py-3 text-sm">
-       <h3 className="break-words font-semibold text-foreground">{item.title}</h3>
+       <Heading level={3} className="break-words text-foreground">{item.title}</Heading>
        <p className="text-body">{item.courseCode} · {item.courseName} · {item.sectionName}</p>
        <p className="text-muted-foreground">Status: {item.status}</p>
      </article>)}

@@ -13,6 +13,7 @@ import {z} from "zod";
 import { listProgramContents } from "@/modules/admin-ui/program-contents-service";
 import { listDepartments } from "@/modules/departments/service";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 export default async function SuperAdminProgramsPage({
  searchParams,
@@ -120,7 +121,7 @@ export default async function SuperAdminProgramsPage({
     </Alert>
     {programs.length===0?<EmptyState title="No programs found. Create a department first." description="No programs are recorded in the selected college."/>:
       <section aria-label="Programs read-only">
-        <h2 className="mb-2 text-base font-semibold text-body">Programs ({programs.length})</h2>
+        <Heading level={2} size="base" className="mb-2 text-body">Programs ({programs.length})</Heading>
         <ul className="divide-y divide-border border-y border-border">
           {programs.map(program=><li key={program.id} className="px-3 py-3 text-sm text-body">
             <strong>{program.name}</strong> ({program.code})

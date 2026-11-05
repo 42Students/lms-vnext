@@ -36,6 +36,8 @@ import {listRecruiterTodayStagedResultsWaiting} from "@/modules/placements/recru
 import {recruiterTodayWeekEvents} from "@/modules/placements/recruiter-today-week-events-model";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 
@@ -84,9 +86,9 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       const rich=richByGrant.get(grant.id);
       return <article key={grant.id} className="space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
         <div className="flex min-w-0 items-start gap-3">
-          {rich?.logoUrl?<img src={rich.logoUrl} alt="" width={48} height={48} className="size-12 shrink-0 rounded border border-border object-contain"/>:
+          {rich?.logoUrl?<Img src={rich.logoUrl} alt="" width={48} height={48} className="size-12 shrink-0 rounded border border-border object-contain"/>:
            <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded border border-border bg-muted text-lg font-semibold">{detail.collegeName.slice(0,1)}</span>}
-          <div className="min-w-0"><h2 className="break-words text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">{detail.collegeName}</h2>
+          <div className="min-w-0"><Heading level={2} className="break-words text-[var(--lms-font-lg)] leading-[26px] text-[var(--lms-heading)] md:text-[var(--lms-font-xl)] md:leading-7">{detail.collegeName}</Heading>
             <p className="text-xs text-body">{detail.collegeCode?"College code: "+detail.collegeCode:"College code unavailable"} · Verified recruiter access</p>
           </div>
         </div>
@@ -105,7 +107,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </div>:<Alert tone="warning">College details are temporarily unavailable. Missing information is not zero.</Alert>}
         {rich?.errors.length?<p role="status" className="text-xs text-muted-foreground">Could not load: {rich.errors.join(", ")}. Retry to refresh.</p>:null}
         <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
-          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Open recruiter Today
         </Link>
       </article>;

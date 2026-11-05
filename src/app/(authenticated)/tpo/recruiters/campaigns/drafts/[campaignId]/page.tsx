@@ -16,6 +16,7 @@ import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatc
 import {TpoCampaignSendControl} from "@/components/tpo/tpo-campaign-send-control";
 import {TpoCampaignPrototypeSidebar} from "@/components/tpo/tpo-campaign-prototype-sidebar";
 import {TpoCampaignSentStory} from "@/components/tpo/tpo-campaign-sent-story";
+import { Heading } from "@/components/ui/heading";
 /** The persisted provider receipt state determines the old LMS status-pill tone. */
 function receiptTone(status:string):"neutral"|"info"|"success"|"warning"|"error" {
  if(status==="SENT")return "success";
@@ -77,7 +78,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
     <TpoCampaignSendControl campaignId={campaignId} ready={deliveryReady}
       recipients={draft.total_recipients} status={draft.status}/>
     <section className="border-b border-[var(--lms-canvas-border)] pb-4">
-     <h2 className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Subject</h2>
+     <Heading level={2} size="sm" className="leading-4 text-[var(--lms-neutral-400)]">Subject</Heading>
      <p className="mt-2 break-words text-[14px] leading-[1.6] text-[var(--lms-body-text)]">{draft.subject}</p>
     </section>
     <Disclosure title="Message" className="border-b border-[var(--lms-canvas-border)] pb-3">
@@ -88,12 +89,12 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
     <p className="text-xs text-muted-foreground leading-5">Template: {draft.template_key}</p>
 
     {recipients?.ready?<section aria-label="Campaign recipient statuses" className="space-y-3">
-     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recipients and delivery status</h2>
+     <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Recipients and delivery status</Heading>
      <p className="text-xs text-muted-foreground leading-5">Names and recorded provider outcomes only. Sent means the email provider accepted the request, not that the recruiter read it.</p>
      {recipients.rows.length?<ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {recipients.rows.slice((page-1)*25,page*25).map(row=><li key={row.id} className="flex min-w-0 flex-col items-start gap-2 py-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">
        <Link href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
-        className="inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center break-words font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{row.name}</Link>
+        className="inline-flex min-h-11 md:min-h-9 min-w-0 items-center break-words font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{row.name}</Link>
        <StatusBadge tone={receiptTone(row.status)}>
         {({PENDING:"Not sent",QUEUED:"Queued · delivery not confirmed",SENT:"Provider accepted",FAILED:"Failed",
           SKIPPED_NO_EMAIL:"Skipped · no email",SKIPPED_UNSUBSCRIBED:"Skipped · opted out",

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSuperAdmin } from "@/modules/identity/context";
+import { Heading } from "@/components/ui/heading";
 
 /**
  * Retired public E2E login deep link. Do not accept a phone number here or
@@ -29,9 +30,9 @@ export default async function LegacySuperAdminE2ELoginPage({
     <PageHeader title="E2E Superadmin Login" />
     <section className="space-y-4 border border-border bg-surface p-5 text-sm text-body"
       role="status" aria-live="polite">
-      <h2 className="text-lg font-semibold text-primary-text">
+      <Heading level={2} size="lg" className="text-primary-text">
         Deprecated E2E login link — restricted development setup
-      </h2>
+      </Heading>
       <p>This link no longer creates a Super Admin session. Sign in using the
         normal secure login and select an authorized workspace. No test account
         or privileged identity can be created from this page.</p>

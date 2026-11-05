@@ -40,7 +40,7 @@ export function TpoPlacementCellReadAction({id,autoMarkRead=false}:{id:string;au
  },[autoMarkRead,markRead]);
  return <div className="min-w-0 space-y-2">
   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void markRead()}
-   className="min-h-11 min-[768px]:min-h-9 px-3">
+   className="min-h-11 md:min-h-9 px-3">
    {busy?"Saving…":"Mark as read for our placement cell"}
   </Button>
   {error?<InlineNotice tone="error" role="alert" message={error}/>:null}

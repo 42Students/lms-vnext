@@ -10,6 +10,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {readTpoTeamEveryone} from "@/modules/placements/tpo-team-everyone-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {TPO_EVERYONE_DESCRIPTION,TPO_EVERYONE_TITLE,TPO_EVERYONE_WELCOME} from "@/modules/placements/tpo-team-everyone-model";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 export default async function TpoEveryonePage({searchParams}:{
  searchParams:Promise<{page?:string|string[]}>,
@@ -28,11 +29,11 @@ export default async function TpoEveryonePage({searchParams}:{
   {result.status==="FAILED"?<Alert tone="error">
    <p>Could not load Everyone right now. Your messages were not changed.</p>
    <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">Retry Everyone</Link>
-  </Alert>:result.status==="NOT_REGISTERED"?<p role="status" className="border-l-[3px] border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
+  </Alert>:result.status==="NOT_REGISTERED"?<p role="status" className="border-l-2 border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
    <section aria-labelledby="section-everyone-conversation" className="min-w-0 space-y-3 border-b border-border pb-4">
-    <h2 id="section-everyone-conversation" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Everyone conversation</h2>
+    <Heading level={2} size="base" id="section-everyone-conversation" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Everyone conversation</Heading>
     {result.rows.length?<ol aria-label="Everyone messages" className="min-w-0 divide-y divide-border">
       {result.rows.map(row=><li key={row.id} className="min-w-0 py-3">
        <p className="text-xs font-medium text-muted-foreground leading-[20px]">{row.authorMembershipId===context.membership?.id?"You":row.authorName} ·

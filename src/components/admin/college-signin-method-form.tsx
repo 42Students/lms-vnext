@@ -11,6 +11,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {collegeSignInMethodSchema,signInChannelOrder} from "@/modules/colleges/signin-methods-model";
 import type {z} from "zod";
+import { Heading } from "@/components/ui/heading";
 type Method=z.infer<typeof collegeSignInMethodSchema>;
 const choices:{value:Method;label:string;hint:string}[]=[
  {value:"EMAIL_AND_PHONE",label:"Email and phone",hint:"Both, with email shown first."},
@@ -144,7 +145,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
  return <><section aria-label="College sign-in methods"
    className="min-w-0 max-w-[680px] space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-   <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Sign-in</h2>
+   <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Sign-in</Heading>
    <Button type="button" size="sm" variant="secondary" disabled={!collegeId||fetching||saving}
     onClick={()=>void reload()}>
     <svg width={15} height={15} viewBox="0 0 24 24" strokeWidth={2}
@@ -168,7 +169,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
   {fetching?<p role="status" className="text-sm text-body">Loading sign-in settings…</p>:null}
   <fieldset disabled={!ready||saving||fetching||Boolean(loadError)} className="min-w-0 print:hidden">
    <legend className="mb-2 text-sm font-semibold text-[var(--lms-heading)]">Sign-in methods</legend>
-   <div role="radiogroup" aria-label="Sign-in methods" className="grid min-w-0 max-w-[640px] gap-[10px] [grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr))]">
+   <div role="radiogroup" aria-label="Sign-in methods" className="grid min-w-0 max-w-[640px] gap-[12px] [grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr))]">
     {choices.map((choice,index)=>{
      const selected=selection===choice.value;
      const order=signInChannelOrder(choice.value).map(channel=>channel==="EMAIL"?"Email":"Phone");
@@ -185,17 +186,17 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
         buttons?.[next]?.focus();
        }
       }}
-      className={"min-w-0 rounded-xl px-[14px] py-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-button-primary)] "+
-        (selected?"border-2 border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border border-[color:var(--lms-neutral-300)] bg-white hover:bg-[color:var(--lms-primary-subtle)]")}>
+      className={"min-w-0 rounded-xl px-[16px] py-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-button-primary)] "+
+        (selected?"border-2 border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border border-[color:var(--lms-neutral-300)] bg-surface hover:bg-[color:var(--lms-primary-subtle)]")}>
       <span className="flex min-w-0 items-center justify-between gap-2">
        <span className="text-sm font-semibold text-[color:var(--lms-heading)]">{choice.label}</span>
-       {choice.value==="EMAIL_AND_PHONE"?<span className="shrink-0 rounded-full bg-[color:var(--lms-primary-subtle)] px-[7px] py-[1px] text-xs text-[color:var(--lms-button-primary-hover)]">Default</span>:null}
+       {choice.value==="EMAIL_AND_PHONE"?<span className="shrink-0 rounded-full bg-[color:var(--lms-primary-subtle)] px-[8px] py-[1px] text-xs text-[color:var(--lms-button-primary-hover)]">Default</span>:null}
       </span>
       <span className="mt-[2px] block text-[13px] text-[color:var(--lms-text-muted)]">{choice.hint}</span>
-      <span aria-hidden="true" className="mt-[10px] flex gap-[3px] rounded-[8px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-100)] p-[3px]">
+      <span aria-hidden="true" className="mt-[12px] flex gap-[4px] rounded-[8px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-100)] p-[4px]">
        {order.map((label,i)=><span key={label}
-        className={"min-w-0 flex-1 rounded-[6px] px-1 py-[3px] text-center text-xs "+
-         (i===0?"bg-white font-semibold text-[color:var(--lms-heading)] shadow-[0_1px_2px_rgba(16,24,40,0.08)]":"text-[color:var(--lms-text-muted)]")}>
+        className={"min-w-0 flex-1 rounded-[6px] px-1 py-[4px] text-center text-xs "+
+         (i===0?"bg-surface font-semibold text-[color:var(--lms-heading)] shadow-(--lms-shadow-sm)":"text-[color:var(--lms-text-muted)]")}>
         {label}
        </span>)}
       </span>

@@ -12,6 +12,7 @@ import {mentorTimelineHref,mentorTimelineQuerySchema}
   from "@/modules/projects/mentor-project-timeline-model";
 import {getMentorProjectTimeline} from "@/modules/projects/mentor-project-timeline-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
+import { Heading } from "@/components/ui/heading";
 type Search={releaseStatus?:string|string[];sprintStatus?:string|string[];page?:string|string[]};
 export default async function MentorProjectTimelinePage({
   params,searchParams,
@@ -63,9 +64,9 @@ export default async function MentorProjectTimelinePage({
       :<Timeline aria-label="Registered releases">
         {data.items.map(release=><TimelineEntry key={release.id}>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">
+            <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">
               Release {release.sequence+1}: {release.title}
-            </h2>
+            </Heading>
             <StatusBadge tone={release.status==="SHIPPED"?"success":release.status==="IN_PROGRESS"?"info":"neutral"}>{release.status}</StatusBadge>
           </div>
           {release.sprints.length===0
@@ -73,9 +74,9 @@ export default async function MentorProjectTimelinePage({
             :<ol aria-label="Sprints in this release" className="mt-3 divide-y divide-[var(--lms-canvas-border)]">{release.sprints.map(sprint=>
               <li key={sprint.id} className="min-w-0 py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="m-0 text-sm font-semibold leading-5 text-[var(--lms-heading)]">
+                  <Heading level={3} size="sm" className="m-0 leading-5 text-[var(--lms-heading)]">
                     Sprint {sprint.sequence+1}: {sprint.title}
-                  </h3>
+                  </Heading>
                   <StatusBadge tone={sprint.status==="COMPLETED"?"success":sprint.status==="ACTIVE"?"info":"neutral"}>{sprint.status}</StatusBadge>
                 </div>
                 <p className="mt-1 text-sm text-body leading-[22px]">

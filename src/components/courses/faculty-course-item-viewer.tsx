@@ -4,6 +4,7 @@ import {useState} from "react";
 import {Dialog} from "@/components/ui/dialog";
 import {Drawer} from "@/components/ui/drawer";
 import {Button} from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 
 type ContentKind="VIDEO"|"YOUTUBE"|"RESOURCE"|"LIVE_CLASS"|"ASSIGNMENT"|"QUIZ";
 type Props={
@@ -33,10 +34,10 @@ export function FacultyCourseItemViewer({title,kind,notes,externalHref,youtubeEm
      className="aspect-video w-full rounded-[var(--lms-control-radius)] border border-border"
      referrerPolicy="strict-origin-when-cross-origin" loading="lazy"
      allow="encrypted-media; picture-in-picture" allowFullScreen/>:null}
-   {externalHref?<a href={externalHref} rel="noopener noreferrer"
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+   {externalHref?<TextLink href={externalHref} rel="noopener noreferrer"
+     className="inline-flex min-h-11 items-center">
      {kind==="LIVE_CLASS"?"Join meeting":"Open content"}
-   </a>:null}
+   </TextLink>:null}
    {kind==="VIDEO"&&!externalHref?<p role="note">Stored videos require an authorised signed playback link. No private file key is displayed.</p>:null}
  </div>;
  return <>

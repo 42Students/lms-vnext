@@ -29,8 +29,8 @@ describe("Faculty native controls preserve readable mobile fonts",()=>{
     expect(component).toContain("text-[var(--lms-font-base)]");
     expect(component).not.toMatch(/\bsm:text-(?:xs|sm)\b/);
    }
-   expect(readControl("select")).toContain("max-[767px]:text-[16px]");
-   expect(readControl("input")).toContain("max-[767px]:min-h-11");
+   expect(readControl("select")).toContain("max-md:text-[16px]");
+   expect(readControl("input")).toContain("max-md:min-h-11");
   });
  }
 });

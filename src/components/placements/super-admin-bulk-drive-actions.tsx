@@ -10,6 +10,7 @@ import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
+import { Heading } from "@/components/ui/heading";
 type Drive = {id: string; title: string; status: string; companyName: string};
 type Preview = {eligible: number; ignored: number; excluded: number; pendingLettersWithdrawn: number;
  recordedApplications?:number;recordedInterviews?:number;actionDescription?:string};
@@ -65,7 +66,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     aria-label="Super Admin bulk drive actions">
     <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
       <div className="flex min-h-11 flex-wrap items-center justify-between gap-3 text-sm">
-       <h2 className="font-semibold">Bulk Open / Close</h2>
+       <Heading level={2}>Bulk Open / Close</Heading>
        <p className="text-xs text-muted-foreground">Select up to 100 drives; changes run in groups of 25.</p>
       </div>
       {selected.length>0?<div role="status"

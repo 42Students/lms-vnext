@@ -10,6 +10,7 @@ import { DataTable } from "@/components/ui/data-table";
 import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-status-label";
 import {legacyAdminProjectStatus} from "@/modules/projects/admin-projects-query-model";
 import {formatProjectAdminUpdatedDateIst} from "@/modules/projects/project-admin-date-model";
+import { Heading } from "@/components/ui/heading";
 
 export type ProjectAdminWorkspaceListItem = {
   id: string;
@@ -155,10 +156,10 @@ export function ProjectAdminWorkspaceList({
   />;
   if (compactAdmin) return <div className="min-w-0 divide-y divide-border border-y border-border">
     {items.map(item=><article key={item.id} className="min-w-0 py-4">
-      <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-center min-[768px]:gap-5">
+      <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-5">
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
-            <Link href={workspaceSummaryHref(item,basePath)} className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">{workspaceTitle(item)}</Link>
+            <Link href={workspaceSummaryHref(item,basePath)} className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{workspaceTitle(item)}</Link>
             <StatusBadge tone={tone(item.status,item.riskReasons)}>{workspaceStatus(item,basePath)}</StatusBadge>
           </div>
           <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.summary ?? "Project workspace."}</p>
@@ -170,14 +171,14 @@ export function ProjectAdminWorkspaceList({
           </dl>
           <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Updated {formatProjectAdminUpdatedDateIst(item.updatedAt)}</p>
         </div>
-        <div className="flex min-w-0 flex-wrap items-center gap-2 min-[768px]:justify-end">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
           <WorkspaceActions item={item} basePath={basePath}/>
         </div>
       </div>
     </article>)}
   </div>;
   return (
-    <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
+    <div className="grid min-w-0 gap-4 lg:grid-cols-2">
       {items.map((item) => (
         <article
           key={item.id}
@@ -189,12 +190,12 @@ export function ProjectAdminWorkspaceList({
                 {item.courseLabel??"Project workspace"}
               </p>
               <div className="mt-2"><TemplateLink item={item} basePath={basePath}/></div>
-              <h2 className="mt-2 line-clamp-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+              <Heading level={2} size="base" className="mt-2 line-clamp-2 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
                 <Link href={workspaceSummaryHref(item,basePath)}
                   className="inline-flex min-h-11 items-center break-words rounded-sm underline-offset-4 hover:text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                   {workspaceTitle(item)}
                 </Link>
-              </h2>
+              </Heading>
             </div>
             <StatusBadge
               tone={tone(item.status,item.riskReasons)}

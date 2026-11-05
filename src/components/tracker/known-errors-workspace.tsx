@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/toast";
 import type { listKnownErrorsForAdmin } from "@/modules/log-alerts/admin-service";
 import Link from "next/link";
 import {knownErrorSafeSummary,knownErrorSafeSql} from "@/modules/log-alerts/known-error-safe-summary";
+import { Heading } from "@/components/ui/heading";
 
 type KnownError = Awaited<ReturnType<typeof listKnownErrorsForAdmin>>[number];
 
@@ -67,10 +68,10 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           <p className="m-0 break-all font-mono text-xs text-muted-foreground leading-[20px]">
             Signature {item.signatureHash.slice(0, 12)}…
           </p>
-          <h3 className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-base font-semibold text-[var(--lms-heading)]"><span className="sr-only">Known error status:</span>
+          <Heading level={3} size="base" className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-[var(--lms-heading)]"><span className="sr-only">Known error status:</span>
             <StatusBadge tone={item.fixStatus==="FIXED"?"success":item.fixStatus==="OPEN"?"warning":"info"}>{item.fixStatus}</StatusBadge>
             <StatusBadge tone={item.muted?"warning":"neutral"}>{item.muted ? "Muted" : "Unmuted"}</StatusBadge>
-          </h3>
+          </Heading>
           <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
             {item.occurrenceCount} occurrences · {item.affectedAccounts} distinct affected accounts
           </p>
@@ -94,7 +95,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
           issuePublicId:item.issuePublicId,
         }).slice(0,450))+"&knownErrorId="+encodeURIComponent(item.id)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text md:w-auto md:min-h-9">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:w-auto md:min-h-9">
           Create tracker issue
         </Link>
       </div>

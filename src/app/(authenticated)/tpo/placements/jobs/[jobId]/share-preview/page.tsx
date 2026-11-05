@@ -18,6 +18,8 @@ import {companyShareStatusSchema,companyShareStatusLabel} from "@/modules/placem
 import {companyShareLinksHref,recoverCompanyShareLinkPage,companySharePreviewSearchState} from "@/modules/placements/company-share/link-page-model";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; sharePage?:string|string[]; q?:string|string[] };
 const first = (value: string | string[] | undefined) =>
@@ -67,8 +69,8 @@ export default async function TpoShortlistSharePreviewPage({
       actions={<>
         <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
           className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Current internal shortlist</Link>
-        <a href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Export capped CSV</a>
+        <ButtonLink variant="secondary" href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
+          className="w-full sm:w-auto">Export capped CSV</ButtonLink>
       </>}
     />
     <form action={path} method="get" className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-4 sm:flex-row sm:items-end sm:gap-3">
@@ -90,7 +92,7 @@ export default async function TpoShortlistSharePreviewPage({
       at 500 application rows with an explicit notice if truncated. It performs no sharing.
     </p>
     <section aria-label="Read-only shortlist preview" className="min-w-0 space-y-3">
-      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Recruiter-visible shortlist</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)]">Recruiter-visible shortlist</Heading>
     <DataTable<(typeof data.rows)[number]> caption="Shortlisted applicant cards"
       rows={data.rows} getRowKey={item=>item.applicationId}
       empty={<EmptyState title="No recruiter-visible shortlisted applications are recorded on this page. Screening state may have changed; absence here is not proof of no applicants." />}

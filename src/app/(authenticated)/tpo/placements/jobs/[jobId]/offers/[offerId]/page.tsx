@@ -8,6 +8,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
 import {tpoOfferEvidenceQuery} from "@/modules/placements/tpo-offer-evidence-model";
+import { Heading } from "@/components/ui/heading";
 export default async function TpoOfferEvidencePage({params}:{params:Promise<{jobId:string;offerId:string}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -37,7 +38,7 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
   </section>
 
   <section aria-label="Offer status and joining history" className="min-w-0 border-b border-border pb-4">
-   <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Recorded transitions</h2>
+   <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)]">Recorded transitions</Heading>
    {data.events.length===0?<EmptyState title="No persisted status or joining history events were found; absence is not evidence of a decision."/>:
     <ol className="mt-3 divide-y divide-border">{data.events.map(event=><li key={event.id} className="min-w-0 py-4">
      <div className="flex flex-wrap items-center justify-between gap-3">

@@ -37,6 +37,7 @@ import { clearLearnerQuizAnswer } from "@/modules/courses/learner-quiz-answer-ed
 import { normalizeLearnerQuizDraftForQuestions } from "@/modules/courses/learner-quiz-draft-scope-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { friendlyApiError } from "@/lib/friendly-error";
+import { Heading } from "@/components/ui/heading";
 
 type QuizPayload = {
   quiz: {
@@ -418,7 +419,7 @@ export function LearnerQuizAttempt() {
           <Button onClick={() => void load()} className="min-h-11 md:min-h-9">Try Again</Button>
           <Button type="button" variant="secondary" onClick={()=>window.location.reload()}
             className="min-h-11 md:min-h-9">Refresh page</Button>
-          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">Back to quizzes</Link>
+          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">Back to quizzes</Link>
         </div>
       </div>
     );
@@ -481,7 +482,7 @@ export function LearnerQuizAttempt() {
             return (
               <article key={question.id} className="border-b border-[var(--lms-canvas-border)] bg-transparent py-[var(--lms-space-4)]">
                 <div className="flex items-start justify-between gap-3">
-                  <h2 className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Question {index + 1}. {question.prompt}</h2>
+                  <Heading level={2} size="base" className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Question {index + 1}. {question.prompt}</Heading>
                   <span className="shrink-0 text-xs font-semibold text-muted-foreground">{question.points} pts</span>
                 </div>
                 <div className="mt-3 space-y-2">
@@ -600,11 +601,11 @@ export function LearnerQuizAttempt() {
           </div>
         </aside>
 
-        <div className="min-w-0 p-4 min-[768px]:p-[var(--lms-canvas-padding)]">
+        <div className="min-w-0 p-4 md:p-[var(--lms-canvas-padding)]">
           {current ? (
             <>
               <div className="flex items-start justify-between gap-4">
-                <h2 className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{current.prompt}</h2>
+                <Heading level={2} size="base" className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">{current.prompt}</Heading>
                 <span className="shrink-0 text-xs font-semibold text-muted-foreground">{current.points} pts</span>
               </div>
               <p className="mt-2 text-xs text-muted-foreground leading-[20px]">
@@ -667,7 +668,7 @@ export function LearnerQuizAttempt() {
             ) : null}
           </div>
           {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
-          <div className={styles["actions"]+" bottom-0 z-10 mt-7 grid min-w-0 grid-cols-2 gap-2"}>
+          <div className={styles["actions"]+" bottom-0 z-(--lms-z-raised) mt-7 grid min-w-0 grid-cols-2 gap-2"}>
             {step>0?<Button variant="secondary" className="min-h-11 w-full md:min-h-9" onClick={() => setStep((value) => Math.max(0, value - 1))}>Previous</Button>:<span aria-hidden="true"/>}
             {step < questions.length - 1 ? (
               <Button className="min-h-11 w-full md:min-h-9" disabled={!current || (answers[current.id]??[]).length===0}

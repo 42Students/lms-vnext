@@ -34,6 +34,7 @@ import {Button} from "@/components/ui/button";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {LearnerRoundConfirmAttendance} from "./learner-round-confirm-attendance";
 import {LearnerScheduleReschedule} from "./learner-schedule-reschedule";
+import { Heading } from "@/components/ui/heading";
 
 const views: CareerCalendarView[] = ["agenda", "month", "week", "day"];
 type EventFilter = LearnerCalendarUrlState["kind"];
@@ -168,7 +169,7 @@ export function LearnerCareerCalendar({
           {surface==="schedule" ? <p className="text-sm text-body">
             Select any date to see rounds, talks, application deadlines and college exam blocks.
           </p> : <div className="min-w-0">
-            <h2 className={styles["heading"]}>Career calendar</h2>
+            <Heading level={2} className={styles["heading"]}>Career calendar</Heading>
             <p className="mt-2 text-sm text-body">
               Scheduled employer assessments, interviews and other rounds for your applications.
               Approved reschedules replace the original slot.
@@ -190,7 +191,7 @@ export function LearnerCareerCalendar({
               aria-pressed={view === option}
               onClick={() => changeCalendar({view:option})}
               variant={view===option?"primary":"secondary"}
-              className="min-h-11 capitalize min-[768px]:min-h-9"
+              className="min-h-11 capitalize md:min-h-9"
             >
               {option}
             </Button>
@@ -230,14 +231,14 @@ export function LearnerCareerCalendar({
               const day=parseLearnerCareerDate(event.target.value);
               if(day)changeCalendar({date:day});
             }}
-            className="mt-1 min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+            className="mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
         {surface==="schedule" ? <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-border py-3 text-xs text-body" aria-label="Calendar legend">
           {([
             ["Your tests and interviews","bg-[color:var(--lms-primary-subtle)]"],
             ["Talks","bg-[color:var(--lms-purple-surface)]"],
-            ["Application deadlines","bg-[rgba(217,119,6,0.18)]"],
-            ["No drives (exams)","bg-[rgba(180,35,24,0.15)]"],
+            ["Application deadlines","bg-[color-mix(in_srgb,var(--lms-warning)_18%,transparent)]"],
+            ["No drives (exams)","bg-[color-mix(in_srgb,var(--lms-error-text)_15%,transparent)]"],
           ] as const).map(([label,color])=>(
             <span key={label} className="inline-flex items-center gap-2">
               <span aria-hidden="true" className={"size-3 shrink-0 rounded-sm border border-border "+color}/>{label}
@@ -269,7 +270,7 @@ export function LearnerCareerCalendar({
       ) : null}
 
       {calendarDays.length ? (
-        <section className={(surface==="schedule"?"p-2 sm:p-3 ":"hidden p-3 min-[768px]:block ")+styles["gridFrame"]} aria-label={view + " calendar grid"}>
+        <section className={(surface==="schedule"?"p-2 sm:p-3 ":"hidden p-3 md:block ")+styles["gridFrame"]} aria-label={view + " calendar grid"}>
           <CalendarGrid variant="hairline" className={styles["grid"]+(surface==="schedule"?" "+styles["scheduleGrid"]:"")}>
             {(surface==="schedule"?["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]:["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]).map((label) => (
               <p key={label} className={styles["weekday"]+" "+(label==="Sun"?calendarStyles.calendarSunday:"")}>
@@ -314,7 +315,7 @@ export function LearnerCareerCalendar({
 
       {dayTimeline ? (
         <section className="border-b border-[var(--lms-canvas-border)] py-4" aria-label="Selected day schedule summary">
-          <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{prettyDay(anchor)} · Day schedule</h3>
+          <Heading level={3} size="base" className="m-0 leading-[26px] text-foreground md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">{prettyDay(anchor)} · Day schedule</Heading>
           <p role="status" className="mt-2 text-sm text-body">
             {dayTimeline.events.length} scheduled round{dayTimeline.events.length===1?"":"s"} on this IST date.
             {dayTimeline.first ? " First: " + displayDate(dayTimeline.first.start) + "." : ""}
@@ -325,20 +326,20 @@ export function LearnerCareerCalendar({
 
       {calendarDays.length ? (
         <section className={styles["agenda"]+(surface==="schedule"?" hidden":" md:hidden")} aria-label="Mobile career calendar agenda">
-          <h3 className="text-base font-semibold text-foreground">Agenda by day (IST)</h3>
+          <Heading level={3} size="base" className="text-foreground">Agenda by day (IST)</Heading>
           {mobileDays.length===0 ? (
             <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
               No scheduled placement events match this period and filter.
             </p>
           ) : mobileDays.map(day=>(
             <div key={day.dayKey} className={styles["mobileDay"]}>
-              <h4 className="text-sm font-semibold text-foreground">
+              <Heading level={4} size="sm" className="text-foreground">
                 <Button type="button" variant="link"
                   className="min-h-11 text-sm font-semibold underline md:min-h-9"
                   onClick={()=>{setSelectedKey(null);setSelectedDayKey(day.dayKey);}}>
                   {prettyDay(day.dayKey)} · Day details
                 </Button>
-              </h4>
+              </Heading>
               {day.events.length===0?<p className="mt-2 text-sm text-body">No scheduled rounds on this day.</p>:null}
               <ul className={styles["mobileList"]}>
                 {day.events.map(event=>(
@@ -363,11 +364,11 @@ export function LearnerCareerCalendar({
         </section>
       ) : null}
 
-      <section aria-label="Career events in selected period" className={calendarDays.length ? "hidden space-y-3 min-[768px]:block" : "space-y-3"}>
+      <section aria-label="Career events in selected period" className={calendarDays.length ? "hidden space-y-3 md:block" : "space-y-3"}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <Heading level={3} size="base" className="m-0 leading-[26px] text-foreground md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
             {view === "agenda" ? "30-day agenda" : view === "day" ? "Day events" : "Events"} · {period.events.length}
-          </h3>
+          </Heading>
           <span className="text-xs text-muted-foreground">
             Times shown in Indian Standard Time
           </span>
@@ -388,7 +389,7 @@ export function LearnerCareerCalendar({
             <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
               <div>
                 <p className="m-0 text-xs font-bold uppercase text-primary-text">{event.companyName}</p>
-                <h4 className="mt-1 text-base font-semibold text-foreground">{event.title}</h4>
+                <Heading level={4} size="base" className="mt-1 text-foreground">{event.title}</Heading>
                 <p className="mt-1 text-sm text-body">{event.roleTitle} · {displayDate(event.start)}</p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -399,12 +400,12 @@ export function LearnerCareerCalendar({
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-3">
-              <Button variant="link" className="max-[767px]:min-h-11 text-sm font-[650]" type="button"
+              <Button variant="link" className="max-md:min-h-11 text-sm font-semibold" type="button"
                 onClick={()=>showEventDetail(event)}>
                 Event details
               </Button>
               {(!event.eventType||event.eventType==="ROUND")?<Link href={hrefForEvent(event)}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
                 View application →
               </Link>:null}
             </div>
@@ -425,7 +426,7 @@ export function LearnerCareerCalendar({
               {selectedDayEvents.map((event)=>(
                 <li key={event.key}
                   className="min-w-0 space-y-2 border-b border-border pb-4 text-sm">
-                  <h3 className="font-semibold text-foreground">{event.title}</h3>
+                  <Heading level={3} className="text-foreground">{event.title}</Heading>
                   <p className="text-body">{event.companyName} · {event.roleTitle}</p>
                   <p className="text-body">{event.eventType==="EXAM_BLOCK"?"Blocked day":event.eventType==="APPLICATION_DEADLINE"?"Deadline":"Scheduled (IST)"}: {displayDate(event.start)}</p>
                   {event.mode?<p className="text-body">Mode: {event.mode==="VIRTUAL"?"Online":event.mode==="ON_CAMPUS"?"On campus":event.mode}</p>:null}
@@ -478,7 +479,7 @@ export function LearnerCareerCalendar({
         footer={
           <div className="flex min-w-0 w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             {selected?<Link href={learnerCareerCalendarEventTarget(selected)}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)]">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)]">
               Open exact round
             </Link>:null}
             <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" type="button" onClick={()=>setSelectedKey(null)}

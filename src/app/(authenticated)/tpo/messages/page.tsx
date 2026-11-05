@@ -28,6 +28,7 @@ import {
   getTpoMessagesInbox,
   tpoMessagesQuerySchema,
 } from "@/modules/placements/tpo-messages-service";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = {
   tab?: string | string[];
@@ -115,7 +116,7 @@ export default async function TpoMessagesPage({
           action={
             <Link
               href="/tpo/messages"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text md:min-h-9 md:w-auto"
             >
               Clear filters
             </Link>
@@ -227,7 +228,7 @@ export default async function TpoMessagesPage({
         <aside aria-label="Recruiter inbox" className="min-w-0 border-b border-border lg:border-b-0 lg:border-r">
           <div className="space-y-3 border-b border-border p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-semibold text-foreground">Inbox</h2>
+              <Heading level={2} size="lg" className="text-foreground">Inbox</Heading>
               {!recipientsUnavailable?<TpoNewRecruiterConversation recruiters={availableRecruiters??[]} actorUserId={context.user.id}/>:null}
             </div>
             <nav aria-label="Recruiter inbox filters" className="flex flex-wrap gap-2">
@@ -299,7 +300,7 @@ export default async function TpoMessagesPage({
             <>
               <div className="flex flex-wrap items-start justify-between gap-2 border-b border-border pb-3">
                 <div>
-                  <h2 className="text-lg font-semibold text-foreground">{active.participantName}</h2>
+                  <Heading level={2} size="lg" className="text-foreground">{active.participantName}</Heading>
                   <p className="text-sm text-muted-foreground">{active.companyName??"Recruiter"} · {active.subject}</p>
                 </div>
                 <Link href={"/tpo/messages/"+encodeURIComponent(active.id)} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">

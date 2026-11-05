@@ -18,6 +18,8 @@ import {EmptyState} from "@/components/ui/empty-state";
 import { Disclosure } from "@/components/ui/disclosure";
 import {CollegeInterviewRefresh} from "@/components/placements/college-interview-refresh";
 import {CollegeInterviewNotice} from "@/components/placements/college-interview-notice";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -90,9 +92,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     <div className="flex min-w-0 flex-wrap items-center gap-3">
       <Link href={applicantHref(row)} aria-label={"View "+row.student+" for "+row.job}
         className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">View</Link>
-      <a href={singleIcsHref(row)} download={"interview-"+row.id+".ics"}
+      <TextLink href={singleIcsHref(row)} download={"interview-"+row.id+".ics"}
         aria-label={"Download interview calendar for "+row.student+" and "+row.job}
-        className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">ICS ↓</a>
+        className="inline-flex min-h-9 items-center">ICS ↓</TextLink>
     </div>
     <Disclosure title="Manage" className="min-w-0" contentClassName="py-2">
       <CollegeInterviewStatusActions id={row.id} version={row.version} status={row.status}/>
@@ -104,7 +106,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
    description="Review the interview schedule, conflicts and candidate context without leaving the placements workspace." actions={<div className="flex flex-wrap gap-2">
      <CollegeInterviewRefresh/>
      <Link href="/college/placements/calendar" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">Calendar view</Link>
-     <Disclosure title="Exports" className="w-full min-w-0 md:w-auto"><div className="flex min-w-0 flex-col items-stretch gap-2 py-2 sm:flex-row sm:items-center"><a href={build(1,"ics")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Download .ics</a><a href={build(1,"csv")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export CSV</a></div></Disclosure></div>}/>
+     <Disclosure title="Exports" className="w-full min-w-0 md:w-auto"><div className="flex min-w-0 flex-col items-stretch gap-2 py-2 sm:flex-row sm:items-center"><ButtonLink variant="secondary" href={build(1,"ics")} className="w-full md:w-auto">Download .ics</ButtonLink><ButtonLink variant="secondary" href={build(1,"csv")} className="w-full md:w-auto">Export CSV</ButtonLink></div></Disclosure></div>}/>
   <p className="text-xs text-muted-foreground" aria-label="Interview company scope">{valid.data.companyId?data.companies.find(item=>item.id===valid.data.companyId)?.name??"Selected company":"All companies"}</p>
   {!data.ready?<Banner tone="warning">
     Candidate interview appointment storage is not registered. No schedule or conflict counts are inferred from round-level placeholders.
@@ -193,10 +195,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       {valid.data.departmentId?<input type="hidden" name="departmentId" value={valid.data.departmentId}/>:null}
       <Button type="submit" variant="secondary">Apply</Button>
     </form>
-    <a href={build(1,"csv")} aria-disabled={data.rows.length===0}
-      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text hover:bg-primary-subtle">
+    <ButtonLink variant="secondary" href={build(1,"csv")} aria-disabled={data.rows.length===0}>
       ↓ Export CSV
-    </a>
+    </ButtonLink>
     {data.summary.conflicts>0?<StatusBadge tone="error">{data.summary.conflicts} {data.summary.conflicts===1?"conflict":"conflicts"}</StatusBadge>:null}
     {hasActiveFilters?<Link href="/college/placements/interviews" className="inline-flex min-h-9 items-center text-primary-text underline">Clear filters</Link>:null}
    </div>
@@ -216,7 +217,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
         <p className="text-sm">Interviewer: {row.interviewerName?.trim()||"Not assigned"}</p>
         <div className="flex items-center justify-between gap-3 text-sm">
           <span>{row.mode==="VIRTUAL"?"▣ Online":row.mode==="ON_CAMPUS"?"⌖ In-person":"Mode not specified"} · {row.venue??"—"}</span>
-          <a href={singleIcsHref(row)} download={"interview-"+row.id+".ics"} className="min-h-11 shrink-0 font-semibold text-primary-text underline">ICS ↓</a>
+          <TextLink href={singleIcsHref(row)} download={"interview-"+row.id+".ics"} className="min-h-11 shrink-0">ICS ↓</TextLink>
         </div>
         <Disclosure title="Manage" className="border-t border-border pt-2">
           <CollegeInterviewStatusActions id={row.id} version={row.version} status={row.status}/>

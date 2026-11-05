@@ -14,6 +14,8 @@ import {
   quizInteractionState,
   type ProgressStatus,
 } from "./learner-interaction-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type QuizQuestion = {
   id: string;
@@ -297,13 +299,13 @@ export function QuizAttemptControl({
   if(missedReview){
     return <section aria-label="Missed quiz review" className="mt-4 space-y-4 rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><h3 className="text-base font-semibold text-foreground">Review quiz</h3>
+        <div><Heading level={3} size="base" className="text-foreground">Review quiz</Heading>
           <p className="text-sm text-body">You didn&apos;t attempt this quiz. The answer key has been released.</p></div>
         <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>setMissedReview(null)}>Close review</Button>
       </div>
       <ol className="space-y-3">
         {missedReview.questions.map((question,index)=><li key={question.id} className="rounded-[var(--lms-control-radius)] border border-border p-3">
-          <h4 className="font-semibold text-foreground">Question {index+1}: {question.prompt}</h4>
+          <Heading level={4} className="text-foreground">Question {index+1}: {question.prompt}</Heading>
           <p className="mt-1 text-xs text-body">{question.points} pts</p>
           <ul className="mt-2 space-y-1">{question.options.map(option=>
             <li key={option.id} className="flex gap-2 text-sm text-body">
@@ -352,19 +354,19 @@ export function QuizAttemptControl({
         </div>
 
         <nav aria-label="Quiz question progress" className="mt-4 rounded-xl border border-border bg-surface p-3">
-          <h3 className="text-sm font-semibold text-foreground">Progress</h3>
+          <Heading level={3} size="sm" className="text-foreground">Progress</Heading>
           <Disclosure title="Questions" className="mt-2 lg:hidden [&>summary]:text-primary-text">
             <ol className="mt-2 flex flex-wrap gap-2">
               {quiz.questions.map((question,index)=><li key={question.id}>
-                <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-                  href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</a>
+                <ButtonLink variant="secondary"
+                  href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</ButtonLink>
               </li>)}
             </ol>
           </Disclosure>
           <ol className="mt-2 hidden flex-wrap gap-2 lg:flex">
             {quiz.questions.map((question,index)=><li key={question.id}>
-              <a className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-                href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</a>
+              <ButtonLink variant="secondary"
+                href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</ButtonLink>
             </li>)}
           </ol>
         </nav>
@@ -406,7 +408,7 @@ export function QuizAttemptControl({
                       return (
                         <label
                           key={option.id}
-                          className="flex min-h-11 min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2.5 text-sm text-body transition-colors hover:border-primary hover:bg-primary-subtle focus-within:border-primary focus-within:ring-2 focus-within:ring-[var(--lms-focus-ring)] motion-reduce:transition-none"
+                          className="flex min-h-11 min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-3 text-sm text-body transition-colors hover:border-primary hover:bg-primary-subtle focus-within:border-primary focus-within:ring-2 focus-within:ring-[var(--lms-focus-ring)] motion-reduce:transition-none"
                         >
                           <ChoiceControl
                             name={`quiz-${quizId}-${question.id}`}

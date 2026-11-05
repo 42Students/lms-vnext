@@ -20,6 +20,7 @@ import {driveSettingsIstDate} from "@/modules/placements/admin-drive-settings-da
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
+import { Heading } from "@/components/ui/heading";
 export default async function DriveSettingsPage({params}:{params:Promise<{jobId:string}>}){
  const {jobId}=await params;
  const context=await getCurrentRequestContext();
@@ -87,12 +88,12 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."
    actions={<PageBackLink href={base} label="Drive overview"/>}/>
   <section aria-label="Job details" className="min-w-0 space-y-[var(--lms-space-2)] border-b border-border pb-[var(--lms-space-4)]">
-   <h2 className="break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{job.title}</h2>
+   <Heading level={2} className="break-words text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">{job.title}</Heading>
    <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? driveSettingsIstDate(job.applicationDeadline) : "Not configured"}</p>
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
   </section>
   <section aria-label="Edit drive" className="min-w-0 space-y-3">
-   <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Edit drive</h2>
+   <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Edit drive</Heading>
    {job.status==="DRAFT"&&draftReady&&publishedPolicy&&
     draftPrograms&&draftCohorts&&draftSections&&typesRead?.status==="fulfilled"&&
     employmentType&&workMode&&applicationMode&&missingEvidencePolicy?
@@ -172,7 +173,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     }} />:job.status!=="DRAFT"?<ErrorState title="Unsupported saved job type" description="This drive contains a legacy employment type or work mode that cannot be edited. No changes have been made."/>:null}
   </section>
   {job.status!=="DRAFT"?<section aria-label="Full job settings" className="min-w-0 space-y-4 border-b border-border pb-5">
-   <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Full job details</h2>
+   <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Full job details</Heading>
    <p className="text-sm text-body">All saved posting fields remain available to review regardless of publication state. Published changes use the audited editor above; eligibility and applicant targeting are frozen after publication to preserve historical decisions.</p>
    <dl className="grid min-w-0 grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
     {([
@@ -189,11 +190,11 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
      </div>)}
    </dl>
    <div className="space-y-2">
-    <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Job description</h3>
+    <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Job description</Heading>
     <p className="whitespace-pre-wrap break-words text-sm text-body">{job.description}</p>
    </div>
    <div className="space-y-2">
-    <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Eligibility and target audience</h3>
+    <Heading level={3} size="sm" className="text-[var(--lms-heading)]">Eligibility and target audience</Heading>
     {publishedPolicy?<dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
      {([
        ["Programs",publishedPolicy.allowedProgramIds.length],
@@ -226,7 +227,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
     <p className="text-xs text-muted-foreground">Informational posting terms; enforceable learner eligibility remains in the drive policy.</p>
     {job.legacyPostingDetails.responsibilities?<div>
-      <h3 className="text-sm font-semibold leading-6 text-[var(--lms-heading)]">Responsibilities</h3>
+      <Heading level={3} size="sm" className="leading-6 text-[var(--lms-heading)]">Responsibilities</Heading>
       <p className="whitespace-pre-wrap text-sm text-body">{job.legacyPostingDetails.responsibilities}</p>
     </div>:null}
     {job.legacyPostingDetails.assessmentUrl?
@@ -236,12 +237,12 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       Assessment deadline (IST): {driveSettingsIstDate(job.legacyPostingDetails.assessmentDeadline)}
     </p>:null}
     {job.legacyPostingDetails.importantDates?.length?<div>
-      <h3 className="text-sm font-semibold leading-6 text-[var(--lms-heading)]">Important dates</h3>
+      <Heading level={3} size="sm" className="leading-6 text-[var(--lms-heading)]">Important dates</Heading>
       <ul className="mt-2 space-y-1 text-sm">{job.legacyPostingDetails.importantDates.map((date,i)=>
         <li key={i}>{date.label}: {driveSettingsIstDate(date.at)}</li>)}</ul>
     </div>:null}
     {job.legacyPostingDetails.customEligibilityRules?.length?<div>
-      <h3 className="text-sm font-semibold leading-6 text-[var(--lms-heading)]">Custom eligibility rules (informational)</h3>
+      <Heading level={3} size="sm" className="leading-6 text-[var(--lms-heading)]">Custom eligibility rules (informational)</Heading>
       <ul className="mt-2 space-y-1 text-sm">{job.legacyPostingDetails.customEligibilityRules.map((rule,i)=>
         <li key={i}>{rule.label}: {rule.value}</li>)}</ul>
     </div>:null}
@@ -250,12 +251,12 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   {job.status==="PUBLISHED"?<SuperAdminDriveDeadline jobId={jobId} deadline={job.applicationDeadline?.toISOString()??null}/>:null}
   <SuperAdminDriveStatusControl jobId={job.id} status={job.status}/>
   <section aria-label="Duplicate drive" className="min-w-0 space-y-3 border-b border-border pb-4">
-   <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Duplicate</h2>
+   <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Duplicate</Heading>
    <SuperAdminDriveDuplicate jobId={jobId} title={job.title}/>
   </section>
   {job.status!=="ARCHIVED"?<section aria-label="Danger zone"
-   className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] p-4">
-   <h2 className="text-lg font-semibold text-[var(--lms-error-text)]">Danger zone</h2>
+   className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[color-mix(in_srgb,var(--lms-error)_25%,transparent)] bg-[var(--lms-error-subtle)] p-4">
+   <Heading level={2} size="lg" className="text-[var(--lms-error-text)]">Danger zone</Heading>
    <p className="text-sm text-[var(--lms-error-text)]">Deleting archives this drive; existing application and decision records remain retained. Review the impact and reason before confirming.</p>
    <SuperAdminDriveArchive jobId={jobId} title={job.title}/>
   </section>:null}

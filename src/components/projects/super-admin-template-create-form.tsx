@@ -14,6 +14,7 @@ import {initialSuperAdminTemplateDraft,type TemplateCreateRelease,
  type TemplateCreateSprint,type TemplateCreateTask,type TemplateCreateResource
 } from "@/modules/projects/super-admin-template-create-model";
 import {projectMutation} from "@/components/projects/project-api";
+import { Heading } from "@/components/ui/heading";
 
 function move<T>(list:readonly T[],index:number,step:-1|1):T[]{
  const dest=index+step;if(dest<0||dest>=list.length)return [...list];
@@ -216,7 +217,7 @@ export function SuperAdminTemplateCreateForm(){
    </fieldset>
   </details>
   <section className="space-y-3 border-t border-border pt-4" aria-label="Additional releases">
-   <h2 className="text-base font-semibold">Releases</h2>
+   <Heading level={2} size="base">Releases</Heading>
    {!releases.length?<p className="text-sm text-body">No additional releases yet.</p>:null}
    {releases.map((row,index)=><fieldset key={row.key} disabled={saving} className="space-y-2 border-b border-border pb-3">
     <legend className="text-sm font-semibold">Release {index+2}</legend>
@@ -246,7 +247,7 @@ export function SuperAdminTemplateCreateForm(){
     }])}>Add release</Button>
   </section>
   <section className="space-y-3 border-t border-border pt-4" aria-label="Additional sprints">
-   <h2 className="text-base font-semibold">Sprints</h2>
+   <Heading level={2} size="base">Sprints</Heading>
    {!sprints.length?<p className="text-sm text-body">No additional sprints yet.</p>:null}
    {sprints.map((row,index)=><fieldset key={row.key} disabled={saving} className="space-y-2 border-b border-border pb-3">
     <legend className="text-sm font-semibold">Sprint {index+2}</legend>
@@ -290,7 +291,7 @@ export function SuperAdminTemplateCreateForm(){
     }])}>Add sprint</Button>
   </section>
   <section className="space-y-3 border-t border-border pt-4" aria-label="Additional tasks">
-   <h2 className="text-base font-semibold">Tasks</h2>
+   <Heading level={2} size="base">Tasks</Heading>
    {!tasks.length?<p className="text-sm text-body">No additional tasks yet.</p>:null}
    {tasks.map((row,index)=><fieldset key={row.key} disabled={saving} className="space-y-2 border-b border-border pb-3">
     <legend className="text-sm font-semibold">Task {index+2}</legend>
@@ -351,7 +352,7 @@ export function SuperAdminTemplateCreateForm(){
     }])}>Add task</Button>
   </section>
   <section className="space-y-3 border-t border-border pt-4" aria-label="Additional resources">
-   <h2 className="text-base font-semibold">Resources</h2>
+   <Heading level={2} size="base">Resources</Heading>
    {!resources.length?<p className="text-sm text-body">No additional resources yet.</p>:null}
    {resources.map((row,index)=><fieldset key={row.key} disabled={saving} className="space-y-2 border-b border-border pb-3">
     <legend className="text-sm font-semibold">Resource {index+2}</legend>

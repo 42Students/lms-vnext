@@ -1,12 +1,13 @@
 import Link from "next/link";
 import {EmptyState} from "@/components/ui/empty-state";
 import type {getCollegeClosingQuizzes} from "@/modules/admin-ui/college-dashboard-quizzes-service";
+import { Heading } from "@/components/ui/heading";
 type Data=Awaited<ReturnType<typeof getCollegeClosingQuizzes>>;
 export function CollegeClosingQuizzesCard({data}:{data:Data}){
  const date=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
  return <section className="space-y-3 border-t border-border pt-5" aria-label="Quizzes closing this week">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h2 className="font-semibold text-foreground">Quizzes closing this week</h2>
+   <div><Heading level={2} className="text-foreground">Quizzes closing this week</Heading>
     <p className="text-sm text-body">{data.total.toLocaleString("en-IN")} published quiz(es) due in the next 7 days</p></div>
    <Link href="/college/quizzes" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View quizzes</Link>
   </div>

@@ -12,6 +12,7 @@ import { getCollegeHallAvailability, CollegeHallAvailabilityNotFoundError }
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Heading } from "@/components/ui/heading";
 
 type Query = Record<string, string | string[] | undefined>;
 
@@ -44,16 +45,16 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
     <PageHeader title={result?.hall.name ?? "Room availability"}
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
       actions={<PageBackLink href="/college/lecture-halls" label="Back to lecture halls"/>} />
-    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" aria-label="Filter lecture hall bookings">
-      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 min-[768px]:w-auto">From (IST)
+    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" aria-label="Filter lecture hall bookings">
+      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 md:w-auto">From (IST)
         <Input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
           />
       </label>
-      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 min-[768px]:w-auto">To (IST)
+      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 md:w-auto">To (IST)
         <Input name="to" type="date" required defaultValue={typeof to === "string" ? to : ""}
           />
       </label>
-      <Button type="submit" className="min-h-11 w-full md:col-span-2 md:min-h-9 min-[992px]:col-span-1 min-[992px]:w-auto">View schedule</Button>
+      <Button type="submit" className="min-h-11 w-full md:col-span-2 md:min-h-9 lg:col-span-1 lg:w-auto">View schedule</Button>
     </form>
     {!parsed.success && hasRange ? <ErrorState title="Invalid date range"
       description="Choose valid from/to dates in IST, up to 31 consecutive calendar days. No schedule was loaded." />
@@ -69,14 +70,14 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
           classes={bookingOptions.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}
           faculty={bookingOptions.faculty} /> : null}
         <section aria-label="Hall scheduled sessions" className="min-w-0 overflow-x-clip space-y-3">
-          <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">{result.conflictCount} flagged booking{result.conflictCount === 1 ? "" : "s"} in selected range</h2>
+          <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)]">{result.conflictCount} flagged booking{result.conflictCount === 1 ? "" : "s"} in selected range</Heading>
           {result.truncated ? <p role="status" className="text-sm text-warning">More than 500 sessions match. This is a truncated read; conflict counts may be incomplete. Select a shorter range.</p> : null}
           {result.sessions.length === 0 ? <p className="border-b border-border pb-5 text-sm text-body">
             No persisted scheduled sessions overlap this date range. This is not confirmation that the hall is free for booking.
           </p> : <ul className="max-h-[40rem] min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)]">{result.sessions.map(item =>
             <li key={item.id} className="min-w-0 py-4">
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-                <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{item.title}</h3>
+                <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{item.title}</Heading>
                 {item.hasConflict ? <StatusBadge tone="warning">Potential conflict</StatusBadge> :
                   <StatusBadge tone="neutral">Scheduled</StatusBadge>}
               </div>

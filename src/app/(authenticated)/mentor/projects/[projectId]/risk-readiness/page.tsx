@@ -9,6 +9,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorRiskReadiness} from "@/modules/projects/mentor-risk-readiness-service";
 import {mentorRiskReadinessHref,mentorRiskReadinessQuerySchema}
   from "@/modules/projects/mentor-risk-readiness-model";
+import { Heading } from "@/components/ui/heading";
 
 type Search={focus?:string|string[];taskPriority?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -90,7 +91,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
         <li key={row.key} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <h2 className="m-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.title}</h2>
+            <Heading level={2} size="base" className="m-0 break-words leading-6 text-[var(--lms-heading)]">{row.title}</Heading>
             <span className="text-xs font-semibold text-body">
               {row.category==="RISK"?"Attention":"Readiness"}
             </span>

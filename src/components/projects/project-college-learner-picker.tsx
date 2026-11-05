@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
 
 type LearnerChoice={membershipId:string;displayName:string;rollNumber:string};
 
@@ -43,7 +44,7 @@ export function ProjectCollegeLearnerPicker({collegeId,selectedIds,onChange}:{
     className="min-w-0 space-y-3 border-y border-border py-4 md:col-span-2">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
-        <h3 className="text-sm font-semibold text-foreground">Learners · {selectedIds.length} selected</h3>
+        <Heading level={3} size="sm" className="text-foreground">Learners · {selectedIds.length} selected</Heading>
         <p className="mt-1 text-xs text-body">
           Select up to 500 eligible college learners. Only selected learners join this workspace.
         </p>

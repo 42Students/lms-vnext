@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { friendlyReference } from "@/lib/friendly-error";
 import styles from "./public-screen.module.css";
+import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Shared error, forbidden, offline and maintenance screen; copy and recovery stay intact. */
 export function GracefulScreen({ title, message, homeHref = "/dashboard", retry, requestId, homeLabel = "Go to home" }: {
@@ -40,7 +42,7 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
       {!legacyStatus ? <header className={styles["header"]}>
         <Link href={destination} className={styles["brand"]} aria-label="42LMS home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles["legacyLogo"]} />
+          <Img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles["legacyLogo"]} />
         </Link>
       </header> : null}
       <div className={styles["center"]}>
@@ -79,7 +81,7 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
         <span>© {new Date().getFullYear()} 42LMS · JRSPF Technologies Pvt. Ltd.</span>
         <nav className={styles["footerLinks"]} aria-label="Footer">
           <Link href="/privacy-policy">Privacy</Link>
-          <a href="/assets/static/terms-and-conditions-view.html">Terms</a>
+          <TextLink href="/assets/static/terms-and-conditions-view.html">Terms</TextLink>
         </nav>
       </footer> : null}
     </main>

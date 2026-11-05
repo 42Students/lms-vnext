@@ -15,6 +15,8 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null;
   knownErrorId?:string|null;muted?:boolean|null};
@@ -329,7 +331,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
   }
   return <section className="min-w-0 space-y-4 border-b border-border pb-5" aria-label="Live logs">
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <div><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Live Logs</h2>
+      <div><Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Live Logs</Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">Redacted log entries from the configured deployment namespace. Warning and above by default.</p>
       </div>
       <div className="flex flex-wrap items-center gap-2">
@@ -435,7 +437,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       {grouped.map(({item,count})=><li key={item.id} id={"log-"+encodeURIComponent(item.id)}
         className="min-w-0 py-3 text-sm">
         {isDeploymentLogEvent(item.event)?<div aria-label="Deployment marker from Cloud Logging"
-          className="mb-2 flex flex-wrap items-center gap-2 border-l-[3px] border-[var(--lms-teal-deep)] bg-[var(--lms-neutral-50)] px-3 py-2 text-xs text-body">
+          className="mb-2 flex flex-wrap items-center gap-2 border-l-2 border-[var(--lms-teal-deep)] bg-[var(--lms-neutral-50)] px-3 py-2 text-xs text-body">
           <strong>Deployment log event</strong>
           <time dateTime={item.time}>{displayTime(item.time)}</time>
           <span className="min-w-0 break-all">{item.event}</span>
@@ -490,13 +492,13 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
           <div><dt className="font-semibold">Provider reference</dt><dd className="break-all">{detailEntry.id}</dd></div>
         </dl>
         <section aria-label="Source and stack trace" className="space-y-2 border-t border-border pt-3 text-xs text-muted-foreground">
-          <h3 className="font-semibold text-body">Source and stack trace</h3>
+          <Heading level={3} className="text-body">Source and stack trace</Heading>
           <p>Only redacted provider fields are shown. Full stack frames, raw SQL and bind values are not returned by the restricted log endpoint.</p>
-          <a rel="noopener noreferrer"
+          <TextLink rel="noopener noreferrer"
             href={"https://github.com/42Students/lms-vnext/search?q="+
               encodeURIComponent((detailEntry.component??detailEntry.path).slice(0,100))}
-            className="inline-flex min-h-9 items-center font-semibold text-link underline"
-            aria-label="Search LMS source for this log component">Search repository source ↗</a>
+            className="inline-flex min-h-9 items-center"
+            aria-label="Search LMS source for this log component">Search repository source ↗</TextLink>
         </section>
         <details className="min-w-0 border-t border-border pt-3">
           <summary className="cursor-pointer font-semibold">Sanitized raw log payload</summary>

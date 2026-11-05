@@ -72,7 +72,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
   const lastItem = Math.min(safeTotal, current * safeSize);
   const choices = [...new Set((pageSizeOptions ?? []).filter(value => Number.isSafeInteger(value) && value > 0))];
   const sizeLinks = choices.map(size=>({size,href: hrefForPageSize ? safePageHref(hrefForPageSize,size) : null}));
-  const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] md:leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none";
+  const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[44px] md:leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none";
   return (
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center justify-center gap-1 md:justify-start md:gap-[var(--lms-space-2)]", className)}>
       {hasTotal && pageSize && pageSize > 0 ? <span role="status" className="w-full text-xs font-medium text-[var(--lms-neutral-500)] tabular-nums md:mr-auto md:w-auto">Showing {firstItem}–{lastItem} of {safeTotal}</span> : null}
@@ -87,7 +87,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
       </> : null}
       {pageLinks.map(({item,href}) => item === current ?
         <span key={item} aria-current="page" aria-label={`Current page ${item} of ${total}`}
-          className={cx(buttonClass, "cursor-default border-[var(--lms-primary)] bg-surface text-[var(--lms-primary)] hover:border-[var(--lms-primary)] hover:bg-white")}>{item}</span> :
+          className={cx(buttonClass, "cursor-default border-[var(--lms-primary)] bg-surface text-[var(--lms-primary)] hover:border-[var(--lms-primary)] hover:bg-surface")}>{item}</span> :
         href ? <Link key={item} href={href} scroll={scroll}
           aria-label={`Page ${item} of ${total}`}
           className={cx(buttonClass, "hidden md:inline-flex hover:bg-[var(--lms-primary-subtle)]")}>

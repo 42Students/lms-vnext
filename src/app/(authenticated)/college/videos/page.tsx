@@ -8,6 +8,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeContentQuerySchema, collegeContentSearchParams } from "@/modules/courses/college-content-aggregate-model";
 import { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
+import { Heading } from "@/components/ui/heading";
 
 
 export default async function CollegeVideosPage({
@@ -42,15 +43,15 @@ export default async function CollegeVideosPage({
       {([{label:"Lessons",href:"/college/lessons"},{label:"Videos",href:"/college/videos"},
         {label:"Live classes",href:"/college/live-classes"},{label:"Resources",href:"/college/resources"}] as const).map(tab=>
         <Link key={tab.href} href={tab.href} aria-current={tab.label==="Videos"?"page":undefined}
-         className={"inline-flex min-h-11 items-center border-b-[3px] px-4 md:min-h-9 "+
+         className={"inline-flex min-h-11 items-center border-b-2 px-4 md:min-h-9 "+
           (tab.label==="Videos"?"border-[var(--lms-teal-deep)] text-[var(--lms-teal-deep)]":
            "border-transparent text-body hover:border-border hover:text-link")}>{tab.label}</Link>)}
     </nav>
     <PageHeader title="Video" description="Upload a video or link a YouTube video to a lesson." eyebrow="College Admin · Courses & Content"
-      actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Lessons</Link>} />
+      actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Lessons</Link>} />
     <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] lg:grid-cols-2">
       <section aria-label="Create a video" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-        <h2 className="text-[16px] font-semibold text-[var(--lms-heading)]">Add a video</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Add a video</Heading>
         {authoring?<CollegeContentAuthoringControl kind="YOUTUBE" lessons={authoring.lessons} deliveries={authoring.deliveries}
           existing={authoring.existing} existingTruncated={authoring.existingTruncated} existingPage={authoring.existingPage}
           existingFilters={authoring.existingFilters} dependencyErrors={authoring.dependencyErrors} />:
@@ -63,7 +64,7 @@ export default async function CollegeVideosPage({
         </p>
       </section>
       <section aria-label="Existing Content" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-        <h2 className="text-[16px] font-semibold text-[var(--lms-heading)]">Existing Content</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Existing Content</Heading>
         {catalogue?<CollegeContentAggregate showHeader={false} data={catalogue}/>:
           <ErrorState title="Couldn't refresh videos" description="The video catalogue is temporarily unavailable."
             action={<Link href="/college/videos" className="font-semibold text-link underline">Retry</Link>}/>}

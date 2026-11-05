@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { TextLink } from "@/components/ui/text-link";
 type Choice = {
   id: string; jobId: string; jobTitle: string; companyName: string; name: string;
   kind: string; status: string; updatedAt: string; scheduledAt: string | null;
@@ -99,7 +100,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
     } catch (e) { setError(e instanceof Error ? e.message : "Calendar update failed."); }
     finally { setPending(false); }
   }
-  if (choices.length === 0) return <EmptyState title="No pending or scheduled rounds exist in published drives." description="Create a round in its job workspace first." action={<a href="/tpo/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-[var(--lms-control-height)]">Calendar</a>}/>;
+  if (choices.length === 0) return <EmptyState title="No pending or scheduled rounds exist in published drives." description="Create a round in its job workspace first." action={<TextLink href="/tpo/calendar" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Calendar</TextLink>}/>;
   return <section className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-4">
     <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive round
       <Select className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9"
@@ -143,11 +144,11 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
       </details>
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Button variant="primary" disabled={pending} type="button" onClick={() => review("SCHEDULE")}
-          className="min-h-11 w-full px-4 md:w-auto min-[768px]:min-h-9">
+          className="min-h-11 w-full px-4 md:w-auto md:min-h-9">
           {round.status === "PENDING" ? "Confirm schedule" : "Confirm reschedule"}
         </Button>
         <Button variant="secondary" disabled={pending} type="button" onClick={() => review("CANCEL")}
-          className="min-h-11 w-full px-4 md:w-auto min-[768px]:min-h-9">
+          className="min-h-11 w-full px-4 md:w-auto md:min-h-9">
           Confirm cancellation
         </Button>
       </div>

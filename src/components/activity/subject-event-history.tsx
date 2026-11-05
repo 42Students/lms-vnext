@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { listActivityEvents } from "@/modules/activity/service";
+import { Heading } from "@/components/ui/heading";
 
 /** Reusable, tenant-authorized event trail for any record drawer or page.
  * The service enforces membership scope before returning the event rows.
@@ -28,7 +29,7 @@ export async function SubjectEventHistory({
     "?" + query.toString();
   return <section aria-label="Record history" className="min-w-0 space-y-3 border-t border-border pt-5">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Record history</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Record history</Heading>
       <Link href={historyHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
         View full history
       </Link>

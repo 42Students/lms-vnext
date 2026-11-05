@@ -9,6 +9,7 @@ import {
   facultyProfileTeachingQuerySchema, ownFacultyTeachingHref,
 } from "@/modules/courses/faculty-profile-teaching-model";
 import { getOwnFacultyTeachingSection } from "@/modules/courses/faculty-profile-teaching-service";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic="force-dynamic";
 type Params={search?:string|string[];page?:string|string[]};
@@ -37,7 +38,7 @@ export default async function FacultyTeachingProfilePage({
         Profile overview
       </Link>} />
     <section aria-labelledby="section-college-managed-employment-details" className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
-      <h2 id="section-college-managed-employment-details" className="text-base font-semibold text-foreground">College-managed employment details</h2>
+      <Heading level={2} size="base" id="section-college-managed-employment-details" className="text-foreground">College-managed employment details</Heading>
       <dl className="mt-3 grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Academic title</dt>
           <dd className="mt-1 text-sm font-semibold">{data.academicTitle||"Not provided"}</dd></div>
@@ -68,7 +69,7 @@ export default async function FacultyTeachingProfilePage({
       : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
         <article key={row.deliveryId} className="min-w-0 space-y-2 py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.courseName}</h2>
+            <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{row.courseName}</Heading>
             <Badge tone="neutral">{row.teachingRole}</Badge>
           </div>
           <p className="mt-2 text-sm text-body leading-[22px]">

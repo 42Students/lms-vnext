@@ -41,7 +41,7 @@
   background: url("/assets/images/legacy-42lms-logo.svg") left center / contain no-repeat;
 }
 .page:has(form), .page:has([role="alert"]) { padding-top: max(72px, env(safe-area-inset-top)); }
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .page::after { top: 16px; left: 20px; }
   .page { padding-top: max(66px, env(safe-area-inset-top)); }
 }

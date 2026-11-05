@@ -11,6 +11,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { ZodError } from "zod";
 import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function FacultyCourseStudentsPage({
   params,searchParams,
@@ -48,7 +49,7 @@ export default async function FacultyCourseStudentsPage({
        error instanceof ZodError)throw error;
     return <div className="min-w-0 space-y-5">
       <h1 className="sr-only">Students</h1>
-      <h2 className="text-xl font-semibold leading-7 text-[var(--lms-heading)]">Class list</h2>
+      <Heading level={2} size="xl" className="leading-7 text-[var(--lms-heading)]">Class list</Heading>
       <Alert tone="error">
         <strong>We couldn&apos;t load the class roster. Check your connection and try again.</strong>
         <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/students"}

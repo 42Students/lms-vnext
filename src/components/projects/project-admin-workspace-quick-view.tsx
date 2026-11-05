@@ -5,6 +5,7 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Heading } from "@/components/ui/heading";
 
 type Summary = {
  id:string;title:string;summary:string|null;status:string;
@@ -80,13 +81,13 @@ export function ProjectAdminWorkspaceQuickView({item,href}:{
    className="!left-auto !right-0 !top-0 !h-[100dvh] !max-h-[100dvh] !w-[min(520px,100vw)] !max-w-[520px] !translate-x-0 !translate-y-0 !rounded-none"
    footer={<div className="flex flex-wrap gap-2">
     <Button variant="secondary" onClick={()=>setOpen(false)}>Close</Button>
-    <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white md:min-h-9">
+    <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] md:min-h-9">
       Open full workspace
     </Link>
    </div>}>
    <div className="min-w-0 space-y-4">
     <div>
-     <h3 className="break-words text-base font-semibold text-foreground">{item.title}</h3>
+     <Heading level={3} size="base" className="break-words text-foreground">{item.title}</Heading>
      <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.summary||"No workspace summary has been added yet."}</p>
     </div>
     {loading?<div role="status" aria-live="polite" className="space-y-2 text-sm text-body">
@@ -107,9 +108,9 @@ export function ProjectAdminWorkspaceQuickView({item,href}:{
       </div>)}
      </dl>
      <section aria-label="Project members" className="space-y-2">
-      <h4 className="text-sm font-semibold text-foreground">
+      <Heading level={4} size="sm" className="text-foreground">
        Members · {members?.length??item.memberCount}
-      </h4>
+      </Heading>
       {(members??[]).length? <ul className="divide-y divide-border">
        {(members??[]).map(member=><li key={member.id}
         className="flex flex-wrap items-center justify-between gap-2 py-2">

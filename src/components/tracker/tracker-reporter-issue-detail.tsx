@@ -12,6 +12,7 @@ import {
   getMyTrackerReport,listMyTrackerReportHistory,listMyTrackerReportScreenshots,
 } from "@/modules/bug-tracker/reporter-service";
 import type {RequestContext} from "@/modules/identity/context";
+import { Heading } from "@/components/ui/heading";
 
 function localDate(value:Date){
   return new Intl.DateTimeFormat("en-IN",{
@@ -66,7 +67,7 @@ export async function TrackerReporterIssueDetail({
       {" "}<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="underline">Retry activity</Link>
     </Alert> : null}
     {historyResult.status==="fulfilled" && activities.length>0 ? <section aria-label="Issue status history" className="space-y-3">
-      <h2 className="font-semibold">Activity</h2>
+      <Heading level={2}>Activity</Heading>
       <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {activities.map(activity=><li key={activity.id} className="py-3 text-sm">
           <p className="font-semibold">{activity.type==="WORKFLOW_UPDATED"?"Engineering update recorded":activity.type.replaceAll("_"," ")}</p>
@@ -83,7 +84,7 @@ export async function TrackerReporterIssueDetail({
     </Alert>:null}
     {screenshotsResult.status==="fulfilled" && screenshots.length>0 ?
       <section aria-label="Your issue screenshots" className="space-y-2">
-        <h2 className="font-semibold">Screenshots</h2>
+        <Heading level={2}>Screenshots</Heading>
         <TrackerScreenshotGallery publicId={report.publicId} screenshots={screenshots}/>
       </section>:null}
     <p className="text-xs text-muted-foreground">This is your own report's read-only status history. Engineering notes and other reporters' issues remain private.</p>

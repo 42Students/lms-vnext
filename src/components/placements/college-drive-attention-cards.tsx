@@ -7,6 +7,7 @@ import {Alert} from "@/components/ui/alert";
 import type {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 import {CollegeDriveDeadlineAction} from "./college-drive-deadline-action";
 import {CollegeDriveDuplicateAction} from "./college-drive-duplicate-action";
+import { Heading } from "@/components/ui/heading";
 
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const labels={
@@ -52,7 +53,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
 
  return <div className="min-w-0 space-y-5">
   <section aria-label="Needs attention" className="min-w-0 space-y-3">
-   <h2 className="text-lg font-semibold">Needs attention ({data.total})</h2>
+   <Heading level={2} size="lg">Needs attention ({data.total})</Heading>
    {!data.categories.length?<Alert tone="success">
     <span role="status"><span aria-hidden="true">✓ </span>No drives currently flagged in this view.</span>
    </Alert>:categories.map(category=>{
@@ -60,10 +61,10 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
     if(!rows.length)return null;
     const shown=expanded[category]?rows:rows.slice(0,3);
     return <section key={category} aria-label={categoryLabels[category]}
-      className="min-w-0 rounded-[8px] border border-[color:var(--lms-gold-subtle)] border-l-4 border-l-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] p-3">
-      <h3 className="flex items-center gap-2 text-sm font-semibold text-[color:var(--lms-gold-accent)]">
+      className="min-w-0 rounded-[8px] border border-[color:var(--lms-gold-subtle)] border-l-2 border-l-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] p-3">
+      <Heading level={3} size="sm" className="flex items-center gap-2 text-[color:var(--lms-gold-accent)]">
        <AttentionGlyph/>{categoryLabels[category]} ({rows.length})
-      </h3>
+      </Heading>
       <ul className="mt-3 divide-y divide-[color:var(--lms-icon-amber)]">
        {shown.map(row=><li key={row.jobId}
         className="flex min-w-0 flex-col justify-between gap-3 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-start">
@@ -105,7 +106,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
 
   <section className="min-w-0 space-y-4 border-t border-border pt-4" aria-label="Active drives">
    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-    <h2 className="text-lg font-semibold">Active drives ({data.activeDriveCount})</h2>
+    <Heading level={2} size="lg">Active drives ({data.activeDriveCount})</Heading>
     <div className="flex min-w-0 flex-wrap items-center gap-3">
       <label className="min-w-0 w-full text-xs font-semibold text-muted-foreground sm:w-60">
         <span className="sr-only">Search active drives</span>
@@ -128,7 +129,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
       const href="/college/placements/jobs/"+encodeURIComponent(job.id)+
         "/overview?returnTo=%2Fcollege%2Fplacements";
       return <article key={job.id}
-        className="group relative min-h-[152px] min-w-0 rounded-[12px] border border-[color:var(--lms-border)] bg-surface p-4 transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md focus-within:border-primary focus-within:shadow-md">
+        className="group relative min-h-[152px] min-w-0 rounded-[12px] border border-[color:var(--lms-border)] bg-surface p-4 transition-[border-color,box-shadow,transform] duration-[var(--lms-motion-fast)] hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md focus-within:border-primary focus-within:shadow-md">
         <Link href={href} aria-label={"Open drive overview: "+job.title}
           className="absolute inset-0 rounded-[12px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
         <div className="pointer-events-none relative flex min-w-0 gap-3">
@@ -137,7 +138,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
             {job.companyName.trim().slice(0,2).toUpperCase()||"CO"}
           </span>
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-sm font-semibold text-foreground" title={job.title}>{job.title}</h3>
+            <Heading level={3} size="sm" className="truncate text-foreground" title={job.title}>{job.title}</Heading>
             <p className="mt-1 truncate text-xs text-body" title={job.companyName}>{job.companyName}</p>
           </div>
           {job.attention>0?<span title={job.attention+" attention item(s)"}
@@ -154,7 +155,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
             <DateGlyph/>{deadlineShort(job.deadline)}
           </span>
         </div>
-        <details className="relative z-10 mt-4 min-w-0">
+        <details className="relative z-(--lms-z-raised) mt-4 min-w-0">
           <summary className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link md:min-h-9">
             More <span aria-hidden="true">⋯</span>
           </summary>

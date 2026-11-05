@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge";
 import { getOwnLearnerApplicationHistory } from "@/modules/placements/learner-application-detail-service";
 import { placementApplicationIdSchema } from "@/modules/placements/validation";
+import { Heading } from "@/components/ui/heading";
 
 function dateInIst(value: Date): string {
   if(!Number.isFinite(value.getTime()))return "Date unavailable";
@@ -88,12 +89,12 @@ export default async function LearnerApplicationHistoryPage({
       <Link
         href={"/learn/my-placements/applications?applicationId=" +
           encodeURIComponent(history.applicationId)}
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
       >
         ← Back to application
       </Link>
       <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4">
-        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status history</h2>
+        <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Status history</Heading>
         <p className="mt-2 max-w-2xl text-sm leading-[22px] text-body">
           Your timeline includes a submission baseline reconstructed from your own saved application when older history entries are missing. Screening and round decisions remain in your application details.
         </p>

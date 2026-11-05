@@ -45,7 +45,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <PageHeader title="Invalid applicant filters"
     description="This URL contains unsupported applicant filters or page values. No applications were loaded."/>
   <Alert tone="error">This URL contains unsupported applicant filters or page values. No applications were loaded.</Alert>
-  <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:w-auto">
+  <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto">
     Reset applicant filters
   </Link>
  </div>;
@@ -57,7 +57,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <PageHeader title={data.job.title}
    description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."
    actions={<Link href={{pathname:"/tpo/placements/jobs/"+jobId+"/applications-export",query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin}}}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:w-auto">Review and export all matching applicants</Link>}/>
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto">Review and export all matching applicants</Link>}/>
   <nav aria-label="Applicants sub-sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm font-semibold">
    <span aria-current="page" className="inline-flex min-h-11 items-center border-b-2 border-primary px-3 text-[var(--lms-primary-text)]">Applicants</span>
    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/not-applied"}
@@ -65,7 +65,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"}
     className="inline-flex min-h-11 items-center px-3 text-link underline">Add to drive</Link>
   </nav>
-  <section className="grid min-w-0 grid-cols-2 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[992px]:grid-cols-4" aria-label="Applicant pipeline counts">
+  <section className="grid min-w-0 grid-cols-2 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 lg:grid-cols-4" aria-label="Applicant pipeline counts">
    {Object.entries(data.counts).map(([label,count])=>
     <div className="min-w-0 border-b border-[var(--lms-canvas-border)] px-1 py-3" key={label}>
       <p className="text-xs capitalize text-body leading-[20px]">{label}</p>
@@ -73,7 +73,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     </div>)}
   </section>
   <form action={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} method="get"
-   className="grid min-w-0 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" aria-label="Filter applicants pipeline">
+   className="grid min-w-0 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" aria-label="Filter applicants pipeline">
    {columns&&<input type="hidden" name="columns" value={columns}/>}
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
     <Select name="stage" defaultValue={data.stage} className="block min-h-11 w-full">
@@ -82,10 +82,10 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
     <Input name="search" defaultValue={data.search} maxLength={100}
      className="block min-h-11 w-full"/></label>
-   <Button type="submit" className="min-h-11 w-full min-[992px]:w-auto">Apply</Button>
+   <Button type="submit" className="min-h-11 w-full lg:w-auto">Apply</Button>
    <details className="group col-span-full" open={data.channel !== "ALL" || data.eligibility !== "ALL" || data.flag !== "ALL" || data.sort !== "NEWEST" || data.submittedWithin !== "ALL"}>
     <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Filter applicants <span aria-hidden="true" className="ml-2">⌄</span></summary>
-    <div className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
+    <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application channel
     <Select name="channel" defaultValue={data.channel} className="block min-h-11 w-full">
      <option value="ALL">All channels</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
@@ -140,15 +140,15 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     /> : null}
   {!data.rows.length?<div className="flex min-w-0 flex-col gap-3">
     <EmptyState title="No matching applicants" description="No applicants match these filters. Clear the filters or check Registered, not applied to see who still needs to apply."/>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:w-auto">Registered, not applied</Link>
-    <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:w-auto">Clear applicant filters</Link>
+    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto">Registered, not applied</Link>
+    <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto">Clear applicant filters</Link>
    </div>:
    <Suspense fallback={<Skeleton variant="row" count={4} label="Loading applicant grid…" />}>
     <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
    </Suspense>}
-  <nav aria-label="Applicant pages" className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
-   {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] min-[768px]:w-auto hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:<span/>}
-   {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] min-[768px]:w-auto hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+  <nav aria-label="Applicant pages" className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+   {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:w-auto hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:<span/>}
+   {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:w-auto hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
   </nav>
   <p className="text-xs text-body leading-[20px]">This stage snapshot does not claim independent employer selection or share private screening comments.</p>
  </div>;

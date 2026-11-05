@@ -28,6 +28,8 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import {Input} from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Course = {
   deliveryId: string;
@@ -367,7 +369,7 @@ export function LearnerAttendanceWorkspace({
             </p>
             {learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month) ? (
               <Link href={learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month)!}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                 Full course attendance history →
               </Link>
             ) : null}
@@ -393,7 +395,7 @@ export function LearnerAttendanceWorkspace({
       </section>
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Attendance History</h2>
+          <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Attendance History</Heading>
           <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Review each scheduled class and your status for it.</p>
           <p className="mt-1 text-xs text-muted-foreground leading-[20px]">{monthLabel} · Status filters affect only the session list, not attendance totals.</p>
         </div>
@@ -422,11 +424,10 @@ export function LearnerAttendanceWorkspace({
       {historyRows.length > 0 ? (
         <div className="flex min-w-0 flex-col items-start gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>{attendanceCsv.truncated ? "CSV includes the first 200 matching sessions; narrow the selection for remaining records." : "CSV includes the matching sessions shown for this month."}</span>
-          <a download="learner-attendance-history.csv"
-            href={"data:text/csv;charset=utf-8,"+encodeURIComponent(attendanceCsv.content)}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          <ButtonLink variant="secondary" download="learner-attendance-history.csv"
+            href={"data:text/csv;charset=utf-8,"+encodeURIComponent(attendanceCsv.content)}>
             Download attendance CSV
-          </a>
+          </ButtonLink>
         </div>
       ) : null}
       {historyRows.length === 0 ? (
@@ -504,9 +505,9 @@ export function LearnerAttendanceWorkspace({
       <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+            <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">
               Eligibility signal
-            </h2>
+            </Heading>
             <p className="mt-1 text-xs text-body leading-[20px]">
               Your College attendance threshold is{" "}
               <strong>{threshold}%</strong>.

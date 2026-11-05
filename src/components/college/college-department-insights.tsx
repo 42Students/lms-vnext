@@ -12,6 +12,7 @@ import {
   readinessEvidenceLabel,
 } from "@/modules/admin-ui/college-department-insights-model";
 import type { listCollegeDepartmentInsights } from "@/modules/admin-ui/college-department-insights-service";
+import { TextLink } from "@/components/ui/text-link";
 
 type Data = Awaited<ReturnType<typeof listCollegeDepartmentInsights>>;
 
@@ -50,11 +51,11 @@ export function CollegeDepartmentInsights({
         ? "College-scoped marked attendance sessions and explicit learner-status records, not attendance rates."
         : "Coverage of persisted academic evidence and placement preferences among active enrolled learners. No eligibility or readiness score is inferred."}
       actions={<>
-        {attendance ? <a href={"/api/attendance/admin/departments/export" +
+        {attendance ? <TextLink href={"/api/attendance/admin/departments/export" +
           (data.query.q ? "?q=" + encodeURIComponent(data.query.q) : "")}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Export CSV
-        </a> : null}
+        </TextLink> : null}
         <Link href={attendance ? "/college/attendance" : "/college/placements"}
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           {attendance ? "Attendance workspace" : "Placements workspace"}
@@ -86,7 +87,7 @@ export function CollegeDepartmentInsights({
     </section>
     <nav aria-label="Department pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm md:flex-row md:items-center">
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
-      <div className="flex min-w-0 gap-[var(--lms-space-3)] max-[767px]:[&_a]:flex-1 max-[767px]:[&_a]:justify-center">
+      <div className="flex min-w-0 gap-[var(--lms-space-3)] max-md:[&_a]:flex-1 max-md:[&_a]:justify-center">
         {data.query.page > 1 ? <Link
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9"
           href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page - 1 })}>Previous</Link> : null}

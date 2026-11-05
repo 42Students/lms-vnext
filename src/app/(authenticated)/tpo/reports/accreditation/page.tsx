@@ -20,6 +20,7 @@ import {getTpoAccreditationStudentExport} from "@/modules/placements/tpo-accredi
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {accreditationStudentCompleteness} from "@/modules/placements/tpo-accreditation-completeness";
 import {accreditationPackageLpa,accreditationOfferStatusLabel,accreditationJoiningLabel} from "@/modules/placements/tpo-accreditation-students-model";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -86,11 +87,11 @@ export default async function TpoAccreditationReportPage({
       <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/accreditation" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <section aria-labelledby="section-naac-5-2-1-placed-students" id="accreditation-batch" className="space-y-3 border-t border-border pt-6">
-       <h2 id="section-naac-5-2-1-placed-students" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">NAAC 5.2.1 · Placed students</h2>
+       <Heading level={2} size="lg" id="section-naac-5-2-1-placed-students" className="leading-[1.4] text-[var(--lms-heading)]">NAAC 5.2.1 · Placed students</Heading>
        <p role="status" className="text-sm leading-[1.6]">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
        <form role="search" aria-label="reports accreditation filters" method="get" className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
-         <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-[6px] block min-h-11 min-[768px]:min-h-9">
+         <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-[6px] block min-h-11 md:min-h-9">
           <option value="">Pick a batch</option>
           {batches.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
          </Select>
@@ -103,8 +104,8 @@ export default async function TpoAccreditationReportPage({
        {selectedBatch&&studentReport?.rows.length===0?<Alert tone="info">No placed students in this batch. Export is unavailable until a recorded placement exists.</Alert>:null}
        {studentReport&&<>
         {completeness?<div role="group" aria-label="NAAC and NIRF completeness" className="min-w-0 space-y-2 border-y border-border py-4">
-         <h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{completeness.missingStudents} of {completeness.total} students are missing data NAAC/NIRF ask for</h3>
-         <ul className="grid gap-1 text-sm min-[768px]:grid-cols-2">{completeness.fields.map(field=>
+         <Heading level={3} size="base" className="leading-[1.4] text-[var(--lms-heading)]">{completeness.missingStudents} of {completeness.total} students are missing data NAAC/NIRF ask for</Heading>
+         <ul className="grid gap-1 text-sm md:grid-cols-2">{completeness.fields.map(field=>
           <li key={field.key}>{field.label} — missing for {field.missing}</li>)}</ul>
          <p className="text-xs text-muted-foreground leading-5">This checks seven fields in the recorded placed-student export, not all graduating learners or external placement evidence.</p>
          {studentReport.rows.length>0?<TpoAccreditationExportPreflight href={"/api/placements/reports?"+query.toString()}
@@ -135,9 +136,9 @@ export default async function TpoAccreditationReportPage({
        </>}
       </section>
       <section aria-labelledby="section-reporting-scope" className="border-t border-border py-4">
-        <h2 id="section-reporting-scope" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" id="section-reporting-scope" className="leading-[1.4] text-[var(--lms-heading)]">
           Reporting scope
-        </h2>
+        </Heading>
         <p className="mt-2 text-sm text-body leading-[22px]">
           {report.seasonName
             ? "Placement season: " + report.seasonName
@@ -169,9 +170,9 @@ export default async function TpoAccreditationReportPage({
       </Disclosure>
 
       <section aria-labelledby="section-evidence-preview" className="space-y-3">
-        <h2 id="section-evidence-preview" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" id="section-evidence-preview" className="leading-[1.4] text-[var(--lms-heading)]">
           Evidence preview
-        </h2>
+        </Heading>
         {overview.length === 0 ? (
           <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body leading-[22px]">
             No reportable placement season was found. Download the

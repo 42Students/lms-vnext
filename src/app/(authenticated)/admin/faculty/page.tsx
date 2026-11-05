@@ -14,6 +14,7 @@ import {listCollegeFacultyPicker} from "@/modules/courses/college-faculty-picker
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {listAdminScopedPeople} from "@/modules/admin-ui/super-admin-scoped-people-service";
 import {getSuperAdminPeopleFilterOptions} from "@/modules/admin-ui/super-admin-people-filter-options";
+import { Heading } from "@/components/ui/heading";
 const statuses=["ALL","ACTIVE","SUSPENDED","ENDED"] as const;
 export default async function SuperAdminFacultyPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -48,7 +49,7 @@ export default async function SuperAdminFacultyPage({searchParams}:{
        </summary>
        <div className="grid min-w-0 gap-6 pt-4 lg:grid-cols-2">
         <div className="min-w-0 space-y-3">
-         <h3 className="font-semibold text-[var(--lms-heading)]">Register New Faculty</h3>
+         <Heading level={3} className="text-[var(--lms-heading)]">Register New Faculty</Heading>
          <p className="text-sm text-body">Create a faculty account for the selected college. Specify the teaching department, faculty type and contact details.</p>
          {peopleFilters?<PersonOnboardDialog collegeId={context.adminScope.collegeId} forcedRole="FACULTY" departments={peopleFilters.departments}/>:<Alert tone="warning">Department choices are unavailable; retry options before registering faculty.</Alert>}
         </div>

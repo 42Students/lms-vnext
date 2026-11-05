@@ -7,6 +7,7 @@ import barStyles from "@/components/placements/report-bar-chart.module.css";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import { Heading } from "@/components/ui/heading";
 
 type UnreadRecipient=string|{id?:string;name:string;rollNumber?:string|null;branchName?:string|null};
 type Summary={delivered:number;read:number;unread:UnreadRecipient[];notDelivered:boolean};
@@ -52,20 +53,20 @@ export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SEN
  }
  return <section className="mt-3 min-w-0 border-t border-border pt-3">
   {!isSent?<p className="text-xs text-muted-foreground">{status==="SCHEDULED"?"Read tracking starts after sending.":status==="ENDED"?"This notice has ended.":"Read tracking starts when this notice is sent."}</p>:null}
-  <Button variant="ghost" type="button" className="min-h-11 min-[768px]:min-h-9 text-sm underline"
+  <Button variant="ghost" type="button" className="min-h-11 md:min-h-9 text-sm underline"
    disabled={busy||!isSent} onClick={()=>void load()}>{busy?"Loading…":data?"Refresh read status":"Retry read status"}</Button>
   {data?<div className="mt-2 min-w-0 space-y-2 text-sm">
    <p>{data.notDelivered?"Awaiting notification delivery":data.read+" of "+data.delivered+" read · "+Math.round(data.read/Math.max(1,data.delivered)*100)+"%"}</p>
    {data.delivered>0?<MetricBar role="progressbar" label="Notices read" maximum={data.delivered} value={data.read} unit="people" className={barStyles["track"]+" w-full"}/>:null}
    {isSent&&data.delivered>data.read&&data.unread.length?<Button variant="secondary" type="button" disabled={busy}
-    className="min-h-11 min-[768px]:min-h-9"
+    className="min-h-11 md:min-h-9"
     onClick={()=>void remind()}>{busy?"Sending…":"Remind them"}</Button>:null}
    {reminder?<InlineNotice tone="success" message={reminder}/>:null}
    {isSent&&!data.notDelivered&&data.delivered>data.read&&data.unread.length>0?
     <section aria-label="Unread announcement recipients preview" className="mt-3 min-w-0 overflow-hidden rounded-lg border border-border">
-     <h3 className="bg-surface-secondary px-3 py-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+     <Heading level={3} size="xs" className="bg-surface-secondary px-3 py-2 uppercase tracking-wide text-muted-foreground">
       Who has not read this notice
-     </h3>
+     </Heading>
      <ul className="divide-y divide-border">
       {data.unread.slice(0,6).map((recipient,index)=>{
        const name=typeof recipient==="string"?recipient:recipient.name;

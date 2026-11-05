@@ -54,7 +54,7 @@ export function RecruiterNotificationBell(){
     variant="secondary" className="relative min-h-11 min-w-11 !p-0 md:min-h-9 md:min-w-9">
     <ShellNavGlyph name="bell" />
     {data?.unread&&data.unread>0?<Badge tone="error" aria-hidden="true"
-      className="pointer-events-none absolute -right-1 -top-1 !min-h-4 !min-w-4 !rounded-full !border-0 !bg-[var(--lms-error)] !px-1 !py-0 !text-xs !leading-3 !text-white">
+      className="pointer-events-none absolute -right-1 -top-1 !min-h-4 !min-w-4 !rounded-full !border-0 !bg-[var(--lms-error)] !px-1 !py-0 !text-xs !leading-4 !text-[color:var(--lms-on-primary)]">
       {data.unread>99?"99+":data.unread}</Badge>:null}
   </Button>
   <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications"
@@ -76,7 +76,7 @@ export function RecruiterNotificationBell(){
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 min-w-0 break-words border-b border-transparent px-2 py-3 text-sm font-[650] leading-[1.4] text-foreground transition-colors duration-200 hover:bg-[var(--lms-neutral-50)] active:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:min-h-9 rounded-[var(--lms-control-radius)]">
+       className="block min-h-11 min-w-0 break-words border-b border-transparent px-2 py-3 text-sm font-semibold leading-[1.4] text-foreground transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-neutral-50)] active:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:min-h-9 rounded-[var(--lms-control-radius)]">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}

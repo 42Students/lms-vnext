@@ -11,6 +11,7 @@ import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {useToast} from "@/components/ui/toast";
 import {TPO_QUICK_REPLIES} from "@/modules/placements/tpo-message-draft-model";
+import { TextLink } from "@/components/ui/text-link";
 
 type Recruiter={userId:string;displayName:string|null;companyName:string};
 export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
@@ -88,7 +89,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div>
-  <Button variant="primary" ref={launchRef} type="button" className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 text-sm font-[650] sm:w-auto md:min-h-9"
+  <Button variant="primary" ref={launchRef} type="button" className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold sm:w-auto md:min-h-9"
    onClick={()=>open?close():openDialog()}>New message</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)close();}} dismissible={!busy}
    title="New message to a recruiter"
@@ -118,7 +119,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
       <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
       {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy||(message?message.length+1+reply.length:reply.length)>4000}
        onClick={()=>editMessage(message?message+" "+reply:reply)}
-       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650]">{reply}</Button>)}
+       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">{reply}</Button>)}
       </div>
      </Disclosure>
      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Message
@@ -139,8 +140,8 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
       This starts their General thread. Messages about a drive are best sent from that drive.
      </p>
      {error?<InlineNotice tone="error" message={error}/>:null}
-     {createdThreadId?<a href={"/tpo/messages/"+encodeURIComponent(createdThreadId)}
-      className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Open conversation</a>:null}
+     {createdThreadId?<TextLink href={"/tpo/messages/"+encodeURIComponent(createdThreadId)}
+      className="lms-inline-link inline-flex min-h-11 items-center text-sm md:min-h-9">Open conversation</TextLink>:null}
 
     </form>
   </Dialog>

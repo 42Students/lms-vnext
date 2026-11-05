@@ -9,6 +9,8 @@ import styles from "./tpo-companies-today.module.css";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type LeadContext={id:string;stage:string;designation:string|null;emailNorm:string|null;ownerName:string|null};
 type CompanyAttention={items:Array<{
@@ -263,7 +265,7 @@ export function TpoCompaniesToday({
      <div className={styles.personHead}>
       <div className={styles.identity}>
        <div className={styles.avatar} aria-hidden="true">{selectedCompany.recruiterName.trim().split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()??"").join("")}</div>
-       <div><h2>{selectedCompany.recruiterName}</h2>
+       <div><Heading level={2}>{selectedCompany.recruiterName}</Heading>
         <p className={styles.sub}>{selectedCompany.companyName} · Recruiter account linked</p></div>
       </div>
       <div className={styles.personActions}>
@@ -288,7 +290,7 @@ export function TpoCompaniesToday({
     </div>:selectedReply?<div className={styles.replyDetail} data-testid="tpo.today.reply-detail">
      <div className={styles.personHead}><div className={styles.identity}>
       <div className={styles.avatar} aria-hidden="true">{selectedReply.name.trim().split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()??"").join("")}</div>
-      <div><h2>{selectedReply.name}</h2><p className={styles.sub}>{selectedReply.company??"Recruiter"} · {when(selectedReply.receivedAt)}</p></div>
+      <div><Heading level={2}>{selectedReply.name}</Heading><p className={styles.sub}>{selectedReply.company??"Recruiter"} · {when(selectedReply.receivedAt)}</p></div>
      </div></div>
      <div className={styles.context}><span className={styles.eyebrow}>RECRUITER MESSAGE · NEEDS ANSWER</span>
       <strong>{selectedReply.subject}</strong></div>
@@ -304,11 +306,11 @@ export function TpoCompaniesToday({
     </div>:null}
     {current?<><div className={styles.personHead}>
       <div className={styles.identity}><div className={styles.avatar} aria-hidden="true">{current.leadName.trim().split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()??"").join("")}</div>
-       <div><h2>{current.leadName}</h2><p className={styles.sub}>{leadInfo?.designation?leadInfo.designation+" · ":""}{current.companyName??"Recruiter"}</p>
+       <div><Heading level={2}>{current.leadName}</Heading><p className={styles.sub}>{leadInfo?.designation?leadInfo.designation+" · ":""}{current.companyName??"Recruiter"}</p>
        {leadInfo?.ownerName?<p className={styles.sub}>Assigned to {leadInfo.ownerName}</p>:null}</div></div>
       <div className={styles.personActions}>
-       {contact?<a href={contact} className={styles.secondary}>Call</a>:null}
-       {emailHref?<a href={emailHref} className={styles.secondary}>Email</a>:null}
+       {contact?<TextLink variant="bare" href={contact} className={styles.secondary}>Call</TextLink>:null}
+       {emailHref?<TextLink variant="bare" href={emailHref} className={styles.secondary}>Email</TextLink>:null}
        <Link href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)} className={styles.secondary}>Open page</Link>
       </div>
      </div>
@@ -353,7 +355,7 @@ export function TpoCompaniesToday({
        onClick={()=>setConfirm("DONE")}>Done & next</Button>
       <Button variant="bare" type="button" disabled={pending} className={styles.secondary}
        onClick={()=>setConfirm("TOMORROW")}>Tomorrow, 10 AM</Button>
-      {contact?<a href={contact} className={styles.secondary}>Call recruiter ↗</a>:null}
+      {contact?<TextLink variant="bare" href={contact} className={styles.secondary}>Call recruiter ↗</TextLink>:null}
      </div>
      </details>
      <Link className={styles.link} href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)}>

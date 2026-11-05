@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {useState} from "react";
+import { Heading } from "@/components/ui/heading";
 
 type Offering={
  offeringId:string;courseName:string;courseCode:string;cohortName:string;
@@ -89,7 +90,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
   }finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 md:flex-none">
-  <h2 className="text-lg font-semibold text-foreground">Create New Lesson</h2>
+  <Heading level={2} size="lg" className="text-foreground">Create New Lesson</Heading>
   {!options.length?<Alert tone="warning">
    No courses in this college yet. Create an active Course Offering first. Lessons belong to a Course and Batch.{" "}
    <Link href="/college/courses" className="font-semibold underline">Go to Courses</Link>

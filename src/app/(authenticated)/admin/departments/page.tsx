@@ -15,6 +15,7 @@ import {
   resolveDepartmentUsage,
 } from "@/modules/departments/service";
 import type { DepartmentDirectoryRow } from "@/modules/admin-ui/department-directory";
+import { Heading } from "@/components/ui/heading";
 
 export default async function SuperAdminDepartmentsPage({
   searchParams,
@@ -27,7 +28,7 @@ export default async function SuperAdminDepartmentsPage({
   const selectedType=validType?requestedType:"department";
   const recoveryType=RECOVERY_ENTITY_TYPES.find(item=>item.value===selectedType)!;
   const recoveryChooser=<section aria-label="Deleted Items" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Deleted Items</h2>
+    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Deleted Items</Heading>
     <form method="get" action="/admin/departments" className="flex flex-wrap items-end gap-3">
       <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">
         Entity type

@@ -5,6 +5,7 @@ import {Badge} from "@/components/ui/badge";
 import {Banner} from "@/components/ui/banner";
 import {getOwnAcademicEvidence} from "@/modules/placements/eligibility-service";
 import {getOwnLearnerAcademicSummary} from "@/modules/people/learner-academic-summary-service";
+import { Heading } from "@/components/ui/heading";
 
 /** Membership-owned, read-only current enrollment. Never claim that grades,
  * imported marks or private evidence were verified by this summary. */
@@ -47,7 +48,7 @@ export default async function LearnerAcademicRecordPage(){
   <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
   <PageHeader title="Academic record" description="Your college-recorded current program enrollment."/>
   <section className="min-w-0 border-t border-border pt-4">
-   <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Current academic enrollment</h2>
+   <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)]">Current academic enrollment</Heading>
    {record.enrollment?<dl className="mt-3 grid min-w-0 grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2 lg:max-w-4xl">
     {([
       ["Learner",record.title],["Program",record.enrollment.program],
@@ -67,9 +68,9 @@ export default async function LearnerAcademicRecordPage(){
   </section>
   <section aria-labelledby="academic-evidence-heading" className="min-w-0 border-t border-border pt-4">
    <div className="flex flex-wrap items-center justify-between gap-3">
-    <h2 id="academic-evidence-heading" className="text-base font-semibold text-[var(--lms-heading)]">
+    <Heading level={2} size="base" id="academic-evidence-heading" className="text-[var(--lms-heading)]">
      Placement academic evidence
-    </h2>
+    </Heading>
     {provenance ? <Badge tone={evidence?.source==="VERIFIED"?"success":"neutral"}>{provenance}</Badge> : null}
    </div>
    {!evidenceResult.available ? <Banner tone="warning" className="mt-3">

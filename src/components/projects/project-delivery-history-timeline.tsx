@@ -2,6 +2,7 @@
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Heading } from "@/components/ui/heading";
 type EventRow={id:string;action:string;label:string;occurredAt:string;
  revisionCount:number|null;actorName:string;actorRole:string|null;
  notes:string|null;feedback:string|null;attachmentCount:number};
@@ -37,7 +38,7 @@ export function ProjectDeliveryHistoryTimeline({projectId}:{projectId:string}){
  return <section aria-label="Delivery history"
    className="mt-4 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h3 className="text-base font-semibold">Delivery history</h3>
+   <Heading level={3} size="base">Delivery history</Heading>
    <Button type="button" size="sm" variant="secondary" disabled={loading}
     onClick={()=>setRetry(n=>n+1)}>Refresh history</Button>
   </div>

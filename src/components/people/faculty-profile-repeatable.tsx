@@ -16,6 +16,7 @@ import type { FacultySelfSection } from "@/modules/people/faculty-self-section-m
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
 import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow,facultyProfileRecordMatches,facultyProfileRepeatableIssue,toggleFacultyProfileCollapsed} from "@/modules/people/faculty-profile-repeatable-actions";
+import { Heading } from "@/components/ui/heading";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -66,13 +67,13 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
     <form id={facultyProfileAnchor(section)} aria-label={title} onSubmit={submit}
       className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <div>
-        <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)] md:text-lg">{title}</h2>
+        <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)] md:text-lg">{title}</Heading>
         <p className="mt-1 text-sm text-muted-foreground leading-[22px]">{description}</p>
       </div>
       {rows.length === 0 ? <p className="text-sm text-muted-foreground leading-[22px]">No records added yet.</p> : null}
       {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find {title.toLowerCase()} records
         <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-          className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full" placeholder="Search section fields"/>
+          className="mt-[var(--lms-space-2)] min-h-11 md:min-h-9 w-full" placeholder="Search section fields"/>
       </label>:null}
       {rows.length>5&&search.trim()?<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
@@ -84,7 +85,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         {visibleRows.map(({row,index}) => (
           <fieldset key={row.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
-            <Button variant="secondary" type="button" className="mb-3 min-h-11 min-[768px]:min-h-9 px-3"
+            <Button variant="secondary" type="button" className="mb-3 min-h-11 md:min-h-9 px-3"
               aria-expanded={!collapsedIds.includes(row.id)}
               onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
               {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
@@ -105,7 +106,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                       disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
                   ) : (
-                    <Input className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full min-w-0"
+                    <Input className="mt-[var(--lms-space-2)] min-h-11 md:min-h-9 w-full min-w-0"
                       type={field.kind ?? "text"} maxLength={field.maxLength}
                       value={typeof value === "string" ? value : ""}
                       disabled={pending || currentDegreeEndYear} required={field.required}
@@ -115,20 +116,20 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
               })}
             </div>:null}
             <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap [&>button]:w-full sm:[&>button]:w-auto">
-              <Button variant="secondary" type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} className="min-h-11 min-[768px]:min-h-9" onClick={async()=>{
+              <Button variant="secondary" type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} className="min-h-11 md:min-h-9" onClick={async()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index-1));setChanged(true);
               }}  aria-label={"Move "+title+" record "+(index+1)+" up"}>Move up</Button>
-              <Button variant="secondary" type="button" disabled={pending || index===rows.length-1 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} className="min-h-11 min-[768px]:min-h-9" onClick={async()=>{
+              <Button variant="secondary" type="button" disabled={pending || index===rows.length-1 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} className="min-h-11 md:min-h-9" onClick={async()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index+1));setChanged(true);
               }}  aria-label={"Move "+title+" record "+(index+1)+" down"}>Move down</Button>
             </div>
             <Button variant="secondary" type="button" disabled={pending || rows.length >= maxItems} onClick={async () => {
               setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
               setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);
-            }} className="mt-[var(--lms-space-3)] mr-[var(--lms-space-2)] min-h-11 w-full sm:w-auto min-[768px]:min-h-9">
+            }} className="mt-[var(--lms-space-3)] mr-[var(--lms-space-2)] min-h-11 w-full sm:w-auto md:min-h-9">
               Duplicate draft
             </Button>
-            <Button variant="secondary" type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={() => setRemoveTarget(row.id)} className="mt-[var(--lms-space-3)] min-h-11 w-full text-error sm:w-auto min-[768px]:min-h-9">
+            <Button variant="secondary" type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={() => setRemoveTarget(row.id)} className="mt-[var(--lms-space-3)] min-h-11 w-full text-error sm:w-auto md:min-h-9">
               Remove draft record
             </Button>
             {facultyProfileRecordHasManagedDocument(row) ? <p className="mt-2 text-xs text-muted-foreground leading-5">This entry has a managed document. Contact your College to remove it.</p> : null}
@@ -136,18 +137,18 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         ))}
       </div>
       <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap [&>button]:w-full sm:[&>button]:w-auto">
-        <Button variant="secondary" type="button" disabled={pending || rows.length >= maxItems} className="min-h-11 min-[768px]:min-h-9"
+        <Button variant="secondary" type="button" disabled={pending || rows.length >= maxItems} className="min-h-11 md:min-h-9"
           
           onClick={async () => { setRows(current => [...current, create()]); setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true); }}>
           Add {title.toLowerCase()} record
         </Button>
         <Button variant="primary" type="submit" disabled={!changed || pending || missingRequired || Boolean(sectionIssue)}
-          className="min-h-11 min-[768px]:min-h-9 px-4">
+          className="min-h-11 md:min-h-9 px-4">
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </Button>
       </div>
       {changed && sectionIssue?<Alert tone="error">Review this section: {sectionIssue}</Alert>:null}
-      {changed ? <Button variant="secondary" type="button" disabled={pending} className="min-h-11 min-[768px]:min-h-9 px-4"
+      {changed ? <Button variant="secondary" type="button" disabled={pending} className="min-h-11 md:min-h-9 px-4"
         onClick={async()=>{if(!(await askConfirm("Discard unsaved changes to "+title+"?")))return;
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
         Discard unsaved edits

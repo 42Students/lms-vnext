@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { learnerProfileDocumentSchema, type LearnerProfileDocument } from "@/modules/people/profile-validation";
 import {formatProfileDateDayFirst,LEARNER_PROFILE_FIELD_LIMITS} from "@/modules/people/legacy-profile-display";
+import { Heading } from "@/components/ui/heading";
 
 type CollectionKey =
   | "experiences"
@@ -131,7 +132,7 @@ function Card({ id, title, action, children }: { id?: string; title: string; act
   return (
     <section id={id} aria-labelledby={id+"-heading"} className="min-w-0 scroll-mt-24 border-b border-border pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id={id+"-heading"} className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{title}</h2>
+        <Heading level={2} size="base" id={id+"-heading"} className="m-0 min-w-0 break-words text-foreground">{title}</Heading>
         {action}
       </div>
       <div className="mt-4 min-w-0">{children}</div>
@@ -579,12 +580,12 @@ export function LearnerProfileWorkspace(props: {
   return (
     <div className="min-w-0 space-y-5">
       <nav aria-label="Quick access to unfinished profile sections" className="min-w-0 border-b border-border pb-3 md:hidden">
-        <h2 className="text-sm font-semibold text-foreground">Quick profile steps</h2>
+        <Heading level={2} size="sm" className="text-foreground">Quick profile steps</Heading>
         <p className="mt-1 text-xs text-body">Jump to an unfinished saved-profile section. These are suggestions, not verification requirements.</p>
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
           {mobileQuickLinks.map(item=><Link key={item.section}
             href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 md:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-[650] text-primary-text break-words">
+            className="flex min-h-11 md:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
             {item.label}
           </Link>)}
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
@@ -611,7 +612,7 @@ export function LearnerProfileWorkspace(props: {
         <div className="flex flex-col gap-5 md:flex-row md:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[50%] bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
-            <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-lg)] font-semibold leading-[1.35] text-[var(--lms-heading)]">{props.displayName || "Learner"}</h2>
+            <Heading level={2} className="m-0 min-w-0 break-words text-[var(--lms-font-lg)] leading-[1.4] text-[var(--lms-heading)]">{props.displayName || "Learner"}</Heading>
             <p className="mt-[var(--lms-space-1)] min-w-0 break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{document.headline || "Add a headline to introduce yourself."}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {props.rollNumber ? <StatusBadge>Roll {props.rollNumber}</StatusBadge> : null}
@@ -638,9 +639,9 @@ export function LearnerProfileWorkspace(props: {
 
       <section className="min-w-0 border-b border-border pb-4" aria-labelledby="learner-profile-checklist-title">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
+          <Heading level={2} size="base" id="learner-profile-checklist-title" className="text-foreground">
             Profile completion checklist
-          </h2>
+          </Heading>
           <Link href="/learn/profile/completeness" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
             Review full checklist
           </Link>
@@ -669,7 +670,7 @@ export function LearnerProfileWorkspace(props: {
           <p role="status" className="mt-3 text-sm text-body">
             Suggested next section:{" "}
             <Link href={"/learn/profile?section="+encodeURIComponent(coverage.next.section)}
-              className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline">
+              className="font-semibold text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center focus-visible:underline">
               {coverage.next.label}
             </Link>. This does not establish identity verification or placement eligibility.
           </p>

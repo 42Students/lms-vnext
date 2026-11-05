@@ -11,6 +11,7 @@ import {batchHistoryDecisionTimeline} from "@/modules/placements/tpo-batch-histo
 import { TpoBatchUndoControl } from "@/components/tpo/tpo-batch-undo-control";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatchHistory } from "@/modules/placements/tpo-batch-workspace-read-service";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 export default async function BatchHistory({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{kind?:string|string[];after?:string|string[];show?:string|string[]}>}){
  const {batchId}=await params;
@@ -30,7 +31,7 @@ export default async function BatchHistory({params,searchParams}:{params:Promise
  if(!showAll)historyParams.set("show","100");
  const toggleHref="/tpo/batches/"+encodeURIComponent(batchId)+"/history"+
    (historyParams.size?"?"+historyParams.toString():"");
- return <div className="min-w-0 space-y-4"><PageHeader title={batch.name+" — Decision history"} description="Review recorded eligibility decisions and undo availability." actions={<a href={tpoCohortHistoryCsvHref(batchId,filters.data)} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Export matching latest-100 events CSV</a>}/>
+ return <div className="min-w-0 space-y-4"><PageHeader title={batch.name+" — Decision history"} description="Review recorded eligibility decisions and undo availability." actions={<ButtonLink variant="secondary" href={tpoCohortHistoryCsvHref(batchId,filters.data)} className="w-full md:w-auto">Export matching latest-100 events CSV</ButtonLink>}/>
  <TpoBatchWorkspaceTabs batchId={batchId} active="history" />
  <p className="max-w-[72ch] text-sm text-muted-foreground">Latest {showAll?"100":"50"} batch, class and learner eligibility decisions, newest first. Undo is permitted only when no later change makes the action stale.</p>
  {events.length>50?<Link href={toggleHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">{showAll?"Show latest 50":"Show up to 100 decisions"}</Link>:null}

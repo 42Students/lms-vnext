@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
 import {verificationFilterDraftError} from "@/modules/verification/filter-draft-validation";
+import { Heading } from "@/components/ui/heading";
 type Fields={ageBand:string;enrollment:string;waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;programId:string;sectionId:string;batchId:string;branchId:string};
 const empty:Fields={ageBand:"ANY",enrollment:"ALL",waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",programId:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -41,7 +42,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
  }
  return <>
   {attentionCounts?<section aria-label="Needs a closer look" className="min-w-0 space-y-2">
-   <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Needs a closer look</h2>
+   <Heading level={2} size="sm" className="text-[var(--lms-heading)]">Needs a closer look</Heading>
    <div className="flex flex-wrap gap-2">
     {([
      ["MISSING_MARKSHEET","A marksheet missing"],
@@ -59,7 +60,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   
   <form className="mt-3 space-y-3" onSubmit={e=>{e.preventDefault();apply(fields);}}>
    <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
-    <h3 className="col-span-full border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">What to check</h3>
+    <Heading level={3} size="sm" className="col-span-full border-b border-border pb-2 text-[var(--lms-heading)]">What to check</Heading>
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact learner membership ID
      <Input type="text" maxLength={36} value={fields.membershipId} onChange={e=>change("membershipId",e.target.value)}
       placeholder="Membership UUID" className="mt-1 w-full"/>
@@ -75,7 +76,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
       <option value="ANY">Any age</option><option value="WITHIN_48_HOURS">Under 48 hours</option><option value="TWO_TO_SEVEN_DAYS">2–7 days</option><option value="OVER_SEVEN_DAYS">At least 7 days</option>
      </Select>
     </label>}
-    <h3 className="col-span-full border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Whose</h3>
+    <Heading level={3} size="sm" className="col-span-full border-b border-border pb-2 text-[var(--lms-heading)]">Whose</Heading>
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner name
      <Input type="search" maxLength={100} value={fields.q} onChange={e=>change("q",e.target.value)}
       placeholder="Search by name" className="mt-1 w-full"/>

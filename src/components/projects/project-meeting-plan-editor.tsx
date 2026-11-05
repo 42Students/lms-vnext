@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
+import { Heading } from "@/components/ui/heading";
 
 type MeetingRow = {
   id: string;status:string;title:string;agenda:string|null;
@@ -141,11 +142,11 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
   return <section aria-label="Meeting plan"
     className="min-w-0 space-y-4 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5">
     <div>
-      <h2 className="text-lg font-semibold text-foreground">Meeting plan</h2>
+      <Heading level={2} size="lg" className="text-foreground">Meeting plan</Heading>
       <p className="mt-3 text-xs font-semibold uppercase tracking-[0.08em] text-body">Team cadence</p>
-      <h3 className="mt-1 text-base font-semibold text-foreground">
+      <Heading level={3} size="base" className="mt-1 text-foreground">
         Keep project conversations attached to the work they move forward
-      </h3>
+      </Heading>
       <p className="mt-1 text-sm leading-6 text-body">
         Use the date and time controls for scheduling, and link meetings to a sprint or task when the
         conversation is about specific delivery work.

@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Heading } from "@/components/ui/heading";
 
 type Season={
  id:string;name:string;status:string;updatedAt:string;
@@ -55,7 +56,7 @@ export function TpoSeasonRegistrationControls({seasons}:{seasons:readonly Season
   finally{setBusy(false);}
  }
  return <section aria-label="Season registration lifecycle" className="min-w-0 space-y-3 border-b border-border pb-5">
-  <h3 className="text-base font-semibold text-foreground">Season registration</h3>
+  <Heading level={3} size="base" className="text-foreground">Season registration</Heading>
   <p className="text-sm text-body">Open registration for a season independently from activating it. Students must also have a current eligible, invited academic cohort. All deadlines are in IST.</p>
   {seasons.filter(season=>season.status==="ACTIVE").length===0?
    <p role="status" className="text-sm text-muted-foreground">Start an active season before opening registration.</p>:

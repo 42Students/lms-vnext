@@ -13,6 +13,7 @@ import {mentorBoardReviewHref,mentorBoardReviewQuerySchema}
   from "@/modules/projects/mentor-board-review-model";
 import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
+import { Heading } from "@/components/ui/heading";
 type Params={status?:string|string[];priority?:string|string[];
   sprintId?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorBoardReviewPage({
@@ -94,13 +95,13 @@ export default async function MentorBoardReviewPage({
           "The stored tasks do not match your filters. Clear filters to view the whole board."} action={filtered?<Link href={base+"/board-review"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>:<Link href={base+"?tab=board"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Full task workspace</Link>} />:
         <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=><li key={row.id}
           className="py-[var(--lms-space-3)]">
-          <h2 className="m-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.title}</h2>
+          <Heading level={2} size="base" className="m-0 break-words leading-6 text-[var(--lms-heading)]">{row.title}</Heading>
           <p className="mt-2 text-sm text-body leading-[22px]">{row.status.replaceAll("_"," ")} ·
             {row.priority} priority · {row.sprintTitle}</p>
         </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Board status pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorBoardReviewHref({...data.query,page})}/>:null}
       <Disclosure title="Registered task counts" className="min-w-0 border-t border-border py-3" contentClassName="pt-3">
-      <section aria-label="Registered task counts" className="grid gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
+      <section aria-label="Registered task counts" className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
          {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
            <StatTile key={status} label={status.replaceAll("_"," ")} value={data.totals[status]} className="min-h-[104px]" />)}
        </section>
@@ -111,7 +112,7 @@ export default async function MentorBoardReviewPage({
       </Disclosure>
       <section aria-label="Sprint status summaries" className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">Sprint summaries</h2>
+          <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Sprint summaries</Heading>
           <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
@@ -130,7 +131,7 @@ export default async function MentorBoardReviewPage({
           <div className="grid gap-3 md:grid-cols-2">
             {data.sprintSummaries.slice(0,6).map(sprint=>
               <article key={sprint.id} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-                <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{sprint.title}</h3>
+                <Heading level={3} className="break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{sprint.title}</Heading>
                 <p className="mt-2 text-sm text-body leading-[22px]">{sprint.matchingTasks} matching of
                   {" "}{sprint.registeredTasks} registered tasks</p>
                 <p className="mt-1 text-sm text-body leading-[22px]">

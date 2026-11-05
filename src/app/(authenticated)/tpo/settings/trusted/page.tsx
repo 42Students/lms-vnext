@@ -15,6 +15,7 @@ import {TpoTrustedDomainEditor} from "@/components/tpo/tpo-trusted-domain-editor
 import {
   getTpoTrustedCompanies,
 } from "@/modules/placements/tpo-settings-people-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function TpoTrustedCompaniesPage() {
   const context = await getCurrentRequestContext();
@@ -39,7 +40,7 @@ export default async function TpoTrustedCompaniesPage() {
         actions={
           <Link
             href="/tpo/settings/team"
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Placement Team
           </Link>
@@ -49,9 +50,9 @@ export default async function TpoTrustedCompaniesPage() {
 
       {!data.explicitDomainsAvailable ? (
         <Alert tone="warning">
-          <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <Heading level={2} size="base" className="leading-[26px] text-[var(--lms-heading)] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
             Trusted-domain allowlist unavailable
-          </h2>
+          </Heading>
           <p className="mt-2 text-sm leading-[22px] text-body">
             The placement trusted-domains table is not registered
             in this database. Its entries cannot be retrieved.
@@ -92,9 +93,9 @@ export default async function TpoTrustedCompaniesPage() {
 
       <section className="border-t border-border">
         <div className="border-b border-border py-4">
-          <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <Heading level={2} size="base" className="leading-[26px] text-[var(--lms-heading)] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
             Company trust
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm leading-[22px] text-body">
             Trust is derived from the active company relationship
             belonging to this college, not from the global

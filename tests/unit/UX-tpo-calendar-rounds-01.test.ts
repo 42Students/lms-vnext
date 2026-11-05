@@ -6,7 +6,7 @@ describe("UX-tpo-calendar-rounds-01 /tpo/calendar/rounds",()=>{
     expect(source).not.toContain("text-[#26bac7]");
     expect(source).not.toContain("text-on-primary");
     expect(source).toContain('min-h-11');
-    expect(source).toContain('min-[768px]:min-h-9');
+    expect(source).toContain('md:min-h-9');
     expect(source).toMatch(/<PageHeader\b|<h1\b|redirect\(/);
   });
 });

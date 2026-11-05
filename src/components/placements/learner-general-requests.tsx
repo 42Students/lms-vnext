@@ -11,6 +11,7 @@ import {FileUpload} from "@/components/ui/file-upload";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {tpoGeneralRequestInputSchema} from "@/modules/placements/tpo-general-request-model";
+import { Heading } from "@/components/ui/heading";
 type History={id:string;kind:string;status:string;reason:string;requestedAt:string;decisionNote:string|null};
 type Kind="OFF_CAMPUS_OFFER"|"REGISTRATION_CHANGE"|"ABSENCE_DISPUTE"|"CORRECTION_WITH_PROOF"|"PLACEMENT_AFTER_PLACEMENT"|"OFFER_ACCEPTANCE_DISPUTE";
 const kinds:readonly [Kind,string][]=[
@@ -123,7 +124,7 @@ export function LearnerGeneralRequests({
  }
  return <section aria-labelledby="learner-general-requests-title" className="min-w-0 space-y-4 border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <h2 id="learner-general-requests-title" className="text-lg font-semibold">Your requests</h2>
+   <Heading level={2} size="lg" id="learner-general-requests-title">Your requests</Heading>
    <Button type="button" size="sm" disabled={pending} onClick={()=>{resetDraft();setAsking(true);}}>New request</Button>
   </div>
   <Dialog open={asking} title="New request" dismissible={!pending}
@@ -195,7 +196,7 @@ export function LearnerGeneralRequests({
    <p className="text-sm text-body">Changes to this request have not been sent to the placement cell.</p>
   </ConfirmDialog>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
-  <h3 id="learner-general-requests-history" className="sr-only">Request history</h3>
+  <Heading level={3} id="learner-general-requests-history" className="sr-only">Request history</Heading>
   {historyLoading?<p role="status" className="text-sm">Loading request history…</p>:
    historyError?<div role="alert" className="flex flex-wrap items-center gap-3 text-sm">
     <span>{historyError}</span>

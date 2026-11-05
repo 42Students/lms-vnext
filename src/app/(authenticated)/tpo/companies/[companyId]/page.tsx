@@ -21,6 +21,8 @@ import { can } from "@/modules/permissions/policy";
 import { tpoCompanyDetailQuerySchema } from "@/modules/placements/tpo-companies-view-service";
 import { getTpoCompanyDetailReadOnly } from "@/modules/placements/tpo-company-detail-read-service";
 import { getTpoPublicJoinLinkStatus } from "@/modules/placements/tpo-public-join-link-service";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function dateLabel(value: Date | null) {
   if (!value) return "—";
@@ -97,7 +99,7 @@ export default async function TpoCompanyDetailPage({
         actions={
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
               Create drive
             </Link>
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
@@ -120,12 +122,12 @@ export default async function TpoCompanyDetailPage({
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 font-semibold text-link hover:bg-primary-subtle">
           Company Memory · People, Drives, Documents, Team, Timeline
         </Link>
-        <a href="#company-students-placed" className="inline-flex min-h-11 items-center px-3 font-semibold text-link underline">Students placed, by year</a>
-        <a href="#company-canonical-timeline" className="inline-flex min-h-11 items-center px-3 font-semibold text-link underline">Company history</a>
+        <TextLink href="#company-students-placed" className="inline-flex min-h-11 items-center px-3">Students placed, by year</TextLink>
+        <TextLink href="#company-canonical-timeline" className="inline-flex min-h-11 items-center px-3">Company history</TextLink>
       </nav>
 
       <section aria-label="College company relationship" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">College relationship and trust</h2>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">College relationship and trust</Heading>
         <p className="mt-2 text-sm text-body leading-[22px]">
           Trust is this college&apos;s recorded relationship setting, not a platform-wide employer verification.
         </p>
@@ -138,7 +140,7 @@ export default async function TpoCompanyDetailPage({
             Updated {relationship?.updatedAt ? dateLabel(new Date(relationship.updatedAt)) + " IST" : "not recorded"}
           </span>
         </div>
-        {lifecycle?.status==="ACTIVE"?<h3 className="mt-4 text-sm font-semibold text-foreground">Trusted company</h3>:null}
+        {lifecycle?.status==="ACTIVE"?<Heading level={3} size="sm" className="mt-4 text-foreground">Trusted company</Heading>:null}
         {lifecycle?.status==="ACTIVE"?
          <TpoCompanyTrustSwitch companyId={route.companyId}
            initialTrusted={lifecycle.isTrusted} updatedAt={lifecycle.updatedAt}/>:null}
@@ -181,30 +183,30 @@ export default async function TpoCompanyDetailPage({
       <Disclosure title="Company CRM views" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
       <nav aria-label="Company CRM views" className="flex flex-wrap gap-3">
         <Link href={"/tpo/companies/"+encodeURIComponent(route.companyId)+"/team"}
-         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
          Open in Team · Company discussion
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/manage"}
-          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]"
+          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]"
         >
           Edit / archive relationship
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/people"}
-          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]"
+          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]"
         >
           Manage contact people
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/contact-log"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         >
           View contact activity log →
         </Link>
         <Link
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/feedback"}
-          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]"
+          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]"
         >
           Internal recruiter feedback
         </Link>
@@ -213,7 +215,7 @@ export default async function TpoCompanyDetailPage({
       </Disclosure>
       <Disclosure title="Employer hiring pulse" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
       <section aria-label="College employer hiring pulse" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="sr-only">Employer hiring pulse</h2>
+        <Heading level={2} className="sr-only">Employer hiring pulse</Heading>
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
           Current college-linked drives and stored offer versions. Season counts reflect drives,
           not confirmed hires. A later activity timestamp is unavailable when no event exists.
@@ -236,7 +238,7 @@ export default async function TpoCompanyDetailPage({
           ))}
         </dl>
         <div className="mt-5 border-t border-border pt-4">
-          <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]" id="company-students-placed">Students placed, by year</h3>
+          <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]" id="company-students-placed">Students placed, by year</Heading>
           <p className="mt-1 text-xs text-muted-foreground leading-5">
             Distinct confirmed JOINED learners by recorded joining year (IST), not offers issued.
             {hiringPulse.yearsHiring>=2
@@ -264,9 +266,9 @@ export default async function TpoCompanyDetailPage({
       <div className="grid min-w-0 gap-4 xl:grid-cols-2">
         <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
           <div className="border-b border-[var(--lms-canvas-border)] py-4">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
+            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
               Recruiter contacts
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body leading-[22px]">
               Contacts explicitly linked to this college-company
               relationship.
@@ -328,9 +330,9 @@ export default async function TpoCompanyDetailPage({
 
         <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
           <div className="border-b border-[var(--lms-canvas-border)] py-4">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
+            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
               Placement drives
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body leading-[22px]">
               All persisted jobs associated with this
               company relationship, including archived history.
@@ -369,9 +371,9 @@ export default async function TpoCompanyDetailPage({
 
       <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
         <div className="border-b border-[var(--lms-canvas-border)] py-4">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
+          <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
             Hiring history
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body leading-[22px]">
             Recorded offers and joining outcomes across this
             company&apos;s placement drives. An accepted offer
@@ -420,9 +422,9 @@ export default async function TpoCompanyDetailPage({
       <Disclosure title="Company timeline" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
       <section id="company-canonical-timeline" className="min-w-0 border-y border-[var(--lms-canvas-border)]">
         <div className="border-b border-[var(--lms-canvas-border)] py-4">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
+          <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
             Company timeline
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body leading-[22px]">
             Most recent 100 canonical contact, drive, offer and joining events.
             For recruiter-lead activity history (up to 200), open

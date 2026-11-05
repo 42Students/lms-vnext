@@ -11,6 +11,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {OtherTenantSettings} from "@/components/admin/tenant-settings-other-keys";
 import {LEGACY_TENANT_SETTING_SPECS,type LegacyTenantSettingSpec} from "@/modules/platform-settings/legacy-setting-specs";
 import {useToast} from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 type Entry={key:string;value:string;version:number};
 type Result={key:string;status:"SAVED"|"DELETED"|"FAILED";message:string;version?:number};
 function validateValue(spec:LegacyTenantSettingSpec,raw:string):string|null{
@@ -173,7 +174,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
  return <section ref={sectionRef} aria-label="Edit Tenant Settings" className="min-w-0 space-y-4 border-b border-border pb-4 print:hidden">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
    <div className="min-w-0 space-y-1">
-    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Edit Tenant Settings</h2>
+    <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Edit Tenant Settings</Heading>
     <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}</p>
    </div>
    <div className="flex min-w-0 flex-wrap gap-2">
@@ -283,7 +284,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
     </div>
   </ConfirmDialog>
   {results.length>0?<div role="status" className="space-y-2">
-   <h3 className="font-semibold text-[var(--lms-heading)]">Save results</h3>
+   <Heading level={3} className="text-[var(--lms-heading)]">Save results</Heading>
    <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 divide-y divide-border overflow-auto overscroll-contain text-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{results.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
     <strong className="break-all">{row.key}</strong><StatusBadge tone={row.status==="SAVED"?"success":row.status==="DELETED"?"info":"error"}>{row.status}</StatusBadge><span className="min-w-0 break-words text-body">{row.message}</span></li>)}</ul>
   </div>:null}

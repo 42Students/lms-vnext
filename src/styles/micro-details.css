@@ -48,7 +48,7 @@
 }
 :where(a[href], button, summary, [role="button"], [role="tab"],
   [role="switch"], [role="menuitem"]):not(:where([data-unskin], [data-unskin] *)) {
-  transition-timing-function: var(--lms-micro-ease);
+  transition-timing-function: var(--lms-micro-var(--lms-motion-ease));
 }
 
 /* Legacy: components___accessibility.scss:25-36 — focus halo for tappable
@@ -57,7 +57,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   [data-slot="stat-tile"][tabindex]):focus-visible:not(:where([data-unskin], [data-unskin] *)) {
   outline: 2px solid var(--lms-micro-focus);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(26, 149, 161, 0.12);
+  box-shadow: var(--lms-focus-ring);
 }
 
 /* Legacy: components___accessibility.scss:49-60,116-124 — on touch,
@@ -68,8 +68,8 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   main :where([role="button"]:not([data-slot="button"]):not([aria-disabled="true"]),
     [data-slot="card"][role="button"]:not([aria-disabled="true"])):active:not(:where([data-unskin], [data-unskin] *)) {
     transform: scale(0.98);
-    opacity: 0.9;
-    transition: transform 0.05s ease, opacity 0.05s ease;
+    opacity: 1;
+    transition: transform var(--lms-motion-fast) var(--lms-motion-ease), opacity var(--lms-motion-fast) var(--lms-motion-ease);
   }
 }
 
@@ -98,7 +98,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 :where(input[type="checkbox"], input[type="radio"],
   [role="checkbox"], [role="radio"], [role="switch"]):not(:where([data-unskin], [data-unskin] *)) {
   accent-color: var(--lms-primary);
-  transition: border-color var(--lms-micro-fast) var(--lms-micro-ease),
+  transition: border-color var(--lms-micro-fast) var(--lms-micro-var(--lms-motion-ease)),
     background-color var(--lms-micro-fast) var(--lms-micro-ease),
     box-shadow var(--lms-micro-fast) var(--lms-micro-ease);
 }
@@ -199,12 +199,12 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 }
 :where([data-slot="notification-popover"] a[href],
   [data-slot="notification-popover"] button):not(:where([data-unskin], [data-unskin] *)) {
-  transition: background-color 200ms ease, border-color 200ms ease,
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease),
     box-shadow 200ms ease;
 }
 :where([data-slot="notification-popover"] a[href],
   [data-slot="notification-popover"] button):active:not(:disabled):not([aria-disabled="true"]) {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: color-mix(in srgb, var(--lms-black) 6%, transparent);
   box-shadow: none;
 }
 /* Legacy: components___notification-drawer.scss:192-210 — button actions
@@ -214,7 +214,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 [data-slot="notification-popover"] :is(ul, ol) button:not(:disabled):not([aria-disabled="true"]):hover {
   background-color: var(--lms-neutral-50);
   border-color: var(--lms-neutral-200);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--lms-shadow-sm);
 }
 /* Legacy: components___notification-drawer.scss:217-224 (row keyboard ring:
    1px neutral-500, offset 1px); keep ordinary 2px teal focus elsewhere. */
@@ -225,7 +225,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 
 /* A4 — global hidden scrollbars are already present in globals.css:183-193.
  * Legacy exceptions: pages___admin-list-pages.scss:96-106 (table wrapper
- * horizontal 4px rgba(0,0,0,.2) thumb), :244-254 (tabs 3px);
+ * horizontal 4px color-mix(in srgb, var(--lms-black) 20%, transparent) thumb), :244-254 (tabs 3px);
  * components___common.scss:294-304 (generic 8px thumb var(--lms-neutral-300), but body
  * scrollbar-width:none), :307-311,329-331 (hidden overflow chrome).
  * These selectors map the existing ScrollCue viewport, not its layout.
@@ -233,7 +233,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 :where([data-slot="table"], [data-slot="data-table"])
   [data-slot="scroll-cue"][data-axis="x"] > div:first-child {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-color: color-mix(in srgb, var(--lms-black) 20%, transparent) transparent;
 }
 :where([data-slot="table"], [data-slot="data-table"])
   [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar {
@@ -245,12 +245,12 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   /* Legacy-skin.css:511-514 gives a generic important thumb fill and
      a normal 1px radius. This narrower exception keeps the measured admin
      20% gray fill and 2px radius (admin-list-pages.scss:102-105,250-253). */
-  background-color: rgba(0, 0, 0, 0.2) !important;
+  background-color: color-mix(in srgb, var(--lms-black) 20%, transparent) !important;
   border-radius: 2px !important;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-color: color-mix(in srgb, var(--lms-black) 20%, transparent) transparent;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar {
   display: block;
@@ -260,7 +260,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   /* Legacy-skin.css:511-514 gives a generic important thumb fill and
      a normal 1px radius. This narrower exception keeps the measured admin
      20% gray fill and 2px radius (admin-list-pages.scss:102-105,250-253). */
-  background-color: rgba(0, 0, 0, 0.2) !important;
+  background-color: color-mix(in srgb, var(--lms-black) 20%, transparent) !important;
   border-radius: 2px !important;
 }
 /* Legacy: old-lms-shell.css:41-43 — sidebar hover thumb 4px / 28% grey;
@@ -301,13 +301,10 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
  * is a shared Drawer (tpo-bell-panel.tsx:154-168), NOT a generic Dropdown
  * sheet. Do not apply the legacy notification backdrop tween to every
  * mobile-sheet filter menu; backdrop belongs to chat-16's Drawer. */
-@keyframes lms-micro-notification-panel-enter {
-  from { opacity: 0; translate: 0 -8px; }
-  to { opacity: 1; translate: 0 0; }
-}
+
 @media (prefers-reduced-motion: no-preference) {
   [data-slot="notification-popover"]:not(:where([data-unskin], [data-unskin] *)) {
-    animation: lms-micro-notification-panel-enter 200ms ease-out both;
+    animation: lms-micro-notification-panel-enter var(--lms-motion-fast) var(--lms-motion-ease) both;
   }
 }
 
@@ -324,12 +321,12 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
  */
 :where([role="switch"][aria-checked="false"],
   [data-slot="switch"][data-state="unchecked"]):not(:where([data-unskin], [data-unskin] *)) {
-  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1),
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease),
     border-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 :where([role="switch"][aria-checked="true"],
   [data-slot="switch"][data-state="checked"]):not(:where([data-unskin], [data-unskin] *)) {
-  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1),
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease),
     border-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 
@@ -386,7 +383,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
  * underline, so this only fixes timing and never creates a second bar.
  */
 [data-slot="tabs"] :is([role="tab"], nav > a)::after {
-  transition: width 200ms ease-in-out, opacity 200ms ease-in-out;
+  transition: width var(--lms-motion-fast) var(--lms-motion-ease), opacity var(--lms-motion-fast) var(--lms-motion-ease);
 }
 @media (prefers-reduced-motion: reduce) {
   [data-slot="tabs"] :is([role="tab"], nav > a)::after {
@@ -400,12 +397,12 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
    avoid elevating every interactive [data-slot=card] by accident. */
 @media (hover: hover) {
   main .ln-card-hvr:not(:where([data-unskin], [data-unskin] *)):hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--lms-elevation-2);
   }
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   main .ln-card-hvr:not(:where([data-unskin], [data-unskin] *)) {
-    transition: box-shadow 200ms ease;
+    transition: box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
   }
 }
 @media (prefers-reduced-motion: reduce) {

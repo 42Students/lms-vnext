@@ -40,6 +40,7 @@ import {
 import {
   getFacultyCourseWorkspace,
 } from "@/modules/courses/faculty-course-service";
+import { Heading } from "@/components/ui/heading";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -151,9 +152,9 @@ function ContentItem({
               {audienceLabel(item.deliveryId)}
             </StatusBadge>
           </div>
-          <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="base" className="mt-2 text-[var(--lms-heading)]">
             {item.title}
-          </h3>
+          </Heading>
           <p className="mt-1 text-xs text-muted-foreground">{item.points} points{item.contentType==="LIVE_CLASS"&&item.startsAt?" · Starts "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.startsAt):""}{item.contentType==="LIVE_CLASS"&&item.endsAt?" · Ends "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.endsAt):""}</p>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
@@ -235,9 +236,9 @@ function AssignmentItem({
               {audienceLabel(item.deliveryId)}
             </StatusBadge>
           </div>
-          <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="base" className="mt-2 text-[var(--lms-heading)]">
             {item.title}
-          </h3>
+          </Heading>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           {item.maxPoints} points
@@ -330,9 +331,9 @@ function QuizItem({
             </StatusBadge>
             {item.status==="DRAFT"?<StatusBadge tone="warning">Draft · hidden from students</StatusBadge>:null}
           </div>
-          <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
+          <Heading level={3} size="base" className="mt-2 text-[var(--lms-heading)]">
             {item.title}
-          </h3>
+          </Heading>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           {item.totalPoints} points
@@ -435,10 +436,10 @@ export function FacultyCourseWorkspace({
         <p className="m-0 text-sm text-muted-foreground">
           {course.courseCode} · {course.sectionName} · {course.academicPeriodName}
         </p>
-        {view!=="BLUEPRINT"?(      <nav aria-label="Overview actions" className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
+        {view!=="BLUEPRINT"?(      <nav aria-label="Overview actions" className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] min-[768px]:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
         >
           Section reports hub
         </Link>
@@ -492,9 +493,9 @@ export function FacultyCourseWorkspace({
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
               Your teaching class
             </p>
-            <h2 className="mt-2 text-xl font-semibold text-[var(--lms-heading)]">
+            <Heading level={2} size="xl" className="mt-2 text-[var(--lms-heading)]">
               {course.sectionName}
-            </h2>
+            </Heading>
             <p className="mt-2 text-sm leading-6 text-body">
               You teach this class as {course.teachingRole.replaceAll("_"," ").toLowerCase()}.
             </p>
@@ -512,7 +513,7 @@ export function FacultyCourseWorkspace({
         </div>
       </section>
 
-      <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5">
+      <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")}
           className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Lessons" value={summary.lessons}
@@ -564,9 +565,9 @@ export function FacultyCourseWorkspace({
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   Course Blueprint
                 </p>
-                <h2 className="mt-2 text-xl font-semibold text-[var(--lms-heading)]">
+                <Heading level={2} size="xl" className="mt-2 text-[var(--lms-heading)]">
                   {learningPath.title}
-                </h2>
+                </Heading>
                 {learningPath.description ? (
                   <p className="mt-2 text-sm leading-6 text-body">
                     {learningPath.description}
@@ -602,16 +603,16 @@ export function FacultyCourseWorkspace({
             }))}
           />
           {selectedLessonId?<nav aria-label="Lesson navigation" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
-            <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">
+            <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center">
               Back to Blueprint
             </Link>
             {workspace.lessons.map((lesson,index)=>lesson.id===selectedLessonId?(
               <div key={lesson.id} className="flex flex-wrap items-center gap-3 text-sm">
-                {index>0?<Link className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1]?.id ?? "")}>
+                {index>0?<Link className="text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1]?.id ?? "")}>
                   Previous lesson
                 </Link>:null}
                 <span className="text-muted-foreground">Lesson {index+1} of {workspace.lessons.length}</span>
-                {index+1<workspace.lessons.length?<Link className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1]?.id ?? "")}>
+                {index+1<workspace.lessons.length?<Link className="text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1]?.id ?? "")}>
                   Next lesson
                 </Link>:null}
               </div>
@@ -656,16 +657,16 @@ export function FacultyCourseWorkspace({
                       defaultOpen={Boolean(selectedLessonId || lessonIndex === 0)}
                       
                       
-                      title={<div className="flex w-full min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+                      title={<div className="flex w-full min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
 
                         <div>
                           <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                             Lesson{" "}
                             {lessonIndex + 1}
                           </p>
-                          <h2 className="mt-1 break-words text-lg font-semibold text-[var(--lms-heading)]">
+                          <Heading level={2} size="lg" className="mt-1 break-words text-[var(--lms-heading)]">
                             {lesson.name}
-                          </h2>
+                          </Heading>
                           {lesson.description ? (
                             <p className="mt-1 max-w-3xl text-sm leading-6 text-body">
                               {

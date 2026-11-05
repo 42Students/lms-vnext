@@ -4,6 +4,7 @@ import {Fragment,type ReactNode} from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 /** The raw forensic view is a different presentation from the readable
  * Activity feed. Historical IP/user-agent fields are not collected by this
@@ -310,10 +311,10 @@ export function ActivityCenter({
           const previousDay=index > 0 && groups[index - 1] ? activityDay(groups[index - 1].latest.event.occurredAt) : null;
           return (
             <Fragment key={group.key+":"+item.event.id}>
-            {day!==previousDay?<h3 className="mt-[var(--lms-space-6)] text-sm font-semibold text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</h3>:null}
+            {day!==previousDay?<Heading level={3} size="sm" className="mt-[var(--lms-space-6)] text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</Heading>:null}
             <article role="listitem" className={"min-w-0 border-b border-[var(--lms-canvas-border)] py-3 "+
-              (/(delete|remove|reject|revoke|suspend|archive|debar)/i.test(item.event.eventType)?"border-l-[3px] border-l-orange-500 pl-3":"")}>
-              <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+              (/(delete|remove|reject|revoke|suspend|archive|debar)/i.test(item.event.eventType)?"border-l-2 border-l-[color:var(--lms-warning)] pl-3":"")}>
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge
@@ -338,13 +339,13 @@ export function ActivityCenter({
                    <time dateTime={item.event.occurredAt} className="whitespace-nowrap pt-1 text-xs tabular-nums text-muted-foreground">
                     {activityTime(item.event.occurredAt)}
                    </time>
-                   <h2 className="min-w-0 break-words text-sm font-medium leading-6 text-[var(--lms-heading)]">
+                   <Heading level={2} size="sm" className="min-w-0 break-words leading-6 text-[var(--lms-heading)]">
                     {/(delete|remove|reject|revoke|suspend|archive|debar)/i.test(item.event.eventType)?
                      <span role="img" aria-label="Caution" className="mr-2">⚠</span>:null}
                     <strong>{activityActorName(item)}</strong>{" "}
                     {actionSentence(item.event.eventType,item.event.subjectType)}{" "}
                     <strong>{activitySubjectName(item.event)}</strong>
-                   </h2>
+                   </Heading>
                   </div>
                   <p className="mt-1 text-sm text-body leading-[22px]">{item.event.summary}</p>
                   <p className="mt-2 text-xs text-muted-foreground leading-5">
@@ -362,10 +363,10 @@ export function ActivityCenter({
                       : ""}
                   </p>
                 </div>
-                <div className="flex shrink-0 flex-col items-start gap-2 min-[768px]:items-end">
+                <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">
                   <Link
                     href={`/activity/${item.event.id}`}
-                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground min-[768px]:min-h-9 min-[768px]:w-auto motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground md:min-h-9 md:w-auto motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
                   >
                     View details
                   </Link>
@@ -375,7 +376,7 @@ export function ActivityCenter({
                 <summary className="inline-flex min-h-9 cursor-pointer list-none items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">
                  <span className="group-open:hidden">Details</span><span className="hidden group-open:inline">Hide details</span>
                 </summary>
-                <dl className="mt-2 grid gap-1 min-[768px]:grid-cols-2">
+                <dl className="mt-2 grid gap-1 md:grid-cols-2">
                   <div><dt>Action</dt><dd>{humanize(item.event.eventType)}</dd></div>
                   <div><dt>Actor</dt><dd className="break-all">{activityActorName(item)}{item.actor?.id?" · "+item.actor.id:""}</dd></div>
                   <div><dt>Entity</dt><dd className="break-all">{item.event.subjectType}: {item.event.subjectId}</dd></div>

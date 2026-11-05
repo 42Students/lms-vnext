@@ -4,6 +4,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { Table } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyContactRoleLabel } from "@/modules/courses/faculty-contact-detail-model";
+import { Heading } from "@/components/ui/heading";
 
 export type FacultyContactRow={
   membershipId:string;displayName:string|null;
@@ -20,24 +21,24 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
   const contactHref = (id:string) => detailBaseHref
     ? detailBaseHref+"/"+encodeURIComponent(id)+detailQuery : null;
   const initials=(name:string)=>name==="—"?"?":name.split(/\s+/).slice(0,2).map(part=>part.slice(0,1).toUpperCase()).join("");
-  const palette=["bg-sky-100 text-sky-800","bg-amber-100 text-amber-800","bg-emerald-100 text-emerald-800",
-    "bg-indigo-100 text-indigo-800","bg-rose-100 text-rose-800","bg-orange-100 text-orange-800",
-    "bg-teal-100 text-teal-800","bg-violet-100 text-violet-800"];
+  const palette=["bg-[color:var(--lms-info-blue-surface)] text-[color:var(--lms-info-text)]","bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]","bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]",
+    "bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple-text)]","bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-strong)]","bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]",
+    "bg-[color:var(--lms-success-surface)] text-[color:var(--lms-button-primary-hover)]","bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]"];
   const avatar=(item:FacultyContactRow,name:string)=>{
    const seed=[...item.membershipId].reduce((hash,ch)=>(hash*31+ch.charCodeAt(0))>>>0,7);
    return <span aria-hidden="true" className={"flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold "+palette[seed%palette.length]}>{initials(name)}</span>;
   };
   return <>
-    <div aria-label="Contacts directory" className="min-w-0 divide-y divide-border border-y border-border min-[560px]:hidden">
+    <div aria-label="Contacts directory" className="min-w-0 divide-y divide-border border-y border-border sm:hidden">
       {items.map(item=>{
         const name=item.displayName?.trim()||"—";
         const href=contactHref(item.membershipId);
         return <article key={item.membershipId} className="min-w-0 rounded border-b border-border bg-surface px-3 py-4">
           <div className="flex min-w-0 items-start gap-3">{avatar(item,name)}<div className="min-w-0 flex-1">
-          <h2 className="text-sm font-semibold text-foreground">
+          <Heading level={2} size="sm" className="text-foreground">
             {href?<Link href={href}
               className="inline-flex min-h-11 max-w-full items-center break-words text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{name}</Link>:name}
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm leading-5 text-body">Email: Private</p>
           <p className="mt-1 text-sm leading-5 text-body">Contact: Private</p>
           <p className="mt-1 text-sm leading-5 text-body">Department: {item.departmentName??"Not recorded"}</p>
@@ -48,7 +49,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
         </article>;
       })}
     </div>
-    <Table aria-label="Contacts directory" containerClassName="hidden min-[560px]:block [&>table]:min-w-[560px]">
+    <Table aria-label="Contacts directory" containerClassName="hidden sm:block [&>table]:min-w-[560px]">
       <thead><tr>
         <th scope="col">Name</th><th scope="col">Email</th><th scope="col">Contact</th>{showRoles?<th scope="col">Role</th>:null}
       </tr></thead>

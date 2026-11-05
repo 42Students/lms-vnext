@@ -2,6 +2,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import {useState} from "react";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
+import { Heading } from "@/components/ui/heading";
 
 export function TpoBatchStudentBulkNotes({rows}:{rows:readonly {id:string;label:string}[]}){
  const [selected,setSelected]=useState<string[]>([]);
@@ -9,7 +10,7 @@ export function TpoBatchStudentBulkNotes({rows}:{rows:readonly {id:string;label:
  const valid=selected.filter(id=>eligible.has(id)).slice(0,100);
  if(rows.length===0)return null;
  return <section aria-label="Add a note to batch learners" className="min-w-0 space-y-3 border-y border-border py-4 print:hidden">
-  <h3 className="font-semibold">Add a note</h3>
+  <Heading level={3}>Add a note</Heading>
   <p className="text-xs text-body">Select up to 100 learners on this current batch page. Notes remain private to authorized placement staff.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm">
    <Checkbox checked={rows.length<=100&&valid.length===rows.length}

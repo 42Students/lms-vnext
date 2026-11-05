@@ -15,6 +15,7 @@ import {Button} from "@/components/ui/button";
 import {planMentorNextSprintAssignments} from "@/modules/projects/mentor-next-sprint-assignment-model";
 import {nextMentorAllocatableSprint} from
   "@/modules/projects/mentor-next-allocatable-sprint-model";
+import { Heading } from "@/components/ui/heading";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
  updatedAt:Date;status:string;priority:string;estimatePoints:number|null;
  sequence?:number;deletedAt?:Date|null};
@@ -113,7 +114,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   </div>
   {nextSprint&&nextSprintPlan?<section
     aria-label="Next sprint allocation preview" className="space-y-2 border-y border-border py-3">
-    <h3 className="font-semibold">Next sprint · Sprint {nextSprint.sequence}</h3>
+    <Heading level={3}>Next sprint · Sprint {nextSprint.sequence}</Heading>
     <p className="text-sm">
       {nextSprintPlan.assignments.length} unassigned eligible
       {" "}{nextSprintPlan.assignments.length===1?"task":"tasks"} ·
@@ -124,7 +125,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     </p>
     {nextSprintPlan.assignments.length>0?<div className="space-y-2"
       aria-label="Suggested next sprint task assignments">
-      <h4 className="text-sm font-semibold">Suggested owner per unassigned task</h4>
+      <Heading level={4} size="sm">Suggested owner per unassigned task</Heading>
       <ul className="space-y-2">
        {nextSprintPlan.assignments.slice(0,25).map(proposal=>{
          const task=tasks.find(item=>item.id===proposal.taskId);
@@ -258,7 +259,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   {error?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
   <section className="rounded-xl border border-border p-3" aria-labelledby="mentor-allocation-workload">
-    <h2 id="mentor-allocation-workload" className="mb-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Workload by learner</h2>
+    <Heading level={2} size="base" id="mentor-allocation-workload" className="mb-2 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Workload by learner</Heading>
     <DataTable
       caption="Workload by learner"
       rows={groups.map(group=>{
@@ -299,8 +300,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        className={[styles["lane"],group.membershipId===null?styles["backlogLane"]:"",groups.length===1?styles["singleLane"]:""].filter(Boolean).join(" ")}
        data-can-drop={!readOnly&&!busy}
       onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,group.membershipId)}>
-     <h2 className={styles["header"]}>
-      <span>{group.displayName??"Learner"}</span><span>{cards.length}</span></h2>
+     <Heading level={2} className={styles["header"]}>
+      <span>{group.displayName??"Learner"}</span><span>{cards.length}</span></Heading>
      <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
       {cards.filter(task=>task.status==="DONE").length} done ·
       {" "}{cards.filter(task=>task.status==="BLOCKED").length} blocked ·

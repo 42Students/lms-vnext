@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import {
   MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta,
 } from "@/components/marketing/marketing-layout";
+import { Heading } from "@/components/ui/heading";
 
 export const metadata: Metadata = {
   title: "Platform | 42 LMS",
@@ -59,29 +60,29 @@ export default function PlatformMarketingPage() {
     <MarketingFeatureGrid title="Every role has a purpose-built workspace" items={WORKSPACES} />
     <MarketingFeatureGrid title="Everything you need to develop talent" items={PILLARS} />
 
-    <section className="relative left-1/2 w-screen -translate-x-1/2 border-y border-[var(--lms-canvas-border)] bg-[color:var(--lms-primary-subtle)] py-14 min-[768px]:py-20"
+    <section className="relative left-1/2 w-screen -translate-x-1/2 border-y border-[var(--lms-canvas-border)] bg-[color:var(--lms-primary-subtle)] py-14 md:py-20"
       aria-labelledby="platform-workflows-heading">
       <div className="mx-auto max-w-[1180px] space-y-4 px-5">
-      <h2 id="platform-workflows-heading" className="text-[20px] font-semibold leading-7 text-[var(--lms-heading)]">
+      <Heading level={2} size="xl" id="platform-workflows-heading" className="leading-7 text-[var(--lms-heading)]">
         Workflows connected across learning and hiring
-      </h2>
+      </Heading>
       <p className="text-sm leading-6 text-body">
         These are connected product workflows, not claims of third-party integrations.
       </p>
       <ul className="flex min-w-0 flex-wrap gap-2">
         {CONNECTED_WORKFLOWS.map(label=><li key={label}
-          className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--lms-body-text)]">
+          className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-sm font-semibold text-[var(--lms-body-text)]">
           {label}
         </li>)}
       </ul>
       </div>
     </section>
 
-    <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)]"
+    <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]"
       aria-labelledby="platform-lifecycle-heading">
-      <h2 id="platform-lifecycle-heading" className="text-[20px] font-semibold leading-7 text-[var(--lms-heading)]">
+      <Heading level={2} size="xl" id="platform-lifecycle-heading" className="leading-7 text-[var(--lms-heading)]">
         A complete talent lifecycle
-      </h2>
+      </Heading>
       <ol className="flex min-w-0 flex-wrap items-center gap-2">
         {LIFECYCLE.map((step,index)=><li key={step} className="inline-flex items-center gap-2">
           <span className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-sm font-semibold">

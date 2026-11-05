@@ -10,6 +10,7 @@ import {
   learnerPlacementChoices, LEARNER_REGISTRATION_COPY,
   type LearnerPlacementChoice,
 } from "@/modules/placements/learner-registration-view-model";
+import { Heading } from "@/components/ui/heading";
 type Props = {
   registration: {
     stage: "NOT_INVITED" | "FINISHED" | "OPEN" | "CLOSED";
@@ -63,10 +64,10 @@ export function LearnerPlacementRegistration({registration}:Props) {
     } finally {setBusy(false);}
   }
   return <section id="registration" aria-labelledby="learner-placement-registration-heading" className="scroll-mt-24 min-w-0 space-y-3 border-b border-border pb-6">
-    <h2 id="learner-placement-registration-heading" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{LEARNER_REGISTRATION_COPY.title}{registration.batchName?" · "+registration.batchName:""}</h2>
+    <Heading level={2} size="base" id="learner-placement-registration-heading" className="leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{LEARNER_REGISTRATION_COPY.title}{registration.batchName?" · "+registration.batchName:""}</Heading>
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
-      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 min-w-0 items-start gap-3 border-b border-border px-2 py-3 transition-colors duration-150 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
+      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 min-w-0 items-start gap-3 border-b border-border px-2 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
         <Radio name="sp-choice" checked={choice===item.value}
           onChange={()=>{setChoice(item.value);setConsent(false);}} className="mt-1" />
         <span className="min-w-0"><span className="block break-words font-semibold">{item.label}</span>

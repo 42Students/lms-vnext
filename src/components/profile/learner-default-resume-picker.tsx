@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
 
 type ResumeList = {
   selected: string | null;
@@ -161,7 +162,7 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
 
   return <section aria-label="Default resume for placements"
     className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Default resume</h2>
+    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Default resume</Heading>
     <p className="text-sm text-body">
       Choose a scanned private PDF for placements. Only you can choose it; the
       placement team can share it only through its verified permissions.

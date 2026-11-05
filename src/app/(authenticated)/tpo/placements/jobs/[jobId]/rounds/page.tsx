@@ -16,6 +16,7 @@ import {and,eq,inArray,sql} from "drizzle-orm";
 import {placementLearnerRequests} from "@/db/schema";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
+import { Heading } from "@/components/ui/heading";
 
 export default async function TpoDriveRoundsPage({
   params,searchParams,
@@ -83,9 +84,9 @@ export default async function TpoDriveRoundsPage({
         pendingProposals:selectedSlots.recruiterProposals.length,
        }:null}/>
     <section aria-labelledby="round-next-action" className="min-w-0 space-y-3 border-b border-border pb-4">
-      <h2 id="round-next-action" className="text-base font-semibold text-foreground">
+      <Heading level={2} size="base" id="round-next-action" className="text-foreground">
         Next action for this drive
-      </h2>
+      </Heading>
       {stagedTotal>0?<p className="text-sm text-body">
         <strong>{stagedTotal} results waiting to apply.</strong> Review the staged results
         with the company before moving students to the next round.
@@ -121,7 +122,7 @@ export default async function TpoDriveRoundsPage({
             <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-xs font-semibold text-body">Round {round.sequence} · {round.kind}</p>
-                <h2 className="mt-1 break-words text-base font-semibold leading-6 text-foreground">{round.name}</h2>
+                <Heading level={2} size="base" className="mt-1 break-words leading-6 text-foreground">{round.name}</Heading>
                 <p className="mt-1 flex min-w-0 flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={round.status==="COMPLETED"?"success":round.status==="CANCELLED"?"error":round.status==="SCHEDULED"?"info":"warning"}>{round.status}</StatusBadge><span>{round.mode} · {date(round.scheduledAt)}</span></p>
               </div>
               <Link href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}

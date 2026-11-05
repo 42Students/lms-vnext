@@ -26,6 +26,7 @@ import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
 import { Pagination } from "@/components/ui/pagination";
 import {LearnerSaveDriveButton} from "./learner-save-drive-button";
+import { Heading } from "@/components/ui/heading";
 
 const PAGE_SIZE = 20;
 
@@ -190,7 +191,7 @@ export function LearnerJobsBrowse({
       <section className="border-b border-border pb-3" aria-label="Drives at a glance">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-semibold text-foreground">Drives</h2>
+            <Heading level={2} size="xl" className="text-foreground">Drives</Heading>
             <p className="mt-1 text-sm text-body">{allDrives.drives} published {allDrives.drives===1?"drive":"drives"} · {allDrives.roles} role options</p>
           </div>
           <Button variant="link" type="button" aria-label={"View "+new Set(savedJobIds).size+" saved drives"}
@@ -230,12 +231,12 @@ export function LearnerJobsBrowse({
             <span aria-hidden="true">{mobileOpen?"−":"+"}</span>
           </Button>
           {mobileOpen?<Button variant="secondary" type="button" aria-label="Close drive filters"
-            className="fixed inset-0 z-40 md:hidden" onClick={closeMobileFilters}/>:null}
+            className="fixed inset-0 z-(--lms-z-shell) md:hidden" onClick={closeMobileFilters}/>:null}
           <div id="learner-drive-filters"
             className={(mobileOpen?"flex":"hidden")+
-             " fixed inset-x-0 bottom-0 z-50 max-h-[82dvh] min-w-0 flex-col gap-4 overflow-y-auto rounded-t-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-lg md:static md:col-span-3 md:flex md:max-h-none md:flex-row md:items-start md:gap-3 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none"}>
+             " fixed inset-x-0 bottom-0 z-(--lms-z-overlay) max-h-[82dvh] min-w-0 flex-col gap-4 overflow-y-auto rounded-t-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-lg md:static md:col-span-3 md:flex md:max-h-none md:flex-row md:items-start md:gap-3 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none"}>
             <div className="flex items-center justify-between md:hidden">
-              <h3 className="text-base font-semibold text-foreground">Filter drives</h3>
+              <Heading level={3} size="base" className="text-foreground">Filter drives</Heading>
               <Button type="button" variant="secondary" onClick={closeMobileFilters}>Done</Button>
             </div>
             <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -323,7 +324,7 @@ export function LearnerJobsBrowse({
           <path d="M16 12h32a3 3 0 0 1 3 3v40L32 43 13 55V15a3 3 0 0 1 3-3z"/>
           <path d="M23 25h18M23 31h12"/>
         </svg>
-        <h2 className="text-lg font-semibold text-foreground">No saved jobs</h2>
+        <Heading level={2} size="lg" className="text-foreground">No saved jobs</Heading>
         <p className="text-sm text-body">Save jobs from All drives to find them here later.</p>
         <Button variant="primary" type="button" className="min-h-11"
           onClick={()=>updateQuery({saved:null})}>Browse all jobs</Button>

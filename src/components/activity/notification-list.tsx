@@ -12,6 +12,8 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { groupNotificationsByDate } from "@/modules/activity/notification-groups";
 import {safeExternalAssessmentUrl,safeNotificationActionHref} from "@/modules/activity/notification-action";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export type NotificationListItem = {
   id: string;
@@ -150,7 +152,7 @@ export function NotificationList({
       {groupNotificationsByDate(items, groupingNow).map((group) => (
         <section key={group.label} aria-label={group.label}
           className="min-w-0 space-y-3">
-          <h2 className="border-b border-[var(--lms-canvas-border)] pb-2 text-[13px] font-semibold leading-5 text-muted-foreground">{group.label}</h2>
+          <Heading level={2} size="sm" className="border-b border-[var(--lms-canvas-border)] pb-2 leading-5 text-muted-foreground">{group.label}</Heading>
           {group.items.map((item) => (
             variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
               onClick={()=>{
@@ -159,7 +161,7 @@ export function NotificationList({
               }}
               aria-label={"Open notification: "+(item.title||"Notification")+", "+notificationCategory(item)}
               loading={pendingId===item.id}
-              className="w-full min-h-12 justify-start rounded-[10px] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-4 py-4 text-left whitespace-normal shadow-none hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:py-4">
+              className="w-full min-h-12 justify-start rounded-[10px] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-4 py-4 text-left whitespace-normal shadow-none hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:py-4">
               <div className="flex min-w-0 items-start gap-3">
                <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -173,10 +175,10 @@ export function NotificationList({
              </Button>:<article
               key={item.id}
               className={readEndpoint==="/api/learn/notifications"
-                ? "min-w-0 rounded-[12px] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-200 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
-                : "min-w-0 rounded-[12px] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-150 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"}
+                ? "min-w-0 rounded-[12px] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+                : "min-w-0 rounded-[12px] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"}
             >
-              <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                   <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--lms-neutral-100)] text-lg">🔔</span>
                   <Button variant="ghost" type="button" className="min-w-0 flex-1"
@@ -189,37 +191,36 @@ export function NotificationList({
                     ) : null}
                     {!item.readAt && item.source !== "ANNOUNCEMENT" ? <StatusBadge tone="info">Unread</StatusBadge> : null}
                   </div>
-                  <h3 className="mt-2 break-words text-sm font-semibold leading-6 text-[var(--lms-heading)] min-[768px]:text-base">{item.title||"Notification"}</h3>
+                  <Heading level={3} size="sm" className="mt-2 break-words leading-6 text-[var(--lms-heading)] md:text-base">{item.title||"Notification"}</Heading>
                   <p className="mt-1 text-xs font-semibold text-muted-foreground leading-5">{item.contextLine??item.module??"—"}</p>
                   <p className={readEndpoint==="/api/learn/notifications"
-                    ? "mt-2 text-[13px] min-[768px]:text-[14px] leading-[1.5] text-[var(--lms-neutral-500)]"
+                    ? "mt-2 text-[13px] md:text-[14px] leading-[1.5] text-[var(--lms-neutral-500)]"
                     : "mt-1 text-sm leading-[1.5] text-body"}>{previewBody(item.body)}</p>
                   <p className="mt-2 text-xs leading-[1.4] text-muted-foreground">
                     {formatWhen(item.createdAt)}
                   </p>
                   </Button>
                 </div>
-                <div className="flex w-full shrink-0 flex-wrap gap-2 min-[768px]:w-auto min-[768px]:justify-end">
+                <div className="flex w-full shrink-0 flex-wrap gap-2 md:w-auto md:justify-end">
                   {safeInternalAction(item.actionHref) ? (
                       <Link
                         href={safeInternalAction(item.actionHref)!}
-                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:flex-none"
+                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:flex-none"
                       >
                         {legacyActionLabel(item)}
                       </Link>
                   ) : null}
                   {item.externalCta&&safeExternalAction(item.externalCta.href)?(
-                    <a href={safeExternalAction(item.externalCta.href)!}
-                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    <ButtonLink variant="secondary" href={safeExternalAction(item.externalCta.href)!}>
                       {item.externalCta.label||"Take Assessment"}
-                    </a>
+                    </ButtonLink>
                   ):null}
                   {!item.readAt && item.source !== "ANNOUNCEMENT" ? (
                     <Button
                       size="sm"
                       variant="ghost"
                       loading={pendingId === item.id}
-                      className="min-h-11 min-[768px]:min-h-9"
+                      className="min-h-11 md:min-h-9"
                       disabled={pendingId !== null}
                       onClick={() => markRead(item.id)}
                     >
@@ -241,10 +242,9 @@ export function NotificationList({
         {selected&&safeInternalAction(selected.actionHref)?<Link href={safeInternalAction(selected.actionHref)!}
           className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)]"
           onClick={()=>setSelected(null)}>{legacyActionLabel(selected)}</Link>:null}
-        {selected?.externalCta&&safeExternalAction(selected.externalCta.href)?<a
-          href={safeExternalAction(selected.externalCta.href)!}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)]">
-          {selected.externalCta.label}</a>:null}
+        {selected?.externalCta&&safeExternalAction(selected.externalCta.href)?<ButtonLink variant="primary"
+          href={safeExternalAction(selected.externalCta.href)!}>
+          {selected.externalCta.label}</ButtonLink>:null}
         <Button variant="primary" onClick={()=>setSelected(null)}>Got it</Button>
       </>}>
       {selected?<div className="space-y-3">

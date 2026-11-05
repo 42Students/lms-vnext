@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 export type PlacementSeasonItem = {
   id: string;
@@ -169,9 +170,9 @@ export function PlacementSeasonManager({
   return (
     <section className="border-t border-border pt-5">
       <div className="border-b border-border pb-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <Heading level={2} size="base" className="m-0 text-foreground">
           Placement season
-        </h2>
+        </Heading>
         <p className="mt-1 text-sm text-body">
           Seasons define the operating boundary for drives and reporting. Employer relationship memory remains available across seasons.
         </p>

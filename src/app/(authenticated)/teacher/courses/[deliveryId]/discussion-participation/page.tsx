@@ -6,6 +6,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {getFacultyDiscussionParticipation}
   from "@/modules/courses/faculty-discussion-participation-service";
+import { Heading } from "@/components/ui/heading";
 export default async function FacultyDiscussionParticipationPage({
   params,
 }:{params:Promise<{deliveryId:string}>}){
@@ -27,7 +28,7 @@ export default async function FacultyDiscussionParticipationPage({
         </div>)}
     </section>
     <section aria-label="Recent discussion activity" aria-live="polite" className="space-y-3">
-      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">12 most recent recorded messages</h2>
+      <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">12 most recent recorded messages</Heading>
       {data.recent.length===0?<EmptyState title="No recorded discussions"
         description="This Section has no stored messages. Replies and deleted text cannot be reconstructed."/>:
         <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.recent.map(row=><li key={row.id}

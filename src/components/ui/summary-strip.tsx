@@ -25,9 +25,9 @@ export function SummaryStrip({ steps, label, className }: SummaryStripProps) {
         className,
       )}
     >
-      <ol className="flex min-w-0 flex-wrap items-center gap-y-3 px-4 py-3 min-[768px]:flex-nowrap min-[768px]:overflow-x-auto min-[768px]:py-4">
+      <ol className="flex min-w-0 flex-wrap items-center gap-y-3 px-4 py-3 md:flex-nowrap md:overflow-x-auto md:py-4">
         {steps.map((step, index) => (
-          <li key={step.label + index} className="flex min-w-0 flex-1 basis-[calc(50%_-_12px)] items-center gap-3 min-[768px]:basis-0">
+          <li key={step.label + index} className="flex min-w-0 flex-1 basis-[calc(50%_-_12px)] items-center gap-3 md:basis-0">
             {index > 0 ? (
               <span aria-hidden="true" className="shrink-0 text-[var(--lms-neutral-400)]">›</span>
             ) : null}

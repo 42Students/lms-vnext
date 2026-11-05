@@ -129,7 +129,7 @@ export function HrRecruiterBell(){
     state?.status!=="READY"?<p className="mt-3 text-sm text-body leading-[22px]">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
     state.items.length===0?<EmptyState title={HR_BELL_EMPTY} description={HR_BELL_EMPTY_HELP}/>:
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3 min-w-0" viewportClassName="max-h-80"><ul role="list" data-testid="recruiter.bell.list" aria-label="Recent recruiter notifications" className="min-w-0 space-y-[6px] px-3">{state.items.map(item=><li key={item.id}>
-     <Link href={item.href} onClick={()=>setOpen(false)} className="grid min-h-11 min-w-0 grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 gap-y-1 rounded-[8px] sm:flex sm:gap-2 border border-[rgba(229,233,240,0.6)] bg-surface px-4 py-3 text-sm text-body transition-[background-color,border-color,box-shadow] duration-200 hover:border-[var(--lms-neutral-200)] hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-[rgba(0,0,0,0.06)] active:shadow-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-neutral-500)] motion-reduce:transition-none md:min-h-9">
+     <Link href={item.href} onClick={()=>setOpen(false)} className="grid min-h-11 min-w-0 grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 gap-y-1 rounded-[var(--lms-radius-shell-control)] sm:flex sm:gap-2 border border-[color-mix(in_srgb,var(--lms-border)_60%,transparent)] bg-surface px-4 py-3 text-sm text-body transition-[background-color,border-color,box-shadow] duration-[var(--lms-motion-fast)] hover:border-[var(--lms-neutral-200)] hover:bg-[var(--lms-neutral-50)] hover:shadow-(--lms-shadow-sm) active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] active:shadow-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-neutral-500)] motion-reduce:transition-none md:min-h-9">
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-[var(--lms-radius-pill)] bg-[var(--lms-notification-unread,var(--lms-error))]":"mt-1.5 h-2 w-2 shrink-0 rounded-[var(--lms-radius-pill)] bg-muted"}/>
       <span className="min-w-0 break-words text-sm font-semibold leading-[1.4] sm:flex-1">
        {item.unread?<span className="sr-only">New notification. </span>:null}{item.label}
@@ -144,9 +144,9 @@ export function HrRecruiterBell(){
    aria-expanded={open} aria-haspopup="dialog" aria-busy={loading}
    aria-controls={open?"hr-topbar-notifications":undefined}
    onClick={()=>setOpen(value=>!value)}
-   variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 md:!h-9 md:!w-9 md:!min-w-9 hover:!bg-[rgba(0,0,0,0.035)] active:!bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
+   variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 md:!h-9 md:!w-9 md:!min-w-9 hover:!bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:!bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
    <ShellNavGlyph name="bell"/>
-   {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-error)] px-1 text-xs leading-3 text-white">{unread>99?"99+":unread}</span>:null}
+   {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-error)] px-1 text-xs leading-4 text-[color:var(--lms-on-primary)]">{unread>99?"99+":unread}</span>:null}
   </Button>
   <Drawer id="hr-topbar-notifications" open={open} onOpenChange={setOpen}
    title="Notifications" className="!left-auto !right-0 !w-[min(400px,100vw)] !max-w-[400px]"

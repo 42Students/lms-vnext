@@ -114,7 +114,7 @@ export function CollegeContentPreview({ data, playback=null,discussion=null }: {
           </Button>
           {videoError?<p role="alert" className="text-sm text-[var(--lms-error)]">{videoError}</p>:null}
           {videoUrl?<video controls playsInline preload="metadata" src={videoUrl}
-            className="aspect-video w-full rounded-[var(--lms-control-radius)] bg-black"
+            className="aspect-video w-full rounded-[var(--lms-control-radius)] bg-[color:var(--lms-black)]"
             aria-label={"Playback "+data.title}/>:null}
         </div>:null}
         {discussion?<div className="mt-4 border-t border-border pt-3">

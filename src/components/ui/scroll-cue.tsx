@@ -70,11 +70,11 @@ export function ScrollCue({ children, axis, label, className, viewportClassName 
         "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
         viewportClassName)}>{children}</div>
     {edges.start ? <span aria-hidden="true" data-scroll-fade="start" className={cx(
-      "pointer-events-none absolute z-20 from-surface to-transparent motion-reduce:transition-none",
+      "pointer-events-none absolute z-(--lms-z-sticky-inline) from-surface to-transparent motion-reduce:transition-none",
       axis === "x" ? "inset-y-0 left-0 w-5 bg-gradient-to-r" : "inset-x-0 top-0 h-5 bg-gradient-to-b"
     )}/> : null}
     {edges.end ? <span aria-hidden="true" data-scroll-fade="end" className={cx(
-      "pointer-events-none absolute z-20 from-surface to-transparent motion-reduce:transition-none",
+      "pointer-events-none absolute z-(--lms-z-sticky-inline) from-surface to-transparent motion-reduce:transition-none",
       axis === "x" ? "inset-y-0 right-0 w-5 bg-gradient-to-l" : "inset-x-0 bottom-0 h-5 bg-gradient-to-t"
     )}/> : null}
   </div>;

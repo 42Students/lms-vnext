@@ -11,6 +11,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {recruiterSelectionRangeWarning} from "@/modules/placements/recruiter-selection-list-model";
 import {parseRecruiterSelectionCsv,recruiterSelectionCsvTemplate}
  from "@/modules/placements/recruiter-selection-csv-model";
+import { Heading } from "@/components/ui/heading";
 
 type Candidate={id:string;name:string};
 type Kind="OFFER"|"LETTER_OF_INTENT";
@@ -143,7 +144,7 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
  return <section className="space-y-3" aria-label="Selection list">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div>
-    <h3 className="font-semibold text-foreground">Send selection list</h3>
+    <Heading level={3} className="text-foreground">Send selection list</Heading>
     <p className="text-sm text-body">Propose an Offer or Letter of Intent to the placement cell for verification.</p>
    </div>
    <div className="flex flex-wrap gap-2">
@@ -205,7 +206,7 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
     </div>
    </div>
    <section aria-label="Import applicant IDs from Excel" className="space-y-2 border-t border-border pt-3">
-    <h4 className="font-semibold text-foreground">Upload your list from Excel</h4>
+    <Heading level={4} className="text-foreground">Upload your list from Excel</Heading>
     <p className="text-xs text-body">
      Download eligible applicants, keep application_id unchanged, choose the rows to include,
      then upload the .xlsx workbook or Excel's CSV (UTF-8). Only eligible IDs are imported.

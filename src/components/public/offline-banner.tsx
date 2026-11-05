@@ -24,7 +24,7 @@ export function OfflineBanner() {
   // The dedicated offline screen already gives this recovery instruction.
   if (!offline || pathname === "/offline") return null;
   return (
-    <div role="alert" className="sticky top-0 z-50 min-w-0 break-words border-b border-warning bg-warning-subtle px-4 py-2.5 text-left text-sm font-medium leading-5 text-foreground sm:text-center">
+    <div role="alert" className="sticky top-0 z-(--lms-z-overlay) min-w-0 break-words border-b border-warning bg-warning-subtle px-4 py-3 text-left text-sm font-medium leading-5 text-foreground sm:text-center">
       You're offline. Reconnect to the internet, then try again. Your current screen has not been cleared.
     </div>
   );

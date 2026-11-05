@@ -104,7 +104,7 @@ export default async function TpoRecruiterConversationPage({params}:{
       {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.createdAt)} IST
      </p>
      {item.via==="EMAIL"?<span className="mt-1 inline-flex rounded border border-border px-1.5 py-0.5 text-xs font-semibold text-muted-foreground">EMAIL</span>:null}
-     {item.requestSummary?<div className="my-2 border-l-[3px] border-border bg-muted/50 p-2 text-xs text-body">
+     {item.requestSummary?<div className="my-2 border-l-2 border-border bg-muted/50 p-2 text-xs text-body">
        {item.changeRequestHref?<Link href={item.changeRequestHref} className="font-semibold text-link underline">Change request: {item.requestSummary}</Link>:
         <span>Change request: {item.requestSummary}</span>}
       </div>:null}

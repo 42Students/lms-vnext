@@ -26,6 +26,9 @@ import {duplicateHrDraftRound} from "@/modules/placements/hr-draft-round-duplica
 import {hrDraftContainsWork} from "@/modules/placements/hr-draft-reset-model";
 import {hrDraftPreviewRounds} from "@/modules/placements/hr-draft-preview-model";
 import {hrDraftCompensationWarnings} from "@/modules/placements/hr-draft-compensation-review-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 const HR_DRAFT_PREVIEW_FIELDS=[
  ["minimumAnnualCtcInr","Minimum CTC"],
@@ -386,17 +389,17 @@ export function HrDriveDraftForm({
   }
 
   if(savedRequestId) return <section aria-label="Drive request submitted" role="status" aria-live="polite" className="min-w-0 max-w-3xl space-y-4 border-y border-border bg-transparent py-4 md:py-6">
-    <h2 className="text-lg font-semibold text-foreground">{approvedJobId ? "Drive approved" : "Request sent"}</h2>
+    <Heading level={2} size="lg" className="text-foreground">{approvedJobId ? "Drive approved" : "Request sent"}</Heading>
     <p className="text-sm text-body">{approvedJobId
       ? "Approved. The placement cell sets the dates and opens it to students."
       : "Your request was saved. The placement cell will review and set the dates before it can open to students."}</p>
-    <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
-      <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open the request</a>
-      <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 w-full items-center justify-center min-[768px]:min-h-9 min-[768px]:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Go to Drives</a>
-      <a href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 w-full items-center justify-center min-[768px]:min-h-9 min-[768px]:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Request another</a>
+    <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
+      <ButtonLink variant="secondary" href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
+        className="w-full md:w-auto">Open the request</ButtonLink>
+      <ButtonLink variant="secondary" href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
+        className="w-full md:w-auto">Go to Drives</ButtonLink>
+      <ButtonLink variant="secondary" href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
+        className="w-full md:w-auto">Request another</ButtonLink>
     </div>
   </section>;
 
@@ -436,7 +439,7 @@ export function HrDriveDraftForm({
        <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
       <div className="min-w-0 space-y-5">
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="font-semibold text-foreground">1 · The role</h2>
+        <Heading level={2} className="text-foreground">1 · The role</Heading>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Role title
@@ -522,12 +525,12 @@ export function HrDriveDraftForm({
             </> : null}
           </div>
           {jdUploadMessage ? <span role="status" className="text-xs text-muted-foreground">{jdUploadMessage}</span> : null}
-           {draft.jdObjectKey&&jdReadUrl?<a href={jdReadUrl} rel="noopener noreferrer" referrerPolicy="no-referrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open verified job description</a>:null}
+           {draft.jdObjectKey&&jdReadUrl?<TextLink href={jdReadUrl} rel="noopener noreferrer" referrerPolicy="no-referrer" className="inline-flex min-h-11 items-center">Open verified job description</TextLink>:null}
         </div>
       </section>
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="font-semibold text-foreground">2 · Pay</h2>
+        <Heading level={2} className="text-foreground">2 · Pay</Heading>
         <p className="mt-1 text-xs text-muted-foreground">
           Enter the overall compensation, then add packages for different offers if needed.
         </p>
@@ -578,7 +581,7 @@ export function HrDriveDraftForm({
         </div>
         <div className="mt-4 space-y-3 border-t border-border pt-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 className="font-semibold text-foreground">Pay packages</h3>
+            <Heading level={3} className="text-foreground">Pay packages</Heading>
             <Button type="button" variant="secondary"
               disabled={(draft.payPackages??[]).length>=25}
               onClick={()=>setDraft(current=>({...current,payPackages:[
@@ -635,7 +638,7 @@ export function HrDriveDraftForm({
       </section>
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="font-semibold text-foreground">3 · Who can apply</h2>
+        <Heading level={2} className="text-foreground">3 · Who can apply</Heading>
         <p className="mt-2 text-sm text-body">Leave optional filters blank to request no additional restrictions. The placement cell still verifies eligibility before students can apply.</p>
         <div className="mt-3 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
@@ -748,7 +751,7 @@ export function HrDriveDraftForm({
       </section>
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-foreground">4 · Rounds</h2>
+          <Heading level={2} className="text-foreground">4 · Rounds</Heading>
           <Button type="button" disabled={draft.rounds.length >= HR_DRIVE_ROUND_LIMIT}
             variant="secondary"
             onClick={() => setDraft((current) => ({
@@ -769,7 +772,7 @@ export function HrDriveDraftForm({
         </p>
         <div className="mt-4 min-w-0 space-y-3">
           {draft.rounds.map((round, index) => (
-            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[170px_minmax(0,1fr)_auto]">
+            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 md:grid-cols-2 lg:grid-cols-[170px_minmax(0,1fr)_auto]">
               <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
                 Kind
                 <Select className="w-full" value={round.kind}
@@ -788,7 +791,7 @@ export function HrDriveDraftForm({
                       ? { ...item, name: event.target.value } : item),
                   }))} />
               </label>
-              <div className="flex min-w-0 flex-wrap items-end gap-2 min-[768px]:col-span-2 min-[992px]:col-span-1 min-[992px]:justify-end">
+              <div className="flex min-w-0 flex-wrap items-end gap-2 md:col-span-2 lg:col-span-1 lg:justify-end">
                 <Button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
                   variant="secondary"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,-1));setShowPreview(false);}}>↑</Button>
@@ -797,12 +800,12 @@ export function HrDriveDraftForm({
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</Button>
                 <Button type="button" disabled={draft.rounds.length>=HR_DRIVE_ROUND_LIMIT}
                   aria-label={"Duplicate "+round.name}
-                  variant="secondary" className="max-[767px]:flex-1"
+                  variant="secondary" className="max-md:flex-1"
                   onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
                   Duplicate
                 </Button>
                 <Button type="button"
-                  variant="secondary" className="max-[767px]:flex-1"
+                  variant="secondary" className="max-md:flex-1"
                   onClick={() => setDraft((current) => ({
                     ...current, rounds: current.rounds.filter((_, i) => i !== index),
                   }))}>Remove</Button>
@@ -814,7 +817,7 @@ export function HrDriveDraftForm({
       </div>
       <aside aria-label="Drive preview and submit" className="min-w-0 self-start rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 lg:sticky lg:top-6">
       <section aria-label="What happens next" className="mb-4 border-b border-border pb-4">
-        <h2 className="font-semibold text-foreground">What happens next</h2>
+        <Heading level={2} className="text-foreground">What happens next</Heading>
         <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-body">
           <li>The placement cell reviews your request and may ask questions.</li>
           <li>They agree dates and publish an approved drive to eligible students.</li>
@@ -823,11 +826,11 @@ export function HrDriveDraftForm({
         <p className="mt-2 text-xs text-muted-foreground">Approval, dates and applicant volume are not guaranteed before the college confirms.</p>
       </section>
       <section className="min-w-0">
-        <h2 className="font-semibold text-foreground">What students will see</h2>
+        <Heading level={2} className="text-foreground">What students will see</Heading>
         <p className="mt-1 text-sm text-body">
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
         </p>
-        <div className="mt-4 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-center">
+        <div className="mt-4 flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
           <Button type="button" variant="secondary"
             onClick={() => {
               if(!branchDraftReady){
@@ -851,9 +854,9 @@ export function HrDriveDraftForm({
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </Button>
-          <details className="min-w-0 min-[768px]:basis-full">
-            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9">Draft tools</summary>
-            <div className="flex min-w-0 flex-col gap-2 pb-2 min-[768px]:flex-row min-[768px]:flex-wrap">
+          <details className="min-w-0 md:basis-full">
+            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Draft tools</summary>
+            <div className="flex min-w-0 flex-col gap-2 pb-2 md:flex-row md:flex-wrap">
           <Button type="button" disabled={!result.success}
             variant="secondary"
             onClick={() => void copyPreview()}>Copy validated draft</Button>
@@ -882,34 +885,33 @@ export function HrDriveDraftForm({
         ) : null}
         {/* Live locally held student-facing draft preview; never imply publication. */}
           <div className="mt-4 min-w-0 space-y-2 break-words border-y border-border bg-transparent py-4 text-sm text-body">
-            <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
+            <Heading level={3} size="base" className="text-foreground">{draft.title.trim()||"Role title"}</Heading>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
             {draft.jdObjectKey ? <div className="space-y-2">
               <p>Private job description attached. Students receive an authorized link after publication.</p>
               <Button type="button" variant="secondary" onClick={() => void viewUploadedJobDescription()}>
                 Preview private job description
               </Button>
-              {jdReadUrl ? <a href={jdReadUrl} rel="noopener noreferrer" referrerPolicy="no-referrer"
-                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+              {jdReadUrl ? <TextLink href={jdReadUrl} rel="noopener noreferrer" referrerPolicy="no-referrer"
+                className="inline-flex min-h-11 items-center">
                 Open verified job description
-              </a> : null}
+              </TextLink> : null}
             </div> : null}
              {result.success && result.data.jdUrl ?
-              <p>Job description: <a href={result.data.jdUrl}
-                rel="noopener noreferrer" referrerPolicy="no-referrer"
-                className="font-semibold text-primary-text underline underline-offset-2">
+              <p>Job description: <TextLink href={result.data.jdUrl}
+                rel="noopener noreferrer" referrerPolicy="no-referrer">
                 View linked job description
-              </a></p> : draft.jdUrl ?
+              </TextLink></p> : draft.jdUrl ?
               <p className="text-xs text-error">Enter a valid public HTTPS job description link to preview it.</p> : null}
             <p>{draft.location || "Location not specified"} · {draft.employmentType.replaceAll("_", " ")} · {LEGACY_HR_DRIVE_MODES.find(option=>option.value===draft.driveMode)?.label??"On campus"} · {draft.workMode}</p>
              <p>Eligible branches: {draft.branches?.length ? draft.branches.join(", ") : "All branches"} ·
                Passing years: {draft.passingYears?.length?draft.passingYears.join(", "):draft.passingYear||"Any year"}</p>
             {draft.driveMode==="OFF_CAMPUS"?
               <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
-                ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer"
-                  className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">{result.data.externalApplicationUrl}</a>
+                ? <TextLink href={result.data.externalApplicationUrl} rel="noopener noreferrer"
+                  className="inline-flex min-h-9 items-center max-md:inline-flex max-md:min-h-11 max-md:items-center">{result.data.externalApplicationUrl}</TextLink>
                 : "Not specified"}</p>:null}
-            <h4 className="font-semibold text-foreground">Planned hiring process</h4>
+            <Heading level={4} className="text-foreground">Planned hiring process</Heading>
             <ol className="list-inside list-decimal space-y-1">
               {hrDraftPreviewRounds(draft).map(step=>(
                 <li key={step.order}>
@@ -918,7 +920,7 @@ export function HrDriveDraftForm({
                 </li>
               ))}
             </ol>
-            <h4 className="pt-3 font-semibold text-foreground">Compensation & eligibility</h4>
+            <Heading level={4} className="pt-3 text-foreground">Compensation & eligibility</Heading>
             <dl className="grid gap-2 md:grid-cols-2">
               {HR_DRAFT_PREVIEW_FIELDS.map(([field,label])=>(
                 <div key={field}>
@@ -930,7 +932,7 @@ export function HrDriveDraftForm({
             </dl>
             {hrDraftCompensationWarnings(draft).length>0?
               <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
-                <h5 className="font-semibold text-foreground">Compensation details to review</h5>
+                <Heading level={5} className="text-foreground">Compensation details to review</Heading>
                 <ul className="mt-2 list-disc space-y-1 pl-5">
                   {hrDraftCompensationWarnings(draft).map(note=><li key={note}>{note}</li>)}
                 </ul>

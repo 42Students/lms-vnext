@@ -33,7 +33,7 @@ export default async function CollegeHiringDashboardPage({
     return <div className="min-w-0 overflow-x-clip space-y-4">
       <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}
       actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Placement Evidence by Department
       </Link>} />
       <ErrorState title="Invalid report search" description="No placement metrics were loaded."
@@ -87,7 +87,7 @@ export default async function CollegeHiringDashboardPage({
         {label:"Companies",href:"/college/placements/companies"},
         {label:"Analytics",href:"/college/hiring-dashboard"}] as const).map(tab=>
         <Link key={tab.href} href={tab.href} aria-current={tab.label==="Analytics"?"page":undefined}
-         className={"inline-flex min-h-11 items-center border-b-[3px] px-4 md:min-h-9 "+
+         className={"inline-flex min-h-11 items-center border-b-2 px-4 md:min-h-9 "+
           (tab.label==="Analytics"?"border-[var(--lms-teal-deep)] text-[var(--lms-teal-deep)]":
             "border-transparent text-body hover:border-border hover:text-link")}>
          {tab.label}
@@ -95,7 +95,7 @@ export default async function CollegeHiringDashboardPage({
     </nav>
     <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}
       actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Placement Evidence by Department
       </Link>} />
     <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">

@@ -9,6 +9,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { getTpoJobTypes, listPlacementJobTypeChoices } from "@/modules/placements/tpo-configuration-read-service";
 import { TPO_BUILTIN_JOB_TYPES, isTpoBuiltinJobType } from "@/modules/placements/tpo-builtin-job-types";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic = "force-dynamic";
 export default async function JobTypesSettings() {
@@ -51,7 +52,7 @@ export default async function JobTypesSettings() {
     <div className="grid min-w-0 gap-6 lg:grid-cols-[224px_minmax(0,1fr)]">
       <TpoSettingsNav active="job-types"/>
       <section className="min-w-0 space-y-4" aria-labelledby="job-types-title">
-        <h2 id="job-types-title" className="text-xl font-semibold text-heading">Job types</h2>
+        <Heading level={2} size="xl" id="job-types-title" className="text-heading">Job types</Heading>
         <p className="text-sm text-muted-foreground">
           The job types drives can have, and whether an offer of each counts as placed. Add your own; switch off the ones you never use.
         </p>
@@ -62,7 +63,7 @@ export default async function JobTypesSettings() {
             <TpoUnifiedJobTypesEditor types={[...builtin,...custom]}/>
             <Disclosure title="Visible choices for drives" className="border-t border-border pt-3">
               <section aria-label="Choices available to drive users">
-              <h3 className="sr-only">Visible choices for drives</h3>
+              <Heading level={3} className="sr-only">Visible choices for drives</Heading>
               <p className="text-xs text-muted-foreground">The same authorized read-only selection is available at /api/placements/job-types. Disabled choices remain on existing drives but are not offered for new ones.</p>
               {choices===null?<p role="alert" className="text-sm text-warning">Could not load the current drive choices.
                 <Link href="/tpo/settings/job-types?retry=1" className="ml-2 font-semibold text-link underline">Retry</Link>

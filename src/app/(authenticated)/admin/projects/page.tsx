@@ -23,6 +23,7 @@ import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-ser
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
+import { Heading } from "@/components/ui/heading";
 
 export default async function SuperAdminProjectsPage({
   searchParams,
@@ -110,7 +111,7 @@ export default async function SuperAdminProjectsPage({
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
       <Banner tone="warning">Couldn't refresh workspaces. Your filters are unchanged, but previously fetched rows are not reused across college scopes.</Banner>
       <section aria-label="Workspace filters" className="min-w-0">
-        <h2 className="mb-3 text-lg font-semibold text-foreground">Workspaces</h2>
+        <Heading level={2} size="lg" className="mb-3 text-foreground">Workspaces</Heading>
         <FilterBar title="Project workspace filters"><ProjectAdminFilters query={query} legacyWorkspaces /></FilterBar>
       </section>
       <ErrorState title="Failed to load project workspaces"

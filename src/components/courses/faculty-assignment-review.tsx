@@ -29,6 +29,7 @@ import { courseApiError } from "./learner-course-api";
 import {
   assignmentSubmissionActions,
 } from "./faculty-assessment-operation-model";
+import { Heading } from "@/components/ui/heading";
 
 type Submission = FacultySubmissionReviewRow;
 const SUBMISSION_FILTERS = ["ALL","UNGRADED","GRADED","LATE"] as const;
@@ -54,13 +55,13 @@ function studentInitials(value:string){
   value.slice(0,2)).toUpperCase()||"ST";
 }
 const AVATAR_PALETTE=[
- "bg-cyan-100 text-cyan-900","bg-violet-100 text-violet-900",
- "bg-lime-100 text-lime-900","bg-orange-100 text-orange-900",
- "bg-pink-100 text-pink-900","bg-blue-100 text-blue-900",
+ "bg-[color:var(--lms-info-blue-surface)] text-[color:var(--lms-text-body)]","bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple-text)]",
+ "bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-success-strong)]","bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]",
+ "bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-error-strong)]","bg-[color:var(--lms-info-blue-surface)] text-[color:var(--lms-info-blue)]",
 ] as const;
 function studentAvatarHue(value:string){
  let sum=0;for(const ch of value)sum=(sum*33+ch.charCodeAt(0))%AVATAR_PALETTE.length;
- return AVATAR_PALETTE[sum] ?? "bg-cyan-100 text-cyan-900";
+ return AVATAR_PALETTE[sum] ?? "bg-[color:var(--lms-info-blue-surface)] text-[color:var(--lms-text-body)]";
 }
 /** Render visible legacy HTML as inert text with line breaks, not unsanitized HTML. */
 function legacySubmissionText(text:string){
@@ -369,9 +370,9 @@ export function SubmissionGradeCard({
     <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
         <div className="min-w-0">
-          <h4 className="m-0 text-sm font-semibold text-foreground">
+          <Heading level={4} size="sm" className="m-0 text-foreground">
             {learnerLabel(submission)}
-          </h4>
+          </Heading>
           {submission.learnerEmail ? (
             <p className="mt-1 text-xs text-muted-foreground">
               {submission.learnerEmail}

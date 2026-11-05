@@ -44,6 +44,9 @@ import {
   listTpoRecruiterAccess,
 } from "@/modules/placements/tpo-recruiter-access-service";
 import {tpoRecruiterGrantExportHref} from "@/modules/placements/tpo-recruiter-grant-export-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   status?: string | string[];
@@ -111,9 +114,9 @@ export default async function TpoRecruiterAccessPage({
    <TpoSettingsNav active="recruiters" compact/>
    <ErrorState title="Couldn't load your recruiters"
     description="Recruiter access records are temporarily unavailable. No changes were made."
-    action={<a href="/tpo/settings/recruiters" className="inline-flex min-h-11 items-center font-semibold text-link underline">
+    action={<TextLink href="/tpo/settings/recruiters" className="inline-flex min-h-11 items-center">
      Retry
-    </a>}/>
+    </TextLink>}/>
   </div>;
   const [data,linkedCompanies,publicLink,communication,team]=loaded.values;
   const actor=team.members.find(item=>item.membershipId===context.membership?.id);
@@ -175,9 +178,9 @@ export default async function TpoRecruiterAccessPage({
        </Disclosure>
       </section>:null}
       <section className="border-t border-border pt-4">
-        <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg md:leading-7 min-[992px]:text-xl">
+        <Heading level={2} size="base" className="leading-6 text-foreground md:text-lg md:leading-7 lg:text-xl">
           Recruiters with access to your college
-        </h2>
+        </Heading>
 
         <Link href="/tpo/recruiters?stage=INVITED"
          className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
@@ -244,18 +247,16 @@ export default async function TpoRecruiterAccessPage({
 
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg md:leading-7 min-[992px]:text-xl">
+          <Heading level={2} size="base" className="leading-6 text-foreground md:text-lg md:leading-7 lg:text-xl">
             Access records (including history)
-          </h2>
+          </Heading>
           <Disclosure title="Export grants" className="min-w-0" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
-            <a href={tpoRecruiterGrantExportHref(query)}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+            <ButtonLink variant="secondary" href={tpoRecruiterGrantExportHref(query)}>
               Export filtered grants CSV
-            </a>
-            <a href={tpoRecruiterGrantExportHref(query,"xlsx")}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+            </ButtonLink>
+            <ButtonLink variant="secondary" href={tpoRecruiterGrantExportHref(query,"xlsx")}>
               Export filtered grants Excel
-            </a>
+            </ButtonLink>
           </Disclosure>
 
           {total>500?<p role="status" className="text-xs text-warning-text">

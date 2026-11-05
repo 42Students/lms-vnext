@@ -7,6 +7,7 @@ import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communicatio
 import { TpoPrepReadinessEditor } from "@/components/tpo/tpo-prep-readiness-editor";
 import { getTpoPrepReadiness, listTpoPrepCourses } from "@/modules/placements/tpo-configuration-read-service";
 import { tpoPrepConfigSchema } from "@/modules/placements/tpo-configuration-model";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function PrepSettings(){
  const context=await getCurrentRequestContext();
@@ -33,7 +34,7 @@ export default async function PrepSettings(){
    {!parsed.success?<Alert tone="error">The saved readiness config uses an unsupported shape. No changes will be made until it is reviewed.</Alert>:null}
    {data.selectionSynchronized===false?<Alert tone="warning">The saved course choices are not yet synchronized with the normalized preparation-course selections. Learner readiness evidence is temporarily unavailable until the settings are reviewed and saved again.</Alert>:null}
    {!coursesResult.ok?<Alert tone="warning">
-     Couldn&apos;t load preparation courses. Saved choices were not changed. <a href="/tpo/settings/prep-readiness" className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry</a>
+     Couldn&apos;t load preparation courses. Saved choices were not changed. <TextLink href="/tpo/settings/prep-readiness" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
    </Alert>:null}
    {parsed.success&&coursesResult.ok?<TpoPrepReadinessEditor key={context.membership?.collegeId??"unscoped"} choices={courses} initial={{courseIds:initial.courseIds,minimumCompleted:initial.minimumCompleted}}
     expectedVersion={data.updatedAt?.toISOString()??"none"}/>:null}

@@ -8,6 +8,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   PUBLIC_JOIN_LINK_COPY, type TpoPublicJoinLinkStatus,
 } from "@/modules/placements/tpo-public-join-link-model";
+import { Heading } from "@/components/ui/heading";
 
 export function TpoPublicJoinLinkCard({
   initial, scope, companyId, companyName,
@@ -177,7 +178,7 @@ export function TpoPublicJoinLinkCard({
 
   return (
     <section aria-label={title} className="min-w-0 space-y-3 border-t border-border pt-4">
-      <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+      <Heading level={2} size="lg" className="text-foreground">{title}</Heading>
       {isCompany ? (
         <>
           {status.domain ? (
@@ -207,7 +208,7 @@ export function TpoPublicJoinLinkCard({
         <div role="status" className="mt-3 flex min-w-0 flex-col items-start gap-2 text-sm text-body sm:flex-row sm:items-center">
           <p className="m-0">{isCompany ? "Couldn't load the company link" : "Couldn't load the public link"}</p>
           <Button type="button" variant="ghost" disabled={busy} onClick={()=>void retryStatus()}
-            className="min-h-11 w-full underline sm:w-auto min-[768px]:min-h-9">Retry</Button>
+            className="min-h-11 w-full underline sm:w-auto md:min-h-9">Retry</Button>
         </div>
       ) : (
         <>
@@ -239,7 +240,7 @@ export function TpoPublicJoinLinkCard({
           <Button
             type="button" disabled={busy || (isCompany && !status.domain)}
             onClick={()=>{if(status.link)setReplaceOpen(true);else void makeLink();}}
-            className="mt-4 min-h-11 w-full sm:w-auto min-[768px]:min-h-9"
+            className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9"
           >
             {status.link ? PUBLIC_JOIN_LINK_COPY.replace :
               isCompany ? PUBLIC_JOIN_LINK_COPY.initial : PUBLIC_JOIN_LINK_COPY.publicInitial}
@@ -252,7 +253,7 @@ export function TpoPublicJoinLinkCard({
                   onFocus={(event) => event.currentTarget.select()}
                   className="min-h-11 min-w-0 w-full md:min-h-9" />
                 <Button type="button" variant="secondary" disabled={busy} onClick={copyLink}
-                  className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9">
+                  className="min-h-11 w-full sm:w-auto md:min-h-9">
                   Copy
                 </Button>
               </div>

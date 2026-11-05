@@ -9,6 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {searchOrganizationPlacementApplications} from "@/modules/placements/organization-application-search-service";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
@@ -90,7 +91,7 @@ export default async function OrganizationApplicationsPage({searchParams}:{
      {result.records.map(record=><li key={record.id} className="min-w-0 rounded-lg border border-border p-4">
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
        <div className="min-w-0 space-y-1">
-        <h2 className="break-words font-semibold">{record.learnerName}</h2>
+        <Heading level={2} className="break-words">{record.learnerName}</Heading>
         <p className="break-words text-sm">{record.companyName} · {record.jobTitle}</p>
        </div>
        <span className="text-sm font-semibold">{record.applicationStatus}</span>

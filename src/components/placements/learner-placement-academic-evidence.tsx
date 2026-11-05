@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { useToast } from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 export type PlacementAcademicEvidenceValue = {
   cgpa: number | null;
@@ -193,9 +194,9 @@ export function LearnerPlacementAcademicEvidence({
     <section id="placement-academic-evidence" className="min-w-0 scroll-mt-24 border-b border-border pb-5">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border py-4 md:flex-row md:items-start md:justify-between">
         <div>
-          <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
+          <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">
             Academic eligibility evidence
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body leading-[22px]">
             Used only for explainable placement eligibility checks.
           </p>

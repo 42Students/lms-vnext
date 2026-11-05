@@ -17,6 +17,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { Tabs } from "@/components/ui/tabs";
 import { listFacultyContacts } from "@/modules/courses/faculty-contacts-service";
+import { Heading } from "@/components/ui/heading";
 
 const tabs = {
   allContacts: {
@@ -130,7 +131,7 @@ export default async function FacultyContactsPage({
       <section aria-label="Contact directory results" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
         <div className="flex min-w-0 flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div className="min-w-0">
-            <h2 className="m-0 text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">Directory results</h2>
+            <Heading level={2} size="lg" className="m-0 leading-[1.4] text-[var(--lms-heading)]">Directory results</Heading>
             <p role="status" aria-live="polite" className="mt-1 text-sm leading-[22px] text-body">
               {result.total} {result.total === 1 ? "contact" : "contacts"} in {selected.label}
               {result.search ? <> matching “{result.search}”</> : null}

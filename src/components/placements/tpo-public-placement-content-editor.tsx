@@ -8,6 +8,7 @@ import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,
  type PublicPlacementMetricKey} from "@/modules/placements/public-page/content-model";
+import { Heading } from "@/components/ui/heading";
 const ALL=Object.keys(PUBLIC_METRIC_LABELS) as PublicPlacementMetricKey[];
 export function TpoPublicPlacementContentEditor({initial}:{initial:{
  ready:boolean;about:string;metricKeys:PublicPlacementMetricKey[];updatedAt:string|null;
@@ -63,7 +64,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
   finally{window.clearTimeout(timeout);pending.current=false;setBusy(false);}
  }
  return <section className="mt-6 space-y-4 border-t border-border pt-5" aria-label="Public placements content">
-  <h2 className="font-semibold">About your placements</h2>
+  <Heading level={2}>About your placements</Heading>
   <label className="grid gap-[6px] text-[13px]">About your placements
    <Textarea rows={4} maxLength={4000} value={about} disabled={!initial.ready||busy}
     onChange={e=>setAbout(e.target.value)}

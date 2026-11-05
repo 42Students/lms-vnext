@@ -22,7 +22,7 @@
 .statValue {
   color: var(--lms-neutral-900);
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.3;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
@@ -72,8 +72,8 @@
   border-radius: 6px;
   background: var(--lms-neutral-100);
 }
-.accuracyRowPoor { border-left: 3px solid var(--lms-error); }
-.accuracyRowFair { border-left: 3px solid var(--lms-warning); }
+.accuracyRowPoor { border-left: 2px solid var(--lms-error); }
+.accuracyRowFair { border-left: 2px solid var(--lms-warning); }
 .accuracyTrack {
   min-width: 0;
   height: 6px !important;
@@ -99,7 +99,7 @@
 .timingValue {
   color: var(--lms-neutral-900);
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 @media (max-width: 767px) {

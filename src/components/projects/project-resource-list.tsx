@@ -14,6 +14,7 @@ import {ProjectResourceActions} from "./project-resource-controls";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import {mentorResourceGroupKey,mentorResourceGroupLabel,mentorResourceGroupOrder} from "@/modules/projects/mentor-resource-groups-model";
 import {mentorResourceEarlierScope,mentorResourceLinkedScopeLabels,mentorResourceMatchesType} from "@/modules/projects/mentor-resource-directory-model";
+import { Heading } from "@/components/ui/heading";
 
 type ResourceRow={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
@@ -232,7 +233,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     </>:null}
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");setSharer("ALL");setGroupBySprint(mode==="MENTOR");
          setShowEarlier(false);}}
-      className="min-h-11 text-sm font-[650] text-link underline md:min-h-9">Clear filters</Button>
+      className="min-h-11 text-sm font-semibold text-link underline md:min-h-9">Clear filters</Button>
   </div>
   {mode==="MENTOR"&&earlierCount>0?<div className="prototype-mentor-resource-earlier"
     role="group" aria-label="Earlier sprint resources">
@@ -268,10 +269,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     return <Fragment key={resource.id}>
       {mode==="MENTOR"&&(index===0||
         (orderedResources[index-1]?groupKey(orderedResources[index-1]!)!==groupKey(resource):true))?
-        <h3 className="prototype-mentor-resource-group-heading">
+        <Heading level={3} className="prototype-mentor-resource-group-heading">
           {mentorResourceGroupLabel(groupKey(resource),sprints)}
           {" · "}{groupCounts.get(groupKey(resource))??0}
-        </h3>:null}
+        </Heading>:null}
     <article id={"mentor-resource-"+resource.id}
       tabIndex={-1}
       draggable={canReorder&&resource.status==="ACTIVE"}

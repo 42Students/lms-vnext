@@ -39,7 +39,7 @@ export function PasswordInput({ error = false, className, ...props }: PasswordIn
         aria-controls={inputId}
         aria-label={effectiveVisible ? "Hide password" : "Show password"}
         aria-pressed={effectiveVisible}
-        className="min-w-[4rem] shrink-0 max-[767px]:min-h-11 max-[767px]:min-w-11 focus-visible:!outline-offset-[3px] focus-visible:!outline-[var(--lms-primary-text)]"
+        className="min-w-[4rem] shrink-0 max-md:min-h-11 max-md:min-w-11 focus-visible:!outline-offset-[3px] focus-visible:!outline-[var(--lms-primary-text)]"
         onClick={() => { setVisible(current => !current); fieldRef.current?.focus(); }}>
         {effectiveVisible ? "Hide" : "Show"}
       </Button>

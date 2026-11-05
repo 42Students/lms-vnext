@@ -14,6 +14,7 @@ import { publicJoinErrorCopy,validatePublicJoinClient } from "@/modules/placemen
 import { publicJoinFormSchema } from "@/modules/placements/public-join/form-model";
 import { publicRecruiterWorkEmailSchema } from "@/modules/placements/public-college-join-model";
 import { JOIN_ERROR_COPY,joinErrorMessage,joinFieldForCode,publicJoinResponseMessage,type JoinErrorField } from "@/modules/placements/public-join/error-copy";
+import { Heading } from "@/components/ui/heading";
 
 type JoinField=JoinErrorField;
 function joinFieldForError(message:string):JoinField|null{
@@ -194,7 +195,7 @@ export function PublicRecruiterJoinForm({
             </div>
             <PageHeader title="This link is no longer valid" />
             <p className="mt-3 max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for a new one. Already joined? Sign in with your work email.</p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
@@ -208,7 +209,7 @@ export function PublicRecruiterJoinForm({
             <p className="mt-3 text-sm text-body">
               {"Sign in with your work email, "+signInEmail+", on the college's placement address. We'll email you a code each time."}
             </p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
           </>
         ) : (
           <>
@@ -216,7 +217,7 @@ export function PublicRecruiterJoinForm({
             <p className="mt-3 text-sm text-body">
               Join with your {companyLabel} email. You can then request placement drives and review the students who apply.
             </p>
-            {sentTo?<h2 className="mt-5 text-lg font-semibold text-foreground">One more step</h2>:null}
+            {sentTo?<Heading level={2} size="lg" className="mt-5 text-foreground">One more step</Heading>:null}
             <form noValidate className="mt-4 min-w-0 space-y-4" aria-busy={pending} onSubmit={event=>{
              event.preventDefault(); if(sentTo)void join();else void sendCode();
             }}>
@@ -273,7 +274,7 @@ export function PublicRecruiterJoinForm({
                 </label>
               ) : null}
               {!sentTo ? (
-                <Button type="submit" loading={pending} className="min-h-11 w-full min-[768px]:min-h-9">Send me a code</Button>
+                <Button type="submit" loading={pending} className="min-h-11 w-full md:min-h-9">Send me a code</Button>
               ) : (
                 <>
                   <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">

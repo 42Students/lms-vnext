@@ -33,6 +33,7 @@ import {
   shiftAttendanceMonth,
 } from "@/modules/attendance/admin-grid-model";
 import { Radio } from "@/components/ui/radio";
+import { Heading } from "@/components/ui/heading";
 
 type DeliveryOption = {
   deliveryId: string;
@@ -421,7 +422,7 @@ export function AdminAttendanceWorkspace({
       {data.gridLookupFailed&&viewGrid?<Alert tone="warning">The monthly attendance refresh failed. Displaying only the last verified grid for this same college, class, course and month. <Button type="button" variant="secondary" size="sm" disabled={refreshing} onClick={()=>startRefresh(()=>router.refresh())}>Retry attendance</Button></Alert>:null}
 
       <section aria-label="Attendance policy" className="min-w-0 border-b border-border pb-4">
-      <h2 className="mb-3 text-base font-semibold text-foreground">Attendance policy</h2>
+      <Heading level={2} size="base" className="mb-3 text-foreground">Attendance policy</Heading>
       <section className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
         <div className="border-b border-border pb-4">
           <p className="mt-2 text-2xl font-semibold text-foreground">
@@ -570,10 +571,10 @@ export function AdminAttendanceWorkspace({
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   Monthly class health
                 </p>
-                <h2 className="mt-1 text-lg font-semibold text-foreground">
+                <Heading level={2} size="lg" className="mt-1 text-foreground">
                   {viewGrid.delivery.sectionName} ·{" "}
                   {viewGrid.delivery.courseName}
-                </h2>
+                </Heading>
                 <p className="mt-1 text-sm text-body">
                   {
                     viewGrid.sessions.filter(
@@ -606,7 +607,7 @@ export function AdminAttendanceWorkspace({
               <caption className="sr-only">College attendance for every calendar day of the selected month. Cross means no scheduled class.</caption>
               <thead>
                 <tr>
-                  <th rowSpan={2} scope="col" className="sticky left-0 z-20 bg-surface px-4 text-left">Student</th>
+                  <th rowSpan={2} scope="col" className="sticky left-0 z-(--lms-z-sticky-inline) bg-surface px-4 text-left">Student</th>
                   {sessionDays.map(({day,weekday,isSunday,sessions})=>(
                     <th key={"weekday-"+day} scope="col"
                       className={"min-w-16 px-2 py-2 text-center text-xs font-semibold "+(isSunday?"bg-surface-subtle":"")}
@@ -636,7 +637,7 @@ export function AdminAttendanceWorkspace({
                           learner.membershipId
                         }
                       >
-                        <th scope="row" className="sticky left-0 z-10 bg-surface px-4 py-3">
+                        <th scope="row" className="sticky left-0 z-(--lms-z-raised) bg-surface px-4 py-3">
                           <p className="m-0 font-semibold text-foreground">
                             {learnerName(
                               learner,

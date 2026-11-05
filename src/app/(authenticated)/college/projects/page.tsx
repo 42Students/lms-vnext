@@ -20,6 +20,7 @@ import {parseCollegeProjectsQuery,canonicalCollegeProjectsPageHref} from "@/modu
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function CollegeProjectsPage({
   searchParams,
@@ -138,7 +139,7 @@ export default async function CollegeProjectsPage({
         searchParamName="q" atRiskHref="/college/projects/at-risk" /></FilterBar>
       <section aria-label="Project workspaces directory" className="min-w-0 space-y-3">
        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Project workspaces</h2>
+        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Project workspaces</Heading>
         <div className="flex min-w-0 items-center gap-3 text-sm">
          <Link href="/college/projects/at-risk" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Needs attention</Link>
          <Tabs ariaLabel="Workspace display mode" renderPanel={false}

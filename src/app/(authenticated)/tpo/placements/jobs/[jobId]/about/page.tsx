@@ -7,6 +7,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveAbout} from "@/modules/placements/tpo-drive-about-service";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 const format=(value:number|null)=>value===null?"Not recorded":"₹"+(value/100000).toLocaleString("en-IN")+" LPA";
 const when=(value:string|null)=>value?new Intl.DateTimeFormat("en-IN",{
@@ -37,7 +38,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   <PageHeader title={data.job.title+" · About this drive"}
    description="Eligibility, reach, packages, employer details, closed summary and the most recent audit activity."/>
   <section className="border-b border-border pb-6">
-   <h2 className="text-lg font-semibold">Eligibility and reach</h2>
+   <Heading level={2} size="lg">Eligibility and reach</Heading>
    <p className="mt-2 break-words text-2xl font-semibold tabular-nums">{data.reach.eligible} students meet the current notification and eligibility rules</p>
    <p className="mt-1 text-sm text-body">{data.reach.excluded} excluded or not notified, out of {data.reach.considered} registered learners considered. Counts come from current registration, opt-in, debarment and academic evidence.</p>
    <div className="mt-4">
@@ -63,15 +64,15 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   </details>
   <details className="group border-b border-border pb-6">
    <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Eligibility rules <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
-   <dl className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-3">
+   <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
     {rules.map(([label,value])=><div key={label} className="min-w-0 border-b border-border pb-3 text-sm">
      <dt className="text-body">{label}</dt><dd className="break-words font-semibold">{value===null?"Not restricted":value}</dd></div>)}
    </dl>
    <p className="mt-3 text-sm text-body">{data.policy.allowedProgramIds.length} program(s), {data.policy.allowedCohortIds.length} cohort(s), {data.policy.allowedSectionIds.length} section(s) explicitly targeted.</p>
   </details>
   <section className="border-b border-border pb-6">
-   <h2 className="font-semibold">Drive details and employer</h2>
-   <dl className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-3 text-sm">
+   <Heading level={2}>Drive details and employer</Heading>
+   <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3 text-sm">
     {[
      ["Company",data.job.company],["Status",data.job.status],["Placement season",data.job.season],
      ["Job type",data.job.employmentType],["Work mode",data.job.workMode],
@@ -85,11 +86,11 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
     ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border pb-3"><dt className="text-body">{label}</dt><dd className="break-words font-semibold">{value}</dd></div>)}
    </dl>
    <p className="mt-4 max-w-prose whitespace-pre-wrap break-words text-sm text-body">{data.job.description}</p>
-   <h3 className="mt-4 font-semibold">Recruiter contacts</h3>
+   <Heading level={3} className="mt-4">Recruiter contacts</Heading>
    {data.recruiterContacts.length?<ul className="mt-2 list-disc break-words pl-6 text-sm">{data.recruiterContacts.map(email=><li key={email}>{email}</li>)}</ul>:
     <EmptyState title="No current recruiter email is recorded for this company relationship."/>}
    <div className="mt-4">
-    <h3 className="font-semibold">Related company requests</h3>
+    <Heading level={3}>Related company requests</Heading>
     {data.previousRequests.length?<ul className="mt-2 divide-y divide-border text-sm">
       {data.previousRequests.map(request=><li key={request.id} className="py-3">
        <Link className="font-semibold text-[var(--lms-teal-deep)] underline"
@@ -102,7 +103,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    </div>
   </section>
   <section className="border-b border-border pb-6">
-   <h2 className="font-semibold">Role packages</h2>
+   <Heading level={2}>Role packages</Heading>
    <div className="mt-3">
     <DataTable caption="Role packages and compensation" rows={data.packages} getRowKey={pkg=>pkg.id}
      empty={<EmptyState title="No role packages are recorded for this drive."/>}
@@ -116,12 +117,12 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    </div>
   </section>
   {["CLOSED","CANCELLED"].includes(data.job.status)?<section className="border-b border-border pb-6">
-   <h2 className="font-semibold">Closed drive summary</h2>
+   <Heading level={2}>Closed drive summary</Heading>
    <p className="mt-2 text-sm">{data.closeSummary.applications} recorded applications · {data.closeSummary.offers} offer versions.</p>
    <Link className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px]" href={root+"/closeout"}>See the close-out report</Link>
   </section>:null}
   <section id="activity" aria-label="Drive activity" className="scroll-mt-24 border-b border-border pb-6">
-   <h2 className="font-semibold">Recent activity · last {data.feed.length} (maximum 100)</h2>
+   <Heading level={2}>Recent activity · last {data.feed.length} (maximum 100)</Heading>
    {!data.feed.length?<EmptyState title="No placement activity recorded for this drive."/>:
    <ol className="mt-3 divide-y divide-border">{data.feed.map(event=><li key={event.id} className="py-3 text-sm">
     <span className="break-words font-semibold">{event.summary}</span>

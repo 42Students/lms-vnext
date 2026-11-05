@@ -13,6 +13,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { safeAnnouncementLink } from "@/modules/announcements/link-model";
 import { announcementLocalTiming } from "@/modules/announcements/local-timing-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export type AnnouncementTarget = {
   type: "COLLEGE" | "PROGRAM" | "DEPARTMENT" | "LEARNER" | "FACULTY" | "CLASS";
@@ -90,8 +93,8 @@ function LinkifiedAnnouncement({ body }: { body: string }) {
   return <>{body.split(expression).map((part, index) => {
     if (index % 2 === 0) return <Fragment key={index}>{part}</Fragment>;
     const safe = safeAnnouncementLink(part);
-    return safe ? <a key={index} href={safe} rel="noopener noreferrer"
-      className="break-all text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{part}</a>
+    return safe ? <TextLink key={index} href={safe} rel="noopener noreferrer"
+      className="break-all">{part}</TextLink>
       : <Fragment key={index}>{part}</Fragment>;
   })}</>;
 }
@@ -361,7 +364,7 @@ export function AnnouncementAdminWorkspace({
       </Dialog>
 
       <section className="min-w-0 space-y-[var(--lms-space-3)]">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Announcements</h2>
+        <Heading level={2} size="lg" className="m-0 text-foreground">Announcements</Heading>
         {items.length === 0 ? (
           <EmptyState title={emptyMessage==="No announcements in this view."?"Nothing sent yet":emptyMessage} {...(emptyMessage==="No announcements in this view."?{}:{description:emptyMessage})}/>
         ) : (
@@ -370,14 +373,14 @@ export function AnnouncementAdminWorkspace({
             return (
               <article key={item.id} id={"announcement-"+item.id}
                className={"flex min-w-0 flex-col gap-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm "+
-                 (item.isPinned?"border-l-[3px] border-l-[var(--lms-primary)]":"")}>
+                 (item.isPinned?"border-l-2 border-l-[var(--lms-primary)]":"")}>
                 <header className="min-w-0 space-y-1">
                   <div className="flex min-w-0 flex-wrap items-center gap-2">
                     {item.isPinned?<svg role="img" aria-label="Pinned" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"
                       className="shrink-0 text-[var(--lms-primary-text)]">
                       <path d="M16 3 21 8l-3 1-3 5v3l-1 1-4-4-4 4-1-1 4-4-4-4 1-1h3l5-3z"/>
                     </svg>:null}
-                    <h3 className="m-0 min-w-0 break-words text-base font-semibold text-[var(--lms-heading)]">{item.title}</h3>
+                    <Heading level={3} size="base" className="m-0 min-w-0 break-words text-[var(--lms-heading)]">{item.title}</Heading>
                     {item.version>1 || (item.updatedAt&&item.updatedAt!==item.createdAt)
                       ?<Badge tone="neutral">Updated</Badge>:null}
                     {item.visibilityState==="SCHEDULED"?<Badge tone="warning">Scheduled for {announcementWhen(item.scheduledAt)}</Badge>:null}
@@ -392,13 +395,12 @@ export function AnnouncementAdminWorkspace({
                 </header>
                 <p className="min-w-0 whitespace-pre-wrap break-words text-sm leading-[1.6] text-body"><LinkifiedAnnouncement body={item.message}/></p>
                 {item.buttonUrl&&/^https:\/\/[^\s]+$/i.test(item.buttonUrl)?
-                  <div className="flex flex-wrap"><a href={item.buttonUrl} rel="noopener noreferrer"
-                   className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                  <div className="flex flex-wrap"><ButtonLink variant="secondary" href={item.buttonUrl} rel="noopener noreferrer">
                     <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
                      <path d="M10 13a5 5 0 0 0 7.1 0l2.1-2.1a5 5 0 0 0-7.1-7.1L11 5"/>
                      <path d="M14 11a5 5 0 0 0-7.1 0l-2.1 2.1a5 5 0 1 0 7.1 7.1L13 19"/>
                     </svg>{item.buttonLabel||"Open"}
-                   </a></div>:null}
+                   </ButtonLink></div>:null}
                 <footer className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-t border-[var(--lms-canvas-border)] pt-3">
                   <span className="text-xs text-muted-foreground">{item.visibilityState==="LIVE"?"Published":item.visibilityState.toLowerCase()}</span>
                   <div className="flex flex-wrap gap-2">

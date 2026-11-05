@@ -15,6 +15,7 @@ import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query
 import {
   mentorTeamMeetingsHref,mentorTeamMeetingsQuerySchema,
 } from "@/modules/projects/mentor-team-meetings-model";
+import { Heading } from "@/components/ui/heading";
 
 type Params={status?:string|string[];type?:string|string[];outcome?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorTeamMeetingsPage({
@@ -49,7 +50,7 @@ export default async function MentorTeamMeetingsPage({
       Projects access is disabled. No private team or meeting data was loaded.
     </section>:<>
       <section aria-labelledby="section-active-team-coverage" className="min-w-0 border-b border-border pb-4">
-        <h2 id="section-active-team-coverage" className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Active team coverage</h2>
+        <Heading level={2} size="base" id="section-active-team-coverage" className="m-0 leading-6 text-[var(--lms-heading)]">Active team coverage</Heading>
         <dl className="mt-4 grid gap-3 md:grid-cols-3">
           <div><dt className="text-xs text-muted-foreground">Learners</dt>
             <dd className="mt-1 text-xl font-semibold">{data.team.learners}</dd></div>
@@ -120,7 +121,7 @@ export default async function MentorTeamMeetingsPage({
         :<ol aria-label="team meetings entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(meeting=>
           <li key={meeting.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">{meeting.title}</h2>
+              <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">{meeting.title}</Heading>
               <span className="text-xs font-semibold text-body">{mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderedAt)}</span>
             </div>
             <p className="mt-2 text-sm text-body leading-[22px]">

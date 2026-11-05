@@ -46,7 +46,7 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
       <div className="min-w-0 space-y-3 pt-3">
     <p className="mt-2 text-sm text-body">Dates and times use IST. A booking is only confirmed after rechecking persisted overlaps.</p>
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:
-      <form onSubmit={submit} className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">
+      <form onSubmit={submit} className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
           <Select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
             <option value="">Select class</option>
@@ -65,7 +65,7 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
           <DateInput className={field} required mode="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
         <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ends (IST)
           <DateInput className={field} required mode="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
-        <div className="md:col-span-2 min-[992px]:col-span-3">
+        <div className="md:col-span-2 lg:col-span-3">
           <Button variant="primary" type="submit" loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!sectionId||!title.trim()}>
             {pending?"Booking…":"Confirm booking"}</Button>
         </div>

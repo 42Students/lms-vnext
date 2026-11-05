@@ -10,6 +10,7 @@ import {Alert} from "@/components/ui/alert";
 import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form";
 import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
 import {listTpoOutsideDriveRecords} from "@/modules/placements/recorded-outside-participation-service";
+import { Heading } from "@/components/ui/heading";
 export default async function TpoRecordedOutsidePage({searchParams}:{searchParams:Promise<{saved?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(
@@ -37,7 +38,7 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
   {!result.choices.length?<Banner tone="warning">No authorized company is available for this record. <Link href="/tpo/companies" className="font-semibold underline">Companies</Link></Banner>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
   <section aria-label="Recorded outside drives" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
-   <h2 className="text-base font-semibold leading-6 md:text-lg md:leading-7 lg:text-xl">Recorded outside drives</h2>
+   <Heading level={2} size="base" className="leading-6 md:text-lg md:leading-7 lg:text-xl">Recorded outside drives</Heading>
    <p className="text-sm text-body">These are historic records, not published jobs; they are excluded from learner application reminders.</p>
    {recorded.length?<ul className="divide-y divide-border">
     {recorded.map(item=><li key={item.id} className="flex min-w-0 flex-col items-stretch gap-2 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">

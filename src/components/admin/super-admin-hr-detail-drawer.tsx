@@ -21,6 +21,7 @@ import {
   hrStatusTone,
 } from "./super-admin-hr-types";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 
 export function SuperAdminHrDetailDrawer({
@@ -248,9 +249,9 @@ export function SuperAdminHrDetailDrawer({
           <section className="border-b border-border pb-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h3 className="m-0 text-base font-semibold text-foreground">
+                <Heading level={3} size="base" className="m-0 text-foreground">
                   College access
-                </h3>
+                </Heading>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
                   {account.grants.length} current access grant{account.grants.length===1?"":"s"} and {Math.max(0,allGrants.length-account.grants.length)} historical records visible in this admin scope.
                 </p>
@@ -293,7 +294,7 @@ export function SuperAdminHrDetailDrawer({
 
             {account.status === "ACTIVE" ? (
               <div className="mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
-                <h4 className="text-sm font-semibold text-foreground">Add a college</h4>
+                <Heading level={4} size="sm" className="text-foreground">Add a college</Heading>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
                   Only active company–college relationships for{" "}
                   {account.companyName} are eligible. Choose the college to grant access.
@@ -412,9 +413,9 @@ export function SuperAdminHrDetailDrawer({
           </section>
 
           <section className="border-b border-border pb-5">
-            <h3 className="m-0 text-base font-semibold text-foreground">
+            <Heading level={3} size="base" className="m-0 text-foreground">
               Account security
-            </h3>
+            </Heading>
             <p className="mt-2 text-sm leading-6 text-body">
               Terminating sessions signs this canonical
               user out from every device. It also affects
@@ -434,7 +435,7 @@ export function SuperAdminHrDetailDrawer({
             </Button>
           </section>
           <section className="min-w-0 space-y-3 border-b border-border pb-5" aria-label="Recruiter account lifecycle">
-            <h3 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h3>
+            <Heading level={3} size="base" className="text-foreground">Recruiter account lifecycle</Heading>
             <p className="text-sm leading-5 text-body">
               Removing a recruiter suspends the recruiter profile and signs out active sessions.
               The canonical user, audit history and college grants are retained; this is not

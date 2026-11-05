@@ -10,6 +10,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {Banner} from "@/components/ui/banner";
 import {preferredNewTenantOrganization} from "@/modules/colleges/admin-tenant-organization-step";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 export default async function SuperAdminTenantCreateStage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
@@ -40,26 +41,26 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
   <PageHeader title="Create the customer, then make one college launch-ready"
    description="Creating organizations and colleges is a platform-level action. Domains, branding and readiness checks are college-specific, so the current scope is always visible before you edit."/>
   <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Create organization">
-   <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Create an organization and its colleges</h2>
+   <Heading level={2} size="lg" className="m-0 break-words leading-7 text-[var(--lms-heading)]">Create an organization and its colleges</Heading>
    <p className="max-w-2xl text-sm leading-6 text-body">
     Start here for a brand-new customer. Create the organization first, then the college under it.
     Creating a college selects it and takes you straight to <strong>2. Set up</strong>.
    </p>
    {orgCreate?<OrganizationCreateForm advanceToCollege/>:
     <Banner tone="warning">Organization creation is unavailable in your selected administrative scope.</Banner>}
-   <Link href="/admin/organizations" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review organizations</Link>
+   <Link href="/admin/organizations" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review organizations</Link>
   </section>
   <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Create college">
-   <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">2. College</h2>
+   <Heading level={2} size="lg" className="m-0 break-words leading-7 text-[var(--lms-heading)]">2. College</Heading>
    {preferredId?<Banner tone="info" role="status">Organization chosen for the next step. The college form has this verified, authorized organization preselected; your current safety scope is unchanged.</Banner>:null}
    {creatable.length?<CollegeCreateForm {...(preferredId !== null && preferredId !== undefined ? {preferredOrganizationId:preferredId} : {})} advanceToSetup organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>: 
     <Banner tone="warning">No organization in the current safety scope can receive a college. Create or select an authorized organization first.</Banner>}
-   <Link href="/admin/colleges" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review colleges</Link>
+   <Link href="/admin/colleges" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review colleges</Link>
   </section>
   <section className="min-w-0 space-y-2 pt-1">
-   <h2 id="launch-setup-heading" tabIndex={-1} className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)] focus:outline-none">Get this college ready to go live</h2>
+   <Heading level={2} size="lg" id="launch-setup-heading" tabIndex={-1} className="m-0 break-words leading-7 text-[var(--lms-heading)] focus:outline-none">Get this college ready to go live</Heading>
    <p className="text-sm text-body">After creating a college, the workflow verifies its identity, selects it in the safety-scope switcher and opens Launch setup. If automatic scope selection fails, choose the created college in the header before continuing. Creation and scope selection are separate audited actions.</p>
-   <Link href="/admin/tenants/setup" aria-describedby="launch-setup-heading" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">Continue to setup →</Link>
+   <Link href="/admin/tenants/setup" aria-describedby="launch-setup-heading" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Continue to setup →</Link>
   </section>
  </div>;
 }

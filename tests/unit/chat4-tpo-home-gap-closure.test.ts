@@ -146,7 +146,7 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
  });
  it("TPO-home-18 verified legacy and graceful behavior",()=>{
   const s=source("src/app/(authenticated)/tpo/home/page.tsx");
-  expect(s).toContain("min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]");
+  expect(s).toContain("lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]");
 
  });
  it("TPO-home-20 verified legacy and graceful behavior",()=>{

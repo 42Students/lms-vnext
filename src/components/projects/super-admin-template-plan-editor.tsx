@@ -19,6 +19,7 @@ import {
 } from "@/modules/projects/template-plan-editor-model";
 import { Button } from "@/components/ui/button";
 import { projectMutation } from "./project-api";
+import { Heading } from "@/components/ui/heading";
 
 type Props = {
   templateId: string;
@@ -223,9 +224,9 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   return <section className="min-w-0 border-b border-border pb-4">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">
           {props.section === "sprints" ? "Sprint plan" : "Task plan"}
-        </h2>
+        </Heading>
         <p className="mt-1 text-sm text-body leading-[22px]">
           {props.section === "sprints"
             ? "The sprints every workspace created from this template starts with."

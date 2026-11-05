@@ -1,2181 +1,243 @@
 {
  "schemaVersion": 1,
  "files": {
-  "src/app/(authenticated)/account/security/page.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/activity/[eventId]/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/activity/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 5,
-   "color-literal": 1
-  },
-  "src/app/(authenticated)/admin/academics/page.tsx": {
-   "palette-class": 2,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/admin/announcements/delivery/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/announcements/page.tsx": {
-   "raw-heading": 4,
-   "raw-link": 1,
-   "palette-class": 6,
-   "breakpoint-off": 8,
-   "font-weight-off-scale": 3
-  },
-  "src/app/(authenticated)/admin/assignments/page.tsx": {
-   "raw-link": 2,
-   "font-weight-off-scale": 3
-  },
-  "src/app/(authenticated)/admin/attendance/page.tsx": {
-   "raw-heading": 1,
-   "palette-class": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/audit/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/batch-promotion/page.tsx": {
-   "raw-heading": 7,
-   "breakpoint-off": 22,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx": {
-   "raw-link": 1,
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/admin/batches/page.tsx": {
-   "raw-heading": 1,
-   "palette-class": 4,
-   "breakpoint-off": 6,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/admin/classes/loading.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/classes/page.tsx": {
-   "raw-heading": 1,
-   "palette-class": 4,
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx": {
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx": {
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 1
-  },
   "src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx": {
    "raw-control": 1
   },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx": {
-   "raw-heading": 1,
-   "palette-class": 16
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx": {
-   "raw-heading": 9,
-   "palette-class": 4,
-   "breakpoint-off": 21,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx": {
-   "raw-heading": 1,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/admin/colleges/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 1,
-   "font-weight-off-scale": 4
-  },
-  "src/app/(authenticated)/admin/companies/page.tsx": {
-   "raw-heading": 4,
-   "raw-link": 3,
-   "breakpoint-off": 10,
-   "font-weight-off-scale": 6,
-   "opacity-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/content-order/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/course-progress/page.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 3
-  },
-  "src/app/(authenticated)/admin/course-progress/students/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/admin/courses/page.tsx": {
-   "raw-heading": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/departments/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/electives/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/faculty/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/page.tsx": {
-   "raw-heading": 5,
-   "color-literal": 2,
-   "palette-class": 4,
-   "breakpoint-off": 14,
-   "font-weight-off-scale": 6
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 7,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx": {
-   "raw-heading": 6,
-   "color-literal": 2,
-   "palette-class": 6,
-   "breakpoint-off": 10,
-   "font-weight-off-scale": 5
-  },
-  "src/app/(authenticated)/admin/features/page.tsx": {
-   "raw-heading": 2,
-   "color-literal": 2,
-   "palette-class": 6,
-   "font-weight-off-scale": 5
-  },
-  "src/app/(authenticated)/admin/hr/page.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/inbound-mail/page.tsx": {
-   "color-literal": 2,
-   "palette-class": 2,
-   "breakpoint-off": 17,
-   "font-weight-off-scale": 3
-  },
-  "src/app/(authenticated)/admin/layout.tsx": {
-   "raw-link": 1,
-   "palette-class": 1
-  },
-  "src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx": {
-   "raw-heading": 2
-  },
   "src/app/(authenticated)/admin/lecture-halls/page.tsx": {
-   "raw-control": 1,
-   "raw-link": 1,
-   "palette-class": 4,
-   "font-weight-off-scale": 2,
-   "motion-literal": 2
-  },
-  "src/app/(authenticated)/admin/lessons/page.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/admin/module-access/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/not-found.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/notification-delivery/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/organizations/page.tsx": {
-   "raw-heading": 3,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx": {
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/admin/people/directory/error.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/people/directory/page.tsx": {
-   "palette-class": 16,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/admin/people/page.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/people/unassigned/page.tsx": {
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/admin/placements/analytics/page.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx": {
-   "raw-heading": 1,
-   "palette-class": 4
-  },
-  "src/app/(authenticated)/admin/placements/drives/page.tsx": {
-   "raw-heading": 2,
-   "palette-class": 5,
-   "font-weight-off-scale": 5,
-   "z-index-literal": 1
-  },
-  "src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx": {
-   "raw-heading": 10,
-   "color-literal": 1
-  },
-  "src/app/(authenticated)/admin/placements/loading.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/placements/organization-applications/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/placements/page.tsx": {
-   "raw-heading": 5,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/placements/student-lookup/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "palette-class": 10
-  },
-  "src/app/(authenticated)/admin/programs/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/projects/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/projects/templates/[templateId]/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx": {
-   "raw-heading": 5
-  },
-  "src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx": {
-   "raw-heading": 3
-  },
-  "src/app/(authenticated)/admin/projects/templates/page.tsx": {
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 1,
-   "spacing-off-grid": 1
-  },
-  "src/app/(authenticated)/admin/projects/workspaces/deleted/loading.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/projects/workspaces/deleted/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/admin/quizzes/page.tsx": {
-   "raw-link": 2,
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/admin/semester-courses/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/admin/semesters/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "palette-class": 4,
-   "font-weight-off-scale": 2,
-   "spacing-off-grid": 2
-  },
-  "src/app/(authenticated)/admin/settings/auth/page.tsx": {
-   "raw-heading": 2
+   "raw-control": 1
   },
   "src/app/(authenticated)/admin/settings/page.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1,
-   "palette-class": 2,
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 1,
-   "spacing-off-grid": 1,
-   "motion-literal": 2
-  },
-  "src/app/(authenticated)/admin/students/page.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1,
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/admin/tenants/create/page.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 3
-  },
-  "src/app/(authenticated)/admin/tenants/directory/page.tsx": {
-   "palette-class": 4,
-   "breakpoint-off": 1,
-   "font-weight-off-scale": 3
-  },
-  "src/app/(authenticated)/admin/tenants/resolve-preview/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/admin/tenants/setup/page.tsx": {
-   "raw-heading": 10,
-   "raw-link": 3,
-   "breakpoint-off": 2
+   "link-bare": 1
   },
   "src/app/(authenticated)/authenticated-print.css": {
-   "color-literal": 3,
    "important": 35
   },
-  "src/app/(authenticated)/college/activity/[eventId]/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/college/activity/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "palette-class": 8,
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/college/announcements/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/college/attendance/corrections/page.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 1,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/college/attendance/page.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/college/batch-promotion/page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/college/batches/page.tsx": {
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/college/classes/error.tsx": {
-   "raw-heading": 1,
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/college/classes/page.tsx": {
-   "raw-link": 1,
-   "palette-class": 6,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/college/companies/page.tsx": {
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/college/contacts/error.tsx": {
-   "z-index-literal": 1
-  },
-  "src/app/(authenticated)/college/contacts/page.tsx": {
-   "palette-class": 2,
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/college/content-order/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/college/course-progress/page.tsx": {
-   "palette-class": 4
-  },
-  "src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/college/electives/[slotId]/page.tsx": {
-   "raw-link": 2
-  },
-  "src/app/(authenticated)/college/faculty-assignment/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/college/faculty/[membershipId]/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4,
-   "spacing-off-grid": 1
-  },
-  "src/app/(authenticated)/college/faculty/import/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/college/groups/[groupId]/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/college/hiring-dashboard/page.tsx": {
-   "palette-class": 4,
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 7
-  },
-  "src/app/(authenticated)/college/lecture-halls/page.tsx": {
-   "breakpoint-off": 6,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/college/lessons/page.tsx": {
-   "palette-class": 4,
-   "breakpoint-off": 1,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/college/live-classes/page.tsx": {
-   "raw-heading": 2,
-   "palette-class": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/college/module-access/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/college/not-found.tsx": {
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/college/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/college/people/manage/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/college/placements/drives/page.tsx": {
-   "color-literal": 2,
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 2,
-   "z-index-literal": 2
-  },
-  "src/app/(authenticated)/college/placements/interviews/page.tsx": {
-   "raw-link": 5,
-   "palette-class": 4,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx": {
-   "raw-link": 1,
-   "color-literal": 2,
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx": {
-   "palette-class": 17,
-   "breakpoint-off": 2,
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx": {
-   "raw-heading": 2,
-   "raw-image": 1,
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1,
-   "palette-class": 4
-  },
-  "src/app/(authenticated)/college/placements/page.tsx": {
-   "raw-heading": 2,
-   "color-literal": 2
-  },
-  "src/app/(authenticated)/college/placements/retention/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/college/programs/loading.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/college/projects/deleted/loading.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/college/projects/deleted/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/college/projects/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/college/projects/templates/[templateId]/loading.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx": {
-   "raw-heading": 1,
-   "palette-class": 1
-  },
-  "src/app/(authenticated)/college/projects/templates/page.tsx": {
-   "raw-heading": 1,
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/college/resources/page.tsx": {
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/college/semester-courses/page.tsx": {
-   "raw-link": 1,
-   "palette-class": 2,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/college/semesters/page.tsx": {
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/college/students/[membershipId]/page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/college/videos/page.tsx": {
-   "raw-heading": 2,
-   "palette-class": 2,
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/dashboard/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4
-  },
-  "src/app/(authenticated)/hr/activity/page.tsx": {
-   "color-literal": 2,
-   "breakpoint-off": 7
-  },
-  "src/app/(authenticated)/hr/calendar/page.tsx": {
-   "raw-heading": 7,
-   "breakpoint-off": 38,
-   "font-weight-off-scale": 5
-  },
-  "src/app/(authenticated)/hr/colleges/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "raw-image": 1
-  },
-  "src/app/(authenticated)/hr/company/page.tsx": {
-   "raw-heading": 5,
-   "raw-link": 1,
-   "raw-image": 1,
-   "breakpoint-off": 21
-  },
-  "src/app/(authenticated)/hr/company/reports/page.tsx": {
-   "raw-heading": 3,
-   "color-literal": 2,
-   "palette-class": 2,
-   "breakpoint-off": 24,
-   "font-weight-off-scale": 3
-  },
-  "src/app/(authenticated)/hr/conversations/[threadId]/page.tsx": {
-   "color-literal": 4,
-   "breakpoint-off": 16
-  },
-  "src/app/(authenticated)/hr/conversations/page.tsx": {
-   "raw-heading": 1,
-   "color-literal": 2,
-   "breakpoint-off": 15
-  },
-  "src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 16
-  },
-  "src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx": {
-   "breakpoint-off": 7
-  },
-  "src/app/(authenticated)/hr/drives/new/page.tsx": {
-   "breakpoint-off": 4
-  },
-  "src/app/(authenticated)/hr/drives/page.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/hr/drives/proposals/page.tsx": {
-   "raw-heading": 1,
-   "color-literal": 2,
-   "breakpoint-off": 18
-  },
-  "src/app/(authenticated)/hr/home/page.tsx": {
-   "raw-heading": 1,
-   "raw-image": 1,
-   "breakpoint-off": 3,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/hr/layout.tsx": {
-   "raw-link": 1,
-   "z-index-literal": 1
-  },
-  "src/app/(authenticated)/hr/notifications/page.tsx": {
-   "raw-heading": 1,
-   "color-literal": 2,
-   "breakpoint-off": 2
-  },
   "src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx": {
-   "raw-control": 1,
-   "raw-heading": 25,
-   "raw-link": 1,
-   "color-literal": 6,
-   "breakpoint-off": 28,
-   "font-weight-off-scale": 8
-  },
-  "src/app/(authenticated)/hr/profile/page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/hr/round-results/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx": {
-   "raw-heading": 4,
-   "raw-link": 3
-  },
-  "src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx": {
-   "raw-heading": 4
-  },
-  "src/app/(authenticated)/learn/attendance/calendar/page.tsx": {
-   "raw-heading": 3,
-   "palette-class": 2,
-   "font-weight-off-scale": 1,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/learn/attendance/page.tsx": {
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/learn/calendar/page.tsx": {
-   "palette-class": 2
-  },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx": {
-   "palette-class": 2
+   "raw-control": 1
   },
   "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx": {
    "raw-control": 1
   },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/progress/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/learn/courses/error.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/announcements/page.tsx": {
-   "raw-heading": 2,
-   "color-literal": 4,
-   "border-width-off-scale": 2,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/error.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/error.tsx": {
-   "palette-class": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx": {
-   "raw-heading": 3
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/page.tsx": {
-   "raw-heading": 1,
-   "raw-image": 1,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/assessments/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/assessments/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/assessments/results/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx": {
-   "raw-heading": 3
-  },
-  "src/app/(authenticated)/learn/my-placements/calendar/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/jobs/page.tsx": {
-   "raw-heading": 3
-  },
-  "src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/offers/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/offers/page.tsx": {
-   "raw-heading": 6,
-   "color-literal": 2,
-   "font-weight-off-scale": 4,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/page.tsx": {
-   "raw-heading": 9
-  },
-  "src/app/(authenticated)/learn/my-placements/placement/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/placement/page.tsx": {
-   "raw-heading": 7,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/preparation/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/rules/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/my-placements/rules/page.tsx": {
-   "raw-heading": 8
-  },
-  "src/app/(authenticated)/learn/my-placements/schedule/page.tsx": {
-   "raw-heading": 6,
-   "raw-image": 1,
-   "breakpoint-off": 9
-  },
-  "src/app/(authenticated)/learn/my-placements/support/page.tsx": {
-   "raw-heading": 2,
-   "color-literal": 3,
-   "font-weight-off-scale": 2,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/learn/notifications/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/notifications/history/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/notifications/history/page.tsx": {
-   "color-literal": 2,
-   "breakpoint-off": 9
-  },
-  "src/app/(authenticated)/learn/profile/academic-record/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/learn/profile/completeness/error.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/learn/profile/completeness/page.tsx": {
-   "raw-heading": 2,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/learn/profile/data-access/page.tsx": {
-   "raw-heading": 5
-  },
-  "src/app/(authenticated)/learn/profile/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/profile/page.tsx": {
-   "raw-heading": 6,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/learn/profile/verification/page.tsx": {
-   "raw-heading": 5
-  },
-  "src/app/(authenticated)/learn/projects/[projectId]/error.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/learn/projects/[projectId]/page.tsx": {
-   "breakpoint-off": 3
-  },
-  "src/app/(authenticated)/learn/projects/page.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/mentor/account/page.tsx": {
-   "raw-heading": 4
-  },
-  "src/app/(authenticated)/mentor/calendar/page.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/mentor/notifications/page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 8
-  },
   "src/app/(authenticated)/mentor/page.tsx": {
-   "raw-control": 1,
-   "raw-link": 1
+   "raw-control": 1
   },
   "src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 1,
    "important": 4
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 4
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx": {
-   "raw-heading": 5,
-   "raw-link": 2,
-   "breakpoint-off": 6
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/error.tsx": {
-   "font-weight-off-scale": 1
   },
   "src/app/(authenticated)/mentor/projects/[projectId]/learner-preview/page.tsx": {
-   "raw-control": 1,
-   "raw-heading": 4,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx": {
-   "raw-heading": 1
+   "raw-control": 1
   },
   "src/app/(authenticated)/mentor/projects/[projectId]/page.tsx": {
-   "raw-control": 1,
-   "raw-heading": 1
+   "raw-control": 1
   },
   "src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2,
    "important": 4
   },
-  "src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 3
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/mentor/reports/page.tsx": {
-   "raw-heading": 5
-  },
-  "src/app/(authenticated)/mentor/review-history/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 6
-  },
-  "src/app/(authenticated)/mentor/search/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/mentor/sprint-progress/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/mentor/task-review-history/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
   "src/app/(authenticated)/mentor/team-coverage/page.tsx": {
-   "raw-heading": 1,
    "important": 6
-  },
-  "src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx": {
-   "breakpoint-off": 11
-  },
-  "src/app/(authenticated)/teach/layout.tsx": {
-   "raw-link": 1,
-   "z-index-literal": 1
   },
   "src/app/(authenticated)/teacher/calendar/loading.tsx": {
    "raw-control": 1
   },
   "src/app/(authenticated)/teacher/calendar/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 1,
-   "border-width-off-scale": 1,
    "important": 1
   },
-  "src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx": {
-   "raw-heading": 1,
-   "spacing-off-grid": 1
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 5
-  },
   "src/app/(authenticated)/teacher/courses/[deliveryId]/layout.tsx": {
-   "raw-control": 1,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx": {
-   "raw-heading": 5
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx": {
-   "raw-heading": 2
+   "raw-control": 1
   },
   "src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx": {
-   "raw-control": 2,
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/teacher/layout.tsx": {
-   "raw-link": 1,
-   "z-index-literal": 1
-  },
-  "src/app/(authenticated)/teacher/live-classes/page.tsx": {
-   "raw-heading": 1,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/teacher/notifications/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/teacher/profile/contacts/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/teacher/profile/details/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/teacher/profile/page.tsx": {
-   "raw-heading": 5
-  },
-  "src/app/(authenticated)/teacher/profile/teaching/page.tsx": {
-   "raw-heading": 2
+   "raw-control": 2
   },
   "src/app/(authenticated)/teacher/report/assignment/[contentId]/grade/page.tsx": {
    "raw-control": 1,
-   "raw-heading": 2,
-   "palette-class": 4,
-   "border-width-off-scale": 2,
    "important": 16
   },
-  "src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx": {
-   "raw-heading": 4,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx": {
-   "raw-heading": 1,
-   "color-literal": 2,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx": {
-   "raw-heading": 1,
-   "color-literal": 1,
-   "breakpoint-off": 2
-  },
   "src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx": {
-   "raw-heading": 4,
-   "raw-link": 2,
    "important": 4
   },
-  "src/app/(authenticated)/teacher/response-followups/page.tsx": {
-   "raw-heading": 1,
-   "color-literal": 2,
-   "breakpoint-off": 1,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/teacher/results/page.tsx": {
-   "raw-heading": 1,
-   "color-literal": 3,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/tpo/announcements/page.tsx": {
-   "raw-heading": 4,
-   "raw-link": 2,
-   "breakpoint-off": 10,
-   "font-weight-off-scale": 1,
-   "border-width-off-scale": 1,
-   "opacity-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/audit/actors/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/audit/page.tsx": {
-   "raw-heading": 2,
-   "raw-link": 2,
-   "color-literal": 5,
-   "border-width-off-scale": 1,
-   "spacing-off-grid": 4,
-   "shadow-literal": 1
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx": {
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "color-literal": 2
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 3,
-   "color-literal": 2
-  },
-  "src/app/(authenticated)/tpo/batches/page.tsx": {
-   "raw-heading": 3,
-   "color-literal": 2,
-   "palette-class": 1,
-   "breakpoint-off": 1,
-   "z-index-literal": 1
-  },
-  "src/app/(authenticated)/tpo/calendar/export/page.tsx": {
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/calendar/interviews/page.tsx": {
-   "raw-heading": 1,
-   "color-literal": 2,
-   "breakpoint-off": 4
-  },
-  "src/app/(authenticated)/tpo/calendar/page.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/tpo/calendar/rounds/page.tsx": {
-   "color-literal": 2,
-   "breakpoint-off": 6
-  },
-  "src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/companies/[companyId]/page.tsx": {
-   "raw-heading": 8,
-   "raw-link": 2,
-   "color-literal": 4,
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 2
-  },
-  "src/app/(authenticated)/tpo/companies/page.tsx": {
-   "color-literal": 2,
-   "font-weight-off-scale": 1,
-   "z-index-literal": 1
-  },
-  "src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2,
-   "font-weight-off-scale": 1,
-   "z-index-literal": 1
-  },
-  "src/app/(authenticated)/tpo/drive-day/page.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 6,
-   "font-weight-off-scale": 1,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/tpo/find/page.tsx": {
-   "raw-heading": 5
-  },
-  "src/app/(authenticated)/tpo/follow-ups/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "color-literal": 2
-  },
-  "src/app/(authenticated)/tpo/home/loading.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/tpo/home/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 3,
-   "font-weight-off-scale": 1,
-   "letter-spacing-off-scale": 1,
-   "motion-literal": 1
-  },
-  "src/app/(authenticated)/tpo/messages/[threadId]/page.tsx": {
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/messages/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/notifications/loading.tsx": {
-   "shadow-literal": 1
-  },
-  "src/app/(authenticated)/tpo/notifications/page.tsx": {
-   "breakpoint-off": 2,
-   "shadow-literal": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx": {
-   "raw-heading": 7,
-   "breakpoint-off": 4
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx": {
-   "color-literal": 2,
-   "breakpoint-off": 15
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 4
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 19
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx": {
-   "breakpoint-off": 5
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/page.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 6
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx": {
-   "raw-heading": 1,
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx": {
-   "palette-class": 2,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2,
-   "palette-class": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 8
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/tpo/placements/lifecycle/page.tsx": {
-   "raw-heading": 14,
-   "raw-link": 1,
-   "color-literal": 3,
-   "breakpoint-off": 14,
-   "font-weight-off-scale": 4,
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/placements/overview/page.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx": {
-   "raw-heading": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/profile/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx": {
-   "raw-heading": 5,
-   "color-literal": 2,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/[slug]/page.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/accreditation/page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/reports/after-college/page.tsx": {
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/tpo/reports/branch-season/page.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/by-company/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2,
-   "breakpoint-off": 5,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx": {
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/intelligence/page.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/joining-followups/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/leads/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/page.tsx": {
-   "raw-heading": 7,
-   "font-weight-off-scale": 1,
-   "letter-spacing-off-scale": 2
-  },
-  "src/app/(authenticated)/tpo/reports/placed-branch/page.tsx": {
-   "raw-link": 1,
-   "palette-class": 1,
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/placement-summary/page.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 10,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/reports/unplaced/page.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 5
-  },
-  "src/app/(authenticated)/tpo/requests/page.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 27
-  },
-  "src/app/(authenticated)/tpo/settings/after-college/page.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/tpo/settings/branding/page.tsx": {
-   "raw-heading": 5,
-   "raw-image": 1,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/tpo/settings/job-types/loading.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/settings/job-types/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/tpo/settings/notices/page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 3
-  },
-  "src/app/(authenticated)/tpo/settings/notifications/page.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 10,
-   "motion-literal": 4
-  },
-  "src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx": {
-   "raw-link": 1
-  },
-  "src/app/(authenticated)/tpo/settings/public-page/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/settings/recruiters/page.tsx": {
-   "raw-heading": 2,
-   "raw-link": 3,
-   "breakpoint-off": 2
-  },
-  "src/app/(authenticated)/tpo/settings/rules/page.tsx": {
-   "raw-heading": 6,
-   "breakpoint-off": 13
-  },
-  "src/app/(authenticated)/tpo/settings/season/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 8
-  },
-  "src/app/(authenticated)/tpo/settings/see/page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 6
-  },
-  "src/app/(authenticated)/tpo/settings/team/page.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 14
-  },
-  "src/app/(authenticated)/tpo/settings/templates/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 1
-  },
-  "src/app/(authenticated)/tpo/settings/trusted/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 9
-  },
-  "src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 7
-  },
-  "src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/tpo/students/page.tsx": {
-   "raw-heading": 6,
-   "breakpoint-off": 1,
-   "font-weight-off-scale": 5
-  },
-  "src/app/(authenticated)/tpo/students/preparation-plan/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/app/(authenticated)/tpo/students/preparation-prep/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/(authenticated)/tpo/students/requests/page.tsx": {
-   "raw-heading": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/team/[threadId]/page.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 9
-  },
-  "src/app/(authenticated)/tpo/team/everyone/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4,
-   "border-width-off-scale": 1
-  },
-  "src/app/(authenticated)/tpo/verification/page.tsx": {
-   "raw-heading": 2
-  },
-  "src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx": {
-   "raw-heading": 4
-  },
-  "src/app/(authenticated)/tracker/audit-findings/page.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 1
-  },
   "src/app/(authenticated)/tracker/issues/[publicId]/page.tsx": {
-   "raw-control": 1,
-   "raw-heading": 3,
-   "raw-link": 2
-  },
-  "src/app/(authenticated)/tracker/issues/page.tsx": {
-   "raw-heading": 1,
-   "palette-class": 1
-  },
-  "src/app/(authenticated)/tracker/logs/page.tsx": {
-   "raw-link": 2,
-   "palette-class": 1
-  },
-  "src/app/(authenticated)/tracker/mine/[publicId]/page.tsx": {
-   "raw-heading": 3,
-   "raw-link": 3
-  },
-  "src/app/(authenticated)/tracker/mine/page.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/app/(authenticated)/tracker/page.tsx": {
-   "breakpoint-off": 1,
-   "font-weight-off-scale": 1,
-   "motion-literal": 1
-  },
-  "src/app/campaign-unsubscribe/[token]/loading.tsx": {
-   "breakpoint-off": 2
+   "raw-control": 1
   },
   "src/app/campaign-unsubscribe/[token]/page.tsx": {
-   "raw-control": 1,
-   "shadow-literal": 1
-  },
-  "src/app/campaign-unsubscribe/confirmed/loading.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/app/campaign-unsubscribe/confirmed/page.tsx": {
-   "breakpoint-off": 3
-  },
-  "src/app/college-join/[token]/loading.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/app/company-join/[token]/loading.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/app/company-share/[token]/error.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/app/company-share/[token]/not-found.tsx": {
-   "breakpoint-off": 1
+   "raw-control": 1
   },
   "src/app/company-share/[token]/page.tsx": {
-   "raw-control": 2,
-   "raw-heading": 1,
-   "raw-link": 4,
-   "color-literal": 1,
-   "opacity-off-scale": 1,
-   "z-index-literal": 1
-  },
-  "src/app/e2e/chat17-ui-kit/ui-harness.tsx": {
-   "raw-heading": 15,
-   "palette-class": 1,
-   "breakpoint-off": 1,
-   "spacing-off-grid": 1
-  },
-  "src/app/e2e/superadmin-login/page.tsx": {
-   "raw-heading": 1
-  },
-  "src/app/enterprises/page.tsx": {
-   "raw-heading": 3,
-   "palette-class": 3,
-   "breakpoint-off": 3,
-   "letter-spacing-off-scale": 1,
-   "spacing-off-grid": 3
+   "raw-control": 2
   },
   "src/app/globals.css": {
-   "motion-literal": 6,
-   "important": 4,
-   "line-height-off-scale": 2,
-   "letter-spacing-off-scale": 1,
-   "font-weight-off-scale": 1,
-   "shadow-literal": 10,
-   "spacing-off-grid": 5,
-   "border-width-off-scale": 2,
-   "opacity-off-scale": 1,
-   "breakpoint-off": 2
-  },
-  "src/app/home/page.tsx": {
-   "raw-heading": 5,
-   "palette-class": 10,
-   "breakpoint-off": 6,
-   "line-height-off-scale": 1,
-   "letter-spacing-off-scale": 1,
-   "shadow-literal": 2
+   "important": 4
   },
   "src/app/jobs/external/[slug]/page.tsx": {
-   "raw-control": 1,
-   "raw-link": 1,
-   "palette-class": 1
-  },
-  "src/app/login-shell.module.css": {
-   "color-literal": 6,
-   "spacing-off-grid": 12,
-   "font-weight-off-scale": 4,
-   "letter-spacing-off-scale": 4,
-   "motion-literal": 3,
-   "shadow-literal": 3,
-   "opacity-off-scale": 1,
-   "z-index-literal": 1,
-   "breakpoint-off": 2
+   "raw-control": 1
   },
   "src/app/page.tsx": {
-   "raw-link": 12,
-   "raw-image": 2,
-   "opacity-off-scale": 5,
-   "z-index-literal": 1
+   "link-bare": 8
   },
   "src/app/placements/page.tsx": {
    "raw-control": 1
   },
-  "src/app/platform/page.tsx": {
-   "raw-heading": 2,
-   "palette-class": 2,
-   "breakpoint-off": 1
-  },
-  "src/app/quiz/page.tsx": {
-   "raw-image": 1,
-   "breakpoint-off": 1
-  },
   "src/app/request-demo/page.tsx": {
-   "raw-control": 1,
-   "raw-heading": 2,
-   "raw-link": 2,
-   "palette-class": 8,
-   "breakpoint-off": 2,
-   "line-height-off-scale": 1,
-   "spacing-off-grid": 7
+   "raw-control": 1
   },
   "src/app/roll-number-login/page.tsx": {
    "raw-control": 1
   },
   "src/app/tracker/issues/public/page.tsx": {
-   "raw-control": 1,
-   "palette-class": 1
-  },
-  "src/app/universities/page.tsx": {
-   "raw-heading": 4,
-   "palette-class": 2,
-   "breakpoint-off": 6,
-   "line-height-off-scale": 1,
-   "z-index-literal": 1
+   "raw-control": 1
   },
   "src/app/verify-email/page.tsx": {
    "button-bare": 1,
-   "raw-control": 1,
-   "palette-class": 2
+   "raw-control": 1
   },
   "src/components/academics/academics-actions.tsx": {
-   "font-weight-off-scale": 2,
    "important": 8
   },
   "src/components/academics/academics-create-panel.tsx": {
-   "raw-heading": 4,
    "important": 8
   },
-  "src/components/academics/academics-overview.tsx": {
-   "raw-heading": 4
-  },
-  "src/components/academics/college-academic-directory.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 7
-  },
-  "src/components/academics/college-archived-programs.tsx": {
-   "font-weight-off-scale": 2
-  },
   "src/components/academics/college-cohort-management.tsx": {
-   "raw-heading": 1,
    "important": 2
   },
-  "src/components/academics/college-hall-booking-action.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/components/academics/college-recurring-preview.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4
-  },
-  "src/components/academics/college-section-management.tsx": {
-   "raw-heading": 1
-  },
   "src/components/academics/college-semester-management.tsx": {
-   "raw-heading": 1,
    "important": 1
-  },
-  "src/components/academics/college-structure-directory.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "font-weight-off-scale": 2
   },
   "src/components/academics/college-term-mapping-manager.tsx": {
-   "raw-heading": 2,
    "important": 1
   },
-  "src/components/academics/college-term-staffing-report.tsx": {
-   "raw-heading": 1
-  },
   "src/components/academics/learner-class-schedule.module.css": {
-   "color-literal": 8,
-   "font-weight-off-scale": 2,
-   "letter-spacing-off-scale": 1,
-   "important": 41,
-   "motion-literal": 2,
-   "shadow-literal": 3
+   "important": 41
   },
   "src/components/academics/learner-class-schedule.tsx": {
-   "raw-heading": 3,
-   "raw-link": 2,
-   "font-weight-off-scale": 3,
-   "border-width-off-scale": 1,
-   "motion-literal": 1,
    "important": 8
   },
   "src/components/academics/legacy-class-month-grid.module.css": {
-   "color-literal": 3,
-   "important": 3,
-   "shadow-literal": 1,
-   "spacing-off-grid": 1,
-   "border-width-off-scale": 1,
-   "line-height-off-scale": 1,
-   "letter-spacing-off-scale": 2,
-   "breakpoint-off": 1
+   "important": 3
   },
   "src/components/academics/section-operations.tsx": {
-   "raw-heading": 5,
-   "raw-link": 1,
-   "breakpoint-off": 12,
    "important": 1
   },
-  "src/components/activity/activity-center.tsx": {
-   "raw-heading": 2,
-   "palette-class": 1,
-   "breakpoint-off": 7,
-   "border-width-off-scale": 1
-  },
   "src/components/activity/learner-notifications-inbox.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2,
-   "color-literal": 4,
-   "palette-class": 5,
-   "breakpoint-off": 23,
-   "font-weight-off-scale": 2,
    "important": 35
   },
   "src/components/activity/notification-list.tsx": {
-   "raw-heading": 2,
-   "raw-link": 2,
-   "breakpoint-off": 11,
-   "motion-literal": 2,
    "important": 1
   },
-  "src/components/activity/notification-toolbar.tsx": {
-   "breakpoint-off": 4,
-   "spacing-off-grid": 1,
-   "motion-literal": 2
-  },
-  "src/components/activity/subject-event-history.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/admin/academic-module-scope-inventory.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "font-weight-off-scale": 2
-  },
-  "src/components/admin/admin-dashboard-actions.tsx": {
-   "raw-heading": 5,
-   "motion-literal": 3
-  },
-  "src/components/admin/admin-learner-profile-sections.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/admin/admin-program-directory.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1
-  },
-  "src/components/admin/admin-revoke-sessions.tsx": {
-   "raw-heading": 1
-  },
   "src/components/admin/admin-scoped-live-search.tsx": {
-   "button-bare": 4,
-   "z-index-literal": 1
-  },
-  "src/components/admin/admin-scoped-read-page.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 12,
-   "z-index-literal": 3
-  },
-  "src/components/admin/college-admin-lifecycle-action.tsx": {
-   "palette-class": 1
-  },
-  "src/components/admin/college-at-glance-panel.tsx": {
-   "raw-heading": 1
+   "button-bare": 4
   },
   "src/components/admin/college-branding-form.tsx": {
-   "raw-heading": 4,
-   "raw-image": 1,
-   "color-literal": 1,
-   "spacing-off-grid": 3,
-   "shadow-literal": 2,
    "important": 2
   },
   "src/components/admin/college-branding-preview.tsx": {
-   "button-bare": 1,
-   "raw-heading": 3,
-   "raw-link": 4,
-   "raw-image": 1,
-   "color-literal": 4,
-   "palette-class": 1,
-   "spacing-off-grid": 3
-  },
-  "src/components/admin/college-bulk-import.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2
-  },
-  "src/components/admin/college-closing-quizzes-card.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/admin/college-create-form.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 1,
-   "z-index-literal": 1
-  },
-  "src/components/admin/college-dashboard-cards.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/admin/college-feature-rule-editor.tsx": {
-   "raw-link": 1
+   "button-bare": 1
   },
   "src/components/admin/college-logo-uploader.tsx": {
-   "raw-heading": 1,
-   "raw-image": 2,
    "important": 18
   },
-  "src/components/admin/college-needs-attention-board.tsx": {
-   "raw-heading": 2,
-   "spacing-off-grid": 1
-  },
-  "src/components/admin/college-setup-checklist.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4
-  },
   "src/components/admin/college-signin-method-form.tsx": {
-   "button-bare": 1,
-   "raw-heading": 1,
-   "palette-class": 2,
-   "spacing-off-grid": 7,
-   "shadow-literal": 1
-  },
-  "src/components/admin/course-progress-policy-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/admin/department-create-form.tsx": {
-   "raw-heading": 1
+   "button-bare": 1
   },
   "src/components/admin/department-directory.tsx": {
-   "button-bare": 1,
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/components/admin/descendant-feature-rule-editor.tsx": {
-   "breakpoint-off": 7
+   "button-bare": 1
   },
   "src/components/admin/inbound-mail-list.tsx": {
    "important": 1
   },
-  "src/components/admin/launch-readiness-checklist.tsx": {
-   "raw-heading": 4
-  },
   "src/components/admin/learner-module-access-drawer.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 6,
    "important": 2
   },
-  "src/components/admin/lecture-hall-manager.tsx": {
-   "raw-heading": 2,
-   "font-weight-off-scale": 1
-  },
   "src/components/admin/legacy-college-stat.module.css": {
-   "color-literal": 2,
    "important": 17
   },
   "src/components/admin/managed-college-subdomain.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "color-literal": 1,
    "important": 2
   },
   "src/components/admin/module-history-drawer.tsx": {
    "important": 1
   },
-  "src/components/admin/organization-settings-cleanup.tsx": {
-   "raw-heading": 1
-  },
   "src/components/admin/person-membership-actions.tsx": {
    "important": 1
-  },
-  "src/components/admin/super-admin-attendance-settings-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/admin/super-admin-batch-roster-manager.tsx": {
-   "breakpoint-off": 3
   },
   "src/components/admin/super-admin-batch-students-dialog.tsx": {
    "important": 1
   },
   "src/components/admin/super-admin-college-company-actions.tsx": {
-   "raw-heading": 1,
    "important": 1
   },
   "src/components/admin/super-admin-college-company-edit.tsx": {
    "important": 1
   },
-  "src/components/admin/super-admin-drive-status-control.tsx": {
-   "raw-heading": 1
-  },
   "src/components/admin/super-admin-faculty-assignment-create.tsx": {
-   "raw-heading": 1,
    "important": 1
-  },
-  "src/components/admin/super-admin-faculty-bulk-import.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/admin/super-admin-global-company-catalogue.tsx": {
-   "raw-link": 1,
-   "raw-image": 1
   },
   "src/components/admin/super-admin-hr-accounts.tsx": {
-   "button-bare": 3,
-   "raw-heading": 2,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 4
+   "button-bare": 3
   },
   "src/components/admin/super-admin-hr-detail-drawer.tsx": {
-   "raw-heading": 4,
    "important": 1
   },
-  "src/components/admin/super-admin-interview-operations.tsx": {
-   "raw-heading": 1,
-   "raw-link": 4,
-   "breakpoint-off": 1
-  },
-  "src/components/admin/super-admin-legacy-group-tabs.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/admin/super-admin-placement-detail-view.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/components/admin/super-admin-student-bulk-access.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/admin/super-admin-today-board.tsx": {
-   "raw-heading": 2,
-   "color-literal": 1
-  },
   "src/components/admin/tenant-domain-manager.tsx": {
-   "raw-heading": 2,
-   "color-literal": 2,
    "important": 1
   },
   "src/components/admin/tenant-settings-editor.tsx": {
-   "button-bare": 1,
-   "raw-heading": 2
-  },
-  "src/components/admin/tenant-settings-other-keys.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/announcements/announcement-admin-workspace.tsx": {
-   "raw-heading": 2,
-   "raw-link": 2,
-   "border-width-off-scale": 1
-  },
-  "src/components/announcements/announcement-feed.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1
-  },
-  "src/components/attendance/admin-attendance-workspace.tsx": {
-   "raw-heading": 2,
-   "z-index-literal": 2
-  },
-  "src/components/attendance/attendance-policy-summary-card.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/attendance/college-attendance-policy-form.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/attendance/faculty-attendance-schedule-editor.tsx": {
-   "raw-heading": 1
+   "button-bare": 1
   },
   "src/components/attendance/faculty-attendance-workspace.tsx": {
    "raw-control": 1,
-   "raw-heading": 5,
-   "color-literal": 4,
-   "palette-class": 3,
-   "spacing-off-grid": 2,
-   "z-index-literal": 6,
    "important": 12
   },
   "src/components/attendance/faculty-prototype-attendance.tsx": {
    "button-bare": 9,
-   "raw-heading": 4,
-   "raw-link": 2,
-   "palette-class": 13,
-   "z-index-literal": 1,
+   "link-bare": 2,
    "important": 6
   },
-  "src/components/attendance/learner-attendance-workspace.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1,
-   "breakpoint-off": 8,
-   "font-weight-off-scale": 2
-  },
-  "src/components/auth/device-list.tsx": {
-   "breakpoint-off": 13
-  },
-  "src/components/auth/dgipuc-sign-in.tsx": {
-   "palette-class": 1
-  },
   "src/components/auth/learner-roll-number-login.tsx": {
-   "button-bare": 1,
-   "raw-link": 1
+   "button-bare": 1
   },
   "src/components/auth/login-form.tsx": {
    "raw-control": 1,
-   "raw-link": 4,
-   "letter-spacing-off-scale": 2,
-   "spacing-off-grid": 1,
-   "z-index-literal": 3,
-   "motion-literal": 1,
    "important": 2
   },
-  "src/components/auth/membership-chooser.tsx": {
-   "raw-heading": 1
-  },
   "src/components/auth/session-response-guard.tsx": {
-   "button-bare": 1,
-   "z-index-literal": 1
-  },
-  "src/components/college/college-admin-profile-editor.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2,
-   "raw-image": 1,
-   "z-index-literal": 1,
-   "motion-literal": 1
-  },
-  "src/components/college/college-course-retake-action.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/college/college-department-insights.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 2
-  },
-  "src/components/college/college-faculty-assignment-actions.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/college/college-faculty-csv-import.tsx": {
-   "raw-heading": 2,
-   "raw-link": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/components/college/college-faculty-schedule-reassign.tsx": {
-   "spacing-off-grid": 1
-  },
-  "src/components/college/college-legacy-group-tabs.tsx": {
-   "raw-heading": 1
+   "button-bare": 1
   },
   "src/components/college/college-person-profile-overview-modal.tsx": {
-   "raw-heading": 4,
    "important": 1
   },
   "src/components/college/college-role-directory-autocomplete.tsx": {
-   "button-bare": 1,
-   "z-index-literal": 1
-  },
-  "src/components/college/college-role-directory-workspace.tsx": {
-   "raw-heading": 2,
-   "palette-class": 1,
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 1,
-   "line-height-off-scale": 2
-  },
-  "src/components/college/college-student-bulk-module-access.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/college/college-student-csv-import.tsx": {
-   "raw-heading": 2,
-   "raw-link": 2,
-   "breakpoint-off": 8,
-   "font-weight-off-scale": 2
-  },
-  "src/components/college/college-student-register-form.tsx": {
-   "z-index-literal": 1
+   "button-bare": 1
   },
   "src/components/courses/add-lesson-content-drawer.tsx": {
    "button-bare": 6,
-   "palette-class": 2,
-   "opacity-off-scale": 2,
    "important": 1
-  },
-  "src/components/courses/admin-assessment-read-directory.tsx": {
-   "shadow-literal": 3,
-   "z-index-literal": 3
   },
   "src/components/courses/admin-course-actions.tsx": {
    "important": 2
   },
   "src/components/courses/admin-course-create-panel.tsx": {
-   "raw-heading": 4,
-   "raw-link": 5,
-   "breakpoint-off": 16,
-   "font-weight-off-scale": 1,
    "important": 3
   },
-  "src/components/courses/admin-course-display-editor.tsx": {
-   "raw-heading": 3,
-   "raw-image": 1
-  },
   "src/components/courses/admin-course-overview.tsx": {
-   "raw-heading": 5,
-   "raw-link": 2,
-   "raw-image": 1
+   "link-bare": 1
   },
   "src/components/courses/admin-learning-structure-actions.tsx": {
-   "raw-heading": 1,
    "important": 1
-  },
-  "src/components/courses/admin-offering-learning-overview.tsx": {
-   "raw-heading": 10,
-   "raw-link": 2
-  },
-  "src/components/courses/admin-offering-learning-page.tsx": {
-   "raw-heading": 3,
-   "raw-link": 4
-  },
-  "src/components/courses/admin-offering-section-preview.tsx": {
-   "raw-heading": 6,
-   "raw-link": 1
-  },
-  "src/components/courses/admin-offering-teachers-panel.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/assignment-file-open-control.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "palette-class": 1
-  },
-  "src/components/courses/assignment-file-submission-control.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/assignment-multipart-parts-editor.tsx": {
-   "raw-heading": 1
   },
   "src/components/courses/assignment-submission-control.tsx": {
-   "raw-heading": 2,
    "important": 1
-  },
-  "src/components/courses/assignment-submission-links.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
   },
   "src/components/courses/college-archived-lesson-restore.tsx": {
    "important": 1
   },
-  "src/components/courses/college-assessment-aggregate.tsx": {
-   "z-index-literal": 2
-  },
-  "src/components/courses/college-assignment-review.tsx": {
-   "raw-heading": 2
-  },
   "src/components/courses/college-content-authoring-control.tsx": {
-   "button-bare": 3,
-   "raw-heading": 2,
-   "raw-link": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/courses/college-content-preview.tsx": {
-   "palette-class": 1
-  },
-  "src/components/courses/college-course-bulk-visibility.tsx": {
-   "raw-heading": 1
+   "button-bare": 3
   },
   "src/components/courses/college-learner-progress-report.module.css": {
    "important": 2
   },
-  "src/components/courses/college-learner-progress-report.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/college-learning-directory.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 2,
-   "font-weight-off-scale": 2
-  },
-  "src/components/courses/college-lesson-create-control.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/college-lesson-drag-order.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/college-live-classes-directory.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 3,
-   "font-weight-off-scale": 1
-  },
   "src/components/courses/college-quiz-create.tsx": {
-   "font-weight-off-scale": 5,
-   "z-index-literal": 1,
    "important": 2
-  },
-  "src/components/courses/course-display-read-only.tsx": {
-   "raw-heading": 1
   },
   "src/components/courses/expandable-course-description.tsx": {
    "important": 1
@@ -2189,43 +251,11 @@
   "src/components/courses/faculty-assessment-editor.tsx": {
    "important": 5
   },
-  "src/components/courses/faculty-assessment-overview.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 4
-  },
   "src/components/courses/faculty-assignment-editor.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 1,
    "important": 1
   },
-  "src/components/courses/faculty-assignment-material-links.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 1
-  },
   "src/components/courses/faculty-assignment-review.tsx": {
-   "button-bare": 1,
-   "raw-heading": 1,
-   "palette-class": 14
-  },
-  "src/components/courses/faculty-assignments-retention.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/courses/faculty-choice-quiz-builder.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 1,
-   "font-weight-off-scale": 3
-  },
-  "src/components/courses/faculty-contacts-failure-toast.tsx": {
-   "border-width-off-scale": 1,
-   "shadow-literal": 1,
-   "z-index-literal": 1
-  },
-  "src/components/courses/faculty-contacts-table.tsx": {
-   "raw-heading": 1,
-   "palette-class": 16,
-   "breakpoint-off": 2
+   "button-bare": 1
   },
   "src/components/courses/faculty-content-editor.tsx": {
    "important": 4
@@ -2234,287 +264,101 @@
    "important": 6
   },
   "src/components/courses/faculty-course-home-signals.tsx": {
-   "button-bare": 1,
-   "raw-heading": 5
+   "button-bare": 1
   },
   "src/components/courses/faculty-course-item-viewer.tsx": {
-   "raw-link": 1,
    "important": 2
-  },
-  "src/components/courses/faculty-course-list.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 11,
-   "shadow-literal": 1
-  },
-  "src/components/courses/faculty-course-roster.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2,
-   "raw-image": 1,
-   "palette-class": 22
-  },
-  "src/components/courses/faculty-course-tab-navigation.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/courses/faculty-course-workspace.tsx": {
-   "raw-heading": 6,
-   "breakpoint-off": 16
   },
   "src/components/courses/faculty-item-actions.tsx": {
    "important": 1
   },
-  "src/components/courses/faculty-lesson-authoring.tsx": {
-   "raw-heading": 5,
-   "palette-class": 3,
-   "font-weight-off-scale": 2
-  },
-  "src/components/courses/faculty-lesson-video-manager.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/courses/faculty-live-class-editor.tsx": {
-   "raw-heading": 1
-  },
   "src/components/courses/faculty-prototype-assessment-directory.tsx": {
    "button-bare": 1,
    "raw-control": 2,
-   "palette-class": 10,
    "important": 6
   },
   "src/components/courses/faculty-prototype-assignment-report.tsx": {
    "raw-control": 2,
-   "raw-heading": 3,
-   "palette-class": 6,
-   "font-weight-off-scale": 1,
-   "spacing-off-grid": 4,
    "important": 17
   },
   "src/components/courses/faculty-prototype-blueprint-row-actions.tsx": {
-   "button-bare": 2,
-   "palette-class": 3
+   "button-bare": 2
   },
   "src/components/courses/faculty-prototype-blueprint.tsx": {
    "button-bare": 2,
-   "raw-heading": 3,
-   "palette-class": 5,
-   "border-width-off-scale": 2,
-   "spacing-off-grid": 4,
-   "z-index-literal": 1,
    "important": 13
   },
   "src/components/courses/faculty-prototype-course-directory.tsx": {
    "button-bare": 1,
    "raw-control": 2,
-   "palette-class": 8,
-   "spacing-off-grid": 1,
    "important": 4
   },
   "src/components/courses/faculty-prototype-course-priorities.tsx": {
-   "raw-heading": 5,
-   "spacing-off-grid": 1,
    "important": 3
   },
   "src/components/courses/faculty-prototype-lesson-items.tsx": {
-   "button-bare": 5,
-   "palette-class": 10,
-   "opacity-off-scale": 2
+   "button-bare": 5
   },
   "src/components/courses/faculty-prototype-schedule.tsx": {
-   "button-bare": 4,
-   "raw-heading": 3,
-   "palette-class": 1,
-   "border-width-off-scale": 1,
-   "spacing-off-grid": 1
+   "button-bare": 4
   },
   "src/components/courses/faculty-prototype-student-directory.tsx": {
    "button-bare": 3,
    "raw-control": 1,
-   "raw-link": 2,
-   "palette-class": 8,
-   "font-weight-off-scale": 1,
-   "spacing-off-grid": 1,
    "important": 4
   },
-  "src/components/courses/faculty-quiz-question-editor.tsx": {
-   "raw-heading": 1
-  },
   "src/components/courses/faculty-quiz-review.tsx": {
-   "raw-heading": 1,
    "important": 1
   },
   "src/components/courses/faculty-report-legacy-charts.module.css": {
-   "font-weight-off-scale": 2,
-   "important": 13,
-   "border-width-off-scale": 2
-  },
-  "src/components/courses/faculty-report-student-table.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/faculty-submission-file-review.tsx": {
-   "raw-link": 1
-  },
-  "src/components/courses/faculty-video-preview.tsx": {
-   "motion-literal": 1
+   "important": 13
   },
   "src/components/courses/learner-assessment-metrics.module.css": {
-   "important": 17,
-   "breakpoint-off": 1
-  },
-  "src/components/courses/learner-assessment-overview.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1,
-   "color-literal": 1,
-   "font-weight-off-scale": 3
-  },
-  "src/components/courses/learner-course-attendance.tsx": {
-   "raw-heading": 4
-  },
-  "src/components/courses/learner-course-card-image.tsx": {
-   "opacity-off-scale": 1
+   "important": 17
   },
   "src/components/courses/learner-course-discussion.tsx": {
-   "raw-heading": 4,
-   "palette-class": 5,
-   "spacing-off-grid": 2,
-   "z-index-literal": 6,
    "important": 19
   },
   "src/components/courses/learner-course-list.tsx": {
-   "button-bare": 1,
-   "raw-heading": 3,
-   "breakpoint-off": 4,
-   "z-index-literal": 3,
-   "motion-literal": 1
-  },
-  "src/components/courses/learner-course-overview.tsx": {
-   "raw-heading": 5,
-   "raw-link": 1,
-   "breakpoint-off": 1,
-   "font-weight-off-scale": 1,
-   "letter-spacing-off-scale": 1
+   "button-bare": 1
   },
   "src/components/courses/learner-course-progress.module.css": {
    "important": 2
-  },
-  "src/components/courses/learner-course-workspace.tsx": {
-   "raw-heading": 12,
-   "raw-link": 2,
-   "palette-class": 1,
-   "border-width-off-scale": 2
   },
   "src/components/courses/learner-live-class-link.tsx": {
    "important": 5
   },
   "src/components/courses/learner-quiz-attempt.module.css": {
-   "z-index-literal": 1,
    "important": 6
   },
   "src/components/courses/learner-quiz-attempt.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 10,
-   "z-index-literal": 1,
    "important": 3
   },
   "src/components/courses/learner-roadmap-item-dialog.tsx": {
    "important": 1
   },
-  "src/components/courses/learner-video-player.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/learner-youtube-player.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2
-  },
   "src/components/courses/legacy-upload-meter.module.css": {
    "important": 5
   },
-  "src/components/courses/lesson-content-discussion.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/lesson-resource-file-uploader.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/courses/lesson-resource-materials-control.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/components/courses/quiz-attempt-control.tsx": {
-   "raw-heading": 3,
-   "raw-link": 2,
-   "palette-class": 2,
-   "spacing-off-grid": 1
-  },
-  "src/components/courses/super-admin-content-authoring.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/super-admin-content-directory-page.tsx": {
-   "raw-heading": 5,
-   "raw-link": 1
-  },
-  "src/components/courses/super-admin-course-bulk-visibility.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/super-admin-lesson-bulk-visibility.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/courses/super-admin-lesson-create.tsx": {
-   "raw-heading": 2
-  },
   "src/components/courses/super-admin-section-syllabus-order.tsx": {
-   "button-bare": 1,
-   "raw-heading": 1
+   "button-bare": 1
   },
   "src/components/electives/college-elective-offering-manager.tsx": {
-   "raw-heading": 2,
-   "palette-class": 3,
-   "breakpoint-off": 6,
    "important": 3
   },
   "src/components/faculty/faculty-today-panel.tsx": {
    "button-bare": 2,
    "raw-control": 1,
-   "raw-heading": 4,
-   "spacing-off-grid": 4,
    "important": 4
   },
-  "src/components/groups/college-group-detail-writes.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/components/groups/college-group-import-preview.tsx": {
-   "raw-heading": 4,
-   "raw-link": 3
-  },
-  "src/components/groups/college-study-member-actions.tsx": {
-   "breakpoint-off": 3
-  },
-  "src/components/groups/learner-group-lists.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1
-  },
   "src/components/hr/hr-drive-draft-form.tsx": {
-   "raw-heading": 12,
-   "raw-link": 7,
-   "breakpoint-off": 25,
    "important": 2
   },
-  "src/components/hr/hr-proposal-history-grid.tsx": {
-   "breakpoint-off": 1
-  },
   "src/components/hr/hr-recruiter-bell.tsx": {
-   "color-literal": 4,
-   "palette-class": 1,
-   "line-height-off-scale": 1,
-   "shadow-literal": 1,
-   "motion-literal": 3,
    "important": 13
   },
-  "src/components/hr/hr-unsent-drive-alert.tsx": {
-   "breakpoint-off": 7
-  },
   "src/components/hr/recruiter-calendar-legacy.module.css": {
-   "spacing-off-grid": 1,
-   "shadow-literal": 1,
-   "important": 8,
-   "breakpoint-off": 1
+   "important": 8
   },
   "src/components/hr/recruiter-colleague-invite-request.tsx": {
    "button-bare": 1
@@ -2522,39 +366,16 @@
   "src/components/hr/recruiter-company-change-request.tsx": {
    "button-bare": 1
   },
-  "src/components/hr/recruiter-company-prototype.module.css": {
-   "spacing-off-grid": 16,
-   "letter-spacing-off-scale": 1,
-   "line-height-off-scale": 1,
-   "opacity-off-scale": 1,
-   "breakpoint-off": 2
-  },
   "src/components/hr/recruiter-company-prototype.tsx": {
-   "raw-control": 2,
-   "raw-heading": 3,
-   "raw-link": 2,
-   "raw-image": 1
-  },
-  "src/components/hr/recruiter-conversation-reply-form.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
+   "link-bare": 1,
+   "raw-control": 2
   },
   "src/components/hr/recruiter-conversation-workspace.tsx": {
    "button-bare": 2,
-   "raw-control": 1,
-   "raw-heading": 1,
-   "palette-class": 2,
-   "border-width-off-scale": 1
-  },
-  "src/components/hr/recruiter-designation-editor.tsx": {
-   "breakpoint-off": 2
+   "raw-control": 1
   },
   "src/components/hr/recruiter-drive-funnel.module.css": {
-   "spacing-off-grid": 1,
-   "letter-spacing-off-scale": 1,
-   "line-height-off-scale": 1,
-   "important": 7,
-   "breakpoint-off": 1
+   "important": 7
   },
   "src/components/hr/recruiter-drive-live-search.tsx": {
    "button-bare": 1
@@ -2563,143 +384,37 @@
    "important": 13
   },
   "src/components/hr/recruiter-joining-report-form.tsx": {
-   "button-bare": 1,
-   "raw-heading": 1
+   "button-bare": 1
   },
   "src/components/hr/recruiter-notification-bell.tsx": {
-   "palette-class": 1,
-   "font-weight-off-scale": 1,
-   "line-height-off-scale": 1,
-   "motion-literal": 1,
    "important": 11
   },
-  "src/components/hr/recruiter-pending-invitations.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/hr/recruiter-private-rating-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/hr/recruiter-profile-access.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 12
-  },
-  "src/components/hr/recruiter-profile-details-editor.tsx": {
-   "breakpoint-off": 7,
-   "z-index-literal": 1
-  },
-  "src/components/hr/recruiter-report-funnel.module.css": {
-   "breakpoint-off": 1
-  },
-  "src/components/hr/recruiter-request-cancel-button.tsx": {
-   "breakpoint-off": 4
-  },
-  "src/components/hr/recruiter-selection-composer.tsx": {
-   "raw-heading": 2
-  },
   "src/components/hr/recruiter-today-prototype.module.css": {
-   "spacing-off-grid": 13,
-   "letter-spacing-off-scale": 1,
-   "line-height-off-scale": 2,
-   "important": 5,
-   "breakpoint-off": 1
+   "important": 5
   },
   "src/components/hr/recruiter-today-prototype.tsx": {
    "button-bare": 2,
    "raw-control": 1
   },
-  "src/components/marketing/marketing-header-client.tsx": {
-   "raw-image": 1,
-   "palette-class": 4,
-   "breakpoint-off": 3,
-   "shadow-literal": 1,
-   "z-index-literal": 2
-  },
   "src/components/marketing/marketing-layout.tsx": {
-   "raw-control": 1,
-   "raw-heading": 5,
-   "raw-link": 3,
-   "palette-class": 15,
-   "breakpoint-off": 16,
-   "line-height-off-scale": 1,
-   "letter-spacing-off-scale": 1,
-   "shadow-literal": 2,
-   "z-index-literal": 1
+   "link-bare": 1,
+   "raw-control": 1
   },
   "src/components/people/faculty-avatar-upload.tsx": {
-   "button-bare": 1,
-   "raw-image": 1
-  },
-  "src/components/people/faculty-contact-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/people/faculty-identity-evidence-editor.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/components/people/faculty-profile-attachments.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/components/people/faculty-profile-editor.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 2,
-   "border-width-off-scale": 1,
-   "motion-literal": 2
-  },
-  "src/components/people/faculty-profile-metadata.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 7
-  },
-  "src/components/people/faculty-profile-repeatable.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 10
-  },
-  "src/components/people/faculty-profile-skills.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 3
-  },
-  "src/components/people/faculty-profile-text-section.tsx": {
-   "raw-heading": 1
+   "button-bare": 1
   },
   "src/components/placements/admin-placement-create-dialog.tsx": {
    "important": 1
   },
   "src/components/placements/admin-placement-student-search.tsx": {
-   "z-index-literal": 1,
    "important": 3
   },
-  "src/components/placements/applicant-notes-panel.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 6
-  },
-  "src/components/placements/campaign-unsubscribe-confirm.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/placements/college-application-detail-drawer.tsx": {
-   "raw-heading": 10,
-   "raw-link": 7,
-   "palette-class": 7
-  },
   "src/components/placements/college-company-create.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 2,
    "important": 2
-  },
-  "src/components/placements/college-drive-archive-action.tsx": {
-   "raw-heading": 1,
-   "border-width-off-scale": 1
   },
   "src/components/placements/college-drive-attention-cards.tsx": {
    "button-bare": 1,
-   "raw-heading": 4,
-   "border-width-off-scale": 1,
-   "z-index-literal": 1,
-   "motion-literal": 1,
    "important": 1
-  },
-  "src/components/placements/college-drive-bulk-actions.tsx": {
-   "raw-heading": 1
   },
   "src/components/placements/college-drive-create-dialog.tsx": {
    "important": 4
@@ -2707,1050 +422,179 @@
   "src/components/placements/college-drive-edit-dialog.tsx": {
    "important": 1
   },
-  "src/components/placements/college-drive-pipeline-overview.tsx": {
-   "raw-heading": 2,
-   "palette-class": 5,
-   "border-width-off-scale": 1
-  },
   "src/components/placements/college-hiring-date-filters.tsx": {
    "button-bare": 1
   },
   "src/components/placements/college-hiring-funnel.tsx": {
-   "raw-heading": 4,
-   "raw-link": 1,
-   "breakpoint-off": 7,
-   "shadow-literal": 1,
-   "z-index-literal": 1
-  },
-  "src/components/placements/college-interview-appointments.tsx": {
-   "raw-heading": 3,
-   "raw-link": 3,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 1,
-   "spacing-off-grid": 2
-  },
-  "src/components/placements/college-legacy-drive-settings.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/college-report-navigation.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/drive-company-avatar.tsx": {
-   "raw-image": 1
-  },
-  "src/components/placements/drive-day-roster.tsx": {
-   "font-weight-off-scale": 1,
-   "letter-spacing-off-scale": 1
-  },
-  "src/components/placements/last-known-good-applications.tsx": {
-   "border-width-off-scale": 1,
-   "opacity-off-scale": 1
+   "link-bare": 1
   },
   "src/components/placements/learner-application-resume-link.tsx": {
-   "button-bare": 1,
-   "raw-link": 1
-  },
-  "src/components/placements/learner-applications-browse.tsx": {
-   "raw-heading": 6,
-   "breakpoint-off": 20,
-   "font-weight-off-scale": 5
+   "button-bare": 1
   },
   "src/components/placements/learner-career-calendar.module.css": {
-   "color-literal": 6,
-   "important": 68,
-   "motion-literal": 4,
-   "shadow-literal": 5,
-   "spacing-off-grid": 2,
-   "border-width-off-scale": 2,
-   "line-height-off-scale": 1,
-   "breakpoint-off": 1
+   "important": 68
   },
   "src/components/placements/learner-career-calendar.tsx": {
-   "raw-heading": 7,
-   "color-literal": 2,
-   "breakpoint-off": 14,
-   "font-weight-off-scale": 2,
    "important": 3
   },
   "src/components/placements/learner-career-rounds-workspace.tsx": {
-   "raw-heading": 5,
-   "raw-link": 4,
-   "breakpoint-off": 5,
-   "font-weight-off-scale": 6,
    "important": 3
   },
   "src/components/placements/learner-career-rounds.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2,
-   "breakpoint-off": 4,
    "important": 1
   },
-  "src/components/placements/learner-general-requests.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/placements/learner-interview-withdrawal-request.tsx": {
-   "raw-heading": 1
-  },
   "src/components/placements/learner-jobs-browse.tsx": {
-   "raw-heading": 3,
-   "z-index-literal": 2,
    "important": 26
   },
-  "src/components/placements/learner-own-drive-journey.tsx": {
-   "raw-heading": 3
-  },
-  "src/components/placements/learner-placement-academic-evidence.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/learner-placement-alerts.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4,
-   "border-width-off-scale": 1
-  },
   "src/components/placements/learner-placement-job-detail.tsx": {
-   "raw-control": 1,
-   "raw-heading": 13,
-   "raw-link": 3,
-   "palette-class": 2,
-   "breakpoint-off": 31,
-   "font-weight-off-scale": 1,
-   "z-index-literal": 1,
-   "motion-literal": 2
+   "raw-control": 1
   },
   "src/components/placements/learner-placement-jobs.tsx": {
-   "button-bare": 1,
-   "raw-heading": 1,
-   "raw-link": 3,
-   "font-weight-off-scale": 2,
-   "line-height-off-scale": 1,
-   "letter-spacing-off-scale": 1,
-   "shadow-literal": 1
+   "button-bare": 1
   },
   "src/components/placements/learner-placement-journey.tsx": {
-   "raw-heading": 5,
-   "raw-link": 1,
-   "letter-spacing-off-scale": 1,
-   "shadow-literal": 1,
-   "motion-literal": 1
+   "link-bare": 1
   },
   "src/components/placements/learner-placement-metrics.module.css": {
-   "color-literal": 5,
-   "important": 34,
-   "motion-literal": 1,
-   "line-height-off-scale": 1,
-   "shadow-literal": 2
-  },
-  "src/components/placements/learner-placement-notification-settings.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4,
-   "motion-literal": 2
-  },
-  "src/components/placements/learner-placement-offers.tsx": {
-   "raw-heading": 4,
-   "raw-link": 1,
-   "raw-image": 1
-  },
-  "src/components/placements/learner-placement-partial-alert.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/learner-placement-preferences.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/learner-placement-registration.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4,
-   "motion-literal": 1
-  },
-  "src/components/placements/learner-placement-requests.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4
+   "important": 34
   },
   "src/components/placements/learner-placements-dashboard.tsx": {
-   "raw-heading": 7,
-   "raw-link": 1,
-   "palette-class": 7,
-   "border-width-off-scale": 1
-  },
-  "src/components/placements/learner-placements-tabs.tsx": {
-   "motion-literal": 1
-  },
-  "src/components/placements/learner-prep-assignment-cards.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/learner-recent-placement-activity.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
+   "palette-class": 1
   },
   "src/components/placements/learner-save-drive-button.tsx": {
    "button-bare": 2
   },
-  "src/components/placements/learner-schedule-reschedule.tsx": {
-   "color-literal": 5
-  },
   "src/components/placements/legacy-calendar-theme.module.css": {
-   "color-literal": 2,
-   "important": 8,
-   "shadow-literal": 3,
-   "spacing-off-grid": 5
+   "important": 8
   },
   "src/components/placements/legacy-tpo-report-stats.module.css": {
-   "color-literal": 1,
-   "important": 16,
-   "spacing-off-grid": 2,
-   "shadow-literal": 1,
-   "font-weight-off-scale": 2,
-   "line-height-off-scale": 1
-  },
-  "src/components/placements/placement-bulk-add-applicants.tsx": {
-   "raw-heading": 2,
-   "color-literal": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/placement-bulk-offer-withdraw.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/placements/placement-calendar-workspace.tsx": {
-   "raw-heading": 8,
-   "raw-link": 1,
-   "breakpoint-off": 1,
-   "z-index-literal": 1
+   "important": 16
   },
   "src/components/placements/placement-draft-edit-form.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1
-  },
-  "src/components/placements/placement-drive-controls.tsx": {
-   "raw-heading": 4,
-   "raw-link": 4,
-   "breakpoint-off": 12,
-   "letter-spacing-off-scale": 1
-  },
-  "src/components/placements/placement-drive-day-overview.tsx": {
-   "raw-heading": 4
-  },
-  "src/components/placements/placement-drive-workspace.tsx": {
-   "raw-heading": 8,
-   "raw-link": 1,
-   "color-literal": 6,
-   "palette-class": 14,
-   "breakpoint-off": 36,
-   "font-weight-off-scale": 2,
-   "border-width-off-scale": 1,
-   "motion-literal": 4
+   "link-bare": 1
   },
   "src/components/placements/placement-employer-relationships.tsx": {
-   "button-bare": 1,
-   "raw-heading": 2,
-   "raw-link": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/placement-job-create-form.tsx": {
-   "raw-heading": 9,
-   "raw-link": 2,
-   "breakpoint-off": 13,
-   "font-weight-off-scale": 5,
-   "border-width-off-scale": 1
-  },
-  "src/components/placements/placement-job-lifecycle-controls.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/placement-offer-controls.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/placement-operations-overview.tsx": {
-   "raw-heading": 5
-  },
-  "src/components/placements/placement-recruiter-access.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/placement-report-ui.tsx": {
-   "raw-link": 1,
-   "palette-class": 1,
-   "font-weight-off-scale": 3
-  },
-  "src/components/placements/placement-request-queue.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 8
-  },
-  "src/components/placements/placement-role-options.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/placement-season-manager.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/public-join-preview-retry.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/placements/public-recruit-from-us.tsx": {
-   "raw-heading": 2
+   "button-bare": 1
   },
   "src/components/placements/public-recruiter-join-form.tsx": {
    "button-bare": 1,
-   "raw-heading": 1,
-   "breakpoint-off": 3,
    "important": 1
   },
-  "src/components/placements/recruiter-placement-portfolio.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 15,
-   "z-index-literal": 4
-  },
-  "src/components/placements/recruiter-result-controls.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 1
-  },
   "src/components/placements/report-bar-chart.module.css": {
-   "font-weight-off-scale": 2,
-   "spacing-off-grid": 2,
    "important": 3
-  },
-  "src/components/placements/report-interactive-table.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 5,
-   "motion-literal": 2
   },
   "src/components/placements/super-admin-bulk-drive-actions.tsx": {
-   "raw-heading": 1,
    "important": 3
   },
-  "src/components/placements/super-admin-drive-archive.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/super-admin-drive-deadline.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/super-admin-drive-pipeline.tsx": {
-   "raw-heading": 3,
-   "palette-class": 6,
-   "breakpoint-off": 4,
-   "border-width-off-scale": 1
-  },
-  "src/components/placements/super-admin-drive-quick-search.tsx": {
-   "raw-heading": 3,
-   "raw-image": 1,
-   "breakpoint-off": 6,
-   "z-index-literal": 2
-  },
-  "src/components/placements/super-admin-drives-retained.tsx": {
-   "opacity-off-scale": 1
-  },
   "src/components/placements/super-admin-hiring-funnel.module.css": {
-   "border-width-off-scale": 1,
-   "font-weight-off-scale": 1,
-   "line-height-off-scale": 1,
-   "important": 3,
-   "spacing-off-grid": 1
-  },
-  "src/components/placements/super-admin-needs-attention.tsx": {
-   "raw-heading": 2,
-   "border-width-off-scale": 1,
-   "shadow-literal": 1
-  },
-  "src/components/placements/super-admin-platform-placement-policy.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/super-admin-published-drive-edit.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 13
-  },
-  "src/components/placements/tpo-accreditation-export-preflight.tsx": {
-   "raw-link": 2
-  },
-  "src/components/placements/tpo-applicant-review-drawer.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/components/placements/tpo-applicant-review-form.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2
-  },
-  "src/components/placements/tpo-bulk-drive-reminder.tsx": {
-   "font-weight-off-scale": 3
-  },
-  "src/components/placements/tpo-bulk-round-result-recorder.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 4
-  },
-  "src/components/placements/tpo-calendar-followup-actions.tsx": {
-   "raw-heading": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/components/placements/tpo-cgpa-rule-control.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/tpo-company-feedback-form.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 1
-  },
-  "src/components/placements/tpo-company-interaction-form.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 5
-  },
-  "src/components/placements/tpo-company-lifecycle-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/tpo-company-person-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/tpo-delete-draft-action.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/tpo-drive-cancel-form.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 8
-  },
-  "src/components/placements/tpo-drive-change-requests.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 11
-  },
-  "src/components/placements/tpo-drive-clone-action.tsx": {
-   "color-literal": 2,
-   "motion-literal": 2
-  },
-  "src/components/placements/tpo-drive-close-preview-form.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/tpo-drive-edit-form.tsx": {
-   "raw-heading": 9,
-   "font-weight-off-scale": 1,
-   "border-width-off-scale": 1,
-   "spacing-off-grid": 2
-  },
-  "src/components/placements/tpo-drive-lifecycle-controls.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 1
-  },
-  "src/components/placements/tpo-drive-recruiter-review-invite.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/tpo-drive-saved-views.tsx": {
-   "font-weight-off-scale": 2
-  },
-  "src/components/placements/tpo-drive-selection-manager.tsx": {
-   "breakpoint-off": 1
+   "important": 3
   },
   "src/components/placements/tpo-drive-workspace-nav.tsx": {
    "important": 3
   },
-  "src/components/placements/tpo-general-requests-panel.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/tpo-interview-reschedule-form.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/components/placements/tpo-interview-slot-planner.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 16,
-   "font-weight-off-scale": 7
-  },
-  "src/components/placements/tpo-offer-lifecycle-panel.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/placements/tpo-public-placement-content-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/tpo-recruiter-grant-controls.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/tpo-report-presentation.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/placements/tpo-report-record-links.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 6
-  },
-  "src/components/placements/tpo-report-saved-filters.tsx": {
-   "breakpoint-off": 8
-  },
   "src/components/placements/tpo-request-bulk-decision.tsx": {
-   "raw-heading": 1,
    "important": 3
   },
-  "src/components/placements/tpo-request-page-clipboard.tsx": {
-   "z-index-literal": 1
-  },
   "src/components/placements/tpo-round-apply-control.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 1,
    "important": 1
-  },
-  "src/components/placements/tpo-round-calendar-control.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 2
-  },
-  "src/components/placements/tpo-round-drive-day-read-only.tsx": {
-   "raw-heading": 10,
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/components/placements/tpo-round-reorder.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/tpo-round-results-import.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/components/placements/tpo-season-controls.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/tpo-season-registration-controls.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/placements/tpo-selection-import.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/tpo-sequential-request-review.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/placements/tpo-settings-nav.tsx": {
-   "raw-heading": 1,
-   "letter-spacing-off-scale": 1,
-   "border-width-off-scale": 2
-  },
-  "src/components/placements/tpo-waitlist-promotion-control.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 8
   },
   "src/components/placements/tpo-week-hour-calendar.module.css": {
-   "color-literal": 1,
-   "important": 25,
-   "z-index-literal": 1,
-   "border-width-off-scale": 1,
-   "spacing-off-grid": 1,
-   "motion-literal": 1
+   "important": 25
   },
   "src/components/placements/tpo-week-hour-calendar.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 3,
-   "z-index-literal": 6,
    "important": 2
   },
-  "src/components/profile/learner-default-resume-picker.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/profile/learner-image-gallery.tsx": {
-   "raw-image": 1
-  },
-  "src/components/profile/learner-profile-workspace.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 3,
-   "font-weight-off-scale": 1,
-   "line-height-off-scale": 1
-  },
   "src/components/profile/learner-skill-catalog-input.tsx": {
-   "shadow-literal": 1,
-   "motion-literal": 2,
    "important": 8
   },
-  "src/components/profile/learner-verification-submit.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/components/profile/learner-verification-withdraw.tsx": {
-   "breakpoint-off": 4
-  },
-  "src/components/projects/admin-project-section-page.tsx": {
-   "border-width-off-scale": 1
-  },
-  "src/components/projects/class-team-workspace-creator.tsx": {
-   "raw-heading": 4,
-   "raw-link": 3,
-   "breakpoint-off": 8,
-   "z-index-literal": 1
-  },
-  "src/components/projects/college-admin-workspace-team-overview.tsx": {
-   "raw-heading": 1
-  },
   "src/components/projects/college-project-delivery-overview.tsx": {
-   "raw-heading": 4,
-   "raw-link": 4
-  },
-  "src/components/projects/college-project-mentor-dialog.tsx": {
-   "raw-link": 1
-  },
-  "src/components/projects/college-project-summary-editor-full.tsx": {
-   "raw-heading": 4
+   "link-bare": 4
   },
   "src/components/projects/learner-board-interactive.tsx": {
-   "raw-heading": 1,
    "important": 1
-  },
-  "src/components/projects/learner-board-task-detail-dialog.tsx": {
-   "raw-heading": 6,
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/components/projects/learner-board-task-index.tsx": {
-   "raw-heading": 1
   },
   "src/components/projects/learner-own-task-controls.tsx": {
    "important": 1
   },
-  "src/components/projects/learner-project-activity.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "color-literal": 4,
-   "breakpoint-off": 5,
-   "font-weight-off-scale": 4,
-   "motion-literal": 4
-  },
-  "src/components/projects/learner-project-board-search.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/projects/learner-project-goals.tsx": {
-   "raw-heading": 5,
-   "breakpoint-off": 4
-  },
-  "src/components/projects/learner-project-mobile-filters.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/projects/learner-task-status-actions.tsx": {
-   "raw-heading": 1
-  },
   "src/components/projects/legacy-project-board.module.css": {
-   "color-literal": 21,
-   "important": 20,
-   "shadow-literal": 6,
-   "motion-literal": 2,
-   "letter-spacing-off-scale": 1,
-   "opacity-off-scale": 1
-  },
-  "src/components/projects/legacy-project-goals.module.css": {
-   "line-height-off-scale": 2
+   "important": 20
   },
   "src/components/projects/legacy-project-tabs.module.css": {
    "important": 2
   },
-  "src/components/projects/mentor-board-task-detail-dialog.tsx": {
-   "raw-heading": 5,
-   "raw-link": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/components/projects/mentor-calendar-load-failure.tsx": {
-   "border-width-off-scale": 1
-  },
-  "src/components/projects/mentor-delivery-history.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/mentor-email-preference-controls.tsx": {
-   "raw-heading": 1
-  },
   "src/components/projects/mentor-evidence-gallery.tsx": {
-   "button-bare": 3,
-   "raw-heading": 2,
-   "raw-link": 1
-  },
-  "src/components/projects/mentor-evidence-preview.tsx": {
-   "raw-link": 2
-  },
-  "src/components/projects/mentor-google-calendar-account.tsx": {
-   "raw-heading": 1
+   "button-bare": 3
   },
   "src/components/projects/mentor-lane-board.tsx": {
    "button-bare": 1,
-   "raw-heading": 9,
-   "raw-link": 2,
-   "breakpoint-off": 7,
    "important": 4
-  },
-  "src/components/projects/mentor-meeting-facilitation-quick-edit.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/mentor-meeting-history.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/projects/mentor-meeting-request-actions.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/mentor-meetings-calendar.module.css": {
-   "font-weight-off-scale": 3,
-   "motion-literal": 1,
-   "line-height-off-scale": 4,
-   "spacing-off-grid": 3
   },
   "src/components/projects/mentor-meetings-calendar.tsx": {
    "button-bare": 3,
-   "raw-heading": 11,
-   "raw-link": 2
+   "link-bare": 1
   },
   "src/components/projects/mentor-product-backlog.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 5,
    "important": 2
-  },
-  "src/components/projects/mentor-project-about-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/mentor-project-update-composer.tsx": {
-   "raw-heading": 1
   },
   "src/components/projects/mentor-prototype-home.tsx": {
    "raw-control": 1
   },
-  "src/components/projects/mentor-prototype-performance-table.tsx": {
-   "raw-heading": 3
-  },
-  "src/components/projects/mentor-prototype-project-summaries.tsx": {
-   "raw-heading": 25,
-   "raw-link": 3
-  },
   "src/components/projects/mentor-release-editor.tsx": {
-   "raw-heading": 1,
-   "z-index-literal": 1,
    "important": 2
   },
-  "src/components/projects/mentor-sprint-backlog-pull.tsx": {
-   "raw-heading": 1
-  },
   "src/components/projects/mentor-sprint-detail-table.tsx": {
-   "button-bare": 1,
-   "raw-heading": 1
-  },
-  "src/components/projects/mentor-sprint-sign-off.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/mentor-sprint-write.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2
-  },
-  "src/components/projects/mentor-task-allocation.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 4
-  },
-  "src/components/projects/mentor-task-create.tsx": {
-   "breakpoint-off": 6
-  },
-  "src/components/projects/mentor-task-criteria-checklist.tsx": {
-   "raw-heading": 1
+   "button-bare": 1
   },
   "src/components/projects/mentor-task-delete-control.tsx": {
    "important": 3
   },
-  "src/components/projects/mentor-task-details-edit.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2
-  },
-  "src/components/projects/mentor-task-history.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/mentor-unified-notification-feed.tsx": {
-   "raw-heading": 2
-  },
   "src/components/projects/mentor-xlsx-evidence-preview.tsx": {
-   "button-bare": 1,
-   "raw-heading": 1
-  },
-  "src/components/projects/project-activity-filtered-list.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/project-admin-audit-page.tsx": {
-   "raw-heading": 4
-  },
-  "src/components/projects/project-admin-readiness-page.tsx": {
-   "raw-heading": 3,
-   "raw-link": 1,
-   "spacing-off-grid": 2
-  },
-  "src/components/projects/project-admin-reassign-mentor-page.tsx": {
-   "font-weight-off-scale": 1
-  },
-  "src/components/projects/project-admin-submissions-page.tsx": {
-   "raw-heading": 2,
-   "raw-link": 2,
-   "breakpoint-off": 4,
-   "z-index-literal": 1
-  },
-  "src/components/projects/project-admin-task-add.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/project-admin-workspace-list.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 10
+   "button-bare": 1
   },
   "src/components/projects/project-admin-workspace-quick-view.tsx": {
-   "raw-heading": 2,
-   "palette-class": 1,
    "important": 10
-  },
-  "src/components/projects/project-archive-control.tsx": {
-   "breakpoint-off": 1,
-   "z-index-literal": 1
-  },
-  "src/components/projects/project-college-learner-picker.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/project-delivery-history-timeline.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/project-final-delivery-controls.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/project-list.tsx": {
-   "raw-heading": 3,
-   "color-literal": 1,
-   "breakpoint-off": 2,
-   "motion-literal": 1
-  },
-  "src/components/projects/project-meeting-plan-editor.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/projects/project-mentor-reassignment.tsx": {
-   "raw-heading": 3
   },
   "src/components/projects/project-mentor-workload-table.tsx": {
    "button-bare": 1
   },
-  "src/components/projects/project-readiness-override-form.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/projects/project-resource-audit-list.tsx": {
-   "raw-heading": 1
-  },
   "src/components/projects/project-resource-files-panel.tsx": {
-   "raw-heading": 2,
-   "raw-image": 1,
    "important": 1
-  },
-  "src/components/projects/project-resource-library-editor.tsx": {
-   "raw-heading": 2
   },
   "src/components/projects/project-resource-list.tsx": {
-   "raw-heading": 1,
-   "font-weight-off-scale": 1,
    "important": 1
   },
-  "src/components/projects/project-resource-open-link.tsx": {
-   "raw-link": 1
-  },
-  "src/components/projects/project-roster-table.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/project-task-plan-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/project-task-submission-overview.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/components/projects/project-template-controls.tsx": {
-   "raw-link": 3,
-   "breakpoint-off": 1
-  },
-  "src/components/projects/project-template-view.tsx": {
-   "raw-heading": 7,
-   "breakpoint-off": 8
-  },
-  "src/components/projects/project-workspace-readiness.tsx": {
-   "raw-heading": 1,
-   "border-width-off-scale": 1
-  },
   "src/components/projects/project-workspace.tsx": {
-   "raw-heading": 41,
-   "raw-link": 11,
-   "breakpoint-off": 9,
-   "border-width-off-scale": 4
-  },
-  "src/components/projects/super-admin-template-archive-control.tsx": {
-   "palette-class": 3
-  },
-  "src/components/projects/super-admin-template-college-bulk.tsx": {
-   "z-index-literal": 1
-  },
-  "src/components/projects/super-admin-template-create-form.tsx": {
-   "raw-heading": 4
-  },
-  "src/components/projects/super-admin-template-plan-editor.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/projects/super-admin-template-resource-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/super-admin-template-rollback-control.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/projects/super-admin-template-subview-page.tsx": {
-   "raw-heading": 12,
-   "raw-link": 1,
-   "breakpoint-off": 22
-  },
-  "src/components/projects/workspace-brief-editor.tsx": {
-   "raw-heading": 6
-  },
-  "src/components/public/error-page-view.tsx": {
-   "raw-link": 1,
-   "raw-image": 1
+   "link-bare": 1
   },
   "src/components/public/graceful-error-boundary.tsx": {
    "button-bare": 1,
-   "raw-control": 1,
-   "raw-heading": 1,
-   "palette-class": 1,
-   "font-weight-off-scale": 2
+   "raw-control": 1
   },
   "src/components/public/graceful-screen.tsx": {
    "button-bare": 1,
-   "raw-control": 1,
-   "raw-link": 1,
-   "raw-image": 1
-  },
-  "src/components/public/offline-banner.tsx": {
-   "spacing-off-grid": 1,
-   "z-index-literal": 1
-  },
-  "src/components/public/public-auth-skin.module.css": {
-   "breakpoint-off": 1
-  },
-  "src/components/public/public-page-loading.tsx": {
-   "raw-link": 1,
-   "raw-image": 1
-  },
-  "src/components/public/public-screen.module.css": {
-   "spacing-off-grid": 10,
-   "letter-spacing-off-scale": 2,
-   "font-weight-off-scale": 3,
-   "opacity-off-scale": 1,
-   "line-height-off-scale": 1
-  },
-  "src/components/shell/account-actions.tsx": {
-   "breakpoint-off": 8
-  },
-  "src/components/shell/admin-scope-switcher.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/shell/app-shell.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 3,
-   "spacing-off-grid": 1,
-   "z-index-literal": 2
+   "raw-control": 1
   },
   "src/components/shell/faculty-prototype.css": {
-   "color-literal": 5,
-   "spacing-off-grid": 17,
-   "font-weight-off-scale": 6,
-   "letter-spacing-off-scale": 5,
-   "line-height-off-scale": 4,
    "font-size-off-scale": 1
   },
-  "src/components/shell/learner-notification-bell.tsx": {
-   "raw-heading": 2,
-   "color-literal": 2,
-   "palette-class": 1,
-   "breakpoint-off": 5,
-   "motion-literal": 2
-  },
-  "src/components/shell/learner-topbar-tools.tsx": {
-   "breakpoint-off": 3,
-   "spacing-off-grid": 1,
-   "z-index-literal": 1
-  },
-  "src/components/shell/legacy-mobile-footer.css": {
-   "hex-color": 1,
-   "color-literal": 2,
-   "z-index-literal": 1,
-   "shadow-literal": 3,
-   "important": 1,
-   "motion-literal": 3,
-   "spacing-off-grid": 1,
-   "font-size-off-scale": 1,
-   "line-height-off-scale": 2,
-   "radius-off-scale": 1,
-   "breakpoint-off": 1
-  },
   "src/components/shell/mobile-navigation.tsx": {
-   "breakpoint-off": 2,
    "important": 5
   },
-  "src/components/shell/route-progress.css": {
-   "color-literal": 1,
-   "z-index-literal": 1,
-   "spacing-off-grid": 1,
-   "font-size-off-scale": 1,
-   "motion-literal": 5,
-   "radius-off-scale": 1,
-   "opacity-off-scale": 1,
-   "keyframes-local": 2
-  },
-  "src/components/shell/route-progress.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/shell/route-transition.css": {
-   "opacity-off-scale": 1,
-   "motion-literal": 2,
-   "keyframes-local": 1
-  },
-  "src/components/shell/shell-connectivity-notice.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/shell/shell-nav-icons.tsx": {
-   "hex-color": 3
-  },
-  "src/components/shell/shell-widget-boundary.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 5
-  },
-  "src/components/shell/sidebar-legacy.css": {
-   "color-literal": 6,
-   "motion-literal": 4,
-   "font-size-off-scale": 5,
-   "spacing-off-grid": 9,
-   "shadow-literal": 3,
-   "opacity-off-scale": 1,
-   "letter-spacing-off-scale": 1,
-   "font-weight-off-scale": 1,
-   "z-index-literal": 1,
-   "important": 1
-  },
   "src/components/shell/topbar/account-menu.tsx": {
-   "breakpoint-off": 2,
    "important": 3
   },
   "src/components/shell/topbar/faculty-find-suggestions.tsx": {
-   "palette-class": 1,
    "important": 2
   },
   "src/components/shell/topbar/mentor-notification-bell-preview.tsx": {
-   "button-bare": 3,
-   "raw-heading": 1,
-   "z-index-literal": 1
+   "button-bare": 3
   },
   "src/components/shell/topbar/topbar.module.css": {
-   "color-literal": 25,
-   "z-index-literal": 9,
-   "spacing-off-grid": 13,
-   "line-height-off-scale": 5,
-   "shadow-literal": 11,
-   "font-weight-off-scale": 1,
    "important": 51,
-   "font-size-off-scale": 2,
-   "motion-literal": 9,
-   "letter-spacing-off-scale": 1,
-   "opacity-off-scale": 1,
-   "keyframes-local": 2,
-   "breakpoint-off": 4
+   "font-size-off-scale": 2
   },
   "src/components/shell/topbar/tpo-quick-create.tsx": {
-   "spacing-off-grid": 1,
    "important": 2
-  },
-  "src/components/tpo/grid/grid-workspace.tsx": {
-   "raw-link": 1,
-   "font-weight-off-scale": 1
   },
   "src/components/tpo/legacy-batch-eligibility.module.css": {
    "important": 4
@@ -3762,292 +606,56 @@
    "important": 4
   },
   "src/components/tpo/legacy-tpo-notification-feed.module.css": {
-   "color-literal": 1,
-   "spacing-off-grid": 5,
-   "shadow-literal": 1,
-   "letter-spacing-off-scale": 1,
-   "important": 10,
-   "motion-literal": 1
-  },
-  "src/components/tpo/recruiter-board-theme.module.css": {
-   "spacing-off-grid": 2
-  },
-  "src/components/tpo/recruiter-bulk-owner-controls.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4
-  },
-  "src/components/tpo/recruiter-bulk-stage-controls.tsx": {
-   "raw-heading": 2,
-   "color-literal": 1
-  },
-  "src/components/tpo/recruiter-inline-owner.tsx": {
-   "color-literal": 2,
-   "motion-literal": 2
-  },
-  "src/components/tpo/recruiter-inline-stage.tsx": {
-   "color-literal": 2,
-   "motion-literal": 2
+   "important": 10
   },
   "src/components/tpo/recruiter-invite-landing.tsx": {
-   "font-weight-off-scale": 1,
-   "motion-literal": 1,
    "important": 1
-  },
-  "src/components/tpo/recruiter-lead-csv-import.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 3,
-   "font-weight-off-scale": 1,
-   "border-width-off-scale": 1
   },
   "src/components/tpo/recruiter-lead-detail-workspace.tsx": {
-   "raw-heading": 6,
-   "raw-link": 4,
-   "breakpoint-off": 14,
-   "font-weight-off-scale": 1,
-   "motion-literal": 1
+   "link-bare": 2
   },
   "src/components/tpo/recruiter-leads-workspace.tsx": {
-   "button-bare": 2,
-   "raw-heading": 5,
-   "color-literal": 2,
-   "breakpoint-off": 3,
-   "font-weight-off-scale": 1,
-   "border-width-off-scale": 1
+   "button-bare": 2
   },
   "src/components/tpo/recruiter-prototype-inspector.tsx": {
-   "button-bare": 1,
-   "raw-heading": 2,
-   "raw-link": 2,
-   "palette-class": 2
+   "button-bare": 1
   },
   "src/components/tpo/recruiter-prototype-roster.tsx": {
-   "button-bare": 1,
-   "palette-class": 17
+   "button-bare": 1
   },
   "src/components/tpo/recruiter-prototype-stage-ribbon.tsx": {
-   "button-bare": 1,
-   "border-width-off-scale": 2
-  },
-  "src/components/tpo/recruiter-saved-view-controls.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/tpo/tpo-academic-import-preview.tsx": {
-   "raw-heading": 1
+   "button-bare": 1
   },
   "src/components/tpo/tpo-academic-import-workspace.tsx": {
-   "raw-link": 1,
-   "breakpoint-off": 3,
-   "font-weight-off-scale": 1,
    "important": 1
   },
-  "src/components/tpo/tpo-after-college-bulk-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-audit-grid.tsx": {
-   "spacing-off-grid": 1
-  },
-  "src/components/tpo/tpo-batch-decision-control.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-batch-eligibility-import.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/tpo/tpo-batch-invitation-control.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 8
-  },
-  "src/components/tpo/tpo-batch-rule-editor.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/tpo/tpo-batch-student-bulk-notes.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-batch-student-keyboard-actions.tsx": {
-   "raw-link": 1
-  },
-  "src/components/tpo/tpo-batch-student-saved-views.tsx": {
-   "raw-heading": 1,
-   "raw-link": 1
-  },
-  "src/components/tpo/tpo-bell-panel.tsx": {
-   "raw-heading": 1,
-   "color-literal": 1,
-   "palette-class": 1,
-   "breakpoint-off": 4,
-   "z-index-literal": 1,
-   "motion-literal": 2
-  },
-  "src/components/tpo/tpo-blocked-dates-editor.tsx": {
-   "breakpoint-off": 17
-  },
-  "src/components/tpo/tpo-builtin-job-types-editor.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 1
-  },
-  "src/components/tpo/tpo-bulk-action-panel.tsx": {
-   "raw-heading": 3
-  },
-  "src/components/tpo/tpo-bulk-action-preview.tsx": {
-   "raw-heading": 2
-  },
-  "src/components/tpo/tpo-by-branch-prototype-chart.tsx": {
-   "palette-class": 1
-  },
   "src/components/tpo/tpo-campaign-compose.tsx": {
-   "button-bare": 3,
-   "raw-heading": 3,
-   "breakpoint-off": 4
+   "button-bare": 3
   },
   "src/components/tpo/tpo-campaign-prototype-sidebar.tsx": {
-   "button-bare": 2,
-   "raw-heading": 1,
-   "border-width-off-scale": 1
-  },
-  "src/components/tpo/tpo-campaign-send-control.tsx": {
-   "raw-heading": 1,
-   "font-weight-off-scale": 1
-  },
-  "src/components/tpo/tpo-campaign-sent-story.tsx": {
-   "raw-heading": 5,
-   "palette-class": 11
-  },
-  "src/components/tpo/tpo-communication-settings-editors.tsx": {
-   "raw-heading": 4,
-   "breakpoint-off": 23
+   "button-bare": 2
   },
   "src/components/tpo/tpo-companies-spreadsheet.tsx": {
-   "button-bare": 2,
-   "raw-heading": 1,
-   "raw-link": 2
-  },
-  "src/components/tpo/tpo-companies-today.module.css": {
-   "letter-spacing-off-scale": 1,
-   "spacing-off-grid": 24,
-   "line-height-off-scale": 1,
-   "breakpoint-off": 6
+   "button-bare": 2
   },
   "src/components/tpo/tpo-companies-today.tsx": {
    "button-bare": 10,
-   "raw-heading": 3,
-   "raw-link": 3
-  },
-  "src/components/tpo/tpo-company-memory-workspace.tsx": {
-   "raw-heading": 7,
-   "breakpoint-off": 2,
-   "shadow-literal": 7
-  },
-  "src/components/tpo/tpo-company-team-conversation.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 2
-  },
-  "src/components/tpo/tpo-company-visibility-editor.tsx": {
-   "raw-heading": 1,
-   "z-index-literal": 2
+   "link-bare": 3
   },
   "src/components/tpo/tpo-conversation-bubble.module.css": {
-   "color-literal": 1,
-   "important": 10,
-   "spacing-off-grid": 2,
-   "radius-off-scale": 4,
-   "shadow-literal": 1,
-   "breakpoint-off": 1
-  },
-  "src/components/tpo/tpo-custom-job-type-rename.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/components/tpo/tpo-debar-control.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-draft-drive-step-one-form.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/tpo/tpo-drive-day-today-list.tsx": {
-   "raw-heading": 2,
-   "line-height-off-scale": 1,
-   "motion-literal": 1
+   "important": 10
   },
   "src/components/tpo/tpo-drive-offers-prototype-review.tsx": {
-   "button-bare": 1,
-   "raw-heading": 2,
-   "palette-class": 5
-  },
-  "src/components/tpo/tpo-drive-rounds-prototype-review.tsx": {
-   "raw-heading": 4,
-   "palette-class": 2,
-   "border-width-off-scale": 1
+   "button-bare": 1
   },
   "src/components/tpo/tpo-drive-students-prototype-review.tsx": {
-   "button-bare": 4,
-   "raw-heading": 2
-  },
-  "src/components/tpo/tpo-due-followup-workspace.tsx": {
-   "raw-heading": 1,
-   "raw-link": 2,
-   "breakpoint-off": 3,
-   "font-weight-off-scale": 1
-  },
-  "src/components/tpo/tpo-everyone-controls.tsx": {
-   "raw-heading": 1
+   "button-bare": 4
   },
   "src/components/tpo/tpo-find-shortcut.tsx": {
    "important": 4
   },
-  "src/components/tpo/tpo-four-entity-search.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-grid-filter-panel.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-header-indicators.tsx": {
-   "palette-class": 1
-  },
-  "src/components/tpo/tpo-home-prototype-focus.tsx": {
-   "raw-heading": 4,
-   "palette-class": 3,
-   "breakpoint-off": 1
-  },
-  "src/components/tpo/tpo-keyboard-shortcuts.tsx": {
-   "raw-heading": 4
-  },
-  "src/components/tpo/tpo-messages-tabs.tsx": {
-   "border-width-off-scale": 1
-  },
-  "src/components/tpo/tpo-mobile-footer.tsx": {
-   "z-index-literal": 1
-  },
-  "src/components/tpo/tpo-more-navigation.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 7,
-   "font-weight-off-scale": 1,
-   "line-height-off-scale": 1,
-   "letter-spacing-off-scale": 1,
-   "spacing-off-grid": 6,
-   "shadow-literal": 1,
-   "motion-literal": 2
-  },
-  "src/components/tpo/tpo-my-notification-preferences-editor.tsx": {
-   "breakpoint-off": 2,
-   "motion-literal": 1
-  },
-  "src/components/tpo/tpo-new-followup-modal.tsx": {
-   "color-literal": 2,
-   "motion-literal": 2
-  },
-  "src/components/tpo/tpo-new-recruiter-conversation.tsx": {
-   "raw-link": 1,
-   "font-weight-off-scale": 2
-  },
   "src/components/tpo/tpo-notice-audience-picker.tsx": {
-   "button-bare": 1,
-   "palette-class": 1,
-   "breakpoint-off": 3
+   "button-bare": 1
   },
   "src/components/tpo/tpo-notice-composer-dialog.tsx": {
    "important": 4
@@ -4055,550 +663,123 @@
   "src/components/tpo/tpo-notice-delete-confirm.tsx": {
    "important": 1
   },
-  "src/components/tpo/tpo-notice-prototype-sidebar.tsx": {
-   "raw-heading": 1,
-   "border-width-off-scale": 1
-  },
   "src/components/tpo/tpo-notice-read-progress.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2,
    "important": 2
   },
-  "src/components/tpo/tpo-notice-schedule-controls.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/components/tpo/tpo-notice-undo-toast.tsx": {
-   "border-width-off-scale": 1,
-   "shadow-literal": 1
-  },
-  "src/components/tpo/tpo-notification-refresh.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/tpo/tpo-optional-emails-editor.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2,
-   "motion-literal": 1
-  },
-  "src/components/tpo/tpo-outcome-labels-editor.tsx": {
-   "raw-heading": 1,
-   "color-literal": 1,
-   "breakpoint-off": 11
-  },
-  "src/components/tpo/tpo-placement-cell-read-action.tsx": {
-   "breakpoint-off": 1
-  },
-  "src/components/tpo/tpo-prep-percentage-editor.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 2
-  },
-  "src/components/tpo/tpo-prep-readiness-editor.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 5
-  },
   "src/components/tpo/tpo-profile-avatar.tsx": {
-   "button-bare": 2,
-   "raw-image": 1
-  },
-  "src/components/tpo/tpo-public-join-link-card.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 3
+   "button-bare": 2
   },
   "src/components/tpo/tpo-recruiter-message-reply.tsx": {
-   "button-bare": 1,
-   "raw-heading": 2,
-   "breakpoint-off": 4,
-   "font-weight-off-scale": 1
-  },
-  "src/components/tpo/tpo-request-prototype-workspace.tsx": {
-   "raw-heading": 7,
-   "border-width-off-scale": 1
-  },
-  "src/components/tpo/tpo-roster-verification-bulk.tsx": {
-   "raw-heading": 3,
-   "breakpoint-off": 4
-  },
-  "src/components/tpo/tpo-selected-review-queue.tsx": {
-   "raw-heading": 1,
-   "font-weight-off-scale": 1
+   "button-bare": 1
   },
   "src/components/tpo/tpo-settings-team-manage.tsx": {
-   "button-bare": 1,
-   "raw-heading": 2
-  },
-  "src/components/tpo/tpo-spreadsheet-grid.tsx": {
-   "z-index-literal": 2
-  },
-  "src/components/tpo/tpo-student-note-editor.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-student-nudge-panel.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-student-quick-panel.tsx": {
-   "raw-heading": 9,
-   "raw-link": 1,
-   "spacing-off-grid": 2
+   "button-bare": 1
   },
   "src/components/tpo/tpo-student-roster-inspector.tsx": {
-   "button-bare": 1,
-   "raw-heading": 2
-  },
-  "src/components/tpo/tpo-student-saved-views.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/tpo/tpo-students-assign-prep.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-students-bulk-add.tsx": {
-   "raw-heading": 2,
-   "breakpoint-off": 4
-  },
-  "src/components/tpo/tpo-students-bulk-debar.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-students-drive-visibility.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-team-ask-panel.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-team-assign-unowned.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-team-forms.tsx": {
-   "raw-heading": 2,
-   "motion-literal": 1
+   "button-bare": 1
   },
   "src/components/tpo/tpo-team-message-actions.tsx": {
    "important": 1
   },
-  "src/components/tpo/tpo-team-messages-directory.tsx": {
-   "raw-heading": 7,
-   "raw-link": 3
-  },
-  "src/components/tpo/tpo-team-people-prototype.module.css": {
-   "spacing-off-grid": 9,
-   "letter-spacing-off-scale": 2,
-   "shadow-literal": 1,
-   "breakpoint-off": 2
-  },
   "src/components/tpo/tpo-team-people-prototype.tsx": {
    "button-bare": 1,
-   "raw-heading": 2,
-   "raw-link": 3
-  },
-  "src/components/tpo/tpo-team-thread-details.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/tpo/tpo-timed-debar-control.tsx": {
-   "raw-heading": 1
+   "link-bare": 3
   },
   "src/components/tpo/tpo-today-alternate-views.tsx": {
-   "raw-control": 1,
-   "raw-heading": 6,
-   "palette-class": 10
-  },
-  "src/components/tpo/tpo-topbar-new-menu.tsx": {
-   "palette-class": 1
-  },
-  "src/components/tpo/tpo-trusted-domain-editor.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 5
-  },
-  "src/components/tpo/tpo-unified-job-types-editor.tsx": {
-   "raw-heading": 1
+   "raw-control": 1
   },
   "src/components/tracker/independent-audit-findings-board.tsx": {
-   "raw-heading": 1,
    "important": 1
-  },
-  "src/components/tracker/independent-finding-actions.tsx": {
-   "raw-heading": 1
   },
   "src/components/tracker/known-errors-workspace.tsx": {
-   "raw-heading": 1,
-   "font-weight-off-scale": 1,
    "important": 1
-  },
-  "src/components/tracker/tracker-admin-nav.tsx": {
-   "raw-link": 1
-  },
-  "src/components/tracker/tracker-issue-logs-panel.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/tracker/tracker-issue-saved-views.tsx": {
-   "z-index-literal": 1
   },
   "src/components/tracker/tracker-live-logs-explorer.tsx": {
-   "raw-heading": 2,
-   "raw-link": 1,
-   "breakpoint-off": 4,
-   "border-width-off-scale": 1,
    "important": 10
   },
-  "src/components/tracker/tracker-quick-report-launcher.tsx": {
-   "shadow-literal": 1,
-   "z-index-literal": 1
-  },
   "src/components/tracker/tracker-report-form.tsx": {
-   "raw-control": 1,
-   "raw-heading": 1,
-   "raw-image": 1,
-   "palette-class": 1,
-   "breakpoint-off": 6,
-   "font-weight-off-scale": 1,
-   "motion-literal": 1
-  },
-  "src/components/tracker/tracker-reporter-issue-detail.tsx": {
-   "raw-heading": 2
+   "raw-control": 1
   },
   "src/components/tracker/tracker-screenshot-gallery.tsx": {
-   "raw-image": 2,
    "important": 1
   },
-  "src/components/tracker/tracker-telegram-manual-panel.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
-  },
-  "src/components/tracker/tracker-workflow-panel.tsx": {
-   "raw-heading": 3,
-   "raw-link": 2
-  },
-  "src/components/ui/action-pagination.tsx": {
-   "line-height-off-scale": 1
-  },
-  "src/components/ui/alert.tsx": {
-   "color-literal": 2
-  },
-  "src/components/ui/avatar.tsx": {
-   "spacing-off-grid": 1
-  },
-  "src/components/ui/badge.tsx": {
-   "breakpoint-off": 1,
-   "shadow-literal": 1
-  },
-  "src/components/ui/banner.tsx": {
-   "color-literal": 2,
-   "spacing-off-grid": 2
-  },
-  "src/components/ui/board-column.tsx": {
-   "shadow-literal": 1
-  },
   "src/components/ui/bottom-sheet.tsx": {
-   "breakpoint-off": 1,
-   "line-height-off-scale": 1,
-   "shadow-literal": 1,
    "important": 2
-  },
-  "src/components/ui/button-group.tsx": {
-   "breakpoint-off": 6,
-   "z-index-literal": 1
   },
   "src/components/ui/button.tsx": {
-   "breakpoint-off": 6,
-   "font-weight-off-scale": 1,
-   "spacing-off-grid": 1,
-   "shadow-literal": 1,
    "important": 2
-  },
-  "src/components/ui/calendar-grid.tsx": {
-   "breakpoint-off": 2
-  },
-  "src/components/ui/card.tsx": {
-   "breakpoint-off": 1,
-   "letter-spacing-off-scale": 1
-  },
-  "src/components/ui/checkbox.tsx": {
-   "shadow-literal": 2,
-   "motion-literal": 1
   },
   "src/components/ui/confirm-action-dialog.tsx": {
    "important": 5
   },
-  "src/components/ui/data-table.tsx": {
-   "spacing-off-grid": 1,
-   "z-index-literal": 4
-  },
   "src/components/ui/date-input.tsx": {
-   "breakpoint-off": 22,
-   "shadow-literal": 1,
-   "z-index-literal": 1,
-   "important": 67
-  },
-  "src/components/ui/date-range-picker.tsx": {
-   "breakpoint-off": 2
+   "important": 66
   },
   "src/components/ui/dialog.tsx": {
-   "breakpoint-off": 6,
-   "line-height-off-scale": 1,
-   "shadow-literal": 2,
-   "z-index-literal": 2,
    "important": 6
   },
-  "src/components/ui/disclosure.tsx": {
-   "shadow-literal": 2
-  },
   "src/components/ui/drawer.tsx": {
-   "line-height-off-scale": 1,
-   "shadow-literal": 2,
    "important": 16
   },
   "src/components/ui/dropdown.tsx": {
-   "color-literal": 2,
-   "shadow-literal": 1,
-   "z-index-literal": 1,
-   "motion-literal": 2,
    "important": 9
   },
-  "src/components/ui/empty-state.tsx": {
-   "breakpoint-off": 8
-  },
-  "src/components/ui/error-state.tsx": {
-   "breakpoint-off": 4,
-   "letter-spacing-off-scale": 1
-  },
   "src/components/ui/file-dropzone.tsx": {
-   "color-literal": 1,
-   "palette-class": 1,
-   "breakpoint-off": 1,
-   "shadow-literal": 2,
-   "motion-literal": 2,
    "important": 3
   },
   "src/components/ui/file-upload.tsx": {
-   "breakpoint-off": 2,
-   "motion-literal": 2,
    "important": 3
   },
-  "src/components/ui/filter-bar.tsx": {
-   "breakpoint-off": 5
-  },
   "src/components/ui/filter-chip.tsx": {
-   "spacing-off-grid": 1,
    "important": 8
-  },
-  "src/components/ui/inline-notice.tsx": {
-   "color-literal": 2,
-   "font-weight-off-scale": 1
-  },
-  "src/components/ui/input-group.tsx": {
-   "color-literal": 1,
-   "shadow-literal": 2
-  },
-  "src/components/ui/input.tsx": {
-   "color-literal": 1,
-   "breakpoint-off": 1,
-   "spacing-off-grid": 1,
-   "shadow-literal": 2,
-   "motion-literal": 1
   },
   "src/components/ui/legacy-overlays.css": {
-   "color-literal": 27,
-   "spacing-off-grid": 3,
-   "shadow-literal": 10,
-   "z-index-literal": 2,
-   "motion-literal": 12,
-   "important": 4,
-   "keyframes-local": 7,
-   "breakpoint-off": 1
-  },
-  "src/components/ui/list-row.tsx": {
-   "spacing-off-grid": 1
-  },
-  "src/components/ui/list-toolbar.tsx": {
-   "breakpoint-off": 1,
    "important": 4
   },
-  "src/components/ui/menu.tsx": {
-   "color-literal": 2,
-   "palette-class": 2,
-   "motion-literal": 2
-  },
-  "src/components/ui/metric-bar.tsx": {
-   "color-literal": 1
+  "src/components/ui/list-toolbar.tsx": {
+   "important": 4
   },
   "src/components/ui/multi-select.tsx": {
-   "palette-class": 1,
-   "breakpoint-off": 5,
    "important": 8
   },
-  "src/components/ui/needs-doing-chips.tsx": {
-   "color-literal": 5,
-   "breakpoint-off": 1,
-   "shadow-literal": 1
-  },
-  "src/components/ui/page-back-link.tsx": {
-   "motion-literal": 1
-  },
-  "src/components/ui/pagination.tsx": {
-   "palette-class": 1,
-   "line-height-off-scale": 1
-  },
   "src/components/ui/password-input.tsx": {
-   "breakpoint-off": 2,
    "important": 2
   },
-  "src/components/ui/popover.tsx": {
-   "breakpoint-off": 2,
-   "spacing-off-grid": 1,
-   "shadow-literal": 2
-  },
-  "src/components/ui/radio.tsx": {
-   "shadow-literal": 2,
-   "motion-literal": 1
-  },
-  "src/components/ui/scroll-cue.tsx": {
-   "z-index-literal": 2
-  },
   "src/components/ui/search-field.tsx": {
-   "breakpoint-off": 3,
-   "spacing-off-grid": 2,
    "important": 8
   },
   "src/components/ui/searchable-select.tsx": {
-   "breakpoint-off": 2,
-   "spacing-off-grid": 2,
-   "shadow-literal": 1,
-   "important": 39
+   "important": 38
   },
   "src/components/ui/segmented-control.tsx": {
-   "palette-class": 2,
-   "breakpoint-off": 2,
-   "motion-literal": 1,
    "important": 2
   },
-  "src/components/ui/select.tsx": {
-   "color-literal": 1,
-   "palette-class": 1,
-   "breakpoint-off": 3,
-   "spacing-off-grid": 1,
-   "shadow-literal": 2,
-   "motion-literal": 1
-  },
-  "src/components/ui/selection-controls.tsx": {
-   "palette-class": 1,
-   "shadow-literal": 1
-  },
   "src/components/ui/split-button.tsx": {
-   "breakpoint-off": 1,
    "important": 7
   },
-  "src/components/ui/stat-tile.tsx": {
-   "color-literal": 2
-  },
-  "src/components/ui/status-badge.tsx": {
-   "breakpoint-off": 1,
-   "spacing-off-grid": 1,
-   "shadow-literal": 1
-  },
-  "src/components/ui/summary-strip.tsx": {
-   "breakpoint-off": 4
-  },
-  "src/components/ui/table.tsx": {
-   "color-literal": 1,
-   "spacing-off-grid": 1
-  },
   "src/components/ui/tabs.tsx": {
-   "palette-class": 1,
-   "breakpoint-off": 2,
-   "opacity-off-scale": 1,
-   "spacing-off-grid": 3,
-   "motion-literal": 4,
    "important": 4
   },
-  "src/components/ui/textarea.tsx": {
-   "color-literal": 1,
-   "spacing-off-grid": 2,
-   "shadow-literal": 2,
-   "motion-literal": 1
-  },
-  "src/components/ui/third-party-link.tsx": {
-   "font-weight-off-scale": 3,
-   "shadow-literal": 1
-  },
-  "src/components/ui/toast.tsx": {
-   "color-literal": 2,
-   "breakpoint-off": 2,
-   "border-width-off-scale": 2,
-   "shadow-literal": 2,
-   "z-index-literal": 1
-  },
-  "src/components/ui/tooltip.tsx": {
-   "palette-class": 1,
-   "breakpoint-off": 7,
-   "shadow-literal": 1,
-   "z-index-literal": 1
-  },
-  "src/components/verification/CollegeVerificationPanel.tsx": {
-   "raw-heading": 5,
-   "breakpoint-off": 12
-  },
-  "src/components/verification/SuperAdminVerificationPanel.tsx": {
-   "breakpoint-off": 7
-  },
   "src/components/verification/TpoVerificationPrototypeQueue.tsx": {
-   "button-bare": 1,
-   "raw-heading": 4,
-   "border-width-off-scale": 1
-  },
-  "src/components/verification/TpoVerificationSwitch.tsx": {
-   "raw-heading": 1
-  },
-  "src/components/verification/VerificationFilterPanel.tsx": {
-   "raw-heading": 3
-  },
-  "src/components/verification/VerificationReviewDrawer.tsx": {
-   "raw-heading": 8,
-   "raw-link": 1
-  },
-  "src/components/verification/VerificationWorkspace.tsx": {
-   "raw-heading": 1,
-   "breakpoint-off": 4
+   "button-bare": 1
   },
   "src/proxy.ts": {
    "font-family-off": 1
   },
   "src/styles/college-admin-north-star.css": {
-   "letter-spacing-off-scale": 1,
-   "font-weight-off-scale": 1,
    "font-size-off-scale": 1
   },
   "src/styles/legacy-skin.css": {
-   "color-literal": 14,
-   "important": 168,
-   "shadow-literal": 9,
-   "motion-literal": 7,
-   "font-weight-off-scale": 1
+   "important": 168
   },
   "src/styles/mentor-legacy-shell.css": {
-   "color-literal": 1,
-   "spacing-off-grid": 4,
-   "line-height-off-scale": 1,
-   "motion-literal": 1,
-   "shadow-literal": 2,
-   "important": 1,
-   "z-index-literal": 1
+   "important": 1
   },
   "src/styles/micro-details.css": {
-   "color-literal": 8,
-   "shadow-literal": 3,
-   "opacity-off-scale": 1,
-   "motion-literal": 7,
-   "important": 20,
-   "keyframes-local": 1
+   "important": 20
   },
   "src/styles/prototype-portals.css": {
-   "color-literal": 4,
-   "spacing-off-grid": 115,
-   "letter-spacing-off-scale": 19,
-   "z-index-literal": 1,
-   "radius-off-scale": 2,
-   "important": 39,
-   "line-height-off-scale": 6,
-   "font-weight-off-scale": 2,
-   "breakpoint-off": 13
+   "important": 39
   }
  }
 }

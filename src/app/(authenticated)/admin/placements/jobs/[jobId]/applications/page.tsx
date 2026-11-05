@@ -21,6 +21,7 @@ import { getCollegeApplicationPipeline } from "@/modules/placements/college-appl
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
 import { listCollegeDriveApplicationFilters } from "@/modules/placements/college-drive-applications-options-service";
 import { SuperAdminDriveApplicationsCsvControl } from "@/components/admin/super-admin-drive-applications-csv-control";
+import { Heading } from "@/components/ui/heading";
 
 function adminHref(...args: Parameters<typeof driveApplicationsHref>) {
  return driveApplicationsHref(...args).replace("/college/placements/","/admin/placements/");
@@ -140,7 +141,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <section aria-label="Drive details" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">{job?.title||data.drive.title}</h2>
+          <Heading level={2} size="lg" className="text-foreground">{job?.title||data.drive.title}</Heading>
           <p className="mt-1 text-sm text-body">{job?.companyName||"Company unavailable"}
             {job?.locations?" · "+job.locations:""}
           </p>

@@ -20,6 +20,8 @@ import {
   LOCATION_OPTIONS, SEVERITY_OPTIONS,
 } from "@/modules/bug-tracker/report-form-options";
 import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 const field = "mt-1 w-full";
 const label = "block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
@@ -289,7 +291,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         onClick={()=>void linkCreatedIssue(created)}>Retry linking Known Error</Button>:null}
 
       <div className="flex flex-wrap gap-3">
-        <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-[14px] font-[650] text-[var(--lms-body-text)] transition-colors duration-[150ms] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
+        <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
         <Button disabled={uploading}
           onClick={() => {setCreated("");setDraft({...initial,...recentContext});clearDraft();setError("");clearScreenshots();}}
           type="button" className="min-h-11 md:min-h-9">Report another</Button>
@@ -305,7 +307,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       </Banner>:null}
       {dirty?<p className="text-xs text-muted-foreground leading-[20px]">Unsaved changes are kept on this device until your report is submitted.</p>:null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
-      <div className="grid gap-4 min-[768px]:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3">
         <label className={label}>Reporter
           <Input className={field} name="reporterName" required maxLength={120}
             placeholder="Your signed-in account display name"
@@ -331,7 +333,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       </div>
       <fieldset className="grid min-w-0 gap-3 border-y border-border py-4">
         <legend className="px-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where did this happen?</legend>
-        <div className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           <label className={label}>Page
             <Select className={field} required value={page} onChange={event => {
               setDraft(current=>({...current,page:event.target.value,screen:"",section:""}));
@@ -361,8 +363,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           </label>
         </div>
       </fieldset>
-      <div className="grid gap-4 min-[768px]:grid-cols-3">
-        <label className={label + " min-[768px]:col-span-2"}>What kind of issue?
+      <div className="grid gap-4 md:grid-cols-3">
+        <label className={label + " md:col-span-2"}>What kind of issue?
           <Select className={field} name="issueType" required value={draft.issueType} onChange={event=>patch("issueType",event.target.value)}>
             <option value="" disabled>Search issue type</option>
             {ISSUE_TYPE_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -388,7 +390,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         {fieldErrors["description"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["description"]}</span>:null}
       </label>
       <section className="min-w-0 space-y-2 border-b border-border pb-4" aria-label="Screenshots and optional evidence">
-        <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Screenshots</h2>
+        <Heading level={2} size="sm" className="text-[var(--lms-heading)]">Screenshots</Heading>
         <div className="rounded-[var(--lms-control-radius)] border border-dashed border-border bg-[var(--lms-neutral-50)] p-4 text-sm text-muted-foreground"
           onDragOver={event=>event.preventDefault()}
           onDrop={event=>{event.preventDefault();addScreenshots(Array.from(event.dataTransfer.files));}}
@@ -404,7 +406,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           </div>
           {screenshots.length?<ul className="mt-3 grid gap-3 sm:grid-cols-2" aria-label="Selected screenshots">
             {screenshots.map(row=><li key={row.id} className="min-w-0 space-y-2 rounded border border-border bg-surface p-2">
-              <img src={row.preview} alt={"Screenshot preview: "+row.file.name}
+              <Img src={row.preview} alt={"Screenshot preview: "+row.file.name}
                 className="h-28 w-full rounded object-contain"/>
               <p className="truncate text-xs" title={row.file.name}>{row.file.name}</p>
               <Button type="button" variant="ghost" disabled={pending}

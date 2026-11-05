@@ -15,6 +15,7 @@ import {facultyLiveConfirmText} from "@/modules/courses/faculty-live-confirmatio
 import {facultyLiveMutationSuccess} from "@/modules/courses/faculty-live-success";
 import {FacultyIstQuarterHourPicker} from "@/components/courses/faculty-ist-quarter-hour-picker";
 import {FACULTY_IST_NOTE,facultyIstQuarterHourIssue} from "@/modules/courses/faculty-ist-quarter-hour-model";
+import { Heading } from "@/components/ui/heading";
 
 type Choice={id:string;title:string;deliveryId:string};
 type Session={
@@ -101,9 +102,9 @@ export function FacultyLiveClassEditor({
     <section aria-label="Manage Faculty live classes" aria-busy={pending}
       className="min-w-0 max-w-4xl space-y-[var(--lms-space-4)]">
       <div className="min-w-0">
-        <h2 className="sr-only">
+        <Heading level={2} className="sr-only">
           Schedule or manage a live class
-        </h2>
+        </Heading>
         <p className="mt-1 max-w-prose text-xs leading-5 text-muted-foreground">
           Enter meeting times in IST (Asia/Kolkata), regardless of your device time zone.
           Each confirmed write is scoped to your assigned Section. HTTPS links only.

@@ -29,6 +29,8 @@ import { announcementVisibilityAt } from "@/modules/announcements/visibility-mod
 import {announcementHistoryEmptyMessage} from "@/modules/announcements/admin-history-empty-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ANNOUNCEMENT_SENDER_TYPES } from "@/modules/announcements/validation";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function currentTimeMs() {
   return Date.now();
@@ -199,7 +201,7 @@ export default async function AnnouncementsPage({
         actions={<SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>} 
       />
       <section aria-label="Announcements to placement cells" className="min-w-0 space-y-4">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Announcements to placement cells</h2>
+        <Heading level={2} size="lg" className="m-0 text-foreground">Announcements to placement cells</Heading>
         {broadcastFeed.length === 0 ? (
           <p className="border-y border-border py-6 text-sm text-muted-foreground">
             {params.q || params.receiverType || params.visibility || params.pinned || params.senderType || includeDeleted
@@ -227,10 +229,10 @@ export default async function AnnouncementsPage({
                     {first.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST
                   </time>
                 </div>
-                <h3 className="mt-2 text-base font-semibold text-foreground">{first.title}</h3>
+                <Heading level={3} size="base" className="mt-2 text-foreground">{first.title}</Heading>
                 <p className="mt-1 whitespace-pre-wrap text-sm text-body">{first.message}</p>
                 {first.buttonLabel && first.buttonUrl && /^https:\/\/[^\s]+$/i.test(first.buttonUrl)
-                  ? <a href={first.buttonUrl} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">{first.buttonLabel} ↗</a> : null}
+                  ? <TextLink href={first.buttonUrl} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm">{first.buttonLabel} ↗</TextLink> : null}
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
                   <span>{groupReceipt?
                     "Sent to "+target+" placement "+(target===1?"cell":"cells"):
@@ -259,22 +261,22 @@ export default async function AnnouncementsPage({
       </div>
       <section aria-label="Announcement management" className="min-w-0 space-y-4 border-t border-border pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div><h2 className="m-0 text-lg font-semibold text-foreground">Announcement management</h2>
+          <div><Heading level={2} size="lg" className="m-0 text-foreground">Announcement management</Heading>
             <p className="mt-1 text-sm text-muted-foreground">Search, filter, export and manage authorized announcements. Placement-cell broadcasts are grouped above.</p></div>
           <Link href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
             className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground hover:bg-[var(--lms-primary-subtle)]">
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
         </div>
-      <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto]">
+      <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
         <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search announcement title or message
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-[6px] w-full"/>
         </label>
-        <div className="order-last min-w-0 min-[768px]:col-span-3">
+        <div className="order-last min-w-0 md:col-span-3">
           <details className="group min-w-0 border-t border-[var(--lms-canvas-border)]">
             <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Filters <span aria-hidden="true">⌄</span></summary>
-            <div className="grid min-w-0 gap-3 pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4">
+            <div className="grid min-w-0 gap-3 pb-4 md:grid-cols-2 xl:grid-cols-4">
         <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Visibility
           <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-[6px]">
             <option value="">All visible states</option>
@@ -303,8 +305,8 @@ export default async function AnnouncementsPage({
             </div>
           </details>
         </div>
-        <Button type="submit" className="w-full min-[768px]:w-auto">Search</Button>
-        <Link href="/admin/announcements" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 min-[768px]:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
+        <Button type="submit" className="w-full md:w-auto">Search</Button>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Clear</Link>
       </form>
       {!targetsResult.ok?<Banner tone="warning" role="status"
         action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry targets</Link>}>
@@ -320,7 +322,7 @@ export default async function AnnouncementsPage({
         Placement-cell read counts are temporarily unavailable. Do not infer unread or zero reach.
       </Banner>:null}
       {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-6">
-       <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Placement-cell read receipts</h2>
+       <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Placement-cell read receipts</Heading>
        <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read. A 1-of-1 cell receipt is not the total reach of a multi-college broadcast.</p>
        <ul className="min-w-0 space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{
         const receipt=receipts.get(row.id)!;
@@ -353,10 +355,10 @@ export default async function AnnouncementsPage({
         ...(params.senderType ? {senderType:params.senderType} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
-      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export this filtered page (CSV)</Link>
+      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Export this filtered page (CSV)</Link>
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
+          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
             Older announcements
           </Link>
         </div>

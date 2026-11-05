@@ -9,6 +9,8 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoSelectionWorkspace} from "@/modules/placements/tpo-drive-selection-service";
 import {getPlacementDriveDay} from "@/modules/placements/drive-day-service";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic="force-dynamic";
 export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:string}>}){
@@ -35,20 +37,18 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
    actions={<Link href={root+"/offers"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Offer register</Link>}/>
   {eligibleActions?<section aria-label="Next selection actions"
     className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Next action for this drive</h2>
+    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Next action for this drive</Heading>
     <div className="flex min-w-0 flex-wrap gap-2">
       {readyToApply?<Link href={root+"/rounds/"+encodeURIComponent(readyToApply.id)+"/results"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-semibold text-white md:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] md:min-h-9">
         Apply {readyToApply.name} results · {readyToApply.count}
       </Link>:null}
-      {toVerify>0?<a href="#selections-release-actions"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
+      {toVerify>0?<ButtonLink variant="secondary" href="#selections-release-actions">
         Verify {toVerify} selections
-      </a>:null}
-      {toRelease>0?<a href="#selections-release-actions"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
+      </ButtonLink>:null}
+      {toRelease>0?<ButtonLink variant="secondary" href="#selections-release-actions">
         Release {toRelease} verified selections
-      </a>:null}
+      </ButtonLink>:null}
       {shareableApplicants>0?<Link href={root+"/share-preview"}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
         Share {shareableApplicants} eligible applicants with company

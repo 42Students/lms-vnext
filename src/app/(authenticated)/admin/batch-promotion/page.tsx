@@ -18,6 +18,7 @@ import { CollegePromotionPreviewError, listCollegePromotionOptions,
 import { readAdminPromotionParams, summarizeAdminPromotion } from "@/modules/academics/admin-batch-promotion-read-model";
 import { formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
 import { getPromotionTeachingForecast } from "@/modules/academics/college-promotion-teaching-forecast";
+import { Heading } from "@/components/ui/heading";
 
 export default async function SuperAdminBatchPromotionPage({
   searchParams,
@@ -28,13 +29,13 @@ export default async function SuperAdminBatchPromotionPage({
   if (!input.success) return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion" />
     <ErrorState title="Invalid batch promotion filters" description="Use consecutive years, e.g. 2026-27. Check the selected program and batch."
-      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion" />
     <div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-4 text-sm text-body">
-      <h2 className="font-semibold text-warning-text">Select a College to promote batches</h2>
+      <Heading level={2} className="text-warning-text">Select a College to promote batches</Heading>
       <p className="mt-1">Batch promotion is always college-scoped in Superadmin. Use the header Organization/College selector.</p>
     </div>
   </div>;
@@ -97,44 +98,44 @@ export default async function SuperAdminBatchPromotionPage({
     </div>
     <section className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-label="Batch Promotion">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 className="text-base font-semibold">Batch Promotion</h2>
+      <Heading level={2} size="base">Batch Promotion</Heading>
       <Link href={pageHref(currentPage)} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">
         <span aria-hidden="true" className="mr-1">↻</span> Refresh
       </Link>
     </div>
-    <form method="get" role="search" aria-label="Batch promotion preview filters" className="grid min-w-0 items-end gap-[8px] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 min-[1200px]:grid-cols-3">
+    <form method="get" role="search" aria-label="Batch promotion preview filters" className="grid min-w-0 items-end gap-[8px] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select name="programId" defaultValue={input.data.programId ?? ""}
-          className="min-h-11 min-[768px]:min-h-9">
+          className="min-h-11 md:min-h-9">
           <option value="">All programs</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
         </Select>
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
         <Select name="cohortId" defaultValue={input.data.cohortId ?? ""}
-          className="min-h-11 min-[768px]:min-h-9">
+          className="min-h-11 md:min-h-9">
           <option value="">Select a batch</option>
           {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
           {preview && !visibleCohorts.some(b => b.id === preview.batch.id) ?
             <option value={preview.batch.id}>{preview.batch.programName} · {preview.batch.name} ({preview.batch.status})</option> : null}
         </Select>
       </label>
-      <div className="order-last grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] min-[768px]:col-span-2 min-[768px]:grid-cols-2 min-[1200px]:col-span-3">
+      <div className="order-last grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:col-span-2 md:grid-cols-2 xl:col-span-3">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year start override
         <Input name="yearStart" type="text" inputMode="numeric" maxLength={7} pattern="[0-9]{4}-[0-9]{2}"
           placeholder="2026-27" title="Use consecutive years, e.g. 2026-27"
           defaultValue={input.data.yearStart!==undefined?formatPromotionAcademicYear(input.data.yearStart):""}
-          className="min-h-11 min-[768px]:min-h-9" />
+          className="min-h-11 md:min-h-9" />
         <span className="text-xs font-normal text-muted-foreground">Leave blank to use the system-suggested academic year. Use consecutive years, e.g. 2026-27.</span>
       </label>
       <label className="flex min-h-11 items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted}/> Show completed / inactive{options.cohorts.length-visibleCohorts.length>0?` (${options.cohorts.length-visibleCohorts.length})`:""}
       </label>
       </div>
-      <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto self-end">Preview</Button>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto self-end">Preview</Button>
     </form>
     <section aria-label="Batch promotion queue" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
-      <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Batches</h2>} defaultOpen contentClassName="pb-[var(--lms-space-4)]">
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Batches</Heading>} defaultOpen contentClassName="pb-[var(--lms-space-4)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
 
         <p role="status" className="text-sm text-muted-foreground">
@@ -188,16 +189,16 @@ export default async function SuperAdminBatchPromotionPage({
     previewFailed ? <ErrorState title="Couldn't verify promotion" description="Promotion preview failed. No promotion can be confirmed until the batch is rechecked."
       action={<Link href={pageHref(1)} className="font-semibold text-primary-text underline">Retry preview</Link>}/> :
     invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
-      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Reset selection</Link>} /> :
+      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Reset selection</Link>} /> :
     !preview || !summary ? <EmptyState title="Choose a batch" description="No learner data is fetched until you select a college-owned batch." /> :
     <>
       <section className="min-w-0 space-y-3 border-b border-border pb-5">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{preview.batch.name}</h2>
+          <Heading level={2} className="m-0 break-words text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">{preview.batch.name}</Heading>
           <StatusBadge tone={preview.simulatedReadiness ? "success" : "warning"}>{preview.simulatedReadiness ? "No detected blockers" : "Blocked or incomplete"}</StatusBadge>
         </div>
         <p className="text-sm text-body">{preview.batch.programName} · {preview.batch.status}</p>
-        <dl className="grid min-w-0 gap-0 divide-y divide-border border-y border-border min-[768px]:grid-cols-2 lg:grid-cols-4">
+        <dl className="grid min-w-0 gap-0 divide-y divide-border border-y border-border md:grid-cols-2 lg:grid-cols-4">
           {([
             ["Action", summary.action], ["Target term", summary.targetTerm ?? "Unavailable"],
             ["Learners checked", summary.learnersChecked], ["Learners with blockers", summary.blockedLearners],
@@ -228,22 +229,22 @@ export default async function SuperAdminBatchPromotionPage({
           ) : null}
       </section>
       <section className="border-b border-border pb-5">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Known batch blockers ({summary.knownBlockers})</h2>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Known batch blockers ({summary.knownBlockers})</Heading>
         {preview.blockers.length ? <ul className="mt-2 list-inside list-disc text-sm text-body">
           {preview.blockers.map(b => <li key={b}>{b.replaceAll("_", " ")}</li>)}
         </ul> : <p className="text-sm text-muted-foreground">No batch-level blocker was detected. Learner and runtime checks still apply.</p>}
       </section>
-      <Disclosure title={<h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Learner-level preview</h2>} contentClassName="space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+      <Disclosure title={<Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Learner-level preview</Heading>} contentClassName="space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
         <p className="text-xs text-muted-foreground">Showing at most 100 of {preview.learners.length} examined enrollments; a shortened display is not a complete readiness decision.</p>
         {preview.learners.length ? <div className="grid gap-3 md:grid-cols-2">
           {preview.learners.slice(0, 100).map(learner => <article key={learner.membershipId} className="min-w-0 border-b border-border py-3">
-            <h3 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{learner.name}</h3>
+            <Heading level={3} className="m-0 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{learner.name}</Heading>
             <p className="mt-1 text-sm text-body">Enrollment: {learner.enrollmentStatus}</p>
             <p className="mt-2 text-sm text-body">{learner.blockers.length ? learner.blockers.join(", ").replaceAll("_", " ") : "No detected learner blocker"}</p>
           </article>)}
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
       </Disclosure>
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">← Academics</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">← Academics</Link>
   </div>;
 }

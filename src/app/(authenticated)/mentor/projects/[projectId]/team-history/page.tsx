@@ -15,6 +15,7 @@ import {
   mentorTeamHistoryHref,
   mentorTeamHistoryQuerySchema,
 } from "@/modules/projects/mentor-team-history-model";
+import { Heading } from "@/components/ui/heading";
 
 type Raw = { view?: string | string[]; role?: string | string[]; primary?:string|string[]; order?:string|string[]; page?: string | string[] };
 const formatDate = (value: Date) => new Intl.DateTimeFormat("en-IN", {
@@ -93,7 +94,7 @@ export default async function MentorTeamHistoryPage({
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
               <article key={item.id} className="py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.displayName}</h2>
+                  <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">{item.displayName}</Heading>
                   <StatusBadge tone={item.endedAt ? "neutral" : "success"}>{item.state}</StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body leading-[22px]">

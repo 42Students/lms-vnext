@@ -16,6 +16,8 @@ import {ErrorState} from "@/components/ui/error-state";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
+import { Img } from "@/components/ui/img";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Filters=z.infer<typeof adminCompaniesQuerySchema>;
 
@@ -30,7 +32,7 @@ export function safeCompanyWebsite(raw:string|null){
 export function SuperAdminCompanyAvatar({name,url}:{name:string;url:string|null}){
  const safe=safeCompanyWebsite(url);
  return <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-primary-subtle)] text-xs font-semibold text-primary-text">
-  {safe?<img width={32} height={32} loading="lazy" alt="" src={safe} className="size-8 object-contain"/>:
+  {safe?<Img width={32} height={32} loading="lazy" alt="" src={safe} className="size-8 object-contain"/>:
    name.split(/\s+/).slice(0,2).map(word=>word[0]?.toUpperCase()??"").join("")}
  </span>;
 }
@@ -99,8 +101,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
    mode="GLOBAL" initialQuery={data.query.q} initialVerified={data.query.verified==="NOT_VERIFIED"}/>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
    <p role="status" className="text-sm text-body">Showing {data.rows.length.toLocaleString("en-IN")} of {data.total.toLocaleString("en-IN")} companies{data.query.q?" matching your search":""} · page {data.query.page} of {data.totalPages}</p>
-   {data.rows.length?<a download="companies.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(csv)}
-    className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">↓ Export CSV</a>:
+   {data.rows.length?<ButtonLink variant="secondary" download="companies.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(csv)}>↓ Export CSV</ButtonLink>:
     <Button type="button" variant="secondary" disabled>Export CSV</Button>}
   </div>
   <DataTable caption="42's curated company list" rows={data.rows} columns={columns}

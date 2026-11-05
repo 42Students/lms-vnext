@@ -21,6 +21,7 @@ import {
 import {
   checkedAssignmentFileDeclaration, refreshStagedAssignmentFile, uploadStagedAssignmentFile,
 } from "./assignment-staged-file-transfer";
+import { Heading } from "@/components/ui/heading";
 
 export function AssignmentFileSubmissionControl({
   assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,pdfOnly=false,uploadsAllowed=true,allowedMethods=ALL_ASSIGNMENT_METHODS,
@@ -183,7 +184,7 @@ export function AssignmentFileSubmissionControl({
   const maySubmit=staged.length>0?canSubmitStagedFiles(files):hasWrittenOrLinkParts;
 
   return <section aria-label="Assignment file submission" className="mt-4 min-w-0 space-y-3">
-    <h3 className="text-sm font-semibold text-foreground">{multipartEnabled?"Combined assignment submission":"File Upload"}</h3>
+    <Heading level={3} size="sm" className="text-foreground">{multipartEnabled?"Combined assignment submission":"File Upload"}</Heading>
     {uploadsAllowed?<p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>:null}
     {uploadsAllowed?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose a file to upload
       <Input type="file" multiple accept={pdfOnly?".pdf":acceptAttributeFor("assignment-submission")}

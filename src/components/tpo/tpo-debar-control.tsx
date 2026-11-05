@@ -14,6 +14,7 @@ import {
 import {
   type TpoMembershipDecisionSnapshot,
 } from "@/modules/placements/tpo-participation-model";
+import { Heading } from "@/components/ui/heading";
 
 type Feedback = { tone: "error" | "success"; message: string } | null;
 
@@ -81,7 +82,7 @@ export function TpoDebarControl({
 
   return (
     <section className="min-w-0 space-y-3 py-2">
-      <h3 className="text-base font-semibold text-foreground">Manual placement restriction</h3>
+      <Heading level={3} size="base" className="text-foreground">Manual placement restriction</Heading>
       <p className="rounded border border-border bg-muted p-3 text-sm text-body">
         This action sets a learner-level eligibility decision, not a timed debarment, job-specific ban, or removal of existing applications.
       </p>

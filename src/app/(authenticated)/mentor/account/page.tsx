@@ -9,6 +9,7 @@ import {MentorGoogleCalendarAccount} from "@/components/projects/mentor-google-c
 import {mentorGoogleConnectionState} from "@/modules/projects/mentor-google-calendar-connection-service";
 import {getMentorEmailPreference} from "@/modules/projects/mentor-email-preference-service";
 import {MentorEmailPreferenceControls} from "@/components/projects/mentor-email-preference-controls";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic="force-dynamic";
 export default async function MentorAccountPage(){
@@ -30,7 +31,7 @@ export default async function MentorAccountPage(){
   <PageHeader title="Mentor · My account"
     description="Your current college, contact details and assigned project teams."/>
   <section aria-label="Personal details" className="space-y-3 border-y border-border py-4">
-   <h2 className="text-lg font-semibold">Profile details</h2>
+   <Heading level={2} size="lg">Profile details</Heading>
    <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
     <div><dt className="text-sm text-muted-foreground">Name</dt>
       <dd className="font-medium">{account.name}</dd></div>
@@ -52,7 +53,7 @@ export default async function MentorAccountPage(){
    </Link>
   </section>
   <section aria-label="Mentor teams and courses" className="space-y-3">
-   <h2 className="text-lg font-semibold">Current Mentor assignments</h2>
+   <Heading level={2} size="lg">Current Mentor assignments</Heading>
    {account.projectsEnabled?<>
      <p><strong>{account.teamCount}</strong> assigned
        {" "}{account.teamCount===1?"team":"teams"} in your current college.</p>
@@ -64,7 +65,7 @@ export default async function MentorAccountPage(){
    </>:<p>Project access is disabled for this college.</p>}
   </section>
   <section aria-label="Connected services" className="space-y-3 border-t border-border pt-4">
-   <h2 className="text-lg font-semibold">Connected services</h2>
+   <Heading level={2} size="lg">Connected services</Heading>
    {googleConnection
      ? <MentorGoogleCalendarAccount {...googleConnection}/>
      : <p>Project calendar connections are disabled for this college.</p>}
@@ -78,7 +79,7 @@ export default async function MentorAccountPage(){
    </p>
   </section>
   <section aria-label="Account actions" className="space-y-3 border-t border-border pt-4">
-   <h2 className="text-lg font-semibold">Account actions</h2>
+   <Heading level={2} size="lg">Account actions</Heading>
    <AccountActions variant="other" showNotifications={false}/>
   </section>
  </div>;

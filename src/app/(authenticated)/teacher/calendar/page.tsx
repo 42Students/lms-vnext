@@ -18,6 +18,7 @@ import {
   currentIstMonth,facultyMonthHref,facultyMonthQuerySchema,istDateKey,shiftMonth,
 } from "@/modules/courses/faculty-ist-month-model";
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
+import { Heading } from "@/components/ui/heading";
 
 type Params=Record<string,string|string[]|undefined>;
 
@@ -92,7 +93,7 @@ export default async function FacultyCalendarPage({
       <div className="mt-4 space-y-4">
     <section aria-label="Upcoming classes" className="min-w-0 space-y-3 border-b border-border pb-4">
      <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 className="text-base font-semibold text-foreground">Next classes</h2>
+      <Heading level={2} size="base" className="text-foreground">Next classes</Heading>
       <p className="text-xs text-muted-foreground">{nextClasses.length} coming up · {schedule.courses.length} teaching sections</p>
      </div>
      {!upcomingRead.available?<details open className="min-w-0">
@@ -123,10 +124,10 @@ export default async function FacultyCalendarPage({
     <Disclosure title="Month view" className="min-w-0 border-t border-border pt-4" contentClassName="pt-4">
     <section className="min-w-0">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className={monthStyles.period}>
+        <Heading level={2} className={monthStyles.period}>
           {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",month:"long",year:"numeric"})
             .format(new Date(grid.query.month+"-01T12:00:00.000Z"))} · IST
-        </h2>
+        </Heading>
         <div className={monthStyles.nav}>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
             className={monthStyles.navLink} aria-label="Previous month">←</Link>
@@ -160,7 +161,7 @@ export default async function FacultyCalendarPage({
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </Alert>:null}
       <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className={monthStyles.scroll}>
-        <CalendarGrid variant="hairline" className={monthStyles.grid+" max-[767px]:!min-w-[770px]"}>
+        <CalendarGrid variant="hairline" className={monthStyles.grid+" max-md:!min-w-[770px]"}>
           {names.map((name,index)=><div key={name} className={monthStyles.weekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{name}</div>)}
           {grid.days.map(day=><section key={day.key}
             aria-label={day.key+" IST"} data-outside={!day.inMonth} data-today={day.key===todayIst} className={monthStyles.day}>
@@ -169,7 +170,7 @@ export default async function FacultyCalendarPage({
             </time>
             <div className="mt-2 space-y-2">
               {day.events.map(event=><article key={event.id}
-                className={monthStyles.dayEvent+" border-l-4 border-l-primary"}>
+                className={monthStyles.dayEvent+" border-l-2 border-l-primary"}>
                 <p className="text-xs font-semibold text-foreground leading-5">{event.title?.trim()||"Scheduled Class"}{event.courseName&&event.courseName!==event.title?" · "+event.courseName:""} ({event.sectionName||"Class"})</p>
                 <p className="text-xs text-body leading-5">
                   {new Intl.DateTimeFormat("en-IN",{

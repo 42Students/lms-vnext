@@ -3,6 +3,7 @@
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Browser previews are optional; third-party providers may disallow framing.
  * Only safe links checked by the server and recognisable image/PDF resources
@@ -23,15 +24,15 @@ export function MentorEvidencePreview({title,href,kind}:{
   return <>
     {previewable?<Button type="button" size="sm" variant="secondary"
       onClick={()=>setOpen(true)}>Zoom</Button>:null}
-    <a rel="noopener noreferrer" href={href}>Open full size ↗</a>
+    <TextLink rel="noopener noreferrer" href={href}>Open full size ↗</TextLink>
     {previewable?<Dialog title={"Preview · "+title}
       description="This preview is read-only. Some file providers block embedding; use Open full size if it does not load."
       open={open} onOpenChange={setOpen}>
       <div className="prototype-mentor-evidence-preview">
         <iframe title={"Evidence preview: "+title} sandbox=""
           referrerPolicy="no-referrer" loading="lazy" src={open?href:undefined} />
-        <div><a href={href} rel="noopener noreferrer">
-          Open full size ↗</a>
+        <div><TextLink href={href} rel="noopener noreferrer">
+          Open full size ↗</TextLink>
           <Button type="button" size="sm" variant="secondary" onClick={()=>setOpen(false)}>
             Close preview
           </Button>

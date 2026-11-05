@@ -41,6 +41,7 @@ import {
 import {
   listMyProjectInstances,
 } from "@/modules/projects/member-service";
+import { Heading } from "@/components/ui/heading";
 
 /** Four platform-level destinations from the old LMS; never show tenant counts without a selected college. */
 const PLATFORM_GLOBAL_LINKS = [
@@ -66,7 +67,7 @@ function MetricCard({
       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground leading-5">
         {label}
       </p>
-      <p className="mt-2 break-words text-2xl font-semibold tracking-tight tabular-nums text-foreground min-[768px]:text-3xl">
+      <p className="mt-2 break-words text-2xl font-semibold tracking-tight tabular-nums text-foreground md:text-3xl">
         {value}
       </p>
       <p className="mt-2 break-words text-sm leading-[22px] text-body">
@@ -78,12 +79,12 @@ function MetricCard({
   return href ? (
     <Link
       href={href}
-      className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] min-[768px]:p-[var(--lms-canvas-padding)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-canvas-border)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+      className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-canvas-border)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
     >
       {content}
     </Link>
   ) : (
-    <section className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] min-[768px]:p-[var(--lms-canvas-padding)]">
+    <section className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)]">
       {content}
     </section>
   );
@@ -100,9 +101,9 @@ async function SuperAdminDashboard({
       <PageHeader eyebrow="Super Admin" title="Overview" description="Platform-wide operations and navigation" />
       <section aria-labelledby="platform-operations-title" className="space-y-3">
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">Platform operations</p>
-        <h2 id="platform-operations-title" className="text-[var(--lms-font-xl)] font-semibold leading-7 text-[var(--lms-heading)] md:text-[var(--lms-font-2xl)]">
+        <Heading level={2} id="platform-operations-title" className="text-[var(--lms-font-xl)] leading-7 text-[var(--lms-heading)] md:text-[var(--lms-font-2xl)]">
           Choose the level you need to operate at.
-        </h2>
+        </Heading>
         <p className="max-w-3xl text-sm leading-[22px] text-body">
           Start with a platform-wide control below, or select a college in the header to switch this dashboard into that college&apos;s operational view.
         </p>
@@ -154,10 +155,10 @@ async function SuperAdminDashboard({
         description={`Hello, welcome to ${scopeLabel}. Counts and actions follow your selected college safety scope.`}
       />
       <section aria-label="Selected college greeting" className="space-y-1">
-        <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Your college at a glance</h2>
+        <Heading level={2} size="xl" className="text-[var(--lms-heading)]">Your college at a glance</Heading>
         <p className="text-sm text-body">Review this college’s activity and quick actions.</p>
       </section>
-      <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
+      <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Organizations"
           value={organizations.length}

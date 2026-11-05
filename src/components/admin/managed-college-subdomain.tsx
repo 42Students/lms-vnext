@@ -5,6 +5,8 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Alert} from "@/components/ui/alert";
 import {useRouter} from "next/navigation";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Managed={ready:boolean;baseDomain:string|null;currentHost:string|null};
 export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;initial:Managed}){
  const router=useRouter(),hintId=useId(),[state,setState]=useState(initial),[label,setLabel]=useState(
@@ -104,7 +106,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
  return <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
    aria-busy={busy||loading} aria-label="Managed college web address">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
-   <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Web address</h2>
+   <Heading level={2} size="lg" className="m-0 text-[var(--lms-heading)]">Web address</Heading>
    <Button type="button" size="sm" variant="secondary" disabled={!collegeId||busy||loading}
     onClick={()=>void reload()}>
     <svg width={15} height={15} viewBox="0 0 24 24" fill="none"
@@ -126,21 +128,21 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
   {!state.ready?<Alert tone="warning">
     One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.
    </Alert>:<>
-   {state.currentHost?<div role="status" className="flex flex-wrap items-center gap-2 rounded-md border border-[rgba(5,150,105,0.3)] bg-[var(--lms-success-subtle)] p-3 text-sm text-[var(--lms-success)]">
+   {state.currentHost?<div role="status" className="flex flex-wrap items-center gap-2 rounded-md border border-[color-mix(in_srgb,var(--lms-success)_30%,transparent)] bg-[var(--lms-success-subtle)] p-3 text-sm text-[var(--lms-success)]">
     <svg width={16} height={16} viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth={2} aria-hidden="true">
       <circle cx={12} cy={12} r={9}/><path d="m8 12 3 3 5-6"/>
     </svg>
     <strong>Live at</strong>
-    <a href={"https://"+state.currentHost} rel="noopener noreferrer"
-      className="inline-flex min-h-9 items-center gap-1 break-all font-semibold underline"
+    <TextLink href={"https://"+state.currentHost} rel="noopener noreferrer"
+      className="inline-flex min-h-9 items-center gap-1 break-all"
       aria-label={"Open "+state.currentHost}>
       {state.currentHost}
       <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
        stroke="currentColor" strokeWidth={2} aria-hidden="true">
        <path d="M12 4h8v8m0-8-9 9"/><path d="M20 14v6H4V4h6"/>
       </svg>
-    </a>
+    </TextLink>
    </div>:null}
    <label className="grid min-w-0 max-w-[560px] gap-1 text-[13px] font-semibold text-body">
     Subdomain

@@ -13,6 +13,7 @@ import {
   GroupReadError,
   getCollegeGroupDetail,
 } from "@/modules/groups/admin-read-service";
+import { Heading } from "@/components/ui/heading";
 
 type Detail = Awaited<ReturnType<typeof getCollegeGroupDetail>>;
 
@@ -98,7 +99,7 @@ export default async function CollegeGroupDetailPage({
         actions={<PageBackLink href="/college/groups" label="All groups" />}
       />
 
-      <section className="grid min-w-0 grid-cols-2 gap-[16px] border-b border-border pb-4 md:grid-cols-3 min-[992px]:grid-cols-5">
+      <section className="grid min-w-0 grid-cols-2 gap-[16px] border-b border-border pb-4 md:grid-cols-3 lg:grid-cols-5">
         <Stat title="Type" value={label(group.kind)} />
         <div>
           <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -170,7 +171,7 @@ export default async function CollegeGroupDetailPage({
       ) : null}
 
       <section className="min-w-0 space-y-3 border-b border-border pb-4">
-        <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Members</h2>
+        <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Members</Heading>
         {members.length === 0 ? (
           <EmptyState title="No members yet" description="Nobody has joined this group." />
         ) : (

@@ -7,6 +7,7 @@ import { getOwnLearnerProfileWithRuntime } from "@/modules/people/runtime";
 import { ownLearnerProfileReadiness } from "@/modules/people/learner-profile-readiness-model";
 import {learnerProfileChecklist} from "@/modules/people/learner-profile-checklist";
 import {learnerProfileCareerCoverage,learnerCareerCompletionMessage} from "@/modules/people/learner-profile-career-coverage-model";
+import { Heading } from "@/components/ui/heading";
 
 export default async function ProfileCompleteness({searchParams}:{
   searchParams:Promise<{show?:string|string[]}>;
@@ -32,7 +33,7 @@ export default async function ProfileCompleteness({searchParams}:{
     <PageHeader title="Profile completion checklist"
       description="Read-only coverage of the fields saved to your learner profile." />
     <section className="min-w-0 border-b border-border pb-4">
-      <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">{readiness.filled} of {readiness.total} sections filled</h2>
+      <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)]">{readiness.filled} of {readiness.total} sections filled</Heading>
       <p className="mt-2 text-sm font-semibold text-foreground">{career.percentage??0}% career profile complete · {learnerCareerCompletionMessage(career.percentage??0)}</p>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
         {readiness.missing} sections have no saved entries. This is not a verification, placement eligibility or application readiness score.
@@ -52,7 +53,7 @@ export default async function ProfileCompleteness({searchParams}:{
         href={"/learn/profile/completeness?show="+option.value}
         aria-current={readiness.show===option.value ? "page" : undefined}
         className={
-          "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-[var(--lms-neutral-200)] px-4 py-2 text-[13px] font-semibold leading-5 transition-[color,background,border-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9 " +
+          "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-[var(--lms-neutral-200)] px-4 py-2 text-[13px] font-semibold leading-5 transition-[color,background,border-color] duration-[var(--lms-motion-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9 " +
           (readiness.show===option.value ? "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)]" :
             "border-[var(--lms-neutral-200)] bg-transparent text-[var(--lms-neutral-500)] hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-primary)]")
         }>
@@ -60,7 +61,7 @@ export default async function ProfileCompleteness({searchParams}:{
       </Link>)}
     </nav>
     <section className="border-t border-border pt-4">
-      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Your sections</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)]">Your sections</Heading>
       {readiness.items.length===0 ? <p className="mt-3 text-sm text-body">
         No sections match this filter. Choose All sections to review the full checklist.
       </p> : <ul className="mt-4 divide-y divide-border border-y border-border">

@@ -57,7 +57,7 @@ export function TpoInterviewRescheduleForm({round}:{
   <label className="min-w-0 sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (audited)
    <Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={field}/></label>
   {error?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
-  <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-[650] text-on-primary disabled:opacity-50 sm:col-span-2 sm:w-auto">
+  <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 sm:col-span-2 sm:w-auto">
     {pending?"Rescheduling…":"Confirm interview reschedule"}</Button>
  </form></Disclosure><ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!pending)setConfirmOpen(next);}} pending={pending}
   title="Reschedule this interview?"

@@ -22,6 +22,7 @@ import { tpoDriveDaySortSchema, sortTpoDriveDayRows } from "@/modules/placements
 import { tpoDriveDayIssueSchema, filterTpoDriveDayIssues } from "@/modules/placements/tpo-drive-day-issue-filter-model";
 import { getTpoLiveDriveDaySummary, getTpoDriveDayQueue } from "@/modules/placements/tpo-live-drive-day-service";
 import { TpoDriveDayTodayList } from "@/components/tpo/tpo-drive-day-today-list";
+import { Heading } from "@/components/ui/heading";
 
 function formatWhen(
   value: Date | null,
@@ -82,11 +83,11 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           </summary>
           <div className="space-y-4 pt-3">
         {!snapshot?<TpoDriveDayLoadWarning/>:null}
-        <h2 className="text-lg font-semibold">Rounds happening now</h2>
+        <Heading level={2} size="lg">Rounds happening now</Heading>
         <form action="/tpo/drive-day" method="get" className="grid min-w-0 grid-cols-1 gap-[8px] sm:grid-cols-2 sm:items-end xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]" aria-label="Filter drive day">
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"/></label>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attendance focus<Select name="issue" defaultValue={issue.data} className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option><option value="UNKNOWN">Attendance not recorded</option><option value="UNRESOLVED">Pending or unrecorded</option><option value="ALL_UNRECORDED">No attendance entries recorded</option></Select></label>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Prioritize<Select name="sort" defaultValue={sort.data} className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="block min-h-11 md:min-h-[var(--lms-control-height)] mt-[6px]"/></label>
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attendance focus<Select name="issue" defaultValue={issue.data} className="block min-h-11 md:min-h-[var(--lms-control-height)] mt-[6px]"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option><option value="UNKNOWN">Attendance not recorded</option><option value="UNRESOLVED">Pending or unrecorded</option><option value="ALL_UNRECORDED">No attendance entries recorded</option></Select></label>
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Prioritize<Select name="sort" defaultValue={sort.data} className="block min-h-11 md:min-h-[var(--lms-control-height)] mt-[6px]"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
           <Button type="submit" className="min-h-11 w-full self-end bg-primary px-4 text-[var(--lms-on-primary)] md:min-h-[var(--lms-control-height)] xl:w-auto">Apply</Button>
         </form>
         <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Reset focus</Link></div>
@@ -104,9 +105,9 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           <div className="grid gap-4">
             {liveRows.map((round) => (
               <article key={round.id} className="border-b border-border py-4">
-                <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
+                <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{round.companyName} · {round.name}</h2>
+                    <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{round.companyName} · {round.name}</Heading>
                     <p className="text-sm text-body leading-[22px]">{round.jobTitle} · Started {
                       round.scheduledAt ? new Date(round.scheduledAt).toLocaleString("en-IN", {
                         timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
@@ -168,16 +169,16 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           {rounds.map((round) => (
             <article
               key={round.roundId}
-              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[12px] border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md sm:flex-row sm:items-center"
+              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[12px] border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-[var(--lms-motion-fast)] hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md sm:flex-row sm:items-center"
             >
               <div className="min-w-0">
                   <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-link leading-5">
                     Assigned round
                   </p>
-                  <h2 className="mt-1 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
+                  <Heading level={2} size="lg" className="mt-1 leading-[1.4] text-[var(--lms-heading)]">
                     {round.company} ·{" "}
                     {round.jobTitle}
-                  </h2>
+                  </Heading>
                   <p className="mt-1 text-sm text-body leading-[22px]">
                     {[round.roundName,formatWhen(round.startsAt,round.timezone),round.venue]
                       .filter(Boolean).join(" · ")}
@@ -188,7 +189,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     "/tpo/drive-day/" +
                     round.roundId
                   }
-                  className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-[650] transition hover:border-primary-hover hover:bg-primary-hover text-[var(--lms-on-primary)]"
+                  className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-semibold transition hover:border-primary-hover hover:bg-primary-hover text-[var(--lms-on-primary)]"
                 >
                   Open round
                 </Link>

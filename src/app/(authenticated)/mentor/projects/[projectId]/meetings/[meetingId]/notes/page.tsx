@@ -5,6 +5,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {MentorMeetingNotesEditor} from "@/components/projects/mentor-meeting-notes-editor";
 import {getMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-service";
 import {meetingNotesEditable} from "@/modules/projects/mentor-meeting-notes-model";
+import { Heading } from "@/components/ui/heading";
 export default async function MentorMeetingNotesPage({params}:{
   params:Promise<{projectId:string;meetingId:string}>;
 }){
@@ -19,7 +20,7 @@ export default async function MentorMeetingNotesPage({params}:{
         className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
         Meeting history</Link>}/>
     <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-      <h2 className="m-0 text-base font-semibold leading-6">Persisted meeting outcome</h2>
+      <Heading level={2} size="base" className="m-0 leading-6">Persisted meeting outcome</Heading>
       <p className="mt-2 text-sm text-body">
         {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
           timeZone:"Asia/Kolkata"}).format(m.startsAt)} IST · <StatusBadge tone={m.status==="COMPLETED"?"success":m.status==="CANCELLED"?"error":"neutral"}>{m.status}</StatusBadge>

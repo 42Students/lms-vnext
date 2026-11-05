@@ -11,6 +11,7 @@ import {shellUnreadBadge} from "../shell-counts-model";
 import {BellIcon} from "./icons";
 import style from "./topbar.module.css";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type PreviewResponse={items:MentorUnifiedNotification[];hasMore:boolean};
 /** The Mentor portal gets its own verified merged-source bell, not the generic
@@ -108,9 +109,9 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
    {badge?<span className={style.badge} aria-hidden="true">{badge}</span>:null}
   </Button>
   {open?<section role="dialog" aria-label="Recent Mentor notifications"
-    className="absolute right-0 top-full z-50 mt-2 max-h-[75vh] w-[min(22rem,90vw)] overflow-y-auto rounded-xl border border-border bg-surface p-3 shadow-xl">
+    className="absolute right-0 top-full z-(--lms-z-overlay) mt-2 max-h-[75vh] w-[min(22rem,90vw)] overflow-y-auto rounded-xl border border-border bg-surface p-3 shadow-xl">
    <div className="mb-3 flex items-center justify-between gap-2">
-    <h2 className="font-semibold">Recent notifications</h2>
+    <Heading level={2}>Recent notifications</Heading>
     <Button variant="bare" type="button" className="text-sm underline"
       onClick={()=>setOpen(false)}>Close</Button>
    </div>

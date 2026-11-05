@@ -24,6 +24,8 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportDetails } from "@/modules/placements/report-service";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -120,7 +122,7 @@ export default async function TpoPlacementSummaryPage({
       <Disclosure title="Offer statuses and lifecycle" className="border-y border-border py-3">
         <div className="min-w-0 space-y-4 pt-3">
       <section aria-label="Offers by current status" className="min-w-0 space-y-3 pt-3">
-       <h2 className="text-lg font-semibold">Offers by status</h2>
+       <Heading level={2} size="lg">Offers by status</Heading>
        <dl className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3">
         {([
          ["Released (all issued histories)",workspace.details.offers.totals.released],
@@ -179,14 +181,14 @@ export default async function TpoPlacementSummaryPage({
               <option value="NOT_RECORDED">Not recorded</option>
              </Select>
             </label>
-            <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:w-auto md:min-h-9">Apply</Button>
-            {(companyId||workMode||payCategory)?<a href={"/tpo/reports/placement-summary?"+
+            <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary sm:w-auto md:min-h-9">Apply</Button>
+            {(companyId||workMode||payCategory)?<TextLink href={"/tpo/reports/placement-summary?"+
              new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
-             }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
+             }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
               Clear drive dimensions
-             </a>:null}
+             </TextLink>:null}
 
           </form>
           {!validFilters?<Alert tone="error">

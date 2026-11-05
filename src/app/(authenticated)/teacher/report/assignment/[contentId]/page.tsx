@@ -23,6 +23,8 @@ import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {CoursesServiceError} from "@/modules/courses/errors";
 import { facultySubmissionListHref } from "@/modules/courses/faculty-assignment-submissions-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function FacultyAssignmentReportPage({
   params,
@@ -77,8 +79,8 @@ export default async function FacultyAssignmentReportPage({
     <div className="min-w-0 max-w-full space-y-6">
       {report.rosterUnavailable?<Banner tone="warning" role="status">
         Report is partially loaded. Known submissions and grades are shown, but the current student roster could not be verified. Not-submitted counts and completion rate are unknown.
-        <a className="ml-2 font-semibold text-primary-text underline"
-          href={"/teacher/report/assignment/"+encodeURIComponent(contentId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}>Retry roster</a>
+        <TextLink className="ml-2"
+          href={"/teacher/report/assignment/"+encodeURIComponent(contentId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}>Retry roster</TextLink>
       </Banner>:null}
       <nav aria-label="Assignment report navigation and download" className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <FacultyReportBackAction fallback="/teacher/allAssignments"/>
@@ -134,9 +136,9 @@ export default async function FacultyAssignmentReportPage({
         ))}
       </dl>
       <section aria-labelledby="section-score-distribution" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 id="section-score-distribution" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" id="section-score-distribution" className="leading-7 text-[var(--lms-heading)]">
           Score distribution
-        </h2>
+        </Heading>
         {metrics.graded===0?<p role="status" className="mt-3 text-sm text-muted-foreground leading-[22px]">
           No graded scores to chart yet.
         </p>:null}
@@ -173,9 +175,9 @@ export default async function FacultyAssignmentReportPage({
       </section>
 
       <section aria-labelledby="section-submission-timing" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 id="section-submission-timing" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" id="section-submission-timing" className="leading-7 text-[var(--lms-heading)]">
           Submission timing
-        </h2>
+        </Heading>
         {metrics.submitted===0?<p className="mt-3 text-sm text-muted-foreground">No submitted assignments to chart yet.</p>:
          <div role="img" aria-label={metrics.onTime+" on time, "+metrics.late+" late"}
           className="mt-4 flex h-4 min-w-0 overflow-hidden rounded-[4px] bg-[var(--lms-neutral-100)]">
@@ -192,9 +194,9 @@ export default async function FacultyAssignmentReportPage({
            </div>)}
         </dl>
 <div aria-labelledby="section-not-submitted" className="mt-4 border-t border-[var(--lms-canvas-border)] pt-3">
-        <h2 id="section-not-submitted" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
+        <Heading level={2} size="lg" id="section-not-submitted" className="leading-7 text-[var(--lms-heading)]">
           Not submitted
-        </h2>
+        </Heading>
         {report.rosterUnavailable ? <p className="mt-3 text-sm text-muted-foreground">Not-submitted status is unavailable until the roster is verified.</p> : missingLearners.length === 0 ? (
           <p className="mt-3 text-sm text-body leading-[22px]">
             Every currently eligible learner has submitted.
@@ -243,7 +245,7 @@ export default async function FacultyAssignmentReportPage({
         </Link>
       </section>
       <section aria-labelledby="section-view-submissions" id="submissions" className="scroll-mt-16 border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 id="section-view-submissions" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">View submissions</h2>
+        <Heading level={2} size="lg" id="section-view-submissions" className="leading-7 text-[var(--lms-heading)]">View submissions</Heading>
         <p className="mt-1 text-sm text-body">See who submitted and grade their work.</p>
         <FacultyAssignmentReview
         filesEnabled={assignmentFilesRuntimeEnabled()}

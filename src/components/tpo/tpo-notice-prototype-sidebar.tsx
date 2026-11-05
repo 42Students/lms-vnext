@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {useState} from "react";
 import { Input } from "@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
 
 export type TpoNoticePrototypeListRow={
  id:string;title:string;senderName:string|null;createdAt:string;
@@ -50,11 +51,11 @@ export function TpoNoticePrototypeSidebar({rows,activeId,tab,mine,page,nowIso}:{
    {groups.map(group=>{
     const matches=filtered.filter(row=>tab==="deleted"?group==="ENDED":state(row,now)===group);
     return matches.length?<section key={group} aria-label={group}>
-     <h2 className="bg-surface-secondary px-4 py-2 text-xs font-bold tracking-wide text-muted-foreground">{group}</h2>
+     <Heading level={2} size="xs" className="bg-surface-secondary px-4 py-2 tracking-wide text-muted-foreground">{group}</Heading>
      <ul className="divide-y divide-border">{matches.map(row=><li key={row.id}>
       <Link href={href(row.id)} aria-current={activeId===row.id?"page":undefined}
        className={"block min-h-11 px-4 py-3 hover:bg-primary-subtle "+(activeId===row.id?
-        "border-l-[3px] border-primary bg-primary-subtle":"")}>
+        "border-l-2 border-primary bg-primary-subtle":"")}>
        <p className="flex items-start justify-between gap-2">
         <strong className="min-w-0 break-words text-sm text-foreground">{row.isPinned?"📌 ":""}{row.title}</strong>
         <span className="shrink-0 text-xs text-muted-foreground">{formatDate(row.createdAt)}</span>

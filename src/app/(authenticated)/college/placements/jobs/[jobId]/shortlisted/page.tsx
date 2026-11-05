@@ -29,6 +29,8 @@ import { placementJobs, placementCompanyRelationships, placementCompanies } from
 import { and, eq } from "drizzle-orm";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { CollegeShortlistedLastGood } from "@/components/placements/college-shortlisted-last-good";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /**
  * Legacy Shortlisted workbench. Pipeline stage (ASSESSMENT by default) is the
@@ -162,9 +164,9 @@ export default async function CollegeDriveShortlistedPage({
     ]}/>
     <section aria-label="Drive summary" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{data.drive.title}</h2>
+        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">{data.drive.title}</Heading>
         <span className={"rounded-full px-3 py-1 text-xs font-semibold " +
-          (job?.status === "PUBLISHED" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700")}>
+          (job?.status === "PUBLISHED" ? "bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success)]" : "bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-text-body)]")}>
           {job?.status ?? "Status unavailable"}
         </span>
       </div>
@@ -181,13 +183,13 @@ export default async function CollegeDriveShortlistedPage({
     {assessmentLink && query.stage==="ASSESSMENT" ? <Alert tone="info">
       <div className="flex flex-wrap items-center gap-3">
         <div className="min-w-0 flex-1"><p className="font-semibold">Assessment link</p>
-          <a href={assessmentLink} rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center break-all font-mono text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{assessmentLink}</a></div>
+          <TextLink href={assessmentLink} rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center break-all font-mono text-sm">{assessmentLink}</TextLink></div>
         <CollegeAssessmentLinkCopy url={assessmentLink}/>
       </div>
     </Alert> : null}
     <section aria-labelledby="shortlisted-applications-title" className="space-y-2">
-      <h2 id="shortlisted-applications-title" className="text-lg font-semibold text-[var(--lms-heading)]">Applications · {data.total.toLocaleString("en-IN")}</h2>
+      <Heading level={2} size="lg" id="shortlisted-applications-title" className="text-[var(--lms-heading)]">Applications · {data.total.toLocaleString("en-IN")}</Heading>
       <p className="text-sm text-muted-foreground">Shortlisted is an Applications subview; review and manage each candidate using the stage tabs.</p>
     </section>
     <Tabs ariaLabel="Shortlisted pipeline stages" renderPanel={false} value={query.stage}
@@ -241,7 +243,7 @@ export default async function CollegeDriveShortlistedPage({
         query={{ ...query, source: "INTERNAL" }} legacyShortlisted />
     ) : null}
     {external.length ? <section className="min-w-0 space-y-3">
-      <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">External applications</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">External applications</Heading>
       <Alert tone="info">Externally sourced candidates are visible for review only. Bulk selection and stage changes are disabled here.</Alert>
       <DataTable caption="External shortlisted applications" rows={external} columns={externalColumns}
         getRowKey={row => row.id} empty={<EmptyState title="No external applications" description="No externally sourced applications match these filters."/>} />

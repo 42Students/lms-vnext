@@ -22,6 +22,7 @@ import {
 } from "@/modules/placements/tpo-settings-model";
 import { getCollegePlacementRules } from "@/modules/placements/tpo-policy-service";
 import { getTpoPlacementRulesSettings } from "@/modules/placements/tpo-settings-read-service";
+import { Heading } from "@/components/ui/heading";
 
 type SearchParams = Record<string,string|string[]|undefined>;
 function SettingsLayout({children}:{children:ReactNode}){
@@ -30,7 +31,7 @@ function SettingsLayout({children}:{children:ReactNode}){
   <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-[13.5rem_minmax(0,1fr)] md:gap-6">
    <TpoSettingsNav active="rules"/>
    <section className="min-w-0 space-y-5" aria-label="Placement rules settings">
-    <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Placement rules</h2>
+    <Heading level={2} size="xl" className="text-[var(--lms-heading)]">Placement rules</Heading>
     {children}
    </section>
   </div>
@@ -108,7 +109,7 @@ export default async function TpoPlacementRulesSettingsPage({
           description="The requested job page is invalid. No placement job records were loaded."
           action={
             <Link href="/tpo/settings/rules"
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Clear filters
             </Link>
           }
@@ -173,9 +174,9 @@ export default async function TpoPlacementRulesSettingsPage({
       <Disclosure title="Current college-wide offer policy" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section className="min-w-0 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <Heading level={3} size="base" className="m-0 leading-[26px] text-foreground md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
             College-wide offer policy
-          </h3>
+          </Heading>
           <StatusBadge
             tone={
               rules.source === "PERSISTED"
@@ -187,7 +188,7 @@ export default async function TpoPlacementRulesSettingsPage({
           </StatusBadge>
         </div>
 
-        <dl className="mt-5 grid gap-4 min-[768px]:grid-cols-2">
+        <dl className="mt-5 grid gap-4 md:grid-cols-2">
           <RuleValue
             label="Count learner as placed at"
             value={placedTriggerLabel(
@@ -224,9 +225,9 @@ export default async function TpoPlacementRulesSettingsPage({
       <Disclosure title="Fixed eligibility and participation behavior" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section className="space-y-4">
         <div>
-          <h3 className="sr-only">
+          <Heading level={3} className="sr-only">
             Fixed eligibility and participation behavior
-          </h3>
+          </Heading>
           <p className="mt-1 text-sm text-muted-foreground">
             These are source-defined rules and fallback
             behavior. They are not independently persisted
@@ -234,16 +235,16 @@ export default async function TpoPlacementRulesSettingsPage({
           </p>
         </div>
 
-        <div className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
           {TPO_FIXED_PLACEMENT_RULE_NOTES.map((note) => (
             <article
               key={note.title}
               className="border-b border-border py-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
-                <h4 className="m-0 text-sm font-semibold text-foreground">
+                <Heading level={4} size="sm" className="m-0 text-foreground">
                   {note.title}
-                </h4>
+                </Heading>
                 <StatusBadge tone="info">
                   Fixed
                 </StatusBadge>
@@ -266,9 +267,9 @@ export default async function TpoPlacementRulesSettingsPage({
       <Disclosure title="Job-specific academic eligibility" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 pt-3">
       <section className="space-y-4">
         <div>
-          <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <Heading level={3} size="base" className="m-0 leading-[26px] text-foreground md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
             Job-specific academic eligibility
-          </h3>
+          </Heading>
           <p className="mt-1 text-sm leading-6 text-body">
             The latest placement jobs in this college,
             with their persisted eligibility thresholds
@@ -306,9 +307,9 @@ export default async function TpoPlacementRulesSettingsPage({
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h4 className="m-0 text-base font-semibold text-foreground">
+                    <Heading level={4} size="base" className="m-0 text-foreground">
                       {job.title}
-                    </h4>
+                    </Heading>
                     <p className="mt-1 text-xs text-muted-foreground">
                       Job status: {job.status}
                     </p>
@@ -435,7 +436,7 @@ export default async function TpoPlacementRulesSettingsPage({
                     ? "/tpo/settings/rules"
                     : `/tpo/settings/rules?page=${result.page - 1}`
                 }
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 ← Previous
               </Link>
@@ -443,7 +444,7 @@ export default async function TpoPlacementRulesSettingsPage({
             {result.page < result.totalPages ? (
               <Link
                 href={`/tpo/settings/rules?page=${result.page + 1}`}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Next →
               </Link>

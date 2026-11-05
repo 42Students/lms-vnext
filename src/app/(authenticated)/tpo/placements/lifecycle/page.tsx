@@ -23,6 +23,8 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {TpoLifecycleRefreshAction,TpoLifecycleStaleSnapshot} from "@/components/placements/tpo-lifecycle-stale-snapshot";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Search = { request?:string|string[]; cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];tab?:string|string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];recruiterDriveMode?:string|string[];employmentType?:string|string[];jobTypeLabel?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -161,18 +163,18 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <Link href={exportHref("ALL")} className="rounded-[var(--lms-control-radius)] px-3 py-2 font-semibold text-primary-text hover:bg-primary-subtle">Export all matching drives (CSV)</Link>
           </nav>
         </Dropdown>
-        <Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgba(38,186,199,0.35)] md:min-h-9 md:w-auto"><span aria-hidden="true" className="mr-2 text-base font-bold">＋</span>Create drive</Link>
+        <Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[color-mix(in_srgb,var(--lms-primary)_35%,transparent)] md:min-h-9 md:w-auto"><span aria-hidden="true" className="mr-2 text-base font-bold">＋</span>Create drive</Link>
       </>} />
     {data.needsReviewCount>0?<section aria-label="Recruiters asked for a drive"
      data-testid="tpo.drives.request-cards" className="space-y-2">
-     <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+     <Heading level={2} size="xs" className="uppercase tracking-wide text-muted-foreground">
       Recruiters asked for a drive · {data.needsReviewCount}
-     </h2>
+     </Heading>
      {requestPreview?.requestsAvailable?<div className="grid gap-3 md:grid-cols-2">
       {requestPreview.requestRows.filter(item=>item.reviewRequired).slice(0,2).map(item=>
        <article key={item.id} className="min-w-0 rounded-xl border border-warning-border bg-warning-subtle p-4">
         <div className="flex flex-wrap justify-between gap-2">
-         <h3 className="font-semibold text-foreground">{item.company} · {item.title}</h3>
+         <Heading level={3} className="text-foreground">{item.company} · {item.title}</Heading>
          <StatusBadge tone={driveRequestStatusTone(item.status)}>{driveRequestStatusLabel(item.status)}</StatusBadge>
         </div>
         <p className="mt-2 text-sm text-body">{item.recruiterEmail??"Recruiter contact unavailable"}
@@ -235,7 +237,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </Select>
       </label>
-      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Batch
+      <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:min-w-0 max-md:basis-full">Batch
         <Select name="cohortId" defaultValue={data.cohortId??""}
           className="mt-[6px] block w-full">
           <option value="">All batches</option>
@@ -252,8 +254,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <details open={advancedFiltersActive} className="min-w-0 w-full flex-1 basis-full sm:basis-0">
           <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Filters</summary>
           <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 lg:grid-cols-3">
-          <h3 className="sm:col-span-2 lg:col-span-3 font-semibold text-foreground">Drive</h3>
-      <h3 className="sm:col-span-2 lg:col-span-3 mt-2 font-semibold text-foreground">People</h3>
+          <Heading level={3} className="sm:col-span-2 lg:col-span-3 text-foreground">Drive</Heading>
+      <Heading level={3} className="sm:col-span-2 lg:col-span-3 mt-2 text-foreground">People</Heading>
       <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
         <Select name="companyId" defaultValue={data.companyId??""}
           className="mt-[6px] block w-full">
@@ -261,14 +263,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
         </Select>
       </label>
-      {data.view!=="REQUESTS"?<label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Created by
+      {data.view!=="REQUESTS"?<label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:min-w-0 max-md:basis-full">Created by
         <Select name="ownerUserId" defaultValue={data.ownerUserId??""}
           className="mt-[6px] block w-full">
           <option value="">Any creator</option>
           {data.owners.map(owner=><option key={owner.id} value={owner.id}>{owner.name??"College staff"}</option>)}
         </Select>
       </label>:null}
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Lifecycle
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:min-w-0 max-md:basis-full">Lifecycle
         <Select name="view" defaultValue={data.view}
           className="mt-[6px] block w-full">
           <option value="ALL">All jobs</option><option value="REQUESTS">Requests</option><option value="DRAFT">Drafts</option>
@@ -276,7 +278,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </Select>
       </label>
 
-      <h3 className="sm:col-span-2 lg:col-span-3 mt-2 font-semibold text-foreground">Timing</h3>
+      <Heading level={3} className="sm:col-span-2 lg:col-span-3 mt-2 text-foreground">Timing</Heading>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applications close
         <Select name="deadline" defaultValue={data.deadline} className="mt-[6px] block w-full">
           <option value="ALL">All deadlines</option>
@@ -291,7 +293,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="DETAILED">Default columns</option><option value="COMPACT">Compact columns</option>
         </Select>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Where it is
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:min-w-0 max-md:basis-full">Where it is
         <Select name="journey" defaultValue={data.journey}
           className="mt-[6px] block w-full">
           <option value="ALL">Every stage</option>
@@ -330,7 +332,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="DEADLINE_DESC">Latest recorded deadline</option>
         </Select>
       </label>
-      <h3 className="sm:col-span-2 lg:col-span-3 mt-2 font-semibold text-foreground">Pay and response</h3>
+      <Heading level={3} className="sm:col-span-2 lg:col-span-3 mt-2 text-foreground">Pay and response</Heading>
       <label className="min-w-32 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Min. applied
         <Input name="minApplied" type="number" disabled={!data.countsAvailable} min={0} max={100000} defaultValue={data.minApplied??""}
           className="mt-[6px] block w-full"/>
@@ -347,7 +349,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <Input name="maxOffers" type="number" disabled={!data.countsAvailable} min={0} max={100000} defaultValue={data.maxOffers??""}
           className="mt-[6px] block w-full"/>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:min-w-0 max-[767px]:basis-full">Pay category
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:min-w-0 max-md:basis-full">Pay category
         <Select name="payCategory" defaultValue={data.payCategory}
           className="mt-[6px] block w-full">
           <option value="ALL">All categories</option><option value="REGULAR">Regular</option>
@@ -361,7 +363,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </div>
     </form>
     {!data.countsAvailable?<Alert tone="warning">Could not load applicant and pipeline counts. Count-dependent filters are unavailable; the drive list remains accessible. Refresh to retry.</Alert>:null}
-    {supportError?<Alert tone="warning">Job type filters are unavailable. The drive list remains available; retry to load the missing filter choices. <a href={retryHref} className="ml-2 inline-flex min-h-11 items-center font-semibold underline underline-offset-4 md:min-h-9">Retry missing data</a></Alert>:null}
+    {supportError?<Alert tone="warning">Job type filters are unavailable. The drive list remains available; retry to load the missing filter choices. <TextLink href={retryHref} className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Retry missing data</TextLink></Alert>:null}
     <TpoDriveSavedViews scopeKey={savedViewScope}/>
 
     {data.view==="REQUESTS" ? (!data.requestsAvailable ?
@@ -371,11 +373,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <p role="status" className="text-sm leading-[1.6]">{data.totalMatching} recruiter drive requests</p>
         {data.requestRows.length>0?<div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(250px,350px)_minmax(0,1fr)]" data-testid="tpo.drives.prototype-request-review">
          <aside className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface" aria-label="Recruiter drive request queue">
-          <h3 className="border-b border-border px-4 py-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">Recruiters asked for a drive</h3>
+          <Heading level={3} size="xs" className="border-b border-border px-4 py-3 uppercase tracking-wide text-muted-foreground">Recruiters asked for a drive</Heading>
           <ul className="divide-y divide-border">{data.requestRows.map(item=><li key={item.id}>
            <Link href={requestHref(item.id)} aria-current={selectedDriveRequest?.id===item.id?"page":undefined}
             className={"block min-h-11 px-4 py-3 hover:bg-primary-subtle "+(selectedDriveRequest?.id===item.id?
-             "border-l-[3px] border-primary bg-primary-subtle":"")}>
+             "border-l-2 border-primary bg-primary-subtle":"")}>
             <strong className="block break-words text-sm text-foreground">{item.company} · {item.title}</strong>
             <span className="mt-1 block text-xs text-body">{driveRequestStatusLabel(item.status)} ·
              {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(new Date(item.createdAt))}</span>
@@ -386,13 +388,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           {selectedDriveRequest?<><header className="border-b border-border p-4">
            <Link href="/tpo/placements/lifecycle?view=REQUESTS" className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9">Back to requests</Link>
            <p className="mt-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">A recruiter asked for a drive</p>
-           <h2 className="mt-1 break-words text-xl font-bold text-foreground">{selectedDriveRequest.company} · {selectedDriveRequest.title}</h2>
+           <Heading level={2} size="xl" className="mt-1 break-words text-foreground">{selectedDriveRequest.company} · {selectedDriveRequest.title}</Heading>
            <p className="mt-1 text-sm text-body">Requested {new Intl.DateTimeFormat("en-IN",{
             timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(selectedDriveRequest.createdAt))} · {driveRequestStatusLabel(selectedDriveRequest.status)}</p>
           </header>
           <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_270px]">
            <div className="min-w-0 space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">What they asked for · checked for you</h3>
+            <Heading level={3} size="xs" className="uppercase tracking-wide text-muted-foreground">What they asked for · checked for you</Heading>
             <dl className="divide-y divide-border text-sm">
              {([
               ["Role",selectedDriveRequest.title],["Company",selectedDriveRequest.company],
@@ -404,7 +406,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
              </div>)}
             </dl>
             {selectedDriveRequest.changes?<section className="space-y-2">
-             <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">What changed since the previous request</h3>
+             <Heading level={3} size="xs" className="uppercase tracking-wide text-muted-foreground">What changed since the previous request</Heading>
              {selectedDriveRequest.changes.filter(change=>change.changed).length===0?
               <p className="text-sm text-body">No changes in the compared categories.</p>:
               <dl className="divide-y divide-border">{selectedDriveRequest.changes.filter(change=>change.changed).map(change=>
@@ -416,7 +418,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <p className="text-xs leading-5 text-muted-foreground">Eligibility, pay, dates and student fit must be verified in the draft before publishing. This preview does not infer a learner audience.</p>
            </div>
            <aside className="min-w-0 space-y-3 rounded-lg border border-border p-4" aria-label="Your answer">
-            <h3 className="text-lg font-bold">Your answer</h3>
+            <Heading level={3} size="lg">Your answer</Heading>
             {selectedDriveRequest.accessEnded?<Alert tone="warning">Recruiter access ended. Finish the review as the placement cell.</Alert>:null}
             {selectedDriveRequest.status==="REQUEST"||selectedDriveRequest.status==="SENT_BACK"?
              <><p className="text-sm text-body">Approve creates an unpublished draft. You can review dates, eligibility and audience before separately publishing.</p>
@@ -428,7 +430,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <p className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">Your decision is version checked, recorded in the audit history, and notified in-app. No recruiter email is assumed delivered.</p>
            </aside>
           </div></>:<div role="status" className="space-y-3 p-5">
-           <h3 className="font-semibold">This request is not on the current authorized page.</h3>
+           <Heading level={3}>This request is not on the current authorized page.</Heading>
            <p className="text-sm text-body">No other request was substituted. Return to the queue or change pages.</p>
            <Link href={requestHref()} className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear selection</Link>
           </div>}
@@ -441,12 +443,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             action={<Link href="/tpo/placements/lifecycle?view=DRAFT" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Drafts</Link>}/>:
           data.requestRows.map(item=><article key={item.id} className="border-b border-border py-4">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
-              <h2 className="min-w-0 break-words font-semibold">{item.company} · {item.title}</h2>
+              <Heading level={2} className="min-w-0 break-words">{item.company} · {item.title}</Heading>
               <StatusBadge tone={driveRequestStatusTone(item.status)}>{driveRequestStatusLabel(item.status)}</StatusBadge>
             </div>
             <p className="text-xs text-muted-foreground">Request ID: {item.id}</p>
             <section aria-label="Recruiter contact" className="mt-2 space-y-1 text-sm">
-             <h3 className="font-semibold">Recruiter</h3>
+             <Heading level={3}>Recruiter</Heading>
              <p>Email: {item.recruiterEmail??"Not recorded"} · Phone: {item.recruiterPhone??"Not recorded"}</p>
              {item.verificationStatus!=="VERIFIED"?<p className="text-[var(--lms-gold-accent)]">Unverified</p>:null}
              {item.accessEnded?<Alert tone="error">Recruiter access ended. Finish this drive yourself.</Alert>:null}
@@ -477,9 +479,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         </nav>
       </section>
     ) : <>
-      <section aria-label="Drive lifecycle counts" className="grid min-w-0 grid-cols-1 gap-0 border-y border-[var(--lms-canvas-border)] min-[768px]:grid-cols-4">
+      <section aria-label="Drive lifecycle counts" className="grid min-w-0 grid-cols-1 gap-0 border-y border-[var(--lms-canvas-border)] md:grid-cols-4">
         {metrics.map(([name,n]) =>
-          <div key={name} className="min-w-0 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] min-[768px]:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0">
+          <div key={name} className="min-w-0 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] md:border-b-0 md:border-r md:last:border-r-0">
             <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{name}</p>
             <p className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{n}</p>
           </div>)}
@@ -496,7 +498,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             description={data.view==="LIVE"?"Published opportunities appear here once ready.":
              data.view==="DRAFT"?"Create a drive to start planning the next hiring opportunity.":
              data.view==="CLOSED"?"Completed and cancelled opportunities appear here.":
-              "No non-archived jobs match the selected season and filters."} action={<Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text sm:w-auto md:min-h-9">Create drive</Link>} />
+              "No non-archived jobs match the selected season and filters."} action={<Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Create drive</Link>} />
 
         </div> :
         <div className="min-w-0 space-y-3">
@@ -673,8 +675,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
          </details>
         </div>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
-       {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:<span/>}
-       {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+       {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:<span/>}
+       {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
       </nav>
     </>}
     </section>

@@ -14,6 +14,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {COURSE_TEACHING_ROLES,type CourseTeachingRole} from "@/modules/courses/constants";
 import {facultyAssignmentRoleLabel} from "@/modules/courses/college-courses-copy";
+import { Heading } from "@/components/ui/heading";
 
 type Delivery={id:string;sectionId:string;courseCode:string;courseName:string;sectionName:string;
   cohortName:string;academicPeriodName:string;endedAt:Date|null;programName?:string};
@@ -93,7 +94,7 @@ export function SuperAdminFacultyAssignmentCreate({
  }
  const inputClass="min-h-11 w-full md:min-h-9";
  return <section aria-label="Create teaching assignment" className="min-w-0 space-y-3 print:hidden">
-   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Create teaching assignment</h2>
+   <Heading level={2} size="base" className="text-[var(--lms-heading)]">Create teaching assignment</Heading>
    {!available.length?<p role="status" className="text-sm text-body leading-[22px]">
     Create an active course offering and class delivery before assigning a teacher.
    </p>:null}

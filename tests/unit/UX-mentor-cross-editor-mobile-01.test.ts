@@ -17,7 +17,7 @@ it("UX-mentor-cross-F04 keeps mobile editors accessible, 16px text and linked re
  expect(n).toContain("<Textarea");
  expect(b).toContain("p-2 text-base focus-visible:outline-2");
  expect(sharedInput).toContain("focus-visible:outline-2");
- expect(sharedInput).toContain("max-[767px]:min-h-11");
+ expect(sharedInput).toContain("max-md:min-h-11");
  expect(sharedTextarea).toContain("text-[var(--lms-font-base)]");
  expect(sharedTextarea).toContain("focus-visible:outline-2");
 });

@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {useToast} from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 type SettingReceipt = {
   key:string;
@@ -82,7 +83,7 @@ export function CourseProgressPolicyEditor({
 
   return <section aria-label="Progress policy" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
     <div className="flex flex-wrap items-center gap-3">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Progress policy</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Progress policy</Heading>
       <StatusBadge tone={overridden?"info":"neutral"}>
         {overridden?"Custom for platform":"Default (5%)"}
       </StatusBadge>

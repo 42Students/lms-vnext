@@ -1,6 +1,7 @@
 "use client";
 
 import {Badge} from "@/components/ui/badge";
+import { Heading } from "@/components/ui/heading";
 
 /** Authorized, read-only snapshot of one pinned template version.
  * Super Admin editing uses the separate permission-gated, versioned
@@ -80,9 +81,9 @@ export function ProjectTemplateView({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <section className="min-w-0 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">
           Overview
-        </h2>
+        </Heading>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
           {data.overview?.goal?.trim() ||
             "No project goal recorded."}
@@ -97,28 +98,28 @@ export function ProjectTemplateView({
         </dl>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-[var(--lms-heading)]">
+            <Heading level={3} size="sm" className="mb-2 text-[var(--lms-heading)]">
               Deliverables
-            </h3>
+            </Heading>
             {list(data.overview?.deliverables)}
             {(!data.overview?.deliverables?.some(value=>value.trim()))?
               <p className="mt-2 text-xs text-muted-foreground">No deliverables recorded in this version.</p>:null}
           </div>
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-[var(--lms-heading)]">
+            <Heading level={3} size="sm" className="mb-2 text-[var(--lms-heading)]">
               Definition of done
-            </h3>
+            </Heading>
             {list(data.overview?.definitionOfDone)}
           </div>
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-[var(--lms-heading)]">Personas</h3>
+            <Heading level={3} size="sm" className="mb-2 text-[var(--lms-heading)]">Personas</Heading>
             {list(data.overview?.personas)}
           </div>
         </div>
       </section>
 
       {data.legacy ? <section aria-label="Imported template metadata" className="border-b border-border pb-4">
-        <h2 className="font-semibold">Source template metadata</h2>
+        <Heading level={2}>Source template metadata</Heading>
         <dl className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
           <div><dt>Course</dt><dd>{data.legacy.courseLabel||"Not recorded"}</dd></div>
           <div><dt>Phase</dt><dd>{data.legacy.phase||"Not recorded"}</dd></div>
@@ -127,7 +128,7 @@ export function ProjectTemplateView({
         </dl>
       </section> : null}
       <section className="border-b border-border pb-4" aria-label="Template submission settings">
-          <h2 className="font-semibold">Submission settings</h2>
+          <Heading level={2}>Submission settings</Heading>
           <p className="mt-2 text-xs font-semibold text-body">
             Type: {data.overview?.submissionType==="LINK"?"Link":data.overview?.submissionType==="FILE"?"File upload":data.overview?.submissionType==="TEXT"?"Text":"Not recorded"}</p>
           <p className="mt-2 whitespace-pre-wrap break-words text-sm">
@@ -175,9 +176,9 @@ function TemplateRows({
   return (
     <section className="border-b border-border pb-[16px]">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">
           {title}
-        </h2>
+        </Heading>
         <Badge tone="neutral">
           {rows?.length ?? 0}
         </Badge>

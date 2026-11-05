@@ -12,6 +12,8 @@ import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel
 import {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 import {CollegeDrivePipelineOverview,CollegeDriveAttentionBanner} from "@/components/placements/college-drive-pipeline-overview";
 import {CollegeDriveDuplicateAction} from "@/components/placements/college-drive-duplicate-action";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 export default async function CollegeDriveOverviewPage({ params }: {
   params: Promise<{ jobId: string }>;
@@ -80,14 +82,14 @@ export default async function CollegeDriveOverviewPage({ params }: {
     </nav>
     <PageHeader title="Drive overview" description={drive.companyName+" · "+drive.seasonName}/>
     {attention?<CollegeDriveAttentionBanner jobId={jobId} attention={attention}/>:null}
-    <section aria-label="Drive company and role" className={"min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] border-l-[3px] bg-surface p-[var(--lms-space-4)] "+(drive.status==="PUBLISHED"?"border-l-[color:var(--lms-success-strong)]":drive.status==="DRAFT"?"border-l-[color:var(--lms-icon-amber)]":"border-l-[color:var(--lms-neutral-400)]")}>
+    <section aria-label="Drive company and role" className={"min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] border-l-2 bg-surface p-[var(--lms-space-4)] "+(drive.status==="PUBLISHED"?"border-l-[color:var(--lms-success-strong)]":drive.status==="DRAFT"?"border-l-[color:var(--lms-icon-amber)]":"border-l-[color:var(--lms-neutral-400)]")}>
       <div className="flex min-w-0 flex-wrap items-start gap-[var(--lms-space-4)]">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle text-lg font-semibold text-[var(--lms-heading)]" aria-label={drive.companyName+" company logo"}>
-          {drive.companyLogoUrl?<img alt="" src={drive.companyLogoUrl} referrerPolicy="no-referrer" width={56} height={56} className="size-14 object-contain" />:
+          {drive.companyLogoUrl?<Img alt="" src={drive.companyLogoUrl} referrerPolicy="no-referrer" width={56} height={56} className="size-14 object-contain" />:
           <span aria-hidden="true">{initials}</span>}
         </div>
         <div className="min-w-0 flex-1 space-y-1">
-          <h2 className="break-words text-xl font-semibold text-[var(--lms-heading)]">{drive.title}</h2>
+          <Heading level={2} size="xl" className="break-words text-[var(--lms-heading)]">{drive.title}</Heading>
           <p className="text-sm text-body">{drive.companyName}</p>
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <StatusBadge tone={expired?"warning":drive.status==="PUBLISHED"?"success":drive.status==="DRAFT"?"warning":drive.status==="CANCELLED"?"error":"neutral"}>{statusLabel}</StatusBadge>
@@ -125,7 +127,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
       </div>
     </section>
     <section aria-label="Drive pipeline" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Pipeline</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Pipeline</Heading>
       {!overview||!funnel?<Alert tone="warning">Could not load pipeline metrics. The drive header remains available, but application and funnel counts could not be verified. Missing counts have not been treated as zero.
         <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/overview`} className="ml-2 font-semibold text-link underline">Retry</Link>
       </Alert>:null}

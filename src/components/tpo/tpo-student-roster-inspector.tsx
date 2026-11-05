@@ -3,6 +3,7 @@ import Link from "next/link";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {Button} from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 function initials(name:string){
  return name.trim().split(/\s+/).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join("")||"S";
@@ -34,7 +35,7 @@ export function TpoStudentRosterInspector({student,onDetails,onDismiss}:{
     {initials(student.displayName)}
    </span>
    <div className="min-w-0 flex-1">
-    <h3 className="break-words text-base font-bold text-foreground">{student.displayName}</h3>
+    <Heading level={3} size="base" className="break-words text-foreground">{student.displayName}</Heading>
     <p className="mt-1 break-words text-xs leading-5 text-body">
      {student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName} · {student.cohortName}
     </p>
@@ -87,7 +88,7 @@ export function TpoStudentRosterInspector({student,onDetails,onDismiss}:{
    </p>:null}
   </dl>
   <section aria-label="Student profile checklist" className="mt-4 border-t border-border pt-3">
-   <h4 className="mb-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">Profile</h4>
+   <Heading level={4} size="xs" className="mb-2 uppercase tracking-wide text-muted-foreground">Profile</Heading>
    <dl className="space-y-2">
     {profile.map(item=><div key={item.label} className="flex items-start justify-between gap-3 text-[13px]">
      <dt className="text-body">{item.label}</dt>

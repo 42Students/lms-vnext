@@ -8,6 +8,7 @@ import {getTpoDriveDiscussion} from "@/modules/placements/tpo-drive-discussion-s
 import {getDriveChangeRequestDiscussionContext} from "@/modules/placements/tpo-drive-change-request-service";
 import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
 import {PlacementsServiceError} from "@/modules/placements/errors";
+import { Heading } from "@/components/ui/heading";
 
 export default async function TpoDriveDiscussion({params,searchParams}:{
  params:Promise<{jobId:string}>;
@@ -48,9 +49,9 @@ export default async function TpoDriveDiscussion({params,searchParams}:{
    <p role="status" className="mb-2 text-sm text-body leading-[1.6]">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
    <ul className="min-w-0 divide-y divide-border border-y border-border">{data.threads.map(thread=><li key={thread.id} className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
     <div className="min-w-0 flex-1 space-y-1">
-     <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{thread.recruiterName?.trim()||"Recruiter"}</h2>
+     <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{thread.recruiterName?.trim()||"Recruiter"}</Heading>
      {thread.recentMessages.length>0?
-      <div className="mt-2 max-h-80 space-y-2 overflow-y-auto border-l-[3px] border-border pl-3" aria-label={"Recent messages with "+(thread.recruiterName||"recruiter")}>
+      <div className="mt-2 max-h-80 space-y-2 overflow-y-auto border-l-2 border-border pl-3" aria-label={"Recent messages with "+(thread.recruiterName||"recruiter")}>
        {thread.recentMessages.map(message=><blockquote key={message.id}
          className="min-w-0 rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-sm">
          <p className="mb-1 text-xs font-semibold text-body">

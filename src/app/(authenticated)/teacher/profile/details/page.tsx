@@ -8,6 +8,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { FacultyProfileEditor } from "@/components/people/faculty-profile-editor";
 import { facultyProfileDocumentStorageReady } from "@/modules/people/faculty-profile-readiness";
 import { loadOwnFacultyProfileDocumentStaged } from "@/modules/people/faculty-profile-self.staged";
+import { Heading } from "@/components/ui/heading";
 export const dynamic="force-dynamic";
 export default async function FacultyProfileDetailsPage({searchParams}:{
  searchParams:Promise<{section?:string|string[]}>
@@ -39,7 +40,7 @@ export default async function FacultyProfileDetailsPage({searchParams}:{
    description="Your self-managed profile sections, separate from college-managed employment information."
    actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">← Profile</Link>} />
   {!ready?<section role="status" className="min-w-0 border-y border-[var(--lms-canvas-border)] py-5">
-   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Profile editing unavailable</h2>
+   <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Profile editing unavailable</Heading>
    <p className="mt-2 max-w-prose text-sm leading-[22px] text-body">Private Faculty profile storage awaits an approved database migration. No edits will be sent or saved until it is ready.</p>
   </section>:result.failed||!profile?<Banner tone="error" role="alert">
    We couldn't load your profile. Please try again.
@@ -51,7 +52,7 @@ export default async function FacultyProfileDetailsPage({searchParams}:{
       No record selected. Your profile sections are empty; choose Edit or Add below to create the first saved record.
     </Banner>:null}
     <section aria-label="Saved faculty profile" className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4">
-      <h2 className="mb-3 text-lg font-semibold text-[var(--lms-heading)]">Your saved profile</h2>
+      <Heading level={2} size="lg" className="mb-3 text-[var(--lms-heading)]">Your saved profile</Heading>
       <dl className="grid min-w-0 gap-4 sm:grid-cols-2">
         <div><dt className="text-xs font-semibold text-muted-foreground">About</dt>
           <dd className="mt-1 whitespace-pre-wrap break-words text-sm text-body">

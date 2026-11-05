@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {useToast} from "@/components/ui/toast";
 import {apiFetch} from "@/lib/api-fetch";
 import {rearrangeLessonIds} from "@/modules/courses/college-lesson-order-model";
+import { Heading } from "@/components/ui/heading";
 
 type Lesson={id:string;name:string;sequence:number};
 export function CollegeLessonDragOrder({learningPathId,lessons}:{
@@ -49,7 +50,7 @@ export function CollegeLessonDragOrder({learningPathId,lessons}:{
   }finally{setBusy(false);setDragging(null);}
  }
  return <section aria-label="Reorder shared lessons" aria-busy={busy} className="min-w-0 border-b border-border pb-4">
-  <h3 className="font-semibold text-foreground">Reorder Lessons</h3>
+  <Heading level={3} className="text-foreground">Reorder Lessons</Heading>
   <p className="mt-1 text-xs text-muted-foreground">Drag a lesson onto another to change its place, or use Move up and Move down. Changes affect every section sharing this offering.</p>
   <ol className="mt-3 divide-y divide-border border-y border-border">
    {order.map((id,index)=><li key={id} draggable={!busy}

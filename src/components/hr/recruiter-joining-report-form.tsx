@@ -7,6 +7,7 @@ import {recruiterJoiningReportMessage,recruiterJoiningReportSchema}
  from "@/modules/placements/recruiter-joining-report-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 export function RecruiterJoiningReportForm({
  collegeId,jobId,jobTitle,offerId,candidate,currentOutcome,
@@ -28,7 +29,7 @@ export function RecruiterJoiningReportForm({
   <input type="hidden" name="collegeId" value={collegeId}/>
   <input type="hidden" name="jobId" value={jobId}/>
   <input type="hidden" name="message" value={message}/>
-  <h4 className="font-semibold text-foreground">{candidate}</h4>
+  <Heading level={4} className="text-foreground">{candidate}</Heading>
   <p className="text-xs text-muted-foreground">
    {currentOutcome&&currentOutcome!=="PENDING"?"Official outcome: "+currentOutcome.replaceAll("_"," "):
     "Official joining status has not been recorded."}

@@ -15,6 +15,8 @@ import { partitionLearnerPlacementSchedule,learnerRoundIsDayOnly } from "@/modul
 import {LearnerScheduleReschedule} from "@/components/placements/learner-schedule-reschedule";
 import {LearnerRoundConfirmAttendance} from "@/components/placements/learner-round-confirm-attendance";
 import {listOwnAppliedPlacementResults} from "@/modules/placements/result-service";
+import { Heading } from "@/components/ui/heading";
+import { Img } from "@/components/ui/img";
 
 /** Dev legacy combines all learner rounds on one authorized Schedule page. */
 export default async function LearnerPlacementSchedulePage({searchParams}:{
@@ -156,8 +158,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     const logo=safeCompanyLogo(row.companyLogoUrl);
     return <span className="inline-flex min-w-0 items-center gap-2">
       {logo?(
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={logo} alt="" loading="lazy" referrerPolicy="no-referrer"
+        <Img src={logo} alt="" loading="lazy" referrerPolicy="no-referrer"
           className="h-8 w-8 shrink-0 rounded-[var(--lms-control-radius)] border border-border bg-surface object-contain"/>
       ):null}
       <span className="min-w-0 break-words">{row.roundName} · {row.companyName}</span>
@@ -214,7 +215,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         <p className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
           Marked absent. If this is wrong, tell the placement cell.
           <Link href="/learn/my-placements/placement#requests"
-            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center font-semibold text-primary-text underline">
+            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
             Wrong? Tell the placement cell
           </Link>
         </p>
@@ -234,16 +235,16 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         { value: "calendar", label: "Calendar", href: "/learn/my-placements/schedule?view=calendar" },
       ]} />
       {view==="coming"?<section className="space-y-3" aria-label="Coming up">
-        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Coming up ({ahead.length} dated)</h2>
+        <Heading level={2} className="text-[var(--lms-font-lg)] leading-[26px] text-[var(--lms-heading)] md:text-[var(--lms-font-xl)] md:leading-7">Coming up ({ahead.length} dated)</Heading>
         {ahead.length === 0 && undated.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">Nothing coming up. Dates will appear when the placement cell schedules a company round. <Link href="/learn/my-placements/applications" className="font-semibold text-link underline">View applications</Link></p> : null}
         {ahead.length === 0 && undated.length > 0 ? <p role="status" className="text-sm text-body">
           {undated.length} upcoming round(s) have no confirmed time yet. Check the details below.
         </p> : null}
         {groupedAhead.map(([day,dayRows])=><section key={day} aria-label={dayLabel(dayRows[0]?.exception?.scheduledAt??dayRows[0]?.scheduledAt??null)} className="space-y-2">
-         <h3 className="text-sm font-semibold text-foreground">{dayLabel(dayRows[0]?.exception?.scheduledAt??dayRows[0]?.scheduledAt??null)}</h3>
-         {dayRows.map(row => <article key={row.roundId+":"+row.applicationId} className="flex min-w-0 items-start gap-3 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:gap-4 min-[768px]:py-6">
+         <Heading level={3} size="sm" className="text-foreground">{dayLabel(dayRows[0]?.exception?.scheduledAt??dayRows[0]?.scheduledAt??null)}</Heading>
+         {dayRows.map(row => <article key={row.roundId+":"+row.applicationId} className="flex min-w-0 items-start gap-3 border-b border-[var(--lms-canvas-border)] py-4 md:gap-4 md:py-6">
           {dateTile(row.exception?.scheduledAt??row.scheduledAt)}<div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-[var(--lms-heading)]">{companyHeadline(row)}</h3>
+          <Heading level={3} className="text-[var(--lms-heading)]">{companyHeadline(row)}</Heading>
           <p className="text-sm text-body">
             <Link href={"/learn/my-placements/applications/"+row.applicationId}
               className="font-semibold text-primary-text underline">{row.roleTitle}</Link>
@@ -257,8 +258,8 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           </div>
         </article>)}</section>)}
         {ahead.length === 0 ? <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
-        {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:py-6">
-          <h3 className="font-semibold text-[var(--lms-heading)]">{companyHeadline(row)}</h3>
+        {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 md:py-6">
+          <Heading level={3} className="text-[var(--lms-heading)]">{companyHeadline(row)}</Heading>
           <p className="text-sm text-body">Date to be told</p>
           {details(row)}
         </article>)}
@@ -292,11 +293,11 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         </Suspense>
       </section>:null}
       {view==="past"?<section aria-label="Past placement rounds" className="space-y-3">
-        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Past</h2>
+        <Heading level={2} className="text-[var(--lms-font-lg)] leading-[26px] text-[var(--lms-heading)] md:text-[var(--lms-font-xl)] md:leading-7">Past</Heading>
         {past.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">No past rounds yet.</p> : past.map(row =>
-          <article key={row.roundId+":"+row.applicationId} className="flex min-w-0 items-start gap-3 border-b border-[var(--lms-canvas-border)] bg-muted/30 py-4 min-[768px]:py-6">
+          <article key={row.roundId+":"+row.applicationId} className="flex min-w-0 items-start gap-3 border-b border-[var(--lms-canvas-border)] bg-muted/30 py-4 md:py-6">
             {dateTile(row.exception?.scheduledAt??row.scheduledAt)}<div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-[var(--lms-heading)]">{companyHeadline(row)}</h3>
+            <Heading level={3} className="text-[var(--lms-heading)]">{companyHeadline(row)}</Heading>
             <p className="text-sm text-body">{timeRange(row)}</p>
             {details(row)}
             </div>

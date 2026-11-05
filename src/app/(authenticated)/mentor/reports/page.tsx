@@ -11,6 +11,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorReports} from "@/modules/projects/mentor-reports-service";
 import {mentorReportsQuerySchema,mentorReportsHref}
   from "@/modules/projects/mentor-reports-model";
+import { Heading } from "@/components/ui/heading";
 type Search={taskCoverage?:string|string[];status?:string|string[];attention?:string|string[];assignment?:string|string[];order?:string|string[];
   search?:string|string[];page?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
@@ -131,7 +132,7 @@ export default async function MentorReportsPage({searchParams}:{
         <ol aria-label="mentor reports entries" className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(project=>
           <li key={project.id} className="min-w-0 py-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="m-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{project.title}</h3>
+              <Heading level={3} size="base" className="m-0 break-words leading-6 text-[var(--lms-heading)]">{project.title}</Heading>
               <span className="text-xs font-semibold text-muted-foreground">{project.status}</span>
             </div>
             <p className="mt-2 text-sm text-body leading-[22px]">
@@ -152,11 +153,11 @@ export default async function MentorReportsPage({searchParams}:{
           </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Mentor report pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReportsHref({...data.query,page})}/>:null}
       <section aria-label="Project status totals" className="space-y-3">
-        <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Registered project status</h2>
+        <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Registered project status</Heading>
         <div className="grid min-w-0 gap-x-4 gap-y-1 border-y border-border md:grid-cols-2 xl:grid-cols-4">
           {statusMetrics.map(([label,count])=>
             <article key={label} className="min-w-0 py-3">
-              <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
+              <Heading level={3} size="xs" className="text-muted-foreground">{label}</Heading>
               <p className="mt-2 text-2xl font-bold tabular-nums">{count}</p>
             </article>)}
         </div>
@@ -166,11 +167,11 @@ export default async function MentorReportsPage({searchParams}:{
         </p>
       </section>
       <section aria-label="Recorded attention totals" className="space-y-3">
-        <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Recorded project attention</h2>
+        <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Recorded project attention</Heading>
         <div className="grid min-w-0 gap-x-4 gap-y-1 border-y border-border md:grid-cols-2 xl:grid-cols-4">
           {attentionMetrics.map(([label,count])=>
             <article key={label} className="min-w-0 py-3">
-              <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
+              <Heading level={3} size="xs" className="text-muted-foreground">{label}</Heading>
               <p className="mt-2 text-xl font-bold tabular-nums">{count}</p>
             </article>)}
         </div>

@@ -10,6 +10,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { NotificationDeliveryActions } from "@/components/announcements/notification-delivery-actions";
+import { Heading } from "@/components/ui/heading";
 
 export default async function NotificationDeliveryHistoryPage() {
   const context = await getCurrentRequestContext();
@@ -72,7 +73,7 @@ export default async function NotificationDeliveryHistoryPage() {
     {entries.length === 0 ? <p role="status">No notification deliveries recorded for this college.</p> : (
       <div className="divide-y divide-border border-y border-border">
         {entries.map(entry => <article key={entry.id} className="space-y-2 py-4">
-          <h2 className="text-sm font-semibold">Delivery {entry.id}</h2>
+          <Heading level={2} size="sm">Delivery {entry.id}</Heading>
           <p className="text-sm">Status: <strong>{entry.deliveryStatus}</strong> · Attempts: {entry.deliveryAttempts}</p>
           <p className="text-sm">Scheduled {formatTime(entry.scheduledAt)}
             {entry.deliveredAt ? " · Delivered " + formatTime(entry.deliveredAt) : ""}

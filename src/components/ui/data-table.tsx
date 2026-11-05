@@ -135,11 +135,11 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className={cx("md:table-header-group md:bg-[var(--lms-white)]",horizontal?"table-header-group bg-surface":"hidden")}>
           <tr>
-            {selection ? <th scope="col" className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-0 md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)]">
+            {selection ? <th scope="col" className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-0 md:sticky md:top-0 md:z-(--lms-z-raised) md:bg-[var(--lms-white)]">
               <TableSelectAll fieldName={selection.fieldName??"selected"} />
             </th> : null}
             {columns.map(col=><th key={col.key} scope="col" aria-sort={col.sortDirection}
-              className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)] md:first:left-0 md:first:z-20",col.className)}>
+              className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[12px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] md:sticky md:top-0 md:z-(--lms-z-raised) md:bg-[var(--lms-white)] md:first:left-0 md:first:z-(--lms-z-sticky-inline)",col.className)}>
               {sortLinks.get(col.key) ? <Link href={sortLinks.get(col.key)!}
                 aria-label={"Sort by "+col.key+(col.sortDirection==="ascending"?" descending":" ascending")}
                 className="inline-flex items-center gap-2 rounded-sm underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
@@ -164,7 +164,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
               return <td key={col.key} className={cx(
-                "min-w-0 break-words py-1 text-body md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)] md:py-[12px] md:align-middle md:first:sticky md:first:left-0 md:first:z-10 md:first:bg-inherit",
+                "min-w-0 break-words py-1 text-body md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)] md:py-[12px] md:align-middle md:first:sticky md:first:left-0 md:first:z-(--lms-z-raised) md:first:bg-inherit",
                 horizontal?"table-cell border-b border-border px-3 py-3 align-middle":phoneVisible?"block":"hidden",col.className,
               )}>
                 {!horizontal && phoneVisible && col.mobilePriority!=="action" ?

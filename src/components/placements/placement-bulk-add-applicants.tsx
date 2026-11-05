@@ -8,6 +8,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import type { BulkDriveResult } from "@/modules/placements/bulk-drive-model";
+import { Heading } from "@/components/ui/heading";
 
 type Learner = { membershipId: string; displayName: string };
 type Candidates = { learners: Learner[]; page: number; hasMore: boolean };
@@ -105,7 +106,7 @@ export function PlacementBulkAddApplicants({
   return (
     <section aria-labelledby="bulk-applicants-heading" className="space-y-4 border-b border-border pb-6">
       <div>
-        <h2 id="bulk-applicants-heading" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Applicants · Bulk Add-to-Drive</h2>
+        <Heading level={2} size="base" id="bulk-applicants-heading" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">Applicants · Bulk Add-to-Drive</Heading>
         <p className="mt-1 text-sm leading-6 text-body">
           Select up to 200 learners across these roster pages, choose the drive role
           and confirm. Eligibility, placement access and current application status
@@ -166,7 +167,7 @@ export function PlacementBulkAddApplicants({
               {candidates.learners.map((candidate) => (
                 <label
                   key={candidate.membershipId}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 border-b border-border px-3 py-2 hover:bg-[rgba(38,186,199,0.07)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
+                  className="flex min-h-11 cursor-pointer items-center gap-3 border-b border-border px-3 py-2 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
                 >
                   <Checkbox
                     checked={selected.has(candidate.membershipId)}
@@ -236,7 +237,7 @@ export function PlacementBulkAddApplicants({
 
       {results.length > 0 ? (
         <div aria-label="Per-learner bulk add results" className="space-y-2">
-          <h3 className="font-semibold text-[var(--lms-heading)]">Results for each selected learner</h3>
+          <Heading level={3} className="text-[var(--lms-heading)]">Results for each selected learner</Heading>
           <ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border">
             {results.map((row) => (
               <li key={row.membershipId} className="flex flex-wrap gap-2 px-3 py-2 text-sm">

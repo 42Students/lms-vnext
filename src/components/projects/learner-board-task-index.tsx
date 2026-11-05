@@ -6,6 +6,7 @@ import Link from "next/link";
 import {learnerBoardCardMetadata} from "@/modules/projects/learner-board-card-model";
 import { learnerBoardTaskHref, type LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
+import { Heading } from "@/components/ui/heading";
 
 export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
  projectId:string;
@@ -20,9 +21,9 @@ export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
     className={styles["scrollRegion"]+" min-w-0 overscroll-x-contain pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>
    <div className={styles["track"]}>
     {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label} width="compact" className={styles["lane"]+(lane.id==="BACKLOG"?" "+styles["backlogLane"]:"")}>
-      <h2 className={styles["header"]+" flex min-w-0 items-center justify-between font-semibold text-foreground"}>
+      <Heading level={2} className={styles["header"]+" flex min-w-0 items-center justify-between font-semibold text-foreground"}>
        <span className="min-w-0 break-words">{lane.label}</span><Badge tone="neutral" className="tabular-nums">{lane.tasks.length}</Badge>
-      </h2>
+      </Heading>
       <ul className={styles["body"]+" mt-3 space-y-2"}>
        {lane.tasks.map(task=>{
         const info=learnerBoardCardMetadata(task,sprints);

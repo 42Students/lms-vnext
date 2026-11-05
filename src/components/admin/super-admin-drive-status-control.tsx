@@ -6,6 +6,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {useToast} from "@/components/ui/toast";
+import { Heading } from "@/components/ui/heading";
 
 /** Close and reopen use the same selected-college lifecycle guard, with an
  * explicit confirmation for each status transition. No draft is published here. */
@@ -46,7 +47,7 @@ export function SuperAdminDriveStatusControl({jobId,status}:{
  }
  return <section aria-label="Drive status" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-   <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Drive status</h2>
+   <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Drive status</Heading>
    <StatusBadge tone={status==="PUBLISHED"?"success":status==="DRAFT"?"warning":"neutral"}>{status}</StatusBadge>
   </div>
   {status==="PUBLISHED"?<Button type="button" variant="danger" disabled={pending} onClick={()=>{setError("");setConfirm("CLOSE");}}>

@@ -11,6 +11,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import type {TpoBatchRuleFields,TpoBatchRuleOverrides} from "@/modules/placements/tpo-batch-rules-model";
+import { Heading } from "@/components/ui/heading";
 
 export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,expectedVersion,readOnly}:{
  batchId:string;batchName:string;college:TpoBatchRuleFields;initialOverride:TpoBatchRuleOverrides;
@@ -97,7 +98,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
    </div>
   </div>;
  return <section aria-label="Batch placement rules" className="min-w-0 space-y-[var(--lms-space-4)] border-y border-border py-[var(--lms-space-4)]">
-  <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Batch placement rules</h2>
+  <Heading level={2} size="base" className="break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Batch placement rules</Heading>
   <p role="status" className="break-words text-sm text-body leading-[22px]">{Object.keys(draft).length?batchName+" has its own rules":batchName+" follows the college rules"}</p>
   <p className="text-sm text-body leading-[22px]">Change a rule only for this batch; everything you leave alone stays the college&apos;s. An internship offer never counts as placed.</p>
   {error?<InlineNotice tone="error" message={"Batch rules were not saved. "+error}/>:null}

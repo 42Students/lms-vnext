@@ -27,6 +27,7 @@ import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversa
 import {RecruiterGeneralDrawer} from "@/components/hr/recruiter-general-drawer";
 import {RecruiterConversationWorkspace} from "@/components/hr/recruiter-conversation-workspace";
 import {selectRecruiterWorkspaceThread} from "@/modules/placements/hr-conversation-inbox-model";
+import { Heading } from "@/components/ui/heading";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[];thread?:string|string[];view?:string|string[]};
 
@@ -137,7 +138,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  const visibleRows=generalHistoryResult && !generalHistoryResult.ok && generalThread
   ?result.items.map(row=>row.id===generalThread.id?{...row,preview:null}:row)
   :result.items;
- return <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
+ return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <RecruiterConversationLiveRefresh collegeId={result.collegeId??undefined}/>
   <PageHeader title="Messages"
    description={result.status==="READY"
@@ -147,7 +148,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    actions={<div className="flex flex-wrap items-center gap-3">
      {result.status==="READY"?<RecruiterGeneralDrawer>
        <section className="border-b border-border pb-4">
-    <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Talk to the placement cell</h2>
+    <Heading level={2} size="base" className="leading-[26px] text-[var(--lms-heading)] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">Talk to the placement cell</Heading>
     <p className="mt-1 max-w-2xl text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
     {generalThread?<div className="mt-3 space-y-3 border-t border-border py-3">
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
@@ -202,7 +203,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
      </Banner>:null}
    {decisionNotices.length>0?<details className="min-w-0 border-b border-border pb-4">
-    <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7">Drive request decisions</summary>
+    <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] md:text-[18px] md:leading-7">Drive request decisions</summary>
     <p className="mt-1 text-xs text-muted-foreground">Approval, changes requested and declined decisions for your own requests.</p>
     <ul className="mt-3 space-y-3">{decisionNotices.map(item=><li key={item.id}
       className="border-b border-border py-3 last:border-b-0">
@@ -222,11 +223,11 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         href:"/hr/conversations?collegeId="+encodeURIComponent(grant.collegeId),
       }))}/>:null}
    <section aria-label="Conversations with the placement cell" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-6">
-   {result.total>6 || parsed.data.q ? <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-[8px] max-[767px]:flex-col max-[767px]:items-stretch">
+   {result.total>6 || parsed.data.q ? <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-[8px] max-md:flex-col max-md:items-stretch">
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>
-    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">Order
+    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:w-full">Order
      <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
@@ -237,11 +238,11 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    </form> :
     <details className="min-w-0 border-b border-border pb-3">
       <summary className="min-h-11 cursor-pointer text-sm font-semibold leading-10 text-primary-text">Search and sort conversations</summary>
-      <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-[8px] max-[767px]:flex-col max-[767px]:items-stretch">
+      <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-[8px] max-md:flex-col max-md:items-stretch">
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>
-    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] max-[767px]:w-full">Order
+    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:w-full">Order
      <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
@@ -287,11 +288,11 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <p className="mt-1 break-words text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
     </li>)}
    </ol>:<EmptyState title={parsed.data.q?"No conversations match your search":"No messages yet"} description={parsed.data.q?"Try another drive or message search.":"Write to the placement cell, or open a drive to discuss its hiring process."} action={<Link href={hrConversationsHref({collegeId:result.collegeId,q:"",unreadOnly:"false",sort:"LATEST",scope:"ALL",page:1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Reset</Link>}/>}
-   {result.pages>1 ? <nav aria-label="Conversation pages" className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&>a]:w-full max-[767px]:[&>a]:justify-center">
+   {result.pages>1 ? <nav aria-label="Conversation pages" className="flex min-w-0 flex-wrap gap-3 max-md:[&>a]:w-full max-md:[&>a]:justify-center">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm">Previous</Link>:null}
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-radius-shell-control)] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm">Previous</Link>:null}
     {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm">Next</Link>:null}
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-radius-shell-control)] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm">Next</Link>:null}
    </nav> : null}
    </section>
   </>}

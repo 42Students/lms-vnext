@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import type { listFacultyCourseDeliveries, FacultyCourseAssignmentDiagnostic } from "@/modules/courses/faculty-course-service";
 import type { FacultyCourseCardSummary } from "@/modules/courses/faculty-course-card-summary-service";
+import { Heading } from "@/components/ui/heading";
 
 type Course = Awaited<
   ReturnType<
@@ -123,18 +124,18 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
           <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search courses
             <Input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Search Courses..."
-              className="text-[var(--lms-font-base)] max-[767px]:text-[16px] md:text-sm" />
+              className="text-[var(--lms-font-base)] max-md:text-[16px] md:text-sm" />
           </label>
           <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Academic period
             <Select name="period" defaultValue={query.period}
-              className="text-[var(--lms-font-base)] max-[767px]:text-[16px] md:text-sm">
+              className="text-[var(--lms-font-base)] max-md:text-[16px] md:text-sm">
               <option value="">All assigned periods</option>
               {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
             </Select>
           </label>
           <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Section
             <Select aria-label="Filter by section" name="section" defaultValue={query.section}
-              className="text-[var(--lms-font-base)] max-[767px]:text-[16px] md:text-sm">
+              className="text-[var(--lms-font-base)] max-md:text-[16px] md:text-sm">
               <option value="">All sections ({sections.length})</option>
               {sections.map(section=><option key={section.id} value={section.id}>
                 {section.name} ({section.count})
@@ -143,15 +144,15 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
           </label>
           <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Teaching role
             <Select name="role" defaultValue={query.role}
-              className="text-[var(--lms-font-base)] max-[767px]:text-[16px] md:text-sm">
+              className="text-[var(--lms-font-base)] max-md:text-[16px] md:text-sm">
               <option value="">All assigned roles</option>
               {COURSE_TEACHING_ROLES.map(role => <option key={role} value={role}>{role.replaceAll("_"," ")}</option>)}
             </Select>
           </label>
         </div>
-        <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-center">
-          <noscript><Button type="submit" variant="primary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Apply filters</Button></noscript>
-          <Link href="/teacher/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] min-[768px]:w-auto bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
+        <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
+          <noscript><Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button></noscript>
+          <Link href="/teacher/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] md:w-auto bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {visibleRows.length} of {pagination.total} matching course Sections
           </p>
@@ -161,7 +162,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
         <EmptyState
           title={query.q?"No courses match “"+query.q+"”":"No teaching assignments in this section."}
           description="Try changing the filters to see your courses."
-          action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 min-[768px]:min-h-9">Clear filters</Link>}
+          action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Clear filters</Link>}
         />
       ) : (
       <div data-testid="teacher.courses.grid" className="grid min-w-0 gap-5 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:grid-cols-2 lg:grid-cols-3 md:p-6">
@@ -170,7 +171,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
           data-testid="teacher.courses.card.open"
-          className="group flex min-h-0 min-w-0 flex-col overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface shadow-[0_2px_8px_rgba(17,36,49,0.06)] transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="group flex min-h-0 min-w-0 flex-col overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface shadow-(--lms-elevation-1) transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         >
           <FacultyCourseCover url={thumbnailUrl??null} title={course.courseName}/>
           <div className="flex min-w-0 flex-wrap items-start gap-3 px-4 pt-4">
@@ -178,9 +179,9 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-[var(--lms-teal-deep)]">
                 {course.courseCode}
               </p>
-              <h2 className="mt-1 break-words text-lg font-semibold text-[var(--lms-heading)]">
+              <Heading level={2} size="lg" className="mt-1 break-words text-[var(--lms-heading)]">
                 {course.courseName}
-              </h2>
+              </Heading>
             </div>
             <StatusBadge
               tone={pathTone(

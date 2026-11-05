@@ -31,6 +31,7 @@ import {RecruiterDrivesRetained,RecruiterDrivesRefreshAction} from "@/components
 import {RecruiterRequestCancelButton} from "@/components/hr/recruiter-request-cancel-button";
 import {RecruiterRequestFeedback} from "@/components/hr/recruiter-request-feedback";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
+import { Heading } from "@/components/ui/heading";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
@@ -155,7 +156,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     <PageHeader title={"Drives at "+(grants.find(grant=>grant.collegeId===selectedCollege)?.collegeName??"your college")}
       description={totals.live+" live · "+requestAttention.waitingOnCollege+" waiting for the placement cell"+(requestAttention.needsRecruiterChanges?" · "+requestAttention.needsRecruiterChanges+" needing your changes":"")+" · "+totals.closed+" completed or cancelled. Visible only through your verified company relationship."}
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Request a drive
       </Link>} />
     {partialLoadFailure ? <Alert tone="warning">
@@ -180,13 +181,13 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         <p>Students (rounded): {collegeOverview.studentsTotal??"Withheld for privacy"}</p>
         <p className="text-xs text-muted-foreground">Approximate active student counts; no individual records are shared. Updated {new Date(collegeOverview.asOf).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST.</p>
         {collegeOverview.byBranch.length?<div>
-          <h3 className="font-semibold">By branch</h3>
+          <Heading level={3}>By branch</Heading>
           <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
             {collegeOverview.byBranch.map(branch=><li key={branch.branch}>{branch.branch}: about {branch.count}</li>)}
           </ul>
         </div>:<p>Branch counts are withheld for groups smaller than 10.</p>}
         {collegeOverview.cgpaBands?<div>
-          <h3 className="font-semibold">CGPA bands (approximate)</h3>
+          <Heading level={3}>CGPA bands (approximate)</Heading>
           <p className="text-xs text-muted-foreground">Based on about {collegeOverview.basedOn} recorded CGPAs; small bands are withheld.</p>
           <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
             {collegeOverview.cgpaBands.map(band=><li key={band.label}>{band.label}: {band.count??"Withheld"}</li>)}
@@ -238,7 +239,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         Export matching drives CSV
       </Link>
     </div>:null}
-    <form method="get" action="/recruiter/drives" role="search" aria-label="Filter recruiter drives" className="flex min-w-0 flex-wrap items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+    <form method="get" action="/recruiter/drives" role="search" aria-label="Filter recruiter drives" className="flex min-w-0 flex-wrap items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 max-md:flex-col max-md:items-stretch">
       <Input type="hidden" name="collegeId" value={selectedCollege} />
       <Input type="hidden" name="view" value={query.data.view} />
       <Input type="hidden" name="page" value="1" />
@@ -273,7 +274,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="inline-flex min-h-11 items-center py-2 text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reset</Link>
     </form>
     {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
-      <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Your drive requests</h2>
+      <Heading level={2} className="text-[var(--lms-font-lg)] leading-[26px] text-[var(--lms-heading)] md:text-[var(--lms-font-xl)] md:leading-7">Your drive requests</Heading>
       <ul className="min-w-0 divide-y divide-border border-y border-border">{requestView.map(req=>{
         const draft=req.draft&&typeof req.draft==="object"?req.draft:{};
         const title=typeof draft["title"]==="string"?draft["title"]:"Drive request";

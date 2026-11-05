@@ -16,6 +16,8 @@ import {Alert} from "@/components/ui/alert";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {AdminProgressRetakeAction} from "@/components/courses/admin-progress-retake-action";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function SuperAdminStudentCourseProgressPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>
@@ -147,10 +149,9 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
         <Link href={reportHref(page)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
           Refresh
         </Link>
-        {report.totalRows>0?<a href={"/api/admin/course-progress/students/export?"+new URLSearchParams({
+        {report.totalRows>0?<ButtonLink variant="secondary" href={"/api/admin/course-progress/students/export?"+new URLSearchParams({
           offeringId:report.offeringId,...(requestedDelivery?{deliveryId:requestedDelivery}:{})
-        }).toString()}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">Export CSV</a>:
+        }).toString()}>Export CSV</ButtonLink>:
           <span aria-disabled="true" title="No students available for export"
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 text-sm text-muted-foreground md:min-h-9">Export CSV</span>}
       </div>
@@ -202,7 +203,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     </form>
   </div>
   <section aria-label="Per student progress" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Per student</h2>
+    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Per student</Heading>
     <p className="text-sm text-muted-foreground">
       Sorted furthest-behind first, which is the order worth acting on. A student retaking the course counts only their current attempt.
     </p>

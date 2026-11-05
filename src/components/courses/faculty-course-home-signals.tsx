@@ -8,6 +8,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type Signals = Awaited<
   ReturnType<typeof getFacultyCourseHomeSignals>
@@ -67,11 +68,11 @@ export function FacultyCourseHomeSignals({
                 Teaching overview
               </span>
             </div>
-            <h2 className="mt-2 text-xl font-semibold text-[var(--lms-heading)]">
+            <Heading level={2} size="xl" className="mt-2 text-[var(--lms-heading)]">
               {firstPending
                 ? `${signals.pendingSubmissions.length} submission${signals.pendingSubmissions.length===1?"":"s"} waiting`
                 : assignmentsReady ? "Nothing waiting on you" : "Some signals unavailable"}
-            </h2>
+            </Heading>
             <p className="mt-1 text-sm text-body">
               {firstPending
                 ? "Review pending learner work before it piles up."
@@ -107,9 +108,9 @@ export function FacultyCourseHomeSignals({
       </Link>:null}
       <section aria-label="Pending work">
         <div className="mb-3">
-          <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
+          <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">
             Pending work
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-muted-foreground">
             Items that need faculty attention.
           </p>
@@ -166,9 +167,9 @@ export function FacultyCourseHomeSignals({
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
+              <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">
                 Needs attention
-              </h2>
+              </Heading>
               <p className="mt-1 text-sm text-muted-foreground">
                 {signals.atRiskCounts.critical} critical ·{" "}
                 {signals.atRiskCounts.moderate} moderate
@@ -212,9 +213,9 @@ export function FacultyCourseHomeSignals({
       </Alert>}
 
       {assignmentsReady ? <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
-        <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
+        <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">
           Performance
-        </h2>
+        </Heading>
         <p className="mt-1 text-sm text-muted-foreground">
           Current learner averages across graded assignments.
         </p>
@@ -274,7 +275,7 @@ export function FacultyCourseHomeSignals({
           })}
         </div>
       </section> : <section aria-label="Performance" className="border-b border-border pb-4">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Performance</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Performance</Heading>
         <p className="mt-2 text-sm text-body">Performance metrics are unavailable until assignment signals can be refreshed.</p>
       </section>}
       </div>

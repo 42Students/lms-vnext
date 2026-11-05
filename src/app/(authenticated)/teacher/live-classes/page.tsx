@@ -10,6 +10,7 @@ import {facultyLiveClassesHref,facultyLiveClassesQuerySchema} from "@/modules/co
 import {getFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-service";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
+import { Heading } from "@/components/ui/heading";
 type Params={view?:string|string[];deliveryId?:string|string[];page?:string|string[]};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function Page({searchParams}:{searchParams:Promise<Params>}){
@@ -61,8 +62,8 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   {data.items.length===0?<EmptyState title="No matching live classes"
    description="No published LIVE_CLASS content matches these filters in your current teaching Sections. Unregistered meetings are not invented."/>
    :<ul className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(s=><li key={s.deliveryId+":"+s.id}
-     className="min-w-0 space-y-2 bg-transparent py-4 transition-colors duration-150 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] motion-reduce:transition-none">
-    <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{s.title}</h2>
+     className="min-w-0 space-y-2 bg-transparent py-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] motion-reduce:transition-none">
+    <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{s.title}</Heading>
     <p className="text-sm text-body leading-[22px]">{s.courseName} · {s.sectionName}</p>
     <p className="text-sm text-body leading-[22px]">
      {new Intl.DateTimeFormat("en-IN",{

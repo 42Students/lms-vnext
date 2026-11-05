@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Heading } from "@/components/ui/heading";
 type Preferences={notifyDriveOpenEmail:boolean;notifyResultApplied:boolean;notifyNudges:boolean;notifyPrepAssigned:boolean};
 const fields=[
  ["notifyDriveOpenEmail","A drive opens or changes","Email to eligible students."],
@@ -46,9 +47,9 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
   }
  }
  return <section className="space-y-3 border-t border-border pt-5">
-  <h2 className="text-lg font-semibold text-foreground">Optional emails</h2>
+  <Heading level={2} size="lg" className="text-foreground">Optional emails</Heading>
   <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
-  {fields.map(([key,label,help])=><label key={key} className={"flex min-h-12 min-w-0 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border-b border-border px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-sm transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] print:hidden "+(value[key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+  {fields.map(([key,label,help])=><label key={key} className={"flex min-h-12 min-w-0 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border-b border-border px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-sm transition-colors duration-[var(--lms-motion-fast)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] print:hidden "+(value[key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
    <span className="min-w-0 flex-1 break-words"><span className="font-medium">{label}</span><span className="block text-xs text-muted-foreground">{help}</span></span>
    <span className="shrink-0"><Checkbox aria-label={label} checked={value[key]} disabled={busy}
     onChange={e=>setValue(current=>({...current,[key]:e.target.checked}))}/></span>
@@ -56,7 +57,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
   <ul aria-label="Current optional email preferences" className="hidden space-y-2 text-sm print:block">{fields.map(([key,label,help])=><li key={key} className="break-words border-b border-border pb-2"><strong>{label}:</strong> {value[key]?"On":"Off"} · {help}</li>)}</ul>
   <p className="text-xs text-muted-foreground">These are college preferences; sending requires verified mail templates and an enabled delivery provider.</p>
   <Button type="button" disabled={busy||!dirty} onClick={()=>void save()}
-   className="min-h-11 w-full min-[768px]:w-auto min-[768px]:min-h-9 print:hidden">Save changes</Button>
+   className="min-h-11 w-full md:w-auto md:min-h-9 print:hidden">Save changes</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {status?<InlineNotice tone="success" message={status}/>:null}
  </section>;

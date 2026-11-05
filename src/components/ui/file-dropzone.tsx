@@ -67,7 +67,7 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     onDragOver={event=>{if(!unavailable && Array.from(event.dataTransfer.types).includes("Files")){event.preventDefault();setDragging(true);}}}
     onDragLeave={event => { const next = event.relatedTarget; if (!(next instanceof Node) || !event.currentTarget.contains(next)) setDragging(false); }}
     onDrop={onDrop}
-    className={cx("min-w-0 rounded-[var(--lms-field-radius)] border border-dashed border-[var(--lms-neutral-300)] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-150 motion-reduce:transition-none has-[:focus-visible]:border-[var(--lms-primary)] has-[:focus-visible]:shadow-[var(--lms-control-shadow)]", !unavailable?"hover:border-[var(--lms-field-hover-border)]":"",dragging?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)]":"",droppedNames.length&&!unavailable?"border-[var(--lms-primary)]":"",dropError&&!unavailable?"border-[var(--lms-error)] bg-[rgba(239,68,68,0.06)] has-[:focus-visible]:border-[var(--lms-error)] has-[:focus-visible]:shadow-[0_0_0_2px_rgba(239,68,68,0.2)]":"",unavailable?"cursor-not-allowed opacity-50":"",className)}>
+    className={cx("min-w-0 rounded-[var(--lms-field-radius)] border border-dashed border-[var(--lms-neutral-300)] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none has-[:focus-visible]:border-[var(--lms-primary)] has-[:focus-visible]:shadow-(--lms-control-shadow)", !unavailable?"hover:border-[var(--lms-field-hover-border)]":"",dragging?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)]":"",droppedNames.length&&!unavailable?"border-[var(--lms-primary)]":"",dropError&&!unavailable?"border-[var(--lms-error)] bg-[color-mix(in_srgb,var(--lms-error)_6%,transparent)] has-[:focus-visible]:border-[var(--lms-error)] has-[:focus-visible]:shadow-(--lms-focus-ring-error)":"",unavailable?"cursor-not-allowed opacity-50":"",className)}>
     <FileUpload key={pickerResetToken} label={label} onFiles={files=>{droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError(null);onFiles(files);}} {...(accept===undefined?{}:{accept})} {...(multiple===undefined?{}:{multiple})} {...(maxBytes===undefined?{}:{maxBytes})} {...(progress===undefined?{}:{progress})} showSelectedFiles={showSelectedFiles} showImagePreview={showImagePreview} imagePreviewKind={imagePreviewKind} disabled={disabled} required={required} pickerUnavailable={pickerUnavailable} {...(helper===undefined?{}:{helper})} {...(fallback===undefined?{}:{fallback})}/>
     <p id={instructionId} className="mt-2 text-[12px] text-[var(--lms-muted-text)]">{unavailable ? "File selection is currently unavailable." : "Drag a file here or use the file picker."}</p>
     {showSelectedFiles && droppedNames.length>0 && !unavailable
@@ -76,12 +76,12 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
         </ul> : null}
     {showSelectedFiles && droppedNames.length > 0 && !unavailable
       ? <Button type="button" variant="ghost" size="sm" onClick={clearDropped}
-          aria-label="Remove dropped files" className="mt-1 !min-h-9 !px-2 max-[767px]:!min-h-11">
+          aria-label="Remove dropped files" className="mt-1 !min-h-9 !px-2 max-md:!min-h-11">
           Remove dropped files
         </Button> : null}
     {showImagePreview&&dropPreviewFile&&dropPreviewUrl&&!unavailable
       ? <div data-slot="image-drop-preview" data-preview-kind={imagePreviewKind}
-          className={cx("mt-2 border border-[var(--lms-neutral-200)] bg-white",
+          className={cx("mt-2 border border-[var(--lms-neutral-200)] bg-surface",
             imagePreviewKind === "profile" ? "h-[194px] w-[175px] max-w-full overflow-hidden rounded-[8px]" : "rounded-[10px] p-2")}>
           <img src={dropPreviewUrl} alt={`${label} preview`}
             className={imagePreviewKind === "profile" ? "h-full w-full object-cover object-center" : "max-h-40 max-w-full rounded-[6px] object-contain"} />
@@ -89,7 +89,7 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     {droppedNames.length>0 && typeof progress==="number" && Number.isFinite(progress) && !unavailable
       ? <div role="progressbar" aria-label={`${label} upload progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.max(0,Math.min(100,progress))}
           className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[var(--lms-primary-light)]">
-          <div className="h-full rounded-full bg-[var(--lms-primary)] transition-[width] duration-150 motion-reduce:transition-none" style={{width:`${Math.max(0,Math.min(100,progress))}%`}} />
+          <div className="h-full rounded-full bg-[var(--lms-primary)] transition-[width] duration-[var(--lms-motion-fast)] motion-reduce:transition-none" style={{width:`${Math.max(0,Math.min(100,progress))}%`}} />
         </div> : null}
     {dropError&&!unavailable?<p id={errorId} role="alert" className="mt-2 text-[12px] text-[var(--lms-error-text)]">{dropError}</p>:null}
   </div>;

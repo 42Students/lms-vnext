@@ -17,6 +17,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Dropdown } from "@/components/ui/dropdown";
 import { useToast } from "@/components/ui/toast";
 import { describePrimaryDomainSwitch, canConfirmPrimaryDomainDelete } from "@/modules/tenant-domains/admin-confirmation-model";
+import { Heading } from "@/components/ui/heading";
 
 export type TenantDomainClientRow = {
   id: string;
@@ -333,9 +334,9 @@ export function TenantDomainManager({
                 <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground [overflow-wrap:anywhere]">
+                      <Heading level={2} size="base" className="m-0 min-w-0 break-words text-foreground [overflow-wrap:anywhere]">
                         {domain.host}
-                      </h2>
+                      </Heading>
                       <StatusBadge
                         tone={
                           domain.isVerified
@@ -427,7 +428,7 @@ export function TenantDomainManager({
 
                 {!domain.isVerified &&
                 domain.verificationToken ? (
-                  <Disclosure ariaLabel="DNS ownership record" defaultOpen={domains.length === 1} title={<h3 className="m-0 text-sm font-semibold text-foreground">DNS ownership record</h3>} className="mt-[var(--lms-space-4)] print:hidden" contentClassName="pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]">
+                  <Disclosure ariaLabel="DNS ownership record" defaultOpen={domains.length === 1} title={<Heading level={3} size="sm" className="m-0 text-foreground">DNS ownership record</Heading>} className="mt-[var(--lms-space-4)] print:hidden" contentClassName="pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]">
                     <p className="text-xs leading-5 text-body">
                       Publish this TXT record with your DNS
                       provider. Verification requires an exact
@@ -485,7 +486,7 @@ export function TenantDomainManager({
         pending={Boolean(pendingAction)}
         onConfirm={() => { if (primaryTarget) void runAction(primaryTarget, "primary"); }}
       >
-        {modalError ? <p role="alert" className="break-words rounded-[8px] border border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{modalError}</p> : null}
+        {modalError ? <p role="alert" className="break-words rounded-[8px] border border-[color-mix(in_srgb,var(--lms-error)_25%,transparent)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{modalError}</p> : null}
       </ConfirmDialog>
 
       <ConfirmDialog
@@ -540,7 +541,7 @@ export function TenantDomainManager({
             disabled={Boolean(pendingAction)} onChange={event => setDeleteHostConfirmation(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label> : null}
-        {modalError ? <p role="alert" className="mt-[var(--lms-space-2)] break-words rounded-[8px] border border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{modalError}</p> : null}
+        {modalError ? <p role="alert" className="mt-[var(--lms-space-2)] break-words rounded-[8px] border border-[color-mix(in_srgb,var(--lms-error)_25%,transparent)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{modalError}</p> : null}
       </ConfirmDialog>
       {dirty?<p role="status" className="text-xs text-warning-text">Unsaved custom-domain changes. Save or discard them before switching colleges.</p>:null}
       <ConfirmDialog open={leaveHref!==null} onOpenChange={open=>{if(!open)setLeaveHref(null);}}

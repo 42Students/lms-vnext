@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { Heading } from "@/components/ui/heading";
 
 export type FacultyProfileTextField = {
   name: string; label: string; maxLength: number;
@@ -39,7 +40,7 @@ export function FacultyProfileTextSection({ section, title, description, fields,
   return <form id={facultyProfileAnchor(section)} onSubmit={submit}
     className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]" aria-label={title} aria-busy={pending}>
     <div>
-      <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg">{title}</h2>
+      <Heading level={2} size="base" className="leading-6 text-foreground md:text-lg">{title}</Heading>
       <p className="mt-[var(--lms-space-1)] max-w-[75ch] break-words text-sm leading-6 text-body">{description}</p>
     </div>
     <div className="grid min-w-0 max-w-[960px] gap-[var(--lms-space-4)] sm:grid-cols-2">

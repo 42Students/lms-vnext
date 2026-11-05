@@ -9,6 +9,8 @@ import { AdminPlacementStudentSearch } from "@/components/placements/admin-place
 import { AdminPlacementStudentProfileEditor } from "@/components/placements/admin-placement-student-profile-editor";
 import { suggestCollegePlacementLearners, getCollegeStudentPlacementDetails } from "@/modules/placements/college-placement-student-lookup-service";
 import { parseSuperAdminPlacementStudentSearch } from "@/modules/admin-ui/super-admin-placement-student-search-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function humanStage(raw: string | null, offer: string | null, joining: string | null) {
   const status = joining === "JOINED" ? "HIRED" :
@@ -30,11 +32,11 @@ function stageTone(status: string): "neutral" | "info" | "success" | "warning" |
 }
 function stageColor(status: string) {
   switch (status) {
-    case "ASSESSMENT": return "bg-amber-50 text-amber-700";
-    case "INTERVIEW": return "bg-purple-50 text-purple-700";
-    case "WAITLISTED": return "bg-orange-50 text-orange-700";
-    case "OFFERED": return "bg-cyan-50 text-cyan-700";
-    case "SHORTLISTED": return "bg-blue-50 text-blue-700";
+    case "ASSESSMENT": return "bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning)]";
+    case "INTERVIEW": return "bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]";
+    case "WAITLISTED": return "bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-error-text)]";
+    case "OFFERED": return "bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary)]";
+    case "SHORTLISTED": return "bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-info-blue)]";
     default: return "";
   }
 }
@@ -135,12 +137,12 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
           <p className="pt-2 text-xs text-muted-foreground">{selectedProfile?.resumeAvailable
             ? "The learner’s selected verified resume is stored privately. This link checks college access and file ownership again before granting a short-lived read."
             : "No selected, verified resume is available. Upload, selection and verification remain with the learner; an administrator cannot replace a resume with an unverified URL."}</p>
-          {selectedProfile?.resumeAvailable?<a
+          {selectedProfile?.resumeAvailable?<TextLink
             href={"/api/placements/college/students/"+encodeURIComponent(selectedStudent.membershipId)+"/resume"}
            
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             View verified resume
-          </a>:null}
+          </TextLink>:null}
           <p className="mt-1 text-xs text-muted-foreground">
             Resume replacement is learner-owned. Save or Cancel in the authorized profile editor below changes skills and job preferences only.
           </p>
@@ -155,7 +157,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
         />
       </div>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-        <h2 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">Placement history</h2>
+        <Heading level={2} size="sm" className="m-0 text-[var(--lms-heading)]">Placement history</Heading>
         <Link href={`/admin/placements/student-lookup?${new URLSearchParams({q, student: selectedStudent.membershipId, refresh: "1"})}`}
           className="inline-flex min-h-9 items-center font-semibold text-sm text-link underline">
           Refresh placement history

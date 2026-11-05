@@ -7,6 +7,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Alert} from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
+import { Heading } from "@/components/ui/heading";
 
 type Course={id:string;name:string;enabled:boolean;updatedAt:string};
 const MAX_SELECTED=100;
@@ -117,7 +118,7 @@ export function CollegeCourseBulkVisibility({courses,collegeId,collegeName="this
  }
  return <div className="space-y-2 border-y border-border py-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
-   <h3 className="text-sm font-semibold">Bulk student visibility</h3>
+   <Heading level={3} size="sm">Bulk student visibility</Heading>
    <div className="flex flex-wrap gap-2">
     <Button type="button" variant="secondary" size="sm" disabled={busy||!selectedRows.length}
      onClick={()=>{setRetryOnly(false);setConfirmTarget(false);}}>Hide from students</Button>

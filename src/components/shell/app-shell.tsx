@@ -31,6 +31,7 @@ import {
   getShellNavigation,
   getShellRoleLabel,
 } from "./shell-model";
+import { TextLink } from "@/components/ui/text-link";
 
 export async function AppShell({
   context,
@@ -92,8 +93,8 @@ export async function AppShell({
         mentorEnabled={hasMembershipRole(context,"MENTOR")}
         tpoEnabled={hasMembershipRole(context,"TPO")}
         recruiterEnabled={Boolean(context.recruiter)||prototypePortal==="recruiter"}>
-        <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-link focus:outline-2 focus:outline-[var(--lms-primary)]">Skip to content</a>
-      <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar relative z-20 hidden h-screen shrink-0 flex-col md:flex">
+        <TextLink href="#lms-main-content" className="sr-only">Skip to content</TextLink>
+      <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar relative z-(--lms-z-sticky-inline) hidden h-screen shrink-0 flex-col md:flex">
         <div className="lms-sidebar-logo-row flex h-20 shrink-0 items-center justify-center border-b border-[var(--lms-sidebar-border)] px-2">
           <Link href={homeHref} aria-label="42Students LMS home"
             className="lms-sidebar-brand-link inline-flex h-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -144,7 +145,7 @@ export async function AppShell({
         <RouteProgress />
         <Suspense fallback={null}><RouteAnnouncer /></Suspense>
         <ShellConnectivityNotice />
-        <main id="lms-main-content" tabIndex={-1} className={"lms-shell-page-main mx-auto min-w-0 w-full px-[var(--lms-space-3)] py-[var(--lms-space-4)] min-[768px]:px-[14px] min-[768px]:py-[var(--lms-space-6)] min-[992px]:px-[var(--lms-space-6)] "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
+        <main id="lms-main-content" tabIndex={-1} className={"lms-shell-page-main mx-auto min-w-0 w-full px-[var(--lms-space-3)] py-[var(--lms-space-4)] md:px-[16px] md:py-[var(--lms-space-6)] lg:px-[var(--lms-space-6)] "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           <RouteTransition>{children}</RouteTransition>
         </main>
         <LearnerFacultyMobileFooter items={navigation} />

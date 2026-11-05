@@ -48,6 +48,8 @@ import {
 import { learnerRoadmapMeasuredProgress } from "@/modules/courses/learner-roadmap-progress-availability-model";
 import { legacySyllabusKind,selectedLessonCompletion } from "@/modules/courses/legacy-syllabus-detail-model";
 import {learnerRoadmapMobileOutline} from "@/modules/courses/learner-roadmap-mobile-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Workspace = Awaited<
   ReturnType<
@@ -72,13 +74,13 @@ function LearnerSyllabusItem({
    <span title={completed?"Completed":props.locked?"Content locked":"Not completed"}
     aria-label={completed?"Completed":props.locked?"Content locked":"Not completed"}
     className={"mt-1 inline-flex size-6 shrink-0 items-center justify-center rounded-full border "+
-     (completed?"border-success bg-success text-white":"border-border text-muted-foreground")}>
+     (completed?"border-success bg-success text-[color:var(--lms-on-primary)]":"border-border text-muted-foreground")}>
     {completed?<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m4 12 5 5L20 6"/></svg>:
     props.locked?<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>:null}
    </span>
    <div className="min-w-0 flex-1">
     <div className="flex min-w-0 flex-wrap items-center gap-2">
-     <h3 className="break-words text-base font-semibold text-foreground">{title}</h3>
+     <Heading level={3} size="base" className="break-words text-foreground">{title}</Heading>
      <StatusBadge tone={completed?"success":props.locked?"warning":"neutral"}>
       {props.locked?"Content locked":completed?"Completed":props.kind}
      </StatusBadge>
@@ -266,7 +268,7 @@ function ContentCard({
   if(legacySyllabusKind(content.type)!=="CONTENT"||
      !["RESOURCE","VIDEO","YOUTUBE","LIVE_CLASS"].includes(content.type))
    return <div role="status" className="space-y-2 border-b border-border py-3">
-    <h3 className="font-semibold">{content.title?.trim()||"Untitled content"}</h3>
+    <Heading level={3}>{content.title?.trim()||"Untitled content"}</Heading>
     <Alert tone="warning">This content type isn&apos;t supported yet. Contact your instructor if this looks wrong.</Alert>
    </div>;
 
@@ -310,9 +312,9 @@ function ContentCard({
               </StatusBadge>
             ) : null}
           </div>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
+          <Heading level={3} size="base" className="mt-2 text-foreground">
             {content.title?.trim()||"Untitled content"}
-          </h3>
+          </Heading>
         </div>
         {legacyAddedDate(content.createdAt)?<span className="text-xs leading-5 text-muted-foreground">
           Added {legacyAddedDate(content.createdAt)}
@@ -379,7 +381,7 @@ function ContentCard({
       ) : null}
 
       {scheduled ? (
-        <div className="mt-4 border-l-[3px] border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm leading-6 text-body">
+        <div className="mt-4 border-l-2 border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm leading-6 text-body">
           {content.type==="LIVE_CLASS"
             ? start
               ? "Live session starts "+start+". Join and Copy are available now when the meeting link is published."
@@ -390,7 +392,7 @@ function ContentCard({
         {content.type==="LIVE_CLASS"&&learnerSafeExternalContentHref(content.externalUrl)?<LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!} endsAt={content.endsAt?new Date(content.endsAt).toISOString():null}/>:null}
          </div>
       ) : content.type === "LIVE_CLASS" && ended ? (
-        <div className="mt-4 border-l-[3px] border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm leading-6 text-body">
+        <div className="mt-4 border-l-2 border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm leading-6 text-body">
           This live session has ended.
         </div>
       ) : content.type === "VIDEO" &&
@@ -451,18 +453,18 @@ function ContentCard({
       ) : content.type === "RESOURCE" &&
       content.storageKey ? (
         <div className="mt-4 flex flex-wrap gap-2">
-          <a
+          <ButtonLink variant="secondary"
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file`}
-            className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text md:w-auto"
+            className="w-full min-w-0 md:w-auto"
           >
             Open resource ↗
-          </a>
-          <a
+          </ButtonLink>
+          <ButtonLink variant="secondary"
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file?download=1`}
-            className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text md:w-auto"
+            className="w-full min-w-0 md:w-auto"
           >
             Download
-          </a>
+          </ButtonLink>
         </div>
       ) : content.storageKey ? (
         <p className="mt-4 text-xs font-semibold text-warning">
@@ -534,9 +536,9 @@ function AssignmentCard({
                   )}
             </StatusBadge>
           </div>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
+          <Heading level={3} size="base" className="mt-2 text-foreground">
             {assignment.title}
-          </h3>
+          </Heading>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           {assignment.maxPoints} points
@@ -569,12 +571,12 @@ function AssignmentCard({
 
       {assignment.submissionId && assignment.submissionType==="TEXT"?
         <section aria-label="Your submission" className="mt-4 rounded-lg bg-surface-subtle p-3">
-          <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
+          <Heading level={4} size="sm" className="text-foreground">Your submission</Heading>
           <LearnerFormattedResponse text={assignment.submissionText??"No text was saved."}/>
         </section>:null}
       {assignment.submissionId && assignment.submissionType==="LINK"?
         <section aria-label="Your submission" className="mt-4 rounded-lg bg-surface-subtle p-3">
-          <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
+          <Heading level={4} size="sm" className="text-foreground">Your submission</Heading>
           {learnerAssessmentSubmittedLinkHref(assignment.submissionUrl)?
             <div className="mt-2"><ThirdPartyLink href={learnerAssessmentSubmittedLinkHref(assignment.submissionUrl)!}
               label={assignment.submissionUrl??"Saved link"} /></div>:
@@ -582,9 +584,9 @@ function AssignmentCard({
         </section>:null}
       {assignment.submissionId && assignment.submissionType === "FILE" ?
         <section aria-label="Your submission" className="mt-4 space-y-3 rounded-lg bg-surface-subtle p-3">
-          <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
+          <Heading level={4} size="sm" className="text-foreground">Your submission</Heading>
           {assignment.submissionText?<div>
-            <h5 className="text-xs font-semibold text-body">Written response</h5>
+            <Heading level={5} size="xs" className="text-body">Written response</Heading>
             <LearnerFormattedResponse text={assignment.submissionText}/>
           </div>:null}
           <AssignmentFileOpenControl key={assignment.submissionId} submissionId={assignment.submissionId}
@@ -681,9 +683,9 @@ function QuizCard({
               </StatusBadge>
             ) : null}
           </div>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
+          <Heading level={3} size="base" className="mt-2 text-foreground">
             {quiz.title}
-          </h3>
+          </Heading>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           {quiz.totalPoints} points
@@ -828,7 +830,7 @@ export function LearnerCourseWorkspace({
               Content locked or unavailable. This item is not published in the selected lesson.
             </Alert>:null}
       <div>
-        <h2 className="text-xl font-semibold text-foreground">Learning Path</h2>
+        <Heading level={2} size="xl" className="text-foreground">Learning Path</Heading>
         <p className="m-0 text-sm text-body">
           Follow the course in order, open lesson content, submit assessments, and track completion.
         </p>
@@ -841,14 +843,14 @@ export function LearnerCourseWorkspace({
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
               {workspace.learningPath.title}
             </p>
-            <h3 className="mt-2 text-xl font-semibold text-foreground">
+            <Heading level={3} size="xl" className="mt-2 text-foreground">
               {progressUnknown?"Lesson content may be out of date":learnerRoadmapHeadline({
                 nextItemTitle:workspace.nextItem?.title??null,
                 itemsMissed:summary.itemsMissed,
                 itemsCompleted:summary.itemsCompleted,
                 itemsTotal:summary.itemsTotal,
               })}
-            </h3>
+            </Heading>
             <p className="mt-2 text-sm leading-6 text-body">
               {workspace.learningPath.description ??
                 "Lessons and learning items are presented in the order defined for this course."}
@@ -986,10 +988,10 @@ export function LearnerCourseWorkspace({
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                       {String(lessonIndex + 1).padStart(2, "0")}
                     </p>
-                    <h3 aria-current={lessonProgress.current&&!progressUnknown?"step":undefined}
-                      className="mt-1 text-lg font-semibold text-foreground">
+                    <Heading level={3} size="lg" aria-current={lessonProgress.current&&!progressUnknown?"step":undefined}
+                      className="mt-1 text-foreground">
                       {lesson.name?.trim()||"Untitled lesson"}
-                    </h3>
+                    </Heading>
                     {lesson.description ? (
                       <p className="mt-1 max-w-3xl text-sm leading-6 text-body">
                         {lesson.description}

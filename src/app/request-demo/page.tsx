@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { MarketingLayout } from "@/components/marketing/marketing-layout";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 const SITE = "https://42lms.com";
 const DEMO_TITLE = "Request a Demo — 42 LMS";
@@ -74,12 +77,12 @@ export default function RequestDemoPage() {
           __html: JSON.stringify(demoJsonLd).replace(/</g, "\\u003c"),
         }}
       />
-      <section aria-labelledby="request-demo-title" className="mx-auto w-full min-w-0 py-14 min-[768px]:py-20">
+      <section aria-labelledby="request-demo-title" className="mx-auto w-full min-w-0 py-14 md:py-20">
         <header className="mx-auto mb-10 max-w-[720px] text-center">
           <p className="mb-3 text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--lms-primary-text)]">
             Request a Demo
           </p>
-          <h1 id="request-demo-title" className="mb-[14px] text-[clamp(26px,4vw,38px)] font-semibold leading-[1.2] text-[var(--lms-heading)]">
+          <h1 id="request-demo-title" className="mb-[16px] text-[clamp(26px,4vw,38px)] font-semibold leading-[1.25] text-[var(--lms-heading)]">
             See 42 LMS in action
           </h1>
           <p className="text-[clamp(16px,2vw,18px)] leading-[1.6] text-[var(--lms-body-text)]">
@@ -87,14 +90,14 @@ export default function RequestDemoPage() {
           </p>
         </header>
 
-        <div className="mx-auto grid max-w-[920px] min-w-0 grid-cols-1 gap-[22px] min-[900px]:grid-cols-2">
-          <article className="min-w-0 rounded-[18px] border border-[color:var(--lms-border)] bg-white p-[30px]">
-            <h2 className="mb-4 mt-2 text-2xl font-semibold text-[var(--lms-heading)]">
+        <div className="mx-auto grid max-w-[920px] min-w-0 grid-cols-1 gap-[24px] lg:grid-cols-2">
+          <article className="min-w-0 rounded-[18px] border border-[color:var(--lms-border)] bg-surface p-[32px]">
+            <Heading level={2} size="2xl" className="mb-4 mt-2 text-[var(--lms-heading)]">
               What to expect
-            </h2>
+            </Heading>
             <ul className="m-0 list-none p-0">
               {EXPECTATIONS.map(item => (
-                <li key={item} className="flex items-start gap-[10px] py-[7px] text-[16px] leading-6 text-[var(--lms-body-text)]">
+                <li key={item} className="flex items-start gap-[12px] py-[8px] text-[16px] leading-6 text-[var(--lms-body-text)]">
                   <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"
                     className="mt-[1px] shrink-0 text-[var(--lms-primary-text)]"
                     fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -106,26 +109,25 @@ export default function RequestDemoPage() {
             </ul>
           </article>
 
-          <article className="min-w-0 rounded-[18px] border border-transparent bg-[color:var(--lms-brand-dark)] p-[30px] text-white">
-            <h2 className="mb-4 mt-2 text-2xl font-semibold text-white">Get in touch</h2>
-            <p className="leading-6 text-white/85">
+          <article className="min-w-0 rounded-[18px] border border-transparent bg-[color:var(--lms-brand-dark)] p-[32px] text-[color:var(--lms-on-primary)]">
+            <Heading level={2} size="2xl" className="mb-4 mt-2 text-[color:var(--lms-on-primary)]">Get in touch</Heading>
+            <p className="leading-6 text-[color:color-mix(in_srgb,var(--lms-white)_85%,transparent)]">
               Email us and a specialist will reach out to schedule your demo. No form data is collected on this page.
             </p>
-            <div className="mt-[18px] flex flex-wrap justify-start gap-3">
-              <a href={DEMO_MAILTO}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-5 py-3 text-center text-sm font-semibold text-white hover:bg-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-white">
+            <div className="mt-[20px] flex flex-wrap justify-start gap-3">
+              <ButtonLink variant="secondary" href={DEMO_MAILTO}>
                 Email us to book a demo
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"
                   fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14m-6-6 6 6-6 6" />
                 </svg>
-              </a>
+              </ButtonLink>
             </div>
-            <p className="mt-4 text-sm leading-6 text-white/75">
+            <p className="mt-4 text-sm leading-6 text-[color:color-mix(in_srgb,var(--lms-white)_75%,transparent)]">
               or write to{" "}
-              <a href={"mailto:" + DEMO_EMAIL} className="font-semibold text-[color:var(--lms-primary-light)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+              <TextLink href={"mailto:" + DEMO_EMAIL} className="text-[color:var(--lms-primary-light)]">
                 {DEMO_EMAIL}
-              </a>
+              </TextLink>
             </p>
           </article>
         </div>

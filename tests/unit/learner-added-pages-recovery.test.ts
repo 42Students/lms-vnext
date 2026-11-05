@@ -47,7 +47,7 @@ describe("Learner added page mobile/recovery/empty audit", () => {
     const notificationList = fs.readFileSync(path.join(
       process.cwd(), "src/components/activity/notification-list.tsx",
     ), "utf8");
-    expect(notificationList).toContain("min-[768px]:");
+    expect(notificationList).toContain("md:");
     const placementPage = read("learn/my-placements/placement/page.tsx");
     expect(placementPage).toContain("LearnerPlacementAlerts");
     const personalAlerts = fs.readFileSync(path.join(

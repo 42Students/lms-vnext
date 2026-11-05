@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 type CampaignReceipt={leadId:string;name:string;status:string};
 type CampaignStory={
@@ -23,9 +24,9 @@ function receiptText(code:string){
  return labels[code]??(code.startsWith("SKIPPED_")?"Skipped":"Status unavailable");
 }
 function receiptTone(code:string){
- return code==="SENT"?"text-emerald-800 bg-emerald-50":
-  code==="FAILED"?"text-red-800 bg-red-50":
-  code==="QUEUED"?"text-sky-800 bg-sky-50":"text-slate-700 bg-slate-100";
+ return code==="SENT"?"text-[color:var(--lms-success)] bg-[color:var(--lms-success-surface)]":
+  code==="FAILED"?"text-[color:var(--lms-error-strong)] bg-[color:var(--lms-error-surface)]":
+  code==="QUEUED"?"text-[color:var(--lms-info-text)] bg-[color:var(--lms-primary-subtle)]":"text-[color:var(--lms-text-body)] bg-[color:var(--lms-neutral-100)]";
 }
 
 /** Email screenshots 06–07 show a campaign as a progression rather than a
@@ -46,7 +47,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
  return <section aria-label="Campaign activity story" data-testid="tpo.campaigns.sent-story"
    className="min-w-0 rounded-xl border border-border bg-surface px-4 py-5 sm:px-6">
    <header className="flex flex-wrap items-center gap-2">
-    <h2 className="text-[20px] font-bold text-foreground">{campaign.subject}</h2>
+    <Heading level={2} size="xl" className="text-foreground">{campaign.subject}</Heading>
     <span className="rounded-full bg-primary-subtle px-2 py-1 text-xs font-bold text-primary-text">
      {campaign.status==="SENT"?"Send recorded":"Sending in progress"}
     </span>
@@ -57,7 +58,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
    </p>
    <div className="mt-5 space-y-6 border-l-2 border-[color:var(--lms-border)] pl-5">
     <section aria-label="What you sent">
-     <h3 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">What you sent</h3>
+     <Heading level={3} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">What you sent</Heading>
      <p className="mt-2 text-sm text-body">Subject: <strong>{campaign.subject}</strong></p>
      <details className="mt-2 rounded-lg border border-border px-3 py-2">
       <summary className="min-h-8 cursor-pointer text-sm font-semibold text-link">See the email</summary>
@@ -65,7 +66,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      </details>
     </section>
     <section aria-label="What happened">
-     <h3 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">What happened</h3>
+     <Heading level={3} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">What happened</Heading>
      <p className="mt-2 text-sm text-foreground">
       {campaign.providerAccepted} of {campaign.totalRecipients} intended recipients
       have a persisted provider-acceptance receipt.
@@ -73,8 +74,8 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      <div className="mt-3 grid gap-3 sm:grid-cols-3">
       {([
        ["Provider accepted",campaign.providerAccepted,"bg-[color:var(--lms-button-primary)]"],
-       ["Failed",campaign.failed,"bg-red-500"],
-       ["Skipped",campaign.skipped,"bg-slate-500"],
+       ["Failed",campaign.failed,"bg-[color:var(--lms-error)]"],
+       ["Skipped",campaign.skipped,"bg-[color:var(--lms-text-muted)]"],
       ] as const).map(([label,count,tone])=>
        <div key={label} className="min-w-0">
         <p className="text-lg font-bold text-foreground">{count}</p>
@@ -85,7 +86,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
         <p className="mt-1 text-xs text-body">{label}</p>
        </div>)}
      </div>
-     {unconfirmed>0?<p role="status" className="mt-3 text-sm text-amber-800">
+     {unconfirmed>0?<p role="status" className="mt-3 text-sm text-[color:var(--lms-warning-strong)]">
       {unconfirmed} intended recipient {unconfirmed===1?"receipt is":"receipts are"} not settled.
       Refresh the saved campaign to check updated results.
      </p>:null}
@@ -95,7 +96,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      </p>
     </section>
     <section aria-label="What to do now">
-     <h3 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">What to do now</h3>
+     <Heading level={3} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">What to do now</Heading>
      {campaign.failed>0?<p className="mt-2 text-sm text-body">
       {campaign.failed} recorded failed {campaign.failed===1?"attempt needs":"attempts need"}
       investigation. Review recipient status before preparing any new outreach.
@@ -116,9 +117,9 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      </div>
     </section>
     <section aria-label="Everyone it went to">
-     <h3 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">
+     <Heading level={3} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">
       Everyone it went to · {campaign.totalRecipients} intended
-     </h3>
+     </Heading>
      {!recipientsReady?<p role="status" className="mt-2 text-sm text-body">
       Individual recipient statuses are unavailable. No one is assumed delivered or skipped.
      </p>:<div className="mt-2 overflow-x-auto">

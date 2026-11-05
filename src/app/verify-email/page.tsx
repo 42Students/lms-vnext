@@ -39,7 +39,7 @@ export default function VerifyEmailPage(){
   {state==="loading"?<p>Checking your link…</p>:null}
   {state==="ready"?<>
    <p>Confirm that this email address belongs to your signed-in college account. This link is valid for 24 hours and can be used only once.</p>
-   <Button variant="bare" type="submit" className="rounded-md bg-slate-900 px-4 py-3 font-medium text-white"
+   <Button variant="bare" type="submit" className="rounded-md bg-[color:var(--lms-heading)] px-4 py-3 font-medium text-[color:var(--lms-on-primary)]"
     onClick={confirm}>Confirm email ownership</Button>
   </>:null}
   {state==="sending"?<p role="status">Verifying…</p>:null}

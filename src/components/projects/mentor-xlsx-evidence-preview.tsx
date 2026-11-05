@@ -6,6 +6,7 @@ import {mentorXlsxTrialSummary,type MentorXlsxTrialSummary}
  from "@/modules/projects/mentor-xlsx-trial-summary-model";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 const MAX_SPREADSHEET=4_000_000;
 /** Preview only a browser-readable authorized same-origin reference. Never
@@ -58,7 +59,7 @@ export function MentorXlsxEvidencePreview({href,name}:{
   }finally{setLoading(false);}
  }
  return <section className="space-y-2" aria-label="Spreadsheet trial summary">
-  <h5 className="font-semibold">First worksheet · trial summary</h5>
+  <Heading level={5}>First worksheet · trial summary</Heading>
   <p className="text-xs text-muted-foreground">
    This is a read-only first-sheet preview. Numeric column totals are calculated
    only when every populated data row contains a numeric value. They are not

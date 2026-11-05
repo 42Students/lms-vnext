@@ -28,7 +28,7 @@ export function MetricBar({
       aria-valuenow={Math.min(safeMaximum, safeValue)}
       aria-valuetext={numericText + (unit ? " " + unit : "")}
       className={cx(
-        "overflow-hidden rounded-[4px] bg-[rgba(0,0,0,0.06)]",
+        "overflow-hidden rounded-[4px] bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)]",
         size === "compact" ? "h-[6px]" : size === "medium" ? "h-2.5" : "h-3",
         className,
       )}

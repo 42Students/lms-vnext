@@ -25,7 +25,7 @@ export function SuperAdminTemplateArchiveControl({templateId,title,status}:{
   finally{setBusy(false);}
  }
  return <div className={styles["legacy"]+" "+styles["contents"]}><span><Button type="button" variant="secondary" disabled={busy||status==="ARCHIVED"} onClick={()=>void archive()}
-    className="border-red-300 text-red-700 hover:bg-red-50">
+    className="border-[color:var(--lms-neutral-400)] text-[color:var(--lms-error-text)] hover:bg-[color:var(--lms-error-surface)]">
     {busy?"Archiving…":status==="ARCHIVED"?"Archived":"Archive"}</Button>
     </span>{error?<Banner tone="error">{error}</Banner>:null}{dialog}</div>;
 }

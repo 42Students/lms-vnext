@@ -13,6 +13,7 @@ import { getOwnLearnerJobEnrollmentState, listLearnerPlacementJobs } from "@/mod
 import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
+import { Heading } from "@/components/ui/heading";
 
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
   return {
@@ -77,7 +78,7 @@ export default async function LearnerPlacementJobsPage() {
       return {ok:false as const};
     });
   if(!browseRead.ok)return <div className="min-w-0 space-y-5">
-    <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Drives</h2>
+    <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Drives</Heading>
     <ErrorState title="Placement drives unavailable"
       description="Your placement drives could not be loaded. This is not an empty jobs list. Try again."
       action={<Link href="/learn/my-placements/jobs"
@@ -91,7 +92,7 @@ export default async function LearnerPlacementJobsPage() {
   const enrollmentState=rows.length===0
     ?await getOwnLearnerJobEnrollmentState(context).catch(()=>"OK" as const):"OK" as const;
   if(enrollmentState!=="OK")return <div className="min-w-0 space-y-5">
-    <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Drives</h2>
+    <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Drives</Heading>
     <ErrorState title="No placement drives can be shown yet"
       description={enrollmentState==="NO_ACTIVE_ENROLLMENT"
         ?"You do not have an active program and batch enrollment, so no placement drives are available to you. Contact your placement cell or college administrator."
@@ -108,7 +109,7 @@ export default async function LearnerPlacementJobsPage() {
   return (
     <div className="min-w-0 space-y-5">
       <div className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-[18px] font-semibold leading-6 text-[var(--lms-heading)]">Drives</h2>
+        <Heading level={2} size="lg" className="leading-6 text-[var(--lms-heading)]">Drives</Heading>
         <Link href="/learn/my-placements/rules?from=drives"
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
           Review placement rules and preparation →

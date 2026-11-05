@@ -8,6 +8,7 @@ import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import styles from "./legacy-project-touch-actions.module.css";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
  currentVersion,status,impact}:{templateId:string;selectedVersion:{
   id:string;version:number;title:string};
@@ -53,7 +54,7 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   finally{setBusy(false);}
  }
  return <div className={"min-w-0 space-y-3 border-b border-border pb-4 text-body "+styles["legacy"]}>
-  <h2 className="text-sm font-semibold text-foreground">Roll back to this version</h2>
+  <Heading level={2} size="sm" className="text-foreground">Roll back to this version</Heading>
   <p className="text-xs text-body">Review the compared changes above. Rollback creates a new editable version;
    assigned colleges and existing workspaces keep their current pinned versions.
    Unlike the old LMS snapshot rollback, this does not restore published,

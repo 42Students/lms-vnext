@@ -27,7 +27,7 @@ describe("NORTH-STAR-CHAT19: recruiter recovery screens inherit the legacy canva
       if (!existsSync(path)) continue;
       const code = readFileSync(path, "utf8");
       expect(code, path).not.toMatch(/\brounded-(?:md|lg|xl|2xl)\b/);
-      expect(code, path).not.toContain("rounded-[9px]");
+      expect(code, path).not.toContain("rounded-[8px]");
       expect(code, path).not.toContain("<main aria-busy");
     }
   });
@@ -38,7 +38,7 @@ describe("NORTH-STAR-CHAT19: recruiter recovery screens inherit the legacy canva
       "src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx",
     ]) {
       const code = readFileSync(path, "utf8");
-      expect(code, path).not.toContain("rounded-[9px]");
+      expect(code, path).not.toContain("rounded-[8px]");
       expect(code, path).not.toMatch(/focus-visible:outline-primary\b/);
     }
   });

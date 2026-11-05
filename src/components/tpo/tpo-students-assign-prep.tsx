@@ -9,6 +9,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
+import { Heading } from "@/components/ui/heading";
 type Course={id:string;cohortId:string;name:string;code:string};
 type Result={id:string;status:"assigned"|"duplicate"|"skipped"};
 export function TpoStudentsAssignPrep(){
@@ -44,7 +45,7 @@ export function TpoStudentsAssignPrep(){
   }catch{setError("Could not assign preparation. Your selection and due date are kept for retry.");}
  }
  return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Assign preparation course">
-  <h2 className="font-semibold">Assign prep</h2>
+  <Heading level={2}>Assign prep</Heading>
   <p className="text-sm">Choose a college course and an optional due date for up to 100 selected students per batch. Existing assignments are skipped; students receive an in-app notice.</p>
   <p role="status" className="break-words text-xs text-muted-foreground">{picked.length} students selected. {picked.length>100?"The first 100 will be checked in this batch.":""}</p>
   {loading?<p role="status" className="text-sm text-body">Loading preparation courses…</p>:null}

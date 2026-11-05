@@ -15,6 +15,7 @@ import {
   learnerPreparationHref, learnerPreparationQuerySchema,
 } from "@/modules/placements/learner-preparation-model";
 import { getOwnLearnerPlacementPreparation } from "@/modules/placements/learner-preparation-service";
+import { Heading } from "@/components/ui/heading";
 
 type Params={view?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -71,7 +72,7 @@ export default async function LearnerPlacementPreparationPage({
         {data.items.map(item=>
           <li key={item.id} className="min-w-0 py-4 first:pt-0 last:pb-0">
             <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <h2 className="min-w-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.title}</h2>
+              <Heading level={2} size="base" className="min-w-0 break-words leading-6 text-[var(--lms-heading)]">{item.title}</Heading>
               <StatusBadge tone={item.recorded?"success":"neutral"}>{item.recorded?"Recorded":"Not recorded"}</StatusBadge>
             </div>
             <p className="mt-2 max-w-3xl text-sm leading-[22px] text-body">{item.description}</p>

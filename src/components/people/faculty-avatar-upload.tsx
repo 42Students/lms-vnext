@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import { Img } from "@/components/ui/img";
 
 type AvatarSnapshot={preview:string|null;version:number};
 
@@ -96,7 +97,7 @@ export function FacultyAvatarUpload({initialVersion,initials}:{initialVersion:nu
  }
  return <div className="min-w-0 space-y-2 text-sm">
   <div className="relative flex h-[120px] w-[120px] shrink-0 items-center justify-center overflow-hidden rounded-[12px] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] text-3xl font-semibold text-[var(--lms-primary-text)]">
-   {preview?<img alt="Current faculty profile" src={preview} className="h-full w-full object-cover"
+   {preview?<Img alt="Current faculty profile" src={preview} className="h-full w-full object-cover"
      referrerPolicy="no-referrer" onError={()=>{setPreview(null);setNotice("Profile photo expired. Refresh to load it again.");}}/>:
      <span aria-label="Profile initials">{initials}</span>}
   </div>

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { courseApiError } from "./learner-course-api";
+import { Heading } from "@/components/ui/heading";
 
 type OptionDraft = {
   key: number;
@@ -453,10 +454,10 @@ export function FacultyQuizQuestionEditor({
                   className="min-w-0 border-b border-border py-4"
                 >
                   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-                    <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
+                    <Heading level={3} size="sm" className="m-0 text-[var(--lms-heading)]">
                       Question{" "}
                       {questionIndex + 1}
-                    </h3>
+                    </Heading>
                     {questions.length >
                     1 ? (
                       <Button

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import type { BulkOfferWithdrawalResult } from "@/modules/placements/bulk-offer-withdrawal-model";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Heading } from "@/components/ui/heading";
 
 type Choice = {
   id: string;
@@ -100,9 +101,9 @@ export function PlacementBulkOfferWithdraw({
   return (
     <section className="space-y-4 border-b border-border pb-6" aria-labelledby="bulk-offer-withdraw-heading">
       <div>
-        <h3 id="bulk-offer-withdraw-heading" className="text-base font-semibold text-[var(--lms-heading)]">
+        <Heading level={3} size="base" id="bulk-offer-withdraw-heading" className="text-[var(--lms-heading)]">
           Bulk withdraw offers
-        </h3>
+        </Heading>
         <p className="mt-1 text-sm leading-6 text-body">
           Select up to 50 issued or accepted offers. Recorded joining outcomes
           cannot be withdrawn here. A TPO cannot accept or decline on behalf of a learner.
@@ -156,7 +157,7 @@ export function PlacementBulkOfferWithdraw({
       {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
       {results.length ? (
         <div aria-label="Per-offer withdrawal results" className="space-y-2">
-          <h4 className="font-semibold text-foreground">Per-offer results</h4>
+          <Heading level={4} className="text-foreground">Per-offer results</Heading>
           <ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border text-sm">
             {results.map((item) => (
               <li key={item.offerId} className="flex min-w-0 flex-wrap gap-2 break-words p-3">

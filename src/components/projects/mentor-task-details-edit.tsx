@@ -13,6 +13,7 @@ import { projectMutation } from "./project-api";
 import { FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
+import { Heading } from "@/components/ui/heading";
 
 type Props={
   projectId:string;taskId:string;title:string;description:string|null;
@@ -118,7 +119,7 @@ export function MentorTaskDetailsEdit(props:Props) {
         </details>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
           <Select value={priority} onChange={event=>setPriority(event.target.value)}
-            className="min-h-11 w-full min-[768px]:min-h-9">
+            className="min-h-11 w-full md:min-h-9">
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </Select>
@@ -132,7 +133,7 @@ export function MentorTaskDetailsEdit(props:Props) {
           Estimate must be a whole number from 0 to 1000.
         </p>:null}
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
-          <Select className="min-h-11 w-full min-[768px]:min-h-9" value={taskType}
+          <Select className="min-h-11 w-full md:min-h-9" value={taskType}
             onChange={e=>setTaskType(e.target.value)}>
             <option value="">Not specified</option><option value="STORY">Story</option>
             <option value="BUG">Bug</option><option value="CHORE">Chore</option>
@@ -164,7 +165,7 @@ export function MentorTaskDetailsEdit(props:Props) {
     {props.inlineEdit
       ? open?<section aria-label={"Edit task "+props.title}
           className="mt-2 min-w-0 rounded border border-border bg-surface p-3">
-          <h3 className="mb-3 text-sm font-semibold">Edit task · {props.title}</h3>
+          <Heading level={3} size="sm" className="mb-3">Edit task · {props.title}</Heading>
           {editor}
         </section>:null
       : <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit task details"

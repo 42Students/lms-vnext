@@ -10,6 +10,7 @@ import {tpoBellOpenHref} from "@/modules/activity/tpo-bell-open-model";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-model";
+import { Heading } from "@/components/ui/heading";
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
 export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{initialUnread:number;items:readonly BellItem[];revision?:number;compact?:boolean}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
@@ -142,7 +143,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   <Button ref={trigger} variant="secondary" size="sm" type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending}
    aria-controls={open ? (mobile ? "tpo-notification-drawer" : "tpo-notification-popover") : undefined} disabled={pending} onClick={()=>changeOpen(!open)}
    className={compact
-    ? "relative inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center md:h-9 md:w-9 md:min-h-9 md:min-w-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-header-border)] bg-surface p-0 text-[var(--lms-topbar-ink)] hover:text-[var(--lms-button-primary)] hover:bg-[var(--lms-topbar-search)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+    ? "relative inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center md:h-9 md:w-9 md:min-h-9 md:min-w-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-header-border)] bg-surface p-0 text-[var(--lms-topbar-ink)] hover:text-[var(--lms-button-primary)] hover:bg-[var(--lms-topbar-search)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
     : "min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"}>
    {compact ? <>
     <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none"
@@ -150,7 +151,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
       <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>
     </svg>
     {unread>0?<span aria-hidden="true"
-      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-[var(--lms-radius-pill)] border-2 border-surface bg-[var(--lms-topbar-unread)] px-0.5 text-xs font-bold leading-none text-white">
+      className="absolute -right-1.5 -top-1.5 inline-flex min-h-[17px] min-w-[17px] items-center justify-center rounded-[var(--lms-radius-pill)] border-2 border-surface bg-[var(--lms-topbar-unread)] px-0.5 text-xs font-bold leading-none text-[color:var(--lms-on-primary)]">
       {unread>99?"99+":unread}
     </span>:null}
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
@@ -162,9 +163,9 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      </Drawer>
    : open ? <PopoverPanel id="tpo-notification-popover" data-slot="notification-popover" label="Notifications"
        onDismiss={()=>{setOpen(false);trigger.current?.focus();}}
-       className="absolute right-0 top-[calc(100%_+_8px)] z-[70] w-[min(420px,calc(100vw_-_24px))] max-h-[min(520px,calc(100dvh_-_120px))] overflow-y-auto overscroll-contain p-4">
+       className="absolute right-0 top-[calc(100%_+_8px)] z-(--lms-z-popover-high) w-[min(420px,calc(100vw_-_24px))] max-h-[min(520px,calc(100dvh_-_120px))] overflow-y-auto overscroll-contain p-4">
        <div className="mb-3 border-b border-border pb-3">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Notifications</h2>
+        <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Notifications</Heading>
         <p className="text-xs text-muted-foreground leading-[20px]">Most recent notifications from your own college.</p>
        </div>
        {panelBody}

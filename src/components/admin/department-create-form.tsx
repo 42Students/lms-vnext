@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {Alert} from "@/components/ui/alert";
 import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
+import { Heading } from "@/components/ui/heading";
 
 export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
   void collegeId; // College identity is scoped by the server request context.
@@ -69,9 +70,9 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
   return (
     <form onSubmit={submit} aria-label={DEPARTMENT_COPY.createCardTitle}
       className="flex min-w-0 flex-col items-stretch gap-4 print:hidden">
-      <h2 className="m-0 -mx-4 border-b border-[var(--lms-canvas-border)] px-4 pb-4 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">
+      <Heading level={2} className="m-0 -mx-4 border-b border-[var(--lms-canvas-border)] px-4 pb-4 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
         {DEPARTMENT_COPY.createCardTitle}
-      </h2>
+      </Heading>
       <div className="min-w-0 w-full flex-1">
         <label htmlFor="department-name" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {DEPARTMENT_COPY.nameLabel}<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>

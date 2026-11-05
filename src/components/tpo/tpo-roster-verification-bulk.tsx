@@ -12,6 +12,7 @@ import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
 import {describeBulkReviewOutcomeRows,type BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 
 type Action="VERIFY"|"SEND_BACK";
 export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly VerificationQueueCard[];scope?:"roster"|"verification"}){
@@ -74,7 +75,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   <p className="text-xs text-muted-foreground">No submitted Education sections or Identity sections need review in the current {scope==="roster"?"student roster":"verification queue"} page.</p>
  </section>;
  return <section aria-label="Bulk student profile verification" className="min-w-0 space-y-3 border-b border-border py-4">
-  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Verify profiles / Send back for correction</h2>
+  <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Verify profiles / Send back for correction</Heading>
   <p className="text-sm text-muted-foreground leading-[22px]">Select up to 20 submitted Education or Identity sections from this current {scope==="roster"?"student roster":"verification queue"} page. Every decision is rechecked, audited, and sent to the student.</p>
   <p role="status" aria-live="polite" className="text-sm tabular-nums leading-[22px]">
    {checked.length} selected of {waiting.length} visible waiting sections ·
@@ -121,7 +122,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    onClick={()=>{setPreview(true);setError("");setOutcomes([]);}}
    >Preview selected</Button>
   {preview?<section id={previewId} aria-label="Review selected profile decisions" className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 md:px-4">
-   <h3 className="font-semibold">Review {eligible.length} eligible, {skipped.length} left out</h3>
+   <Heading level={3}>Review {eligible.length} eligible, {skipped.length} left out</Heading>
    {skipped.length?<p className="text-sm text-warning-text leading-[22px]">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
    {action==="VERIFY"?<label className="flex gap-2 text-sm"><Checkbox  checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
     I have checked their documents another way (for example the college&apos;s own records).
@@ -133,7 +134,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    <Button variant="secondary" type="button" disabled={busy}  onClick={()=>setPreview(false)}>Cancel preview</Button>
   </section>:null}
   {outcomes.length>0?<section aria-label="Bulk review results" className="space-y-2 border-t border-border py-3">
-   <h3 className="font-semibold">Bulk review results</h3>
+   <Heading level={3}>Bulk review results</Heading>
    <p role="status">{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
    {outcomes.some(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK")?<p className="text-sm text-muted-foreground">Failed sections remain selected if still waiting. Refresh to retry with their latest versions. Sections no longer waiting cannot be retried.</p>:null}
    <div className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-border">

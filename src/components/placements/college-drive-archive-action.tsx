@@ -5,6 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Heading } from "@/components/ui/heading";
 type Preview={job:{title:string;status:string};canArchive:boolean;applications:number;
  rounds:number;interviews:number;offers:Record<string,number>;note:string};
 export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
@@ -37,12 +38,12 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
   finally{setBusy(false);}
  }
  return <section aria-labelledby="drive-archive-heading"
-  className="min-w-0 space-y-[var(--lms-space-3)] border-l-4 border-[var(--lms-error)] bg-[var(--lms-neutral-50)] px-4 py-4">
-  <h2 id="drive-archive-heading" className="flex items-center gap-2 text-base font-semibold text-[var(--lms-error)]">
+  className="min-w-0 space-y-[var(--lms-space-3)] border-l-2 border-[var(--lms-error)] bg-[var(--lms-neutral-50)] px-4 py-4">
+  <Heading level={2} size="base" id="drive-archive-heading" className="flex items-center gap-2 text-[var(--lms-error)]">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8">
       <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>
     </svg>Archive drive
-  </h2>
+  </Heading>
   <p className="text-sm text-muted-foreground">Safely archive instead of permanently erasing placement evidence.</p>
   {!preview?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void load()} className="min-h-11 w-full md:w-auto md:min-h-9">
     {busy?"Loading…":"Review archive impact"}</Button>:

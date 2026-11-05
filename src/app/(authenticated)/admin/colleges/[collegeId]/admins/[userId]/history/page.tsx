@@ -8,6 +8,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import {parseAdminSessionHistoryPage} from "@/modules/colleges/admin-session-query-model";
 import {listCollegeAdminHistory} from "@/modules/colleges/admin-session-service";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function AdministratorHistoryPage({params,searchParams}:{
  params:Promise<{collegeId:string;userId:string}>;
@@ -21,7 +22,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  if(page===null)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title="Administrator activity history" actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="College admins"/>}/>
   <ErrorState title="Invalid history page" description="Choose a valid page without repeated or unrelated filters."
-   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-[650] text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear history filters</Link>}/>
+   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear history filters</Link>}/>
  </div>;
  const data=await listCollegeAdminHistory(context,collegeId,userId,page);
  const base="/admin/colleges/"+encodeURIComponent(collegeId)+"/admins";
@@ -43,8 +44,8 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
       {key:"summary",header:"Summary",mobilePriority:"secondary",cell:row=><span className="break-words">{row.summary}</span>},
     ]}/>
   <div className="flex min-w-0 justify-start print:hidden">
-    <a href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Export shown history (CSV)</a>
+    <TextLink href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
+     className="inline-flex min-h-11 items-center md:min-h-9">Export shown history (CSV)</TextLink>
   </div>
   <nav aria-label="Administrator activity pages" className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
     {data.page>1?<Link href={"?page="+(data.page-1)}

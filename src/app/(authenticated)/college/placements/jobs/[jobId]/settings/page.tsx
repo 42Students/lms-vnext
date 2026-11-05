@@ -23,6 +23,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { CollegeDriveSettingsDirtyGuard } from "@/components/placements/college-drive-settings-dirty-guard";
 import {listCollegeCompanyDirectory} from "@/modules/placements/college-company-directory-service";
 import {CollegeDraftCompanyPicker} from "@/components/placements/college-draft-company-picker";
+import { Heading } from "@/components/ui/heading";
 
 // Use a static route template: never put tenant/job IDs or filter values in
 // structured error metadata. Authorization failures must reach the role fence
@@ -159,7 +160,7 @@ export default async function CollegeDriveSettingsPage({
       <Link href={base+"/settings"} className="ml-2 font-semibold text-link underline">Retry</Link>
     </Alert>:null}
     <section aria-label="Linked company" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
-      <h2 className="text-[16px] font-semibold text-[var(--lms-heading)]">Company</h2>
+      <Heading level={2} size="base" className="text-[var(--lms-heading)]">Company</Heading>
       <p className="mt-1 text-sm text-body">{drive?.companyName??"Company association unavailable"}</p>
       <p className="mt-2 text-xs text-muted-foreground">
         Company names can be searched in the college-scoped directory. Verified relationships
@@ -234,7 +235,7 @@ export default async function CollegeDriveSettingsPage({
           :"This drive is read-only. Only drafts in an active placement season are editable. Published-drive changes use the guarded lifecycle and deadline actions."}
       </Alert>}
     <section aria-label="Drive status" className="min-w-0">
-      <h2 className="mb-3 text-[16px] font-semibold text-[var(--lms-heading)]">Drive status</h2>
+      <Heading level={2} size="base" className="mb-3 text-[var(--lms-heading)]">Drive status</Heading>
       <CollegeLegacyDriveSettings jobId={jobId} status={(drive?.status??job.status) as CollegeLegacyDriveStatus}/>
     </section>
     {(drive?.status??job.status)!=="ARCHIVED"?<Disclosure title="Danger zone · Delete drive" className="min-w-0 border-b border-[var(--lms-canvas-border)]"><div className="min-w-0 pt-[var(--lms-space-2)]"><CollegeDriveArchiveAction jobId={jobId}/></div></Disclosure>:null}

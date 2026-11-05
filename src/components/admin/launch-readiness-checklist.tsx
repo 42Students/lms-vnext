@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type {CollegeReadinessEvaluation} from "@/modules/colleges/readiness-model";
 import {readinessRemediationLink} from "@/modules/colleges/readiness-remediation-links";
+import { Heading } from "@/components/ui/heading";
 
 type Advisory={id:string;title:string;reason:string;fix:string;href:string};
 type ReadinessInput={collegeId:string;collegeName:string;
@@ -21,7 +22,7 @@ function ReadinessRow({item,blocking}:{item:Advisory;blocking:boolean}){
    {blocking?"✕":"!"}
   </span>
   <div className="min-w-0 flex-1">
-   <h4 className="font-semibold text-heading">{item.title}</h4>
+   <Heading level={4} className="text-heading">{item.title}</Heading>
    <p className="mt-1 text-sm text-body">{item.reason}</p>
    <p className="mt-1 text-sm text-body"><strong>What to do:</strong> {item.fix}</p>
   </div>
@@ -48,7 +49,7 @@ export function LaunchReadinessChecklist({collegeId,collegeName,readiness,loadFa
  return <section aria-label="Launch checklist" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-sm md:p-5">
   <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
    <div>
-    <h3 className="text-lg font-semibold text-heading">Launch checklist</h3>
+    <Heading level={3} size="lg" className="text-heading">Launch checklist</Heading>
     <p className="mt-1 text-xs text-muted-foreground">
      Everything that has to be true before this college can be handed over.
     </p>
@@ -75,16 +76,16 @@ export function LaunchReadinessChecklist({collegeId,collegeName,readiness,loadFa
      <p className="mt-1 text-xs font-normal">This is a persisted setup checklist, not confirmation that live DNS, OTP or login works.</p>
     </div>
     <section className="mt-4" aria-label="Must fix before launch">
-     <h4 className="text-sm font-semibold text-heading">Must fix before launch
+     <Heading level={4} size="sm" className="text-heading">Must fix before launch
       <span className="ml-2 rounded border border-border px-2 py-0.5 text-xs tabular-nums">{blocking.length}</span>
-     </h4>
+     </Heading>
      {blocking.length?<ul className="mt-2">{blocking.map(x=><ReadinessRow key={x.id} item={x} blocking/>)}</ul>:
        <p className="mt-2 text-sm text-body">No failed or unknown persisted checks.</p>}
     </section>
     <section className="mt-4" aria-label="Recommended">
-     <h4 className="text-sm font-semibold text-heading">Recommended
+     <Heading level={4} size="sm" className="text-heading">Recommended
       <span className="ml-2 rounded border border-border px-2 py-0.5 text-xs tabular-nums">{advisory.length}</span>
-     </h4>
+     </Heading>
      {advisory.length?<ul className="mt-2">{advisory.map(x=><ReadinessRow key={x.id} item={x} blocking={false}/>)}</ul>:
        <p className="mt-2 text-sm text-body">No additional recommendations.</p>}
     </section>

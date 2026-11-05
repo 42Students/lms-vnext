@@ -17,6 +17,8 @@ import { driveInterviewDateIst, driveInterviewsHref, driveInterviewsParams, driv
 import { listCollegeDriveInterviews } from "@/modules/placements/college-drive-interviews-service";
 import { getCollegeRoundSlotAppointments } from "@/modules/placements/college-round-slot-action-service";
 import { CollegeInterviewAppointments } from "@/components/placements/college-interview-appointments";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function adminInterviewsHref(...args:Parameters<typeof driveInterviewsHref>){
  return driveInterviewsHref(...args)
@@ -265,14 +267,14 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
         {conflictsOnly?"Show all appointments":"Show possible overlaps (this page)"}
       </Link>
-      <a href={exportHref} download="drive-interviews.csv"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+      <TextLink href={exportHref} download="drive-interviews.csv"
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Export visible appointments (CSV)
-      </a>
+      </TextLink>
     </div>
     <section aria-label="Candidate interviews" className="min-w-0 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Candidate interviews</h2>
+       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Candidate interviews</Heading>
        <Link href={conflictHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
         {conflictsOnly?"Show all interviews":"Only schedule conflicts"} ({conflictIds.size} on this page)
        </Link>
@@ -323,7 +325,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           </Link>}/>}
     </section>
     <section aria-label="Persisted interview rounds" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
-      <h2 className="font-semibold text-[var(--lms-heading)]">Interview and GD rounds</h2>
+      <Heading level={2} className="text-[var(--lms-heading)]">Interview and GD rounds</Heading>
       {data ? <>
         <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching interview/GD rounds</p>
         <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}

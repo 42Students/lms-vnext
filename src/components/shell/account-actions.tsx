@@ -51,11 +51,11 @@ export function AccountActions({
     "text-foreground outline-none hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 " +
     "focus-visible:outline-[var(--lms-primary)] motion-safe:transition-colors " +
     "motion-safe:duration-[var(--lms-motion-fast)] motion-reduce:transition-none " +
-    "max-[767px]:min-h-11 min-[768px]:w-auto";
+    "max-md:min-h-11 md:w-auto";
 
   return (
-    <div className="flex w-full min-w-0 max-w-full flex-col items-stretch gap-[var(--lms-space-3)] min-[768px]:w-auto">
-      <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] min-[768px]:flex min-[768px]:flex-wrap min-[768px]:items-center min-[768px]:justify-end">
+    <div className="flex w-full min-w-0 max-w-full flex-col items-stretch gap-[var(--lms-space-3)] md:w-auto">
+      <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] md:flex md:flex-wrap md:items-center md:justify-end">
         {showNotifications ? (
           <Link href="/notifications" className={actionLinkClasses}>
             Notifications
@@ -71,7 +71,7 @@ export function AccountActions({
           size="sm"
           disabled={pending}
           aria-busy={pending}
-          className="w-full min-[768px]:w-auto"
+          className="w-full md:w-auto"
           onClick={signOut}
         >
           {copy.signOutLabel}

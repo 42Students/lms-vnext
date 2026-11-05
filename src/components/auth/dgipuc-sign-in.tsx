@@ -20,7 +20,7 @@ export function DgipucSignIn(props:Props){
     <Button key={next} type="button" variant="ghost" aria-pressed={role===next}
      onClick={()=>setRole(next)}
      className={"min-h-11 md:min-h-9 "+(role===next
-       ?"bg-white font-semibold text-primary-text shadow-sm"
+       ?"bg-surface font-semibold text-primary-text shadow-sm"
        :"text-body hover:text-primary-text")}>
      {next==="STUDENT"?"Student":"Teacher"}
     </Button>)}

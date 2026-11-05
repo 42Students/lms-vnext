@@ -9,6 +9,7 @@ import {SuperAdminBatchStudentsDialog} from "@/components/admin/super-admin-batc
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getSuperAdminBatchRosterOverview} from "@/modules/admin-ui/super-admin-batch-roster-service";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function SuperAdminBatchStudentsPage({params}:{
  params:Promise<{batchId:string}>;
@@ -22,7 +23,7 @@ export default async function SuperAdminBatchStudentsPage({params}:{
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <Breadcrumbs items={[{label:"Batches",href:"/admin/batches"},{label:data.batch.name}]}/>
   <PageHeader eyebrow="Super Admin · Academic Setup" title={"Manage students · "+data.batch.name} description={`${data.batch.programName} · ${data.batch.code} · ${total} active class assignments`}
-   actions={<a href={"/api/admin/batches/"+encodeURIComponent(batchId)+"/students/export"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export batch students (CSV)</a>}/>
+   actions={<ButtonLink variant="secondary" href={"/api/admin/batches/"+encodeURIComponent(batchId)+"/students/export"} className="w-full md:w-auto">Export batch students (CSV)</ButtonLink>}/>
   <p className="max-w-3xl text-sm leading-6 text-body">Select a class to search its roster by learner name, roll number or email and move learners through the existing capacity-checked class assignment controls. A learner may have distinct period-based assignments.</p>
   <section aria-label="Batch students"><SuperAdminBatchStudentsDialog name={data.batch.name} classes={data.classes} students={data.roster}/></section>
   <section className="min-w-0 space-y-[var(--lms-space-3)]" aria-label="Batch classes">

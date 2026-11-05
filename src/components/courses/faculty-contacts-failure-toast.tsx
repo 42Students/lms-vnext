@@ -13,7 +13,7 @@ export function FacultyContactsFailureToast(){
  },[]);
  if(!visible)return null;
  return <aside role="alert" aria-label="Contacts load notification"
-  className="pointer-events-auto fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-[1000] w-[min(420px,calc(100vw_-_32px))] rounded-[var(--lms-canvas-radius)] border border-l-4 border-error bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]">
+  className="pointer-events-auto fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-(--lms-z-toast) w-[min(420px,calc(100vw_-_32px))] rounded-[var(--lms-canvas-radius)] border border-l-2 border-error bg-surface px-4 py-3 text-foreground shadow-(--lms-toast-shadow)">
   <div className="flex items-start gap-3">
    <div className="min-w-0 flex-1">
     <p className="text-sm font-semibold">Couldn't load contacts</p>

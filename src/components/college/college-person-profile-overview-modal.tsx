@@ -4,6 +4,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Alert} from "@/components/ui/alert";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useRef,useState} from "react";
+import { Heading } from "@/components/ui/heading";
 type Overview={person:{name:string;kind:"FACULTY"|"LEARNER";gender:string;bio:string;
  academicTitle:string|null;employmentType:string|null;rollNumber:string|null};
  education:{title:string;detail:string;year:string;extra:string}[];
@@ -49,7 +50,7 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
        <p className="text-sm text-muted-foreground">Read-only profile sections. Private identity values and files are not displayed here.</p>
        <div className="grid min-w-0 gap-4 md:grid-cols-2">
         {data.learnerSections.map(section=><section key={section.key} className="min-w-0 border-b border-border pb-[var(--lms-space-3)]">
-         <h3 className="text-base font-semibold text-[var(--lms-heading)]">{section.label}</h3>
+         <Heading level={3} size="base" className="text-[var(--lms-heading)]">{section.label}</Heading>
          {section.items.length?<ul className="mt-2 list-inside list-disc space-y-1 break-words text-sm">
           {section.items.map((item,index)=><li key={index} className="whitespace-pre-wrap [overflow-wrap:anywhere]">{item}</li>)}
          </ul>:<p className="mt-2 text-sm text-muted-foreground">Nothing on file yet.</p>}
@@ -58,7 +59,7 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
        </div>
       </section>
       :<>
-     <section className="min-w-0"><h3 className="font-semibold text-[var(--lms-heading)]">Education</h3>
+     <section className="min-w-0"><Heading level={3} className="text-[var(--lms-heading)]">Education</Heading>
       {!data.education.length?<p role="status" className="py-[var(--lms-space-3)] text-sm text-muted-foreground leading-[22px]">No education records.</p>:
       <ul className="mt-[var(--lms-space-2)] divide-y divide-border">{data.education.map((item,index)=>
        <li key={index} className="min-w-0 break-words py-[var(--lms-space-3)] text-sm"><strong>{item.title||"Education"}</strong>
@@ -68,12 +69,12 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
      </section>
      <div className="grid min-w-0 gap-4 md:grid-cols-2">{sections.map(section=>
       <section key={section} className="min-w-0 border-b border-border py-[var(--lms-space-3)]">
-       <h3 className="font-semibold capitalize">{section}</h3>
+       <Heading level={3} className="capitalize">{section}</Heading>
        {data[section].length?<ul className="mt-[var(--lms-space-2)] list-inside list-disc space-y-[var(--lms-space-1)] break-words text-sm">
         {data[section].map((item,index)=><li key={index}>{item}</li>)}</ul>:
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">None recorded.</p>}
       </section>)}</div>
-     <section className="min-w-0"><h3 className="font-semibold">Identity</h3><p className="mt-[var(--lms-space-2)] break-words text-sm text-muted-foreground leading-[22px]">{data.identity}</p></section>
+     <section className="min-w-0"><Heading level={3}>Identity</Heading><p className="mt-[var(--lms-space-2)] break-words text-sm text-muted-foreground leading-[22px]">{data.identity}</p></section>
      </>}
     </div>:null}
   </Dialog>

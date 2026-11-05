@@ -4,8 +4,8 @@ import { PageHeader } from "@/components/ui/page-header";
 /** The legacy invitation renders four paragraph skeleton rows before preview. */
 export default function Loading(){
  return <main className={authStyles["page"]}>
-  <div className="mx-auto flex min-h-dvh w-full max-w-xl min-w-0 items-center px-4 pb-8 pt-24 min-[768px]:py-12">
-  <section className="w-full min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 min-[768px]:p-6"
+  <div className="mx-auto flex min-h-dvh w-full max-w-xl min-w-0 items-center px-4 pb-8 pt-24 md:py-12">
+  <section className="w-full min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6"
    role="status" aria-label="Loading college invitation" aria-busy="true">
    <PageHeader title="Loading college invitation..."/>
    <div className="space-y-3" aria-hidden="true">

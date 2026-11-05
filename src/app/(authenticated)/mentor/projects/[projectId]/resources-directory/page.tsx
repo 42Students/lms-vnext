@@ -12,6 +12,7 @@ import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-dir
 import {mentorResourceDirectoryHref,parseMentorResourceDirectorySearch}
  from "@/modules/projects/mentor-resource-directory-model";
 import {mentorResourceDirectoryFilterLayout} from "@/modules/projects/mentor-resource-directory-layout-model";
+import { Heading } from "@/components/ui/heading";
 type Search={required?:string|string[];link?:string|string[];description?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
@@ -44,7 +45,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     {" "}{data.linkableCount} with HTTPS links.
    </p>
    <FilterBar title="Filters"><form method="get" action={base+"/resources-directory"} role="search" aria-label="Project resources filters"
-    className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-[767px]:[&_label]:w-full [&_button]:max-[767px]:w-full"}>
+    className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-md:[&_label]:w-full [&_button]:max-md:w-full"}>
     <div className="grid min-w-0 w-full items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
@@ -104,7 +105,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     {data.items.map(resource=><li key={resource.id}
      className="min-w-0 py-4">
      <div className="flex flex-wrap items-start justify-between gap-2">
-      <h2 className="m-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{resource.title}</h2>
+      <Heading level={2} size="base" className="m-0 break-words leading-6 text-[var(--lms-heading)]">{resource.title}</Heading>
       <span className="text-xs font-semibold text-body">
        {resource.required?"Required":"Optional"}
       </span>

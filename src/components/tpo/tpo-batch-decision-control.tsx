@@ -7,6 +7,7 @@ import {Select} from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
+import { Heading } from "@/components/ui/heading";
 type Decision="ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
 export function TpoBatchDecisionControl({batchId,current}:{batchId:string;current:{
  status:string;reason:string|null;expectedVersion:string;
@@ -38,7 +39,7 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
   finally{setPending(false);}
  }
  return <section className="min-w-0 space-y-3 border-y border-[var(--lms-canvas-border)] py-4" aria-label="Batch eligibility decision">
-  <h2 className="font-semibold">Who is in placements?</h2>
+  <Heading level={2}>Who is in placements?</Heading>
   <p className="text-sm text-muted-foreground">This sets the default for this whole cohort. More specific class and student decisions override it.</p>
   <label className="block text-[13px]">Batch default decision
    <Select className="min-h-11 md:min-h-9" value={decision} disabled={pending}

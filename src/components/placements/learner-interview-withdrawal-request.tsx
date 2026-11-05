@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {learnerInterviewWithdrawalInputSchema,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
 import {Textarea} from "@/components/ui/textarea";
+import { Heading } from "@/components/ui/heading";
 export function LearnerInterviewWithdrawalRequest({withdrawalRequest:target}:{withdrawalRequest:LearnerInterviewWithdrawalTarget}){
   const router=useRouter();
   const [review,setReview]=useState(false),[reason,setReason]=useState("");
@@ -31,7 +32,7 @@ export function LearnerInterviewWithdrawalRequest({withdrawalRequest:target}:{wi
     finally{setPending(false);}
   }
   return <section className="space-y-3 border-t border-border pt-4" aria-labelledby="learner-interview-withdrawal-title">
-    <h3 id="learner-interview-withdrawal-title" className="text-sm font-semibold text-[var(--lms-heading)]">Ask the placement team to withdraw</h3>
+    <Heading level={3} size="sm" id="learner-interview-withdrawal-title" className="text-[var(--lms-heading)]">Ask the placement team to withdraw</Heading>
     <p className="text-sm leading-[22px] text-body">This requests withdrawal of the whole application, including its interview rounds. Your application and interview remain active until the placement team approves.</p>
     {target.pending||submitted ? <p role="status" className="text-sm text-body leading-[22px]">
       Withdrawal requested; awaiting the placement team&apos;s decision. <Link className="font-semibold text-primary-text underline focus-visible:underline" href="/learn/my-placements/support?status=PENDING&type=APPLICATION_WITHDRAWAL">Review request</Link>

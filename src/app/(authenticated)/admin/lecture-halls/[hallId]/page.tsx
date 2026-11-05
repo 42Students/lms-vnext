@@ -12,6 +12,7 @@ import {
   CollegeHallAvailabilityNotFoundError,
   getCollegeHallAvailability,
 } from "@/modules/academics/college-hall-availability-service";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic = "force-dynamic";
 
@@ -71,9 +72,9 @@ export default async function SuperAdminLectureHallAvailability({
         : <p role="status" className="text-sm text-[var(--lms-muted-text)]">Choose an IST date range to view scheduled classes.</p>
       : <section aria-label="Hall scheduled sessions" className="min-w-0 space-y-[var(--lms-space-4)]">
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:flex-row md:items-baseline md:justify-between md:gap-[var(--lms-space-4)]">
-          <h2 className="min-w-0 text-lg font-semibold text-[var(--lms-heading)]">
+          <Heading level={2} size="lg" className="min-w-0 text-[var(--lms-heading)]">
             {result?.sessions.length ?? 0}{result?.truncated ? "+" : ""} scheduled classes · {result?.conflictCount ?? 0} potential conflicts
-          </h2>
+          </Heading>
           <p className="shrink-0 text-sm text-body">Capacity: {result?.hall.capacity ?? "Unknown"} seats · Status: {result?.hall.status ?? "Unknown"}</p>
         </div>
         {result?.truncated ? <p role="status" className="text-sm text-warning">
@@ -84,7 +85,7 @@ export default async function SuperAdminLectureHallAvailability({
           : <ul className="min-w-0 divide-y divide-border border-b border-border">
             {result?.sessions.map(row => <li key={row.id} className="min-w-0 py-[var(--lms-space-4)] first:pt-0">
               <div className="flex min-w-0 flex-col gap-[var(--lms-space-1)] md:flex-row md:items-start md:justify-between md:gap-[var(--lms-space-4)]">
-                <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)]">{row.title}{row.hasConflict ? " · Potential conflict" : ""}</h3>
+                <Heading level={3} className="min-w-0 break-words text-[var(--lms-heading)]">{row.title}{row.hasConflict ? " · Potential conflict" : ""}</Heading>
                 <p className="shrink-0 text-sm text-[var(--lms-muted-text)]">{inIst(row.startsAt)} – {inIst(row.endsAt)}</p>
               </div>
               <p className="mt-[var(--lms-space-1)] text-sm text-body">{row.sectionName} · Class capacity: {row.sectionCapacity ?? "Unknown"}; hall capacity: {result?.hall.capacity ?? "Unknown"}</p>

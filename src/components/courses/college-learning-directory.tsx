@@ -18,6 +18,7 @@ import type {
   listCollegeCourseProgress,
   listCollegeLessons,
 } from "@/modules/courses/college-learning-directory-service";
+import { Heading } from "@/components/ui/heading";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeLessons>>
@@ -42,18 +43,18 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
         {...(!lessons ? {description:COLLEGE_COURSE_TAB_COPY.progressDescription} : {})}
         actions={
           <Link href="/college/courses"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Course offerings
           </Link>
         }
       /> : null}
-      <div className={lessons&&prepend?"grid min-w-0 grid-cols-1 gap-5 min-[992px]:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]":"min-w-0"}>
+      <div className={lessons&&prepend?"grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]":"min-w-0"}>
         {prepend ? <aside data-slot="page-tools" aria-label={lessons?"Create New Lesson":"Page tools"} className="min-w-0">
-          {lessons?<h2 className="mb-3 text-base font-semibold text-[var(--lms-heading)]">Create New Lesson</h2>:null}
+          {lessons?<Heading level={2} size="base" className="mb-3 text-[var(--lms-heading)]">Create New Lesson</Heading>:null}
           {prepend}
         </aside> : null}
         <div className="min-w-0 space-y-4">
-      {lessons?<h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Lessons</h2>:null}
+      {lessons?<Heading level={2} size="lg" className="m-0 text-[var(--lms-heading)]">Lessons</Heading>:null}
       <section aria-label={title + " filters"} className="min-w-0 pb-[var(--lms-space-4)]">
         <form method="get" action={href} className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto_auto]">
           <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -67,7 +68,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
           </p>
           <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)] md:col-span-3" open={activeAdvanced || undefined}>
             <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Advanced filters</summary>
-            <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-4">
+            <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-4">
           {lessons?<label className="grid min-w-32 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Rows per page
             <Select name="pageSize" defaultValue={data.query.pageSize}
@@ -563,7 +564,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
             </div>
           </details>
           <Button type="submit" className="min-h-11 w-full px-6 md:min-h-9 md:w-auto">Filter</Button>
-          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Clear
           </Link>
         </form>

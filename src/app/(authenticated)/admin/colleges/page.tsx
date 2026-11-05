@@ -25,6 +25,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import {canManageCollegeDirectoryRow} from "@/modules/colleges/admin-directory-access-model";
 import { listColleges } from "@/modules/colleges/service";
 import { listOrganizations } from "@/modules/organizations/service";
+import { Heading } from "@/components/ui/heading";
 
 type CollegeRow = Awaited<ReturnType<typeof listColleges>>[number] & {canManage:boolean;organizationName:string};
 
@@ -127,7 +128,7 @@ const columns: DataTableColumn<CollegeRow>[] = [
     cell: (college) => (
       <div className="flex min-w-0 flex-wrap justify-start gap-2 md:justify-end">
         <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">
           Manage
         </Link>
         {college.canManage?<CollegeEditDialog college={college} />:null}
@@ -135,13 +136,13 @@ const columns: DataTableColumn<CollegeRow>[] = [
           <div className="grid min-w-0 gap-[var(--lms-space-2)]">
         <Link role="menuitem"
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]"
         >
           Readiness
         </Link>
         <Link role="menuitem"
           href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]"
         >
           Branding
         </Link>
@@ -173,7 +174,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     <PageHeader title="Colleges"/>
     <ErrorState title="Invalid college directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const [collegesResult,organizationsResult]=await Promise.all([
     listColleges(context).then(value=>({ok:true as const,value}))
@@ -264,7 +265,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       <PageHeader
         title="Colleges"
         description="Active colleges are constrained by the selected Super Admin safety scope."
-        actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Search tenant directory →</Link>}
+        actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Search tenant directory →</Link>}
       />
       {!organizationsResult.ok?<Banner tone="warning" role="status"
         action={<Link href={href(page)}
@@ -277,7 +278,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
 
       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
       <section aria-label="Create New College" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm md:p-5">
-       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Create New College</h2>
+       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Create New College</Heading>
       {creatableOrganizations.length > 0 ? (
         <div className="min-w-0 space-y-3">
         <CollegeCreateForm
@@ -297,7 +298,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       ) : !organizationsResult.ok?<p role="status" className="text-sm text-muted-foreground">Organization options are unavailable. Retry organizations above.</p>:<p className="text-sm text-muted-foreground">Your role cannot create colleges in this scope.</p>}
       </section>
       <section aria-label="Existing Colleges" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm md:p-5">
-       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Existing Colleges</h2>
+       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Existing Colleges</Heading>
       <form role="search" aria-label="Search colleges" className="grid min-w-0 items-end gap-[8px] border-y border-border py-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]" method="get">
        <label className="flex min-w-0 w-full flex-1 flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search colleges
         <Input type="search" name="q" defaultValue={q} maxLength={100} placeholder="Search colleges..." />

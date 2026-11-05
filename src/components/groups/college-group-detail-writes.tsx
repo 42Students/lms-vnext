@@ -9,6 +9,8 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {groupRuleCriteriaSchema} from "@/modules/groups/rule-evaluator";
 import {collegeGroupDetailActionLabel} from "@/modules/groups/college-group-detail-write-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Waitlisted={membershipId:string;displayName:string|null;version:number;isLocked:boolean;waitlistPosition:number|null};
 export function CollegeGroupDetailWrites({
@@ -69,7 +71,7 @@ export function CollegeGroupDetailWrites({
   const front=ordered[0];
   return <section aria-label="Group rule and waitlist actions" className="min-w-0 space-y-4">
     <div className="space-y-3 border-b border-border pb-4">
-      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Waitlist review</h2>
+      <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Waitlist review</Heading>
       <p className="mt-1 text-sm text-body leading-[22px]">Only the first waitlisted learner can be promoted. Locked members and full groups cannot be overridden.</p>
       {ordered.length===0?<EmptyState title="No waitlisted learners" description="No waitlisted learners recorded."/>:
         <ul className="mt-3 divide-y divide-border">{ordered.map(member=><li key={member.membershipId}
@@ -98,10 +100,9 @@ export function CollegeGroupDetailWrites({
       <Switch label="Enable rule auto-refresh setting (does not execute a refresh now)"
         checked={autoRefresh} disabled={busy} onChange={e=>setAutoRefresh(e.target.checked)}/>
       <div className="flex flex-wrap gap-2">
-       <a href={"/college/groups/"+encodeURIComponent(groupId)+"/rule-preview"}
-         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+       <ButtonLink variant="secondary" href={"/college/groups/"+encodeURIComponent(groupId)+"/rule-preview"}>
          Preview rule
-       </a>
+       </ButtonLink>
        <Button variant="secondary" type="button" disabled={busy||groupStatus!=="ACTIVE"||!initialRule}
         onClick={()=>submit({},"Apply this eligibility rule to eligible learners now? Confirm you reviewed the read-only eligibility preview.","APPLY")}>
         Apply rule

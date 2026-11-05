@@ -44,22 +44,22 @@ export default async function LearnerNotificationHistoryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href="/learn/notifications"
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline">
+        className="inline-flex min-h-11 md:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline">
         ← Notifications
       </Link>
       <PageHeader
         title="Personal notification history"
         description="Browse your recorded personal notifications beyond the latest inbox items. College announcements use the main Notifications page."
       />
-      <nav aria-label="Notification history filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
+      <nav aria-label="Notification history filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0">
         <Link href="/learn/notifications/history"
           aria-current={!page.unreadOnly ? "page" : undefined}
-          className={!page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-[rgba(38,186,199,0.07)] min-[768px]:min-h-9"}>
+          className={!page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] md:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] md:min-h-9"}>
           All personal
         </Link>
         <Link href="/learn/notifications/history?unread=1"
           aria-current={page.unreadOnly ? "page" : undefined}
-          className={page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] min-[768px]:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-[rgba(38,186,199,0.07)] min-[768px]:min-h-9"}>
+          className={page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] md:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] md:min-h-9"}>
           Unread only
         </Link>
       </nav>
@@ -88,7 +88,7 @@ export default async function LearnerNotificationHistoryPage({
         {page.isOlderPage ? (
           <Link
             href={learnerNotificationHistoryHref(null, page.unreadOnly)}
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline"
+            className="inline-flex min-h-11 md:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline"
           >
             Return to newest
           </Link>

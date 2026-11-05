@@ -10,6 +10,8 @@ import {useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {facultyAssignmentMaterialLinkSchema} from "@/modules/courses/learner-assignment-materials-model";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Material={id:string;title:string;href:string};
 export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled=false}:{
  deliveryId:string;assignmentId:string;disabled?:boolean;
@@ -61,8 +63,8 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
   finally{lock.current=false;setPending(false);}
  }
  const parsed=facultyAssignmentMaterialLinkSchema.safeParse({title,externalUrl});
- return <section aria-label="Instructor assignment resources" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] max-[767px]:[&_button]:min-h-11">
-  <h3 className="text-base font-semibold">Instructions &amp; resources</h3>
+ return <section aria-label="Instructor assignment resources" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] max-md:[&_button]:min-h-11">
+  <Heading level={3} size="base">Instructions &amp; resources</Heading>
   {loading?<LoadingState label="Loading instructor links…" />:null}
   {error&&removeId===null?<Alert tone="error" role="alert">{error}</Alert>:null}
   {!loading&&error&&removeId===null?<Button type="button" variant="secondary"
@@ -71,7 +73,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
   {!loading&&!error&&links.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No instructor resources yet.</p>:null}
   <ul className="divide-y divide-border">
    {links.map(link=><li key={link.id} className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] py-[var(--lms-space-3)] text-sm md:flex-row md:items-center md:justify-between">
-    <a href={link.href} className="inline-flex min-h-11 min-w-0 max-w-full items-center break-words [overflow-wrap:anywhere] font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{link.title}</a>
+    <TextLink href={link.href} className="inline-flex min-h-11 min-w-0 max-w-full items-center break-words [overflow-wrap:anywhere] md:min-h-9">{link.title}</TextLink>
     <Button variant="secondary" type="button" disabled={disabled||pending} onClick={()=>setRemoveId(link.id)} size="md">Remove</Button>
    </li>)}
   </ul>

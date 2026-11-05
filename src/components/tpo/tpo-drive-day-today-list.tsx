@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Heading } from "@/components/ui/heading";
 
 export type TpoDriveDayTodayRound = {
   id: string;
@@ -64,7 +65,7 @@ export function TpoDriveDayTodayList({
   return (
     <section aria-label="Today's on-campus rounds" className="min-w-0 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="sr-only">Today&apos;s on-campus rounds</h2>
+        <Heading level={2} className="sr-only">Today&apos;s on-campus rounds</Heading>
         <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
           disabled={refreshing} onClick={retry}>
           {refreshing ? "Refreshing…" : "Reload"}
@@ -95,12 +96,12 @@ export function TpoDriveDayTodayList({
         <div className="grid min-w-0 gap-3 md:grid-cols-2">
           {visible.map(round => (
             <article key={round.id}
-              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[12px] border border-[color:var(--lms-border)] bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md sm:flex-row sm:items-center">
+              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[12px] border border-[color:var(--lms-border)] bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-[var(--lms-motion-fast)] hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md sm:flex-row sm:items-center">
               <div className="min-w-0">
                 <p className="text-xs font-semibold uppercase tracking-wide text-link">Assigned round</p>
-                <h3 className="mt-1 break-words text-lg font-semibold leading-snug text-foreground">
+                <Heading level={3} size="lg" className="mt-1 break-words leading-[1.4] text-foreground">
                   {round.companyName} · {round.jobTitle}
-                </h3>
+                </Heading>
                 <p className="mt-1 text-sm text-body">
                   {[round.name,when(round.scheduledAt),round.venue].filter(Boolean).join(" · ")}
                 </p>

@@ -16,6 +16,7 @@ import {
   mentorTeamCoverageHref, mentorTeamCoverageQuerySchema,
 } from "@/modules/projects/mentor-team-coverage-model";
 import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-service";
+import { Heading } from "@/components/ui/heading";
 
 type Params = {
   filter?: string | string[];
@@ -133,7 +134,7 @@ export default async function MentorTeamCoveragePage({
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
             <article key={item.projectId} className="py-[var(--lms-space-3)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h2 className="min-w-0 break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{item.title}</h2>
+                <Heading level={2} className="min-w-0 break-words text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">{item.title}</Heading>
                 <span className="text-xs font-semibold text-body">{item.status}</span>
               </div>
               <dl className="mt-3 grid grid-cols-1 gap-3 border-t border-border pt-3 sm:grid-cols-3">

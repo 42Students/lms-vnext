@@ -46,6 +46,7 @@ import { getLearnerPlacementJourneyWithActivity } from "@/modules/placements/lea
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
+import { Heading } from "@/components/ui/heading";
 
 export default async function LearnerPlacementsPage({
   searchParams,
@@ -290,7 +291,7 @@ export default async function LearnerPlacementsPage({
       </div>
 
       {debarRead.status==="fulfilled"&&debarRead.value?<Alert tone="warning" role="alert">
-        <h2 className="font-semibold text-foreground">You are barred from drives for now</h2>
+        <Heading level={2} className="text-foreground">You are barred from drives for now</Heading>
         <p className="mt-2 text-sm text-body">
           The placement cell has recorded a temporary participation restriction.
           {debarRead.value.untilDate?" Until "+debarRead.value.untilDate+" (college local date).":""}
@@ -308,7 +309,7 @@ export default async function LearnerPlacementsPage({
       <section id="learner-next-seven-days" aria-labelledby="learner-next-seven-days-title"
         className="min-w-0 border-b border-border py-4">
        <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="learner-next-seven-days-title" className="text-lg font-semibold text-heading">Next 7 days</h2>
+        <Heading level={2} size="lg" id="learner-next-seven-days-title" className="text-heading">Next 7 days</Heading>
         <Link href="/learn/my-placements/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Full schedule →</Link>
        </div>
        {!availability.rounds?<p role="status" className="mt-3 text-sm text-body">Upcoming events are temporarily unavailable. No empty schedule is assumed.</p>:
@@ -323,7 +324,7 @@ export default async function LearnerPlacementsPage({
       <section id="learner-application-progress" aria-labelledby="learner-application-progress-title"
        className="min-w-0 border-b border-border py-4">
        <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="learner-application-progress-title" className="text-lg font-semibold text-heading">Where your applications stand</h2>
+        <Heading level={2} size="lg" id="learner-application-progress-title" className="text-heading">Where your applications stand</Heading>
         <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">All applications →</Link>
        </div>
        {!availability.journey?<p role="status" className="mt-3 text-sm text-body">Application journeys could not be loaded. No progress has been inferred.</p>:
@@ -347,7 +348,7 @@ export default async function LearnerPlacementsPage({
       </section>
       <section aria-labelledby="learner-college-notice-preview" className="min-w-0 border-b border-border py-4 md:py-6">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <h2 id="learner-college-notice-preview" className="text-base font-semibold text-foreground">Latest from the placement cell</h2>
+          <Heading level={2} size="base" id="learner-college-notice-preview" className="text-foreground">Latest from the placement cell</Heading>
           <div className="flex flex-wrap gap-3">
             <Link href="/learn/my-placements/announcements"
               className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View all visible notices →</Link>
@@ -369,7 +370,7 @@ export default async function LearnerPlacementsPage({
               <time dateTime={notice.createdAt} className="text-xs text-muted-foreground">{learnerNoticeRelativeDay(notice.createdAt,new Date())}</time>
             </li>)}</ul>}
         <div className="mt-4 border-t border-border pt-4">
-          <h3 className="text-sm font-semibold text-foreground">Latest personal updates</h3>
+          <Heading level={3} size="sm" className="text-foreground">Latest personal updates</Heading>
           {!personalNoticeRead.available ? (
             <Alert tone="info" className="mt-2">Personal placement updates are temporarily unavailable. College notices above remain visible.</Alert>
           ) : personalNoticeRead.value.length===0 ? (
@@ -390,13 +391,13 @@ export default async function LearnerPlacementsPage({
       </section>
       {registrationRead.status==="fulfilled"?<LearnerPlacementRegistration registration={registrationRead.value}/>:(
         <Alert tone="warning" role="alert" aria-label="Placement registration">
-          <h2 className="font-semibold text-foreground">Registration</h2>
+          <Heading level={2} className="text-foreground">Registration</Heading>
           <p className="mt-2 text-sm text-body">Your batch registration status is temporarily unavailable. No registration choice has been assumed.</p>
           <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">Retry registration</Link>
         </Alert>
       )}
       {overviewUnavailable ? <Alert tone="error" role="alert">
-        <h2 className="font-semibold text-foreground">We could not load your placements</h2>
+        <Heading level={2} className="text-foreground">We could not load your placements</Heading>
         <p className="mt-2 text-sm text-body">
           Your placement results have not been changed. Some account and registration
           information may still be visible, but your journey and schedule could not be verified.
@@ -433,7 +434,7 @@ export default async function LearnerPlacementsPage({
       <section aria-labelledby="learner-placement-verification"
         className="min-w-0 border-b border-border py-4 md:py-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="learner-placement-verification" className="text-base font-semibold text-foreground">Profile verification</h2>
+          <Heading level={2} size="base" id="learner-placement-verification" className="text-foreground">Profile verification</Heading>
           <Link href="/learn/profile/verification" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
             Review education and identity verification →
           </Link>
@@ -654,9 +655,9 @@ export default async function LearnerPlacementsPage({
 
       {rows ? <section aria-label="Live placement opportunities" className="space-y-3">
         <div>
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <Heading level={2} size="base" className="m-0 text-foreground">
             Live opportunities
-          </h2>
+          </Heading>
           <p className="mt-1 text-sm text-body">
             Published jobs for your college with explainable eligibility and exact application state.
           </p>

@@ -88,7 +88,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
                   <StatusBadge tone={item.gradedLearners>0?"success":"neutral"}>{item.gradedLearners} graded</StatusBadge>
                 </div>
               </td>
-              <td className="sticky right-0 z-10 border-l border-border bg-surface px-3 py-3 shadow-[-4px_0_6px_-5px_rgba(0,0,0,0.2)]">
+              <td className="sticky right-0 z-(--lms-z-raised) border-l border-border bg-surface px-3 py-3 shadow-(--lms-shadow-edge-start)">
                 <div className="flex min-w-[200px] flex-col items-start gap-2">
                   <Link href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
                     className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open offering →</Link>
@@ -111,7 +111,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
         <thead className="bg-muted"><tr className="border-b border-border text-xs font-semibold">
           {["Title","Course","Status","Results","Audience","Points","Due"].map(column=>
             <th scope="col" key={column} className="whitespace-nowrap px-3 py-3">{column}</th>)}
-          <th scope="col" className="sticky right-0 z-10 min-w-[235px] border-l border-border bg-muted px-3 py-3 text-right shadow-[-4px_0_6px_-5px_rgba(0,0,0,0.2)]">Actions</th>
+          <th scope="col" className="sticky right-0 z-(--lms-z-raised) min-w-[235px] border-l border-border bg-muted px-3 py-3 text-right shadow-(--lms-shadow-edge-start)">Actions</th>
         </tr></thead>
         <tbody className="divide-y divide-border">
           {data.items.map(item=><tr key={item.id} className="group align-top hover:bg-muted/40">
@@ -127,7 +127,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
             </td>
             <td className="px-3 py-3 tabular-nums">{item.points}</td>
             <td className="whitespace-nowrap px-3 py-3">{formatDue(item.dueAt)}</td>
-            <td className="sticky right-0 z-10 border-l border-border bg-surface px-3 py-3 shadow-[-4px_0_6px_-5px_rgba(0,0,0,0.2)] group-hover:bg-muted">
+            <td className="sticky right-0 z-(--lms-z-raised) border-l border-border bg-surface px-3 py-3 shadow-(--lms-shadow-edge-start) group-hover:bg-muted">
               <div className="flex min-w-[215px] flex-col items-start gap-2">
                 <Link href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
                   className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open offering →</Link>

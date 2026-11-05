@@ -23,6 +23,8 @@ import {
   LearningPathActions,
   LessonActions,
 } from "./admin-learning-structure-actions";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Workspace = Awaited<
   ReturnType<
@@ -115,9 +117,9 @@ function ContentCard({
               Shared Offering
             </StatusBadge>
           </div>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
+          <Heading level={3} size="base" className="mt-2 text-foreground">
             {item.title}
-          </h3>
+          </Heading>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           #{item.sequence + 1}
@@ -131,14 +133,14 @@ function ContentCard({
       ) : null}
 
       {item.externalUrl ? (
-        <a
+        <TextLink
           href={item.externalUrl}
           
           rel="noopener noreferrer"
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9"
         >
           Open link ↗
-        </a>
+        </TextLink>
       ) : null}
 
       {item.contentType === "LIVE_CLASS" ? (
@@ -191,9 +193,9 @@ function AssignmentCard({
               Shared Offering
             </StatusBadge>
           </div>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
+          <Heading level={3} size="base" className="mt-2 text-foreground">
             {item.title}
-          </h3>
+          </Heading>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           {item.maxPoints} points
@@ -259,9 +261,9 @@ function QuizCard({
               Shared Offering
             </StatusBadge>
           </div>
-          <h3 className="mt-2 text-base font-semibold text-foreground">
+          <Heading level={3} size="base" className="mt-2 text-foreground">
             {item.title}
-          </h3>
+          </Heading>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           {item.totalPoints} points
@@ -349,9 +351,9 @@ export function AdminOfferingLearningOverview({
               {offering.academicPeriodName}
             </StatusBadge>
           </div>
-          <h2 className="mt-3 text-xl font-semibold text-foreground">
+          <Heading level={2} size="xl" className="mt-3 text-foreground">
             Shared learning structure
-          </h2>
+          </Heading>
           <p className="mt-2 text-sm leading-6 text-body">
             No active Learning Path exists for
             this Offering yet. Create one before
@@ -399,9 +401,9 @@ export function AdminOfferingLearningOverview({
             <p className="mt-3 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
               Shared Learning Path
             </p>
-            <h2 className="mt-1 text-xl font-semibold text-foreground">
+            <Heading level={2} size="xl" className="mt-1 text-foreground">
               {learningPath.title}
-            </h2>
+            </Heading>
             {learningPath.description ? (
               <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
                 {learningPath.description}
@@ -426,15 +428,14 @@ export function AdminOfferingLearningOverview({
           every active Section Delivery in this
           Offering. Faculty can add separate
           Section-specific items from their
-          Teaching Course workspace. <a href="#section-content"
-           className="font-semibold text-primary-text underline underline-offset-2">
+          Teaching Course workspace. <TextLink href="#section-content">
            View shared and Section-specific content for a class
-          </a>.
+          </TextLink>.
         </div>
       </section>
 
       <section aria-label="In this course" className="min-w-0 border-b border-border pb-4">
-        <h2 className="text-lg font-semibold text-foreground">In this course</h2>
+        <Heading level={2} size="lg" className="text-foreground">In this course</Heading>
         <p className="mt-1 text-sm text-muted-foreground">Recorded shared learning items only. Visibility and publication are separate controls.</p>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
           {summarizeCollegeCourseContents(workspace.lessons).map(item=>(
@@ -444,10 +445,10 @@ export function AdminOfferingLearningOverview({
       </section>
 
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 className="m-0 flex items-center gap-2 text-xl font-semibold text-[var(--lms-heading)]">
+        <Heading level={2} size="xl" className="m-0 flex items-center gap-2 text-[var(--lms-heading)]">
           <span aria-hidden="true" className="h-6 w-1 rounded bg-[color:var(--lms-icon-amber)]"/>
           Lessons
-        </h2>
+        </Heading>
         <div id="lesson-authoring" className="flex flex-wrap items-center gap-3">
        <Button type="button" onClick={()=>setCreateOpen(true)}
         className="min-h-11 md:min-h-9">
@@ -476,7 +477,7 @@ export function AdminOfferingLearningOverview({
            fill="none" stroke="currentColor" strokeWidth="1.5" className="text-muted-foreground">
             <rect x="8" y="8" width="44" height="32" rx="3"/><path d="M18 17h24M18 24h19M18 31h14"/>
           </svg>
-          <h3 className="mt-3 text-sm font-semibold text-foreground">No Lessons yet</h3>
+          <Heading level={3} size="sm" className="mt-3 text-foreground">No Lessons yet</Heading>
           <p className="mt-1 text-sm text-muted-foreground">Click Create New to add your first Lesson.</p>
         </section>
       ) : (
@@ -492,9 +493,9 @@ export function AdminOfferingLearningOverview({
                   className="min-w-0 flex-col"
                   onClick={()=>setFocusedLessonId(lesson.id)}>
                   <p className="text-xs font-semibold text-primary-text">Lesson {index+1}</p>
-                  <h3 className="mt-3 break-words text-[24px] font-semibold leading-[1.25] capitalize text-[var(--lms-heading)]">
+                  <Heading level={3} size="2xl" className="mt-3 break-words leading-[1.25] capitalize text-[var(--lms-heading)]">
                     {lesson.name.trim()||"Untitled lesson"}
-                  </h3>
+                  </Heading>
                   <p className="mt-auto pt-4 text-sm text-muted-foreground">
                     Created on {lessonCreatedOn(lesson.createdAt)}
                   </p>
@@ -536,9 +537,9 @@ export function AdminOfferingLearningOverview({
                       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                         Lesson {lessonIndex + 1}
                       </p>
-                      <h2 className="mt-1 text-[24px] font-semibold capitalize text-[var(--lms-heading)]">
+                      <Heading level={2} size="2xl" className="mt-1 capitalize text-[var(--lms-heading)]">
                         {lesson.name.trim()||"Untitled lesson"}
-                      </h2>
+                      </Heading>
                       <p className="mt-2 text-xs text-muted-foreground">
                         Created on {lessonCreatedOn(lesson.createdAt)}
                       </p>

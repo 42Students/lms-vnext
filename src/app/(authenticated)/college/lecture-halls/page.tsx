@@ -156,7 +156,7 @@ export default async function CollegeLectureHallsPage({
       <Disclosure title="Advanced lecture hall filters" defaultOpen={filtered}
         className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
       <section aria-label="Lecture hall filters" className="min-w-0 pt-3">
-        <form action="/college/lecture-halls" method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-4">
+        <form action="/college/lecture-halls" method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Room name
             <Input type="search" name="q" maxLength={100} defaultValue={query.q}
@@ -198,9 +198,9 @@ export default async function CollegeLectureHallsPage({
               {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
             </Select>
           </label>
-          <details className="min-w-0 border-t border-border pt-2 md:col-span-2 min-[992px]:col-span-4" open={Boolean(query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL")||undefined}>
+          <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4" open={Boolean(query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL")||undefined}>
             <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
-            <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-3">
+            <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-3">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Minimum seats
             <Input name="minimumCapacity" type="number" min={1} max={5000} step={1}
@@ -224,13 +224,13 @@ export default async function CollegeLectureHallsPage({
           </label>
             </div>
           </details>
-          <div className="flex min-w-0 flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch md:col-span-2 min-[992px]:col-span-4">
+          <div className="flex min-w-0 flex-wrap items-end gap-2 max-md:flex-col max-md:items-stretch md:col-span-2 lg:col-span-4">
             <Button variant="primary" type="submit"
               className="min-h-11 w-full px-4 md:min-h-9 md:w-auto">
               Filter
             </Button>
             <Link href="/college/lecture-halls"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Clear
             </Link>
           </div>

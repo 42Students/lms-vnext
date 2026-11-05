@@ -24,6 +24,8 @@ import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 const uuid = z.string().uuid();
 const ROSTER_PAGE_SIZE = 50;
@@ -254,11 +256,11 @@ export default async function ElectiveRoster({
         </label>
         <Button type="submit" variant="secondary">Search</Button>
         <Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh / Reset</Link>
-        <a href={"data:text/csv;charset=utf-8," + encodeURIComponent("\uFEFF" + csv)}
+        <TextLink href={"data:text/csv;charset=utf-8," + encodeURIComponent("\uFEFF" + csv)}
           download={"elective-" + offering.id + "-roster.csv"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Export this page (CSV)
-        </a>
+        </TextLink>
       </form>
       <p className="text-sm text-muted-foreground">
         {total === 0 ? "No students in this state." :
@@ -313,7 +315,7 @@ export default async function ElectiveRoster({
       {pageCount > 1 && <Pagination label="Roster pages" page={page} pageCount={pageCount} hrefForPage={filterHref} />}
     </section>
     <section id="faculty" className="min-w-0 scroll-mt-24 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-      <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Faculty</h2>
+      <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Faculty</Heading>
       <p className="text-sm text-muted-foreground leading-[22px]">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
       {assignments.length === 0 && <EmptyState title="No faculty assigned" description="Assign an eligible faculty member to this elective offering."/>}
       {assignments.map(item => <div key={item.id} className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">
@@ -346,13 +348,13 @@ export default async function ElectiveRoster({
       </form>}
       {!archived && <form action={changeFaculty} className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <Input type="hidden" name="action" value="ASSIGN" />
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] max-md:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
           <Select name="membershipId" required defaultValue="" className="w-full max-w-full">
             <option value="" disabled>Choose faculty</option>
             {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] max-md:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
           <Select name="role" className="w-full max-w-full">
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-Teacher</option>

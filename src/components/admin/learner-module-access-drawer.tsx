@@ -10,6 +10,7 @@ import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
 import {StudentRuleEditor} from "@/components/admin/student-rule-editor";
 import { Table } from "@/components/ui/table";
+import { Heading } from "@/components/ui/heading";
 type Learner={membershipId:string;displayName:string|null;rollNumber:string|null};
 type Rule={module:"projects"|"electives";label:string;stored:boolean|null;locked:boolean;blocked:boolean};
 type TraceStep={level:string;inChain:boolean;source:"PERSISTED"|"SOURCE_DEFAULT"|"NONE";
@@ -169,7 +170,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
  },[endpoint,rosterOpen,roster.page,rosterFilter,rosterRetry]);
  return <section aria-label="Why a learner sees a module" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-   <h2 className="font-semibold text-[var(--lms-heading)]">Why can&apos;t a student see a module?</h2>
+   <Heading level={2} className="text-[var(--lms-heading)]">Why can&apos;t a student see a module?</Heading>
    <Button type="button" variant="secondary" size="sm" onClick={()=>{
     setRosterOpen(true);setRosterFilter("overrides");
     setRoster({page:1,total:0,totalPages:1});
@@ -179,7 +180,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    Why can&apos;t a student see a module? Search…
    <Input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
     placeholder="Why can't a student see a module? Search…" autoComplete="off"
-    className="min-h-11 w-full pr-10 min-[768px]:min-h-9"/>
+    className="min-h-11 w-full pr-10 md:min-h-9"/>
    <svg aria-hidden="true" width={18} height={18} viewBox="0 0 24 24"
      fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"
      className="pointer-events-none absolute bottom-3 right-3 text-muted-foreground">
@@ -252,11 +253,11 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    {detail?<div className="min-w-0 space-y-[var(--lms-space-4)]">
     {message?<p role="alert" className="max-w-prose break-words text-sm text-error leading-[22px]">{message}</p>:null}
     {repairMessage?<Alert tone={repairVerified?"success":"warning"}>{repairMessage}</Alert>:null}
-    <div className="min-w-0"><h3 className="text-lg font-semibold text-[var(--lms-heading)]">{detail.displayName||"#"+detail.membershipId.slice(0,8)}</h3>
+    <div className="min-w-0"><Heading level={3} size="lg" className="text-[var(--lms-heading)]">{detail.displayName||"#"+detail.membershipId.slice(0,8)}</Heading>
       <p className="text-sm text-body leading-[22px]">{detail.rollNumber||"No roll number"}</p>
     </div>
     <section aria-label="Placement participation" className="border-b border-border pb-[var(--lms-space-4)] text-sm">
-     <h4 className="font-semibold text-foreground">Placement cell decision</h4>
+     <Heading level={4} className="text-foreground">Placement cell decision</Heading>
      <p className="mt-1">{detail.placementParticipation.status==="NOT_DECIDED"?"Not decided yet":
       detail.placementParticipation.status==="ELIGIBLE"?"Eligible":
       "Ineligible"+(detail.placementParticipation.reason?": "+detail.placementParticipation.reason:"")}</p>
@@ -281,7 +282,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
     </section>
     <div className="space-y-[var(--lms-space-4)]">{detail.modules.map(module=><article key={module.module}
      className="border-b border-border pb-[var(--lms-space-4)]">
-      <h4 className="font-semibold text-foreground">{module.label}: {module.enabled?"On":"Off"}</h4>
+      <Heading level={4} className="text-foreground">{module.label}: {module.enabled?"On":"Off"}</Heading>
       <p className="mt-1 text-xs text-body leading-5">{module.explanation}</p>
       <p className="mt-1 text-xs text-muted-foreground">
        Winning scope: {module.winnerLevel} · {module.winnerLocked?"Locked override":"Normal inheritance"}
@@ -326,7 +327,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
          locked={rule.locked} blocked={rule.blocked}/>
        </div>)}
      </article>)}</div>
-    <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-4)] min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-center [&>button]:w-full min-[768px]:[&>button]:w-auto">
+    <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-4)] md:flex-row md:flex-wrap md:items-center [&>button]:w-full md:[&>button]:w-auto">
     <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
      onClick={()=>void lookup(search,detail.membershipId)} disabled={loading}>
      Recheck access after a change
@@ -335,7 +336,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
      href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(detail.membershipId)}>
      Open full access trace →
     </Link>
-     <Button type="button" variant="secondary" className="min-h-11 min-[768px]:min-h-9" onClick={close} aria-label="Close student explanation">Close</Button>
+     <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={close} aria-label="Close student explanation">Close</Button>
     </div>
     <p className="text-xs text-body leading-5">This reads persisted learner access. It does not sign in as the student.</p>
    </div>:null}

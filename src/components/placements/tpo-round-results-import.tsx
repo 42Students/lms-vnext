@@ -12,6 +12,8 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 type Match={line:number;identity:string;applicationId:string;name:string;outcome:string;status:string|null};
 type Missing={line:number;identity:string;reason:string;suggestions:Array<{applicationId:string;name:string;roll:string|null}>};
 type Preview={previewToken:string;sourceRows:number;candidateCount:number;matched:Match[];
@@ -58,10 +60,10 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   finally{setBusy(false);}
  }
  return <section aria-labelledby="tpo-round-import-title" className="min-w-0 space-y-4 border-b border-border pb-5">
-  <h2 id="tpo-round-import-title" className="text-lg font-semibold text-foreground">Import company round results</h2>
+  <Heading level={2} size="lg" id="tpo-round-import-title" className="text-foreground">Import company round results</Heading>
   <p className="text-sm text-body">Upload a CSV or Excel (.xlsx) result list. All supplied Application ID, email and roll identifiers must agree.
    Company portal IDs with no matching application are left unmatched. Contradictory IDs, email and roll must be reviewed; a manual match is audited. Nothing is applied to the round until the separate Apply results step.</p>
-  <a href={url} download className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 sm:w-auto text-sm font-[650] text-[var(--lms-link-text)] hover:bg-primary-subtle underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden hover:underline">Download CSV template</a>
+  <ButtonLink variant="secondary" href={url} download className="w-full sm:w-auto print:hidden">Download CSV template</ButtonLink>
   <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Company results file"
      accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
      disabled={busy} onFiles={files=>{setFile(files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/>
@@ -70,7 +72,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    >
    {busy?"Checking…":"Preview matching results"}</Button>
   {preview?<div className="min-w-0 space-y-4 border-t border-border pt-4">
-   <h3 className="font-semibold">Import preview</h3>
+   <Heading level={3}>Import preview</Heading>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
    <div className="max-h-64 min-w-0 overflow-auto print:max-h-none print:overflow-visible">
     <DataTable<Match> caption="Imported round matched rows" rows={preview.matched}
@@ -83,7 +85,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
      ]}/>
    </div>
    {preview.unmatched.length?<div className="space-y-2">
-    <h4 className="font-semibold">Unmatched rows — review or skip</h4>
+    <Heading level={4}>Unmatched rows — review or skip</Heading>
     <DataTable<Missing> caption="Unmatched round result rows" rows={preview.unmatched}
       getRowKey={row=>String(row.line)} empty={<EmptyState title="All result rows were matched."/>}
       columns={[
