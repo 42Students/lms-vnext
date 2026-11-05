@@ -13,7 +13,7 @@ describe("Final sprint recruiter Today partial and fatal errors",()=>{
   expect(page).toContain("(summaryPartiallyUnavailable||otherSignalsUnavailable)");
   expect(page).toContain("unavailableSources");
   expect(page).toContain('href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}');
-  expect(page).toContain(">Retry</Link>");
+  expect(page).toContain(">Retry</TextLink>");
   expect(error).toContain("onClick={reset}");
   expect(error).toContain("Retry");
   expect(page).toContain("recentJobCapReached");

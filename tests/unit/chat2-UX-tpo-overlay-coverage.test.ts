@@ -152,7 +152,7 @@ describe("UX-tpo-overlay component coverage: accessible dialogs, names and guard
       const source = readFileSync(path, "utf8");
       if (kind === "Navigation") {
         expect(source).toContain('<nav aria-label="TPO mobile footer"');
-        expect(source).toContain("<Link");
+        expect(source).toContain("<TextLink");
         expect(source).toContain('aria-current={active ? "page" : undefined}');
         expect(source).toContain(cue);
         expect(source).not.toContain("window.open");

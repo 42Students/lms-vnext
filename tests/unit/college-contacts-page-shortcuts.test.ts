@@ -16,7 +16,7 @@ describe("College Contacts first and last page navigation",()=>{
   const page=readFileSync("src/app/(authenticated)/college/contacts/page.tsx","utf8");
   expect(page).toContain("filter.page>2");
   expect(page).toContain("filter.page<pageCount-1");
-  expect(page).toContain(">First</Link>");
-  expect(page).toContain(">Last</Link>");
+  expect(page).toContain(">First</ButtonLink>");
+  expect(page).toContain(">Last</ButtonLink>");
  });
 });

@@ -29,7 +29,7 @@ describe("chat-11 mentor activity and resource parity",()=>{
  it("MEN-projects-meetings-62 renders relative time with exact timestamp on hover",()=>{
   expect(mentorActivityRelativeTime("2099-01-01T00:00:00Z","2099-01-01T01:00:00Z")).toBe("1h ago");
   expect(mentorActivityRelativeTime("2099-01-01T00:00:00Z","2099-01-03T00:00:00Z")).toBe("2d ago");
-  expect(source("src/components/projects/project-activity-filtered-list.tsx")).toContain("title={new Date(event.occurredAt).toLocaleString");
+  expect(source("src/components/projects/project-activity-filtered-list.tsx")).toContain('title={formatDateWith(new Date(event.occurredAt), "en-IN", {dateStyle:"full",timeStyle:"long"})}');
   expect(source("src/components/projects/project-workspace.tsx")).toContain("now={new Date().toISOString()}");
  });
 });

@@ -33,8 +33,8 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
  });
  it("FAC-courses-10 collapses the lesson blueprint into accessible native accordions with the first lesson initially expanded",()=>{
   const course=src("src/components/courses/faculty-course-workspace.tsx");
-  expect(course).toContain("<details");
-  expect(course).toContain("<summary");
+  expect(course).toContain("<Disclosure");expect(readFileSync("src/components/ui/disclosure.tsx","utf8")).toContain("<details");
+  expect(readFileSync("src/components/ui/disclosure.tsx","utf8")).toContain("<summary");
   expect(course).toContain('defaultOpen={Boolean(selectedLessonId || lessonIndex === 0)}');
   expect(course).toContain('Expand lesson');
  });

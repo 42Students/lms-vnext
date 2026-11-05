@@ -7,7 +7,7 @@ describe("TPO Team remaining gap increments, not full object-thread parity",()=>
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx");
   expect(service).toContain("eq(placementTpoMessageThreads.collegeId,collegeId)");
   expect(service).toContain("eq(placementTpoMessageThreads.jobId,jobId)");
-  expect(page).toContain("Open conversation</Link>");
+  expect(page).toContain("Open conversation</ButtonLink>");
  });
  it("TPO-inbox-team-18 defaults to Following, retains search and counted filters but not imaginary object threads",()=>{
   const legacy=source("src/app/(authenticated)/tpo/team/page.tsx");

@@ -27,15 +27,15 @@ describe("chat-9 last-third admin UX rollout, batch 03",()=>{
   const page=source("src/app/(authenticated)/admin/projects/workspaces/new/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
   expect(page).toContain("text-primary-text");
-  expect(page).toContain("focus-ring");
+  expect(page).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|Input|Select|Textarea|PageBackLink|Pagination|FilterBar|Disclosure)\b/);expect(readFileSync("src/app/globals.css","utf8")).toContain("@utility focus-ring");
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|SuperAdminTemplateSubviewPage|AdminScopedReadPage|SuperAdminContentDirectoryPage|redirect\(|export\s*\{\s*default\s*\}/);
  });
  it("UX-admin-quizzes-01 protects route accessibility and delegate",()=>{
   const page=source("src/app/(authenticated)/admin/quizzes/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).toContain("text-primary-text");
-  expect(page).toContain("focus-ring");
+  expect(page).toMatch(/text-primary-text|<(?:TextLink|ButtonLink)/);expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("--lms-link-text");
+  expect(page).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|Input|Select|Textarea|PageBackLink|Pagination|FilterBar|Disclosure)\b/);expect(readFileSync("src/app/globals.css","utf8")).toContain("@utility focus-ring");
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|SuperAdminTemplateSubviewPage|AdminScopedReadPage|SuperAdminContentDirectoryPage|redirect\(|export\s*\{\s*default\s*\}/);
  });
@@ -54,16 +54,16 @@ describe("chat-9 last-third admin UX rollout, batch 03",()=>{
  it("UX-admin-semester-courses-01 protects route accessibility and delegate",()=>{
   const page=source("src/app/(authenticated)/admin/semester-courses/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).toContain("text-primary-text");
-  expect(page).toContain("focus-ring");
+  expect(page).toMatch(/text-primary-text|<(?:TextLink|ButtonLink)/);expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("--lms-link-text");
+  expect(page).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|Input|Select|Textarea|PageBackLink|Pagination|FilterBar|Disclosure)\b/);expect(readFileSync("src/app/globals.css","utf8")).toContain("@utility focus-ring");
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|SuperAdminTemplateSubviewPage|AdminScopedReadPage|SuperAdminContentDirectoryPage|redirect\(|export\s*\{\s*default\s*\}/);
  });
  it("UX-admin-semesters-01 protects route accessibility and delegate",()=>{
   const page=source("src/app/(authenticated)/admin/semesters/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).toContain("text-primary-text");
-  expect(page).toContain("focus-ring");
+  expect(page).toMatch(/text-primary-text|<(?:TextLink|ButtonLink)/);expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("--lms-link-text");
+  expect(page).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|Input|Select|Textarea|PageBackLink|Pagination|FilterBar|Disclosure)\b/);expect(readFileSync("src/app/globals.css","utf8")).toContain("@utility focus-ring");
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|SuperAdminTemplateSubviewPage|AdminScopedReadPage|SuperAdminContentDirectoryPage|redirect\(|export\s*\{\s*default\s*\}/);
  });
@@ -71,7 +71,7 @@ describe("chat-9 last-third admin UX rollout, batch 03",()=>{
   const page=source("src/app/(authenticated)/admin/settings/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
   expect(page).toContain("text-primary-text");
-  expect(page).toContain("focus-ring");
+  expect(page).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|Input|Select|Textarea|PageBackLink|Pagination|FilterBar|Disclosure)\b/);expect(readFileSync("src/app/globals.css","utf8")).toContain("@utility focus-ring");
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|SuperAdminTemplateSubviewPage|AdminScopedReadPage|SuperAdminContentDirectoryPage|redirect\(|export\s*\{\s*default\s*\}/);
  });

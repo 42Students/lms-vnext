@@ -13,8 +13,8 @@ describe("TPO recruiter editor duplicate conflict recovery",()=>{
   expect(ui).toContain("value.lead.id!==leadId");
   expect(ui).toContain("setDuplicateLead(value.lead)");
   expect(ui).toContain("Contact already exists:");
-  expect(ui).toContain('className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline');
-  expect(ui).toContain(">Open {duplicateLead.name}</Link>");
+  expect(ui).toContain('className="inline-flex min-h-11 items-center">Open {duplicateLead.name}</TextLink>');
+  expect(ui).toContain(">Open {duplicateLead.name}</TextLink>");
   expect(ui).toContain("return false;");
   expect(endpoint).toContain("checkTpoLeadContact(context");
  });

@@ -6,6 +6,6 @@ describe("college bulk selection visibility",()=>{
   const panel=readFileSync(resolve(process.cwd(),"src/components/verification/CollegeVerificationPanel.tsx"),"utf8");
   const workspace=readFileSync(resolve(process.cwd(),"src/components/verification/VerificationWorkspace.tsx"),"utf8");
   expect(panel).toContain("selectionDisabled={bulkBusy} disableLocalSearch");
-  expect(workspace).toContain("{!disableLocalSearch&&<label");
+  expect(workspace).toContain("{!disableLocalSearch&&<Label variant=\"choice\"");
  });
 });

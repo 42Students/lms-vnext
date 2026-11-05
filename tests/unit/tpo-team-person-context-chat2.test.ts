@@ -20,7 +20,7 @@ describe("TPO team conversation and person context",()=>{
  it("TPO-inbox-team-42 and TPO-inbox-team-R07 offer a keyboard-native All conversations back link",()=>{
   const page=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
   expect(page).toContain('href="/tpo/team?tab=conversations"');
-  expect(page).toContain(">All conversations</Link>");
+  expect(page).toContain(">All conversations</TextLink>");
   expect(page).toContain('aria-label="Private team messages"');
  });
 });

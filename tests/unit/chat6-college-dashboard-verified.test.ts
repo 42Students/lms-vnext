@@ -74,6 +74,6 @@ describe("chat-6 College Admin dashboard verified legacy attention",()=>{
   const setup=src("src/components/admin/college-setup-checklist.tsx");
   expect(cards).toContain('<StatTile key={card.key} variant="college" href={card.href}');
   expect(setup).not.toContain('aria-live="polite"');
-  expect(setup).toContain("step.href ? <Link");
+  expect(setup).toContain("step.href ? <ButtonLink");
  });
 });

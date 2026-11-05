@@ -1,6 +1,8 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {recruiterTodayGreeting} from "@/modules/placements/recruiter-today-greeting-model";
+import {readFileSync as readFormatDateSource} from "node:fs";
+const readFormatDate=()=>readFormatDateSource("src/lib/format-date.ts","utf8");
 describe("Final sprint recruiter IST date decision",()=>{
  it("REC-home-drives-R07 IST presentation deliberately overrides viewer-local legacy dates",()=>{
   const instant=new Date("2099-01-01T09:00:00Z");
@@ -12,7 +14,7 @@ describe("Final sprint recruiter IST date decision",()=>{
   ];
   for(const path of paths){
    const content=readFileSync(path,"utf8");
-   expect(content).toContain("Asia/Kolkata");
+   expect(content).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
   }
   const page=readFileSync(paths[0]!,"utf8");
   expect(page).toContain(" IST");

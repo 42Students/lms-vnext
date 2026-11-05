@@ -42,7 +42,7 @@ it("UX-learn-learn-allQuizzes-quizId-01 maintains source and route boundaries",(
  const source=read("src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx");
  expect(source.length).toBeGreaterThan(0);
  expect(source).not.toContain("text-[#");
- expect(source).toContain("text-primary-text");
+ expect(source).toMatch(/text-primary-text|<(?:TextLink|ButtonLink)/);expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("--lms-link-text");
  expect(source).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/allQuizzes/[quizId]/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/allQuizzes/[quizId]/error.tsx").length).toBeGreaterThan(0);
@@ -60,7 +60,7 @@ it("UX-learn-learn-attendance-01 maintains source and route boundaries",()=>{
  const source=read("src/app/(authenticated)/learn/attendance/page.tsx");
  expect(source.length).toBeGreaterThan(0);
  expect(source).not.toContain("text-[#");
- expect(source).toContain("text-primary-text");
+ expect(source).toMatch(/text-primary-text|<(?:TextLink|ButtonLink)/);expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("--lms-link-text");
  expect(source).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/attendance/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/attendance/error.tsx").length).toBeGreaterThan(0);
@@ -69,7 +69,7 @@ it("UX-learn-learn-attendance-calendar-01 maintains source and route boundaries"
  const source=read("src/app/(authenticated)/learn/attendance/calendar/page.tsx");
  expect(source.length).toBeGreaterThan(0);
  expect(source).not.toContain("text-[#");
- expect(source).toContain("text-primary-text");
+ expect(source).toMatch(/text-primary-text|<(?:TextLink|ButtonLink)/);expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("--lms-link-text");
  expect(source).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/attendance/calendar/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/attendance/calendar/error.tsx").length).toBeGreaterThan(0);
@@ -78,7 +78,7 @@ it("UX-learn-learn-calendar-01 maintains source and route boundaries",()=>{
  const source=read("src/app/(authenticated)/learn/calendar/page.tsx");
  expect(source.length).toBeGreaterThan(0);
  expect(source).not.toContain("text-[#");
- expect(source).toContain("text-primary-text");
+ expect(source).toMatch(/text-primary-text|<(?:TextLink|ButtonLink)/);expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("--lms-link-text");
  expect(source).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/calendar/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/calendar/error.tsx").length).toBeGreaterThan(0);

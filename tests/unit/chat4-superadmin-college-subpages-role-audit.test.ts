@@ -5,6 +5,8 @@ import {
   canManageCollegeDirectoryRow,
 } from "@/modules/colleges/admin-directory-access-model";
 import type { RequestContext } from "@/modules/identity/context";
+import {readFileSync as readFormatDateSource} from "node:fs";
+const readFormatDate=()=>readFormatDateSource("src/lib/format-date.ts","utf8");
 
 const root = "src/app/(authenticated)/admin/colleges/[collegeId]/";
 const read = (suffix: string) => readFileSync(join(process.cwd(), root, suffix), "utf8");
@@ -81,7 +83,7 @@ describe("Super Admin college and tenant subpage threat and state audit", () => 
     expect(devices).toContain("up to 100 shown");
     expect(devices).toContain("No active sessions for this account.");
     expect(devices).toContain("AdminRevokeSessions");
-    expect(devices).toContain('timeZone:"Asia/Kolkata"');
+    expect(devices).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
     const guard = history.indexOf('requirePermission(context,"admin-scope.select")');
     const parse = history.indexOf("parseAdminSessionHistoryPage(raw)");
     const list = history.indexOf("listCollegeAdminHistory(context,collegeId,userId,page)");

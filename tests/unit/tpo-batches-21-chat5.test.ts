@@ -29,7 +29,7 @@ describe("TPO batch next step parity",()=>{
   expect(ui).toContain("Suggested: make them eligible");
   expect(ui).toContain("Suggested: invite the batch");
   expect(ui).toContain('href="#batch-next-step"');
-  expect(ui).toContain(">Show me</Link>");
-  expect(ui).toContain(">Do it</Link>");
+  expect(ui).toContain(">Show me</TextLink>");
+  expect(ui).toContain(">Do it</TextLink>");
  });
 });

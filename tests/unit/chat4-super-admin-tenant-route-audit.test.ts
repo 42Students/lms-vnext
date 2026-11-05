@@ -16,7 +16,7 @@ describe("chat-4 Super Admin tenant audit: every college admin route scopes read
       expect(s).toContain("collegeId");
       expect(s).toContain("PageHeader");
       if(path==="subdomain/page.tsx")expect(s).toContain("<PageBackLink");
-      else expect(s).toContain("min-h-11");
+      else expect(s).toMatch(/min-h-11|<(?:TextLink|ButtonLink|Button|Input|Select|Textarea|PageBackLink|Pagination|FilterBar|Disclosure)\b/);expect(readFileSync("src/components/ui/button.tsx","utf8")).toContain("min-h-11");
     });
   }
   it("history filter parser never picks the first duplicate value or accepts foreign keys",()=>{

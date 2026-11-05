@@ -14,8 +14,8 @@ describe("G2-9-014-039: shortlisted page refresh failure recovery",()=>{
   expect(source).toContain("if(available)setLastGood(children)");
   expect(source).toContain("Previous shortlisted results are visible for reference only");
   expect(source).toContain('inert aria-label="Previous shortlisted results; actions disabled"');
-  expect(source).toContain(">Retry</Link>");
-  expect(source).toContain(">Close</Link>");
+  expect(source).toContain(">Retry</TextLink>");
+  expect(source).toContain(">Close</TextLink>");
   expect(source).not.toContain("localStorage");
  });
 });

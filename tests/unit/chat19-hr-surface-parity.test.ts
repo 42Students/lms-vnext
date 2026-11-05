@@ -67,7 +67,7 @@ describe("NORTH-STAR chat-19: legacy recruiter page canvas", () => {
     expect((text.match(/<svg\b/g) ?? []).length).toBe(1);
     expect((text.match(/<\/svg>/g) ?? []).length).toBe(1);
     expect(text).toContain('onOpenChange={setOpen}');
-    expect(text).toContain('bodyClassName="!px-[var(--lms-space-3)]');
+    expect(text).toContain('bodyClassName="px-[var(--lms-space-3)]');
     expect(text).toContain('<SidebarNav items={items} onNavigate={() => setOpen(false)}');
   });
 });

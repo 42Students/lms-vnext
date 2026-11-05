@@ -360,7 +360,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
           <option value="WARNING">Warning and above</option>
         </Select>
       </Label>
-      <Label stack className="w-full min-w-0 basis-full text-[length:var(--lms-font-sm)] md:min-w-44 md:basis-auto md:flex-1">Search logs
+      <Label stack className="w-full min-w-0 basis-full text-[length:var(--lms-font-sm)] md:min-w-44 md:flex-[1_1_auto]">Search logs
         <Input type="search" maxLength={200} value={query} onChange={event=>setQuery(event.target.value)}
           placeholder="Search message, route, request ID…" className="min-h-11 w-full min-w-0 md:min-h-9"/>
       </Label>

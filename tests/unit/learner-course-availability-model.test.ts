@@ -39,7 +39,7 @@ describe("Learner course availability and locked-card navigation", () => {
     );
     expect(source).toContain('return <div role="group" aria-disabled="true"');
     expect(source).toContain('title={blockedReason}');
-    expect(source).toContain('return <Link href={href}');
+    expect(source).toContain('return <TextLink variant="bare" href={href}');
     expect(source).toContain('<LearnerCourseCardSurface');
     expect(source).toContain('blockedReason={blockedReason}');
     // Read-only course cards expose the lock reason and no nested action.

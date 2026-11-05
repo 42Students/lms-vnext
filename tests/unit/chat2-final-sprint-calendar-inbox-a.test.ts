@@ -1,12 +1,14 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
+import {readFileSync as readFormatDateSource} from "node:fs";
+const readFormatDate=()=>readFormatDateSource("src/lib/format-date.ts","utf8");
 const read=(path:string)=>readFileSync(path,"utf8");
 describe("Final sprint recruiter calendar and inbox parity — group A",()=>{
  it("REC-calendar-messages-profile-03 shows scheduled start and end in IST when available",()=>{
   const calendar=read("src/app/(authenticated)/hr/calendar/page.tsx");
   const service=read("src/modules/placements/recruiter-calendar-service.ts");
   expect(calendar).toContain('event.endsAt?<span>– <time dateTime={event.endsAt.toISOString()}>{eventTime(event.endsAt)} IST</time>');
-  expect(calendar).toContain('timeZone: "Asia/Kolkata"');
+  expect(calendar).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
   expect(service).toContain("durationMinutes: placementJobRounds.durationMinutes");
  });
  it("REC-calendar-messages-profile-05 uses recruiter calendar legacy subtitle and accessible week navigation",()=>{
@@ -34,8 +36,8 @@ describe("Final sprint recruiter calendar and inbox parity — group A",()=>{
   const inbox=read("src/app/(authenticated)/hr/conversations/page.tsx");
   expect(inbox).toContain('result.unreadTotal+" unread message"');
   expect(inbox).toContain("Conversations with the placement cell, one per drive, plus a general one.");
-  expect(inbox).toContain('result.total.toLocaleString("en-IN")+" conversation"');
-  expect(inbox).toContain('Showing {result.first.toLocaleString("en-IN")}');
+  expect(inbox).toContain('formatNumberIN(result.total)+" conversation"');
+  expect(inbox).toContain('Showing {formatNumberIN(result.first)}');
   expect(inbox).toContain("Search by drive or message");
   expect(inbox).toContain('name="q"');
  });

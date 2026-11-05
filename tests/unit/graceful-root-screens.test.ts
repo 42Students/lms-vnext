@@ -25,7 +25,7 @@ describe("graceful route screens", () => {
       "tpo", "recruiter", "admin", "superadmin", "hr"]) {
       const screen=source(`src/app/(authenticated)/${role}/not-found.tsx`);
       expect(screen).toContain('<PageHeader title="Page not found"');
-      expect(screen).toMatch(/<Link\b|<PageBackLink\b/);
+      expect(screen).toMatch(/<ButtonLink\b|<PageBackLink\b/);
     }
     const fallback=source("src/app/not-found.tsx");
     expect(fallback).toContain('let homeHref = "/dashboard"');

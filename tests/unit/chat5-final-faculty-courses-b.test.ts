@@ -37,8 +37,8 @@ describe("chat-5 final sprint: teaching surface and discussion parity",()=>{
  });
  it("FAC-courses-35 groups lesson authoring in accessible details and describes a keyboard-operable summary",()=>{
   const blueprint=src("src/components/courses/faculty-course-workspace.tsx");
-  expect(blueprint).toContain("<details");
-  expect(blueprint).toContain('<summary className="min-h-11 cursor-pointer');
+  expect(blueprint).toContain("<Disclosure");expect(readFileSync("src/components/ui/disclosure.tsx","utf8")).toContain("<details");
+  expect(readFileSync("src/components/ui/disclosure.tsx","utf8")).toContain("<summary");expect(readFileSync("src/components/ui/disclosure.tsx","utf8")).toContain("cursor-pointer");expect(readFileSync("src/components/ui/disclosure.tsx","utf8")).toContain("minHeight:44");
   expect(blueprint).toContain("+ Add content");
   expect(blueprint).toContain("<Heading level={2}");
  });

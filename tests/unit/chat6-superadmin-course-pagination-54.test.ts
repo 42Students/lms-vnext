@@ -26,7 +26,7 @@ describe("Super Admin Courses bounded page size",()=>{
   expect(page).toContain("parseSuperAdminCourseQuery(query)");
   expect(overview).toContain("paginateCollegeCourses(workspace.courses,catalogueQuery)");
   expect(overview).toContain('name="pageSize"');
-  expect(overview).toContain(">Refresh</Link>");
+  expect(overview).toContain(">Refresh</TextLink>");
   expect(overview).toContain("{catalogue.pageSize} per page");
  });
 });

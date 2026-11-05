@@ -8,7 +8,7 @@ describe("Recruiter profile failure recovery", () => {
     expect(source).toContain('title="We couldn\'t load your profile"');
     expect(source).toContain('const retryHref = scopedCollegeId');
     expect(source).toContain('"/hr/profile?collegeId=" + encodeURIComponent(scopedCollegeId)');
-    expect(source).toContain("<Link href={retryHref}");
-    expect(source).toContain(">Retry</Link>");
+    expect(source).toContain("<TextLink href={retryHref}");
+    expect(source).toContain(">Retry</TextLink>");
   });
 });

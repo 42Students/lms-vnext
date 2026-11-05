@@ -28,7 +28,7 @@ export function Select({ className, children, error = false, ...props }: SelectP
         "max-md:text-[16px] max-md:leading-6",
         "rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)]",
         "bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[8px]",
-        "font-[inherit] text-[length:var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",
+        "font-[family-name:inherit] text-[length:var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",
         "outline-none shadow-none transition-[border-color,box-shadow,background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)]",
         "enabled:hover:border-[var(--lms-field-hover-border)]",
         "focus-visible:border-[var(--lms-primary)] focus-visible:shadow-(--lms-control-shadow)",

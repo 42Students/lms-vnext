@@ -9,7 +9,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   const page=route("inbound-mail");
   expect(page).toContain("The inbox is unavailable; this is not a zero-message result.");
   expect(page).toContain('href="/admin/inbound-mail"');
-  expect(page).toContain(">Retry</Link>");
+  expect(page).toContain(">Retry</TextLink>");
   for(const ctl of ["<Input","<Select","<Button"])expect(page).toContain(ctl);
   expect(page).toContain('min-h-11 min-w-11 shrink-0 items-center justify-center');
  });
@@ -56,7 +56,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   expect(page).toContain("Email and phone are masked outside a selected college.");
   for(const ctl of ["<Input","<Select","<Button","<Pagination"])expect(page).toContain(ctl);
   expect(page).toContain('label="Contacts pages"');
-  expect(page).toContain('min-h-11 items-center font-semibold');
+  expect(page).toContain("min-h-11 md:min-h-9");expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("font-semibold");
  });
  it("UX-admin-placements-analytics-02 shows missing-college help before invoking scoped services",()=>{
   const page=route("placements/analytics");

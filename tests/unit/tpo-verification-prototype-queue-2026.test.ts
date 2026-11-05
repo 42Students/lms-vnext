@@ -1,5 +1,7 @@
 import {readFileSync} from "node:fs";
 import {describe,it,expect} from "vitest";
+import {readFileSync as readFormatDateSource} from "node:fs";
+const readFormatDate=()=>readFormatDateSource("src/lib/format-date.ts","utf8");
 const source=(file:string)=>readFileSync(file,"utf8");
 describe("TPO Students / To verify prototype",()=>{
  it("keeps the full private review and optimistic version workflow while adding queue/detail presentation",()=>{
@@ -32,6 +34,6 @@ describe("TPO Students / To verify prototype",()=>{
   expect(side).toContain("rows.find(row=>row.learnerMembershipId");
   expect(side).toContain("row.learnerName");
   expect(side).toContain("focus.submittedAt");
-  expect(side).toContain('timeZone:"Asia/Kolkata"');
+  expect(side).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
  });
 });

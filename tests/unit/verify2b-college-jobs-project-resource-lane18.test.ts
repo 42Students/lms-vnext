@@ -15,7 +15,7 @@ describe("verify2b W1_lane5_9: college jobs, lecture hall and project audit",()=
   const halls=readFileSync("src/components/admin/lecture-hall-manager.tsx","utf8");
   expect(jobs).toContain("Create Job");
   expect(interviews).toContain("This drive only");
-  expect(interviews).toContain('min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh');
+  expect(interviews).toContain('className="inline-flex min-h-11 items-center md:min-h-9">Refresh</TextLink>');
   expect(halls).toContain('capacity: "50"');
   expect(halls).toContain("capacity > 1000");
   expect(halls).toContain('confirmLabel="Discard edits"');

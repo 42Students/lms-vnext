@@ -352,7 +352,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
           </div>
         </section>
 
-        <section id="social" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 border-t border-border pt-6">
+        <section id="social" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 border-t border-border pt-6">
           {cardHeader("social","Social Profiles")}
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="LinkedIn" type="url" maxLength={500} value={profile.social.linkedIn}
@@ -370,7 +370,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
           </div>
         </section>
 
-        <section id="address" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 border-t border-border pt-6">
+        <section id="address" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 border-t border-border pt-6">
           {cardHeader("address","Address")}
           <p className="text-xs text-muted-foreground">Current and Permanent addresses are saved independently. City, State and Pincode below are shared profile defaults.</p>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
@@ -395,7 +395,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
             ))}
           </div>
         </section>
-        <section id="contacts" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 border-t border-border pt-6">
+        <section id="contacts" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 border-t border-border pt-6">
           {cardHeader("contacts","Contacts")}
           <div className="min-w-0 space-y-1">
             <p className="text-xs text-muted-foreground">Login mobile and email require a separate verified account change. The profile contact number below does not change login credentials.</p>

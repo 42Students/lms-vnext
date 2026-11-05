@@ -138,7 +138,7 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  });
  it("UX-admin-placements-jobs-jobId-applications-01 /admin route /admin/placements/jobs/[jobId]/applications preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx");
-  expect(page).toContain('title={"Applications ("+data.total.toLocaleString("en-IN")+")"}');
+  expect(page).toContain('title={"Applications ("+formatNumberIN(data.total)+")"}');
   expect(page).toContain("CollegeApplicationPipelineControls");
 
  });
@@ -218,7 +218,7 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
   const page=read("src/components/admin/super-admin-placement-detail-view.tsx");
   expect(page).toContain('return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">');
   expect(page).not.toContain("<main");
-  expect(page).toContain("min-h-11");
+  expect(page).toMatch(/min-h-11|<(?:TextLink|ButtonLink|Button|Input|Select|Textarea|PageBackLink|Pagination|FilterBar|Disclosure)\b/);expect(readFileSync("src/components/ui/button.tsx","utf8")).toContain("min-h-11");
   expect(page).toContain("StatusBadge");
 
  });

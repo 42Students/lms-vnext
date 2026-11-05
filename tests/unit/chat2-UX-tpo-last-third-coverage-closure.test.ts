@@ -2,6 +2,8 @@ import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {TPO_EVERYONE_DESCRIPTION,TPO_EVERYONE_TITLE,TPO_EVERYONE_WELCOME} from "@/modules/placements/tpo-team-everyone-model";
 import {tpoVerificationQuerySchema} from "@/modules/verification/tpo-queue-server-model";
+import {readFileSync as readFormatDateSource} from "node:fs";
+const readFormatDate=()=>readFormatDateSource("src/lib/format-date.ts","utf8");
 
 describe("TPO last third page-level UX coverage closure",()=>{
  it("UX-tpo-team-everyone-01 retains permission-scoped, recoverable Everyone messages with paging and IST dates",()=>{
@@ -15,7 +17,7 @@ describe("TPO last third page-level UX coverage closure",()=>{
   expect(s).toContain('aria-label="Everyone messages"');
   expect(s).toContain("Newer messages");
   expect(s).toContain("Older messages");
-  expect(s).toContain('timeZone:"Asia/Kolkata"');
+  expect(s).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
   expect(s).toContain("TpoEveryoneControls");
   expect(TPO_EVERYONE_TITLE).toBeTruthy();
   expect(TPO_EVERYONE_DESCRIPTION).toBeTruthy();

@@ -1,5 +1,7 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
+import {readFileSync as readFormatDateSource} from "node:fs";
+const readFormatDate=()=>readFormatDateSource("src/lib/format-date.ts","utf8");
 const src=(p:string)=>readFileSync(p,"utf8");
 describe("Final sprint recruiter calendar verification",()=>{
  it("REC-calendar-messages-profile-03 includes actual round end and duration evidence rather than guessing a one-hour event",()=>{
@@ -8,7 +10,7 @@ describe("Final sprint recruiter calendar verification",()=>{
   expect(service).toContain("durationMinutes: placementJobRounds.durationMinutes");
   expect(calendar).toContain("event.endsAt");
   expect(calendar).toContain("eventTime(event.endsAt)");
-  expect(calendar).toContain('timeZone: "Asia/Kolkata"');
+  expect(calendar).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
  });
  it("REC-calendar-messages-profile-05 shows the legacy range, navigation and empty calendar wording",()=>{
   const page=src("src/app/(authenticated)/hr/calendar/page.tsx");

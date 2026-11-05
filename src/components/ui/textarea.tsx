@@ -24,7 +24,7 @@ export function Textarea({ className, error = false, rows, ...props }: TextareaP
       aria-invalid={invalid ? true : props["aria-invalid"]}
       className={cx(
         touchHeightClass,
-        "w-full min-w-0 resize-y disabled:resize-none font-[inherit] scroll-mt-3",
+        "w-full min-w-0 resize-y disabled:resize-none font-[family-name:inherit] scroll-mt-3",
         "rounded-[var(--lms-field-radius)] border-0",
         "bg-[var(--lms-form-bg)] px-[12px] py-[16px]",
         "text-[length:var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",

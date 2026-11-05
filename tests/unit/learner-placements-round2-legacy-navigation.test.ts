@@ -5,9 +5,9 @@ describe("Learner Placements legacy request/nav surfaces",()=>{
  it("LEARNER-placements-46 links announcements and personal updates separately",()=>{
   const text=source("src/app/(authenticated)/learn/my-placements/announcements/page.tsx");
   expect(text).toContain("Updates about you (");
-  expect(text).toContain('<Link href={tabHref("announcements")}');
+  expect(text).toContain('<TextLink variant="bare" href={tabHref("announcements")}');
   expect(text).toContain('<section id="college-notices"');
-  expect(text).toContain('<Link href={tabHref("updates")}');
+  expect(text).toContain('<TextLink variant="bare" href={tabHref("updates")}');
   expect(text).toContain('id="personal-updates"');
  });
  it("LEARNER-placements-54 labels pending and rejected requests as placement cell decisions",()=>{

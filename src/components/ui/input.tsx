@@ -14,7 +14,7 @@ export function Input({ className, error = false, ...props }: InputProps) {
   const placeholder = props.placeholder ?? (props.type === "search" ? "Search..." : undefined);
   const invalid = error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
   const inputClassName = cx(
-        "min-h-[var(--lms-control-height)] max-md:min-h-11 w-full min-w-0 font-[inherit]",
+        "min-h-[var(--lms-control-height)] max-md:min-h-11 w-full min-w-0 font-[family-name:inherit]",
         "rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)]",
         "bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[8px]",
         "text-[length:var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",

@@ -13,7 +13,7 @@ describe("Faculty quiz report legacy header", () => {
     expect(source).toContain('["Submitted",');
     expect(source).toContain('["Average score",');
     expect(source).toContain('["Questions", metrics.questionCount]');
-    expect(source).toContain('["Due date", quiz.dueAt ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata"');
+    expect(source).toContain('["Due date", quiz.dueAt ? istDayMonthYearFormatter.format(quiz.dueAt) : "—"]');expect(readFileSync("src/lib/format-date.ts","utf8")).toContain('timeZone: TIME_ZONE, day: "numeric", month: "short", year: "numeric"');
     expect(source).not.toContain('["Total attempts", metrics.totalAttempts]');
     expect(source).toContain('"Total attempts: " + metrics.totalAttempts');
   });

@@ -58,7 +58,7 @@ it("opens authorized external applicant links in the same tab with an accessible
   expect(page).not.toContain('target="_blank"');
   expect(page).toContain('aria-label={"Open "+COMPANY_SHARE_COLUMNS[key]+" for "+(row.displayName??row.applicationId)+" (external website)"}');
   expect(page).toContain('className="inline-flex min-h-11 items-center');
-  expect(page).toContain("focus-ring");
+  expect(page).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|Input|Select|Textarea|PageBackLink|Pagination|FilterBar|Disclosure)\b/);expect(readFileSync("src/app/globals.css","utf8")).toContain("@utility focus-ring");
 });
 
 it("discloses resumes only through an unexpired short-lived HTTPS grant", () => {

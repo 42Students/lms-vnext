@@ -18,7 +18,7 @@ describe("TPO calendar and reports verified source contracts",()=>{
   const source=load("src/components/placements/placement-calendar-workspace.tsx");expect(source).toContain('aria-label="Today and next 7 days"');expect(source).toContain("Nothing scheduled today");expect(source).toContain("Next 7 days");
  });
  it("TPO-calendar-reports-12 provides Show everything while calendar filters are active",()=>{
-  const source=load("src/components/placements/placement-calendar-workspace.tsx");expect(source).toContain(">Show everything</Link>");expect(source).toContain('href={calendarHref(basePath,audience,state,{company:"",kind:undefined,kinds:[],focus:null})}');
+  const source=load("src/components/placements/placement-calendar-workspace.tsx");expect(source).toContain(">Show everything</TextLink>");expect(source).toContain('href={calendarHref(basePath,audience,state,{company:"",kind:undefined,kinds:[],focus:null})}');
  });
  it("TPO-calendar-reports-39 renders the placement journey linking students, placements and offers",()=>{
   const source=load("src/app/(authenticated)/tpo/reports/page.tsx");expect(source).toContain('aria-label="Placement journey"');expect(source).toContain("Looking for a job");expect(source).toContain("Placed");expect(source).toContain("Accepted");

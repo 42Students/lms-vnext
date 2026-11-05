@@ -24,7 +24,7 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(page).toContain('courseBasePath="/admin/courses"');
     expect(table).toContain('action={courseBasePath}');
     expect(table).toContain('href={courseBasePath}');
-    expect(table).toContain('>Clear</Link>');
+    expect(table).toContain('>Clear</TextLink>');
     expect(table).toContain(".replace(\"/college/courses\",courseBasePath)");
     expect(table).toContain("Search courses");
     expect(table).toContain("Export CSV");

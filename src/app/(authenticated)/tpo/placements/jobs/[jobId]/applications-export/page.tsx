@@ -85,7 +85,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
      <p className="break-words text-sm text-body">{row.roleTitle} · {row.status} · {row.screeningStatus??"Screening unavailable"}</p>
      <p className="mt-1 break-words text-xs text-body">Channel: {row.channel} · Submitted {formatDateTimeIst(new Date(row.submittedAt))} IST</p>
      <Disclosure title={<>Academic evidence <span aria-hidden="true" className="ml-2">⌄</span></>} className="mt-3 min-w-0" preserveSummary summaryClassName="inline-flex min-h-11 items-center">
-     <dl className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-3 text-xs text-body md:grid-cols-4">
+     <dl className="grid min-w-0 grid-cols-1 gap-3 text-xs text-body md:grid-cols-4">
       <div><dt>Roll number</dt><dd className="font-semibold text-foreground">{row.rollNumber??"Not recorded"}</dd></div>
       <div><dt>Batch</dt><dd className="font-semibold text-foreground">{row.batchName??"Not recorded"}</dd></div>
       <div><dt>Branch</dt><dd className="font-semibold text-foreground">{row.branchName??"Not recorded"}</dd></div>

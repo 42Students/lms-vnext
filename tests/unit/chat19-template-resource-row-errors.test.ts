@@ -10,7 +10,7 @@ describe("chat-19 template resource per-row validation",()=>{
   expect(source).toContain('Fix "+rowErrors[i].length+" error(s)"');
   expect(source).toContain('<ul role="alert"');
   expect(source).toContain("Boolean(rowErrors[index]?.length)||rows.length<=12");
-  expect(source).toContain('open={rowErrors[i]?.length?true:undefined}');
+  expect(source).toContain('defaultOpen={rowErrors[i]?.length?true:undefined}');
   expect(source).toContain('setRowErrors({});setRows(r=>');
  });
 });

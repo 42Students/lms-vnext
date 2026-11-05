@@ -13,7 +13,7 @@ describe("TPO calendar adaptive and draft safety",()=>{
  });
  it("TPO-calendar-reports-13 provides immediate authorized company links while preserving filters",()=>{
   const page=source("src/components/placements/placement-calendar-workspace.tsx");
-  expect(page).toContain('aria-label="Quick company filters"');
+  expect(page).toContain('ariaLabel="Quick company filters"');
   expect(page).toContain("calendarHref(basePath,audience,state,{company:name})");
   expect(page).toContain("calendarHref(basePath,audience,state,{company:\"\"})");
  });

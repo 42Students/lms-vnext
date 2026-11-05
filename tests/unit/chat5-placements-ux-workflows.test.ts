@@ -71,7 +71,7 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(page).toContain("getTpoOfferEvidence(context,parsed.data)");
   expect(page).toContain("No persisted status or joining history events");
   expect(page).toContain("This page does not verify letter delivery");
-  expect(page).toContain("inline-flex min-h-11 items-center w-full justify-center");
+  expect(page).toContain('<ButtonLink variant="secondary" className="w-full md:w-auto print:hidden"');expect(readFileSync("src/components/ui/button.tsx","utf8")).toMatch(/inline-flex[^"]*items-center[^"]*justify-center/);
   expect(page).toContain("No persisted status or joining history events");
   expect(page).toContain("This page does not verify letter delivery");
  });

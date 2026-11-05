@@ -14,7 +14,7 @@ describe("Faculty contacts tabs, timetable and back-link wording",()=>{
  });
  it("uses Class Schedule and no invented calendar subtitle",()=>{
   const calendar=file("calendar/page.tsx");
-  expect(calendar).toContain('<PageHeader title="Class Schedule" actions={<Link href="/teacher/live-classes"');
+  expect(calendar).toContain('<PageHeader title="Class Schedule" actions={<ButtonLink variant="secondary" href="/teacher/live-classes"');
   expect(calendar).not.toContain('eyebrow="Faculty"');
  });
  it("retains the exact legacy Back to courses button text",()=>{

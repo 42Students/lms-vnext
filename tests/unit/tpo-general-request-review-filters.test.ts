@@ -1,6 +1,8 @@
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-request-model";
+import {readFileSync as readFormatDateSource} from "node:fs";
+const readFormatDate=()=>readFormatDateSource("src/lib/format-date.ts","utf8");
 const src=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),"utf8");
 describe("TPO server-scoped general request filters",()=>{
  it("rejects unsupported kinds, unknown college IDs, and broad one-letter probes",()=>{
@@ -39,6 +41,6 @@ describe("TPO server-scoped general request filters",()=>{
   expect(panel).toContain('onReviewed={load} disabled={loading||stale||pending}');
   expect(panel).toContain('dateTime={row.requestedAt}');
   expect(panel).toContain('dateTime={row.decidedAt}');
-  expect(panel).toContain('timeZone:"Asia/Kolkata"');
+  expect(panel).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
  });
 });

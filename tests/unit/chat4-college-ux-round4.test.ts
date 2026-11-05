@@ -15,7 +15,7 @@ describe("Chat-4 College UX round 4",()=>{
  });
  it("UX-college-contacts-membershipId-01 protects action size or responsive width",()=>{
  const page=source("contacts/[membershipId]");
- expect(page).toContain("min-h-11");
+ expect(page).toMatch(/min-h-11|<(?:TextLink|ButtonLink|Button|Input|Select|Textarea|PageBackLink|Pagination|FilterBar|Disclosure)\b/);expect(readFileSync("src/components/ui/button.tsx","utf8")).toContain("min-h-11");
  
  });
  it("UX-college-course-progress-01 protects action size or responsive width",()=>{

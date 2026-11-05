@@ -83,9 +83,9 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
  });
  it("TPO-drives-12 row More menu links to applicants, rounds and offers",()=>{
   expect(page()).toContain('trigger="···"');
-  expect(page()).toContain('>Applicants</Link>');
-  expect(page()).toContain('>Rounds and schedule</Link>');
-  expect(page()).toContain('>Offers</Link>');
+  expect(page()).toContain('>Applicants</ButtonLink>');
+  expect(page()).toContain('>Rounds and schedule</ButtonLink>');
+  expect(page()).toContain('>Offers</ButtonLink>');
  });
  it("TPO-drives-14 reminder flow requires preview token and explicit confirmation",()=>{
   const panel=source("src/components/placements/tpo-remind-non-applicants.tsx");
@@ -94,7 +94,7 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
   expect(panel).toContain('method:"POST"');
  });
  it("TPO-drives-15 list exposes the extended-deadline action only on published drives",()=>{
-  expect(page()).toContain('job.status==="PUBLISHED"?<Link');
+  expect(page()).toContain('job.status==="PUBLISHED"?<ButtonLink');
   expect(page()).toContain("/extend-deadline");
  });
  it("TPO-drives-16 published list rows can open guarded close-preview",()=>{
@@ -115,7 +115,7 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
  it("TPO-drives-19 empty lifecycle view shows a create action",()=>{
   expect(page()).toContain("No live drives yet");
   expect(page()).toContain("No draft drives yet");
-  expect(page()).toContain('>Create drive</Link>');
+  expect(page()).toContain('>Create drive</ButtonLink>');
  });
  it("TPO-drives-20 a missing season selector does not hide college history",()=>{
   expect(service()).toContain("// TPO-drives-20: default to all college seasons");
