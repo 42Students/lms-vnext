@@ -13,6 +13,8 @@ import { getFacultyDiscussionHistory } from "@/modules/courses/faculty-discussio
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Params={action?:string|string[];page?:string|string[]};
 export default async function FacultyDiscussionHistoryPage({
@@ -47,14 +49,14 @@ export default async function FacultyDiscussionHistoryPage({
       <TextLink href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
         className="inline-flex min-h-11 items-center justify-center px-3 text-sm">Clear</TextLink>
     </form>
-    <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} recorded event{data.total===1?"":"s"}</p>
+    <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{formatNumberIN(data.total)} recorded event{data.total===1?"":"s"}</p>
     {data.items.length===0?<EmptyState title="No registered moderation history"
       description="No persisted moderation or Faculty reply events match this Section and filter. Records before event tracking are unavailable, not reconstructed."/>:
       <ol aria-label="discussion history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="min-w-0 bg-transparent py-4">
           <Badge tone="neutral">{item.action}</Badge>
           <p className="mt-2 text-sm leading-5 text-body">
-            {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.occurredAt)} IST
+            {istDateTimeFormatter.format(item.occurredAt)} IST
           </p>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">
             {item.actorMembershipId?"Recorded member action":"System/unknown actor"}

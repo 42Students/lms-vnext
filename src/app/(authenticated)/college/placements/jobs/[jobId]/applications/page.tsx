@@ -23,6 +23,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
   params: Promise<{jobId:string}>;
@@ -76,7 +78,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   const data = pipelineResult.value;
   const assessmentUrl = job?.legacyPostingDetails?.assessmentUrl;
   const safeAssessmentUrl = assessmentUrl && (assessmentUrl.startsWith("https://") || assessmentUrl.startsWith("http://")) ? assessmentUrl : null;
-  const formatter = new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+  const formatter = istDateFormatter;
   const columns:DataTableColumn<(typeof data.items)[number]>[]=[
     {key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name??"Unnamed learner"},
     {key:"email",header:"Email",cell:row=>row.email??"Not provided"},
@@ -88,7 +90,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     {key:"screening",header:"Screening",cell:row=>row.screening??"Not recorded"},
   ];
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
-    <PageHeader title={"Applications ("+data.total.toLocaleString("en-IN")+")"}
+    <PageHeader title={"Applications ("+formatNumberIN(data.total)+")"}
       description={data.drive.title+" · Review applications, move candidates through hiring stages and notify them about decisions."}
       actions={<TextLink href={`/college/placements/jobs/${jobId}/overview`} className="min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center">Drive overview</TextLink>} />
     <nav aria-label="Drive sections" className="min-w-0">
@@ -113,7 +115,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         <span className="font-semibold">Pipeline:</span>
         {Object.entries(data.stageCounts).map(([stage,count])=>
           <span key={stage} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1 text-sm font-semibold">
-            {stage}: {count.toLocaleString("en-IN")}
+            {stage}: {formatNumberIN(count)}
           </span>)}
       </div>
     </section>
@@ -125,7 +127,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       {" "}<TextLink href={driveApplicationsHref(jobId,query)}>Retry filter choices</TextLink>
     </Alert> : null}
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">
-      <span>{data.total.toLocaleString("en-IN")} matching applications</span>
+      <span>{formatNumberIN(data.total)} matching applications</span>
       <CollegeDriveApplicationsExport href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
         matching={data.total} cap={DRIVE_APPLICATION_EXPORT_CAP}/>
     </div>
@@ -185,7 +187,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       </div>
     </nav>
     <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">
-      CSV uses formula-neutralized cells, includes filtered rows up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")},
+      CSV uses formula-neutralized cells, includes filtered rows up to {formatNumberIN(DRIVE_APPLICATION_EXPORT_CAP)},
       and includes a truncation notice if more matching rows exist.
     </p>
   </div>;

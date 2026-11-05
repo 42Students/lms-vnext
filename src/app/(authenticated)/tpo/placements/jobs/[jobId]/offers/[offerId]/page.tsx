@@ -9,6 +9,7 @@ import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-servi
 import {tpoOfferEvidenceQuery} from "@/modules/placements/tpo-offer-evidence-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateFormatter, istDateTimeFormatter } from "@/lib/format-date";
 export default async function TpoOfferEvidencePage({params}:{params:Promise<{jobId:string;offerId:string}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -20,8 +21,8 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
   throw e;
  }
  const base="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
- const dateInIst=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(value));
- const momentInIst=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value))+" IST";
+ const dateInIst=(value:string)=>istDateFormatter.format(new Date(value));
+ const momentInIst=(value:string)=>istDateTimeFormatter.format(new Date(value))+" IST";
  const facts=[["Current status",data.offer.status],["Issued",dateInIst(data.offer.issued)],["Response",data.offer.responded?dateInIst(data.offer.responded):"Not recorded"],["Expiry",data.offer.expires?dateInIst(data.offer.expires):"Not recorded"],["Joining",data.joining??"Not applicable"]] as const;
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
 

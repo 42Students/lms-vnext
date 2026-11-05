@@ -1,4 +1,5 @@
 import { cx } from "@/lib/class-names";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 export type SummaryStep = {
   label: string;
@@ -12,7 +13,7 @@ export type SummaryStripProps = {
   className?: string;
 };
 
-const numberFormat = new Intl.NumberFormat("en-IN");
+const numberFormat = createNumberFormatter("en-IN");
 
 /** Single hairline summary strip, not a separate card for every pipeline stage. */
 export function SummaryStrip({ steps, label, className }: SummaryStripProps) {

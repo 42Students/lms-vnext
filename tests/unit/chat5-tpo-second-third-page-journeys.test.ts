@@ -16,7 +16,8 @@ describe("chat-5 second-third TPO page journeys",()=>{
    expect(source).toMatch(/hasMembershipRole\(context,\s*"TPO"\)/);
    expect(source).toContain("notFound()");
    expect(source).toContain('<Alert tone="warning">');
-   expect(source).toMatch(/actions=\{<Link[^>]*className="[^"]*inline-flex min-h-11[^\"]*items-center[^\"]*w-full[^\"]*focus-visible:outline-2/);
+   expect(source).toMatch(/actions=\{<TextLink[^>]*className="[^"]*inline-flex min-h-11[^"]*items-center[^"]*w-full/);
+   expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("focus-ring");
    expect(source).toContain("<PageHeader");
    expect(source).toContain("preview.");
   }

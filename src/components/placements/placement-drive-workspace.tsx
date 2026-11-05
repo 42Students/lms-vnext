@@ -55,9 +55,11 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 function formatDriveIst(date:Date|null){
- return date?new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",
+ return date?createDateFormatter("en-IN", {day:"numeric",month:"short",hour:"numeric",
   minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date)+" IST":"Date to be decided";
 }
 export async function PlacementDriveWorkspace({
@@ -515,8 +517,7 @@ export async function PlacementDriveWorkspace({
             <p className="mt-2 text-sm text-body leading-[22px]">Pool host: {job.legacyPostingDetails.campusPool.hostCollege}</p>
           ):null}
           {job.legacyPostingDetails.campusPool?.reportingTime?(
-            <p className="mt-2 text-sm text-body leading-[22px]">Pool reporting time (IST): {new Intl.DateTimeFormat("en-IN",
-              {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(
+            <p className="mt-2 text-sm text-body leading-[22px]">Pool reporting time (IST): {istDateTimeFormatter.format(
                 new Date(job.legacyPostingDetails.campusPool.reportingTime))}</p>
           ):null}
           {job.legacyPostingDetails.campusPool?.travelNote?(
@@ -583,7 +584,7 @@ export async function PlacementDriveWorkspace({
                         className="ml-2 max-md:inline-flex max-md:min-h-11 max-md:items-center">Review pending →</TextLink>:null}
                     </dd></div>
                     <div><dt className="font-semibold">Results expected</dt><dd>{round.resultsDueAt
-                      ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.resultsDueAt)+" IST"
+                      ? istDateTimeFormatter.format(round.resultsDueAt)+" IST"
                       : "Not set"}</dd></div>
                     <div><dt className="font-semibold">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes+" minutes" : "Not specified"}</dd></div>
                   </dl>

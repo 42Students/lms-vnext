@@ -39,7 +39,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
  });
  it("TPO-inbox-team-64 keeps clickable bell rows and accessible error feedback",()=>{
   expect(bell()).toContain('onClick={()=>void openItem(item)}');
-  expect(bell()).toContain("focus-visible:outline-[var(--lms-primary-text)]");
+  expect(bell()).toMatch(/focus-(?:ring|outline)/);
   expect(bell()).toContain('"New  →"');
  });
  it("TPO-inbox-team-04 marks a recruiter conversation read with bounded POST, not a mutating GET",()=>{
@@ -128,7 +128,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
   const c=source("src/app/(authenticated)/tpo/team/everyone/page.tsx");
   expect(c).toContain("Retry Everyone");
   expect(everyone()).toContain('import {Button} from "@/components/ui/button"');
-  expect(source("src/components/ui/button.tsx")).toContain("focus-visible:outline-[var(--lms-primary-text)]");
+  expect(source("src/components/ui/button.tsx")).toMatch(/focus-(?:ring|outline)/);
  });
  it("GR-92 does not depend on color alone for failures",()=>{
   expect(everyone()).toContain('role="alert"');

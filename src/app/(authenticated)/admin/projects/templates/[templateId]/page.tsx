@@ -22,6 +22,7 @@ import { SuperAdminTemplatePreviewControl } from "@/components/admin/super-admin
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function SuperAdminProjectTemplateDetailPage({
   params,searchParams,
@@ -180,9 +181,9 @@ export default async function SuperAdminProjectTemplateDetailPage({
             {([
               ["Published version",detail.template.publishedVersion!==null?"Version "+detail.template.publishedVersion:"Not published"],
               ["Published at","Not recorded"],
-              ["Archived at",detail.template.archivedAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(detail.template.archivedAt)+" IST":"Not archived"],
-              ["Created at",new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(detail.template.createdAt)+" IST"],
-              ["Last updated",new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(detail.template.updatedAt)+" IST"],
+              ["Archived at",detail.template.archivedAt?istDateTimeFormatter.format(detail.template.archivedAt)+" IST":"Not archived"],
+              ["Created at",istDateTimeFormatter.format(detail.template.createdAt)+" IST"],
+              ["Last updated",istDateTimeFormatter.format(detail.template.updatedAt)+" IST"],
             ] as const).map(([label,value])=>
               <div key={label} className="grid min-w-0 gap-1 py-2 sm:grid-cols-[135px_minmax(0,1fr)]">
                 <dt className="font-semibold text-body">{label}</dt>

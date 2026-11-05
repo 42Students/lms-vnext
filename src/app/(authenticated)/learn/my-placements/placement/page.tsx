@@ -16,6 +16,7 @@ import { getOwnLearnerPlacementRulesView } from "@/modules/placements/learner-pl
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function LearnerPlacementCellPage({
  searchParams,
@@ -132,7 +133,7 @@ export default async function LearnerPlacementCellPage({
                 <p className="mt-1 text-body">{row.roundName} · {row.mode==="VIRTUAL"?"Virtual":"On campus"}</p></div>
               <time className="shrink-0 text-xs text-muted-foreground" dateTime={row.exception?.scheduledAt.toISOString()??row.scheduledAt?.toISOString()}>
                 {row.exception?.scheduledAt||row.scheduledAt
-                  ?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.exception?.scheduledAt??row.scheduledAt!)
+                  ?istDateTimeFormatter.format(row.exception?.scheduledAt??row.scheduledAt!)
                   :"Time to be confirmed"}
               </time>
             </li>)}

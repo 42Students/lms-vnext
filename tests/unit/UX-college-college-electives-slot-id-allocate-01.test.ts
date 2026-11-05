@@ -13,7 +13,7 @@ it("UX-college-college-electives-slot-id-allocate-01 provides keyboard-scrolling
  expect(table).toContain("md:first:z-(--lms-z-raised)");
  expect(scroll).toContain("tabIndex={edges.scrollable ? 0 : -1}");
  expect(scroll).toContain("role={edges.scrollable");
- expect(scroll).toContain('focus-visible:outline-[var(--lms-primary-text)]');
+ expect(scroll).toMatch(/focus-(?:ring|outline)/);
  expect(source).toContain('min-h-11');
  expect(source).not.toContain("text-on-primary");
 });

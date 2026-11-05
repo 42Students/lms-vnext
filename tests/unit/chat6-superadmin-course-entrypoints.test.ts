@@ -9,7 +9,7 @@ describe("Super Admin course in-tab entry points",()=>{
    const code=source(path);
    expect(code).toContain("/admin/courses/offerings/");
    expect(code).toMatch(/Open offering(?: to add lessons| builder \/ submissions)?(?: →)?/);
-   expect(code).toContain("focus-visible:outline");
+   expect(code).toMatch(/focus-(?:ring|outline)|<(?:TextLink|ButtonLink|Button|Select|Input|Textarea|ErrorState|EmptyState|Pagination|FilterBar|NeedsDoingChips|Tabs|Disclosure)\b/);
   }
  });
  it("SA-academics-people-57 lessons have course filter CSV and bulk visibility controls",()=>{

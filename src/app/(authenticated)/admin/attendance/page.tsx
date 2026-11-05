@@ -16,9 +16,10 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 function currentMonth() {
-  return new Intl.DateTimeFormat("en-CA", {
+  return createDateFormatter("en-CA", {
     timeZone: "Asia/Kolkata",
     year: "numeric",
     month: "2-digit",

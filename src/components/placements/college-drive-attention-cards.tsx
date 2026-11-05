@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const labels={
@@ -35,7 +37,7 @@ function AttentionGlyph(){
 }
 function deadlineShort(value:Date|null){
  if(!value||!Number.isFinite(value.getTime()))return "—";
- return new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",
+ return createDateFormatter("en-IN", {day:"2-digit",month:"short",
   timeZone:"Asia/Kolkata"}).format(value);
 }
 
@@ -74,7 +76,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
         <div className="min-w-0 flex-1">
          <p className="break-words text-sm font-semibold text-foreground">{row.title}</p>
          <p className="text-xs text-body">{row.category==="LOW_CONVERSION"
-           ?"1 drive flagged for low conversion":row.count.toLocaleString("en-IN")+" candidate(s) need review"}</p>
+           ?"1 drive flagged for low conversion":formatNumberIN(row.count)+" candidate(s) need review"}</p>
          {row.sampleOmitted>0?<p role="status" className="mt-1 text-xs text-muted-foreground">
           Showing {row.examples.length} sample{row.examples.length===1?"":"s"} of {row.countTotal} affected applications.
           {row.examples.length===0?" No named sample is available on this read.":""}

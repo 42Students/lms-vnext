@@ -1,4 +1,5 @@
 import {tpoBranchChartPercent} from "@/modules/placements/tpo-branch-report-view-model";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 export type TpoBranchChartRow={
  departmentName:string;
@@ -15,7 +16,7 @@ export function TpoByBranchPrototypeChart({rows}:{
  rows:readonly TpoBranchChartRow[];
 }){
  const safe=rows.filter(row=>typeof row.departmentName==="string"&&row.departmentName.trim().length>0);
- const format=new Intl.NumberFormat("en-IN");
+ const format=createNumberFormatter("en-IN");
  return <figure aria-label="Placement rate by branch" className="min-w-0 rounded-xl border border-[color:var(--lms-border)] bg-surface p-4 md:p-5"
   data-testid="tpo.report.branch.chart">
   <div className="mb-4 flex flex-wrap items-center justify-between gap-3">

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istTimeFormatter } from "@/lib/format-date";
 
 export type TpoDriveDayTodayRound = {
   id: string;
@@ -30,9 +31,7 @@ function isRound(value: unknown): value is TpoDriveDayTodayRound {
 
 function when(value:string|null):string|null{
   if(!value||!Number.isFinite(Date.parse(value)))return null;
-  return new Intl.DateTimeFormat("en-IN",{
-    hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata",
-  }).format(new Date(value)).toUpperCase();
+  return istTimeFormatter.format(new Date(value)).toUpperCase();
 }
 
 /** Store only the last good same-user, same-college, same-IST-day snapshot. */

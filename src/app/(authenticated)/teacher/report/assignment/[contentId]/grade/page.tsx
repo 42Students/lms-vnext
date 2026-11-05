@@ -8,6 +8,7 @@ import {facultyAssignmentReportHidden} from "@/modules/courses/faculty-assessmen
 import {facultyGradingSelectedSubmission} from "@/modules/courses/faculty-grading-selection-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Params={deliveryId?:string;student?:string;filter?:string};
 export default async function FacultyAssignmentGradePage({params,searchParams}:{
@@ -33,7 +34,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
  const root="/teacher/report/assignment/"+encodeURIComponent(assignment.id)+"/grade";
  const href=(f:string,student?:string)=>root+"?deliveryId="+encodeURIComponent(assignment.deliveryId)+
    (f==="all"?"":"&filter="+encodeURIComponent(f))+(student?"&student="+encodeURIComponent(student):"");
- const stamp=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
+ const stamp=(value:Date)=>createDateFormatter("en-IN", {
    timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
   }).format(value);
  const percent=report.rosterUnavailable?null:metrics.eligibleLearners;

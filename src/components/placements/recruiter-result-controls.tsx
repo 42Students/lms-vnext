@@ -22,6 +22,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { createDateFormatter } from "@/lib/format-date";
 
 type ResultOutcome =
   | "PASS"
@@ -87,7 +88,7 @@ function formatWhen(
   timezone: string | null,
 ) {
   if (!value) return "Not scheduled";
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone:

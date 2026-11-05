@@ -28,6 +28,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeClasses>>
@@ -71,7 +72,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
             <Heading level={2} size="base" className="text-foreground">
               {classes ? "Existing Classes/Sections" : "Elective slots"}
             </Heading>
-            <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")}
+            <p className="text-xs text-muted-foreground">{formatNumberIN(data.total)}
               {classes ? " classes" : " elective slots"}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -393,7 +394,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
       </section></FilterBar>
       <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full overflow-x-auto border-b border-[var(--lms-canvas-border)]">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)]">
-          <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching {classes ? "classes" : "elective slots"}</p>
+          <p className="text-sm text-muted-foreground">{formatNumberIN(data.total)} matching {classes ? "classes" : "elective slots"}</p>
           <span className="text-xs text-muted-foreground">Showing {data.items.length} on this page</span>
         </div>
         <p className="px-4 py-2 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all class or elective columns.</p>
@@ -498,8 +499,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
 <div className="flex flex-wrap items-center gap-3">
           <p className="text-muted-foreground">
-            {data.total === 0 ? "0" : ((data.query.page - 1) * data.query.pageSize + 1).toLocaleString("en-IN")}–{Math.min(data.query.page * data.query.pageSize, data.total).toLocaleString("en-IN")}
-            {" of "}{data.total.toLocaleString("en-IN")} · Page {data.query.page} of {data.totalPages}
+            {data.total === 0 ? "0" : formatNumberIN(((data.query.page - 1) * data.query.pageSize + 1))}–{formatNumberIN(Math.min(data.query.page * data.query.pageSize, data.total))}
+            {" of "}{formatNumberIN(data.total)} · Page {data.query.page} of {data.totalPages}
           </p>
           <CollegeDirectoryPageSize current={data.query.pageSize} />
         </div>

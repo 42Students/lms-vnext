@@ -14,13 +14,12 @@ import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Query = Record<string, string | string[] | undefined>;
 
 function when(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  return istDateTimeFormatter.format(new Date(value));
 }
 
 export default async function CollegeHallAvailabilityPage({ params, searchParams }: {

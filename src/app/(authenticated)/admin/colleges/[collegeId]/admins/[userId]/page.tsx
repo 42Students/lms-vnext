@@ -6,6 +6,7 @@ import {PageBackLink} from "@/components/ui/page-back-link";
 import {EmptyState} from "@/components/ui/empty-state";
 import {AdminRevokeSessions} from "@/components/admin/admin-revoke-sessions";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type DeviceRow={id:string;device_name:string|null;user_agent:string|null;ip_address:string|null;
  last_seen_at:Date;created_at:Date;expires_at:Date};
@@ -16,9 +17,7 @@ export default async function AdminDeviceSessionsPage({params}:{
  const {collegeId,userId}=await params;
  const sessions=await listCollegeAdminSessions(await getCurrentRequestContext(),collegeId,userId);
  const data={target:sessions.target,devices:sessions.devices as DeviceRow[]};
- const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
- }).format(new Date(value));
+ const format=(value:Date)=>istDateTimeFormatter.format(new Date(value));
  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-6)]">
   <PageHeader title={data.target.name+" · Active sessions"}
    description="Current device sessions for the selected administrator. Times are in IST. An unknown or out-of-scope person cannot be inspected."

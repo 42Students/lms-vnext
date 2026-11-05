@@ -21,6 +21,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter, istDateFormatter } from "@/lib/format-date";
 
 export type VerificationQueueCard = Pick<VerificationRecord,
  "learnerMembershipId"|"section"|"status"|"submittedAt"|"version"> & {
@@ -30,7 +31,7 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  missingMarksheet:boolean;missingIdentityProof?:boolean;attention:string[];marksheets?:{uploaded:number;expected:number;missing:number};
 };
 function istTimestamp(value:Date){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST";
+ return istDateTimeFormatter.format(value)+" IST";
 }
 function relativeTimestamp(value:Date,nowMs:number|null){
  if(nowMs===null)return istTimestamp(value);
@@ -131,7 +132,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
        row.section,verificationQueueCardPresentation(row.status).state,
        row.section==="EDUCATION"?(row.marksheets?row.marksheets.uploaded+"/"+row.marksheets.expected:
         row.missingMarksheet?"Missing":"Available"):row.missingIdentityProof?"Missing":"Available",
-       new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.submittedAt),
+       istDateTimeFormatter.format(row.submittedAt),
        [row.decidedByName,row.decisionNote].filter(Boolean).join(" · ")])];
     const csv=fields.map(columns=>columns.map(value=>{
      const text=String(value).replace(/[\r\n]+/g," ");
@@ -222,7 +223,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
        ?"All "+row.marksheets.uploaded+" uploaded"
        :row.marksheets.missing+" of "+row.marksheets.expected+" missing"}
      </p>:null}
-     {row.decidedAt?<p className="mt-2 text-xs leading-[20px]">Decided by {row.decidedByName??"Placement team"} on {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.decidedAt)}</p>:null}
+     {row.decidedAt?<p className="mt-2 text-xs leading-[20px]">Decided by {row.decidedByName??"Placement team"} on {istDateFormatter.format(row.decidedAt)}</p>:null}
      {row.status==="SENT_BACK"&&row.decisionNote?<p className="mt-1 text-sm leading-[22px]">Reason sent back: {row.decisionNote}</p>:null}
      <p className="mt-2 text-xs leading-[20px]">Submitted <VerificationTimestamp value={row.submittedAt} nowMs={nowMs}/></p>
      {row.attention.length>0&&<p className="mt-2 break-words text-sm leading-[22px]" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}

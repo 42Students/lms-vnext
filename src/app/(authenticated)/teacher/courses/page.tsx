@@ -17,6 +17,7 @@ import { listFacultyCourseAssignmentDiagnostics } from "@/modules/courses/facult
 import { FacultyCoursesRetry } from "./faculty-courses-retry";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 export default async function TeacherCoursesPage({searchParams}: {
   searchParams: Promise<Record<string,string|string[]|undefined>>;
@@ -64,7 +65,7 @@ export default async function TeacherCoursesPage({searchParams}: {
    .groupBy(assignmentSubmissions.deliveryId):[];
   const pendingByDelivery=Object.fromEntries(waiting.map(row=>[row.deliveryId,row.total] as const));
   const now=new Date();
-  const dateParts=new Intl.DateTimeFormat("en-GB",{
+  const dateParts=createDateFormatter("en-GB", {
     timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",
   }).formatToParts(now);
   const month=dateParts.find(part=>part.type==="year")!.value+"-"+

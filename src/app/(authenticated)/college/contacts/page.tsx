@@ -25,8 +25,9 @@ import {CollegeContactsLiveSearch} from "./college-contacts-live-search";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateFormatter } from "@/lib/format-date";
 type RawSearch=Record<string,string|string[]|undefined>;
-const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+const dateFormat=istDateFormatter;
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const AVATAR_TINTS=[
  ["var(--lms-primary-subtle)","var(--lms-button-primary)"],["var(--lms-purple-surface)","var(--lms-purple-text)"],["var(--lms-gold-subtle)","var(--lms-warning-strong)"],

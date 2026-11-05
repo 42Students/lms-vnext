@@ -10,6 +10,7 @@ import {placementCompanyShareSelections} from "@/db/schema/placement-company-sha
 import {placementCompanyApplicantShares} from "@/db/schema/placement-company-shares";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 /** LEARNER-profile-misc-18: self-only, read-only data-access explanation. */
 export default async function LearnerProfileDataAccessPage({
@@ -76,8 +77,8 @@ export default async function LearnerProfileDataAccessPage({
     <li key={share.shareId} className="min-w-0 space-y-1 py-3 text-sm text-body">
      <p className="font-semibold text-[var(--lms-heading)]">{share.company} · {share.job}</p>
      <p>External recipient: {share.company} (individual recipient not recorded)</p>
-     <p>Shared: <time dateTime={share.sharedAt.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(share.sharedAt)} IST</time></p>
-     <p>First recorded download: {share.firstDownloadedAt?<time dateTime={new Date(String(share.firstDownloadedAt)).toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(String(share.firstDownloadedAt)))} IST</time>:"Never downloaded"}</p>
+     <p>Shared: <time dateTime={share.sharedAt.toISOString()}>{istDateTimeFormatter.format(share.sharedAt)} IST</time></p>
+     <p>First recorded download: {share.firstDownloadedAt?<time dateTime={new Date(String(share.firstDownloadedAt)).toISOString()}>{istDateTimeFormatter.format(new Date(String(share.firstDownloadedAt)))} IST</time>:"Never downloaded"}</p>
     </li>)}</ul>:<p role="status" className="mt-3 text-sm text-body">No companies have been given your data through a recorded placement shortlist share.</p>}
   </section>
 
@@ -93,9 +94,9 @@ export default async function LearnerProfileDataAccessPage({
     {tpoShares.items.map(share=><li key={share.shareId} className="min-w-0 space-y-1 py-3 text-sm text-body">
      <p className="font-semibold text-[var(--lms-heading)]">{share.company} · {share.role}</p>
      <p className="break-all">Recipient: {share.sharedWithEmail}</p>
-     <p>Link created: <time dateTime={share.sharedAt.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(share.sharedAt)} IST</time></p>
+     <p>Link created: <time dateTime={share.sharedAt.toISOString()}>{istDateTimeFormatter.format(share.sharedAt)} IST</time></p>
      <p>First link-wide download: {share.downloadedAt?
-       <time dateTime={share.downloadedAt.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(share.downloadedAt)} IST</time>:
+       <time dateTime={share.downloadedAt.toISOString()}>{istDateTimeFormatter.format(share.downloadedAt)} IST</time>:
        "No recorded download"}</p>
      <p>Stage limit: {share.maxStage??"No limit recorded"} · Fields requested: {share.requestedColumns?.length?share.requestedColumns.join(", "):"Not recorded"}</p>
      <p className="text-xs text-muted-foreground">{share.revokedAt?"Link revoked":share.expiresAt<=new Date()?"Link expired":"Link validity depends on current grant and access controls"} · Individual-row inclusion not recorded.</p>
@@ -114,7 +115,7 @@ export default async function LearnerProfileDataAccessPage({
      className="min-w-0 py-3 first:pt-0 last:pb-0 text-sm leading-6 text-body">
       <p className="max-w-3xl break-words">{event.summary}</p>
       <time className="mt-1 block text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>
-       {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(event.occurredAt)} IST
+       {istDateTimeFormatter.format(event.occurredAt)} IST
       </time>
      </li>)}
    </ol>:<p role="status" className="mt-3 text-sm text-body leading-[22px]">No recorded membership changes to display.</p>}

@@ -39,6 +39,8 @@ import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 
@@ -205,7 +207,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   }
   const greeting = recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length);
   const collegeName=grants.find(item=>item.collegeId===selectedId)?.collegeName??"this college";
-  const dateLabel=new Intl.DateTimeFormat("en-GB",{
+  const dateLabel=createDateFormatter("en-GB", {
     timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",
   }).format(now)+" · "+collegeName;
   const tasks=actionQueue.map(task=>({
@@ -253,7 +255,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       tasks={tasks}
       weekEvents={weekEvents.map(item=>({
         id:item.id,kind:item.kind,title:item.title,jobTitle:item.jobTitle,
-        href:item.href,when:new Intl.DateTimeFormat("en-IN",{
+        href:item.href,when:createDateFormatter("en-IN", {
           timeZone:"Asia/Kolkata",weekday:"short",hour:"numeric",minute:"2-digit",hour12:true,
         }).format(item.startsAt),
       }))}
@@ -263,9 +265,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       liveDrive={liveDrive?{
         title:liveDrive.job.title,href:"/recruiter/drives/"+encodeURIComponent(liveDrive.job.id),
         deadline:liveDrive.job.applicationDeadline
-          ?new Intl.DateTimeFormat("en-IN",{
-            timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-          }).format(liveDrive.job.applicationDeadline)+" IST":null,
+          ?istDateTimeFormatter.format(liveDrive.job.applicationDeadline)+" IST":null,
         sharedApplicants:liveDriveCounts?liveDriveCounts[liveDrive.job.id]?.sharedApplicants??0:null,
       }:null}/>
   </div>;

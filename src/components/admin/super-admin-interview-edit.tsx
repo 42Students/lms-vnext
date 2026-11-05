@@ -11,6 +11,7 @@ import {Banner} from "@/components/ui/banner";
 import {useToast} from "@/components/ui/toast";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Appointment={
  id:string;roundId:string;applicationId:string;status:string;
@@ -21,7 +22,7 @@ type Appointment={
 };
 type Type="SCREENING"|"TECHNICAL"|"HR"|"MANAGERIAL"|"FINAL";
 const TYPES:Type[]=["SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"];
-const toIstLocal=(value:string)=>new Intl.DateTimeFormat("sv-SE",{
+const toIstLocal=(value:string)=>createDateFormatter("sv-SE", {
  year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",
  hourCycle:"h23",timeZone:"Asia/Kolkata",
 }).format(new Date(value)).replace(" ","T");

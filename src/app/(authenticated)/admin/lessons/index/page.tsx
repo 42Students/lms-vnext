@@ -11,6 +11,7 @@ import { Table } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 export const dynamic="force-dynamic";
 
@@ -80,7 +81,7 @@ export default async function GlobalLessonIndexPage({searchParams}:{
     </Table>
    </div>:<p role="status" className="p-4 text-sm text-muted-foreground">No colleges match this search.</p>}
    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4 text-sm">
-    <p className="text-muted-foreground">Page {data.page} · up to {GLOBAL_LESSON_INDEX_PAGE_SIZE} colleges per page · Refreshed {new Date(data.refreshedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
+    <p className="text-muted-foreground">Page {data.page} · up to {GLOBAL_LESSON_INDEX_PAGE_SIZE} colleges per page · Refreshed {formatDateTimeIst(new Date(data.refreshedAt))} IST</p>
     <div className="flex items-center gap-3">
      {data.page>1?<TextLink href={href(data.page-1)}>Previous</TextLink>:null}
      {data.hasNext?<TextLink href={href(data.page+1)}>Next</TextLink>:null}

@@ -35,12 +35,10 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function formatDate(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata", dateStyle: "medium",
-    timeStyle: "short",
-  }).format(value) + " IST";
+  return istDateTimeFormatter.format(value) + " IST";
 }
 
 function DetailField({

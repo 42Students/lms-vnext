@@ -26,6 +26,8 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istIsoDateFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 const PAST_PREVIEW = 20;
 const validTime=(raw:string)=>raw.trim().length>0&&Number.isFinite(Date.parse(raw));
@@ -280,9 +282,7 @@ export function MentorMeetingsCalendar({
   const visiblePast=expanded?past:past.slice(0,PAST_PREVIEW);
   const allVisible=[...upcoming,...visiblePast];
   const selected=allVisible.find(item=>item.id===selectedId)??allVisible[0]??null;
-  const dayKey=(input:Date)=>new Intl.DateTimeFormat("en-CA",{
-    year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Asia/Kolkata",
-  }).format(input);
+  const dayKey=(input:Date)=>istIsoDateFormatter.format(input);
   // Seven day strip is aligned to the IST week containing the server clock.
   const istNow=new Date(instant.getTime()+330*60_000);
   const mondayOffset=(istNow.getUTCDay()+6)%7;
@@ -292,7 +292,7 @@ export function MentorMeetingsCalendar({
     const display=new Date(mondayUtc+offset*86400000);
     const key=dayKey(new Date(display.getTime()-330*60_000));
     return {
-      key,label:new Intl.DateTimeFormat("en-IN",{
+      key,label:createDateFormatter("en-IN", {
         weekday:"short",day:"numeric",timeZone:"Asia/Kolkata",
       }).format(new Date(display.getTime()-330*60_000)),
       count:meetings.filter(item=>validTime(item.startsAt)&&

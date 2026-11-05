@@ -16,7 +16,8 @@ describe("Chat-6 recruiter login and mobile layout safety",()=>{
   const checklist=source("src/components/admin/college-setup-checklist.tsx");
   expect(cards).toContain("grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4");
   expect(cards).toContain("min-w-0 break-words");
-  expect(cards).toContain("focus-visible:outline");
+  expect(cards).toContain("<TextLink");
+  expect(source("src/components/ui/text-link.tsx")).toContain("focus-ring");
   expect(checklist).toContain("grid min-w-0 gap-4");
   expect(checklist).toContain('href={step.href}');
  });
@@ -24,7 +25,7 @@ describe("Chat-6 recruiter login and mobile layout safety",()=>{
   const page=source("src/components/courses/admin-course-overview.tsx");
   const table=source("src/components/ui/data-table.tsx");
   expect(page).toContain("grid min-w-0 items-start gap-6");
-  expect(page).toContain('search={<label className="grid min-w-0 gap-2');
+  expect(page).toContain('search={<Label stack className="min-w-0"');
   expect(table).toContain('<ScrollCue axis="x"');
   // Shared DataTable is a block/card layout under 640px and a
   // collapsible-border table from sm onward; no horizontal page scroll.

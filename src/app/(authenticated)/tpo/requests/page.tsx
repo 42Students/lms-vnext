@@ -35,6 +35,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic";
 type Params = { request?:string|string[];proof?:string|string[];branchId?:string|string[];
@@ -218,7 +220,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
      baseHref={href(data.query)} total={data.total} pendingTotal={data.summary.pending}/>
     <Disclosure title="Advanced request table, exports and additional request tools"
      className="min-w-0" contentClassName="min-w-0 space-y-4 pt-4">
-    <p className="text-sm text-body">Showing {data.requests.length} of {data.total.toLocaleString("en-IN")} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
+    <p className="text-sm text-body">Showing {data.requests.length} of {formatNumberIN(data.total)} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<EmptyState
       title={data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you":"No requests in this period"}
       {...(data.total===0?{description:"Withdrawals, off-campus offers, registration changes and disputes from students show up here."}:{})}
@@ -246,7 +248,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
               const kind=request.requestType==="APPLICATION_WITHDRAWAL"?"Withdrawal request":
                 request.requestType==="ROUND_RESCHEDULE"?"Reschedule interview":
                 request.requestType==="OFFER_EXTENSION"?"Extend offer deadline":request.requestType.replaceAll("_"," ");
-              const timestamp=new Intl.DateTimeFormat("en-IN",{
+              const timestamp=createDateFormatter("en-IN", {
                 timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",hour12:true,
               }).format(request.requestedAt);
               return <tr key={request.id} className="align-top hover:bg-primary-subtle">
@@ -272,7 +274,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
                 </td>
                 {data.query.status!=="PENDING"?<>
                   <td className="px-3 py-3">{request.decidedBy||"—"}</td>
-                  <td className="whitespace-nowrap px-3 py-3">{request.decidedAt?new Intl.DateTimeFormat("en-IN",{
+                  <td className="whitespace-nowrap px-3 py-3">{request.decidedAt?createDateFormatter("en-IN", {
                     timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true,
                   }).format(request.decidedAt):"—"}</td>
                   <td className="max-w-[180px] break-words px-3 py-3">{request.decisionNote||"—"}</td>

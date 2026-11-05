@@ -27,6 +27,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 export const dynamic="force-dynamic";
 export const metadata={title:"Audit findings · 42 Tracker"};
 export default async function IndependentFindingsPage({searchParams}:{
@@ -82,15 +84,13 @@ export default async function IndependentFindingsPage({searchParams}:{
   {key:"reason",header:"Why",mobilePriority:"secondary",cell:item=>
     <span className="break-words">{item.reason||"Reason not recorded"}</span>},
   {key:"checked",header:"Checked",mobilePriority:"secondary",cell:item=>
-    item.checkedAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
-     dateStyle:"medium",timeStyle:"short"}).format(item.checkedAt)+" IST":"Not given"},
+    item.checkedAt?istDateTimeFormatter.format(item.checkedAt)+" IST":"Not given"},
  ];
  return <div className="min-w-0 space-y-5">{header}
   <div className="space-y-2 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
    <p className="text-body">Source: <span className="font-semibold">{sync?.source??"42Students/lms-findings"}</span>
     {" · "}Last verified sync: {sync?.lastSyncedAt ?
-      new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-        timeZone:"Asia/Kolkata"}).format(sync.lastSyncedAt)+" IST" : "not recorded"}
+      istDateTimeFormatter.format(sync.lastSyncedAt)+" IST" : "not recorded"}
     {" · "}Result: {sync?.lastResult??"NOT CONFIGURED"}.
    </p>
    <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
@@ -170,7 +170,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    </Disclosure>
   </form>
   <p role="status" className="text-sm text-body leading-[1.6]">
-   {data.total.toLocaleString("en-IN")} finding{data.total===1?"":"s"} · page {data.page} of {data.pages}
+   {formatNumberIN(data.total)} finding{data.total===1?"":"s"} · page {data.page} of {data.pages}
   </p>
   <IndependentAuditFindingsBoard rows={data.items} view={parsed.view}/>
   <Pagination label="Audit findings pages" page={data.page} pageCount={data.pages} hrefForPage={page=>independentFindingHref(parsed,page)}/>
@@ -181,7 +181,7 @@ export default async function IndependentFindingsPage({searchParams}:{
       sync?.lastResult==="PARTIAL"?"The last sync was partial; review refused files.":
       "Sync isn't set up on this server."}
    </p>
-   {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
+   {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {istDateTimeFormatter.format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
     <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
    <p className="mt-1 text-xs text-muted-foreground">Sync is an explicit, authorized POST requiring an active unscoped Super Admin, same-origin access, repository credentials and a verified import ledger. Viewing this page never triggers a sync.</p>
    {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">

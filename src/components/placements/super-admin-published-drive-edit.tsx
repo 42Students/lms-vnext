@@ -14,6 +14,7 @@ import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 type Job={id:string;title:string;description:string;locations:string[];
  applicationDeadline:string|null;openings:number|null;minCtc:number|null;maxCtc:number|null;updatedAt:string;
  companyRelationshipId:string;assessmentUrl:string|null;assessmentDeadline:string|null;
@@ -26,7 +27,7 @@ type Job={id:string;title:string;description:string;locations:string[];
  targeting:{programs:number;cohorts:number;sections:number}|null};
 function istLocal(value:string|null){
  if(!value)return "";
- return new Intl.DateTimeFormat("sv-SE",{
+ return createDateFormatter("sv-SE", {
   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date(value)).replace(" ","T");

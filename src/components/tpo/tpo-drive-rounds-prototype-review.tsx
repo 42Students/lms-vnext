@@ -2,6 +2,8 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istIsoDateFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type RoundPreview={
  id:string;sequence:number;name:string;kind:string;status:string;mode:string|null;
@@ -18,15 +20,14 @@ type SelectedSlots={
  reschedules:readonly {id:string;name:string|null;reason:string|null}[];
  pendingProposals:number;
 };
-const when=(date:Date|string|null)=>date?new Intl.DateTimeFormat("en-IN",{
+const when=(date:Date|string|null)=>date?createDateFormatter("en-IN", {
  timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
  }).format(new Date(date))+" IST":"Not scheduled";
-const clock=(at:string)=>new Intl.DateTimeFormat("en-IN",{
+const clock=(at:string)=>createDateFormatter("en-IN", {
  timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
  }).format(new Date(at));
 function dateKey(date:Date){
- return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",
-  year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
+ return istIsoDateFormatter.format(date);
 }
 /** The original left-rail round overview and right-side real slot evidence.
  * It intentionally does not imply a slot is learner-confirmed just because

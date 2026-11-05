@@ -6,6 +6,7 @@ import {TpoApplicantReviewForm} from "./tpo-applicant-review-form";
 import {applicantDrawerReviewable,type TpoApplicantReviewSnapshot} from "@/modules/placements/tpo-applicant-review-drawer-model";
 import {Button} from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}:{
  jobId:string;jobStatus:string;app:TpoApplicantReviewSnapshot;previousId?:string;nextId?:string;
 }){
@@ -31,7 +32,7 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
     <div className="min-w-0"><dt className="text-body">Screening</dt><dd className="break-words">{app.screeningStatus??"Not recorded"}</dd></div>
     <div><dt className="text-body">Eligibility</dt><dd>{app.eligibilityStatus}</dd></div>
     <div><dt className="text-body">Channel</dt><dd>{app.channel}</dd></div>
-    <div><dt className="text-body">Submitted</dt><dd>{new Date(app.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</dd></div>
+    <div><dt className="text-body">Submitted</dt><dd>{formatDateTimeIst(new Date(app.submittedAt))} IST</dd></div>
    </dl>
    {applicantDrawerReviewable(jobStatus,app)&&app.screeningUpdatedAt?
     <TpoApplicantReviewForm key={app.screeningUpdatedAt} jobId={jobId} applicationId={app.id}

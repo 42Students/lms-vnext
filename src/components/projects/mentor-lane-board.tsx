@@ -33,6 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { formatDateWith } from "@/lib/format-date";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
@@ -412,7 +413,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        <Heading level={4} size="xs" className="mt-3">Activity</Heading>
        <ul className="space-y-1">{taskActivity.filter(event=>event.subjectId===task.id).slice(0,8).map(event=>
          <li key={event.id} className="text-xs text-body">{event.summary} · {event.actorDisplayName??"System"} ·
-           {" "+new Date(event.occurredAt).toLocaleDateString("en-IN")}</li>
+           {" "+formatDateWith(new Date(event.occurredAt), "en-IN", {})}</li>
        )}</ul>
        <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={new Date(task.updatedAt).toISOString()} canPost={!readOnly}/>

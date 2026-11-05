@@ -23,6 +23,9 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic";
 type Params = {month?:string|string[];deliveryId?:string|string[];status?:string|string[]};
@@ -61,7 +64,7 @@ export default async function LearnerAttendanceCalendarPage({
     byDay.set(day,rows);
   }
   const days=attendanceCalendarDays(data.query.month);
-  const monthLabel=new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"UTC"})
+  const monthLabel=createDateFormatter("en-IN", {month:"long",year:"numeric",timeZone:"UTC"})
     .format(new Date(data.query.month+"-15T12:00:00Z"));
   const previous=attendanceCalendarHref({
     ...data.query,month:shiftAttendanceCalendarMonth(data.query.month,-1),
@@ -119,7 +122,7 @@ export default async function LearnerAttendanceCalendarPage({
       {label:"Scheduled",value:data.summary.scheduled},
     ]} />
     <p className="text-sm text-body">
-      {data.summary.total.toLocaleString("en-IN")} recorded class{data.summary.total===1?"":"es"} match the filters.
+      {formatNumberIN(data.summary.total)} recorded class{data.summary.total===1?"":"es"} match the filters.
       {" "}Attendance percentage: <Badge tone="neutral">{data.summary.percentage===null
         ?"Unknown (no marked classes)" : data.summary.percentage+"%"}</Badge>.
     </p>
@@ -173,9 +176,7 @@ export default async function LearnerAttendanceCalendarPage({
             </div>
             <p className="mt-2 text-sm text-body">{row.courseName} · {row.courseCode}</p>
             <p className="mt-1 text-sm text-body">
-              {new Intl.DateTimeFormat("en-IN",{
-                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-              }).format(row.startsAt)} IST
+              {istDateTimeFormatter.format(row.startsAt)} IST
             </p>
             <TextLink href={"/learn/attendance?"+new URLSearchParams({
               month:data.query.month,deliveryId:row.deliveryId,

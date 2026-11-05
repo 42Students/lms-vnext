@@ -11,6 +11,8 @@ import { parseSuperAdminPlacementStudentSearch } from "@/modules/admin-ui/super-
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 function humanStage(raw: string | null, offer: string | null, joining: string | null) {
   const status = joining === "JOINED" ? "HIRED" :
@@ -44,7 +46,7 @@ function appliedDate(value: Date | string | null) {
   if (!value) return "-";
   const date = value instanceof Date ? value : new Date(value);
   if (!Number.isFinite(date.getTime())) return "-";
-  return new Intl.DateTimeFormat("en-GB", {
+  return createDateFormatter("en-GB", {
     timeZone: "Asia/Kolkata", day: "2-digit", month: "short", year: "numeric",
   }).format(date);
 }
@@ -186,9 +188,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
                   row.offerStatus === "ACCEPTED" ? " · Offer accepted" : ""}
               </p>
               {row.nextInterview ? <p className="text-xs text-body">
-                Next interview: {row.nextInterview.roundName} · {new Intl.DateTimeFormat("en-IN",{
-                  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-                }).format(new Date(row.nextInterview.startsAt))} IST
+                Next interview: {row.nextInterview.roundName} · {istDateTimeFormatter.format(new Date(row.nextInterview.startsAt))} IST
                 {row.nextInterview.room?" · "+row.nextInterview.room:""}
               </p> : null}
               {row.rejectionReason ? <p className="text-xs text-error">Rejection reason: {row.rejectionReason}</p> : null}

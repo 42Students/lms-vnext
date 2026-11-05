@@ -24,6 +24,7 @@ import { facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDayMonthYearFormatter } from "@/lib/format-date";
 
 export default async function FacultyQuizReportPage({
   params,
@@ -130,7 +131,7 @@ export default async function FacultyQuizReportPage({
           ["Submitted", `${metrics.submittedLearners}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Questions", metrics.questionCount],
-          ["Due date", quiz.dueAt ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",month:"short",day:"numeric",year:"numeric"}).format(quiz.dueAt) : "—"],
+          ["Due date", quiz.dueAt ? istDayMonthYearFormatter.format(quiz.dueAt) : "—"],
         ].map(([label, value]) => (
           <div key={label} className="min-w-0 px-3 py-4 first:pl-0 last:pr-0">
             <dt className="text-xs font-semibold leading-5 text-muted-foreground">{label}</dt>

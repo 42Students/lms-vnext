@@ -47,6 +47,7 @@ import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function LearnerPlacementsPage({
   searchParams,
@@ -259,9 +260,7 @@ export default async function LearnerPlacementsPage({
   const money=Number(countingAcceptedOffer?.offer.annualCtcInr??0);
   const acceptedLpa=money>0&&Number.isFinite(money)
     ?(Math.round(money/10000)/10).toFixed(1):null;
-  const dateFormatter=new Intl.DateTimeFormat("en-IN",{
-   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-  });
+  const dateFormatter=istDateTimeFormatter;
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader

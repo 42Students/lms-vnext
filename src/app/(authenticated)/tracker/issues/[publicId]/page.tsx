@@ -27,13 +27,10 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 function when(value: Date) {
-  return value.toLocaleString("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  });
+  return formatDateTimeIst(value);
 }
 
 const STATUS_TEXT:Record<string,string>={

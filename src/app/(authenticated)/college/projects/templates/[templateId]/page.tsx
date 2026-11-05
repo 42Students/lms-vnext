@@ -17,6 +17,7 @@ import {publishableProjectTemplateBlueprintSchema} from "@/modules/projects/vali
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 const subtitle="Maintained by 42Students — use this template to start a workspace.";
 const backHref="/college/projects/templates";
@@ -82,9 +83,7 @@ export default async function CollegeProjectTemplateDetailPage({
  const publication=detail.template.currentVersion===detail.template.publishedVersion&&
   detail.version.version===detail.template.publishedVersion
   ?detail.template.updatedAt:null;
- const publishedAt=publication?publication.toLocaleString("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
- }):"—";
+ const publishedAt=publication?formatDateTimeIst(publication):"—";
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <ProjectAdminNav basePath="/college/projects" active="templates"/>
   {header(ready)}

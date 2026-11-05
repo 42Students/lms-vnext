@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -103,7 +104,7 @@ export default async function CollegeFacultyAssignmentPage({
         ["Classes covered",currentVisibleClasses,"Visible page only"],
        ] as const).map(([label,value,note])=><article key={label} className="min-w-0 p-[var(--lms-space-4)]">
         <p className="text-xs font-semibold text-muted-foreground">{label}</p>
-        <strong className="mt-2 block text-2xl font-semibold tabular-nums text-[var(--lms-heading)]">{value===null?"—":value.toLocaleString("en-IN")}</strong>
+        <strong className="mt-2 block text-2xl font-semibold tabular-nums text-[var(--lms-heading)]">{value===null?"—":formatNumberIN(value)}</strong>
         {note?<p className="mt-1 text-xs text-muted-foreground">{note}</p>:null}
        </article>)}
       </section>

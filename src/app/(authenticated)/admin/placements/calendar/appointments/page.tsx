@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 const TYPES=["ALL","SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"] as const;
 const STATUSES=["ALL","ACTIVE","SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED",
@@ -19,8 +21,7 @@ function validOption<T extends string>(value:string|undefined,options:readonly T
  return options.find(option=>option===value)??fallback;
 }
 function ist(value:string){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
-  dateStyle:"medium",timeStyle:"short"}).format(new Date(value))+" IST";
+ return istDateTimeFormatter.format(new Date(value))+" IST";
 }
 const activeStatuses=new Set(["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"]);
 
@@ -92,7 +93,7 @@ export default async function SuperAdminCalendarAppointmentsPage({
   </form>
   {result.truncated?<Alert tone="warning">Showing up to 2,000 appointments. Conflict indicators may be incomplete outside this bounded sample. Narrow the college's interview search for current appointments.</Alert>:null}
   <p role="status" className="text-sm text-body">
-   {filtered.length.toLocaleString("en-IN")} matching appointments · Page {selectedPage} of {pages}
+   {formatNumberIN(filtered.length)} matching appointments · Page {selectedPage} of {pages}
   </p>
   {filtered.length===0?<EmptyState title="No interviews match these filters"
     description="Try another status, type or mode."/>:

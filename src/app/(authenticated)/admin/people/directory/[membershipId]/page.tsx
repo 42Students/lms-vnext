@@ -10,6 +10,7 @@ import {getSuperAdminMembershipDetail} from "@/modules/people/admin-membership-d
 import {getAdminLearnerProfileSections} from "@/modules/people/admin-learner-profile-sections-service";
 import {AdminLearnerProfileSections} from "@/components/admin/admin-learner-profile-sections";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export default async function MembershipDetail({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
  const context=await getCurrentRequestContext();
@@ -17,7 +18,7 @@ export default async function MembershipDetail({params}:{params:Promise<{members
  if(!detail)notFound();
  const learnerSections=detail.roles.includes("LEARNER")&&context.adminScope?.collegeId?
   await getAdminLearnerProfileSections(context,membershipId):null;
- const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
+ const fmt=istDateTimeFormatter;
  const fields=[
   {label:"College",value:detail.collegeName},
   {label:"Created",value:fmt.format(detail.createdAt)+" IST"},

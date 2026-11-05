@@ -16,16 +16,13 @@ import {
 } from "@/modules/placements/tpo-company-contact-log-service";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type SearchParams = { page?: string | string[]; type?: string | string[] };
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
-const dateFormat = new Intl.DateTimeFormat("en-IN", {
-  dateStyle: "medium",
-  timeStyle: "short",
-  timeZone: "Asia/Kolkata",
-});
+const dateFormat = istDateTimeFormatter;
 
 export default async function TpoCompanyContactLogPage({
   params,

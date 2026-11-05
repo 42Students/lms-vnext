@@ -28,6 +28,8 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 export default async function SuperAdminCompaniesPage({
   searchParams,
@@ -111,7 +113,7 @@ export default async function SuperAdminCompaniesPage({
     sortDirection:data.query.sort==="DRIVES"?"descending":data.query.sort==="DRIVES_ASC"?"ascending":"none",cell:row=><span>{row.driveCount??0}</span>},
    {key:"active",header:"Last active",sortable:true,
     sortDirection:data.query.sort==="LAST_ACTIVE"?"descending":data.query.sort==="LAST_ACTIVE_ASC"?"ascending":"none",cell:row=><span>{row.lastActiveAt?
-    new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"}).format(new Date(row.lastActiveAt)):
+    createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"}).format(new Date(row.lastActiveAt)):
     "Never posted"}</span>},
 
    {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="min-w-0 space-y-2">
@@ -249,7 +251,7 @@ export default async function SuperAdminCompaniesPage({
       </Disclosure>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto self-end px-4 md:col-start-2 md:row-start-1">Filter</Button>
     </form>
-    <p role="status" className="text-sm text-body">Showing {data.rows.length.toLocaleString("en-IN")} of {data.total.toLocaleString("en-IN")} college-company relationships · page {data.query.page} of {data.totalPages}.</p>
+    <p role="status" className="text-sm text-body">Showing {formatNumberIN(data.rows.length)} of {formatNumberIN(data.total)} college-company relationships · page {data.query.page} of {data.totalPages}.</p>
 
     {data.total>0?<ButtonLink variant="secondary" href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}>
       ↓ Export CSV (matching filters; up to 2,000 rows)

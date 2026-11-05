@@ -10,6 +10,7 @@ import {
 } from "@/modules/placements/tpo-public-join-link-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDayMonthYearFormatter } from "@/lib/format-date";
 
 export function TpoPublicJoinLinkCard({
   initial, scope, companyId, companyName,
@@ -215,7 +216,7 @@ export function TpoPublicJoinLinkCard({
         <>
           {status.link ? (
             <p className="mt-3 text-sm text-body">
-              Made {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(status.link.createdAt))}. Opened {status.link.opensCount} times, {status.link.joinsCount} joined.
+              Made {istDayMonthYearFormatter.format(new Date(status.link.createdAt))}. Opened {status.link.opensCount} times, {status.link.joinsCount} joined.
             </p>
           ) : null}
           {status.link&&!freshUrl?<p className="mt-2 text-xs text-muted-foreground">

@@ -16,6 +16,8 @@ import {ownApplicationAssessmentLinks} from "@/modules/placements/learner-applic
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 /** Cancellation detail is only shown when carried by a verified imported
  * posting. Absence is an explicit no-reason state, not a fabricated reason. */
@@ -108,15 +110,12 @@ export default async function LearnerPlacementApplicationsPage() {
          const pay=row.job.ctcLpa!==null
            ?String(row.job.ctcLpa)+" LPA"
            :row.job.stipendPerMonthInr!==null
-             ?"₹"+Number(row.job.stipendPerMonthInr).toLocaleString("en-IN")+" / month"
+             ?"₹"+formatNumberIN(Number(row.job.stipendPerMonthInr))+" / month"
              :row.job.minimumAnnualCtcInr!==null
-               ?"From ₹"+Number(row.job.minimumAnnualCtcInr).toLocaleString("en-IN")+" annually"
+               ?"From ₹"+formatNumberIN(Number(row.job.minimumAnnualCtcInr))+" annually"
                :null;
-         const submitted=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-          timeZone:"Asia/Kolkata"}).format(row.submittedAt)+" IST";
-         const optOutDeadline=row.staffOptOutUntil?new Intl.DateTimeFormat("en-IN",{
-          dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-         }).format(row.staffOptOutUntil)+" IST":null;
+         const submitted=istDateTimeFormatter.format(row.submittedAt)+" IST";
+         const optOutDeadline=row.staffOptOutUntil?istDateTimeFormatter.format(row.staffOptOutUntil)+" IST":null;
          return <li key={row.applicationId} className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-start">
           {logo?<Img src={logo} alt="" width={44} height={44}
             referrerPolicy="no-referrer" className="h-11 w-11 shrink-0 rounded-[var(--lms-control-radius)] border border-border object-contain"/>

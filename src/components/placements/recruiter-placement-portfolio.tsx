@@ -4,6 +4,8 @@ import type { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruit
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { createDateFormatter } from "@/lib/format-date";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 type RecruiterJobs = Awaited<
   ReturnType<typeof listOwnRecruiterPlacementJobs>
@@ -12,7 +14,7 @@ type RecruiterJobs = Awaited<
 function deadlineRelative(deadline:Date|null,now:Date):string{
  if(!deadline)return "Application deadline not recorded";
  const day=(value:Date)=>{
-  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+  const parts=createDateFormatter("en-GB", {timeZone:"Asia/Kolkata",
     year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(value);
   const get=(name:string)=>Number(parts.find(item=>item.type===name)?.value??0);
   return Date.UTC(get("year"),get("month")-1,get("day"))/86400000;
@@ -117,7 +119,7 @@ export function RecruiterPlacementPortfolio({
               {item.job.minimumAnnualCtcInr!=null||item.job.maximumAnnualCtcInr!=null?<p className="mt-2 text-sm font-medium text-foreground leading-[22px]">
                 {item.job.minimumAnnualCtcInr!=null||item.job.maximumAnnualCtcInr!=null
                   ? "CTC: "+[item.job.minimumAnnualCtcInr,item.job.maximumAnnualCtcInr]
-                    .filter(value=>value!=null).map(value=>"₹"+new Intl.NumberFormat("en-IN").format(value)).join("–")
+                    .filter(value=>value!=null).map(value=>"₹"+createNumberFormatter("en-IN").format(value)).join("–")
                   : null}
               </p>:null}
               <p className="mt-1 text-xs text-muted-foreground leading-[20px]">

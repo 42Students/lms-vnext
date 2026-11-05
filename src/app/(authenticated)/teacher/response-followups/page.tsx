@@ -16,6 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Params = Record<string,string|string[]|undefined>;
 
@@ -87,7 +88,7 @@ export default async function FacultyResponseFollowUpsPage({
     </form>
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[22px]">
-        {data.total.toLocaleString("en-IN")} matching past-due published assessment{data.total === 1 ? "" : "s"}
+        {formatNumberIN(data.total)} matching past-due published assessment{data.total === 1 ? "" : "s"}
       </p>
       <ButtonLink variant="secondary" href={facultyFollowUpCsvHref({...data.query,page:data.page})}
        className="w-full sm:w-auto">

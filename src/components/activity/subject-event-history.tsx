@@ -3,6 +3,7 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { listActivityEvents } from "@/modules/activity/service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 /** Reusable, tenant-authorized event trail for any record drawer or page.
  * The service enforces membership scope before returning the event rows.
@@ -47,7 +48,7 @@ export async function SubjectEventHistory({
         </TextLink>
         <p className="text-xs text-muted-foreground">
           {item.actor?.displayName ?? "System"} · <time dateTime={item.event.occurredAt.toISOString()}>
-            {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.event.occurredAt)} IST
+            {istDateTimeFormatter.format(item.event.occurredAt)} IST
           </time>
         </p>
       </li>)}

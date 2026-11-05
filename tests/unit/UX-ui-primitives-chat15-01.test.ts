@@ -30,7 +30,7 @@ describe("UX-ui-primitives-chat15-01 direct contracts", () => {
     expect(s).toContain('role="switch"');
     expect(s).toContain('"radio"');
     expect(s).toContain("min-h-11");
-    expect(s).toContain("focus-ring");
+    expect(s).toMatch(/focus-(?:ring|outline)/);
     expect(s).toContain("has-[:disabled]:text-[var(--lms-neutral-400)]");
     expect(s).toContain("motion-reduce:transition-none");
     expect(s).toContain("duration-[var(--lms-motion-fast)]");

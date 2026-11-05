@@ -27,6 +27,8 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -73,7 +75,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   // A closed/expired deadline is distinct from an administrator closing a job.
   // Every date is presented in the college's India-time legacy format.
   if(data.total>0&&query.page>data.totalPages)redirect(driveListHref({...query,page:data.totalPages}));
-  const formatter = new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"});
+  const formatter = createDateFormatter("en-IN", {day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"});
   const expired=(job:(typeof data.items)[number])=>Boolean(job.applicationDeadline&&job.applicationDeadline.getTime()<Date.now());
   const jobStatus=(job:(typeof data.items)[number])=>{
     const ended=job.status==="PUBLISHED"&&expired(job);
@@ -190,7 +192,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
     </form>
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">
-      <p role="status" className="text-sm text-body leading-[1.6]">{data.total.toLocaleString("en-IN")} matching persisted drives</p>
+      <p role="status" className="text-sm text-body leading-[1.6]">{formatNumberIN(data.total)} matching persisted drives</p>
       <div className="hidden md:block"><DataTable caption="College placement jobs" columns={columns} rows={data.items} mobileMode="scroll"
         getRowKey={item=>item.id}
         empty={<div className="min-w-0 space-y-2 text-sm text-body" role="status">

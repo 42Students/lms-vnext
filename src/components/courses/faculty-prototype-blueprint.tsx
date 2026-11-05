@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istWeekdayDayMonthFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
-const istDate=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
-}).format(date);
-const istClassTime=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
+const istDate=(date:Date)=>istWeekdayDayMonthFormatter.format(date);
+const istClassTime=(date:Date)=>createDateFormatter("en-IN", {
  timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
  hour:"numeric",minute:"2-digit",hour12:true,
 }).format(date);

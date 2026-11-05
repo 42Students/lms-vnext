@@ -20,21 +20,20 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter, istTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
 function when(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDateTimeFormatter.format(value);
 }
 function timeOnly(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    hour:"numeric", minute:"2-digit", hour12:true, timeZone:"Asia/Kolkata",
-  }).format(value).toUpperCase();
+  return istTimeFormatter.format(value).toUpperCase();
 }
 function istDateKey(value: Date) {
-  const parts = new Intl.DateTimeFormat("en-GB", {
+  const parts = createDateFormatter("en-GB", {
     year:"numeric", month:"2-digit", day:"2-digit", timeZone:"Asia/Kolkata",
   }).formatToParts(value);
   const part=(kind:string)=>parts.find(v=>v.type===kind)?.value??"";
@@ -46,7 +45,7 @@ function dateHeading(value: Date, now: Date) {
   const target=istDateKey(value);
   if(target===today)return "Today";
   if(target===yesterday)return "Yesterday";
-  return new Intl.DateTimeFormat("en-GB",{
+  return createDateFormatter("en-GB", {
     weekday:"long",day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
   }).format(value);
 }
@@ -270,10 +269,10 @@ export default async function CollegeActivityPage({
       <p className="text-xs text-muted-foreground">Showing {data.items.length} recorded events in {data.groups.length} chronological groups on this page. Grouped counts never imply missing history was retrieved.</p>
     </section>
     <nav aria-label="Activity history pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-      <p className="text-muted-foreground">Showing {data.items.length} events · {data.remainingCount.toLocaleString("en-IN")} older matching events</p>
+      <p className="text-muted-foreground">Showing {data.items.length} events · {formatNumberIN(data.remainingCount)} older matching events</p>
       {data.nextCursor ? ((data.query.loaded ?? 1)<10
         ? <ButtonLink variant="secondary" href={collegeActivityHref({...data.query,loaded:(data.query.loaded ?? 1)+1})+"#activity-feed"}>
-          Load more ({data.remainingCount.toLocaleString("en-IN")} older)
+          Load more ({formatNumberIN(data.remainingCount)} older)
         </ButtonLink>
         : <TextLink href={collegeActivityHref({...data.query,loaded:1},data.nextCursor)}
           className="inline-flex min-h-11 items-center md:min-h-9">

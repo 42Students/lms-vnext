@@ -22,6 +22,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page",backHref,headerActions,intro,compactReadLayout=false}:{
  title:string;path:string;description:string;headingMode?:"page"|"section";backHref?:string;headerActions?:ReactNode;intro?:ReactNode;compactReadLayout?:boolean;
  statuses:readonly string[];
@@ -195,7 +196,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    </article>)}
   </section>:null}
   {intro}
-  {applicationFilters?<p role="status" className="text-sm text-muted-foreground leading-[22px]">Filters apply within your selected college. {data.total.toLocaleString("en-IN")} matching applications; showing page {data.query.page}.</p>:null}
+  {applicationFilters?<p role="status" className="text-sm text-muted-foreground leading-[22px]">Filters apply within your selected college. {formatNumberIN(data.total)} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename} {...(title==="Registered Faculty"?{visibleFacultyRows:data.items}:{})}/>:null}
   {headingMode==="section"?refreshAction:null}
@@ -304,7 +305,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </p>:null}
   {compactReadLayout?
     <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
-      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" students":directoryKind==="FACULTY"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>
+      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?formatNumberIN(data.total)+" of "+formatNumberIN(peopleSummary[0].total)+" students":directoryKind==="FACULTY"&&peopleSummary?formatNumberIN(data.total)+" of "+formatNumberIN(peopleSummary[0].total)+" faculty":formatNumberIN(data.total)+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start md:justify-end">
         {data.items.length>0&&(data.query.q||data.query.status!=="ALL"||data.query.page!==1||data.query.pageSize!==25)?
          <TextLink href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")} className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear search</TextLink>:null}
@@ -312,7 +313,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename} {...(title==="Registered Faculty"?{visibleFacultyRows:data.items}:{})}/>:null}
       </div>
     </div>
-   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" students":directoryKind==="FACULTY"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}
+   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?formatNumberIN(data.total)+" of "+formatNumberIN(peopleSummary[0].total)+" students":directoryKind==="FACULTY"&&peopleSummary?formatNumberIN(data.total)+" of "+formatNumberIN(peopleSummary[0].total)+" faculty":formatNumberIN(data.total)+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}
   {compactReadLayout?<>
   {directoryKind==="LEARNER"?<nav aria-label="Sort students" className="flex flex-wrap gap-3 print:hidden">
     {(["name","roll"] as const).map(key=><TextLink key={key}

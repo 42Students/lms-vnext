@@ -14,6 +14,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { recruiterInvitePreviewDisposition,RECRUITER_INVITE_LOAD_ERROR_HEADING } from "@/modules/placements/recruiter-invite-preview-disposition-model";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Invite = {
   collegeName: string;
@@ -326,7 +327,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         Contact details are shared only as the placement cell allows.
       </p>
       <p className="mt-2 text-xs text-muted-foreground">
-       Invitation expires {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+       Invitation expires {createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",
         day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",
         hour12:true}).format(new Date(invite.expiresAt))} IST.
       </p>

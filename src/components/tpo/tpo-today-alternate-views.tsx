@@ -3,6 +3,8 @@ import {istDateKey,splitTpoTodayFollowups,tpoTodayFocusHref,tpoTodayAgendaHref,t
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type TpoTodayView="focus"|"agenda"|"brief";
 export type TpoTodayReply={
@@ -11,14 +13,12 @@ export type TpoTodayReply={
 };
 
 function formatDay(date:Date,weekday:"short"|"long"="short"){
- return new Intl.DateTimeFormat("en-IN",{
+ return createDateFormatter("en-IN", {
   timeZone:"Asia/Kolkata",weekday,day:"numeric",month:"short",
  }).format(date);
 }
 function formatTime(date:Date){
- return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
- }).format(date);
+ return istTimeFormatter.format(date);
 }
 function messageHref(id:string){
  return "/tpo/messages?tab=recruiters&thread="+encodeURIComponent(id);
@@ -104,7 +104,7 @@ export function TpoTodayAlternateViews({
      className={"rounded-xl border px-2 py-3 text-center "+(selectedDay===index?
       "border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border-[color:var(--lms-border)] bg-surface")}>
      <span className="block text-xs font-bold uppercase text-[color:var(--lms-text-muted)]">{formatDay(day.date).split(" ")[0]}</span>
-     <strong className="mt-1 block text-xl">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(day.date)}</strong>
+     <strong className="mt-1 block text-xl">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric"}).format(day.date)}</strong>
      <span className="text-xs text-[color:var(--lms-button-primary)]">{day.count||"—"}</span>
     </TextLink>)}
    </nav>

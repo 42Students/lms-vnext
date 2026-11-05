@@ -23,6 +23,8 @@ import { listSuperAdminTemplateCollegeAvailability } from "@/modules/projects/te
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateFormatter } from "@/lib/format-date";
 export default async function TemplateCollegeAvailabilityPage({ params, searchParams }: {
   params: Promise<{ templateId: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -104,7 +106,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       <Button className="min-h-11 w-full self-end md:min-h-9" type="submit">Filter</Button>
     </form>
     </FilterBar>
-    <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching active colleges · page {data.query.page} of {data.totalPages}</p>
+    <p className="text-xs text-muted-foreground">{formatNumberIN(data.total)} matching active colleges · page {data.query.page} of {data.totalPages}</p>
     <SuperAdminTemplateCollegeBulk templateId={id} published={data.template.status==="PUBLISHED"}
       colleges={data.items.map(row=>({id:row.id,name:row.name,code:row.code,
         assigned:Boolean(row.assignment),
@@ -121,7 +123,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
         {key:"version",header:"Assigned version",mobilePriority:"secondary",cell:row=>row.assignment?
           <span className="text-sm text-body">Pinned version {row.assignment.assignedVersion??"Unresolved"}</span>:"—"},
         {key:"assignedAt",header:"Assigned on",mobilePriority:"secondary",cell:row=>row.assignment?
-          new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.assignment.assignedAt)+" IST":"—"},
+          istDateFormatter.format(row.assignment.assignedAt)+" IST":"—"},
         {key:"actions",header:"Actions",mobilePriority:"action",cell:row=>
           can(context,"project-template.assign",{collegeId:row.id,organizationId:row.organizationId})?
             <ProjectTemplateActions templateId={id} title={data.template.title}

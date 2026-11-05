@@ -15,6 +15,7 @@ import {Button} from "@/components/ui/button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { formatNumberIN } from "@/lib/safe-format";
 
 export default async function SuperAdminQuizzesPage({
   searchParams,
@@ -97,7 +98,7 @@ export default async function SuperAdminQuizzesPage({
        {query.data.courseCode?<TextLink href="/admin/quizzes" className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:null}
       </form>
       <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
-       Quizzes fetched successfully · {data.total.toLocaleString("en-IN")} matching quizzes in this college · {data.items.length} on this page.
+       Quizzes fetched successfully · {formatNumberIN(data.total)} matching quizzes in this college · {data.items.length} on this page.
       </p>
     </div>
     <div className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">

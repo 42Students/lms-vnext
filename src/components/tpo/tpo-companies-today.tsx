@@ -13,6 +13,8 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateTimeFormatter, istWeekdayDayMonthFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type LeadContext={id:string;stage:string;designation:string|null;emailNorm:string|null;ownerName:string|null};
 type CompanyAttention={items:Array<{
@@ -36,12 +38,10 @@ const outcomes:{value:Outcome;label:string}[]=[
  {value:"DECLINED",label:"4 Not interested"},
 ];
 function when(value:string){
- return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
- }).format(new Date(value))+" IST";
+ return istDateTimeFormatter.format(new Date(value))+" IST";
 }
 function dayLabel(date:Date){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(date);
+ return istWeekdayDayMonthFormatter.format(date);
 }
 export function TpoCompaniesToday({
  scope,rows,nowIso,hasMore,unreadMessages,replies,replyTotal,initialFollowupId,notContacted,leadContexts,companyAttention,outsideWeek=null
@@ -96,8 +96,8 @@ export function TpoCompaniesToday({
   const date=new Date(now.getTime()+offset*86400000);
   const key=istDateKey(date);
   return {offset,label:dayLabel(date),
-    weekday:new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"}).format(date),
-    dayNumber:new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(date),
+    weekday:createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short"}).format(date),
+    dayNumber:createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric"}).format(date),
     count:active.filter(row=>offset===0
       ?istDateKey(new Date(row.dueAt))<=todayKey
       :istDateKey(new Date(row.dueAt))===key).length+

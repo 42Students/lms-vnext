@@ -17,6 +17,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istIsoDateFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
@@ -27,9 +29,9 @@ type WeekConfirm =
  | {kind:"ADD";prompts:string[];index:number}
  | {kind:"DISCARD";prompts:string[];index:number}
  | {kind:"LEAVE";href:string;prompts:string[];index:number};
-const label=(day:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",weekday:"short",day:"numeric",month:"short"})
+const label=(day:string)=>createDateFormatter("en-IN", {timeZone:"UTC",weekday:"short",day:"numeric",month:"short"})
  .format(new Date(day+"T12:00:00Z"));
-const clock=(hour:number)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",hour:"numeric",hour12:true})
+const clock=(hour:number)=>createDateFormatter("en-IN", {timeZone:"UTC",hour:"numeric",hour12:true})
  .format(new Date(Date.UTC(2026,0,1,hour)));
 const kinds:Record<string,string>={ROUND:"Round",FOLLOW_UP:"Follow-up",APPLICATION_DEADLINE:"Deadline",INTERVIEW_SLOT:"Interview"};
 const tone=(kind:string)=>kind==="APPLICATION_DEADLINE"?"bg-warning-subtle text-[var(--lms-gold-accent)]":kind==="FOLLOW_UP"?
@@ -54,13 +56,13 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  const [message,setMessage]=useState("");
  const [filter,setFilter]=useState("");
  const byDay=useMemo(()=>new Map(days.map(day=>[day,positionWeekEvents(events.filter(e=>
-  new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"})
+  istIsoDateFormatter
    .format(new Date(e.startsAt))===day))])),[days,events]);
  const matches=leads.filter(lead=>[lead.name,lead.companyName??"",lead.email??""].some(x=>
   x.toLocaleLowerCase("en-IN").includes(leadQuery.trim().toLocaleLowerCase("en-IN")))).slice(0,50);
- const current=new Date(nowIso),hourParts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(current);
+ const current=new Date(nowIso),hourParts=createDateFormatter("en-GB", {timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(current);
  const nowMinutes=Number(hourParts.find(p=>p.type==="hour")?.value??0)*60+Number(hourParts.find(p=>p.type==="minute")?.value??0);
- const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(current);
+ const today=istIsoDateFormatter.format(current);
  async function open(day:string,hour:number,trigger?:HTMLButtonElement){
   triggerRef.current=trigger??null;
   if(!canCreate)return;

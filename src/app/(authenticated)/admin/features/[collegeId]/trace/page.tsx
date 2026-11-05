@@ -32,6 +32,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 type SearchParams = Record<
   string,
@@ -366,7 +367,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>:null}
             {selected.placementParticipation.decidedAt?<p className="mt-1 text-xs text-body">
               Decided by {selected.placementParticipation.actorName||"Unknown actor"} on {
-                selected.placementParticipation.decidedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
+                formatDateTimeIst(selected.placementParticipation.decidedAt)
               }
             </p>:null}
             <p className="mt-2 text-xs text-muted-foreground">

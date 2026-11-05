@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 type Query = Record<string, string | string[] | undefined>;
 const statuses = ["SENT", "SCHEDULED", "PROCESSING", "FAILED", "DELETED"] as const;
@@ -20,7 +21,7 @@ function formatIst(value: string) {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? value
-    : date.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) + " IST";
+    : formatDateTimeIst(date) + " IST";
 }
 
 function single(value: string | string[] | undefined) {
@@ -96,7 +97,7 @@ export default async function NotificationDeliveryPage({
             <div className="flex flex-wrap items-center justify-between gap-2">
               <strong className="text-sm">{item.deliveryStatus}</strong>
               <time className="text-xs text-muted-foreground" dateTime={item.occurredAt.toISOString()}>
-                {item.occurredAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" })} IST
+                {formatDateTimeIst(item.occurredAt)} IST
               </time>
             </div>
             <p className="break-words font-medium">{item.subjectLabel || item.summary || "Notification"}</p>

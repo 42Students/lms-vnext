@@ -16,10 +16,9 @@ import {
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
-const dateFormat = new Intl.DateTimeFormat("en-IN", {
-  dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-});
+const dateFormat = istDateTimeFormatter;
 export default async function TpoCandidateSchedulePage({
   params, searchParams,
 }: { params: Promise<{ jobId: string }>; searchParams: Promise<{roundId?:string|string[]}> }) {

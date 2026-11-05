@@ -6,6 +6,8 @@ import {getOwnAcademicEvidence} from "@/modules/placements/eligibility-service";
 import {getOwnLearnerAcademicSummary} from "@/modules/people/learner-academic-summary-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 /** Membership-owned, read-only current enrollment. Never claim that grades,
  * imported marks or private evidence were verified by this summary. */
@@ -25,7 +27,7 @@ export default async function LearnerAcademicRecordPage(){
  const provenanceDetail=evidence?.source==="VERIFIED"
    ? "College-verified placement evidence" : evidence?"Learner-provided placement evidence":null;
  const recordedAt=(value:Date|null|undefined)=>value?
-  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST":
+  istDateTimeFormatter.format(value)+" IST":
   "Not recorded";
  const importBatchId=typeof evidence?.sourceMetadata?.["importBatchId"]==="string"
    ?evidence.sourceMetadata["importBatchId"]:null;
@@ -43,7 +45,7 @@ export default async function LearnerAcademicRecordPage(){
  ] : [];
  const scoreLabel=(value:number|null,suffix:string) =>
   value===null||!Number.isFinite(value) ? "Not recorded" :
-   value.toLocaleString("en-IN",{maximumFractionDigits:2})+suffix;
+   formatNumberIN(value, {maximumFractionDigits:2})+suffix;
  return <div className="min-w-0 space-y-5">
   <TextLink href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">← Profile</TextLink>
   <PageHeader title="Academic record" description="Your college-recorded current program enrollment."/>

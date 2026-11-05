@@ -19,6 +19,7 @@ import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-er
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 type Cohort = { id: string; name: string; code: string; programName: string; programId: string };
 type Period = { id: string; name: string; code: string };
@@ -487,7 +488,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
         <ul className="max-h-48 space-y-2 overflow-y-auto" aria-label="Existing class sessions">
           {scheduleItems.map(item=><li key={item.id} className="border-b border-border pb-2 text-sm">
             <strong>{item.title}</strong> · {item.status} ·
-            {" "}{new Date(item.startsAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}
+            {" "}{formatDateTimeIst(new Date(item.startsAt))}
           </li>)}
         </ul>
         {!scheduleLoading&&scheduleItems.length===0?

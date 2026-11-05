@@ -10,6 +10,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Slot={id:string;startsAt:string;endsAt:string;room:string;panel:string|null;status:string;
  applicationId:string|null;version:number};
 type Learner={applicationId:string;name:string|null;roll:string|null};
@@ -47,7 +48,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
  const booked=slots.filter(s=>s.status==="BOOKED");
  const taken=new Set(booked.map(s=>s.applicationId));
  const waiting=roster.filter(r=>!taken.has(r.applicationId));
- const format=(iso:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(iso))+" IST";
+ const format=(iso:string)=>istDateTimeFormatter.format(new Date(iso))+" IST";
  return <section className="min-w-0 space-y-4">
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}

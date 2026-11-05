@@ -13,6 +13,8 @@ import {mentorHomeGreeting} from "@/modules/projects/mentor-home-greeting-model"
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDayMonthYearFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type FocusItem = MentorProjectAttention;
 
@@ -43,9 +45,7 @@ function attentionAction(kind:FocusItem["kind"]):string {
 function activityTime(value:string) {
   const parsed=new Date(value);
   if(!Number.isFinite(parsed.getTime()))return "Recorded update";
-  return new Intl.DateTimeFormat("en-IN",{
-    day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
-  }).format(parsed);
+  return istDayMonthYearFormatter.format(parsed);
 }
 /** Prototype screen #45: verified project attention with durable,
  * recipient-scoped Later receipts that reopen when source revisions change.
@@ -159,7 +159,7 @@ export function MentorPrototypeHome({
             {meetings.slice(0,4).map(item=><TextLink variant="bare"
               href={"/mentor/calendar?projectId="+encodeURIComponent(item.projectId)}
               className="prototype-mentor-small-row" key={item.id}>
-              <span>{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",
+              <span>{createDateFormatter("en-IN", {day:"numeric",month:"short",
                 weekday:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"})
                 .format(new Date(item.startsAt))}</span>
               <strong>{mentorHomeMeetingDisplayTitle(item)}</strong>

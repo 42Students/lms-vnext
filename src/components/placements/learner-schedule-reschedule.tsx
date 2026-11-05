@@ -10,6 +10,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {useToast} from "@/components/ui/toast";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meetingUrl}:{applicationId:string;roundId:string;mode:"ON_CAMPUS"|"VIRTUAL";venue:string|null;meetingUrl:string|null}){
  const router=useRouter();
  const {showToast}=useToast();
@@ -40,7 +41,7 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
   if(!Number.isFinite(when.getTime())){
    setError("Choose a valid future date and time in IST.");return;
   }
-  const parts=new Intl.DateTimeFormat("en-US",{
+  const parts=createDateFormatter("en-US", {
    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
    hour:"2-digit",minute:"2-digit",hourCycle:"h23",
   }).formatToParts(when);

@@ -35,6 +35,8 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst, formatDateIst } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
@@ -179,7 +181,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     <Disclosure title="About this college" className="min-w-0">
       {collegeOverview?<section aria-label="College hiring context" className="mt-2 space-y-3 text-sm text-body">
         <p>Students (rounded): {collegeOverview.studentsTotal??"Withheld for privacy"}</p>
-        <p className="text-xs text-muted-foreground">Approximate active student counts; no individual records are shared. Updated {new Date(collegeOverview.asOf).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST.</p>
+        <p className="text-xs text-muted-foreground">Approximate active student counts; no individual records are shared. Updated {formatDateTimeIst(new Date(collegeOverview.asOf))} IST.</p>
         {collegeOverview.byBranch.length?<div>
           <Heading level={3}>By branch</Heading>
           <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
@@ -214,12 +216,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         {attention.soon.map(item=><TextLink key={"soon:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
           className="min-h-11 md:min-h-9 inline-flex min-w-0 flex-col items-start justify-center rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
           <span className="block max-w-full break-words font-semibold">{item.job.title}</span>
-          <span className="mt-1 block text-xs text-body">Due within 7 days · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
+          <span className="mt-1 block text-xs text-body">Due within 7 days · {formatDateIst(item.job.applicationDeadline!)}</span>
         </TextLink>)}
         {attention.past.map(item=><TextLink key={"past:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
           className="min-h-11 md:min-h-9 inline-flex min-w-0 flex-col items-start justify-center rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
           <span className="block max-w-full break-words font-semibold">{item.job.title}</span>
-          <span className="mt-1 block text-xs text-body">Recorded deadline passed · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
+          <span className="mt-1 block text-xs text-body">Recorded deadline passed · {formatDateIst(item.job.applicationDeadline!)}</span>
         </TextLink>)}
       </div>
       </Disclosure>
@@ -288,7 +290,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           {req.status==="SENT_BACK"?<Alert tone="warning" className="mt-2">
             Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}
           </Alert>:null}
-          <p className="mt-2 text-xs text-muted-foreground">Requested {req.createdAt.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
+          <p className="mt-2 text-xs text-muted-foreground">Requested {formatDateIst(req.createdAt)}</p>
           <dl className="mt-2 grid gap-x-4 gap-y-1 text-xs text-body sm:grid-cols-2 lg:grid-cols-3">
             {([
               ["Location",draft["location"]],["Job type",draft["employmentType"]],["Drive mode",draft["driveMode"]],
@@ -344,7 +346,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         returnTo={recruiterDrivesHref({...query.data,collegeId:selectedCollege})} />:null}
     {query.data.view !== "WAITING" ? <div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><p className="text-sm text-body">{pageResult.total===0?"No matching drives":
         "Showing "+(Math.min(pageResult.total,(pageResult.page-1)*pageResult.pageSize+1))+"–"+
-        Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+pageResult.total.toLocaleString("en-IN")}</p>{pageResult.pages>1 ? <Pagination label="Drive pages" page={pageResult.page} pageCount={pageResult.pages} hrefForPage={page=>recruiterDrivesHref({...query.data,collegeId:selectedCollege,page})}/> : null}</div>:null}
+        Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+formatNumberIN(pageResult.total)}</p>{pageResult.pages>1 ? <Pagination label="Drive pages" page={pageResult.page} pageCount={pageResult.pages} hrefForPage={page=>recruiterDrivesHref({...query.data,collegeId:selectedCollege,page})}/> : null}</div>:null}
     </section>
     <TextLink href="/hr/round-results" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Review round results →</TextLink>
     <p className="text-xs text-muted-foreground">Your requests and placement-cell decisions are saved. Approved draft drives become visible to students only when the placement cell publishes them.</p>

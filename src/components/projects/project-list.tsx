@@ -2,6 +2,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type ProjectListItem = {
   id: string;
@@ -119,7 +120,7 @@ export function ProjectList({
               : item.status === "COMPLETED" ? "ok" : "info";
             const activityAt=item.lastActivityAt;
             const updated=activityAt&&Number.isFinite(activityAt.getTime())?
-              new Intl.DateTimeFormat("en-IN",{
+              createDateFormatter("en-IN", {
                 day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
                 timeZone:"Asia/Kolkata",
               }).format(activityAt):"No recorded activity";
@@ -338,7 +339,7 @@ export function ProjectList({
           <div className="mt-auto flex items-end justify-between gap-3 pt-3">
             <p className="m-0 text-xs text-muted-foreground">
               Updated{" "}
-              {new Intl.DateTimeFormat("en-IN", {
+              {createDateFormatter("en-IN", {
                 dateStyle: "medium",
               }).format(item.updatedAt)}
             </p>

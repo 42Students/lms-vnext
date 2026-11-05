@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import { formatNumberIN } from "@/lib/safe-format";
 
 /** Live legacy showCount, including drafts restored after validation/navigation. */
 export function TpoNoticeMessageCount({formId,outputId}:{formId:string;outputId:string}){
@@ -24,6 +25,6 @@ export function TpoNoticeMessageCount({formId,outputId}:{formId:string;outputId:
  },[formId]);
  return <output id={outputId} htmlFor={formId} aria-live="polite"
    className="block text-right text-xs tabular-nums text-muted-foreground">
-   {count.toLocaleString("en-IN")} / 8,000
+   {formatNumberIN(count)} / 8,000
  </output>;
 }

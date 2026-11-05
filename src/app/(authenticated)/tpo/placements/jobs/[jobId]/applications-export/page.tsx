@@ -14,6 +14,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 export default async function TpoApplicationsExportPage({params,searchParams}:{
  params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[]}>;
 }){
@@ -82,7 +83,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     {result.rows.map(row=><article key={row.applicationId} className="min-w-0 py-4">
      <Heading level={2} className="break-words text-foreground">{row.studentName??"Name unavailable"}</Heading>
      <p className="break-words text-sm text-body">{row.roleTitle} · {row.status} · {row.screeningStatus??"Screening unavailable"}</p>
-     <p className="mt-1 break-words text-xs text-body">Channel: {row.channel} · Submitted {new Date(row.submittedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})} IST</p>
+     <p className="mt-1 break-words text-xs text-body">Channel: {row.channel} · Submitted {formatDateTimeIst(new Date(row.submittedAt))} IST</p>
      <Disclosure title={<>Academic evidence <span aria-hidden="true" className="ml-2">⌄</span></>} className="mt-3 min-w-0" preserveSummary summaryClassName="inline-flex min-h-11 items-center">
      <dl className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-3 text-xs text-body md:grid-cols-4">
       <div><dt>Roll number</dt><dd className="font-semibold text-foreground">{row.rollNumber??"Not recorded"}</dd></div>

@@ -13,6 +13,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 type LeadChoice={id:string;name:string;companyName:string|null};
 const field="min-h-11 w-full md:min-h-9";
 export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
@@ -106,7 +107,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
   if(!value)return "";
   try{
    const iso=calendarLocalIstToOffset(value);
-   const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+   const parts=createDateFormatter("en-GB", {timeZone:"Asia/Kolkata",
     day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",hour12:true,
    }).formatToParts(new Date(iso));
    const get=(part:string)=>parts.find(item=>item.type===part)?.value??"";

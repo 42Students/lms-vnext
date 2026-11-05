@@ -20,12 +20,11 @@ import type { listCollegeAssessmentAggregate } from "@/modules/courses/college-a
 import { Table } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Data = Awaited<ReturnType<typeof listCollegeAssessmentAggregate>>;
 function formatDue(value: Date | null) {
-  return value ? new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-  }).format(value) + " IST" : "Not scheduled";
+  return value ? istDateTimeFormatter.format(value) + " IST" : "Not scheduled";
 }
 export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Data; showHeader?: boolean }) {
   const assignment = data.kind === "ASSIGNMENT";

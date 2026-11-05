@@ -20,6 +20,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 const statuses = ["ALL", "ACTIVE", "INACTIVE", "COMPLETED", "PLANNED", "ARCHIVED"] as const;
 const pageUrl = (query: Parameters<typeof academicDirectoryHref>[1]) => academicDirectoryHref("BATCHES", query).replace("/college/batches", "/admin/batches");
@@ -127,12 +129,12 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             {key:"students",header:"Students",mobilePriority:"secondary",cell:row=>row.activeEnrolledLearners},
             {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><>
               <StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="PLANNED"?"info":"neutral"}>{legacyAcademicStatus(row.status,true)}</StatusBadge>
-              {row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.inactiveAt))}</span>:null}
+              {row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {istDateFormatter.format(new Date(row.inactiveAt))}</span>:null}
             </>},
             {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeCohortRowActions row={row} periods={periods}/>},
           ]} />
         <nav aria-label="Batch pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-          <span role="status" aria-live="polite">{data.total===0?0:(data.query.page-1)*data.query.pageSize+1}-{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total.toLocaleString("en-IN")} · Page {data.query.page} of {data.totalPages}</span>
+          <span role="status" aria-live="polite">{data.total===0?0:(data.query.page-1)*data.query.pageSize+1}-{Math.min(data.total,data.query.page*data.query.pageSize)} of {formatNumberIN(data.total)} · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
             {data.query.page>1?<ButtonLink variant="secondary" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</ButtonLink>:null}
             {data.query.page<data.totalPages?<ButtonLink variant="secondary" href={pageUrl({...data.query,page:data.query.page+1})}>Next</ButtonLink>:null}

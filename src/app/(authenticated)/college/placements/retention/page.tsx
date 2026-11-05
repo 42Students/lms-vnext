@@ -11,7 +11,9 @@ import {getCollegeApplicationRetentionReport} from "@/modules/placements/college
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
-const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+import { istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
+const fmt=istDateFormatter;
 type Filters=Record<string,string|string[]|undefined>;
 const retentionFilters=z.strictObject({
  olderThanDays:z.coerce.number().int().min(1).max(3650).default(365),
@@ -46,12 +48,12 @@ export default async function CollegeRetentionPage({searchParams}:{searchParams:
    <Button type="submit" variant="secondary">Apply</Button>
   </form>
   <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-   <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)] md:text-[18px]">Review candidates ({data.total.toLocaleString("en-IN")})</Heading>
+   <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)] md:text-[18px]">Review candidates ({formatNumberIN(data.total)})</Heading>
    <p className="my-[var(--lms-space-3)] max-w-[85ch] break-words text-sm leading-[22px] text-muted-foreground">Cutoff: {fmt.format(data.cutoff)} IST. {data.note}</p>
    <DataTable caption="Retention review candidates" rows={data.rows} columns={columns}
      getRowKey={row=>row.id} empty={<EmptyState title="No applications to review" description="No applications currently match the retention review criteria." />}/>
    <nav aria-label="Retention report pages" className="mt-[var(--lms-space-3)] flex flex-wrap items-center justify-between gap-3 text-sm">
-     <span>Page {data.page.toLocaleString("en-IN")} of {data.pageCount.toLocaleString("en-IN")} · {data.total.toLocaleString("en-IN")} records</span>
+     <span>Page {formatNumberIN(data.page)} of {formatNumberIN(data.pageCount)} · {formatNumberIN(data.total)} records</span>
      <span className="flex items-center gap-3">
        {data.page>1?<TextLink href={`/college/placements/retention?olderThanDays=${data.days}&page=${data.page-1}`}>Previous</TextLink>:null}
        {data.truncated?<TextLink href={`/college/placements/retention?olderThanDays=${data.days}&page=${data.page+1}`}>Next</TextLink>:null}

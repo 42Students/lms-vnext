@@ -36,6 +36,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 
 type SearchParams = {
@@ -60,11 +61,7 @@ function first(
 function auditDateTime(
   value: string,
 ) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  return istDateTimeFormatter.format(new Date(value));
 }
 
 export default async function TpoAuditPage({

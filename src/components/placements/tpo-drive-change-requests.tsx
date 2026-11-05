@@ -17,6 +17,8 @@ import {useToast} from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
+import { formatDateWith } from "@/lib/format-date";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;legacyField?:string|null;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdByName?:string|null;
@@ -42,7 +44,7 @@ function readableValue(field:string,value:string|null|undefined):string{
  const cleaned=field==="DESCRIPTION"?value.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim():value;
  if(field==="DEADLINE"){
   const date=new Date(value);
-  return Number.isFinite(date.getTime())?date.toLocaleString("en-IN",{
+  return Number.isFinite(date.getTime())?formatDateWith(date, "en-IN", {
    timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
   })+" IST":value;
  }
@@ -54,7 +56,7 @@ function readableValue(field:string,value:string|null|undefined):string{
 }
 function formatCreatedAt(value:string):string{
  const date=new Date(value);
- return Number.isFinite(date.getTime())?date.toLocaleString("en-IN",{
+ return Number.isFinite(date.getTime())?formatDateWith(date, "en-IN", {
   timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
  })+" IST":"";
 }
@@ -231,7 +233,7 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
       <Alert tone="info">{item.answerValue?"Answer: ":item.replyText?"Declined: ":"Decision: "}
        {item.answerValue??item.replyText??item.decisionNote}</Alert>:null}
      {item.resolvedAt?<p className="text-xs text-body">
-      Resolved {new Date(item.resolvedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST
+      Resolved {formatDateTimeIst(new Date(item.resolvedAt))} IST
      </p>:null}
      <TextLink href={party==="TPO"
        ?"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion?requestId="+encodeURIComponent(item.id)

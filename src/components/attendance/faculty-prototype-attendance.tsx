@@ -11,14 +11,15 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 
 type AttendanceMark="PRESENT"|"ABSENT";
 type Session=FacultyAttendanceWorkspaceData["sessions"][number];
-const sessionLabel=(date:string)=>new Intl.DateTimeFormat("en-IN",{
+const sessionLabel=(date:string)=>createDateFormatter("en-IN", {
  timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"short",
  hour:"numeric",minute:"2-digit",
 }).format(new Date(date));
-const monthLabel=(date:string)=>new Intl.DateTimeFormat("en-IN",{
+const monthLabel=(date:string)=>createDateFormatter("en-IN", {
  timeZone:"Asia/Kolkata",month:"long",year:"numeric",
 }).format(new Date(date));
 function existingMarks(workspace:FacultyAttendanceWorkspaceData,selected:Session|null){
@@ -238,7 +239,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
    {sessions.slice(0,6).map(session=><TextLink key={session.id} href={selectedHref(session.id)}
     className="faculty-proto-pill"
     aria-current={session.id===selected?.id?"page":undefined}>
-    {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(new Date(session.startsAt))}</TextLink>)}
+    {createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(new Date(session.startsAt))}</TextLink>)}
   </div>:null}
  </section>;
 }

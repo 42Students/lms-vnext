@@ -11,6 +11,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { createDateFormatter } from "@/lib/format-date";
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
 export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{initialUnread:number;items:readonly BellItem[];revision?:number;compact?:boolean}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
@@ -24,7 +25,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
  const [refreshing,setRefreshing]=useState(false);
  const displayedItems=latest?.items??items;
  const groupedItems=displayedItems.slice(0,20).reduce<{day:string;items:BellItem[]}[]>((groups,item)=>{
-  const day=new Intl.DateTimeFormat("en-IN",{
+  const day=createDateFormatter("en-IN", {
    day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Kolkata",
   }).format(new Date(item.createdAt));
   const last=groups[groups.length-1];
@@ -132,7 +133,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      <span className="block max-w-full break-words text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-topbar-unread)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
      {item.body?<span className="mt-1 block max-w-full line-clamp-2 break-words text-sm leading-[1.5] text-muted-foreground">{item.body}</span>:null}
      <time dateTime={item.createdAt} className="mt-1 block text-xs text-[var(--lms-muted-text)] leading-[20px]">
-      {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))}
+      {createDateFormatter("en-IN", {day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))}
      </time>
      <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
      </Button>

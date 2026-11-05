@@ -60,6 +60,10 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter, istDateFormatter, istTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createNumberFormatter } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 function currentTimeMs(){return Date.now();}
 
@@ -76,7 +80,7 @@ function formatCtc(
   value: number | null,
 ) {
   if (value == null) return null;
-  return new Intl.NumberFormat("en-IN", {
+  return createNumberFormatter("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,
@@ -236,8 +240,7 @@ export default async function HrPlacementJobPage({
     : null;
   const outcomeOptions = hrInlineRoundResultFilters(inlineResults?.counts);
   const roundSchedule=hrScheduledRoundRows(workspace.rounds);
-  const formatRoundTime=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
-    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(d);
+  const formatRoundTime=(d:Date)=>istDateTimeFormatter.format(d);
 
   // Use one authorized mapping for both normal round editing and focused review.
   const resultControlRounds = workspace.rounds.map(
@@ -353,7 +356,7 @@ export default async function HrPlacementJobPage({
                 "On campus",
               applicants.counts.all+" applicants shared with you",
               workspace.job.applicationDeadline&&workspace.job.status==="PUBLISHED"?
-                "Applications close "+new Intl.DateTimeFormat("en-IN",{
+                "Applications close "+createDateFormatter("en-IN", {
                   timeZone:"Asia/Kolkata",day:"numeric",month:"short",
                   hour:"numeric",minute:"2-digit",hour12:true,
                 }).format(workspace.job.applicationDeadline):null,
@@ -489,7 +492,7 @@ export default async function HrPlacementJobPage({
     <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Pay</dt><dd className="text-foreground">{workspace.job.ctcLpa!==null?workspace.job.ctcLpa+" LPA":ctc??"Not specified"}{workspace.job.fixedCtcLpa!==null?" ("+workspace.job.fixedCtcLpa+" fixed)":""}</dd></div>
     <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Who could apply</dt><dd className="break-words text-foreground">{workspace.job.eligibleBranches.length?workspace.job.eligibleBranches.join(", "):"No branch restriction recorded"}{workspace.job.eligiblePassingYear?" · "+workspace.job.eligiblePassingYear:""}. College placement rules also apply.</dd></div>
     <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Rounds</dt><dd className="break-words text-foreground">{workspace.rounds.length?workspace.rounds.map(round=>round.name).join(" → "):"The placement cell sets them with you"}</dd></div>
-    <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Apply by</dt><dd className="text-foreground">{workspace.job.applicationDeadline?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(workspace.job.applicationDeadline)+" IST":"Not set yet"}</dd></div>
+    <div className="grid grid-cols-[100px_minmax(0,1fr)] gap-2"><dt className="text-muted-foreground">Apply by</dt><dd className="text-foreground">{workspace.job.applicationDeadline?istDateTimeFormatter.format(workspace.job.applicationDeadline)+" IST":"Not set yet"}</dd></div>
   </dl>
 </section>
             </section>
@@ -513,7 +516,7 @@ export default async function HrPlacementJobPage({
                 {workspace.job.variableCtcLpa!==null?" · Variable "+workspace.job.variableCtcLpa+" LPA":""}
               </dd></div>
               <div><dt className="font-semibold text-foreground">Stipend</dt><dd className="text-body">{workspace.job.stipendPerMonthInr!==null?
-                "₹"+new Intl.NumberFormat("en-IN").format(workspace.job.stipendPerMonthInr)+" / month":"Not specified"}</dd></div>
+                "₹"+createNumberFormatter("en-IN").format(workspace.job.stipendPerMonthInr)+" / month":"Not specified"}</dd></div>
               <div><dt className="font-semibold text-foreground">Eligible branches</dt><dd className="break-words text-body">{workspace.job.eligibleBranches.length?
                 workspace.job.eligibleBranches.join(", "):"No branch restriction recorded"}</dd></div>
               <div><dt className="font-semibold text-foreground">Passing year</dt><dd className="text-body">
@@ -521,7 +524,7 @@ export default async function HrPlacementJobPage({
               </dd></div>
               <div><dt className="font-semibold text-foreground">Apply by</dt><dd className="text-body">
                 {workspace.job.applicationDeadline?
-                  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(workspace.job.applicationDeadline)+" IST":"Not specified"}
+                  istDateTimeFormatter.format(workspace.job.applicationDeadline)+" IST":"Not specified"}
               </dd></div>
             </dl>
              </div>
@@ -582,13 +585,13 @@ export default async function HrPlacementJobPage({
               className="mt-2 inline-flex min-h-9 max-md:min-h-11 items-center">Open change requests →</TextLink>
           </div>:null}
         {threadMessages?<div className="space-y-3">
-          <p className="text-xs text-muted-foreground">{threadMessages.total.toLocaleString("en-IN")} recorded messages</p>
+          <p className="text-xs text-muted-foreground">{formatNumberIN(threadMessages.total)} recorded messages</p>
           <ScrollCue axis="y" label="Drive discussion history" viewportClassName="max-h-[36rem]"><ol aria-label="Drive discussion history" className="space-y-2">
             {[...threadMessages.messages].reverse().map(message=><li key={message.id}
               className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
               <p className="text-xs font-semibold text-muted-foreground">
                 {message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} ·
-                {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
+                {" "}{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
               </p>
               {message.changeRequestId?<p className="mt-1 text-xs font-semibold text-primary-text">Regarding change request {message.changeRequestId}</p>:null}
               <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
@@ -680,7 +683,7 @@ export default async function HrPlacementJobPage({
                   twelfthOrDiplomaPercentage:applicant.twelfthOrDiplomaPercentage==null?null:String(applicant.twelfthOrDiplomaPercentage),
                   status:String(applicant.status??""),
                   screening:String(applicant.screening??""),
-                  applied:new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt),
+                  applied:istDateFormatter.format(applicant.submittedAt),
                   reviewHref:"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+
                     "&page="+filters.page+"&applicant="+encodeURIComponent(applicant.id)+returnQuery,
                 }))}/>
@@ -696,7 +699,7 @@ export default async function HrPlacementJobPage({
                 {applicant.tenthPercentage?<p className="mt-1 text-xs text-body">10th %: {applicant.tenthPercentage}</p>:null}
                 {applicant.twelfthOrDiplomaPercentage?<p className="mt-1 text-xs text-body">12th / diploma %: {applicant.twelfthOrDiplomaPercentage}</p>:null}
                 <div className="mt-2 flex flex-wrap gap-2"><StatusBadge tone={applicant.status==="SUBMITTED"?"success":"neutral"}>{applicant.status}</StatusBadge><StatusBadge tone={applicant.screening==="VERIFIED"?"success":"info"}>{applicant.screening}</StatusBadge></div>
-                <p className="mt-2 text-xs text-muted-foreground">Applied {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt)}</p>
+                <p className="mt-2 text-xs text-muted-foreground">Applied {istDateFormatter.format(applicant.submittedAt)}</p>
                 <ButtonLink variant="secondary" href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&applicant="+applicant.id+returnQuery}
                   className="mt-3">Review applicant</ButtonLink>
               </article>
@@ -762,7 +765,7 @@ export default async function HrPlacementJobPage({
                 {selectedApplicant.twelfthOrDiplomaPercentage?<div><dt className="text-muted-foreground">12th / diploma %</dt><dd className="text-foreground">{selectedApplicant.twelfthOrDiplomaPercentage}</dd></div>:null}
                 <div><dt className="text-muted-foreground">Application</dt><dd className="text-foreground">{selectedApplicant.status}</dd></div>
                 <div><dt className="text-muted-foreground">Placement-cell screening</dt><dd className="text-foreground">{selectedApplicant.screening}</dd></div>
-                <div><dt className="text-muted-foreground">Applied (IST)</dt><dd className="text-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(selectedApplicant.submittedAt)}</dd></div>
+                <div><dt className="text-muted-foreground">Applied (IST)</dt><dd className="text-foreground">{istDateFormatter.format(selectedApplicant.submittedAt)}</dd></div>
               </dl>
               <RecruiterPrivateRatingEditor key={selectedApplicant.id}
                 jobId={workspace.job.id} applicationId={selectedApplicant.id}/>
@@ -883,7 +886,7 @@ export default async function HrPlacementJobPage({
                 rows={selectionRows.map(item=>({
                   id:item.id,candidate:item.name??"Unnamed applicant",role:item.role,
                   ctcLpa:item.annualCtcInr==null?"—":
-                    (item.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2}),
+                    formatNumberIN((item.annualCtcInr/100000), {maximumFractionDigits:2}),
                   ctcSort:item.annualCtcInr,
                   status:item.status==="SELECTED"?"With the placement cell":
                     item.status==="VERIFIED"?"Verified, awaiting release":"Selection cancelled",
@@ -907,9 +910,9 @@ export default async function HrPlacementJobPage({
               id:offer.id,candidate:offer.name||"Unnamed applicant",role:offer.role,
               kind:offer.kind==="LOI"?"Letter of intent":"Offer",
               ctcLpa:offer.annualCtcInr==null?"-":
-                (offer.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2})+" LPA",
+                formatNumberIN((offer.annualCtcInr/100000), {maximumFractionDigits:2})+" LPA",
               ctcSort:offer.annualCtcInr,status:recruiterOfferStatusLabel(offer.status),
-              deadline:offer.expiresAt?new Intl.DateTimeFormat("en-IN",{
+              deadline:offer.expiresAt?createDateFormatter("en-IN", {
                 timeZone:"Asia/Kolkata",day:"numeric",month:"short",
                 hour:"numeric",minute:"2-digit",hour12:true,
               }).format(offer.expiresAt):"-",
@@ -1032,7 +1035,7 @@ export default async function HrPlacementJobPage({
                 (roundSlotCounts[round.id]?.confirmed??0)>0?"Scheduled":"Not scheduled"}
                 {round.createdByUserId===context.user.id?" · Added by you":""}</p>
               <p className="text-muted-foreground">{round.scheduledAt?
-                new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.scheduledAt)+" IST":
+                istDateTimeFormatter.format(round.scheduledAt)+" IST":
                 "Date to be set by the placement cell"} · {round.mode==="VIRTUAL"?"Online":
                   round.mode==="ON_CAMPUS"?"On campus":"Mode to be decided"}</p>
               <p className="text-muted-foreground">{round.venue??"Venue not set"}</p>
@@ -1074,7 +1077,7 @@ export default async function HrPlacementJobPage({
                       {group.appointments.map(slot=><li key={slot.slotId}
                         className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-border px-3 py-2 text-sm">
                         <span className="min-w-0 flex-1">
-                          <strong>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true}).format(slot.startsAt)}</strong>
+                          <strong>{istTimeFormatter.format(slot.startsAt)}</strong>
                           {" · "}{slot.name||"Unnamed applicant"}
                           <small className="block text-muted-foreground">{slot.panel||"Panel not assigned"} · {slot.room}</small>
                         </span>

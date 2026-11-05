@@ -16,6 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Request={id:string;kind:string;status:string;reason:string;payload:Record<string,unknown>;
  studentName:string|null;version:string;requestedAt:string;decidedAt:string|null;decisionNote:string|null};
 function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
@@ -148,12 +149,12 @@ export function TpoGeneralRequestsPanel(){
     <p className="break-words text-body">{row.reason}</p>
     <p className="text-xs leading-[20px]">{row.status.replaceAll("_"," ")}
      {" · "}Asked <time dateTime={row.requestedAt}>
-      {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.requestedAt))} IST
+      {istDateTimeFormatter.format(new Date(row.requestedAt))} IST
      </time>
     </p>
     {row.decidedAt?<p className="text-xs text-muted-foreground">Decided{" "}
       <time dateTime={row.decidedAt}>
-       {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.decidedAt))} IST
+       {istDateTimeFormatter.format(new Date(row.decidedAt))} IST
       </time>
      </p>:null}
     <Disclosure title="Request details" className="min-w-0">

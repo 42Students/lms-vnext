@@ -13,6 +13,7 @@ import {companyShareAuditPageHref} from "@/modules/placements/company-share/audi
 import {parseCompanyShareAuditQuery} from "@/modules/placements/company-share/audit-query-model";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export const dynamic="force-dynamic";
 export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  params:Promise<{jobId:string}>;
@@ -38,7 +39,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  </div>;
  const {kind,page:auditPage}=parsed.data;
  const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
- const ist=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value))+" IST";
+ const ist=(value:string)=>istDateTimeFormatter.format(new Date(value))+" IST";
  return <div className="min-w-0 space-y-4">
 
   <PageHeader title="Company-share access history"

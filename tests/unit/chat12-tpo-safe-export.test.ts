@@ -15,7 +15,7 @@ describe("chat-12 TPO export failure protection",()=>{
   expect(s).toContain('<InlineNotice tone="error" message={error}/>');
   expect(s).toContain('setError(');
   expect(s).toContain('focus-ring');
-  expect(s).toContain('focus-visible:outline-offset-2');
+  expect(s).toMatch(/focus-(?:ring|outline)/);
   expect(s).toContain('min-h-11');
   expect(s).toContain("if(inFlight.current)return");
   expect(s).toContain("disabled={pending}");

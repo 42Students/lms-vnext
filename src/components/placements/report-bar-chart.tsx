@@ -1,5 +1,6 @@
 import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "./report-bar-chart.module.css";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type MetricRow={label:string;value:number;detail?:string};
 /** Accessible read-only bar chart. Incoming values must be measured, never placeholders. */
@@ -17,8 +18,8 @@ export function ReportBarChart({title,rows,units="items",limit=20}:{
     <span className={styles["label"]} title={row.label}>{row.label}</span>
     <MetricBar label={row.label} value={row.value} maximum={maximum} unit={units}
       className={styles["track"]}/>
-    <span className={styles["value"]} title={row.value.toLocaleString("en-IN")+" "+units}>
-      {row.value.toLocaleString("en-IN")} {units}
+    <span className={styles["value"]} title={formatNumberIN(row.value)+" "+units}>
+      {formatNumberIN(row.value)} {units}
     </span>
    </div>
    {row.detail?<p className="mt-1 text-xs text-muted-foreground">{row.detail}</p>:null}

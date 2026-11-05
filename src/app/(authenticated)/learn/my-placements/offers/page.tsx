@@ -35,6 +35,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 const expiryTabs = [{id:"all",label:"All expiry states"},{id:"expired",label:"Issued, deadline passed"},{id:"undated",label:"Issued, no deadline recorded"}] as const;
 const joiningTabs = [
@@ -339,7 +340,7 @@ export default async function LearnerOffersPage({
         </>
       )}
       {paginated.total>0 ? <div className="space-y-2">
-        <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">{paginated.from.toLocaleString("en-IN")}–{paginated.to.toLocaleString("en-IN")} of {paginated.total.toLocaleString("en-IN")} matching offers</p>
+        <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">{formatNumberIN(paginated.from)}–{formatNumberIN(paginated.to)} of {formatNumberIN(paginated.total)} matching offers</p>
         <Pagination label="Offer results pagination" page={paginated.page} pageCount={paginated.pages} hrefForPage={pageUrl} />
       </div> : null}
       <section aria-label="How offers work at your college" className="min-w-0 rounded-[12px] border border-border bg-surface p-4 md:p-5">

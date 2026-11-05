@@ -14,6 +14,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { apiFetch } from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Option = { id: string; name: string };
 type ClassOption = Option & { cohortName: string; periodStart: string; periodEnd: string; updatedAt: string };
@@ -24,7 +25,7 @@ type Result = { slots: Array<{ startsAt: string; endsAt: string; localDate: stri
 
 /** Recurring preview is always displayed in IST regardless of device timezone. */
 export function recurringSlotTimeIst(slot: Pick<Result["slots"][number], "startsAt" | "endsAt">): string {
-  const format = new Intl.DateTimeFormat("en-IN", {
+  const format = createDateFormatter("en-IN", {
     timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",
   });
   return format.format(new Date(slot.startsAt))+" – "+format.format(new Date(slot.endsAt));

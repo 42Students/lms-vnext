@@ -42,6 +42,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -89,7 +90,7 @@ function ContentGlyph({kind}:{kind:string}) {
 
 function istDueLabel(value:Date|null|undefined){
  if(!value)return "No deadline";
- return "Due "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(value);
+ return "Due "+istDateTimeFormatter.format(value);
 }
 
 function Metric({
@@ -156,7 +157,7 @@ function ContentItem({
           <Heading level={3} size="base" className="mt-2 text-[var(--lms-heading)]">
             {item.title}
           </Heading>
-          <p className="mt-1 text-xs text-muted-foreground">{item.points} points{item.contentType==="LIVE_CLASS"&&item.startsAt?" · Starts "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.startsAt):""}{item.contentType==="LIVE_CLASS"&&item.endsAt?" · Ends "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.endsAt):""}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{item.points} points{item.contentType==="LIVE_CLASS"&&item.startsAt?" · Starts "+istDateTimeFormatter.format(item.startsAt):""}{item.contentType==="LIVE_CLASS"&&item.endsAt?" · Ends "+istDateTimeFormatter.format(item.endsAt):""}</p>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           #{item.sequence + 1}

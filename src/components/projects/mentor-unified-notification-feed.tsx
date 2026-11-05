@@ -10,6 +10,7 @@ import {mentorUnifiedNotificationGroups,mentorUnifiedOpenReadRequest,mergeMentor
 import {MentorSourceNotificationRead} from "./mentor-source-notification-read";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateWith } from "@/lib/format-date";
 
 function MentorPersonalRead({id}:{id:string}){
  const router=useRouter();
@@ -154,7 +155,7 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,pers
         <p className="text-sm text-body">{item.description}</p>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <time dateTime={item.occurredAt} className="text-xs text-muted-foreground">
-            {new Date(item.occurredAt).toLocaleString("en-IN",{
+            {formatDateWith(new Date(item.occurredAt), "en-IN", {
               timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
             })} IST
           </time>

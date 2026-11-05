@@ -6,11 +6,10 @@ import { getFacultyStudentDetail } from "@/modules/courses/faculty-student-detai
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function dateText(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-  }).format(new Date(value)) + " IST";
+  return istDateTimeFormatter.format(new Date(value)) + " IST";
 }
 
 export default async function FacultyStudentDetailPage({

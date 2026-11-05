@@ -5,18 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 export type FacultyCalendarItem={id:string;title:string;sectionName:string;courseCode:string|null;
  startsAt:string;location:string|null;deliveryId:string|null};
 function istDay(instant:string):string{
- const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date(instant));
+ const parts=createDateFormatter("en-GB", {timeZone:"Asia/Kolkata",day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date(instant));
  const part=(name:string)=>parts.find(p=>p.type===name)?.value??"";
  return part("year")+"-"+part("month")+"-"+part("day");
 }
 const date=(key:string)=>new Date(key+"T12:00:00Z");
 const shift=(key:string,n:number)=>{const d=date(key);d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
 const monday=(key:string)=>shift(key,-((date(key).getUTCDay()+6)%7));
-const dayLabel=(key:string)=>new Intl.DateTimeFormat("en-GB",{timeZone:"UTC",weekday:"short",day:"numeric"}).format(date(key));
-const localTime=(raw:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true}).format(new Date(raw));
+const dayLabel=(key:string)=>createDateFormatter("en-GB", {timeZone:"UTC",weekday:"short",day:"numeric"}).format(date(key));
+const localTime=(raw:string)=>istTimeFormatter.format(new Date(raw));
 /** Faculty screenshot schedule: only dates backed by the bounded persisted query. */
 export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
  events:readonly FacultyCalendarItem[];nowIso:string;minDate:string;maxDate:string;
@@ -66,9 +68,9 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
      {courses.map(code=><option key={code} value={code}>{code}</option>)}
     </Select>
     <span className="self-center text-sm font-semibold text-[color:var(--lms-heading)]">
-     {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",day:"numeric",month:"short"}).format(date(keys[0]!))}
+     {createDateFormatter("en-IN", {timeZone:"UTC",day:"numeric",month:"short"}).format(date(keys[0]!))}
      {" – "}
-     {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",day:"numeric",month:"short"}).format(date(keys.at(-1)!))}
+     {createDateFormatter("en-IN", {timeZone:"UTC",day:"numeric",month:"short"}).format(date(keys.at(-1)!))}
     </span>
     <Button variant="secondary" type="button" disabled={previous<minDate}
       onClick={()=>setDay(previous)} aria-label={"Previous "+view}>←</Button>

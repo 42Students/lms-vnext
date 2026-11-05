@@ -20,14 +20,16 @@ import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter, istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 type Row={id:string;name:string|null;email:string|null;collegeName:string;ageDays:number;
  source:string;submittedAt:Date|string;rollNumber:string|null;roleTitle:string;
  status:string;screening:string|null;screeningScore?:number|null;partialScore?:number|null;
  stage:string;previousStage:string|null;stageVersion:number|null;
  allowedNextStages?:readonly string[];stageMovedByName?:string|null;stageMovedAt?:string|null;};
 const transitions=COLLEGE_APPLICATION_TRANSITIONS;
-const istDateTime=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
-const istDay=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"});
+const istDateTime=istDateTimeFormatter;
+const istDay=istDateFormatter;
 function stageAge(row:Row){
  const start=new Date(row.stageMovedAt??row.submittedAt).getTime();
  if(!Number.isFinite(start))return null;
@@ -332,7 +334,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    <strong role="status" aria-live="polite">{selectedCount} selected</strong>
    {total>eligible.length?<Button type="button" disabled={busy||total>3000}
     variant="secondary" onClick={()=>{setAllMatching(true);setSelected([]);}} >
-    Select all {total.toLocaleString("en-IN")} matching this filter</Button>:null}
+    Select all {formatNumberIN(total)} matching this filter</Button>:null}
    {allMatching?<Button type="button" variant="secondary" onClick={()=>{setAllMatching(false);setSelected([]);}}
     >Clear selection</Button>:null}
    {total>3000?<span className="text-error">Narrow filters to 3,000 or fewer applicants before bulk actions.</span>:null}

@@ -7,6 +7,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useRef,useState} from "react";
 import {isCurrentCollegeImportHistoryRequest} from "@/modules/people/college-import-history-request-model";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Receipt={id:string;when:string;students:number;imported:number;partial:number;failed:number};
 export function CollegeStudentImportHistory(){
  const [open,setOpen]=useState(false);
@@ -65,8 +66,7 @@ export function CollegeStudentImportHistory(){
     {busy?<Skeleton variant="row" label="Loading import history"/>:null}
     {!busy&&!error?<DataTable<Receipt> caption="Bulk import history" rows={rows} getRowKey={row=>row.id}
       columns={[
-        {key:"when",header:"When",cell:row=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-          timeZone:"Asia/Kolkata"}).format(new Date(row.when)),mobilePriority:"primary"},
+        {key:"when",header:"When",cell:row=>istDateTimeFormatter.format(new Date(row.when)),mobilePriority:"primary"},
         {key:"students",header:"Students",cell:row=>row.students,mobilePriority:"secondary"},
         {key:"imported",header:"Imported",cell:row=>row.imported,mobilePriority:"secondary"},
         {key:"partial",header:"Partial",cell:row=>row.partial,mobilePriority:"secondary"},

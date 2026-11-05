@@ -5,6 +5,7 @@ import {getMentorDeliveryVersion} from "@/modules/projects/mentor-delivery-versi
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export default async function MentorDeliveryVersionPage({params}:{
   params:Promise<{projectId:string;submissionId:string}>;
 }){
@@ -13,9 +14,7 @@ export default async function MentorDeliveryVersionPage({params}:{
   const v=data.version;
   const attachments=v.attachments.filter((item):item is Record<string,unknown>=>
     Boolean(item)&&typeof item==="object"&&!Array.isArray(item));
-  const format=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
-    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-  }).format(date)+" IST";
+  const format=(date:Date)=>istDateTimeFormatter.format(date)+" IST";
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title={"Delivery version "+v.version}
       description={data.projectTitle+" · "+data.projectStatus}

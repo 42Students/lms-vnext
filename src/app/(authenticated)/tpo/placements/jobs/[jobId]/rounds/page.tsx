@@ -19,6 +19,7 @@ import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function TpoDriveRoundsPage({
   params,searchParams,
@@ -66,9 +67,7 @@ export default async function TpoDriveRoundsPage({
   const selectedSlots=chosen?.kind==="INTERVIEW"?await getTpoInterviewSlotWorkspace(context,jobId,chosen.id)
    .catch(error=>{if(error instanceof AuthorizationError)throw error;return null;}):null;
   const date = (value: Date | null) =>
-    value ? new Intl.DateTimeFormat("en-IN", {
-      timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
-    }).format(value) + " IST" : "To be scheduled";
+    value ? istDateTimeFormatter.format(value) + " IST" : "To be scheduled";
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader eyebrow="TPO · Drive workspace" title="Rounds and schedule"
       description="Plan the drive rounds, check bookings and record company results."

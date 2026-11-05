@@ -17,6 +17,7 @@ import {
 } from "@/modules/projects/mentor-task-review-model";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Params = {
   assignment?: string | string[];
@@ -153,9 +154,7 @@ export default async function MentorTaskReviewsPage({
               {item.projectTitle} · Version {item.version} · Priority {item.priority}
             </p>
             <p className="mt-1 text-xs text-muted-foreground leading-5">
-              Submitted {new Intl.DateTimeFormat("en-IN", {
-                dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-              }).format(item.submittedAt)} IST
+              Submitted {istDateTimeFormatter.format(item.submittedAt)} IST
             </p>
             <TextLink href={mentorTaskReviewTargetHref(item.projectId,item.taskId)}
               className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">

@@ -9,6 +9,7 @@ import {mentorReviewCompletenessHref,mentorReviewCompletenessQuerySchema}
   from "@/modules/projects/mentor-review-completeness-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Params={page?:string|string[]};
 export default async function MentorProjectReviewCompletenessPage({
@@ -60,16 +61,12 @@ export default async function MentorProjectReviewCompletenessPage({
             </div>
           </dl>
           {item.submittedAt?<p className="mt-2 text-xs text-muted-foreground leading-5">
-            Submitted {new Intl.DateTimeFormat("en-IN",{
-              dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-            }).format(item.submittedAt)} IST
+            Submitted {istDateTimeFormatter.format(item.submittedAt)} IST
           </p>:<p className="mt-2 text-xs text-muted-foreground leading-5">
             No submitted timestamp (draft)
           </p>}
           {item.reviewedAt?<p className="mt-1 text-xs text-muted-foreground leading-5">
-            Reviewed {new Intl.DateTimeFormat("en-IN",{
-              dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-            }).format(item.reviewedAt)} IST
+            Reviewed {istDateTimeFormatter.format(item.reviewedAt)} IST
           </p>:null}
         </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Review version pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewCompletenessHref({projectId,page})}/>:null}

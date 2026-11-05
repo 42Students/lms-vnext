@@ -19,6 +19,7 @@ import {AFTER_COLLEGE_LABELS,AFTER_COLLEGE_OUTCOMES} from "@/modules/placements/
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 export const dynamic="force-dynamic";
 type Raw=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -61,7 +62,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
    </form>
    <div className="flex min-w-0 flex-wrap items-center gap-2"><TpoReportPresentation /></div>
    <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId} userId={ctx.user.id}/></Suspense>
-   <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} students in this reporting population. NAAC 5.2 / NIRF working data only; unreported choices remain Not decided.</p>
+   <p className="text-sm text-body leading-[22px]">{formatNumberIN(data.total)} students in this reporting population. NAAC 5.2 / NIRF working data only; unreported choices remain Not decided.</p>
    <SummaryStrip label="After-college outcomes" steps={AFTER_COLLEGE_OUTCOMES.map(key=>({label:AFTER_COLLEGE_LABELS[key],value:data.counts[key]}))}/>
    <DataTable rows={data.rows.slice((page-1)*25,page*25)} getRowKey={row=>row.membershipId}
     caption="After college"

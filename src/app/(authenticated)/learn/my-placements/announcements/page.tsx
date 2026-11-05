@@ -37,6 +37,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateFormatter } from "@/lib/format-date";
 
 // Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
 const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-[var(--lms-motion-fast)] hover:border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] hover:text-[var(--lms-primary)] focus-ring aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
@@ -271,10 +272,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
               {notice.publicationDateUnavailable
                 ? <span className="mt-3 block text-xs text-muted-foreground">Publication date unavailable</span>
                 : <time dateTime={notice.createdAt} className="mt-3 block text-xs text-muted-foreground">
-                    {new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium" }).format(new Date(notice.createdAt))}
+                    {istDateFormatter.format(new Date(notice.createdAt))}
                   </time>}
               {notice.updatedAt ? <time dateTime={notice.updatedAt} className="mt-1 block text-xs text-muted-foreground">
-                Updated {new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium" }).format(new Date(notice.updatedAt))}
+                Updated {istDateFormatter.format(new Date(notice.updatedAt))}
               </time> : null}
             </li>
           ))}

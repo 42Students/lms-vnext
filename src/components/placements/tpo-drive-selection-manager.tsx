@@ -12,6 +12,7 @@ import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
 import { Label } from "@/components/ui/label";
+import { formatNumberIN } from "@/lib/safe-format";
 type Candidate={applicationId:string;name:string;email?:string|null;roleTitle:string;offerReady:boolean;alreadyOffered:boolean};
 type RoleOption={id:string;title:string;annualCtcInr:number|null};
 type Selection={id:string;applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null;status:string;recordedAt:string;offerReady:boolean;releasedOfferId:string|null};
@@ -73,7 +74,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       {key:"student",header:"Student",mobilePriority:"primary",cell:row=><strong>{row.name}</strong>},
       {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
       {key:"package",header:"Package",mobilePriority:"secondary",cell:row=>row.annualCtcInr==null
-        ?"Not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"},
+        ?"Not recorded":"₹"+formatNumberIN((row.annualCtcInr/100000))+" LPA"},
       {key:"stage",header:"Stage",mobilePriority:"secondary",cell:row=>row.status==="RELEASED"
         ?"Released":row.status==="VERIFIED"?"Verified, release pending":"Selected"},
     ]}/>
@@ -99,7 +100,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);
         if(option){setRole(option.title);setLpa(option.annualCtcInr==null?"":String(option.annualCtcInr/100000));}}}>
       <option value="">Choose a role package or enter manually</option>
-      {roleOptions.map(o=><option value={o.id} key={o.id}>{o.title}{o.annualCtcInr==null?"":" · ₹"+(o.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</option>)}
+      {roleOptions.map(o=><option value={o.id} key={o.id}>{o.title}{o.annualCtcInr==null?"":" · ₹"+formatNumberIN((o.annualCtcInr/100000))+" LPA"}</option>)}
      </Select></Label>:null}
     {mode==="RECORD"?<div className="grid gap-3 md:grid-cols-2">
      <Label stack className="min-w-0">Role<Input required value={role} onChange={e=>setRole(e.target.value)}

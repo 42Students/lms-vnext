@@ -10,6 +10,7 @@ import { getPublicPlacementStatistics } from "@/modules/placements/public-page/r
 import { publicPlacementTableReady } from "@/modules/placements/public-page/readiness";
 import { readOptionalPublicPlacementData } from "@/modules/placements/public-page/optional-read-model";
 import { Heading } from "@/components/ui/heading";
+import { istDateFormatter } from "@/lib/format-date";
 
 /** Public route: never loads private placements, identities, or employer contacts.
  * A verified public publication producer and code delivery are still required
@@ -107,9 +108,7 @@ export default async function PublicPlacementsPage() {
               {published ? <p className="mt-1 text-xs text-muted-foreground">
                 College-published figures last updated{" "}
                 <time dateTime={published.publishedAt}>
-                  {new Intl.DateTimeFormat("en-IN",{
-                    dateStyle:"medium",timeZone:"Asia/Kolkata",
-                  }).format(new Date(published.publishedAt))}
+                  {istDateFormatter.format(new Date(published.publishedAt))}
                 </time>. Individual records are never displayed here.
               </p> : null}
             </>

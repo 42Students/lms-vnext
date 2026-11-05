@@ -9,6 +9,7 @@ import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules
 import {verificationFilterDraftError} from "@/modules/verification/filter-draft-validation";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 type Fields={ageBand:string;enrollment:string;waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;programId:string;sectionId:string;batchId:string;branchId:string};
 const empty:Fields={ageBand:"ANY",enrollment:"ALL",waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",programId:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -19,7 +20,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
  function istDay(daysBeforeToday=0){
   const date=new Date(Date.now()-daysBeforeToday*24*60*60*1000);
-  return new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
+  return createDateFormatter("sv-SE", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
  }
  function chooseWaitingPreset(preset:"TODAY"|"WEEK"|"OLDER"){
   const next={...fields,ageBand:"ANY",attention:"ALL",waitingState:"ALL",

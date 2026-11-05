@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type TpoRecruiterInspectorLead={
  id:string;name:string;designation:string|null;companyName:string|null;
@@ -18,7 +19,7 @@ function when(value:string|null){
  if(!value)return "Not recorded";
  const date=new Date(value);
  if(!Number.isFinite(date.getTime()))return "Unavailable";
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+ return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",
   day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",
  }).format(date)+" IST";
 }

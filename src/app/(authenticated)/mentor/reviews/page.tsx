@@ -15,6 +15,8 @@ import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query
 import {mentorReviewExportHref} from "@/modules/projects/mentor-review-export-model";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 
@@ -105,15 +107,13 @@ export default async function MentorReviewsPage({
         </TextLink>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching reviews.</span>:null}
       </div>
-      <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} matching review item{data.total === 1 ? "" : "s"}</p>
+      <p className="text-sm text-body leading-[22px]">{formatNumberIN(data.total)} matching review item{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." action={<TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-9">Projects</TextLink>} />
         : <div className="grid">{data.items.map(item =>
           <TextLink variant="bare" key={item.key} href={item.href} className="min-h-11 block border-b border-border py-4 hover:border-primary focus-ring md:min-h-[var(--lms-control-height)]">
             <p className="min-w-0 break-words font-semibold text-link">{item.description}</p>
-            <p className="mt-2 text-xs text-muted-foreground leading-5">Submitted: {new Intl.DateTimeFormat("en-IN",{
-              dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-            }).format(new Date(item.occurredAt))} IST</p>
+            <p className="mt-2 text-xs text-muted-foreground leading-5">Submitted: {istDateTimeFormatter.format(new Date(item.occurredAt))} IST</p>
             <p className="mt-1 text-xs font-semibold text-link leading-5">Open delivery review →</p>
           </TextLink>)}</div>}
       {data.totalPages>1?<Pagination label="Review queue pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>{ const { projectId, ...query } = data.query; return mentorPortfolioHref("reviews", { ...query, ...(projectId === undefined ? {} : { projectId }), page }); }}/>:null}

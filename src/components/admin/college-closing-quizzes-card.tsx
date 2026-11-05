@@ -2,13 +2,15 @@ import {EmptyState} from "@/components/ui/empty-state";
 import type {getCollegeClosingQuizzes} from "@/modules/admin-ui/college-dashboard-quizzes-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 type Data=Awaited<ReturnType<typeof getCollegeClosingQuizzes>>;
 export function CollegeClosingQuizzesCard({data}:{data:Data}){
- const date=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
+ const date=istDateTimeFormatter;
  return <section className="space-y-3 border-t border-border pt-5" aria-label="Quizzes closing this week">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><Heading level={2} className="text-foreground">Quizzes closing this week</Heading>
-    <p className="text-sm text-body">{data.total.toLocaleString("en-IN")} published quiz(es) due in the next 7 days</p></div>
+    <p className="text-sm text-body">{formatNumberIN(data.total)} published quiz(es) due in the next 7 days</p></div>
    <TextLink href="/college/quizzes" className="inline-flex min-h-11 items-center md:min-h-9">View quizzes</TextLink>
   </div>
   {!data.items.length?<EmptyState title="No quizzes closing this week" description="Published quizzes due in the next seven days will appear here."/>:

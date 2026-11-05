@@ -8,6 +8,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export default async function LearnerSupportHistory({searchParams}:{
   searchParams:Promise<{status?:string|string[];type?:string|string[];page?:string|string[]}>;
 }) {
@@ -52,7 +54,7 @@ export default async function LearnerSupportHistory({searchParams}:{
       </TextLink>)}
     </nav>
     <p role="status" className="text-xs text-muted-foreground leading-5">
-      {data.total.toLocaleString("en-IN")} matching requests · Page {data.page} of {data.totalPages}
+      {formatNumberIN(data.total)} matching requests · Page {data.page} of {data.totalPages}
     </p>
     {data.items.length===0?<EmptyState title="No requests in this view"
       description={selectedStatus==="ALL"?"You have not submitted a placement request yet.":"No requests match this status filter."}/>:<ol className="divide-y divide-border border-y border-border">
@@ -63,7 +65,7 @@ export default async function LearnerSupportHistory({searchParams}:{
         </div>
         <p className="mt-2 text-sm text-body leading-[22px]">{row.source==="GENERAL"?"General placement request":row.jobTitle??"Placement request"}</p>
         <p className="mt-1 text-xs text-muted-foreground leading-5">
-          {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.requestedAt)}
+          {istDateTimeFormatter.format(row.requestedAt)}
         </p>
         <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{row.reason}</p>
         {row.source==="PLACEMENT"&&row.status==="PENDING"&&row.updatedAt ? (

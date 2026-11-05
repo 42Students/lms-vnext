@@ -21,6 +21,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; sharePage?:string|string[]; q?:string|string[] };
 const first = (value: string | string[] | undefined) =>
@@ -126,7 +127,7 @@ export default async function TpoShortlistSharePreviewPage({
         audit:link.audit,
       }))} />
     <div className="min-w-0 space-y-2 border-t border-border pt-3">
-      <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">{shares.total.toLocaleString("en-IN")} matching link(s)</p>
+      <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">{formatNumberIN(shares.total)} matching link(s)</p>
       <Pagination label="Company-share link pages" page={shares.page} pageCount={shares.totalPages}
         hrefForPage={target=>companyShareLinksHref(data.job.id,shareStatus,target,parsed.data.q,data.page)}/>
     </div>

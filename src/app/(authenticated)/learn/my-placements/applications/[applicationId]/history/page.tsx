@@ -10,14 +10,11 @@ import { getOwnLearnerApplicationHistory } from "@/modules/placements/learner-ap
 import { placementApplicationIdSchema } from "@/modules/placements/validation";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function dateInIst(value: Date): string {
   if(!Number.isFinite(value.getTime()))return "Date unavailable";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value) + " IST";
+  return istDateTimeFormatter.format(value) + " IST";
 }
 
 export default async function LearnerApplicationHistoryPage({

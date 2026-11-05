@@ -42,6 +42,8 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateTimeFormatter, istDateFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[];notice?:string|string[];compose?:string|string[]}>};
 
 // Only confirmed persisted delivery starts the 30-second undo window.
@@ -202,15 +204,15 @@ export default async function TpoAnnouncements({searchParams}:Props){
      </svg>:null}
      <Heading level={2} className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] leading-[30px] text-[var(--lms-heading)] md:text-[24px] md:leading-[32px]">{row.title}</Heading>
      {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<StatusBadge tone="info">New</StatusBadge>:null}
-     {tab.data==="yours"&&row.scheduledAt&&new Date(row.scheduledAt)>new Date()?<StatusBadge tone="warning">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</StatusBadge>:null}
+     {tab.data==="yours"&&row.scheduledAt&&new Date(row.scheduledAt)>new Date()?<StatusBadge tone="warning">Scheduled for {istDateTimeFormatter.format(new Date(row.scheduledAt))} IST</StatusBadge>:null}
      {row.expiresAt&&new Date(row.expiresAt)<=new Date()?<StatusBadge tone="neutral">Ended</StatusBadge>:null}
      {row.updatedAt.getTime()>row.createdAt.getTime()+1000?<StatusBadge tone="neutral">Updated</StatusBadge>:null}
     </div>
     <p className="mt-1 text-xs text-muted-foreground leading-5">
       By {row.senderName?.trim()||"Placement team"} ·
-      {" "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}).format(row.createdAt)} IST
+      {" "+createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}).format(row.createdAt)} IST
       {" · For "+({COLLEGE:"whole college",PLACEMENTS:"students in placements",BATCHES:"selected batches",BRANCHES:"selected branches",DRIVE:"selected drive"} as Record<string,string>)[row.audienceKind??"COLLEGE"]}
-      {row.expiresAt&&new Date(row.expiresAt)>new Date()?" · shows until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.expiresAt):""}
+      {row.expiresAt&&new Date(row.expiresAt)>new Date()?" · shows until "+istDateFormatter.format(row.expiresAt):""}
     </p>
     <p className="mt-3 max-w-[72ch] whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
      {tpoNoticeTextParts(row.message).map((part,index)=>part.kind==="link"?

@@ -1,5 +1,6 @@
 import type {MentorGoogleMeetingStatus} from
  "@/modules/projects/mentor-google-calendar-status";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 /** Renders only a status retrieved from the Google Calendar event API using
  * the calendar owner's live consent. No imported text or .ics export enters
@@ -24,9 +25,7 @@ export function MentorGoogleMeetingProviderStatus({
   <p>One-hour provider reminder: {status.reminderOneHour===true?"Verified":
    status.reminderOneHour===false?"Not configured":"Not reported"}.</p>
   <p>Weekly recurrence in Google: {status.recurringWeekly?"Recorded":"Not recorded"}.</p>
-  {status.verifiedAt?<p>Provider event last updated: {new Intl.DateTimeFormat("en-IN",{
-   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-  }).format(new Date(status.verifiedAt))} IST.</p>:null}
+  {status.verifiedAt?<p>Provider event last updated: {istDateTimeFormatter.format(new Date(status.verifiedAt))} IST.</p>:null}
   <p className="text-xs text-muted-foreground">
    These are the provider's recorded invitation responses, not actual
    meeting attendance or the separate in-app project RSVP.

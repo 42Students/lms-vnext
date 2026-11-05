@@ -23,7 +23,7 @@ describe("chat-11 College roster and Faculty attendance source parity",()=>{
  });
  it("FAC-attendance-grades-14 restores legacy attendance subtitle while keeping useful coverage navigation",()=>{
   const ui=src("src/components/attendance/faculty-attendance-workspace.tsx");
-  expect(ui).toContain('<h1 className="sr-only">Attendance</h1>');
+  expect(ui).toContain('<Heading level={1} className="sr-only">Attendance</Heading>');
   expect(ui).toContain('aria-label="Attendance legend"');
   expect(ui).toContain('label="Faculty monthly attendance summary"');
   expect(src("src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx")).toContain("Review session coverage");

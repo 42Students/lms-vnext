@@ -28,6 +28,7 @@ import { FacultyVideoPreview } from "./faculty-video-preview";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateFormatter } from "@/lib/format-date";
 
 type Action = (signal: AbortSignal) => Promise<void>;
 type VideoConfirmation = {kind: "DELETE"; video: ManagedVideo} | {kind: "REPLACE"; video: ManagedVideo; file: File};
@@ -339,7 +340,7 @@ export function FacultyLessonVideoManager({
           <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
            <div className="min-w-0">
             <Heading level={4} size="sm" className="break-words text-foreground leading-[22px]">{video.title} · {formatFileSize(video.sizeBytes)}</Heading>
-            <p className="text-xs text-muted-foreground">Added {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(video.createdAt))}</p>
+            <p className="text-xs text-muted-foreground">Added {istDateFormatter.format(new Date(video.createdAt))}</p>
            </div>
            <div className="flex flex-wrap items-center gap-2">
             <StatusBadge tone={state.tone}>{state.label}</StatusBadge>

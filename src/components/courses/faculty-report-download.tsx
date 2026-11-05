@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { buildFacultyReportPdf, type FacultyReportPdfInput } from "@/modules/courses/faculty-report-pdf";
+import { createDateFormatter } from "@/lib/format-date";
 
 /** An incomplete learner workflow (ungraded or unsubmitted work) is NOT an
  * unavailable roster. Only an explicit failed/partial roster read authorizes
@@ -28,7 +29,7 @@ function reportFileName(props:Props){
   // Never use browser-local dates or generated-at (which may be another month).
   const fallbackMonth=props.title.match(/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})\b/i);
   const explicit=props.attendanceMonth?.match(/^(\d{4})-(0[1-9]|1[0-2])$/);
-  const monthName=explicit?new Intl.DateTimeFormat("en-US",{month:"long",timeZone:"UTC"}).format(
+  const monthName=explicit?createDateFormatter("en-US", {month:"long",timeZone:"UTC"}).format(
     new Date(Date.UTC(Number(explicit[1]),Number(explicit[2])-1,1))):
     fallbackMonth?.[1]??"Unknown";
   const year=explicit?.[1]??fallbackMonth?.[2]??"Unknown";

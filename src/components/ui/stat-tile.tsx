@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 import { isSafeInternalHref } from "@/lib/safe-internal-href";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 export type StatTileProps = {
   label: string;
@@ -13,7 +14,7 @@ export type StatTileProps = {
   children?: ReactNode;
 };
 
-const numberFormat = new Intl.NumberFormat("en-IN");
+const numberFormat = createNumberFormatter("en-IN");
 
 export function StatTile({ label, value, detail, href, className, variant = "default", children }: StatTileProps) {
   const safeHref = href && isSafeInternalHref(href) ? href : null;

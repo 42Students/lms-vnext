@@ -7,6 +7,7 @@ import styles from "./tpo-team-people-prototype.module.css";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
  people:readonly TpoPrototypeTeamPerson[];
@@ -59,9 +60,7 @@ export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
       </dl>
       <Heading level={3} className={styles.eyebrow}>AWAY</Heading>
       <p>{selected.awayUntil?
-        "Away until "+new Intl.DateTimeFormat("en-IN",{
-         timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-        }).format(new Date(selected.awayUntil))+" IST":
+        "Away until "+istDateTimeFormatter.format(new Date(selected.awayUntil))+" IST":
         "No currently recorded away interval"}</p>
       <div className={styles.actions}>
        {selected.membershipId===selfMembershipId?

@@ -18,6 +18,7 @@ import { getCollegeNoticeInbox } from "@/modules/announcements/college-notice-in
 import { collegeNoticeUnreadLabel } from "@/modules/announcements/college-notice-inbox-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function AnnouncementsPage({
   searchParams,
@@ -55,7 +56,7 @@ export default async function AnnouncementsPage({
           : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
-            <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
+            <p className="mt-2 text-xs text-muted-foreground">{istDateTimeFormatter.format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
             {item.actionHref ? <TextLink href={item.actionHref} className="inline-flex min-h-11 items-center md:min-h-9">Open related page</TextLink> : null}
           </li>)}</ul>}
         <TextLink href="/notifications" className="inline-flex min-h-11 items-center md:min-h-9">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</TextLink>
@@ -186,7 +187,7 @@ export default async function AnnouncementsPage({
           : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
-            <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
+            <p className="mt-2 text-xs text-muted-foreground">{istDateTimeFormatter.format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
             {item.actionHref ? <TextLink href={item.actionHref} className="inline-flex min-h-11 items-center md:min-h-9">Open related page</TextLink> : null}
           </li>)}</ul>}
         <TextLink href="/notifications" className="inline-flex min-h-11 items-center md:min-h-9">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</TextLink>

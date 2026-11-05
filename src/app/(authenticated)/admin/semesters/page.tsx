@@ -19,6 +19,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -96,7 +97,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6" aria-label="Semesters">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <Heading level={2} size="base" className="m-0 text-foreground">Semesters</Heading>
-        <span className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} total</span>
+        <span className="text-sm text-muted-foreground">{formatNumberIN(data.total)} total</span>
       </div>
       <div className="border-b border-border pb-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]" aria-label="Search semesters">
@@ -146,7 +147,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     </ButtonLink>
     </div>
     <div className="min-w-0 space-y-3">
-      <p role="status" className="m-0 break-words text-sm text-muted-foreground">Showing {data.total?((data.query.page-1)*data.query.pageSize+1):0}–{Math.min(data.query.page*data.query.pageSize,data.total)} of {data.total.toLocaleString("en-IN")} semesters</p>
+      <p role="status" className="m-0 break-words text-sm text-muted-foreground">Showing {data.total?((data.query.page-1)*data.query.pageSize+1):0}–{Math.min(data.query.page*data.query.pageSize,data.total)} of {formatNumberIN(data.total)} semesters</p>
       <DataTable
         caption="Semesters"
         rows={data.items}

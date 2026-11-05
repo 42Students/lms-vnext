@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 type Message={
  id:string;contentText:string;sequence:number;parentDiscussionId:string|null;
@@ -118,7 +119,7 @@ export function LessonContentDiscussion({contentId,deliveryId}:{
     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
      <span><strong className="font-semibold text-body">{message.authorName??"Class member"}</strong>
       {message.isMine?" (you)":""} · #{message.sequence}</span>
-     <time dateTime={message.createdAt}>{new Date(message.createdAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time>
+     <time dateTime={message.createdAt}>{formatDateTimeIst(new Date(message.createdAt))} IST</time>
     </div>
     {message.parentDiscussionId?<p className="text-xs text-muted-foreground">Reply in this content thread</p>:null}
     <p className="whitespace-pre-wrap break-words text-sm text-body">{message.contentText}</p>

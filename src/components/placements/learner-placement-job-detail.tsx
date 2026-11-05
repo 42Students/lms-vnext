@@ -16,14 +16,14 @@ import {learnerDrivePayFacts} from "@/modules/placements/learner-drive-pay-model
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istIsoDateFormatter, istDayMonthYearFormatter, istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 function relativePostedDate(value:string|null|undefined){
  if(!value||!Number.isFinite(Date.parse(value)))return "Not specified";
  // Compare IST calendar dates, not elapsed 24-hour intervals: a drive
  // posted yesterday at 23:50 IST is still "Yesterday" at 00:10 today.
- const dayFormatter=new Intl.DateTimeFormat("en-CA",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
- });
+ const dayFormatter=istIsoDateFormatter;
  const civilDay=(instant:Date)=>{
   const parts=dayFormatter.formatToParts(instant);
   const part=(key:string)=>Number(parts.find(item=>item.type===key)?.value);
@@ -35,7 +35,7 @@ function relativePostedDate(value:string|null|undefined){
  if(days===1)return "Yesterday";
  if(days<7)return days+" days ago";
  if(days<30)return Math.floor(days/7)+" week"+(days>=14?"s":"")+" ago";
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(posted);
+ return istDayMonthYearFormatter.format(posted);
 }
 function humanize(value: string) {
   return value.toLowerCase().split("_").map((part) =>
@@ -141,11 +141,11 @@ export function LearnerPlacementJobDetail({
             <dd className="mt-1 font-semibold text-foreground">{humanize(item.job.employmentType)}</dd></div>
           <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Compensation</dt>
             <dd className="mt-1 font-semibold text-foreground">{item.job.minimumAnnualCtcInr!==null
-              ? "₹"+(item.job.minimumAnnualCtcInr/100000).toLocaleString("en-IN")+" LPA"
+              ? "₹"+formatNumberIN((item.job.minimumAnnualCtcInr/100000))+" LPA"
               : item.job.maximumAnnualCtcInr!==null
-                ? "Up to ₹"+(item.job.maximumAnnualCtcInr/100000).toLocaleString("en-IN")+" LPA"
+                ? "Up to ₹"+formatNumberIN((item.job.maximumAnnualCtcInr/100000))+" LPA"
                 : item.job.stipendPerMonthInr!=null
-                  ? "₹"+item.job.stipendPerMonthInr.toLocaleString("en-IN")+" / month stipend"
+                  ? "₹"+formatNumberIN(item.job.stipendPerMonthInr)+" / month stipend"
                   : "Not disclosed"}</dd></div>
           <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Posted</dt>
             <dd className="mt-1 font-semibold text-foreground">{relativePostedDate(item.job.publishedAt)}</dd></div>
@@ -175,9 +175,7 @@ export function LearnerPlacementJobDetail({
             {applied.map(row=><li key={row.application!.id} className="break-words">
               <span className="font-semibold">{row.roleOption.title}</span>
               <span className="block text-xs">Reference: APP-{row.application!.id}</span>
-              <span className="block text-xs">Submitted: {new Intl.DateTimeFormat("en-IN",{
-                timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-              }).format(new Date(row.application!.submittedAt))}</span>
+              <span className="block text-xs">Submitted: {istDateTimeFormatter.format(new Date(row.application!.submittedAt))}</span>
             </li>)}
           </ul>
           <div className="mt-4 flex flex-wrap gap-3">

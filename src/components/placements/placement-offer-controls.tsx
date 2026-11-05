@@ -19,6 +19,7 @@ import { TpoOfferLifecyclePanel } from "./tpo-offer-lifecycle-panel";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 type OfferStatus =
   | "ISSUED"
@@ -84,7 +85,7 @@ function humanize(value: string) {
 
 function formatMoney(value: number | null) {
   if (value == null) return null;
-  return new Intl.NumberFormat("en-IN", {
+  return createNumberFormatter("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,

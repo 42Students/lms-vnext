@@ -16,6 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { createDateFormatter } from "@/lib/format-date";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;contentType:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number;visibleToStudents:boolean};
@@ -26,7 +27,7 @@ const MEETING_ZONES = Array.from(new Set([
  "Asia/Kolkata", "UTC",
  ...Intl.supportedValuesOf("timeZone"),
 ])).sort((left, right) => left.localeCompare(right));
-const dateInput=(iso:string|null,zone:MeetingZone="Asia/Kolkata")=>iso?new Intl.DateTimeFormat("sv-SE",{
+const dateInput=(iso:string|null,zone:MeetingZone="Asia/Kolkata")=>iso?createDateFormatter("sv-SE", {
  timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",
  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date(iso)).replace(" ","T"):"";
@@ -35,7 +36,7 @@ const dateInput=(iso:string|null,zone:MeetingZone="Asia/Kolkata")=>iso?new Intl.
 function isoIst(local:string,zone:MeetingZone="Asia/Kolkata"){
  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))
   throw Error("Enter date and time");
- try{new Intl.DateTimeFormat("en-US",{timeZone:zone}).format(new Date());}
+ try{createDateFormatter("en-US", {timeZone:zone}).format(new Date());}
  catch{throw Error("Enter a valid IANA Time Zone");}
  const instant=Date.parse(local+":00Z");
  if(Number.isNaN(instant))throw Error("Enter a valid date and time");

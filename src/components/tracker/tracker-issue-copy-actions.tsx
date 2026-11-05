@@ -1,6 +1,7 @@
 "use client";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type FullIssue={
   publicId:string;status:string;severity:string;environment:string;
@@ -19,9 +20,7 @@ const label=(text:string|null|undefined)=>trim(text).replaceAll("_"," ").toLower
 function issueMarkdown(issue:FullIssue,url:string,attachmentCount:number){
   const location=[issue.page,issue.screen,issue.section].filter(Boolean).join(" · ");
   const date=new Date(issue.createdAt);
-  const when=Number.isNaN(date.getTime())?"":new Intl.DateTimeFormat("en-IN",{
-    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-  }).format(date);
+  const when=Number.isNaN(date.getTime())?"":istDateTimeFormatter.format(date);
   const lines=[
     "## "+issue.publicId+(location?" — "+location:""),"",
     "**Status:** "+label(issue.status)+" · **Severity:** "+label(issue.severity)+

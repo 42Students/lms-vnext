@@ -16,6 +16,7 @@ import {mentorResourceGroupKey,mentorResourceGroupLabel,mentorResourceGroupOrder
 import {mentorResourceEarlierScope,mentorResourceLinkedScopeLabels,mentorResourceMatchesType} from "@/modules/projects/mentor-resource-directory-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDayMonthYearFormatter, istDateTimeFormatter } from "@/lib/format-date";
 
 type ResourceRow={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
@@ -287,16 +288,12 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
        <p className="font-semibold text-foreground">{resource.title}</p>
        {mode==="MENTOR"?<p className="text-xs text-muted-foreground">
          Created by {sourceSharer?.displayName??"unknown recorded creator"} ·
-         {" "}{new Intl.DateTimeFormat("en-IN",{
-           day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
-         }).format(new Date(resource.createdAt))} IST
+         {" "}{istDayMonthYearFormatter.format(new Date(resource.createdAt))} IST
        </p>:null}
        {mode==="MENTOR"?<p className="mt-1 text-xs text-muted-foreground">
          {sourceSharer?.sharedAt?
            <>First shared with team: <time dateTime={sourceSharer.sharedAt}>{
-             new Intl.DateTimeFormat("en-IN",{
-               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-             }).format(new Date(sourceSharer.sharedAt))
+             istDateTimeFormatter.format(new Date(sourceSharer.sharedAt))
            }</time> IST</>:
            "Team sharing time not recorded"}
        </p>:null}
@@ -307,8 +304,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          </p>:null}
        {(rows.length<=12||expanded[resource.id])?<p className="mt-2 text-xs text-muted-foreground leading-[20px]">
         Last updated: <time dateTime={new Date(resource.updatedAt).toISOString()}>
-         {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-           timeZone:"Asia/Kolkata"}).format(new Date(resource.updatedAt))} IST
+         {istDateTimeFormatter.format(new Date(resource.updatedAt))} IST
         </time>
        </p>:null}
       </div>

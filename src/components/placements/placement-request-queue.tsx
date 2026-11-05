@@ -9,6 +9,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export type PlacementRequestQueueItem = {
   id: string;
@@ -52,11 +53,7 @@ function when(value: unknown) {
   }
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return null;
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(date);
+  return istDateTimeFormatter.format(date);
 }
 
 export function PlacementRequestQueue({

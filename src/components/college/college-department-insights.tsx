@@ -13,6 +13,7 @@ import {
 import type { listCollegeDepartmentInsights } from "@/modules/admin-ui/college-department-insights-service";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Data = Awaited<ReturnType<typeof listCollegeDepartmentInsights>>;
 
@@ -76,7 +77,7 @@ export function CollegeDepartmentInsights({
     </section>
     <section aria-label="Department evidence results" className="min-w-0">
       <p className="border-b border-border py-3 text-sm text-muted-foreground">
-        {data.total.toLocaleString("en-IN")} matching department{data.total === 1 ? "" : "s"}
+        {formatNumberIN(data.total)} matching department{data.total === 1 ? "" : "s"}
       </p>
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
         caption={title}

@@ -10,12 +10,13 @@ import type { PlacementReportMetrics } from "@/modules/placements/report-model";
 import type { getPlacementReportWorkspace } from "@/modules/placements/report-service";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 export type PlacementReportWorkspace = Awaited<
   ReturnType<typeof getPlacementReportWorkspace>
 >;
 
-const integerFormat = new Intl.NumberFormat("en-IN");
+const integerFormat = createNumberFormatter("en-IN");
 
 export function reportNumber(value: number) {
   return integerFormat.format(value);
@@ -31,7 +32,7 @@ export function reportCurrency(value: number | null) {
 /** Annual compensation in rupees, displayed in lakhs without double conversion. */
 export function reportLpa(annualCtcInr: number | null) {
   if(annualCtcInr===null||!Number.isFinite(annualCtcInr)||annualCtcInr<=0)return "—";
-  return `₹${new Intl.NumberFormat("en-IN",{maximumFractionDigits:2}).format(annualCtcInr/100000)} LPA`;
+  return `₹${createNumberFormatter("en-IN", {maximumFractionDigits:2}).format(annualCtcInr/100000)} LPA`;
 }
 
 export function reportHref(

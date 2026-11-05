@@ -29,6 +29,8 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type RoundData = Awaited<
   ReturnType<typeof getTpoRoundDriveDay>
@@ -56,11 +58,7 @@ function formatScheduledAt(
     return "Not scheduled";
   }
 
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value) + " IST";
+  return istDateTimeFormatter.format(value) + " IST";
 }
 
 function statusTone(
@@ -434,7 +432,7 @@ export function TpoRoundDriveDayReadOnly({
                <p className="break-words text-lg font-semibold text-foreground">{student.displayName}</p>
                <p className="mt-1 text-xs text-body">
                 {student.rollNumber??"Roll unavailable"} · Slot {student.slotStartsAt?
-                 new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":
+                 createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":
                  "time unavailable"}
                </p>
                <TpoRoundResultRecorder roundId={data.round.id}
@@ -483,7 +481,7 @@ export function TpoRoundDriveDayReadOnly({
            <p className="break-words text-sm font-semibold text-foreground">{student.displayName}</p>
            <p className="mt-1 text-xs text-muted-foreground">
             {student.rollNumber??"Roll not recorded"} · Booked slot:
-            {" "}{student.slotStartsAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":"Not assigned"}
+            {" "}{student.slotStartsAt?createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit"}).format(new Date(student.slotStartsAt))+" IST":"Not assigned"}
            </p>
           </div>
           <TpoRoundCheckIn roundId={data.round.id} applicationId={student.applicationId}

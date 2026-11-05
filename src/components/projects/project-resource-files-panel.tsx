@@ -24,6 +24,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type FileResponse={file:ProjectResourceFile};
 type FileListResponse={files:ProjectResourceFile[]};
@@ -295,7 +296,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                 <p className="mt-1 text-xs font-semibold text-body leading-[20px]">Resource: {resources.find(item=>item.id===file.resourceId)?.title}</p>:null}
               <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                 Last updated: <time dateTime={file.completedAt??file.createdAt}>
-                  {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
+                  {istDateTimeFormatter
                     .format(new Date(file.completedAt??file.createdAt))} IST
                 </time>
               </p>

@@ -8,6 +8,8 @@ import {ErrorState} from "@/components/ui/error-state";
 import {parseAdminSessionHistoryPage} from "@/modules/colleges/admin-session-query-model";
 import {listCollegeAdminHistory} from "@/modules/colleges/admin-session-service";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 export const dynamic="force-dynamic";
 export default async function AdministratorHistoryPage({params,searchParams}:{
  params:Promise<{collegeId:string;userId:string}>;
@@ -25,15 +27,13 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  </div>;
  const data=await listCollegeAdminHistory(context,collegeId,userId,page);
  const base="/admin/colleges/"+encodeURIComponent(collegeId)+"/admins";
- const format=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
- }).format(date);
+ const format=(date:Date)=>istDateTimeFormatter.format(date);
  return <div className="min-w-0 space-y-5">
   <PageHeader title={data.target.name+" · History"}
    description="Recorded identity, college-admin lifecycle and platform actions concerning this administrator in this college. Cross-college and raw event metadata are excluded."
    actions={<PageBackLink href={base} label="College admins"/>}/>
   <p role="status" className="text-sm text-muted-foreground tabular-nums">
-   Page {data.page} · {data.events.length.toLocaleString("en-IN")} recorded event(s) shown{data.truncated?" · more available":""}.
+   Page {data.page} · {formatNumberIN(data.events.length)} recorded event(s) shown{data.truncated?" · more available":""}.
   </p>
   <DataTable<(typeof data.events)[number]> caption="Administrator activity history" rows={data.events} getRowKey={row=>row.id}
     empty={<EmptyState title="No administrator history" description="No matching identity or platform history was recorded for this administrator in the current college."/>}

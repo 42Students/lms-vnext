@@ -17,6 +17,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[];publication?:string|string[]};
 
@@ -86,7 +88,7 @@ export default async function FacultyAssignmentSubmissionsPage({
     </Disclosure>
     <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <p className="text-sm text-body leading-[22px]">
-        {data.total.toLocaleString("en-IN")} matching persisted submission{data.total===1?"":"s"} in this teaching Section
+        {formatNumberIN(data.total)} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
       <div className="min-w-0 space-y-1">
         <ButtonLink variant="secondary" href={csvHref} className="w-full md:w-auto">
@@ -115,9 +117,7 @@ export default async function FacultyAssignmentSubmissionsPage({
             </p>
             {row.submissionType==="FILE"?<FacultySubmissionFileReview submissionId={row.id}/>:null}
             <p className="mt-1 text-xs text-muted-foreground leading-5">
-              Submitted {new Intl.DateTimeFormat("en-IN",{
-                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-              }).format(row.submittedAt)} IST
+              Submitted {istDateTimeFormatter.format(row.submittedAt)} IST
             </p>
           </li>;
         })}

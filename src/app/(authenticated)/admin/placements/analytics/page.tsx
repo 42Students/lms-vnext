@@ -21,6 +21,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
@@ -161,14 +162,14 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   </div>:null}
   <p role="status" className="text-sm text-body">{data.matchingJobCount} matching drives · showing {data.rows.length} across {groups.length} displayed companies{data.truncated?" (row/CSV cap: 5,000 drives)":""}</p>
   {data.truncated?<Banner tone="warning">
-    This report reached its 5,000-drive row and CSV limit. Headline metrics and funnel totals are calculated on the server across all {data.matchingJobCount.toLocaleString("en-IN")} filtered drives. Company subtotals and the CSV cover only the displayed 5,000 rows. Narrow filters for a complete per-company breakdown and export.
+    This report reached its 5,000-drive row and CSV limit. Headline metrics and funnel totals are calculated on the server across all {formatNumberIN(data.matchingJobCount)} filtered drives. Company subtotals and the CSV cover only the displayed 5,000 rows. Narrow filters for a complete per-company breakdown and export.
   </Banner>:null}
   <section aria-label="Hiring metrics" className="min-w-0">
    <Heading level={2} className="sr-only">Hiring metrics</Heading>
    <dl className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
     {metricKeys.map((key,index)=><div key={key} className={"min-w-0 border-r border-b border-[var(--lms-canvas-border)] bg-surface px-3 py-4 last:border-r-0 "+(index===0?"col-span-2 sm:col-span-2":"")}>
      <dt className="text-[13px] font-medium text-muted-foreground">{hiringMetricLabel(key)}</dt>
-     <dd className="mt-2 text-2xl font-semibold tabular-nums text-[var(--lms-heading)]">{totals[key].toLocaleString("en-IN")}</dd>
+     <dd className="mt-2 text-2xl font-semibold tabular-nums text-[var(--lms-heading)]">{formatNumberIN(totals[key])}</dd>
     </div>)}
    </dl>
   </section>
@@ -185,7 +186,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
          {step.percentPrevious}% of {funnel[index-1]?.label??"previous stage"}
         </span>:null}
        </div>
-       <span className="font-semibold tabular-nums">{step.count.toLocaleString("en-IN")}</span>
+       <span className="font-semibold tabular-nums">{formatNumberIN(step.count)}</span>
       </div>
       <MetricBar className="h-6 overflow-hidden rounded bg-muted" role="img"
        label={step.label+": "+step.count+" applications"}
@@ -194,7 +195,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   </section>
   {meanShortlistHours!==null?<div className="w-full border-t border-[var(--lms-canvas-border)] pt-4">
    <p className="text-sm text-muted-foreground">Avg. time to shortlist</p>
-   <p className="mt-2 text-2xl font-semibold tabular-nums">{meanShortlistHours.toLocaleString("en-IN")} <span className="text-sm font-normal">hrs</span></p>
+   <p className="mt-2 text-2xl font-semibold tabular-nums">{formatNumberIN(meanShortlistHours)} <span className="text-sm font-normal">hrs</span></p>
    <p className="mt-1 text-xs text-muted-foreground">Mean of drives with recorded first-shortlist transitions.</p>
   </div>:<p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. A first-shortlist transition is required before this metric can be calculated.</p>}
   <section aria-label="Company-wise Hiring Report" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">

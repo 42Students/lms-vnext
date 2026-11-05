@@ -9,6 +9,7 @@ import {listSuperAdminApplicationStageHistory} from "@/modules/admin-ui/super-ad
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 export default async function SuperAdminApplicationDetail({params}:{params:Promise<{applicationId:string}>}){
  const {applicationId}=await params;
  const context=await getCurrentRequestContext();
@@ -31,7 +32,7 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
        </span>},
        {key:"reason",header:"Reason",mobilePriority:"secondary",cell:event=>event.reason},
        {key:"date",header:"Changed at",mobilePriority:"secondary",cell:event=><time dateTime={event.changedAt.toISOString()}>
-         {event.changedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST
+         {formatDateTimeIst(event.changedAt)} IST
        </time>},
      ] satisfies DataTableColumn<NonNullable<typeof history>[number]>[]}
      rows={history??[]} getRowKey={event=>String(event.id)}

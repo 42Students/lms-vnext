@@ -14,6 +14,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Props={searchParams:Promise<{days?:string|string[];page?:string|string[];q?:string|string[]}>};
 export default async function TpoInterviewReadinessPage({searchParams}:Props){
  const context=await getCurrentRequestContext();
@@ -47,7 +48,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
    {data.rows.map(r=><article key={r.id} className="min-w-0 space-y-2 py-4">
     <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{r.companyName} · {r.jobTitle}</Heading>
     <p className="mt-1 text-sm text-body leading-[22px]">{r.name} · {r.state.replaceAll("_"," ")} · {r.mode??"Mode not recorded"}</p>
-    <p className="mt-1 text-sm text-body leading-[22px]">{r.scheduledAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(r.scheduledAt)) + " IST":"Start not scheduled"} · {r.venue??"Venue not recorded"}</p>
+    <p className="mt-1 text-sm text-body leading-[22px]">{r.scheduledAt?istDateTimeFormatter.format(new Date(r.scheduledAt)) + " IST":"Start not scheduled"} · {r.venue??"Venue not recorded"}</p>
     <p className="mt-1 text-xs text-[var(--lms-muted-text)] leading-5">Duration: {r.durationMinutes??"Not recorded"} minutes</p>
     <TextLink href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm">
       View round and candidate readiness →

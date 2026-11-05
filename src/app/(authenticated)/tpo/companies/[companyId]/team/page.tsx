@@ -8,6 +8,7 @@ import {Alert} from "@/components/ui/alert";
 import {TpoCompanyTeamComposer} from "@/components/tpo/tpo-company-team-composer";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function TpoCompanyTeamPage({params}:{
  params:Promise<{companyId:string}>;
@@ -41,8 +42,7 @@ export default async function TpoCompanyTeamPage({params}:{
      {result.messages.map(message=><li key={message.id} id={"team-message-"+message.id}
       className="min-w-0 py-4">
       <p className="text-xs text-muted-foreground">{message.authorName??"Team member"} ·
-       {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
-         dateStyle:"medium",timeStyle:"short"}).format(message.createdAt)} IST</p>
+       {" "}{istDateTimeFormatter.format(message.createdAt)} IST</p>
       <p className="mt-2 max-w-[72ch] whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
      </li>)}
     </ol>

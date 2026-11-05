@@ -18,6 +18,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { istDateFormatter } from "@/lib/format-date";
 
 function employerWebsiteHost(url:string|null){
  if(!url)return null;
@@ -94,10 +95,7 @@ function historyDate(value: string | null): string {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? "Date unavailable"
-    : new Intl.DateTimeFormat("en-IN", {
-        dateStyle: "medium",
-        timeZone: "Asia/Kolkata",
-      }).format(date);
+    : istDateFormatter.format(date);
 }
 
 export function PlacementEmployerRelationships({
@@ -434,7 +432,7 @@ export function PlacementEmployerRelationships({
                 <div role="cell" className="text-sm text-body">{item.drives??"—"}</div>
                 <div role="cell" className="text-sm text-body">
                   {item.lastActive
-                    ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.lastActive)
+                    ? istDateFormatter.format(item.lastActive)
                     : "Never posted"}
                 </div>
                 <div role="cell" className="min-w-0 space-y-3">

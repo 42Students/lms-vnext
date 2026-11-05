@@ -6,6 +6,7 @@ import {getMentorTaskFeedback} from "@/modules/projects/mentor-task-feedback-ser
 import {mentorTaskFeedbackParamsSchema,taskFeedbackStatusLabel} from "@/modules/projects/mentor-task-feedback-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export default async function Page({params}:{
  params:Promise<{projectId:string;taskId:string}>;
 }){
@@ -21,9 +22,7 @@ export default async function Page({params}:{
     <div className="flex flex-wrap items-center justify-between gap-2">
      <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Version {entry.version} · <StatusBadge tone={entry.status==="APPROVED"?"success":entry.status==="REJECTED"?"error":"neutral"}>{taskFeedbackStatusLabel(entry.status)}</StatusBadge></Heading>
      <span className="text-xs text-muted-foreground">
-      {entry.reviewedAt?new Intl.DateTimeFormat("en-IN",{
-       dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-      }).format(entry.reviewedAt)+" IST":"Review date unavailable"}
+      {entry.reviewedAt?istDateTimeFormatter.format(entry.reviewedAt)+" IST":"Review date unavailable"}
      </span>
     </div>
     <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{entry.feedback}</p>

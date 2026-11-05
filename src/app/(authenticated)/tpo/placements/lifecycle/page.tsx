@@ -27,6 +27,10 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDayMonthYearFormatter, istDateFormatter, formatDateTimeIst } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
+import { formatDateWith } from "@/lib/format-date";
 type Search = { request?:string|string[]; cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];tab?:string|string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];recruiterDriveMode?:string|string[];employmentType?:string|string[];jobTypeLabel?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -180,7 +184,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
          <StatusBadge tone={driveRequestStatusTone(item.status)}>{driveRequestStatusLabel(item.status)}</StatusBadge>
         </div>
         <p className="mt-2 text-sm text-body">{item.recruiterEmail??"Recruiter contact unavailable"}
-         {" · "}Asked {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})
+         {" · "}Asked {istDayMonthYearFormatter
           .format(new Date(item.createdAt))}</p>
         {item.accessEnded?<p className="mt-1 text-xs font-semibold text-warning-text">
          Recruiter access ended. The placement cell must complete the review.</p>:null}
@@ -381,7 +385,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
              "border-l-2 border-primary bg-primary-subtle":"")}>
             <strong className="block break-words text-sm text-foreground">{item.company} · {item.title}</strong>
             <span className="mt-1 block text-xs text-body">{driveRequestStatusLabel(item.status)} ·
-             {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(new Date(item.createdAt))}</span>
+             {" "}{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(new Date(item.createdAt))}</span>
            </TextLink>
           </li>)}</ul>
          </aside>
@@ -390,8 +394,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
            <TextLink href="/tpo/placements/lifecycle?view=REQUESTS" className="inline-flex min-h-11 items-center text-xs md:min-h-9">Back to requests</TextLink>
            <p className="mt-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">A recruiter asked for a drive</p>
            <Heading level={2} size="xl" className="mt-1 break-words text-foreground">{selectedDriveRequest.company} · {selectedDriveRequest.title}</Heading>
-           <p className="mt-1 text-sm text-body">Requested {new Intl.DateTimeFormat("en-IN",{
-            timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(selectedDriveRequest.createdAt))} · {driveRequestStatusLabel(selectedDriveRequest.status)}</p>
+           <p className="mt-1 text-sm text-body">Requested {istDateFormatter.format(new Date(selectedDriveRequest.createdAt))} · {driveRequestStatusLabel(selectedDriveRequest.status)}</p>
           </header>
           <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_270px]">
            <div className="min-w-0 space-y-3">
@@ -512,9 +515,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             const href="/tpo/placements/jobs/"+encodeURIComponent(job.id);
             const next=job.nextRoundAt?new Date(job.nextRoundAt):null;
             const nextEvent=next&&Number.isFinite(next.getTime())?
-             "Next round "+next.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):
+             "Next round "+formatDateWith(next, "en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):
              job.applicationDeadline&&new Date(job.applicationDeadline).getTime()>new Date(data.asOf).getTime()?
-              "Applications close "+new Date(job.applicationDeadline).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}):
+              "Applications close "+formatDateWith(new Date(job.applicationDeadline), "en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short"}):
              job.offersMade>0?"Review recorded offers":"No next event recorded";
             const task=job.status==="PUBLISHED"&&!job.applicationDeadline?
              {label:"Set a deadline",href:href+"/extend-deadline"}:
@@ -527,7 +530,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
              <td className="px-4 py-3 align-top">
               <TextLink href={href} className="inline-flex min-h-11 items-center break-words text-foreground md:min-h-9">{job.company}</TextLink>
               <p className="text-xs leading-5 text-body">{job.title} · {job.minimumAnnualCtcInr!=null?
-               (job.minimumAnnualCtcInr/100000).toLocaleString("en-IN")+" LPA":"CTC not recorded"}</p>
+               formatNumberIN((job.minimumAnnualCtcInr/100000))+" LPA":"CTC not recorded"}</p>
               <p className="mt-1 text-xs text-muted-foreground">{job.jobTypeLabel??tpoDriveEmploymentLabel(job.employmentType)}
                {job.isDream?" · Dream":""}</p>
              </td>
@@ -605,15 +608,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 <td className="px-3 py-3">{job.jobTypeLabel??tpoDriveEmploymentLabel(job.employmentType)}</td>
                 {data.display==="DETAILED"?<td className="px-3 py-3">
                   {job.minimumAnnualCtcInr==null&&job.maximumAnnualCtcInr==null?"Not recorded":
-                   "₹"+(job.minimumAnnualCtcInr!=null?(job.minimumAnnualCtcInr/100000).toLocaleString("en-IN"):"—")+
-                   (job.maximumAnnualCtcInr!=null?"–"+(job.maximumAnnualCtcInr/100000).toLocaleString("en-IN"):"")+" LPA"}
+                   "₹"+(job.minimumAnnualCtcInr!=null?formatNumberIN((job.minimumAnnualCtcInr/100000)):"—")+
+                   (job.maximumAnnualCtcInr!=null?"–"+formatNumberIN((job.maximumAnnualCtcInr/100000)):"")+" LPA"}
                   {job.isDream?<span className="mt-1 block text-xs">Dream</span>:null}
-                  {job.stipendPerMonthInr!=null?<span className="mt-1 block text-xs">₹{job.stipendPerMonthInr.toLocaleString("en-IN")}/month</span>:null}
+                  {job.stipendPerMonthInr!=null?<span className="mt-1 block text-xs">₹{formatNumberIN(job.stipendPerMonthInr)}/month</span>:null}
                 </td>:null}
                 <td className="px-3 py-3 text-right tabular-nums">{job.appliedCount??"Unknown"}</td>
                 <td className="px-3 py-3">
-                  {job.applicationDeadline?new Date(job.applicationDeadline).toLocaleString("en-IN",{
-                    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})+" IST":"No deadline"}
+                  {job.applicationDeadline?formatDateTimeIst(new Date(job.applicationDeadline))+" IST":"No deadline"}
                 </td>
                 <td className="px-3 py-3"><StatusBadge tone={tpoDriveStatusTone(job.status)}>{tpoDriveStatusLabel(job.status)}</StatusBadge></td>
                 <td className="px-3 py-3">

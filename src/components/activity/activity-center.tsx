@@ -6,6 +6,9 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istIsoDateFormatter, istDateTimeFormatter, istTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 /** The raw forensic view is a different presentation from the readable
  * Activity feed. Historical IP/user-agent fields are not collected by this
@@ -122,23 +125,19 @@ export function activityEventSentence(
 }
 
 function activityDay(value:string){
- return new Intl.DateTimeFormat("en-CA",{year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(value));
+ return istIsoDateFormatter.format(new Date(value));
 }
 function activityDayHeading(value:string){
- return new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(value));
+ return createDateFormatter("en-IN", {weekday:"long",day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(value));
 }
 function formatWhen(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  return istDateTimeFormatter.format(new Date(value));
 }
 
 function activityTime(value:string){
  const date=new Date(value);
  return Number.isFinite(date.getTime())?
- new Intl.DateTimeFormat("en-IN",{hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})
+ istTimeFormatter
   .format(date).toUpperCase():"Not recorded";
 }
 function activityActorName(item:ActivityCenterGroup["latest"]){
@@ -332,7 +331,7 @@ export function ActivityCenter({
                      </span>:null}
                     {group.count > 1 ? (
                       <span className="text-xs font-semibold text-muted-foreground">
-                        {group.count.toLocaleString("en-IN")} recorded operations
+                        {formatNumberIN(group.count)} recorded operations
                       </span>
                     ) : null}
                   </div>

@@ -18,6 +18,8 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 export const dynamic="force-dynamic";
 export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
@@ -48,7 +50,7 @@ export default async function CompanySharePage({
     "A code can be emailed only to your verified recruiter account. You can request it once per minute, up to three times per hour.":
     <>To protect applicant privacy, email codes are available only to an authenticated recruiter with access to this company and college. <TextLink href="/login">Sign in</TextLink> with that account, or ask the placement cell for the original code.</>}</p>
    </div>
-   <p className="mt-3 break-words text-xs leading-[20px] text-muted-foreground">The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
+   <p className="mt-3 break-words text-xs leading-[20px] text-muted-foreground">The link works until {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
   </section>
  </main>;
  }
@@ -91,12 +93,12 @@ export default async function CompanySharePage({
   <div className="relative z-[2] min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
   <section aria-label="Shared applicant summary" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-    <Heading level={1} size="xl" className="min-w-0 break-words leading-7 text-[var(--lms-heading)]">{result.total.toLocaleString("en-IN")} applicants for {result.title}</Heading>
+    <Heading level={1} size="xl" className="min-w-0 break-words leading-7 text-[var(--lms-heading)]">{formatNumberIN(result.total)} applicants for {result.title}</Heading>
     <ButtonLink variant="secondary" href={publicApplicantExportHref(token,result.search)}>Download list</ButtonLink>
    </div>
-   {result.shortlistBy?<p role="status" className="flex items-start gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm text-body leading-[22px]"><span aria-hidden="true" className="font-bold text-[var(--lms-info)]">ⓘ</span><span>Please shortlist by {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.shortlistBy))}.</span></p>:null}
-   <p className="break-words text-sm text-muted-foreground leading-[22px]">Shared by the placement cell on {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))} for {result.companyName}. Please do not forward this page. Phone numbers appear only for shortlisted students.</p>
-   <p className="break-words text-xs text-muted-foreground leading-[20px]">The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
+   {result.shortlistBy?<p role="status" className="flex items-start gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm text-body leading-[22px]"><span aria-hidden="true" className="font-bold text-[var(--lms-info)]">ⓘ</span><span>Please shortlist by {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.shortlistBy))}.</span></p>:null}
+   <p className="break-words text-sm text-muted-foreground leading-[22px]">Shared by the placement cell on {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))} for {result.companyName}. Please do not forward this page. Phone numbers appear only for shortlisted students.</p>
+   <p className="break-words text-xs text-muted-foreground leading-[20px]">The link works until {createDateFormatter("en-IN", {day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
    <p className="break-words text-xs text-muted-foreground leading-[20px]">Only the authorized shortlist and selected applicant details are shared. Private notes remain confidential.</p>
   </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
@@ -109,7 +111,7 @@ export default async function CompanySharePage({
     <TextLink href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">Clear</TextLink>
   </form>
   <p role="status" className="text-sm text-body leading-[22px]">
-   {result.total.toLocaleString("en-IN")} applicants · Page {result.page} of {result.totalPages}
+   {formatNumberIN(result.total)} applicants · Page {result.page} of {result.totalPages}
   </p>
   <DataTable columns={tableColumns} rows={result.rows} mobileMode="cards"
    getRowKey={row=>row.applicationId} caption="Shared applicants"

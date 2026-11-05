@@ -16,14 +16,13 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type ActivityRow = {
   id: string; eventType: string; summary: string; occurredAt: Date;
   actorDisplayName: string | null; subjectLabel: string | null; cursorOccurredAt: string;
 };
-const formatter = new Intl.DateTimeFormat("en-IN", {
-  timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
-});
+const formatter = istDateTimeFormatter;
 export function LearnerProjectActivity({ projectId, events, categoryInput, fromInput, toInput, beforeTimeInput, beforeIdInput, hasMore }: {
   projectId: string; events: readonly ActivityRow[]; categoryInput: unknown; fromInput?: unknown; toInput?: unknown; beforeTimeInput?: unknown; beforeIdInput?: unknown; hasMore: boolean;
 }) {

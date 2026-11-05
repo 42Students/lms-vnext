@@ -90,6 +90,7 @@ import type {
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Workspace = Awaited<
   ReturnType<typeof getProjectWorkspaceView>
@@ -193,7 +194,7 @@ function formatWorkspaceTarget(value: string | null | undefined) {
   const date = new Date(Date.UTC(year, month - 1, day));
   if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 ||
       date.getUTCDate() !== day) return value;
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
   }).format(date);
 }
@@ -1284,7 +1285,7 @@ export function ProjectWorkspace({
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
-            const today=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",
+            const today=createDateFormatter("sv-SE", {timeZone:"Asia/Kolkata",
               year:"numeric",month:"2-digit",day:"2-digit"}).format(renderTime);
             const rollup=learnerSprintRollup(workspace.sprints,workspace.tasks,today);
             return <>Sprints completed {rollup.completed} of {rollup.total}

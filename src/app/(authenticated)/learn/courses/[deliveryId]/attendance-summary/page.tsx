@@ -14,12 +14,9 @@ import { courseSectionDeliveryIdSchema } from "@/modules/courses/validation";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
-const formatWhen = (value: Date) => new Intl.DateTimeFormat("en-IN", {
-  dateStyle: "medium",
-  timeStyle: "short",
-  timeZone: "Asia/Kolkata",
-}).format(value) + " IST";
+const formatWhen = (value: Date) => istDateTimeFormatter.format(value) + " IST";
 
 export default async function LearnerCourseAttendanceSummaryPage({
   params,

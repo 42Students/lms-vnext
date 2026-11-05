@@ -11,6 +11,7 @@ import {createInboundMailTriageGate} from "@/modules/inbound-mail/triage-submit-
 import {inboundMailStatusActions,type InboundMailStatus} from "@/modules/inbound-mail/triage-transition-model";
 import { Table } from "@/components/ui/table";
 import { ButtonLink } from "@/components/ui/button-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 /** Inbox list data is a preview, never a full-message permission grant.
  * The full plain-text body is fetched only after opening the global-SA drawer. */
@@ -24,7 +25,7 @@ type Detail=InboundMailRow;
 function receivedLabel(raw:string){
  const date=new Date(raw);
  if(!Number.isFinite(date.getTime()))return "Date unavailable";
- const parts=new Intl.DateTimeFormat("en-GB",{
+ const parts=createDateFormatter("en-GB", {
   timeZone:"Asia/Kolkata",day:"numeric",month:"short",
   hour:"numeric",minute:"2-digit",hour12:true,
  }).formatToParts(date);

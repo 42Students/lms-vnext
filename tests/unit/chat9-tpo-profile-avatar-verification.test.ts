@@ -12,9 +12,11 @@ describe("TPO profile photo: legacy square avatar with accessible editing",()=>{
  });
  it("provides keyboard-accessible 44px editing and image-link controls",()=>{
   expect(component).toContain('aria-label="Change profile photo"');
-  expect(component).toContain("flex h-11 w-11 items-center justify-center rounded-full");
-  expect(component).toContain("min-h-11 items-center text-left");
-  expect(component).toContain("focus-ring");
+  expect(component).toContain('variant="ghost" size="icon"');
+  expect(component).toContain('className="absolute -bottom-1 -right-1"');
+  expect(readFileSync("src/components/ui/button.tsx","utf8")).toContain("max-md:min-h-11 max-md:min-w-11");
+  expect(component).toContain('variant="link" size="inline" type="button" className="text-left"');
+  expect(readFileSync("src/components/ui/button.tsx","utf8")).toContain("focus-ring");
   expect(component).toContain('type="file" accept="image/png,image/jpeg,image/webp"');
  });
  it("does not publish an unscanned upload or drop optimistic version checking",()=>{

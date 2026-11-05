@@ -13,12 +13,11 @@ import {getCollegeCorrectionRead} from "@/modules/attendance/college-correction-
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Search=Record<string,string|string[]|undefined>;
 function when(value:string) {
-  return new Intl.DateTimeFormat("en-IN",{
-    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-  }).format(new Date(value));
+  return istDateTimeFormatter.format(new Date(value));
 }
 
 export default async function CollegeCorrectionReadPage({searchParams}:{searchParams:Promise<Search>}) {

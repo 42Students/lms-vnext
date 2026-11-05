@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 type InboxRow={id:string;jobId:string|null;jobTitle:string;unread:number;
  preview:{text:string}|null;lastMessageAt:Date|null;createdAt:Date};
@@ -18,7 +19,7 @@ type Props={collegeId:string;choices:readonly {collegeId:string;collegeName:stri
  selectedHistoryUnavailable:boolean;generalPreviewUnavailable:boolean;
  decisionNoticesUnavailable:boolean;decisionNotices:readonly DecisionNotice[];
  q:string;total:number;pages:number;unreadTotal:number};
-const formatted=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
+const formatted=(value:Date)=>createDateFormatter("en-IN", {
  timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
  hour12:true,
 }).format(value);

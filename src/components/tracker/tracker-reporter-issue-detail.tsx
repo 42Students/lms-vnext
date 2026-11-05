@@ -13,11 +13,10 @@ import {
 import type {RequestContext} from "@/modules/identity/context";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function localDate(value:Date){
-  return new Intl.DateTimeFormat("en-IN",{
-    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-  }).format(value);
+  return istDateTimeFormatter.format(value);
 }
 
 /** A public-looking URL is NOT public authorization. Only the persisted

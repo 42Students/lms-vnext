@@ -5,6 +5,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type TpoNoticePrototypeListRow={
  id:string;title:string;senderName:string|null;createdAt:string;
@@ -13,7 +14,7 @@ export type TpoNoticePrototypeListRow={
 };
 function formatDate(value:string){
  const date=new Date(value);
- return Number.isFinite(date.getTime())?new Intl.DateTimeFormat("en-IN",{
+ return Number.isFinite(date.getTime())?createDateFormatter("en-IN", {
   timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
  }).format(date):"Date unavailable";
 }

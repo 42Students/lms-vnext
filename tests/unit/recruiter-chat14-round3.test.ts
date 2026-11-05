@@ -7,7 +7,7 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
   const code=job();
   expect(code).toContain("safeDriveReturnTo(");
   expect(code).toContain('← All drives');
-  expect(code).toContain('<h1 className=');
+  expect(code).toContain('<Heading level={1}');
   expect(code).toContain('{workspace.job.title}');
   expect(code).toContain('"Sent for review"');
   expect(code).toContain("applicants.counts.all+");
@@ -33,7 +33,7 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
   expect(code).toContain("<HrJobOffersGrid");
   expect(code).toContain("recruiterOfferStatusLabel(offer.status)");
   expect(code).toContain("(offer.annualCtcInr/100000)");
-  expect(code).toContain('toLocaleString("en-IN",{maximumFractionDigits:2})');
+  expect(code).toContain('formatNumberIN((offer.annualCtcInr/100000), {maximumFractionDigits:2})');
  });
  it("REC-home-drives-53 refreshes a stale recruiter drive after tab focus without hiding data errors",()=>{
   const component=read("src/components/hr/recruiter-drive-focus-refresh.tsx");

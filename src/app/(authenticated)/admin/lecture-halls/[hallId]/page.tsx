@@ -14,13 +14,12 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic";
 
 function inIst(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  return istDateTimeFormatter.format(new Date(value));
 }
 
 /** SA-academics-people-26: scoped room schedule view, never College Admin booking actions. */

@@ -18,6 +18,8 @@ import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Params={importance?:string|string[];view?:string|string[];window?:string|string[];order?:string|string[];page?:string|string[];pageSize?:string|string[];meetingKey?:string|string[];meetingPage?:string|string[]};
 
@@ -122,7 +124,7 @@ export default async function MentorProjectActivityHistoryPage({
           className="inline-flex min-h-11 items-center px-3 py-2 text-sm md:min-h-[var(--lms-control-height)]">Clear</TextLink>:null}
       </form></FilterBar>
       <p className="text-sm text-body leading-[22px]">
-        {data.total.toLocaleString("en-IN")} matching persisted event{data.total===1?"":"s"}
+        {formatNumberIN(data.total)} matching persisted event{data.total===1?"":"s"}
       </p>
       {data.query.view!=="MEETINGS"?<p className="text-sm text-body">
         Project lifecycle and audit events are separate from the authoritative
@@ -159,9 +161,7 @@ export default async function MentorProjectActivityHistoryPage({
               <span className="text-xs text-body">{event.importance}</span>
             </div>
             <time dateTime={event.occurredAt.toISOString()} className="mt-2 block text-xs text-muted-foreground">
-              {new Intl.DateTimeFormat("en-IN",{
-                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-              }).format(event.occurredAt)} IST
+              {istDateTimeFormatter.format(event.occurredAt)} IST
             </time>
           </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Project activity history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorProjectActivityHref({...data.query,page})}/>:null}
@@ -201,8 +201,7 @@ export default async function MentorProjectActivityHistoryPage({
               <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
                 <strong>{item.actionType.replaceAll("_"," ")} · {item.meetingKey}</strong>
                 <time dateTime={item.createdAt} className="text-xs text-muted-foreground">
-                  {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-                    timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} IST
+                  {istDateTimeFormatter.format(new Date(item.createdAt))} IST
                 </time>
               </div>
               <p className="text-xs text-body">By {item.actorName}

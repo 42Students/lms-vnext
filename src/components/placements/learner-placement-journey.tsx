@@ -4,6 +4,8 @@ import {ownApplicationJobHref} from "@/modules/placements/learner-application-jo
 import {learnerApplicationCardActivity} from "@/modules/placements/learner-application-card-activity-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type LearnerPlacementJourneyItem = {
   applicationId: string;
@@ -83,16 +85,16 @@ function statusTone(
 /** Legacy application rows use D MMM; dispute/opt-out deadlines include time. */
 function formatWhen(value: Date | null) {
   if (!value) return null;
-  return new Intl.DateTimeFormat("en-GB", {
+  return createDateFormatter("en-GB", {
     day: "numeric", month: "short", timeZone: "Asia/Kolkata",
   }).format(value);
 }
 
 function formatOptOutDeadline(value: Date) {
   const timeZone = "Asia/Kolkata";
-  const weekday = new Intl.DateTimeFormat("en-GB", { timeZone, weekday: "short" }).format(value);
+  const weekday = createDateFormatter("en-GB", { timeZone, weekday: "short" }).format(value);
   const date = formatWhen(value);
-  const parts = new Intl.DateTimeFormat("en-US", {
+  const parts = createDateFormatter("en-US", {
     timeZone, hour: "numeric", minute: "2-digit", hour12: true,
   }).formatToParts(value);
   const part = (kind: Intl.DateTimeFormatPartTypes) =>
@@ -293,7 +295,7 @@ export function LearnerPlacementJourney({
                       <div>
                         <p className="font-semibold text-foreground">{round.roundName}</p>
                         <p className="text-xs text-body">{round.scheduledAt
-                          ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(round.scheduledAt))+" IST"
+                          ? istDateTimeFormatter.format(new Date(round.scheduledAt))+" IST"
                           : "Date to be told"} · {round.mode.replaceAll("_"," ").toLowerCase()}</p>
                         <p className="text-xs text-body">{round.venue??"Venue to be told"}
                           {round.isRescheduled?" · You asked to reschedule":""}</p>

@@ -6,6 +6,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 export type TpoCampaignSidebarRow={
  campaign_id:string;title:string;subject:string;status:string;
  created_at:Date|string;createdByUserId:string;
@@ -19,7 +20,7 @@ function statusLabel(status:string){
 }
 function calendarLabel(date:Date|string){
  const when=new Date(date);
- return Number.isFinite(when.getTime())?new Intl.DateTimeFormat("en-IN",{
+ return Number.isFinite(when.getTime())?createDateFormatter("en-IN", {
   timeZone:"Asia/Kolkata",day:"numeric",month:"short",
  }).format(when):"Date unavailable";
 }

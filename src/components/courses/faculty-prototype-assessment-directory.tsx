@@ -8,14 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istWeekdayDayMonthFormatter } from "@/lib/format-date";
 export type AssessmentRow={
  key:string;kind:"Assignment"|"Quiz";deliveryId:string;title:string;courseCode:string;sectionName:string;
  dueAt:string|null;status:string;handedIn:number;eligible:number|null;toGrade:number|null;
  primaryHref:string;reportHref:string;editorHref:string;
 };
-const dateLabel=(value:string|null)=>value?new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
-}).format(new Date(value)):"Not set";
+const dateLabel=(value:string|null)=>value?istWeekdayDayMonthFormatter.format(new Date(value)):"Not set";
 type AssessmentKindFilter="all"|"assignment"|"quiz";
 export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialKind="all"}:{rows:readonly AssessmentRow[];
  lessonChoices:Awaited<ReturnType<typeof getFacultyAssessmentOverview>>["lessonChoices"];

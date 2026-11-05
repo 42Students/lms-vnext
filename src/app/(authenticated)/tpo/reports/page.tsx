@@ -24,6 +24,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -260,11 +261,11 @@ export default async function TpoReportsPage({
        </div>
        <div className="grid overflow-hidden rounded-xl border border-border bg-surface sm:grid-cols-2 xl:grid-cols-4">
         {([
-         {label:"Placed",value:placed.toLocaleString("en-IN"),detail:"of "+looking.toLocaleString("en-IN")+" registered · "+percent(placed)+"%",href:"/tpo/reports/placement-summary"},
-         {label:"Offers",value:workspace.report.metrics.offers.toLocaleString("en-IN"),detail:workspace.report.metrics.acceptedOffers+" accepted offers",href:"/tpo/reports/offers-acceptance"},
+         {label:"Placed",value:formatNumberIN(placed),detail:"of "+formatNumberIN(looking)+" registered · "+percent(placed)+"%",href:"/tpo/reports/placement-summary"},
+         {label:"Offers",value:formatNumberIN(workspace.report.metrics.offers),detail:workspace.report.metrics.acceptedOffers+" accepted offers",href:"/tpo/reports/offers-acceptance"},
          {label:"Average package",value:workspace.report.metrics.averagePackageInr!==null?
            (workspace.report.metrics.averagePackageInr/100000).toFixed(1)+" LPA":"—",detail:"Accepted full-time packages only",href:"/tpo/reports/ctc"},
-         {label:"Not placed yet",value:Math.max(0,looking-placed).toLocaleString("en-IN"),detail:"Of the registered placement pool",href:"/tpo/reports/unplaced"},
+         {label:"Not placed yet",value:formatNumberIN(Math.max(0,looking-placed)),detail:"Of the registered placement pool",href:"/tpo/reports/unplaced"},
         ] as const).map(card=><TextLink variant="bare" key={card.label} href={reportHref(card.href,workspace)}
          className="min-w-0 border-b border-border p-4 last:border-0 hover:bg-[color:var(--lms-primary-subtle)] sm:odd:border-r xl:border-b-0 xl:border-r xl:last:border-r-0">
          <strong className="block text-2xl font-bold tabular-nums text-heading">{card.value}</strong>
@@ -313,35 +314,35 @@ export default async function TpoReportsPage({
          <TextLink variant="bare" href={reportHref("/tpo/reports/by-branch",workspace)} aria-label={"Looking for a job: "+looking}
           className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="block text-sm text-body">Looking for a job</span>
-          <strong className="mt-1 block text-2xl tabular-nums text-link">{looking.toLocaleString("en-IN")}</strong>
+          <strong className="mt-1 block text-2xl tabular-nums text-link">{formatNumberIN(looking)}</strong>
           <span className="text-xs text-muted-foreground">100% baseline</span>
          </TextLink>
         </li>
         <li className="min-w-0">
          <TextLink href={reportHref("/tpo/reports/unplaced",workspace)}
           className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs sm:max-w-[144px] md:min-h-9">
-          <span>Unplaced</span><strong className="tabular-nums">{Math.max(0,looking-placed).toLocaleString("en-IN")}</strong><span aria-hidden="true">→</span>
+          <span>Unplaced</span><strong className="tabular-nums">{formatNumberIN(Math.max(0,looking-placed))}</strong><span aria-hidden="true">→</span>
          </TextLink>
         </li>
         <li className="min-w-0">
          <TextLink variant="bare" href={reportHref("/tpo/reports/placement-summary",workspace)} aria-label={"Placed: "+placed+"; "+percent(placed)+" percent"}
           className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="block text-sm text-body">Placed</span>
-          <strong className="mt-1 block text-2xl tabular-nums text-link">{placed.toLocaleString("en-IN")}</strong>
+          <strong className="mt-1 block text-2xl tabular-nums text-link">{formatNumberIN(placed)}</strong>
           <span className="text-xs text-muted-foreground">{percent(placed)}% of looking</span>
          </TextLink>
         </li>
         <li className="min-w-0">
          <TextLink href={reportHref("/tpo/reports/offers-acceptance",workspace)}
           className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs sm:max-w-[144px] md:min-h-9">
-          <span>Not accepted yet</span><strong className="tabular-nums">{Math.max(0,placed-accepted).toLocaleString("en-IN")}</strong><span aria-hidden="true">→</span>
+          <span>Not accepted yet</span><strong className="tabular-nums">{formatNumberIN(Math.max(0,placed-accepted))}</strong><span aria-hidden="true">→</span>
          </TextLink>
         </li>
         <li className="min-w-0">
          <TextLink variant="bare" href={reportHref("/tpo/reports/offers-acceptance",workspace)} aria-label={"Accepted: "+accepted+"; "+percent(accepted)+" percent"}
           className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="block text-sm text-body">Accepted</span>
-          <strong className="mt-1 block text-2xl tabular-nums text-link">{accepted.toLocaleString("en-IN")}</strong>
+          <strong className="mt-1 block text-2xl tabular-nums text-link">{formatNumberIN(accepted)}</strong>
           <span className="text-xs text-muted-foreground">{percent(accepted)}% of looking</span>
          </TextLink>
         </li>

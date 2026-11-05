@@ -11,6 +11,7 @@ import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function TpoDriveDiscussion({params,searchParams}:{
  params:Promise<{jobId:string}>;
@@ -58,7 +59,7 @@ export default async function TpoDriveDiscussion({params,searchParams}:{
          className="min-w-0 rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-sm">
          <p className="mb-1 text-xs font-semibold text-body">
           {message.senderType==="RECRUITER"?(thread.recruiterName||"Recruiter"):"Placement team"}
-          {" · "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(message.createdAt))} IST
+          {" · "}{istDateTimeFormatter.format(new Date(message.createdAt))} IST
          </p>
          {message.event?<p className="text-xs text-muted-foreground">{message.event.replaceAll("_"," ")}</p>:null}
          <p className="whitespace-pre-wrap break-words">{message.body.length>500?message.body.slice(0,500)+"…":message.body}</p>
@@ -67,7 +68,7 @@ export default async function TpoDriveDiscussion({params,searchParams}:{
       </div>:thread.lastPreview?<p className="break-words text-sm leading-[22px] text-body">{thread.lastPreview}</p>:null}
      <p className="break-words text-sm leading-[22px] text-body">{thread.count} recorded message(s) · {thread.unread} unread recruiter message(s)</p>
      <p className="break-words text-xs leading-5 text-muted-foreground">{thread.latestAt?
-      new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(thread.latestAt)+" IST":
+      istDateTimeFormatter.format(thread.latestAt)+" IST":
       "No messages yet"}</p>
     </div>
     <ButtonLink variant="secondary" href={"/tpo/messages/"+encodeURIComponent(thread.id)}

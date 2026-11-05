@@ -36,6 +36,8 @@ import {
 import {SegmentedControl} from "@/components/ui/segmented-control";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter, istTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Course = {
   deliveryId: string;
@@ -103,28 +105,21 @@ function learnerName(learner: Learner) {
 }
 
 function dateTime(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+  return istDateTimeFormatter.format(new Date(value));
 }
 
 function legacySessionDate(value: string) {
-  return new Intl.DateTimeFormat("en-GB", {
+  return createDateFormatter("en-GB", {
     timeZone: "Asia/Kolkata", weekday: "short", day: "numeric", month: "short", year: "numeric",
   }).format(new Date(value));
 }
 function legacyClockTime(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
+  return createDateFormatter("en-US", {
     timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true,
   }).format(new Date(value));
 }
 function sessionTime(value: Session) {
-  return `${dateTime(value.startsAt)} – ${new Intl.DateTimeFormat(
-    "en-IN",
-    { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit" },
-  ).format(new Date(value.endsAt))}`;
+  return `${dateTime(value.startsAt)} – ${createDateFormatter("en-IN", { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit" }).format(new Date(value.endsAt))}`;
 }
 
 async function errorMessage(
@@ -169,7 +164,7 @@ export function FacultyAttendanceWorkspace({
   const [month, setMonth] = useState(
     () => indiaAttendanceMonthKey(new Date()),
   );
-  const monthLabel = new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", month: "long", year: "numeric" })
+  const monthLabel = createDateFormatter("en-IN", { timeZone: "Asia/Kolkata", month: "long", year: "numeric" })
     .format(new Date(month + "-01T12:00:00+05:30"));
   const [selectedSessionId, setSelectedSessionId] =
     useState(selection);
@@ -816,7 +811,7 @@ export function FacultyAttendanceWorkspace({
                 <caption className="sr-only">Attendance by student and day for {monthLabel}</caption>
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
                   <tr><th scope="col" aria-label="Student name" className="sticky left-0 z-(--lms-z-raised) bg-[var(--lms-table-header)] px-3 py-2" />
-                    {calendarDays.map(day=><th scope="col" key={day.dayKey+"-weekday"} className={"min-w-16 px-2 py-2 text-center " + (new Date(day.dayKey + "T12:00:00+05:30").getUTCDay() === 0 ? "text-error" : "")} aria-label={day.dayKey}>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"})
+                    {calendarDays.map(day=><th scope="col" key={day.dayKey+"-weekday"} className={"min-w-16 px-2 py-2 text-center " + (new Date(day.dayKey + "T12:00:00+05:30").getUTCDay() === 0 ? "text-error" : "")} aria-label={day.dayKey}>{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short"})
                       .format(new Date(day.dayKey+"T12:00:00+05:30")).slice(0,1)}</th>)}
                   </tr>
                   <tr><th scope="col" className="sticky left-0 z-(--lms-z-raised) bg-[var(--lms-table-header)] px-3 py-2">Student Name</th>
@@ -890,9 +885,7 @@ export function FacultyAttendanceWorkspace({
                                       const code = new Date(session.startsAt).getTime() > clock.getTime() ? "S" :
                                         record?.status === "ABSENT" ? "A" :
                                         record || session.attendanceStatus === "MARKED" ? "P" : "N";
-                                      return <tr key={session.id}><td className="pr-3">{new Intl.DateTimeFormat("en-IN", {
-                                        timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
-                                      }).format(new Date(session.startsAt))}</td><td>{code}</td></tr>;
+                                      return <tr key={session.id}><td className="pr-3">{istTimeFormatter.format(new Date(session.startsAt))}</td><td>{code}</td></tr>;
                                     })}</tbody>
                                   </Table>
                                 </div>

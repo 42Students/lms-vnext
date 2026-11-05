@@ -9,6 +9,7 @@ import { Button } from "./button";
 import { PopoverPanel } from "./popover";
 import { CalendarGrid } from "./calendar-grid";
 import { cx } from "@/lib/class-names";
+import { formatDateWith } from "@/lib/format-date";
 
 export type DateInputProps = Omit<ComponentPropsWithRef<"input">, "type"> & {
   mode?: "date" | "time" | "datetime-local" | "month" | "week";
@@ -356,7 +357,7 @@ export function DateInput({
                 const maxValue = mode === "datetime-local" ? dateTimeMax.slice(0, 10) : String(props.max ?? "");
                 const limited = Boolean((minValue && candidate < minValue) || (maxValue && candidate > maxValue)) || !calendarStepAllowed(candidate);
                 return <Button key={iso} type="button" variant="ghost" size="icon-sm"
-                  data-calendar-day={iso} aria-label={`${day.toLocaleDateString(undefined, { dateStyle: "full" })}${weekMode ? `, ${candidate}` : ""}`}
+                  data-calendar-day={iso} aria-label={`${formatDateWith(day, "en-IN", { dateStyle: "full" })}${weekMode ? `, ${candidate}` : ""}`}
                   aria-current={iso === today ? "date" : undefined} aria-pressed={mode === "datetime-local" ? draftDate === candidate : selected === candidate}
                   disabled={Boolean(limited)}
                   data-outside={outsideMonth}

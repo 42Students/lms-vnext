@@ -22,6 +22,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 const statuses = ["ALL", "ACTIVE", "ARCHIVED"] as const;
 const pageUrl = (query: CollegeClassQuery) => collegeStructureHref("CLASSES", query).replace("/college/classes", "/admin/classes");
@@ -111,7 +112,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           {recurring?<CollegeRecurringEntry options={{...recurring,
             classes:recurring.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}}/>:null}
           {exportHref?<TextLink href={exportHref} className="inline-flex min-h-11 items-center md:min-h-9">Export classes.csv</TextLink>:null}
-          <span className="text-xs tabular-nums text-muted-foreground">{data.total.toLocaleString("en-IN")} results</span>
+          <span className="text-xs tabular-nums text-muted-foreground">{formatNumberIN(data.total)} results</span>
         </div>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
         <div className="min-w-0 overflow-x-auto" role="region" aria-label="Existing classes horizontal scroll" tabIndex={0}>
@@ -144,7 +145,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           ]} />
         </div>
         <nav aria-label="Class pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
-          <span role="status" aria-live="polite">{data.items.length} of {data.total.toLocaleString("en-IN")} results · Page {data.query.page} of {data.totalPages}</span>
+          <span role="status" aria-live="polite">{data.items.length} of {formatNumberIN(data.total)} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
             {data.query.page>1?<ButtonLink variant="secondary" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</ButtonLink>:null}
             {data.query.page<data.totalPages?<ButtonLink variant="secondary" href={pageUrl({...data.query,page:data.query.page+1})}>Next</ButtonLink>:null}

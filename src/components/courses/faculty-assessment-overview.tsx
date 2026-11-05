@@ -25,6 +25,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
 type Assessment = Overview["assignments"][number] | Overview["quizzes"][number];
@@ -79,9 +80,7 @@ export function FacultyAssessmentOverview({
     const value = new Date(date);
     return Number.isNaN(value.getTime())
       ? "Date unavailable"
-      : new Intl.DateTimeFormat("en-IN", {
-          timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
-        }).format(value);
+      : istDateTimeFormatter.format(value);
   };
 
   const assignmentsHeader=kind==="ASSIGNMENT"?

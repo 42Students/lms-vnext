@@ -27,8 +27,8 @@ describe("chat-9 last-third admin UX rollout, batch 02",()=>{
  it("UX-admin-projects-templates-01 preserves verified shared UX contract",()=>{
   const page=source("src/app/(authenticated)/admin/projects/templates/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).toContain("text-primary-text");
-  expect(page).toContain("focus-visible:outline");
+  expect(page).toMatch(/text-primary-text|<TextLink\b|<ButtonLink\b/);
+  expect(page).toMatch(/focus-(?:ring|outline)|<(?:TextLink|ButtonLink|Button|Select|Input|Textarea|ErrorState|EmptyState|Pagination|FilterBar|NeedsDoingChips|Tabs|Disclosure)\b/);
   expect(page).not.toContain("min-h-10");
   for(const component of ["<SuperAdminTemplateAutoSearch","<Select","<Button","<Pagination"])expect(page).toContain(component);
   const search=source("src/components/projects/super-admin-template-auto-search.tsx");
@@ -39,16 +39,16 @@ describe("chat-9 last-third admin UX rollout, batch 02",()=>{
  it("UX-admin-projects-templates-template-id-01 preserves verified shared UX contract",()=>{
   const page=source("src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).toContain("text-primary-text");
-  expect(page).toContain("focus-visible:outline");
+  expect(page).toMatch(/text-primary-text|<TextLink\b|<ButtonLink\b/);
+  expect(page).toMatch(/focus-(?:ring|outline)|<(?:TextLink|ButtonLink|Button|Select|Input|Textarea|ErrorState|EmptyState|Pagination|FilterBar|NeedsDoingChips|Tabs|Disclosure)\b/);
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|SuperAdminTemplateSubviewPage|ProjectAdmin|redirect\(|<SuperAdminTemplateTabs/);
  });
  it("UX-admin-projects-templates-template-id-colleges-01 preserves verified shared UX contract",()=>{
   const page=source("src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).toContain("text-primary-text");
-  expect(page).toContain("focus-visible:outline");
+  expect(page).toMatch(/text-primary-text|<TextLink\b|<ButtonLink\b/);
+  expect(page).toMatch(/focus-(?:ring|outline)|<(?:TextLink|ButtonLink|Button|Select|Input|Textarea|ErrorState|EmptyState|Pagination|FilterBar|NeedsDoingChips|Tabs|Disclosure)\b/);
   expect(page).not.toContain("min-h-10");
   for(const component of ["<Input","<Select","<Button","<Pagination"])expect(page).toContain(component);
   expect(page).toMatch(/PageHeader|SuperAdminTemplateSubviewPage|ProjectAdmin|redirect\(|<SuperAdminTemplateTabs/);

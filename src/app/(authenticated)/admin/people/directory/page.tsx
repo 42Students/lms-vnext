@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 export default async function SuperAdminUserDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
@@ -158,7 +159,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   </form>
   <div className="flex flex-wrap items-end justify-between gap-3">
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
-    {data.total.toLocaleString("en-IN")} matching memberships · page {visiblePage} of {totalPages} · {size} per page
+    {formatNumberIN(data.total)} matching memberships · page {visiblePage} of {totalPages} · {size} per page
    </p>
    <form method="get" action="/admin/people/directory" className="flex items-end gap-2">
     {data.query.tab!=="ALL"?<input type="hidden" name="tab" value={data.query.tab}/>:null}

@@ -13,6 +13,7 @@ import {afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements
 import {TpoRequestDecisionControl} from "@/components/placements/tpo-request-decision-control";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
 const tabs:readonly Tab[]=["Profile","Placement","Requests","Notes","History"];
@@ -71,7 +72,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  // Only a learner identity change starts a fresh load; tab changes are user-initiated.
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[student.membershipId]);
- const when=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
+ const when=(value:string)=>istDateTimeFormatter.format(new Date(value));
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
  const attention=[
   !student.registeredForPlacements?"Placement registration not recorded":null,

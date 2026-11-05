@@ -1,6 +1,7 @@
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istIsoDateFormatter, istWeekdayDayMonthFormatter, istTimeFormatter } from "@/lib/format-date";
 
 export type TpoHomeFocusNeed = {
  type:string; priority:number; title:string; count:number; link:string;
@@ -8,19 +9,13 @@ export type TpoHomeFocusNeed = {
 export type TpoHomeFocusEvent = {startsAt:Date;title:string};
 
 function istDay(value:Date){
- return new Intl.DateTimeFormat("en-CA",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
- }).format(value);
+ return istIsoDateFormatter.format(value);
 }
 function dayLabel(value:Date){
- return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
- }).format(value);
+ return istWeekdayDayMonthFormatter.format(value);
 }
 function timeLabel(value:Date){
- return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
- }).format(value);
+ return istTimeFormatter.format(value);
 }
 function needCategory(type:string){
  if(/TEAM/.test(type))return "TEAM";

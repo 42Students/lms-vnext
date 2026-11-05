@@ -16,6 +16,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function RecruiterDriveProposalHistory({
  searchParams,
@@ -65,7 +67,7 @@ export default async function RecruiterDriveProposalHistory({
      Export this page (summary CSV)
     </TextLink>:null}
    <p role="status" className="max-w-2xl text-sm text-body leading-[1.6]">
-    {data.total.toLocaleString("en-IN")} recorded discussion proposals · Page {data.page} of {data.pages}.
+    {formatNumberIN(data.total)} recorded discussion proposals · Page {data.page} of {data.pages}.
     These are not submitted approval requests.
    </p>
    {data.items.length?<>
@@ -73,9 +75,7 @@ export default async function RecruiterDriveProposalHistory({
       <HrProposalHistoryGrid scopeKey={context.user.id+":"+(data.collegeId??"")}
        rows={data.items.map(row=>({
         id:row.id,title:row.title,reference:row.referenceId,
-        sentAt:new Intl.DateTimeFormat("en-IN",{
-          dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-        }).format(row.createdAt)+" IST",
+        sentAt:istDateTimeFormatter.format(row.createdAt)+" IST",
         sentAtMs:row.createdAt.getTime(),
         status:"Discussion only — not an approval request",
         threadHref:"/hr/conversations/"+row.threadId,
@@ -90,9 +90,7 @@ export default async function RecruiterDriveProposalHistory({
       Proposal reference: {row.referenceId}
      </p>
      <p className="mt-1 text-xs text-muted-foreground leading-5">
-      Sent for discussion on {new Intl.DateTimeFormat("en-IN",{
-        dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-      }).format(row.createdAt)} IST
+      Sent for discussion on {istDateTimeFormatter.format(row.createdAt)} IST
      </p>
      <p className="mt-2 text-xs text-[var(--lms-muted-text)] leading-5">No approval or drive publication is implied.</p>
     </li>)}

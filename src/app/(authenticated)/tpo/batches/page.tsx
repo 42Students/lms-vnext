@@ -37,6 +37,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 export const dynamic="force-dynamic";
 
 export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[];facetState?:string|string[];facetProgram?:string|string[];facetDepartment?:string|string[];facetFinalYear?:string|string[];selectedBatch?:string|string[]}>}){
@@ -158,11 +160,11 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    </Disclosure>
   </div>
   {latestDecision?<Alert tone="info" className="mt-3">
-    <span>Last change {new Date(latestDecision[1].occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST by {latestDecision[1].actor}</span>
+    <span>Last change {formatDateTimeIst(new Date(latestDecision[1].occurredAt))} IST by {latestDecision[1].actor}</span>
     {latestDecision[1].canUndo&&!data.batches.find(batch=>batch.id===latestDecision[0])?.finishedAt?<TpoBatchUndoControl batchId={latestDecision[0]} actionId={latestDecision[1].actionId}/>:null}
    </Alert>:null}
   {unassigned!==null&&unassigned>0?<Banner tone="warning">
-    {unassigned.toLocaleString("en-IN")} {unassigned===1?"student is":"students are"} not in any class. They can't be part of placements until Academic Setup puts them in a class of a batch.
+    {formatNumberIN(unassigned)} {unassigned===1?"student is":"students are"} not in any class. They can't be part of placements until Academic Setup puts them in a class of a batch.
    </Banner>:null}
   {unassigned===null?<InlineNotice tone="info" message="Class assignment counts could not load. The batch list is still available. Try again later."/>:null}
   {eligibility===null?<InlineNotice tone="info" message="Eligibility counts could not load. The batch list is still available. Try again later."/>:null}
@@ -266,10 +268,10 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
      </header>
      {summary?<div className="space-y-2">
       <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
-       <span><strong className="text-[var(--lms-heading)]">{total.toLocaleString("en-IN")}</strong> {total===1?"student":"students"}</span>
-       <span><strong className="text-[var(--lms-success-text)]">{summary.eligible.toLocaleString("en-IN")}</strong> eligible</span>
-       <span><strong className="text-[var(--lms-error-text)]">{summary.ineligible.toLocaleString("en-IN")}</strong> ineligible</span>
-       <span><strong className="text-[var(--lms-heading)]">{(summary.undecided+summary.needsReview).toLocaleString("en-IN")}</strong> not decided</span>
+       <span><strong className="text-[var(--lms-heading)]">{formatNumberIN(total)}</strong> {total===1?"student":"students"}</span>
+       <span><strong className="text-[var(--lms-success-text)]">{formatNumberIN(summary.eligible)}</strong> eligible</span>
+       <span><strong className="text-[var(--lms-error-text)]">{formatNumberIN(summary.ineligible)}</strong> ineligible</span>
+       <span><strong className="text-[var(--lms-heading)]">{formatNumberIN((summary.undecided+summary.needsReview))}</strong> not decided</span>
       </div>
       <div role="img" aria-label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+(summary.undecided+summary.needsReview)+" not decided"} className="flex h-[6px] overflow-hidden rounded-full bg-[var(--lms-header-border)]">
        <span className="bg-[color:var(--lms-success-strong)]" style={{width:total>0?summary.eligible/total*100+"%":"0%"}}/>

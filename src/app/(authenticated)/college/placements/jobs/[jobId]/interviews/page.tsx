@@ -19,6 +19,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {CollegeInterviewsCapture,CollegeInterviewsStaleFallback} from "@/components/placements/college-interviews-last-good";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istIsoDateFormatter } from "@/lib/format-date";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   params:Promise<{jobId:string}>;
@@ -84,8 +85,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   const scheduled=appointments.interviews.filter(item=>
     ["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"].includes(item.status));
   const conflictIds=collegeInterviewConflictIds(appointments.interviews);
-  const todayIst=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-  const dateIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
+  const todayIst=istIsoDateFormatter.format(new Date());
+  const dateIst=(iso:string)=>istIsoDateFormatter.format(new Date(iso));
   const interviewToday=scheduled.filter(item=>dateIst(item.scheduledAt)===todayIst).length;
   const conflicts=conflictIds.size;
   const visibleAppointments=conflictOnly?appointmentRows.filter(item=>conflictIds.has(item.id)):appointmentRows;

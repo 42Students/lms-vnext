@@ -25,6 +25,7 @@ import {
 } from "./admin-learning-structure-actions";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter, istDayMonthYearFormatter } from "@/lib/format-date";
 
 type Workspace = Awaited<
   ReturnType<
@@ -58,11 +59,7 @@ function formatDateTime(
     return String(value);
   }
 
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  return istDateTimeFormatter.format(date);
 }
 
 /** The historic API sometimes serialized createdAt as a Java LocalDateTime
@@ -80,7 +77,7 @@ function lessonCreatedOn(value:Date|string|readonly number[]|null|undefined){
   date=value instanceof Date?value:new Date(value as string);
  }
  return Number.isNaN(date.getTime())?"—":
-  new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(date);
+  istDayMonthYearFormatter.format(date);
 }
 
 function ContentCard({

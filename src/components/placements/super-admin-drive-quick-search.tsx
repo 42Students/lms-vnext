@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export type QuickDrive = {
   id: string; title: string; companyName: string; status: string;
@@ -93,7 +94,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
             {validDeadline?<p className={"mt-2 flex items-center gap-2 text-xs "+(expired?"text-error":"text-muted-foreground")}>
               <svg aria-hidden="true" className="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg>
               {expired?"Deadline passed: ":"Apply by "}
-              {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(deadline!)} IST
+              {istDateTimeFormatter.format(deadline!)} IST
             </p>:null}
           </div>
           <div className="relative z-(--lms-z-raised) flex min-w-0 flex-wrap items-center gap-3 border-t border-border pt-3 text-sm font-semibold">

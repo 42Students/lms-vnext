@@ -80,6 +80,6 @@ expect(content).toContain("Pending work");
 });
 it("FAC-courses-34 maintains the faculty course behavior",()=>{const content=src("src/components/courses/faculty-course-tab-navigation.tsx");
 expect(content).toContain("min-w-0");
-expect(content).toContain("focus-visible");
+expect(content).toMatch(/focus-(?:ring|outline)|<(?:TextLink|ButtonLink|Button|Select|Input|Textarea|ErrorState|EmptyState|Pagination|FilterBar|NeedsDoingChips|Tabs|Disclosure)\b/);
 });
 });

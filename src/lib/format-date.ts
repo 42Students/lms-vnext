@@ -18,6 +18,20 @@ const dateFormat = new Intl.DateTimeFormat(LOCALE, {
   timeZone: TIME_ZONE,
 });
 
+/** Shared formatter instances: use these instead of building new Intl.DateTimeFormat in components. */
+export const istDateTimeFormatter = dateTimeFormat;
+export const istDateFormatter = dateFormat;
+/** YYYY-MM-DD in IST (en-CA gives ISO ordering). */
+export const istIsoDateFormatter = new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" });
+export const istDayMonthYearFormatter = new Intl.DateTimeFormat(LOCALE, { timeZone: TIME_ZONE, day: "numeric", month: "short", year: "numeric" });
+export const istTimeFormatter = new Intl.DateTimeFormat(LOCALE, { timeZone: TIME_ZONE, hour: "numeric", minute: "2-digit", hour12: true });
+export const istWeekdayDayMonthFormatter = new Intl.DateTimeFormat(LOCALE, { timeZone: TIME_ZONE, weekday: "short", day: "numeric", month: "short" });
+
+/** For one-off layouts: IST is applied unless the caller passes its own timeZone, so server and browser agree. */
+export function createDateFormatter(locale: string, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  return new Intl.DateTimeFormat(locale, { timeZone: TIME_ZONE, ...options });
+}
+
 const INVALID_DATE_LABEL = "—";
 type DateInput = string | number | Date | null | undefined;
 
@@ -26,6 +40,12 @@ function validDate(value: DateInput): Date | null {
   if (value === null || value === undefined || value === "") return null;
   const date = value instanceof Date ? value : new Date(value);
   return Number.isFinite(date.getTime()) ? date : null;
+}
+
+/** Replacement for value.toLocale*String(locale, options): invalid input gives the dash label, never throws, IST by default. */
+export function formatDateWith(value: DateInput, locale: string, options: Intl.DateTimeFormatOptions = {}): string {
+  const date = validDate(value);
+  return date ? new Intl.DateTimeFormat(locale, { timeZone: TIME_ZONE, ...options }).format(date) : INVALID_DATE_LABEL;
 }
 
 export function formatDateTimeIst(value: DateInput): string {

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDayMonthYearFormatter } from "@/lib/format-date";
 
 export function TpoRecruiterGrantForm({ companies }: {
   companies: readonly { relationshipId: string; name: string }[];
@@ -157,7 +158,7 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
    if(result.outcome!=="extended")throw Error("Recruiter access could not be confirmed. Refresh and review the grant.");
    const validTime=result.validUntil?Date.parse(result.validUntil):NaN;
    const until=Number.isFinite(validTime)
-    ?new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(validTime))
+    ?istDayMonthYearFormatter.format(new Date(validTime))
     :null;
    setNotice("Access extended"+(until?" · Until "+until:""));
    setConfirmOpen(false);router.refresh();

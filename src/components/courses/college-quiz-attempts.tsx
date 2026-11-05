@@ -9,6 +9,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 type Answer={id:string;promptSnapshot:string;questionType:string;pointsPossible:number;pointsAwarded:number;
@@ -28,7 +29,7 @@ function isLate(submittedAt:string,dueAt:string|null|undefined){
 function submittedTime(value:string){
  const instant=new Date(value);
  return Number.isNaN(instant.getTime())?"Time unavailable":
-  new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(instant)+" IST";
+  istDateTimeFormatter.format(instant)+" IST";
 }
 function QuizAttemptsSkeleton(){
  return <div aria-label="Loading quiz submissions" role="status">

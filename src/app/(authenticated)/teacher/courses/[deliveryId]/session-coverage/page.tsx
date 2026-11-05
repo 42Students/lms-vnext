@@ -4,9 +4,10 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getFacultySessionCoverage } from "@/modules/courses/faculty-session-coverage-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 const backLinkClass = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:text-[var(--lms-primary-text)] focus-ring sm:w-auto md:min-h-9";
-const dateFormat = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" });
+const dateFormat = istDateTimeFormatter;
 
 export default async function FacultySessionCoveragePage({
   params,

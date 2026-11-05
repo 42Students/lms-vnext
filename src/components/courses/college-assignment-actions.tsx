@@ -13,11 +13,12 @@ import {FacultyAssignmentMaterialLinks} from "./faculty-assignment-material-link
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 type Assignment={id:string;title:string;points:number;dueAt:Date|null;status:string;
  courseName?:string;lessonName?:string;submissionCount?:number};
 function istInput(value:Date|string|null){
  if(!value)return "";
- return new Intl.DateTimeFormat("sv-SE",{
+ return createDateFormatter("sv-SE", {
   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date(value)).replace(" ","T");

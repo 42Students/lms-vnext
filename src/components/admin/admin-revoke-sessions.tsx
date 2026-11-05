@@ -7,6 +7,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import { Heading } from "@/components/ui/heading";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;userId:string;count:number}){
  const router=useRouter();
  const {run,pending:busy}=useGuardedAction();
@@ -35,8 +36,7 @@ export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;u
  function sessionTime(value:string){
   const date=new Date(value);
   return Number.isFinite(date.getTime())
-   ?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-      timeZone:"Asia/Kolkata"}).format(date)+" IST":"—";
+   ?istDateTimeFormatter.format(date)+" IST":"—";
  }
  async function revoke(){
   if(busy||count<1)return;

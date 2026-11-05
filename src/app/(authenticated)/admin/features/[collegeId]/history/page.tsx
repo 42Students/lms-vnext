@@ -8,6 +8,7 @@ import {collegePolicyHistoryQuery,collegePolicyHistoryHref} from "@/modules/modu
 import {listCollegeFeatureHistory} from "@/modules/module-access/admin-college-rule-history-service";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 export const dynamic="force-dynamic";
 export default async function SuperAdminCollegeFeatureHistory({params,searchParams}:{
  params:Promise<{collegeId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -31,7 +32,7 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
    <ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{result.items.map(item=><li key={item.id} className="min-w-0 py-4">
     <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
       <p className="min-w-0 break-words font-semibold text-foreground">{item.category} · {item.module}</p>
-      <p className="shrink-0 text-xs text-muted-foreground">{item.at.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
+      <p className="shrink-0 text-xs text-muted-foreground">{formatDateTimeIst(item.at)}</p>
     </div>
     <p className="mt-2 break-words text-sm text-body">{item.change}</p>
     <p className="mt-1 break-words text-xs text-body">Scope: {item.scope}{item.studentCount===undefined?"":" · "+item.studentCount+" students"}</p>

@@ -14,6 +14,7 @@ import {getTpoDriveEditState} from "@/modules/placements/tpo-drive-edit-service"
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -35,7 +36,7 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
  const roles=job.status==="DRAFT"&&job.editable?await listPlacementRoleOptions(context,job.id):[];
  return <div className="min-w-0 space-y-4">
   <PageHeader title={"Edit drive · "+job.title}
-    description={"Saved "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(job.updatedAt))+" IST"}
+    description={"Saved "+istDateTimeFormatter.format(new Date(job.updatedAt))+" IST"}
     actions={<div className="flex flex-wrap items-center gap-2">
       <StatusBadge tone={job.editable?"info":"neutral"}>{job.status==="DRAFT"?"Draft":job.status==="PUBLISHED"?"Live":job.status}</StatusBadge>
       <PageBackLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)} label="Open drive page"/>

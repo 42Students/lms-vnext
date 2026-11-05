@@ -21,6 +21,7 @@ import { parseTrackerIssuesPageParams } from "@/modules/bug-tracker/issues-query
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const metadata={title:"Issues · 42 Tracker"};
@@ -186,7 +187,7 @@ export default async function TrackerIssuesPage({
                   <div><dt className="font-semibold">Environment</dt>
                     <dd>{issue.environment.toLowerCase().replace(/^./,c=>c.toUpperCase()).replaceAll("_"," ")}</dd></div>
                   <div><dt className="font-semibold">Reported</dt>
-                    <dd>{issue.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</dd></div>
+                    <dd>{formatDateTimeIst(issue.createdAt)} IST</dd></div>
                 </dl>
               </TextLink>
             </article>

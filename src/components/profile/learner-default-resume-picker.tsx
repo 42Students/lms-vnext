@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDateFormatter } from "@/lib/format-date";
 
 type ResumeList = {
   selected: string | null;
@@ -173,9 +174,7 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
       {list.items.map((item, index) => <li key={item.id}
         className="flex min-w-0 flex-wrap items-center justify-between gap-2 py-2">
         <span className="min-w-0 text-sm text-body">
-          Resume {index + 1} · {new Intl.DateTimeFormat("en-IN", {
-            dateStyle: "medium", timeZone: "Asia/Kolkata",
-          }).format(new Date(item.uploadedAt))}
+          Resume {index + 1} · {istDateFormatter.format(new Date(item.uploadedAt))}
           {list.selected === item.id ? " · Default" : ""}
         </span>
         <div className="flex flex-wrap items-center gap-2">

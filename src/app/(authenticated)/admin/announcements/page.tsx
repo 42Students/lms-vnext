@@ -33,6 +33,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 function currentTimeMs() {
   return Date.now();
@@ -228,7 +229,7 @@ export default async function AnnouncementsPage({
                     <StatusBadge tone={state==="Live"?"success":state==="Scheduled"?"warning":"neutral"}>{state}</StatusBadge>
                   </div>
                   <time className="text-xs text-muted-foreground" dateTime={first.createdAt.toISOString()}>
-                    {first.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST
+                    {formatDateTimeIst(first.createdAt)} IST
                   </time>
                 </div>
                 <Heading level={3} size="base" className="mt-2 text-foreground">{first.title}</Heading>
@@ -240,9 +241,9 @@ export default async function AnnouncementsPage({
                     "Sent to "+target+" placement "+(target===1?"cell":"cells"):
                     "Showing "+copies.length+" placement "+(copies.length===1?"cell":"cells")+" on this page"}</span>
                   <span>{reached} of {target} placement cells read{groupReceipt?"":" on this page"}</span>
-                  {first.expiresAt ? <span>Show until {first.expiresAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
+                  {first.expiresAt ? <span>Show until {formatDateTimeIst(first.expiresAt)} IST</span> : null}
                   {first.updatedAt.getTime() !== first.createdAt.getTime()
-                    ? <span>Updated {first.updatedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
+                    ? <span>Updated {formatDateTimeIst(first.updatedAt)} IST</span> : null}
                 </div>
                 {groupReceipt&&target>0?<MetricBar role="progressbar"
                   label={first.title+" placement cells read"} className={chartStyles["track"]+" mt-3 w-full"}

@@ -12,6 +12,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 export const dynamic="force-dynamic";
 type Params={search?:string|string[];page?:string|string[]};
@@ -65,7 +66,7 @@ export default async function FacultyTeachingProfilePage({
         Clear
       </TextLink>
     </form>
-    <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching active teaching assignment{data.total===1?"":"s"}</p>
+    <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{formatNumberIN(data.total)} matching active teaching assignment{data.total===1?"":"s"}</p>
     {data.items.length===0 ? <EmptyState title="No current teaching assignments"
       description="No persisted active teaching deliveries match this search. Expired, revoked or unassigned teaching roles are not reconstructed." />
       : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>

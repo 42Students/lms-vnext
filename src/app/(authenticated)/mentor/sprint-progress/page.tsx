@@ -17,6 +17,7 @@ import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progre
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Params = { order?:string|string[];taskAttention?:string|string[];projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -99,7 +100,7 @@ export default async function MentorSprintProgressPage({
 
       </form></FilterBar>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
-        <p className="font-medium text-body">{data.total.toLocaleString("en-IN")} matching sprint{data.total === 1 ? "" : "s"}</p>
+        <p className="font-medium text-body">{formatNumberIN(data.total)} matching sprint{data.total === 1 ? "" : "s"}</p>
         <div className="flex min-w-0 flex-wrap items-center gap-3">
         <TextLink data-unskin="" href={"/api/mentor/sprint-progress/export?"+
           new URLSearchParams({

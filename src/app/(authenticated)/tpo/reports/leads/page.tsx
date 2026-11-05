@@ -30,6 +30,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -230,7 +231,7 @@ export default async function TpoLeadsReportPage({
         <p className="text-sm text-body">
           Recent contact rate: {reportPercent(health.recentContactRatePercent)} ·
           Latest observed contact: {health.lastContactAt
-            ? new Date(health.lastContactAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+            ? formatDateTimeIst(new Date(health.lastContactAt))
             : "Not recorded"}
         </p>
               </div>

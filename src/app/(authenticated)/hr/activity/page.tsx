@@ -14,6 +14,7 @@ import {listRecruiterJobActivity} from "@/modules/placements/hr-job-activity-ser
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 const HR_ACTIVITY_FILTER_KINDS=["ALL","PUBLISHED","CLOSED"] as const;
 export default async function HrJobActivityPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];kind?:string|string[];page?:string|string[];q?:string|string[]}>
@@ -27,9 +28,7 @@ export default async function HrJobActivityPage({searchParams}:{
  if(!input.success)return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Hiring activity"/>
   <ErrorState title="Invalid activity filters" description="Review the college and event filters." action={<TextLink href="/hr/activity" className="inline-flex min-h-11 items-center md:min-h-9">Choose again</TextLink>}/></div>;
  const result=await listRecruiterJobActivity(context,input.data);
- const fmt=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
- }).format(date);
+ const fmt=(date:Date)=>istDateTimeFormatter.format(date);
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader title="Hiring activity"
    description="Published and closed hiring drives at your authorized college. No private applicant information."/>

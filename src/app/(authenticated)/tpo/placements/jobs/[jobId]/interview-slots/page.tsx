@@ -11,6 +11,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listTpoRecruiterProposedSlots} from "@/modules/placements/tpo-recruiter-slot-review-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function TpoRecruiterSlotReviewPage({params}:{
  params:Promise<{jobId:string}>;
@@ -25,9 +26,7 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
     error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();
   throw error;
  }
- const when=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
- }).format(date)+" IST";
+ const when=(date:Date)=>istDateTimeFormatter.format(date)+" IST";
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Interview slot proposals"
     description={data.job.title+" · Employer-proposed time blocks for your college."}

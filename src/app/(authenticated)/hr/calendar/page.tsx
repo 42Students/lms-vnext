@@ -50,6 +50,8 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istTimeFormatter, istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic";
 
@@ -107,7 +109,7 @@ function calendarHref(
 }
 
 function dateLabel(day: string) {
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -116,7 +118,7 @@ function dateLabel(day: string) {
 }
 
 function shortDayLabel(day: string) {
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     day: "numeric",
     month: "short",
     timeZone: "UTC",
@@ -124,13 +126,13 @@ function shortDayLabel(day: string) {
 }
 
 function fullDayLabel(day:string){
-  return new Intl.DateTimeFormat("en-IN",{
+  return createDateFormatter("en-IN", {
     weekday:"long",day:"numeric",month:"short",timeZone:"UTC",
   }).format(new Date(day+"T12:00:00Z"));
 }
 
 function monthLabel(day: string) {
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
@@ -138,20 +140,11 @@ function monthLabel(day: string) {
 }
 
 function eventTime(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istTimeFormatter.format(value);
 }
 
 function eventDateTime(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDateTimeFormatter.format(value);
 }
 
 function eventHref(event: PlacementCalendarEvent) {

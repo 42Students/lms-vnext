@@ -17,6 +17,7 @@ import {tpoFollowupContactLinks} from "@/modules/placements/tpo-followup-queue-m
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type DueRow = {
   id: string;
@@ -45,9 +46,7 @@ type Queue = {
 const field = "min-h-11 w-full md:min-h-9";
 const action = "min-h-11 w-full sm:w-auto md:min-h-9";
 function displayDate(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-  }).format(new Date(value)) + " IST";
+  return istDateTimeFormatter.format(new Date(value)) + " IST";
 }
 
 export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {

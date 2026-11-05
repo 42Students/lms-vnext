@@ -15,6 +15,8 @@ import { adminUnassignedUsersHref, adminUnassignedUsersQuerySchema, unassignedId
 import { listSuperAdminUnassignedUsers } from "@/modules/people/admin-unassigned-user-service";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 export default async function UnassignedIdentityDirectory({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
@@ -56,7 +58,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   const data = loaded.value;
   const statuses = ["ALL", "ACTIVE", "DISABLED"] as const;
   const roles = ["ALL", "SUPER_ADMIN", "NONE"] as const;
-  const date = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" });
+  const date = istDateFormatter;
   const columns: DataTableColumn<(typeof data.items)[number]>[] = [
     { key: "user", header: "User", mobilePriority: "primary",
       cell: row => <span className="font-semibold text-[var(--lms-heading)]">{row.displayName ?? "Unnamed user"}</span> },
@@ -82,7 +84,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
         className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{roles.map(role => <option key={role}>{role}</option>)}</Select></Label>
       <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
     </form>
-    <p role="status" className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
+    <p role="status" className="text-xs text-muted-foreground">{formatNumberIN(data.total)} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
     <DataTable caption="Users without college memberships" columns={columns}
       rows={data.items} getRowKey={row=>row.id} mobileMode="scroll"
       empty={<EmptyState title="No matching users" description="No users without college memberships match these filters."/>}/>

@@ -17,6 +17,8 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -186,9 +188,7 @@ async function checkOwnPlacementApplication(jobId:string,roleOptionId:string):Pr
 }
 function formatApplicationReceiptTime(value:string){
  const at=new Date(value);
- return Number.isFinite(at.getTime())?new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
- }).format(at):"Date unavailable";
+ return Number.isFinite(at.getTime())?istDateTimeFormatter.format(at):"Date unavailable";
 }
 
 type SignedOwnResume = {url:string;isPdf:boolean};
@@ -706,7 +706,7 @@ function postedAtLabel(value:string|null|undefined,snapshotNowIso:string|null):s
  if(days===1)return "Posted Yesterday";
  if(days<7)return "Posted "+days+" days ago";
  if(days<30)return "Posted "+Math.floor(days/7)+" weeks ago";
- return "Posted "+new Intl.DateTimeFormat("en-IN",{
+ return "Posted "+createDateFormatter("en-IN", {
   day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
  }).format(new Date(value));
 }

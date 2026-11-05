@@ -17,11 +17,11 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Raw = { view?: string | string[]; role?: string | string[]; primary?:string|string[]; order?:string|string[]; page?: string | string[] };
-const formatDate = (value: Date) => new Intl.DateTimeFormat("en-IN", {
-  dateStyle: "medium", timeZone: "Asia/Kolkata",
-}).format(value);
+const formatDate = (value: Date) => istDateFormatter.format(value);
 
 export default async function MentorTeamHistoryPage({
   params, searchParams,
@@ -88,7 +88,7 @@ export default async function MentorTeamHistoryPage({
           {filtered?<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:null}
         </form></FilterBar>
 
-        <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} matching membership record{data.total === 1 ? "" : "s"}</p>
+        <p className="text-sm text-body leading-[22px]">{formatNumberIN(data.total)} matching membership record{data.total === 1 ? "" : "s"}</p>
         {data.items.length === 0
           ? <EmptyState title="No team membership records"
               description="No registered membership rows match this project and filter. History from before migration may not be available." action={filtered?<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={back} className="inline-flex min-h-11 items-center md:min-h-9">Team workspace</TextLink>} />

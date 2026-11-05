@@ -9,6 +9,7 @@ import { getOwnLearnerPlacementRulesView } from "@/modules/placements/learner-pl
 import { learnerPlacementRulesQuerySchema } from "@/modules/placements/learner-placement-rules-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateFormatter } from "@/lib/format-date";
 
 export default async function LearnerPlacementRulesPage({
   searchParams,
@@ -59,7 +60,7 @@ export default async function LearnerPlacementRulesPage({
         </div>
         {effectivePolicySource==="BATCH_OVERRIDE" ? <p className="mt-2 text-xs text-muted-foreground">
           Your active cohort overrides the college baseline where the placement cell has saved a value.
-          {effectivePolicyUpdatedAt ? " Override updated "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(effectivePolicyUpdatedAt))+" IST." : ""}
+          {effectivePolicyUpdatedAt ? " Override updated "+istDateFormatter.format(new Date(effectivePolicyUpdatedAt))+" IST." : ""}
         </p> : null}
         <p className="mt-2 text-xs text-muted-foreground">These are the effective saved rules for your active cohort where an override exists, otherwise the college-wide baseline. Drive-specific eligibility and your scoped application check remain authoritative.</p>
         {policyView?<div className="mt-3 space-y-2">

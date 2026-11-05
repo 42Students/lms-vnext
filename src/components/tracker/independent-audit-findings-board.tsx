@@ -14,6 +14,7 @@ import {auditFindingHistoryActionLabel} from "@/modules/bug-tracker/audit-findin
 import { Heading } from "@/components/ui/heading";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Finding=typeof db10AuditFindings.$inferSelect;
 type FindingEvent={id:string;action:string;toValue:unknown;note:string|null;createdAt:string;fromStatus:string|null;toStatus:string|null};
@@ -23,7 +24,7 @@ function istDate(value:Date|string|null|undefined){
  if(!value)return "Not given";
  const date=new Date(value);
  return Number.isNaN(date.getTime())?"Not given":
-  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST";
+  istDateTimeFormatter.format(date)+" IST";
 }
 const statuses:Record<string,string>={
  NEW:"New",CONFIRMED:"Confirmed",IN_PROGRESS:"In progress",FIXED_DEV:"Fixed (dev)",

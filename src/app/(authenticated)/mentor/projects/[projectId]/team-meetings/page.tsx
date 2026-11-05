@@ -17,6 +17,8 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Params={status?:string|string[];type?:string|string[];outcome?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorTeamMeetingsPage({
@@ -116,7 +118,7 @@ export default async function MentorTeamMeetingsPage({
             className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear</TextLink>:null}
         </form>
       </FilterBar>
-      <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} registered meeting{data.total===1?"":"s"} match</p>
+      <p className="text-sm text-body leading-[22px]">{formatNumberIN(data.total)} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
         description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." action={filtered?<TextLink href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={board} className="inline-flex min-h-11 items-center md:min-h-9">Team workspace</TextLink>} />
         :<ol aria-label="team meetings entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(meeting=>
@@ -126,9 +128,7 @@ export default async function MentorTeamMeetingsPage({
               <span className="text-xs font-semibold text-body">{mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderedAt)}</span>
             </div>
             <p className="mt-2 text-sm text-body leading-[22px]">
-              {meeting.type} · {new Intl.DateTimeFormat("en-IN",{
-                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-              }).format(meeting.startsAt)} IST
+              {meeting.type} · {istDateTimeFormatter.format(meeting.startsAt)} IST
             </p>
             <p className="mt-1 text-xs text-muted-foreground leading-5">
               Source timezone: {meeting.timeZone} · Outcome:{" "}

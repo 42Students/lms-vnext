@@ -10,6 +10,7 @@ import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export default async function TpoOutsideDriveDetail({params,searchParams}:{
  params:Promise<{recordId:string}>;searchParams:Promise<{q?:string|string[]}>;
 }){
@@ -32,8 +33,7 @@ export default async function TpoOutsideDriveDetail({params,searchParams}:{
   <PageHeader eyebrow="TPO · External history" title={data.record.title}
    description="Add participating learners and outcomes from a drive already completed outside the platform."
    actions={<TextLink href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 w-full items-center justify-center text-[13px] sm:w-auto md:min-h-9">← All recorded outside drives</TextLink>}/>
-  <p className="text-sm text-body">Occurred {new Intl.DateTimeFormat("en-IN",{
-   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(data.record.occurredAt)} IST</p>
+  <p className="text-sm text-body">Occurred {istDateTimeFormatter.format(data.record.occurredAt)} IST</p>
   <form method="get" role="search" aria-label="Find college learners" className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
    <Label stack className="min-w-0 flex-1">Search college learners
     <Input type="search" name="q" defaultValue={q} maxLength={80} />

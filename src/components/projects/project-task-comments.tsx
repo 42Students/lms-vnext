@@ -11,6 +11,7 @@ import {projectMutation} from "./project-api";
 import {PROJECT_TASK_COMMENT_KINDS,PROJECT_TASK_COMMENT_KIND_LABELS,
  type ProjectTaskCommentKind,projectTaskActivityLabel} from "@/modules/projects/task-comment-kind-staged";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Comment={id:string;body:string;commentKind:string;createdAt:string;
  authorMembershipId:string;authorName:string|null;progressValue:number|null;
  taskStatusSnapshot:string|null};
@@ -92,9 +93,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost,blockerR
        <p role="status" className="text-sm text-muted-foreground leading-[22px]">No comments match this filter.</p>:null}
      {rows.filter(row=>filter==="ALL"||row.commentKind===filter).map(row=><article key={row.id} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body last:border-b-0">
       <p className="mb-1 text-xs font-semibold text-muted-foreground leading-[20px]">
-        {row.authorName || "Unknown"} · {new Intl.DateTimeFormat("en-IN", {
-          dateStyle: "medium",timeStyle: "short",timeZone: "Asia/Kolkata",
-        }).format(new Date(row.createdAt))}
+        {row.authorName || "Unknown"} · {istDateTimeFormatter.format(new Date(row.createdAt))}
       </p>
       <p className="mb-1 text-xs font-semibold text-body leading-[20px]">
         <span aria-hidden="true">{row.commentKind==="PROGRESS_UPDATE"?"Progress:":

@@ -22,6 +22,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 export default async function SuperAdminCourseProgressPage({
   searchParams,
@@ -167,7 +168,7 @@ export default async function SuperAdminCourseProgressPage({
       </p>}
     </div>:<EmptyState title="Pick a class, then one of its courses." description="Choose a batch and a taught course to see recorded activity. No learner report has been requested."/>}
     <p role="status" className="text-sm text-muted-foreground">
-      {data.total.toLocaleString("en-IN")} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
+      {formatNumberIN(data.total)} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
       {" "}{summary.completedContentRecords} completed rows. Learner counts are per-offering, not additive.
     </p>
     {selected&&data.items.length ? <div className="divide-y divide-border border-y border-border">

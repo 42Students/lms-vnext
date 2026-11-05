@@ -6,6 +6,7 @@ import {getMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-ser
 import {meetingNotesEditable} from "@/modules/projects/mentor-meeting-notes-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export default async function MentorMeetingNotesPage({params}:{
   params:Promise<{projectId:string;meetingId:string}>;
 }){
@@ -22,8 +23,7 @@ export default async function MentorMeetingNotesPage({params}:{
     <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <Heading level={2} size="base" className="m-0 leading-6">Persisted meeting outcome</Heading>
       <p className="mt-2 text-sm text-body">
-        {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-          timeZone:"Asia/Kolkata"}).format(m.startsAt)} IST · <StatusBadge tone={m.status==="COMPLETED"?"success":m.status==="CANCELLED"?"error":"neutral"}>{m.status}</StatusBadge>
+        {istDateTimeFormatter.format(m.startsAt)} IST · <StatusBadge tone={m.status==="COMPLETED"?"success":m.status==="CANCELLED"?"error":"neutral"}>{m.status}</StatusBadge>
       </p>
       {m.outcome?.trim()?
         <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">{m.outcome}</p>:

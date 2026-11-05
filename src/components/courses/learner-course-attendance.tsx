@@ -16,6 +16,8 @@ import { DataTable } from "@/components/ui/data-table";
 import type { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDayMonthYearFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type AttendanceWorkspace = Awaited<
   ReturnType<typeof getLearnerAttendanceWorkspace>
@@ -46,19 +48,14 @@ function sameMonth(value: Date, month: Date) {
 }
 
 function dateLabel(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDayMonthYearFormatter.format(value);
 }
 
 function weekdayLabel(value:Date){
- return new Intl.DateTimeFormat("en-IN",{weekday:"long",timeZone:"Asia/Kolkata"}).format(value);
+ return createDateFormatter("en-IN", {weekday:"long",timeZone:"Asia/Kolkata"}).format(value);
 }
 function timeLabel(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     hour: "numeric",
     minute: "2-digit",
     timeZone: "Asia/Kolkata",
@@ -177,7 +174,7 @@ export function LearnerCourseAttendance({
     router.replace(pathname+"?"+params.toString());
   }
 
-  const monthName=new Intl.DateTimeFormat("en-IN",{
+  const monthName=createDateFormatter("en-IN", {
     month:"long",year:"numeric",timeZone:"Asia/Kolkata",
   }).format(new Date(Date.UTC(month.getFullYear(),month.getMonth(),15,12)));
   const course = workspace.courses.find(

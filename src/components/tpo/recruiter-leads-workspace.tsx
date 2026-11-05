@@ -50,6 +50,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Lead = {
   id: string;
@@ -83,7 +84,7 @@ const recruiterDate=(value:string|null|undefined,withYear=false):string=>{
  if(!value)return "-";
  const parsed=new Date(value);
  if(Number.isNaN(parsed.getTime()))return "-";
- return new Intl.DateTimeFormat("en-GB",{
+ return createDateFormatter("en-GB", {
   timeZone:"Asia/Kolkata",day:"numeric",month:"short",...(withYear?{year:"numeric" as const}:{})
  }).format(parsed);
 };

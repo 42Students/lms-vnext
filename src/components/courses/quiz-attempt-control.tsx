@@ -17,6 +17,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 
 type QuizQuestion = {
   id: string;
@@ -74,7 +75,7 @@ function formatAttemptDate(value: string) {
     return value;
   }
 
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);

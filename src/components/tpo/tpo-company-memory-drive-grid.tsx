@@ -7,6 +7,8 @@ import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {exportTpoGridCsv} from "@/modules/placements/tpo-grid-model";
 import {GridWorkspace} from "./grid/grid-workspace";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type CompanyMemoryDriveRow={
  id:string;jobTitle:string;status:string;createdAt:string;applied:number|null;offers:number|null;
@@ -17,15 +19,13 @@ const statusLabel=(status:string)=>({
 } as Record<string,string>)[status]??status;
 const year=(value:string)=>{
  const instant=Date.parse(value);
- return Number.isFinite(instant)?new Intl.DateTimeFormat("en-IN",{
+ return Number.isFinite(instant)?createDateFormatter("en-IN", {
   timeZone:"Asia/Kolkata",year:"numeric",
  }).format(new Date(instant)):"Not recorded";
 };
 const date=(value:string)=>{
  const instant=Date.parse(value);
- return Number.isFinite(instant)?new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
- }).format(new Date(instant)):"Not recorded";
+ return Number.isFinite(instant)?istDateTimeFormatter.format(new Date(instant)):"Not recorded";
 };
 const columns:readonly TpoGridColumn<CompanyMemoryDriveRow>[]=[
  {key:"role",label:"Role",read:row=>row.jobTitle},

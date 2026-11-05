@@ -35,6 +35,7 @@ import {
 import { Radio } from "@/components/ui/radio";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type DeliveryOption = {
   deliveryId: string;
@@ -133,11 +134,7 @@ function codeFor(session: Session, record: RecordRow | undefined) {
 
 function formatDateTime(value: string | null) {
   if (!value) return "Not recorded";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  return istDateTimeFormatter.format(new Date(value));
 }
 
 export function AdminAttendanceWorkspace({

@@ -26,6 +26,8 @@ import {MentorProjectFocusQueue} from "./mentor-project-focus-queue";
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
 type ProjectTask=Workspace["tasks"][number];
@@ -285,7 +287,7 @@ export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{w
     const stamp=workspace.mentorTeamLastSignIn[membershipId];
     if(!stamp)return "Not recorded";
     const when=new Date(stamp);
-    return Number.isFinite(when.getTime())?new Intl.DateTimeFormat("en-IN",{
+    return Number.isFinite(when.getTime())?createDateFormatter("en-IN", {
       day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
       timeZone:"Asia/Kolkata",
     }).format(when)+" IST":"Not recorded";
@@ -294,7 +296,7 @@ export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{w
     const stamp=workspace.mentorTeamRecentActorActivity[userId];
     if(!stamp)return "No recorded action";
     const when=new Date(stamp);
-    return Number.isFinite(when.getTime())?new Intl.DateTimeFormat("en-IN",{
+    return Number.isFinite(when.getTime())?createDateFormatter("en-IN", {
       day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
       timeZone:"Asia/Kolkata",
     }).format(when)+" IST":"No recorded action";
@@ -492,8 +494,7 @@ export function MentorPrototypeDeliveryEvidence({workspace}:{workspace:Workspace
         {submitter?<p>
           {submitter.attempt} · Submitted by {submitter.submitter}
           {submitter.submittedAt?" · "+
-            new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-              timeZone:"Asia/Kolkata"}).format(new Date(submitter.submittedAt))+" IST":
+            istDateTimeFormatter.format(new Date(submitter.submittedAt))+" IST":
             " · submission timestamp unavailable"}
           {submitter.source==="HISTORIC"?" (preserved imported name)":""}
         </p>:null}
@@ -759,7 +760,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
         <Link href={base+"?tab=meetings"}>All meetings →</Link></div>
       {nextMeeting?<div className="prototype-mentor-overview-actions">
         <strong>{nextMeeting.title}</strong>
-        <p>{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",weekday:"short",
+        <p>{createDateFormatter("en-IN", {day:"numeric",month:"short",weekday:"short",
           hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(nextMeeting.startsAt)} IST
           {" · "+Math.max(0,Math.round((nextMeeting.endsAt.getTime()-
             nextMeeting.startsAt.getTime())/60000))+" minutes"}</p>
@@ -771,8 +772,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
             workspace.mentorMeetingNoticeFacts.find(row=>row.meetingId===nextMeeting.id)!
               .notifiedRecipients
           } recipient inbox record(s), saved {
-            new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-              timeZone:"Asia/Kolkata"}).format(new Date(
+            istDateTimeFormatter.format(new Date(
                 workspace.mentorMeetingNoticeFacts.find(row=>row.meetingId===nextMeeting.id)!
                   .announcedAt))} IST.</p>
           :<p>No in-app meeting notice event recorded.</p>}
@@ -807,7 +807,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
           {update.eventType==="projects.mentor_update.posted"?
             <strong>Mentor update · saved project activity</strong>:null}
           <p>{update.summary}</p>
-          <span>{update.actorDisplayName||"Recorded project event"} · {new Intl.DateTimeFormat("en-IN",{
+          <span>{update.actorDisplayName||"Recorded project event"} · {createDateFormatter("en-IN", {
             day:"numeric",month:"short",timeZone:"Asia/Kolkata",
           }).format(update.occurredAt)}</span>
           <Link href={base+"?tab="+(

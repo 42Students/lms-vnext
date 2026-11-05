@@ -16,6 +16,8 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istIsoDateFormatter, istTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 const FILTERS = [
  ["following","Following"],["all","All"],["me","@ Me"],["asks","Asks"],
@@ -29,18 +31,14 @@ function selectedFilter(value:string):TeamFilter {
 }
 
 function threadTime(value:Date, now:Date) {
- const day = (date:Date)=>new Intl.DateTimeFormat("en-CA",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
- }).format(date);
- if(day(value)===day(now))return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
- }).format(value);
+ const day = (date:Date)=>istIsoDateFormatter.format(date);
+ if(day(value)===day(now))return istTimeFormatter.format(value);
  const yesterday=new Date(now.getTime()-86400000);
  if(day(value)===day(yesterday))return "Yesterday";
- if(now.getTime()-value.getTime()<6*86400000)return new Intl.DateTimeFormat("en-IN",{
+ if(now.getTime()-value.getTime()<6*86400000)return createDateFormatter("en-IN", {
   timeZone:"Asia/Kolkata",weekday:"short",
  }).format(value);
- return new Intl.DateTimeFormat("en-IN",{
+ return createDateFormatter("en-IN", {
   timeZone:"Asia/Kolkata",day:"numeric",month:"short",
  }).format(value);
 }

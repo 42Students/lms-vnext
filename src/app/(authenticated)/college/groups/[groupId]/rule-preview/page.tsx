@@ -12,6 +12,7 @@ import {
 } from "@/modules/groups/college-rule-preview-service";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function CollegeGroupRulePreviewPage({
   params,
@@ -77,7 +78,7 @@ export default async function CollegeGroupRulePreviewPage({
       </dl>
       <p className="text-sm text-muted-foreground">
         {result.lastRunAt
-          ? "Last persisted rule run: " + new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(result.lastRunAt)+" IST" + " · " + (result.lastRunMatched ?? "unknown") + " matches"
+          ? "Last persisted rule run: " + istDateTimeFormatter.format(result.lastRunAt)+" IST" + " · " + (result.lastRunMatched ?? "unknown") + " matches"
           : "No completed rule refresh is recorded."}
       </p>
         </div>

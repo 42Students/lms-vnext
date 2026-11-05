@@ -1,4 +1,5 @@
 import { cx } from "@/lib/class-names";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 /** Read-only proportional bar, using the legacy LMS teal and light-cyan tokens. */
 export type MetricBarProps = {
@@ -17,7 +18,7 @@ export function MetricBar({
   const safeMaximum = Number.isFinite(maximum) && maximum > 0 ? maximum : 0;
   const safeValue = Number.isFinite(value) ? Math.max(0, value) : 0;
   const width = safeMaximum > 0 ? Math.min(100, (safeValue / safeMaximum) * 100) : 0;
-  const numericText = new Intl.NumberFormat("en-IN").format(safeValue);
+  const numericText = createNumberFormatter("en-IN").format(safeValue);
   return (
     <div
       data-slot="metric-bar"

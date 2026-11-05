@@ -31,6 +31,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Submission = FacultySubmissionReviewRow;
 const SUBMISSION_FILTERS = ["ALL","UNGRADED","GRADED","LATE"] as const;
@@ -79,11 +80,7 @@ function formatDateTime(value: string) {
     return value;
   }
 
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  return istDateTimeFormatter.format(date);
 }
 
 export function SubmissionGradeCard({

@@ -13,6 +13,8 @@ import {mentorReportsQuerySchema,mentorReportsHref}
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Search={taskCoverage?:string|string[];status?:string|string[];attention?:string|string[];assignment?:string|string[];order?:string|string[];
   search?:string|string[];page?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
@@ -125,7 +127,7 @@ export default async function MentorReportsPage({searchParams}:{
           CSV omits {data.exportOmitted} matching assigned projects.
         </span>:null}
       </div>
-      <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} projects match these filters.</p>
+      <p className="text-sm text-body leading-[22px]">{formatNumberIN(data.total)} projects match these filters.</p>
       {data.items.length===0?<EmptyState title="No assigned projects match"
         description={data.projectCount===0?
           "No current Mentor assignments are registered for this membership.":
@@ -141,9 +143,7 @@ export default async function MentorReportsPage({searchParams}:{
               {project.attention.length?" · "+project.attention.join(", "):" · No currently recorded attention"}
             </p>
             <p className="mt-2 text-xs text-muted-foreground leading-5">
-              Project record updated {new Intl.DateTimeFormat("en-IN",{
-                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-              }).format(project.updatedAt)} IST
+              Project record updated {istDateTimeFormatter.format(project.updatedAt)} IST
             </p>
             <div className="mt-3 flex flex-wrap gap-3 text-sm">
               <TextLink href={"/mentor/projects/"+encodeURIComponent(project.id)}

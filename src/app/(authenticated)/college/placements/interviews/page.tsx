@@ -20,6 +20,8 @@ import {CollegeInterviewNotice} from "@/components/placements/college-interview-
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -59,7 +61,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
    format==="csv"?"/api/college/placements/interviews/export":"/college/placements/interviews";
   return route+"?"+query;
  };
- const formatter=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
+ const formatter=istDateTimeFormatter;
  const applicantHref=(row:(typeof data.rows)[number])=>"/college/placements/jobs/"+encodeURIComponent(row.jobId)+"/applications"+(row.applicationId?"?applicationId="+encodeURIComponent(row.applicationId):"");
  const singleIcsHref=(row:(typeof data.rows)[number])=>build(1,"ics")+"&interviewId="+encodeURIComponent(row.id);
  const hasActiveFilters=Boolean(valid.data.q||valid.data.status!=="ALL"||valid.data.mode!=="ALL"||valid.data.type!=="ALL"||valid.data.companyId||valid.data.departmentId);
@@ -154,7 +156,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     </Disclosure>
    </form>
    <div className="flex min-w-0 flex-wrap items-center gap-3 border-y border-border py-3 text-sm">
-    <p role="status">{data.total.toLocaleString("en-IN")} {data.total===1?"interview":"interviews"}
+    <p role="status">{formatNumberIN(data.total)} {data.total===1?"interview":"interviews"}
       {data.summary.companies>1?" · "+data.summary.companies+" companies":""}
       {data.summary.today>0?" · "+data.summary.today+" today":""}
     </p>

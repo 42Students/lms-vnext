@@ -5,6 +5,7 @@ import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useRef,useState} from "react";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Event={id:string;summary:string;kind:string;at:string;importance:string;authorId:string|null;authorName:string|null};
 export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:string;name:string;kind:"FACULTY"|"LEARNER"}){
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false);
@@ -23,7 +24,7 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
   }catch(e){if(requestId.current===currentRequest)setError(e instanceof Error?e.message:"Could not load audit trail");}
   finally{if(requestId.current===currentRequest)setBusy(false);}
  }
- const date=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
+ const date=istDateTimeFormatter;
  return <>
   <Button variant="secondary" type="button" onClick={()=>void show()}
    className="min-h-11 w-full md:min-h-9 md:w-auto">Audit trail</Button>

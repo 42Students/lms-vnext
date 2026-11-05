@@ -21,6 +21,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Params=Record<string,string|string[]|undefined>;
 
@@ -107,9 +109,7 @@ export default async function FacultyCalendarPage({
          className="flex min-w-0 flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
            <p className="break-words text-sm font-semibold text-foreground">{item.title?.trim()||"Scheduled Class"}</p>
-           <p className="text-xs text-body">{new Intl.DateTimeFormat("en-IN",{
-             timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-           }).format(item.startsAt)} IST · {item.sectionName}</p>
+           <p className="text-xs text-body">{istDateTimeFormatter.format(item.startsAt)} IST · {item.sectionName}</p>
           </div>
           {item.deliveryId?<TextLink href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}
             className="inline-flex min-h-11 items-center text-sm md:min-h-9">Open course →</TextLink>:
@@ -125,7 +125,7 @@ export default async function FacultyCalendarPage({
     <section className="min-w-0">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
         <Heading level={2} className={monthStyles.period}>
-          {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",month:"long",year:"numeric"})
+          {createDateFormatter("en-IN", {timeZone:"UTC",month:"long",year:"numeric"})
             .format(new Date(grid.query.month+"-01T12:00:00.000Z"))} · IST
         </Heading>
         <div className={monthStyles.nav}>
@@ -173,7 +173,7 @@ export default async function FacultyCalendarPage({
                 className={monthStyles.dayEvent+" border-l-2 border-l-primary"}>
                 <p className="text-xs font-semibold text-foreground leading-5">{event.title?.trim()||"Scheduled Class"}{event.courseName&&event.courseName!==event.title?" · "+event.courseName:""} ({event.sectionName||"Class"})</p>
                 <p className="text-xs text-body leading-5">
-                  {new Intl.DateTimeFormat("en-IN",{
+                  {createDateFormatter("en-IN", {
                     timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
                   }).format(event.startsAt)} IST
                 </p>

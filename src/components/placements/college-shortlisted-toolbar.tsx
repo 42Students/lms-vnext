@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { formatNumberIN } from "@/lib/safe-format";
 
 /** Safe same-origin CSV export and refresh for the College Admin shortlist. */
 export function CollegeShortlistedToolbar({ exportHref, cap }: {
@@ -50,7 +51,7 @@ export function CollegeShortlistedToolbar({ exportHref, cap }: {
       onClick={() => void exportCsv()}>
       {exporting ? "Exporting…" : "Export CSV"}
     </Button>
-    <p className="text-xs text-muted-foreground">Up to {cap.toLocaleString("en-IN")} rows</p>
+    <p className="text-xs text-muted-foreground">Up to {formatNumberIN(cap)} rows</p>
     {notice ? <p role="status" className="w-full text-xs">{notice}</p> : null}
   </div>;
 }

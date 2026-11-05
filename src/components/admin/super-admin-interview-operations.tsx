@@ -15,6 +15,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istIsoDateFormatter, istDateTimeFormatter } from "@/lib/format-date";
 export function SuperAdminInterviewOperations({events,today,truncated=false}:{events:SuperAdminCalendarRound[];today:string;truncated?:boolean}){
  const [kind,setKind]=useState("ALL"),[status,setStatus]=useState("ALL");
  const [mode,setMode]=useState("ALL"),[department,setDepartment]=useState("ALL"),[conflictsOnly,setConflictsOnly]=useState(false);
@@ -57,8 +58,8 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
     <option value="ALL">All</option>{items.map(i=><option key={i} value={i}>{i}</option>)}
    </Select>
   </Label>;
- const dateInIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
- const inIst=(iso:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(iso));
+ const dateInIst=(iso:string)=>istIsoDateFormatter.format(new Date(iso));
+ const inIst=(iso:string)=>istDateTimeFormatter.format(new Date(iso));
  return <section aria-label="Interview operations" className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><Heading level={2} className="text-[var(--lms-heading)]">Interviews</Heading>

@@ -12,6 +12,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 export const dynamic="force-dynamic";
 export default async function TpoLearnerBatchRegistrationHistory({params,searchParams}:{params:Promise<{batchId:string;membershipId:string}>;searchParams:Promise<{source?:string|string[];event?:string|string[]}>}){
  const {batchId,membershipId}=await params;
@@ -30,7 +31,7 @@ export default async function TpoLearnerBatchRegistrationHistory({params,searchP
     <li key={event.id} className="min-w-0 space-y-2 py-4">
      <Heading level={2}>{tpoRegistrationHistoryChangeLabel(event.previousChoice,event.nextChoice)}</Heading>
      <p className="text-sm text-body">{tpoRegistrationHistorySourceLabel(event.source)}</p>
-     <time dateTime={event.occurredAt.toISOString()} className="text-xs text-muted-foreground">{event.occurredAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time>
+     <time dateTime={event.occurredAt.toISOString()} className="text-xs text-muted-foreground">{formatDateTimeIst(event.occurredAt)} IST</time>
     </li>)}</ol>}
   </>}
  <p className="max-w-[72ch] text-sm text-muted-foreground">Batch: {data.batch.name}. Immutable recorded choice transitions only; this page does not display contact details or raw consent versions, and visiting never changes a choice.</p>

@@ -8,6 +8,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst, formatDateIst } from "@/lib/format-date";
 type Task={
  id:string;title:string;status:string;description:string|null;approach:string|null;acceptanceCriteria:string|null;
  priority:string;createdAt?:Date;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
@@ -40,9 +41,9 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
   </dl>
   <dl className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] text-xs leading-5 text-[var(--lms-body-text)] sm:grid-cols-2">
     {task.createdAt ? <div><dt className="font-semibold">Created</dt>
-      <dd>{creator ? "Created by "+creator+" · " : ""}{new Date(task.createdAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</dd></div> : null}
+      <dd>{creator ? "Created by "+creator+" · " : ""}{formatDateTimeIst(new Date(task.createdAt))}</dd></div> : null}
     <div><dt className="font-semibold">Last edited</dt>
-      <dd>{editor ? "Last edited by "+editor+" · " : ""}{new Date(task.updatedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</dd></div>
+      <dd>{editor ? "Last edited by "+editor+" · " : ""}{formatDateTimeIst(new Date(task.updatedAt))}</dd></div>
   </dl>
   <section className="mt-[var(--lms-space-5)]"><Heading level={3}>Description / Approach</Heading>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.description||"No description recorded"}</p></section>
@@ -59,7 +60,7 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
    <Heading level={3}>Submissions · {attempts.length}</Heading>
    {attempts.length?<ul className="mt-2 space-y-2">{attempts.map(row=>
     <li key={row.id} className="border-b border-border py-2 text-xs">
-     Version {row.version} · {row.status} · {new Date(row.createdAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}
+     Version {row.version} · {row.status} · {formatDateIst(new Date(row.createdAt))}
      {row.submittedByMembershipId ? " · Submitted by "+(members.find(member=>member.membershipId===row.submittedByMembershipId)?.displayName??"Project member") : ""}
      {safeProjectExternalHref(row.submissionUrl)?
       <TextLink href={safeProjectExternalHref(row.submissionUrl)!} rel="noopener noreferrer"
@@ -72,7 +73,7 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
    {recent.length?<ol className="mt-2 space-y-2">{recent.slice(0,20).map(item=>
     <li key={item.id} className="border-l-2 border-border pl-2 text-xs">{item.summary} ·
       {" "+(item.actorDisplayName??"System")} ·
-      {" "+new Date(item.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</li>)}</ol>:
+      {" "+formatDateTimeIst(new Date(item.occurredAt))}</li>)}</ol>:
     <p className="text-xs text-muted-foreground">No activity for this task.</p>}
    </Disclosure></section>
   <section className="mt-[var(--lms-space-5)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"><Heading level={3}>Comments</Heading>

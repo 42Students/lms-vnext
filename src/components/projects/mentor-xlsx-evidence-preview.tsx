@@ -7,6 +7,7 @@ import {mentorXlsxTrialSummary,type MentorXlsxTrialSummary}
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { formatNumberIN } from "@/lib/safe-format";
 
 const MAX_SPREADSHEET=4_000_000;
 /** Preview only a browser-readable authorized same-origin reference. Never
@@ -74,7 +75,7 @@ export function MentorXlsxEvidencePreview({href,name}:{
       {" "}{summary.headers.length} columns · first 12 rows shown</p>
     {summary.numericTotals.length?<ul className="text-sm">
       {summary.numericTotals.slice(0,10).map((v,i)=>
-        <li key={i}>{v.header}: {v.total.toLocaleString("en-IN")}
+        <li key={i}>{v.header}: {formatNumberIN(v.total)}
           {" "}({v.count} numeric rows)</li>)}
     </ul>:<p className="text-sm">No fully numeric columns to total.</p>}
     <div className="max-w-full overflow-auto" role="region"

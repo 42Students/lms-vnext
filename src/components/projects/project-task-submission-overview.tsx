@@ -7,6 +7,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export type TaskSubmissionOverviewRow={
  id:string;taskTitle:string;submitter:string;version:number;
@@ -29,9 +30,7 @@ export function ProjectTaskSubmissionOverview({rows,metrics}:{
   if(!iso)return "—";
   const d=new Date(iso);
   return Number.isFinite(d.getTime())?
-   new Intl.DateTimeFormat("en-IN",{
-     timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-   }).format(d):"—";
+   istDateTimeFormatter.format(d):"—";
  };
  return <section aria-label="Task submissions summary"
    className="space-y-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">

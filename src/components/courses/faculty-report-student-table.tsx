@@ -7,6 +7,7 @@ import type {FacultyReportStudentRow} from "@/modules/courses/faculty-report-stu
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 
 const avatarTints=[
  {bg:"var(--lms-primary-subtle)",fg:"var(--lms-button-primary)"},{bg:"var(--lms-purple-surface)",fg:"var(--lms-purple-text)"},
@@ -28,7 +29,7 @@ function submittedText(value:string|null){
  if(!value)return "—";
  const date=new Date(value);
  if(!Number.isFinite(date.getTime()))return "—";
- return new Intl.DateTimeFormat("en-IN",{
+ return createDateFormatter("en-IN", {
   timeZone:"Asia/Kolkata",month:"short",day:"numeric",
   hour:"numeric",minute:"2-digit",hour12:true,
  }).format(date);

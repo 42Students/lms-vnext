@@ -29,6 +29,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 type ClassChoice = { id:string;name:string;code:string };
 type Learner = {membershipId:string;rollNumber:string;displayName:string};
@@ -668,7 +669,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       <p className="text-sm leading-[22px]">{outcome.created.length} created · {outcome.alreadyCovered} already covered · {
         outcome.failedCount??Math.max(0,outcome.requested-outcome.alreadyCovered-outcome.created.length)
       } not created</p>
-      {outcomeCheckedAt?<p className="text-xs text-body">Reported at {new Date(outcomeCheckedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>:null}
+      {outcomeCheckedAt?<p className="text-xs text-body">Reported at {formatDateTimeIst(new Date(outcomeCheckedAt))} IST</p>:null}
       <p role="status" className="text-sm leading-[22px]">{outcome.created.length===0
         ? "No workspaces were created — the selected class may have no active learners."
         : outcome.created.length<outcome.requested-outcome.alreadyCovered

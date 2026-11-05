@@ -23,21 +23,19 @@ import { getTpoPublicJoinLinkStatus } from "@/modules/placements/tpo-public-join
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 function dateLabel(value: Date | null) {
   if (!value) return "—";
 
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDateTimeFormatter.format(value);
 }
 
 function currency(value: number | null) {
   return value === null
     ? "Not recorded"
-    : new Intl.NumberFormat("en-IN", {
+    : createNumberFormatter("en-IN", {
         style: "currency",
         currency: "INR",
         maximumFractionDigits: 0,

@@ -13,6 +13,7 @@ import {useToast} from "@/components/ui/toast";
 import {collegeRulePayload,isCollegeRuleDirty,collegeRuleReceipt,collegeRuleSelection,parseCollegeRuleRecheck,type CollegeModule,type CollegeChoice,type ObservedCollegeRule} from "@/modules/module-access/admin-college-rule-ui-model";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { formatNumberIN } from "@/lib/safe-format";
 export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked,effectiveEnabled=false,collegeLabel="selected college"}:{collegeId:string;module:CollegeModule;stored:ObservedCollegeRule;ancestorLocked:boolean;effectiveEnabled?:boolean;collegeLabel?:string}){
  const router=useRouter();
  const {showToast}=useToast();
@@ -213,18 +214,18 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
       {["Active drives","In-progress applications","Pending offers","Upcoming interviews"].map((label,index)=>{
        const value=impactCounts?.[index];
        return <div key={label}><dt className="text-muted-foreground">{label}</dt>
-        <dd className="font-semibold tabular-nums">{value===undefined?"Unavailable":value.toLocaleString("en-IN")}</dd></div>;
+        <dd className="font-semibold tabular-nums">{value===undefined?"Unavailable":formatNumberIN(value)}</dd></div>;
       })}
      </dl>
      <p className="text-xs text-muted-foreground">Counts can overlap; they are a blast-radius preview, not a deletion list.</p>
      {impactCounts!==null&&impactCounts.length<4?<Alert tone="warning">Upcoming-interview counts are not returned by this API. Check scheduled interviews before disabling Placements.</Alert>:null}
     </div>:null}
-    {students!==null?<p className="m-0 break-words text-sm font-semibold leading-5 text-body">Active learners in this college: {students.toLocaleString("en-IN")}</p>:
+    {students!==null?<p className="m-0 break-words text-sm font-semibold leading-5 text-body">Active learners in this college: {formatNumberIN(students)}</p>:
      <Alert tone="warning">Student population could not be confirmed. The change will not be saved.</Alert>}
     {students!==null&&students>=100?<Label variant="choice" className="flex min-h-11 min-w-0 items-start gap-3 py-2">
       <Checkbox checked={acknowledgedPopulation} disabled={busy}
        onChange={e=>setAcknowledgedPopulation(e.target.checked)}/>
-      <span className="min-w-0 break-words">I understand this may change access for {students.toLocaleString("en-IN")} active learners.</span>
+      <span className="min-w-0 break-words">I understand this may change access for {formatNumberIN(students)} active learners.</span>
     </Label>:null}
     {impactCounts===null?<Label variant="choice" className="flex min-h-11 min-w-0 items-start gap-3 py-2">
       <Checkbox checked={ackUnknown} disabled={busy} onChange={e=>setAckUnknown(e.target.checked)}/>

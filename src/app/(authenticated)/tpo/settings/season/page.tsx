@@ -13,6 +13,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPlacementSeasonSettings } from "@/modules/placements/tpo-settings-read-service";
 import { Heading } from "@/components/ui/heading";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function TpoPlacementSeasonSettingsPage() {
   const context = await getCurrentRequestContext();
@@ -130,7 +131,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
                   <dd className="mt-1 text-sm text-body">
                     {!season.registrationControlled?"Managed per invited cohort":
                       season.isRegistrationOpen && (!season.registrationDeadline || new Date(season.registrationDeadline).getTime()>Date.now())
-                        ?"Open"+(season.registrationDeadline?" until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(season.registrationDeadline))+" IST":""):
+                        ?"Open"+(season.registrationDeadline?" until "+istDateTimeFormatter.format(new Date(season.registrationDeadline))+" IST":""):
                         "Closed"}
                   </dd>
                 </div>

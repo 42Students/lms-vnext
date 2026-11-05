@@ -11,13 +11,10 @@ import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 function when(value: Date) {
-  return value.toLocaleString("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  });
+  return formatDateTimeIst(value);
 }
 
 export default async function ActivityDetailPage({

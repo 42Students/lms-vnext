@@ -13,6 +13,7 @@ import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-wor
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export default async function RecruiterInterviewSlots({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
@@ -31,8 +32,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
  const rounds=workspace.rounds.filter(row=>row.kind==="INTERVIEW"&&
   (row.status==="PENDING"||row.status==="SCHEDULED"));
  const action="/api/placements/recruiter/drives/"+jobId+"/interview-slots";
- const when=(d:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
-  dateStyle:"medium",timeStyle:"short"}).format(d)+" IST";
+ const when=(d:Date)=>istDateTimeFormatter.format(d)+" IST";
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Interview slots"
    description={workspace.job.title+" · This schedules employer time blocks only. No learner invitation or candidate booking is created here."}/>

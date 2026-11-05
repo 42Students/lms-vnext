@@ -2,15 +2,13 @@ import {facultyReportCsvHref} from "@/modules/courses/faculty-report-csv-request
 import type {getFacultyAssignmentReport} from "@/modules/courses/faculty-assessment-report-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istIsoDateFormatter, istWeekdayDayMonthFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Report=Awaited<ReturnType<typeof getFacultyAssignmentReport>>;
-const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
- timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
-}).format(date);
-const dayLabel=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
-}).format(date);
-const shortDay=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
+const istDay=(date:Date)=>istIsoDateFormatter.format(date);
+const dayLabel=(date:Date)=>istWeekdayDayMonthFormatter.format(date);
+const shortDay=(date:Date)=>createDateFormatter("en-IN", {
  timeZone:"Asia/Kolkata",day:"numeric",month:"short",
 }).format(date);
 

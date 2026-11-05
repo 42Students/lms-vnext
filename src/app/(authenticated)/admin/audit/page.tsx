@@ -17,10 +17,10 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function smsDate(value:Date){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
-  dateStyle:"medium",timeStyle:"short"}).format(value)+" IST";
+ return istDateTimeFormatter.format(value)+" IST";
 }
 export default async function SuperAdminAuditPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;

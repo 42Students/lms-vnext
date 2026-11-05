@@ -10,6 +10,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 const hrefBase="/admin/placements/organization-jobs";
 type Row=Awaited<ReturnType<typeof searchOrganizationPlacementJobs>>["rows"][number];
@@ -17,7 +18,7 @@ function first(value:string|string[]|undefined){
  return typeof value==="string"?value:"";
 }
 function localDate(value:Date|null){
- return value?new Intl.DateTimeFormat("en-IN",{
+ return value?createDateFormatter("en-IN", {
   timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
  }).format(value):"Not set";
 }

@@ -18,6 +18,8 @@ import { getMentorReviewHistory } from "@/modules/projects/mentor-review-history
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Search = { projectState?:string|string[];window?:string|string[];order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
@@ -102,7 +104,7 @@ export default async function MentorReviewHistoryPage({
       </FilterBar>
 
       <p className="text-sm text-body leading-[22px]">
-        {data.total.toLocaleString("en-IN")} persisted delivery decision{data.total === 1 ? "" : "s"} across assigned projects
+        {formatNumberIN(data.total)} persisted delivery decision{data.total === 1 ? "" : "s"} across assigned projects
       </p>
       {data.items.length===0
         ? <EmptyState title="No recorded delivery reviews"
@@ -117,9 +119,7 @@ export default async function MentorReviewHistoryPage({
             </div>
             <p className="mt-2 text-sm text-body leading-[22px]">
               Final delivery version {item.version} · Reviewed{" "}
-              {new Intl.DateTimeFormat("en-IN",{
-                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-              }).format(item.reviewedAt)} IST
+              {istDateTimeFormatter.format(item.reviewedAt)} IST
             </p>
             <TextLink href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=delivery"}
               className="mt-3 inline-flex min-h-11 items-center text-sm">

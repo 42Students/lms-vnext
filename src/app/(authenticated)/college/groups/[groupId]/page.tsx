@@ -15,6 +15,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Detail = Awaited<ReturnType<typeof getCollegeGroupDetail>>;
 
@@ -34,7 +35,7 @@ function label(value: string) {
 }
 
 function when(value: Date | null) {
-  return value ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST" : "—";
+  return value ? istDateTimeFormatter.format(value)+" IST" : "—";
 }
 
 function Stat({ title, value }: { title: string; value: string | number }) {

@@ -51,6 +51,8 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istTimeFormatter, istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
@@ -361,7 +363,7 @@ function eventHref(
 }
 
 function dayLabel(day: string): string {
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     day: "numeric",
     month: "short",
     weekday: "short",
@@ -372,7 +374,7 @@ function dayLabel(day: string): string {
 }
 
 function dateLabel(day: string): string {
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -383,7 +385,7 @@ function dateLabel(day: string): string {
 }
 
 function monthLabel(day: string): string {
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
@@ -393,20 +395,11 @@ function monthLabel(day: string): string {
 }
 
 function eventTime(value: Date): string {
-  return new Intl.DateTimeFormat("en-IN", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istTimeFormatter.format(value);
 }
 
 function eventDateTime(value: Date): string {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDateTimeFormatter.format(value);
 }
 
 function eventTypeLabel(
@@ -814,7 +807,7 @@ export async function PlacementCalendarWorkspace({
 
       {isTpo?<section aria-label="Today and next 7 days" className="border-b border-border pb-4">
        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Today, {new Intl.DateTimeFormat("en-IN",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"})
+        Today, {createDateFormatter("en-IN", {weekday:"short",day:"numeric",month:"short",timeZone:"UTC"})
          .format(new Date(today+"T12:00:00Z"))}
        </p>
        {needsKnown?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
@@ -1333,7 +1326,7 @@ export async function PlacementCalendarWorkspace({
               className="space-y-3"
             >
               <Heading level={3} size="sm" className="m-0 border-b border-border pb-2 text-foreground">
-                {new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(group.day+"T12:00:00Z"))}
+                {createDateFormatter("en-IN", {weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(group.day+"T12:00:00Z"))}
                 {group.day === today
                   ? " · Today"
                   : ""}

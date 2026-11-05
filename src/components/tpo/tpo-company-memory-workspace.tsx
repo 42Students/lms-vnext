@@ -15,6 +15,8 @@ import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -76,11 +78,7 @@ const buttonStyle =
 function dateLabel(value: string) {
   const date = new Date(value);
   return Number.isFinite(date.getTime())
-    ? new Intl.DateTimeFormat("en-IN", {
-        dateStyle: "medium",
-        timeStyle: "short",
-        timeZone: "Asia/Kolkata",
-      }).format(date)
+    ? istDateTimeFormatter.format(date)
     : "Unknown time";
 }
 
@@ -88,7 +86,7 @@ function dateLabel(value: string) {
 function legacyActivityTime(value:string){
  const date=new Date(value);
  if(!Number.isFinite(date.getTime()))return "Unknown time";
- return new Intl.DateTimeFormat("en-IN",{
+ return createDateFormatter("en-IN", {
   day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true,
   timeZone:"Asia/Kolkata",
  }).format(date).replace(/\b(am|pm)\b/g,s=>s.toUpperCase());
@@ -104,7 +102,7 @@ function legacyAgoText(value:string,now:number){
 function legacyActivityDay(value:string){
  const date=new Date(value);
  if(!Number.isFinite(date.getTime()))return "Unknown day";
- return new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",timeZone:"Asia/Kolkata"}).format(date);
+ return createDateFormatter("en-IN", {day:"numeric",month:"short",timeZone:"Asia/Kolkata"}).format(date);
 }
 
 export function TpoCompanyMemoryWorkspace({

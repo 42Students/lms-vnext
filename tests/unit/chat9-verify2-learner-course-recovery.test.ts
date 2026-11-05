@@ -13,11 +13,11 @@ describe("learner course recovery and missing class state",()=>{
   expect(retry).toContain('className="mt-3 min-h-11 md:min-h-9"');
   expect(retry).toContain('type="button"');
   expect(retry).toContain('disabled={pending}');
-  expect(code).toContain('<Link href="/learn/courses" className="font-semibold text-primary-text underline">');
+  expect(code).toContain('<TextLink href="/learn/courses">');
  });
  it("shows an accessible book illustration and class assignment guidance",()=>{
   const code=readFileSync(join(process.cwd(),"src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx"),"utf8");
-  expect(code).toContain('aria-hidden="true" width="28" height="28"');
+  expect(code).toContain('aria-hidden="true" width="32" height="32"');
   expect(code).toContain("Please contact your administrator to check your course and class assignment.");
  });
 });

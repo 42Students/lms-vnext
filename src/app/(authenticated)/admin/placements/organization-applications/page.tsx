@@ -11,6 +11,7 @@ import {searchOrganizationPlacementApplications} from "@/modules/placements/orga
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
@@ -22,7 +23,7 @@ function listingUrl(params:{search:string;status:string;sort:string;pageSize:num
 }
 const statusOptions=["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW",
  "WAITLISTED","OFFERED","REJECTED","HIRED","WITHDRAWN"] as const;
-const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
+const fmt=istDateTimeFormatter;
 
 export default async function OrganizationApplicationsPage({searchParams}:{
  searchParams:Promise<Params>;

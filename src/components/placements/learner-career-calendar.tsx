@@ -37,6 +37,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 const views: CareerCalendarView[] = ["agenda", "month", "week", "day"];
 type EventFilter = LearnerCalendarUrlState["kind"];
@@ -49,15 +51,11 @@ const filters: { key: EventFilter; label: string }[] = [
 ];
 
 function displayDate(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDateTimeFormatter.format(value);
 }
 
 function prettyDay(dayKey: string) {
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     dateStyle: "medium", timeZone: "UTC",
   }).format(new Date(dayKey + "T12:00:00.000Z"));
 }
@@ -136,7 +134,7 @@ export function LearnerCareerCalendar({
   const selectedDayEvents=selectedDayKey
     ? events.filter((event)=>event.dayKey===selectedDayKey) : [];
   const dayDrawerTitle=selectedDayKey
-    ? new Intl.DateTimeFormat("en-IN",{
+    ? createDateFormatter("en-IN", {
         timeZone:"UTC",weekday:"long",day:"numeric",month:"long",
       }).format(new Date(selectedDayKey+"T12:00:00.000Z")).replace(",", "")
     : "Day schedule";
@@ -221,7 +219,7 @@ export function LearnerCareerCalendar({
           >→</Button>
           <span className={styles["period"]}>
             {surface==="schedule"&&view==="month"
-              ? new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(anchor.slice(0,7)+"-01T12:00:00.000Z"))
+              ? createDateFormatter("en-IN", {month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(anchor.slice(0,7)+"-01T12:00:00.000Z"))
               : view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
           </span>
         </div>
@@ -263,7 +261,7 @@ export function LearnerCareerCalendar({
 
       {view === "month" ? (
         <section className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)] pb-4 text-sm text-body" aria-label="Selected month round totals">
-          <strong className="text-foreground">{new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(period.start+"T12:00:00Z"))}: {monthCounts.total} scheduled round{monthCounts.total===1?"":"s"}</strong>
+          <strong className="text-foreground">{createDateFormatter("en-IN", {month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(period.start+"T12:00:00Z"))}: {monthCounts.total} scheduled round{monthCounts.total===1?"":"s"}</strong>
           <span>{monthCounts.assessments} assessments</span>
           <span>{monthCounts.interviews} interviews</span>
           <span>{monthCounts.talks} talks</span>

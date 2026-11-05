@@ -16,13 +16,12 @@ describe("Activity Log forensic view switcher", () => {
       const currentMarker = 'aria-current={' + current + '?"page":undefined}';
       const start = activitySource.indexOf(currentMarker);
       expect(start).toBeGreaterThanOrEqual(0);
-      const end = activitySource.indexOf('>' + title + '</Link>', start);
+      const end = activitySource.indexOf('>' + title + '</TextLink>', start);
       expect(end).toBeGreaterThan(start);
       const link = activitySource.slice(start, end);
       expect(link).toContain('className="inline-flex min-h-11 items-center');
-      expect(link).toContain('focus-ring');
-      expect(link).toContain('focus-visible:outline-offset-[3px]');
-      expect(link).toContain('focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"');
+      expect(link).toContain('className="inline-flex min-h-11 items-center md:min-h-9"');
+      expect(readFileSync("src/components/ui/text-link.tsx", "utf8")).toContain("focus-ring");
     }
   });
 

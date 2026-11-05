@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Data = {
   kind: CollegeAssessmentKind;
@@ -45,11 +46,7 @@ type Data = {
 
 function formatDue(value: Date | null) {
   if (!value) return "Not scheduled";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value) + " IST";
+  return istDateTimeFormatter.format(value) + " IST";
 }
 
 function QuizListActions({item}:{item:CollegeAssessmentAggregateItem}){

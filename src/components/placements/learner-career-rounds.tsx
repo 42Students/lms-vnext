@@ -10,6 +10,7 @@ import { learnerRoundTimeLabel, learnerRoundTimeSignal } from "@/modules/placeme
 import {learnerInterviewCountdown} from "@/modules/placements/learner-interview-countdown-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export type LearnerCareerRound = {
   applicationId: string;
@@ -50,11 +51,7 @@ function formatWhen(value: string | null) {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? value
-    : new Intl.DateTimeFormat("en-IN", {
-        dateStyle: "medium",
-        timeStyle: "short",
-        timeZone: "Asia/Kolkata",
-      }).format(date);
+    : istDateTimeFormatter.format(date);
 }
 
 export function LearnerCareerRounds({

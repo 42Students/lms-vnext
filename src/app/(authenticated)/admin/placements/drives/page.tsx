@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 export default async function SuperAdminDrivesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -160,7 +161,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   </div>
   <p role="status" className="text-sm text-muted-foreground">
     {data.total===0?"No drives":((data.page-1)*data.pageSize+1)+"–"+Math.min(data.total,data.page*data.pageSize)+
-      " of "+data.total.toLocaleString("en-IN")} drives · {data.pageSize} per page · Page {data.page} of {data.totalPages}
+      " of "+formatNumberIN(data.total)} drives · {data.pageSize} per page · Page {data.page} of {data.totalPages}
     {parsed.data.q?" · Search: "+parsed.data.q:""}
   </p>
   <DataTable columns={columns} rows={data.items} getRowKey={row=>row.job.id}

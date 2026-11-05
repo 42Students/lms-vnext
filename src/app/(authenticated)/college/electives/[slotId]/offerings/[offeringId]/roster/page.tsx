@@ -26,6 +26,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 const uuid = z.string().uuid();
 const ROSTER_PAGE_SIZE = 50;
@@ -158,9 +159,7 @@ export default async function ElectiveRoster({
     "name,rollNumber,department,state,since",
     ...rosterRows.map(member => [
       member.displayName, member.rollNumber, member.department, member.state,
-      member.joinedAt ? new Intl.DateTimeFormat("en-IN", {
-        dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-      }).format(member.joinedAt) : "",
+      member.joinedAt ? istDateTimeFormatter.format(member.joinedAt) : "",
     ].map(csvCell).join(",")),
   ].join("\r\n");
   async function mutate(form: FormData) {
@@ -282,7 +281,7 @@ export default async function ElectiveRoster({
           { key: "source", header: "How", mobilePriority: "secondary",
             cell: member => member.source },
           { key: "since", header: "Since", mobilePriority: "secondary",
-            cell: member => member.joinedAt ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(member.joinedAt) : "—" },
+            cell: member => member.joinedAt ? istDateTimeFormatter.format(member.joinedAt) : "—" },
           { key: "actions", header: "Actions", mobilePriority: "action",
             cell: member => !archived && ["ACTIVE", "WAITLISTED"].includes(member.state)
               ? <div className="grid gap-2">

@@ -16,6 +16,7 @@ import {
 } from "./course-media-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateFormatter } from "@/lib/format-date";
 
 type YouTubePlayer = {
   destroy: () => void;
@@ -493,7 +494,7 @@ export function LearnerYouTubePlayer({
         <div className="min-w-0">
           <p className="text-xs font-semibold text-muted-foreground">YouTube Video</p>
           <Heading level={3} size="base" className="break-words text-foreground">{contentTitle?.trim()||"Embedded YouTube video"}</Heading>
-          {contentAddedAt?<p className="mt-1 text-xs text-muted-foreground">Added {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(contentAddedAt))}</p>:null}
+          {contentAddedAt?<p className="mt-1 text-xs text-muted-foreground">Added {istDateFormatter.format(new Date(contentAddedAt))}</p>:null}
         </div>
         {(onEdit||onDelete)?<div className="flex flex-wrap items-center gap-2">
           {onEdit?<Button type="button" variant="secondary" onClick={onEdit}>Edit</Button>:null}

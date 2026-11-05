@@ -16,6 +16,7 @@ import {readOptionalPublicPlacementData} from "@/modules/placements/public-page/
 import {publicPlacementSettingState} from "@/modules/placements/public-page/publication-view-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateFormatter } from "@/lib/format-date";
 export const dynamic="force-dynamic";
 
 export default async function PublicPlacementSettingsPage({
@@ -60,7 +61,7 @@ export default async function PublicPlacementSettingsPage({
     <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
     {!view.enabled?<Alert tone="info">Publication is off; this preview does not make any statistics public.</Alert>:null}
     {view.enabled&&!published?<Alert tone="warning">{preview?.available?"Not enough data yet. There is no current published snapshot to preview. Figures remain withheld.":"The published preview could not be loaded. Figures remain withheld."}</Alert>:null}
-    {published?<p className="text-xs text-muted-foreground">Published as of {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(published.publishedAt))}.</p>:null}
+    {published?<p className="text-xs text-muted-foreground">Published as of {istDateFormatter.format(new Date(published.publishedAt))}.</p>:null}
     {published&&content.about?<p className="whitespace-pre-wrap text-sm text-body">{content.about}</p>:null}
     <div className="grid gap-3 md:grid-cols-2">
      {content.metricKeys.flatMap(key=>{

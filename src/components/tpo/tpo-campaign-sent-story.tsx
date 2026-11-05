@@ -2,6 +2,7 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDayMonthYearFormatter } from "@/lib/format-date";
 
 type CampaignReceipt={leadId:string;name:string;status:string};
 type CampaignStory={
@@ -11,9 +12,7 @@ type CampaignStory={
 };
 function campaignDay(input:Date|string){
  const date=new Date(input);
- return Number.isFinite(date.getTime())?new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
- }).format(date):"Date unavailable";
+ return Number.isFinite(date.getTime())?istDayMonthYearFormatter.format(date):"Date unavailable";
 }
 function receiptText(code:string){
  const labels:Record<string,string>={

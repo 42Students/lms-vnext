@@ -21,6 +21,7 @@ import { telegramAlertsConfigured } from "@/modules/log-alerts/telegram-notifier
 import { knownErrorListSchema } from "@/modules/log-alerts/validation";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 function LockKeyhole({className = ""}: {className?: string}) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" width={26} height={26}
@@ -99,7 +100,7 @@ export default async function TrackerLogsPage({
   const deploy = /^[0-9a-f]{7,64}$/i.test(commit) ? commit : null;
   const startedRaw = process.env["DEPLOY_STARTED_AT"] ?? "";
   const backendStartedAt = startedRaw && Number.isFinite(Date.parse(startedRaw))
-    ? new Date(startedRaw).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" })
+    ? formatDateTimeIst(new Date(startedRaw))
     : null;
 
   const header = (

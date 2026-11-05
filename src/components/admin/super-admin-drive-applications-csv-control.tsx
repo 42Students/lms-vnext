@@ -3,6 +3,7 @@ import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {useToast} from "@/components/ui/toast";
+import { formatNumberIN } from "@/lib/safe-format";
 
 /** Scoped job-application export; never substitute an unfiltered or global CSV. */
 export function SuperAdminDriveApplicationsCsvControl({href,limit}:{href:string;limit:number}){
@@ -32,7 +33,7 @@ export function SuperAdminDriveApplicationsCsvControl({href,limit}:{href:string;
  return <div className="min-w-0 space-y-2 print:hidden">
   <Button variant="secondary" size="sm" className="min-h-11 w-full md:min-h-9 md:w-auto"
    type="button" disabled={busy} loading={busy} onClick={()=>void download()}>
-   {busy?"Preparing applications CSV…":"Export CSV (up to "+limit.toLocaleString("en-IN")+")"}
+   {busy?"Preparing applications CSV…":"Export CSV (up to "+formatNumberIN(limit)+")"}
   </Button>
   {error?<Alert tone="error" role="alert">{error}</Alert>:null}
  </div>;

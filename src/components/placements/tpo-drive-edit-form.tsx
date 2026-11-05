@@ -24,6 +24,9 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 type Draft=Awaited<ReturnType<typeof getTpoDriveEditState>>;
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
@@ -332,9 +335,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
      <li key={round.id} className="break-words">
       <span className="font-semibold">{round.sequence}. {round.name}</span>
       {" · "}{round.kind.replaceAll("_"," ")}{" · "}{round.status}
-      {round.scheduledAt?" · "+new Intl.DateTimeFormat("en-IN",{
-       timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-      }).format(new Date(round.scheduledAt))+" IST":""}
+      {round.scheduledAt?" · "+istDateTimeFormatter.format(new Date(round.scheduledAt))+" IST":""}
      </li>)}</ol>}
    {!job.roundsComplete?<p role="status" className="text-xs text-warning">
     Showing the first 100 rounds. Visit the rounds workspace for the full list.</p>:null}
@@ -518,7 +519,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
    <Label className="block text-[length:var(--lms-font-sm)]">Application deadline (IST)
     <DateInput name="applicationDeadline" mode="datetime-local"
-      defaultValue={job.applicationDeadline?new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
+      defaultValue={job.applicationDeadline?createDateFormatter("sv-SE", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
       className={cls}/>
    </Label>
    <Label className="block text-[length:var(--lms-font-sm)]">Minimum CGPA for eligibility
@@ -531,9 +532,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    <p role="status" className="inline-flex items-center gap-2 text-body">
     <span aria-hidden="true" className={dirty?"h-2 w-2 rounded-full bg-warning":"h-2 w-2 rounded-full bg-success"}/>
     {dirty?"Unsaved changes — leave this page only after saving.":
-     "Last server save: "+new Intl.DateTimeFormat("en-IN",{
-      dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-     }).format(new Date(saved?.at??version))+" IST"}
+     "Last server save: "+istDateTimeFormatter.format(new Date(saved?.at??version))+" IST"}
    </p>
    <p className="text-xs text-body">Active-season draft and live drives can be edited. Live changes are audited. Applicant notices are sent only after you choose to notify; no automatic email is sent.</p>
    {job.status==="PUBLISHED"?<p className="text-xs text-muted-foreground">
@@ -598,7 +597,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     {reachBusy?<p role="status" className="mt-2 text-sm text-body">Calculating the saved eligibility policy…</p>:null}
     {reach?.kind==="READY"?<div className="mt-3 space-y-3">
      <p role="status" className="text-sm font-semibold text-foreground">
-      {reach.eligible.toLocaleString("en-IN")} fully eligible of {reach.evaluated.toLocaleString("en-IN")} active enrolled learners
+      {formatNumberIN(reach.eligible)} fully eligible of {formatNumberIN(reach.evaluated)} active enrolled learners
      </p>
      <dl className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
       {([
@@ -609,7 +608,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
       ] as const).map(([label,value])=><div key={label}
        className="min-w-0 rounded border border-border px-2 py-2">
        <dt className="text-muted-foreground">{label}</dt>
-       <dd className="mt-1 text-lg font-semibold tabular-nums text-foreground">{value.toLocaleString("en-IN")}</dd>
+       <dd className="mt-1 text-lg font-semibold tabular-nums text-foreground">{formatNumberIN(value)}</dd>
       </div>)}
      </dl>
      <Disclosure title="Branch breakdown">
@@ -622,7 +621,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
      </Disclosure>
      <p className="text-xs leading-5 text-muted-foreground">{reach.scopeNote}</p>
      <p className="text-xs text-muted-foreground">
-      Calculated {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(reach.asOf))} IST
+      Calculated {istDateTimeFormatter.format(new Date(reach.asOf))} IST
       {reach.savedRevision!==version?" · Refresh to check the latest saved revision":""}
      </p>
     </div>:reach?.kind==="UNAVAILABLE"?<p role="alert" className="mt-2 text-sm text-warning">
@@ -647,12 +646,12 @@ export function TpoDriveEditForm({job}:{job:Draft}){
        <div><dt className="inline font-semibold">Work mode: </dt><dd className="inline">{role.workMode??"—"}</dd></div>
        <div><dt className="inline font-semibold">CTC: </dt><dd className="inline">
         {role.minimumAnnualCtcInr===null||role.minimumAnnualCtcInr===undefined?
-         "—":"₹"+role.minimumAnnualCtcInr.toLocaleString("en-IN")}
+         "—":"₹"+formatNumberIN(role.minimumAnnualCtcInr)}
         {role.maximumAnnualCtcInr!==null&&role.maximumAnnualCtcInr!==undefined?
-         " – ₹"+role.maximumAnnualCtcInr.toLocaleString("en-IN"):""}</dd></div>
+         " – ₹"+formatNumberIN(role.maximumAnnualCtcInr):""}</dd></div>
        <div><dt className="inline font-semibold">Monthly stipend: </dt><dd className="inline">
         {role.stipendPerMonthInr===null||role.stipendPerMonthInr===undefined?
-         "—":"₹"+Number(role.stipendPerMonthInr).toLocaleString("en-IN")}</dd></div>
+         "—":"₹"+formatNumberIN(Number(role.stipendPerMonthInr))}</dd></div>
       </dl>
      </li>)}</ul>:
      <p className="text-sm text-muted-foreground">No role packages recorded.</p>}

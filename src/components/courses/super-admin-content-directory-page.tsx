@@ -26,6 +26,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function publicHttpsHref(value:string|null){
  return safePublicCourseContentUrl(value);
@@ -37,7 +38,7 @@ function studentContentVisible(item:{
  return effectiveCourseContentVisibleToStudents(item);
 }
 function ist(value:Date) {
- return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(value)+" IST";
+ return istDateTimeFormatter.format(value)+" IST";
 }
 export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  kind:AdminContentKind;

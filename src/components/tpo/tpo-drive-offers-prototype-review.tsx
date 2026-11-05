@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 type OfferRow={
  id:string;name:string;membershipId:string;rollNumber:string|null;branch:string|null;
  role:string;status:string;statusLabel:string;kind:string;issued:string;
@@ -14,7 +16,7 @@ type OfferRow={
 type Selection={
  id:string;name:string;roleTitle:string;status:string;offerReady:boolean;
 };
-const date=(iso:string|null)=>iso?new Intl.DateTimeFormat("en-IN",{
+const date=(iso:string|null)=>iso?createDateFormatter("en-IN", {
  timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
  hour:"numeric",minute:"2-digit",
 }).format(new Date(iso))+" IST":"Not recorded";
@@ -127,7 +129,7 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
       <header className="border-b border-border pb-3">
        <Heading level={3} size="lg" className="break-words text-foreground">{selected.name}</Heading>
        <p className="mt-1 text-sm text-body">
-        {selected.role} · {selected.annualCtcInr===null?"Package not recorded":"₹"+(selected.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}
+        {selected.role} · {selected.annualCtcInr===null?"Package not recorded":"₹"+formatNumberIN((selected.annualCtcInr/100000))+" LPA"}
        </p>
        <p className="mt-2 text-sm font-semibold text-[color:var(--lms-warning-strong)]">
         {selected.status==="ISSUED"?"Waiting on student":

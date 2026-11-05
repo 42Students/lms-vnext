@@ -8,6 +8,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Season={
  id:string;name:string;status:string;updatedAt:string;
@@ -69,7 +70,7 @@ export function TpoSeasonRegistrationControls({seasons}:{seasons:readonly Season
       <p className="font-semibold text-sm">{season.name}</p>
       <p className="mt-1 text-xs text-muted-foreground">
        {!season.registrationControlled?"Cohort invitations control registration":
-        effectiveOpen?"Registration open"+(season.registrationDeadline?" until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(season.registrationDeadline))+" IST":""):
+        effectiveOpen?"Registration open"+(season.registrationDeadline?" until "+istDateTimeFormatter.format(new Date(season.registrationDeadline))+" IST":""):
         "Registration closed"}
       </p>
      </div>

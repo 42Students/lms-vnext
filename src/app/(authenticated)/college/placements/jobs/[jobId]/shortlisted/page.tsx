@@ -31,6 +31,8 @@ import { CollegeShortlistedLastGood } from "@/components/placements/college-shor
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 /**
  * Legacy Shortlisted workbench. Pipeline stage (ASSESSMENT by default) is the
@@ -113,7 +115,7 @@ export default async function CollegeDriveShortlistedPage({
   if (query.page > data.totalPages) redirect(href({ ...query, page: data.totalPages }));
   const stages = ["ASSESSMENT", "INTERVIEW", "OFFERED", "HIRED", "SHORTLISTED", "WAITLISTED", "REJECTED", "APPLIED"] as const;
   const stageName = (value: string) => value.charAt(0) + value.slice(1).toLowerCase();
-  const date = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" });
+  const date = istDateFormatter;
   const external = data.items.filter(row => row.source === "EXTERNAL");
   const internal = data.items.filter(row => row.source !== "EXTERNAL");
   // Current shared pipeline controls do not safely exclude external candidates
@@ -187,7 +189,7 @@ export default async function CollegeDriveShortlistedPage({
       </div>
     </Alert> : null}
     <section aria-labelledby="shortlisted-applications-title" className="space-y-2">
-      <Heading level={2} size="lg" id="shortlisted-applications-title" className="text-[var(--lms-heading)]">Applications · {data.total.toLocaleString("en-IN")}</Heading>
+      <Heading level={2} size="lg" id="shortlisted-applications-title" className="text-[var(--lms-heading)]">Applications · {formatNumberIN(data.total)}</Heading>
       <p className="text-sm text-muted-foreground">Shortlisted is an Applications subview; review and manage each candidate using the stage tabs.</p>
     </section>
     <Tabs ariaLabel="Shortlisted pipeline stages" renderPanel={false} value={query.stage}
@@ -223,7 +225,7 @@ export default async function CollegeDriveShortlistedPage({
         : null}
     </form>
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
-      <span role="status">{data.total.toLocaleString("en-IN")} matching {stageName(query.stage).toLowerCase()} applications</span>
+      <span role="status">{formatNumberIN(data.total)} matching {stageName(query.stage).toLowerCase()} applications</span>
       <CollegeShortlistedToolbar cap={DRIVE_APPLICATION_EXPORT_CAP}
         exportHref={"/api/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications/export"+
           (driveApplicationsHref(jobId, query, true).split("/export")[1] ?? "")}/>

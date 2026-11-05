@@ -26,6 +26,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 export default async function SuperAdminLessonsPage({
   searchParams,
@@ -180,7 +181,7 @@ export default async function SuperAdminLessonsPage({
       </Disclosure>
       <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9" href="/admin/lessons">Clear filters</TextLink>
     </form>
-    <p className="mt-3 text-sm text-muted-foreground">{hasCourseSelection?data.total.toLocaleString("en-IN"):"0"} matching lessons · on this page: {summary.authored} content records, {summary.published} published{" "}
+    <p className="mt-3 text-sm text-muted-foreground">{hasCourseSelection?formatNumberIN(data.total):"0"} matching lessons · on this page: {summary.authored} content records, {summary.published} published{" "}
       <TextLink href={selectedScopeHref(data.query)}>Reload results</TextLink>
     </p>
     {filtersResult.status==="rejected"?<Alert tone="warning">

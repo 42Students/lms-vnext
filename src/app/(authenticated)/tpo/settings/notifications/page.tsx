@@ -26,6 +26,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type SearchParams = {
   view?: string | string[];
@@ -34,11 +35,7 @@ type SearchParams = {
 };
 
 function formatWhen(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDateTimeFormatter.format(value);
 }
 
 export default async function TpoMyNotificationsPage({

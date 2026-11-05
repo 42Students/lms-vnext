@@ -19,7 +19,7 @@ describe("UX-campaign-unsubscribe-token-01 preference confirmation",()=>{
  it("uses mobile-safe shared Card and a guarded confirmed POST with accessible error",()=>{
   const page=read("src/app/campaign-unsubscribe/[token]/page.tsx");
   const form=read("src/components/placements/campaign-unsubscribe-confirm.tsx");
-  expect(page).toContain('<h1 className="m-0 text-[20px]');
+  expect(page).toContain('<Heading level={1} size="xl" className="m-0');
   expect(page).toContain('<Card as="section"');
   expect(page).toContain('min-h-dvh');
   expect(form).toContain("if(pendingRef.current||confirmed||!token.trim())return");

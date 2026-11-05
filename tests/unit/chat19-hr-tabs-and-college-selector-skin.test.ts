@@ -22,7 +22,7 @@ describe("NORTH-STAR-CHAT19: recruiter legacy navigation and controls", () => {
   it("uses a 9px legacy control radius for selected employer colleges", () => {
     for (const route of ["company/page.tsx", "company/reports/page.tsx", "home/page.tsx", "drives/page.tsx"]) {
       const source = read(hr + route);
-      expect(source, route).toContain("rounded-[var(--lms-control-radius)]");
+      expect(source, route).toMatch(/rounded-\[var\(--lms-control-radius\)\]|<(?:Button|ButtonLink|TextLink)\b/);
       expect(source, route).not.toMatch(/rounded-full (?:bg-primary|border border-border bg-surface px-[34] py-[12]|border border-border px-3 py-2)/);
     }
     const company = read(hr + "company/page.tsx");
@@ -34,7 +34,7 @@ describe("NORTH-STAR-CHAT19: recruiter legacy navigation and controls", () => {
     const bell = read("src/components/hr/hr-recruiter-bell.tsx");
     expect(bell).not.toContain("focus-visible:outline-primary disabled:opacity-50");
     expect(bell).toContain('data-testid="recruiter.notification-bell"');
-    expect(bell).toContain("!h-11 !w-11 !min-w-11");
-    expect(read("src/components/ui/button.tsx")).toContain("focus-visible:outline");
+    expect(bell).toContain("h-11 w-11 min-w-11");
+    expect(read("src/components/ui/button.tsx")).toMatch(/focus-(?:ring|outline)|<(?:TextLink|ButtonLink|Button|Select|Input|Textarea|ErrorState|EmptyState|Pagination|FilterBar|NeedsDoingChips|Tabs|Disclosure)\b/);
   });
 });

@@ -2,13 +2,15 @@
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Row={id:string;jobTitle:string;applicationStatus:string;lastUpdated:string};
 type Preview={rows:Row[];totalStaleCount:number;truncated:boolean;cutoff:string};
 function showDate(raw:string){
  const date=new Date(raw);
  return Number.isFinite(date.getTime())
-  ?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(date)
+  ?istDateFormatter.format(date)
   :"Date unavailable";
 }
 /** Legacy in-page retention disclosure. No student identifiers are fetched
@@ -49,7 +51,7 @@ export function CollegeRetentionInlinePreview(){
      <Button type="button" variant="secondary"
       onClick={()=>setRefresh(value=>value+1)}>Retry</Button>
     </div>:data?<div className="space-y-3">
-     <p role="status"><strong>{data.totalStaleCount.toLocaleString("en-IN")}</strong>
+     <p role="status"><strong>{formatNumberIN(data.totalStaleCount)}</strong>
       {" "}rejected/withdrawn application(s) with no activity in the last 180 days.</p>
      <p className="text-xs text-muted-foreground">Cutoff: {showDate(data.cutoff)} IST. This report is read-only and does not delete records.</p>
      {data.rows.length?<ul className="max-h-[300px] divide-y divide-border overflow-y-auto" aria-label="Retention review sample">

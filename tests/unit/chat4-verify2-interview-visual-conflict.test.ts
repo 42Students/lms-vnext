@@ -49,7 +49,7 @@ describe("W1-2 old LMS interview calendar warning parity",()=>{
  it("renders a visible, typed red warning icon in candidate rows and table",()=>{
   const source=readFileSync("src/components/placements/college-interview-appointments.tsx","utf8");
   expect(source).toContain('visibleInterviewConflictLabel(kinds)');
-  expect(source).toContain('aria-hidden="true" width="13" height="13"');
+  expect(source).toContain('aria-hidden="true" width="14" height="14"');
   expect(source).toContain('<StatusBadge tone="error">');
   expect(source).toContain('cell:row=>conflictBadge(row)??"—"');
  });

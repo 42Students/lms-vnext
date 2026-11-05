@@ -17,6 +17,8 @@ import {listOwnAppliedPlacementResults} from "@/modules/placements/result-servic
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
+import { istIsoDateFormatter, istTimeFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 /** Dev legacy combines all learner rounds on one authorized Schedule page. */
 export default async function LearnerPlacementSchedulePage({searchParams}:{
@@ -102,32 +104,30 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       meetingUrl: row.exception.meetingUrl,
     } : null,
   }));
-  const dateKey=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
-    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
-  }).format(date);
+  const dateKey=(date:Date)=>istIsoDateFormatter.format(date);
   const todayKey=dateKey(now),tomorrowKey=dateKey(new Date(now.getTime()+86400000)),
     yesterdayKey=dateKey(new Date(now.getTime()-86400000));
   const dayLabel=(date:Date|null)=>{
     if(!date)return "Date to be told";
     const key=dateKey(date);
-    const weekday=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"}).format(date);
-    const day=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(date);
+    const weekday=createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short"}).format(date);
+    const day=createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(date);
     if(key===todayKey)return "Today · "+weekday+" "+day;
     if(key===tomorrowKey)return "Tomorrow · "+weekday+" "+day;
     if(key===yesterdayKey)return "Yesterday · "+weekday+" "+day;
-    return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long"}).format(date);
+    return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long"}).format(date);
   };
   const fmt = (date: Date | null) => date
-    ? new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium",
+    ? createDateFormatter("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium",
         ...(learnerRoundIsDayOnly(date)?{}:{timeStyle:"short" as const}) }).format(date)+
       (learnerRoundIsDayOnly(date)?" · Time to be told":"")
     : "Date to be told";
   const dateTile=(date:Date|null)=>{
    if(!date)return <span aria-hidden="true" className="flex h-20 w-16 shrink-0 items-center justify-center rounded border border-border bg-muted text-xs">TBC</span>;
    return <span aria-hidden="true" className="flex h-20 w-16 shrink-0 flex-col items-center justify-center rounded border border-border bg-primary-subtle text-center">
-    <span className="text-xs font-semibold uppercase">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",month:"short"}).format(date)}</span>
-    <strong className="text-2xl tabular-nums">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(date)}</strong>
-    <span className="text-xs">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"}).format(date)}</span>
+    <span className="text-xs font-semibold uppercase">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",month:"short"}).format(date)}</span>
+    <strong className="text-2xl tabular-nums">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric"}).format(date)}</strong>
+    <span className="text-xs">{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short"}).format(date)}</span>
    </span>;
   };
   const aheadByDay=new Map<string,WorkspaceRound[]>();
@@ -141,9 +141,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
    const duration=row.durationMinutes;
    if(duration===null||duration===undefined||duration<=0||learnerRoundIsDayOnly(start))return fmt(start);
    const end=new Date(start.getTime()+duration*60_000);
-   return fmt(start)+" – "+new Intl.DateTimeFormat("en-IN",{
-    timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
-   }).format(end)+" IST";
+   return fmt(start)+" – "+istTimeFormatter.format(end)+" IST";
   };
   // Legacy schedule cards include a company mark when a verified HTTPS
   // asset is persisted. Never render an imported, unsafe company logo URL.

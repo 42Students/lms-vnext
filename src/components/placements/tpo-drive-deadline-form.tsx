@@ -10,6 +10,8 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import { Label } from "@/components/ui/label";
+import { formatDateTimeIst, istDateTimeFormatter } from "@/lib/format-date";
+import { formatDateWith } from "@/lib/format-date";
 type Deadline={id:string;updatedAt:string;applicationDeadline:string|null};
 
 /** TPO-drives-15, TPO-drives-45: first deadlines work and every failure is recoverable. */
@@ -20,7 +22,7 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
  const [proposal,setProposal]=useState<{newDeadlineIso:string;reason:string}|null>(null);
  const [confirmOpen,setConfirmOpen]=useState(false);
  const initial=job.applicationDeadline
-  ?new Date(job.applicationDeadline).toLocaleString("sv-SE",{timeZone:"Asia/Kolkata"}).replace(" ","T").slice(0,16)
+  ?formatDateWith(new Date(job.applicationDeadline), "sv-SE", { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", timeZone:"Asia/Kolkata" }).replace(" ","T").slice(0,16)
   :"";
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(pending)return;
@@ -63,7 +65,7 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
  return <>
   <form onSubmit={submit} className="min-w-0 max-w-2xl space-y-4 border-b border-border pb-5">
    {job.applicationDeadline?<p className="border-b border-border pb-3 text-sm font-semibold text-body">Current deadline: {
-    new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>:null}
+    formatDateTimeIst(new Date(job.applicationDeadline))} IST</p>:null}
    <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:items-start">
     <Label stack className="min-w-0">New application deadline (IST)
      <Input required type="datetime-local" name="newDeadline" defaultValue={initial}
@@ -87,7 +89,7 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
    confirmVariant="primary" confirmLabel={job.applicationDeadline?"Extend deadline":"Set deadline"}
    pending={pending} onConfirm={()=>void confirm()}>
    {proposal?<dl className="min-w-0 space-y-2 text-sm">
-    <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3"><dt className="font-semibold">New deadline (IST)</dt><dd className="min-w-0 break-words">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(proposal.newDeadlineIso))} IST</dd></div>
+    <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3"><dt className="font-semibold">New deadline (IST)</dt><dd className="min-w-0 break-words">{istDateTimeFormatter.format(new Date(proposal.newDeadlineIso))} IST</dd></div>
     <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3"><dt className="font-semibold">Reason</dt><dd className="min-w-0 break-words">{proposal.reason}</dd></div>
    </dl>:null}
   </ConfirmDialog>

@@ -15,6 +15,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export default async function TpoNoShowReportPage({
   params,
@@ -47,11 +48,7 @@ export default async function TpoNoShowReportPage({
   }
   const report = buildTpoNoShowReport(data.rows);
   const roundHref = "/tpo/drive-day/" + encodeURIComponent(data.round.id);
-  const formatTime = new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  });
+  const formatTime = istDateTimeFormatter;
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-6)]">

@@ -16,6 +16,8 @@ import { getMentorTaskReviewHistory } from "@/modules/projects/mentor-task-histo
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Params={decision?:string|string[];priority?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -88,7 +90,7 @@ export default async function MentorTaskReviewHistoryPage({
 
       </form></FilterBar>
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
-        <p className="font-medium text-body">{data.total.toLocaleString("en-IN")} matching reviewed task version{data.total===1?"":"s"}</p>
+        <p className="font-medium text-body">{formatNumberIN(data.total)} matching reviewed task version{data.total===1?"":"s"}</p>
         <div className="flex flex-wrap items-center gap-3">
         <TextLink data-unskin="" href={"/api/mentor/task-review-history/export?"+
           new URLSearchParams({decision:data.query.decision,priority:data.query.priority,
@@ -113,9 +115,7 @@ export default async function MentorTaskReviewHistoryPage({
           <p className="mt-2 text-sm text-body leading-[22px]">{item.projectTitle} · Version {item.version}</p>
           <p className="mt-1 text-xs text-muted-foreground leading-5">
             Reviewed {item.reviewedAt
-              ? new Intl.DateTimeFormat("en-IN",{
-                dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-              }).format(item.reviewedAt)+" IST" : "date not recorded"}
+              ? istDateTimeFormatter.format(item.reviewedAt)+" IST" : "date not recorded"}
           </p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <TextLink href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board"}

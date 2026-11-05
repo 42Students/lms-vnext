@@ -4,9 +4,10 @@ import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
+import { istDayMonthYearFormatter } from "@/lib/format-date";
 
 function when(value:Date){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})
+ return istDayMonthYearFormatter
   .format(value);
 }
 export function TpoVerificationPrototypeQueue({rows,active,onReview}:{

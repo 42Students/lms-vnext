@@ -26,6 +26,7 @@ export const RULES = {
   "raw-details": "Use the shared Disclosure instead of a raw <details>.",
   "handrolled-skeleton": "Use SkeletonBlock or Skeleton instead of animate-pulse placeholders.",
   "class-conflict": "Two classes from the same property group in one class list (e.g. p-2 p-4); keep only the one that wins.",
+  "adhoc-format": "Format dates and numbers with the shared helpers in src/lib/format-date.ts and src/lib/safe-format.ts, not toLocale*/Intl.* in components.",
   "button-bare": 'Button variant="bare" has no standard look. Use primary/secondary/ghost/danger/link/chip/menu-item.',
   "hex-color": "Use a --lms-* color token instead of a hex literal.",
   "color-literal": "Use a --lms-* color token instead of rgb()/hsl()/named colors.",
@@ -188,6 +189,7 @@ export function scanFile(path, rawSource) {
     }
     for (const m of source.matchAll(/<h[2-6](?=[\s>/])/g)) add("raw-heading", m.index, m[0]);
     for (const m of source.matchAll(/<label(?=[\s>])/g)) add("raw-label", m.index, m[0]);
+    for (const m of source.matchAll(/new Intl\.(?:DateTimeFormat|NumberFormat)|\.toLocale(?:Date|Time)?String\(/g)) add("adhoc-format", m.index, m[0]);
     for (const m of source.matchAll(/<details(?=[\s>])/g)) add("raw-details", m.index, m[0]);
     for (const m of source.matchAll(/animate-pulse/g)) add("handrolled-skeleton", m.index, m[0]);
     for (const m of source.matchAll(/<a(?=[\s>])/g)) add("raw-link", m.index, m[0]);

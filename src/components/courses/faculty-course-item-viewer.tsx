@@ -5,6 +5,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Drawer} from "@/components/ui/drawer";
 import {Button} from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type ContentKind="VIDEO"|"YOUTUBE"|"RESOURCE"|"LIVE_CLASS"|"ASSIGNMENT"|"QUIZ";
 type Props={
@@ -24,12 +25,9 @@ export function FacultyCourseItemViewer({title,kind,notes,externalHref,youtubeEm
  const content=<div className="space-y-4 text-sm text-body">
    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{kind.replaceAll("_"," ")}{status?" · "+status:""}</p>
    {notes?<p className="whitespace-pre-wrap">{notes}</p>:null}
-   {dueAt?<p>Due {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-     timeZone:"Asia/Kolkata"}).format(new Date(dueAt))} IST</p>:null}
-   {start?<p>Starts {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-     timeZone:"Asia/Kolkata"}).format(start)} IST</p>:null}
-   {end?<p>Ends {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-     timeZone:"Asia/Kolkata"}).format(end)} IST</p>:null}
+   {dueAt?<p>Due {istDateTimeFormatter.format(new Date(dueAt))} IST</p>:null}
+   {start?<p>Starts {istDateTimeFormatter.format(start)} IST</p>:null}
+   {end?<p>Ends {istDateTimeFormatter.format(end)} IST</p>:null}
    {youtubeEmbed?<iframe title={"Preview "+title} src={youtubeEmbed}
      className="aspect-video w-full rounded-[var(--lms-control-radius)] border border-border"
      referrerPolicy="strict-origin-when-cross-origin" loading="lazy"

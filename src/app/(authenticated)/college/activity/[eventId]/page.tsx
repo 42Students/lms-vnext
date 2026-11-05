@@ -19,6 +19,7 @@ function activityDetails(metadata:unknown):[string,string][]{
 
 import { getCollegeActivityDetail } from "@/modules/activity/college-activity-service";
 import { Heading } from "@/components/ui/heading";
+import { createDateFormatter } from "@/lib/format-date";
 
 export default async function CollegeActivityDetailPage({
   params,
@@ -26,7 +27,7 @@ export default async function CollegeActivityDetailPage({
   const context = await getCurrentRequestContext();
   const { eventId } = await params;
   const { event, actor } = await getCollegeActivityDetail(context, eventId);
-  const date = new Intl.DateTimeFormat("en-IN", {
+  const date = createDateFormatter("en-IN", {
     dateStyle: "full", timeStyle: "medium", timeZone: "Asia/Kolkata",
   }).format(event.occurredAt);
   const compact=activityDetails(event.metadata);

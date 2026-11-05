@@ -7,6 +7,8 @@ import {listSuperAdminPersonAudit} from "@/modules/people/super-admin-person-aud
 import {PageHeader} from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 export default async function MembershipAuditPage({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
  const read=await listSuperAdminPersonAudit(await getCurrentRequestContext(),membershipId)
@@ -19,11 +21,11 @@ export default async function MembershipAuditPage({params}:{params:Promise<{memb
  </div>;
  const data=read.data;
  if(!data)notFound();
- const date=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
+ const date=istDateTimeFormatter;
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader eyebrow="Super Admin · People" title={"Audit trail · "+(data.membership.name??"Unnamed person")}
    description={"Recorded events for this exact membership in the selected college: "+data.membership.collegeName} actions={<PageBackLink href={"/admin/people/directory/"+encodeURIComponent(membershipId)} label="Membership profile" />}/>
-  <p role="status" className="max-w-3xl text-sm leading-6 text-body">Showing latest {data.events.length.toLocaleString("en-IN")} recorded events. This is not an authentication-session or cross-college activity audit.</p>
+  <p role="status" className="max-w-3xl text-sm leading-6 text-body">Showing latest {formatNumberIN(data.events.length)} recorded events. This is not an authentication-session or cross-college activity audit.</p>
   <DataTable caption="Membership activity events" mobileMode="scroll"
    columns={[
     {key:"event",header:"Event",mobilePriority:"primary",cell:(event)=><span className="font-semibold text-[var(--lms-heading)]">{event.summary}</span>},

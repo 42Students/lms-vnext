@@ -12,6 +12,8 @@ import {getMentorDeliveryReviewOverview} from "@/modules/projects/mentor-review-
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateFormatter, istDateTimeFormatter } from "@/lib/format-date";
 type Search={status?:string|string[];feedback?:string|string[];version?:string|string[];page?:string|string[]};
 export default async function MentorReviewOverviewPage({
  params,searchParams,
@@ -81,7 +83,7 @@ export default async function MentorReviewOverviewPage({
  Counts apply to the current page of registered delivery versions. Feedback is optional for approval
  and required when changes are requested. Missing records are not assumed complete.
  </p></section>
- <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} registered delivery version{data.total===1?"":"s"}</p>
+ <p className="text-sm text-body leading-[22px]">{formatNumberIN(data.total)} registered delivery version{data.total===1?"":"s"}</p>
  {data.items.length===0?<EmptyState title="No registered final delivery"
  description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history." action={filtered?<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center md:min-h-9">Delivery workspace</TextLink>}/>
  :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
@@ -96,14 +98,10 @@ export default async function MentorReviewOverviewPage({
   View recorded review details
  </TextLink>
  <p className="mt-1 text-xs text-muted-foreground leading-5">
- {item.submittedAt?"Submitted "+new Intl.DateTimeFormat("en-IN",{
- dateStyle:"medium",timeZone:"Asia/Kolkata",
- }).format(item.submittedAt)+" IST":"No recorded submission"}
+ {item.submittedAt?"Submitted "+istDateFormatter.format(item.submittedAt)+" IST":"No recorded submission"}
  </p>
  <p className="mt-1 text-xs text-muted-foreground leading-5">
- {item.reviewedAt?"Reviewed "+new Intl.DateTimeFormat("en-IN",{
- dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
- }).format(item.reviewedAt)+" IST":"No recorded review instant"}
+ {item.reviewedAt?"Reviewed "+istDateTimeFormatter.format(item.reviewedAt)+" IST":"No recorded review instant"}
  </p>
  </li>)}</ol>}
  {data.totalPages>1?<Pagination label="Delivery review history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewOverviewHref({...data.query,page})}/>:null}

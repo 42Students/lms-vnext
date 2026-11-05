@@ -14,6 +14,7 @@ import {mentorResourceDirectoryFilterLayout} from "@/modules/projects/mentor-res
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 type Search={required?:string|string[];link?:string|string[];description?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
@@ -97,7 +98,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      Export omits {data.exportOmitted} matching resource records.
     </p>:null}
    </div>
-   <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} matching recorded resource{data.total===1?"":"s"}</p>
+   <p className="text-sm text-body leading-[22px]">{formatNumberIN(data.total)} matching recorded resource{data.total===1?"":"s"}</p>
    {data.items.length===0?<EmptyState title="No matching resources"
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":

@@ -28,6 +28,7 @@ import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 /** Spreadsheet viewport is browser-only; authorization and export remain with the page. */
 const TpoGrid = dynamic<TpoSpreadsheetGridProps<TpoStudentRow>>(
@@ -81,7 +82,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"eligibilityReason",label:"Eligibility reason",read:row=>row.participationReason??"Not recorded"},
  {key:"eligibilityLevel",label:"Eligibility set by",read:row=>row.participationLevel??"Not recorded"},
  {key:"eligibilityDate",label:"Eligibility set at",read:row=>row.participationDecidedAt?
-  row.participationDecidedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Not recorded"},
+  formatDateTimeIst(row.participationDecidedAt):"Not recorded"},
  {key:"attention",label:"Needs attention",read:row=>tpoStudentNeedsAttention(row)?"Review needed":"No flags"},
  {key:"debarred",label:"Debarred",filter:{urlKey:"debarred",
   options:[{value:"YES",label:"Debarred"},{value:"NO",label:"Not debarred"}]},

@@ -11,6 +11,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { NotificationDeliveryActions } from "@/components/announcements/notification-delivery-actions";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 
 export default async function NotificationDeliveryHistoryPage() {
   const context = await getCurrentRequestContext();
@@ -64,9 +65,7 @@ export default async function NotificationDeliveryHistoryPage() {
   } catch {
     return <ErrorState title="Could not load notification deliveries" description="The delivery history is temporarily unavailable. Retry the page to load current statuses." />;
   }
-  const formatTime = (value: Date) => value.toLocaleString("en-IN", {
-    timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
-  }) + " IST";
+  const formatTime = (value: Date) => formatDateTimeIst(value) + " IST";
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Notification delivery history" description="The 50 most recently created delivery records in the selected college. Statuses reflect persisted delivery, not provider acceptance." />
     <TextLink href="/admin/announcements" className="inline-flex min-h-11 items-center md:min-h-9">Back to announcements</TextLink>

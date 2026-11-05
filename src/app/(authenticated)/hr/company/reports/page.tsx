@@ -31,6 +31,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateFormatter } from "@/lib/format-date";
 
 type SearchParams = {
   collegeId?: string | string[];
@@ -42,10 +43,7 @@ type SearchParams = {
 function formatDate(value: Date | null) {
   if (!value) return "Not recorded";
 
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDateFormatter.format(value);
 }
 
 export default async function RecruiterCompanyReportsPage({

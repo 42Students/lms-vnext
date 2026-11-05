@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 type Choice = {
   id: string; jobId: string; jobTitle: string; companyName: string; name: string;
   kind: string; status: string; updatedAt: string; scheduledAt: string | null;
@@ -18,7 +19,7 @@ type Choice = {
   durationMinutes: number | null;
 };
 const localIst = (value: string | null) => value
-  ? new Intl.DateTimeFormat("sv-SE", {
+  ? createDateFormatter("sv-SE", {
       timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit",
       day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
     }).format(new Date(value)).replace(", ", "T").replace(" ", "T")

@@ -12,9 +12,10 @@ import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function when(date:Date) {
-  return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(date)+" IST";
+  return istDateTimeFormatter.format(date)+" IST";
 }
 export default async function LearnerApplicationDetailPage({params}:{
   params:Promise<{applicationId:string}>;

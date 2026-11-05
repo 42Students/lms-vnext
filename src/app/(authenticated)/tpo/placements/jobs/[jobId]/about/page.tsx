@@ -9,10 +9,11 @@ import {getTpoDriveAbout} from "@/modules/placements/tpo-drive-about-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export const dynamic="force-dynamic";
-const format=(value:number|null)=>value===null?"Not recorded":"₹"+(value/100000).toLocaleString("en-IN")+" LPA";
-const when=(value:string|null)=>value?new Intl.DateTimeFormat("en-IN",{
- dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(value))+" IST":"Not recorded";
+const format=(value:number|null)=>value===null?"Not recorded":"₹"+formatNumberIN((value/100000))+" LPA";
+const when=(value:string|null)=>value?istDateTimeFormatter.format(new Date(value))+" IST":"Not recorded";
 export default async function AboutDrivePage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -81,7 +82,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
      ["Dream drive",data.job.isDream?"Yes":"No"],
      ["Fixed CTC (LPA)",data.job.fixedCtcLpa??"Not recorded"],
      ["Variable CTC (LPA)",data.job.variableCtcLpa??"Not recorded"],
-     ["Stipend per month",data.job.stipendPerMonthInr!==null?"₹"+data.job.stipendPerMonthInr.toLocaleString("en-IN"):"Not recorded"],
+     ["Stipend per month",data.job.stipendPerMonthInr!==null?"₹"+formatNumberIN(data.job.stipendPerMonthInr):"Not recorded"],
     ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border pb-3"><dt className="text-body">{label}</dt><dd className="break-words font-semibold">{value}</dd></div>)}
    </dl>
    <p className="mt-4 max-w-prose whitespace-pre-wrap break-words text-sm text-body">{data.job.description}</p>

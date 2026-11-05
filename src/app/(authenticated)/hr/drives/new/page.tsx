@@ -28,6 +28,7 @@ import {listRecruiterCollegeBranches} from "@/modules/placements/recruiter-colle
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 function DriveSourceUnavailable({ collegeId }: { collegeId?: string | null }) {
   const backHref=collegeId
@@ -187,7 +188,7 @@ export default async function RecruiterRequestDrivePage({
     </nav>
     {approximateStudents!==null?<div role="status" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-3 text-sm text-body">
       <strong>College overview</strong>
-      <p>About {approximateStudents.toLocaleString("en-IN")} learners currently enrolled at {grant.collegeName}.</p>
+      <p>About {formatNumberIN(approximateStudents)} learners currently enrolled at {grant.collegeName}.</p>
       <p className="text-xs text-muted-foreground">Rounded college-wide estimate. No student identities are shown, and this is not the eligible audience for your request.</p>
     </div>:<Alert tone="warning">College enrollment preview is unavailable. You can still prepare a request; no estimated eligibility is implied.</Alert>}
     {suggestionsUnavailable ? <ErrorState title="College suggestions unavailable"

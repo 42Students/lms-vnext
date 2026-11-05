@@ -18,6 +18,6 @@ describe("Final sprint recruiter home greeting",()=>{
   expect(view).toContain("recruiterTodayHeadline(props.greeting,visible.length");
   expect(recruiterTodayHeadline("Good morning, Asha",2,true)).toBe("Good morning, Asha. Two things need you.");
   expect(recruiterTodayHeadline("Good morning, Asha",0,true)).toBe("Good morning, Asha. You\u0027re all caught up.");
-  expect(view).toContain('<h1>{headline}</h1>');
+  expect(view).toContain('<Heading level={1}>{headline}</Heading>');
  });
 });

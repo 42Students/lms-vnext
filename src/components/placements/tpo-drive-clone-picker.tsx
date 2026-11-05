@@ -4,6 +4,7 @@ import {Input} from "@/components/ui/input";
 import {TpoDriveCloneAction} from "./tpo-drive-clone-action";
 import {CollegeDriveDuplicateAction} from "./college-drive-duplicate-action";
 import { Label } from "@/components/ui/label";
+import { istDateFormatter } from "@/lib/format-date";
 
 export type CloneableTpoDrive={
   id:string;title:string;status:string;
@@ -44,7 +45,7 @@ export function TpoDriveClonePicker({drives,collegeAdmin=false}:{drives:readonly
        <p className="break-words text-sm font-semibold text-foreground">{drive.title}</p>
        <p className="mt-1 text-xs text-muted-foreground">
         {drive.status==="CANCELLED"?"Cancelled":"Closed"} ·{" "}
-        {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"})
+        {istDateFormatter
           .format(new Date(drive.createdAt))}
        </p>
       </div>

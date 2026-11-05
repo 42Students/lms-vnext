@@ -15,6 +15,7 @@ import {
   quizReviewActions,
 } from "./faculty-assessment-operation-model";
 import { Heading } from "@/components/ui/heading";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type AttemptAnswer = {
   id: string;
@@ -51,11 +52,7 @@ function formatDateTime(value: string) {
     return value;
   }
 
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+  return istDateTimeFormatter.format(date);
 }
 
 function learnerLabel(attempt: Attempt) {

@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 /** Saved consent is distinct from a live provider token verification. */
 export function MentorGoogleCalendarAccount({connected,available,connectedAt}:{
@@ -49,9 +50,7 @@ export function MentorGoogleCalendarAccount({connected,available,connectedAt}:{
     "Consent saved for this college; live Google access not yet verified"}
   </p>
   {connected&&connectedAt?<p className="text-xs text-muted-foreground">
-   Consent recorded {new Intl.DateTimeFormat("en-IN",{
-    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-   }).format(new Date(connectedAt))} IST.
+   Consent recorded {istDateTimeFormatter.format(new Date(connectedAt))} IST.
   </p>:null}
   {available?<div className="flex flex-wrap items-center gap-2">
     {connected?<Button type="button" disabled={busy} loading={busy}

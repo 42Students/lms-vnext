@@ -22,6 +22,13 @@ export function formatCount(value: number | null | undefined): string {
   return typeof value === "number" && Number.isFinite(value)
     ? new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(value) : EMPTY;
 }
+export function createNumberFormatter(locale: string, options?: Intl.NumberFormatOptions): Intl.NumberFormat {
+  return new Intl.NumberFormat(locale, options);
+}
+/** Plain en-IN number with grouping; use instead of value.toLocaleString("en-IN"). */
+export function formatNumberIN(value: number | null | undefined, options?: Intl.NumberFormatOptions): string {
+  return typeof value === "number" && Number.isFinite(value) ? new Intl.NumberFormat("en-IN", options).format(value) : EMPTY;
+}
 export function formatCurrencyINR(value: number | null | undefined): string {
   return typeof value === "number" && Number.isFinite(value)
     ? new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR",

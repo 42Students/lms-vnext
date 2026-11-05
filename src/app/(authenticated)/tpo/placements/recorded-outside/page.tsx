@@ -11,6 +11,7 @@ import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/module
 import {listTpoOutsideDriveRecords} from "@/modules/placements/recorded-outside-participation-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateFormatter } from "@/lib/format-date";
 export default async function TpoRecordedOutsidePage({searchParams}:{searchParams:Promise<{saved?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(
@@ -42,7 +43,7 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
    <p className="text-sm text-body">These are historic records, not published jobs; they are excluded from learner application reminders.</p>
    {recorded.length?<ul className="divide-y divide-border">
     {recorded.map(item=><li key={item.id} className="flex min-w-0 flex-col items-stretch gap-2 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-     <span className="min-w-0 break-words">{item.company} · {item.title} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.occurredAt)} · Recorded outside LMS</span>
+     <span className="min-w-0 break-words">{item.company} · {item.title} · {istDateFormatter.format(item.occurredAt)} · Recorded outside LMS</span>
      <TextLink href={"/tpo/placements/recorded-outside/"+item.id} className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9">
       Add students and results
      </TextLink>

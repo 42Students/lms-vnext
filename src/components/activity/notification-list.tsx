@@ -13,6 +13,7 @@ import { groupNotificationsByDate } from "@/modules/activity/notification-groups
 import {safeExternalAssessmentUrl,safeNotificationActionHref} from "@/modules/activity/notification-action";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type NotificationListItem = {
   id: string;
@@ -69,7 +70,7 @@ function previewBody(body:string):string {
 function formatWhen(value: string) {
   const date = parseLegacyNotificationDate(value);
   if (Number.isNaN(date.getTime())) return "Date unavailable";
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     day: "numeric",
     month: "short",
     hour: "numeric",

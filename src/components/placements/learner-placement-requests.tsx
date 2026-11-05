@@ -13,6 +13,7 @@ import { apiFetch,FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 /** Legacy seven-option vocabulary. Keep specialized vNext request payload
  * shapes separate: Withdrawal needs an application, Extension an offer; the
@@ -99,11 +100,7 @@ function humanize(value: string) {
 
 function when(value: string | null) {
   if (!value) return "Not set";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  return istDateTimeFormatter.format(new Date(value));
 }
 
 function localInput(value: string | null) {

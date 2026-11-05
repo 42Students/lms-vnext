@@ -11,11 +11,10 @@ import { getTpoCompanyFeedback } from "@/modules/placements/tpo-company-feedback
 import { tpoCompanyFeedbackQuerySchema } from "@/modules/placements/tpo-company-feedback-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type SearchParams = { page?: string | string[] };
-const dateFormat = new Intl.DateTimeFormat("en-IN", {
-  dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-});
+const dateFormat = istDateTimeFormatter;
 function first(v: string | string[] | undefined) {
   return Array.isArray(v) ? v[0] : v;
 }

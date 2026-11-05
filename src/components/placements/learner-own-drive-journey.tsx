@@ -1,6 +1,7 @@
 import type {getOwnLearnerDriveJourney} from "@/modules/placements/learner-historical-drive-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Journey=NonNullable<Awaited<ReturnType<typeof getOwnLearnerDriveJourney>>>;
 /** LEARNER-placements-24: these are recorded job/round statuses only.
  * No unverified selection result or attendance claim is invented.
@@ -43,8 +44,7 @@ export function LearnerOwnDriveJourney({journey}:{journey:Journey}){
     {journey.rounds.map(round=><li key={round.id} className="min-w-0 break-words border-t border-border py-3 text-sm">
      <strong>{round.sequence}. {round.name}</strong>
      <p>Round status: {round.status.replaceAll("_"," ").toLowerCase()}</p>
-     {round.scheduledAt?<p>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",
-      timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(round.scheduledAt))}</p>:null}
+     {round.scheduledAt?<p>{istDateTimeFormatter.format(new Date(round.scheduledAt))}</p>:null}
     </li>)}
    </ol>:<p className="mt-2 text-sm leading-[22px]">The placement cell has not published the selection rounds yet.</p>}
   </section>

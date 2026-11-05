@@ -17,6 +17,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 export default async function HrMessagesPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[];page?:string|string[];q?:string|string[]}>
 }) {
@@ -34,9 +36,7 @@ export default async function HrMessagesPage({searchParams}:{
    action={<TextLink href="/hr/notifications" className="inline-flex min-h-11 items-center md:min-h-9">Reset</TextLink>}/>
  </div>;
  const result=await listHrNotifications(context,query.data);
- const time=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
- }).format(d);
+ const time=(d:Date)=>istDateTimeFormatter.format(d);
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."
@@ -79,7 +79,7 @@ export default async function HrMessagesPage({searchParams}:{
        placeholder="Search drive titles" className="min-h-11 min-w-0 w-full md:min-h-9 md:max-w-sm md:flex-1" />
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
-   <p className="text-sm text-body leading-[22px]">{result.unread.toLocaleString("en-IN")} unread · {result.total.toLocaleString("en-IN")} matching authorized notifications</p>
+   <p className="text-sm text-body leading-[22px]">{formatNumberIN(result.unread)} unread · {formatNumberIN(result.total)} matching authorized notifications</p>
 
    {result.rows.length?<div className="space-y-6">
      <p className="text-xs text-muted-foreground leading-5">Grouped by drive within this page only. This is not a conversation thread.</p>
@@ -110,7 +110,7 @@ export default async function HrMessagesPage({searchParams}:{
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground leading-5">
        {result.first?result.first+"–"+result.last:"No rows on this page"}
-       {" of "+(query.data.unreadOnly==="true"?result.unread:result.total).toLocaleString("en-IN")}
+       {" of "+formatNumberIN((query.data.unreadOnly==="true"?result.unread:result.total))}
       </p>
       <div className="flex flex-wrap gap-2">
        {result.page>1?<ButtonLink variant="secondary" href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page-1)}>Previous</ButtonLink>:null}

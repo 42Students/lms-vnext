@@ -8,6 +8,7 @@ import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Candidate=TpoApplicantReviewSnapshot&{
  rollNumber:string|null;branchName:string|null;cgpaHundredths:number|null;
@@ -26,7 +27,7 @@ function label(row:Candidate,jobStatus:string){
    "Withdrawn":applicantStage(row)==="HOLD"?"On hold":"Applied";
 }
 function shortNumber(value:number|null,divisor=1){
- return value===null?"Not recorded":(value/divisor).toLocaleString("en-IN",{maximumFractionDigits:2});
+ return value===null?"Not recorded":formatNumberIN((value/divisor), {maximumFractionDigits:2});
 }
 /** Original selected-row reviewer. A page-scoped preview never projects scores,
  * skills, resumes or eligible students that weren't returned by this job's

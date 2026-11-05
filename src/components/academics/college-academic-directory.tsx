@@ -19,6 +19,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeSemesters>>
@@ -262,7 +263,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
 
       <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full overflow-x-auto border-b border-[var(--lms-canvas-border)]">
         <p className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm text-muted-foreground">
-          {data.total.toLocaleString("en-IN")} {semesters ? "semesters" : "batches"} ·
+          {formatNumberIN(data.total)} {semesters ? "semesters" : "batches"} ·
           {hasFilters ? " filtered results" : " all records"}
         </p>
         <p className="px-4 py-2 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all semester or batch columns.</p>

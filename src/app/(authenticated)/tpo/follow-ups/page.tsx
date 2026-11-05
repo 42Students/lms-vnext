@@ -15,6 +15,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 export const dynamic = "force-dynamic";
 const FOLLOWUP_SCOPES=["MINE","TEAM"] as const;
@@ -73,7 +74,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       </form>
       <p className="text-sm text-body leading-[22px]">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
       {data ? <><TpoDueFollowupWorkspace data={data} />
-        <div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"><span className="text-body">Showing {(data.total===0?0:(data.page-1)*data.pageSize+1).toLocaleString("en-IN")}–{Math.min(data.total,data.page*data.pageSize).toLocaleString("en-IN")} of {data.total.toLocaleString("en-IN")} matching tasks · page {data.page} of {data.totalPages}</span>{data.totalPages > 1 ? <Pagination label="Follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>tpoFollowupQueueHref({scope,window,q,page})}/> : null}</div></> : (
+        <div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"><span className="text-body">Showing {formatNumberIN((data.total===0?0:(data.page-1)*data.pageSize+1))}–{formatNumberIN(Math.min(data.total,data.page*data.pageSize))} of {formatNumberIN(data.total)} matching tasks · page {data.page} of {data.totalPages}</span>{data.totalPages > 1 ? <Pagination label="Follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>tpoFollowupQueueHref({scope,window,q,page})}/> : null}</div></> : (
         <Alert tone="warning" className="border-t border-border">
           <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Recruiter follow-ups unavailable</Heading>
           <p className="mt-2 text-sm text-body leading-[22px]">

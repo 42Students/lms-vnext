@@ -20,6 +20,8 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istIsoDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 function adminInterviewsHref(...args:Parameters<typeof driveInterviewsHref>){
  return driveInterviewsHref(...args)
@@ -125,9 +127,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   ].join("\r\n")+"\r\n";
   const exportHref="data:text/csv;charset=utf-8,"+encodeURIComponent("\uFEFF"+appointmentCsv);
   const nowMs=Date.now();
-  const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
-    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
-  }).format(date);
+  const istDay=(date:Date)=>istIsoDateFormatter.format(date);
   const todayIst=istDay(new Date(nowMs));
   const todayCount=candidateRows.filter(row=>
     istDay(new Date(row.scheduledAt))===todayIst).length;
@@ -328,7 +328,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <section aria-label="Persisted interview rounds" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
       <Heading level={2} className="text-[var(--lms-heading)]">Interview and GD rounds</Heading>
       {data ? <>
-        <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching interview/GD rounds</p>
+        <p className="text-sm text-muted-foreground">{formatNumberIN(data.total)} matching interview/GD rounds</p>
         <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
           caption="Persisted interview rounds"
           empty={<EmptyState title={data.total===0?"No matching interview rounds":"No rounds on this page"}

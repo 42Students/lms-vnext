@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Event={from:string|null;to:string;reason:string|null;when:string;actorName?:string|null};
 type CandidateInterviews={
  rounds:Array<{id:string;name:string;status:string;kind:string}>;
@@ -47,8 +48,7 @@ const when=(v:string|null|undefined)=>{
  if(!v)return "—";
  const parsed=new Date(v);
  return Number.isFinite(parsed.getTime())
-  ?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-    timeZone:"Asia/Kolkata"}).format(parsed)+" IST"
+  ?istDateTimeFormatter.format(parsed)+" IST"
   :"—";
 };
 export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,initialDetail,basePath="/college/placements"}:{

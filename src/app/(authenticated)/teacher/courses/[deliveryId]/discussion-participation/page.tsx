@@ -7,6 +7,7 @@ import {getFacultyDiscussionParticipation}
   from "@/modules/courses/faculty-discussion-participation-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export default async function FacultyDiscussionParticipationPage({
   params,
 }:{params:Promise<{deliveryId:string}>}){
@@ -38,8 +39,7 @@ export default async function FacultyDiscussionParticipationPage({
             {row.pinned?<Badge tone="neutral">Pinned</Badge>:null}
           </div>
           <time dateTime={row.createdAt} className="text-xs text-muted-foreground">
-            {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-              timeZone:"Asia/Kolkata"}).format(new Date(row.createdAt))} IST
+            {istDateTimeFormatter.format(new Date(row.createdAt))} IST
           </time>
         </li>)}</ol>}
     </section>

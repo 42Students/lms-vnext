@@ -2,6 +2,7 @@
 import {useState} from "react";
 import { Button } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export function LearnerApplicationResumeLink({applicationId}:{applicationId:string}){
  const [state,setState]=useState<{
   status:"IDLE"|"LOADING"|"READY"|"ABSENT"|"ERROR";
@@ -42,8 +43,6 @@ export function LearnerApplicationResumeLink({applicationId}:{applicationId:stri
   {state.status==="ERROR"?<span role="alert" className="block">
     Resume is unavailable; no private file was exposed.</span>:null}
   {state.status==="READY"&&state.expiresAt?<span className="block">
-    Link expires {new Intl.DateTimeFormat("en-IN",{
-      timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-    }).format(new Date(state.expiresAt))}.</span>:null}
+    Link expires {istDateTimeFormatter.format(new Date(state.expiresAt))}.</span>:null}
  </span>;
 }

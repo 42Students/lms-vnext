@@ -7,7 +7,7 @@ it("UX-learn-learn-my-placements-rules-01 keeps learner route accessible and hon
  expect(s.length).toBeGreaterThan(0);
  expect(s).not.toContain('text-[#26bac7]');
  // Legacy link color tokens or explicit keyboard-focus outlines are both acceptable.
- expect(s).toMatch(/text-primary-text|text-link|focus-visible:outline-2/);
+ expect(s).toMatch(/text-primary-text|text-link|focus-(?:ring|outline)/);
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/rules/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/my-placements/rules/error.tsx").length).toBeGreaterThan(0);
@@ -17,7 +17,7 @@ it("UX-learn-learn-my-placements-schedule-01 keeps learner route accessible and 
  expect(s.length).toBeGreaterThan(0);
  expect(s).not.toContain('text-[#26bac7]');
  // Legacy link color tokens or explicit keyboard-focus outlines are both acceptable.
- expect(s).toMatch(/text-primary-text|text-link|focus-visible:outline-2/);
+ expect(s).toMatch(/text-primary-text|text-link|focus-(?:ring|outline)/);
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/schedule/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/my-placements/schedule/error.tsx").length).toBeGreaterThan(0);
@@ -27,7 +27,7 @@ it("UX-learn-learn-my-placements-support-01 keeps learner route accessible and h
  expect(s.length).toBeGreaterThan(0);
  expect(s).not.toContain('text-[#26bac7]');
  // Legacy link color tokens or explicit keyboard-focus outlines are both acceptable.
- expect(s).toMatch(/text-primary-text|text-link|focus-visible:outline-2/);
+ expect(s).toMatch(/text-primary-text|text-link|focus-(?:ring|outline)/);
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/support/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/my-placements/support/error.tsx").length).toBeGreaterThan(0);
@@ -46,7 +46,7 @@ it("UX-learn-learn-notifications-history-01 keeps learner route accessible and h
  expect(s.length).toBeGreaterThan(0);
  expect(s).not.toContain('text-[#26bac7]');
  // Legacy link color tokens or explicit keyboard-focus outlines are both acceptable.
- expect(s).toMatch(/text-primary-text|text-link|focus-visible:outline-2/);
+ expect(s).toMatch(/text-primary-text|text-link|focus-(?:ring|outline)/);
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/notifications/history/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/notifications/history/error.tsx").length).toBeGreaterThan(0);
@@ -65,7 +65,7 @@ it("UX-learn-learn-profile-01 keeps learner route accessible and honest",()=>{
  expect(s.length).toBeGreaterThan(0);
  expect(s).not.toContain('text-[#26bac7]');
  // Legacy link color tokens or explicit keyboard-focus outlines are both acceptable.
- expect(s).toMatch(/text-primary-text|text-link|focus-visible:outline-2/);
+ expect(s).toMatch(/text-primary-text|text-link|focus-(?:ring|outline)/);
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/profile/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/profile/error.tsx").length).toBeGreaterThan(0);
@@ -75,7 +75,7 @@ it("UX-learn-learn-profile-academic-record-01 keeps learner route accessible and
  expect(s.length).toBeGreaterThan(0);
  expect(s).not.toContain('text-[#26bac7]');
  // Legacy link color tokens or explicit keyboard-focus outlines are both acceptable.
- expect(s).toMatch(/text-primary-text|text-link|focus-visible:outline-2/);
+ expect(s).toMatch(/text-primary-text|text-link|focus-(?:ring|outline)/);
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/profile/academic-record/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/profile/academic-record/error.tsx").length).toBeGreaterThan(0);
@@ -85,7 +85,7 @@ it("UX-learn-learn-profile-completeness-01 keeps learner route accessible and ho
  expect(s.length).toBeGreaterThan(0);
  expect(s).not.toContain('text-[#26bac7]');
  // Legacy link color tokens or explicit keyboard-focus outlines are both acceptable.
- expect(s).toMatch(/text-primary-text|text-link|focus-visible:outline-2/);
+ expect(s).toMatch(/text-primary-text|text-link|focus-(?:ring|outline)/);
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/profile/completeness/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/profile/completeness/error.tsx").length).toBeGreaterThan(0);
@@ -95,7 +95,7 @@ it("UX-learn-learn-profile-verification-01 keeps learner route accessible and ho
  expect(s.length).toBeGreaterThan(0);
  expect(s).not.toContain('text-[#26bac7]');
  // Legacy link color tokens or explicit keyboard-focus outlines are both acceptable.
- expect(s).toMatch(/text-primary-text|text-link|focus-visible:outline-2/);
+ expect(s).toMatch(/text-primary-text|text-link|focus-(?:ring|outline)/);
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/profile/verification/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/profile/verification/error.tsx").length).toBeGreaterThan(0);

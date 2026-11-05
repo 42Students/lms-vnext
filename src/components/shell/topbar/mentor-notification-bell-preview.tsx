@@ -12,6 +12,7 @@ import style from "./topbar.module.css";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateWith } from "@/lib/format-date";
 
 type PreviewResponse={items:MentorUnifiedNotification[];hasMore:boolean};
 /** The Mentor portal gets its own verified merged-source bell, not the generic
@@ -133,7 +134,7 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
       <p className="line-clamp-2 text-xs">{item.description}</p>
       <div className="flex items-center justify-between gap-2 text-xs">
        <time dateTime={item.occurredAt}>
-        {new Date(item.occurredAt).toLocaleDateString("en-IN",{
+        {formatDateWith(new Date(item.occurredAt), "en-IN", {
          day:"numeric",month:"short",timeZone:"Asia/Kolkata"})}
        </time>
        {href?<TextLink href={href}

@@ -3,13 +3,10 @@ import type {
 } from "@/modules/placements/learner-recent-placement-activity-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function formatIst(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value) + " IST";
+  return istDateTimeFormatter.format(value) + " IST";
 }
 
 export function LearnerRecentPlacementActivity({

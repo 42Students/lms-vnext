@@ -13,13 +13,14 @@ import {apiFetch} from "@/lib/api-fetch";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 import {parseAdminContentLocalMoment,type AdminContentTimeZone} from "@/modules/courses/super-admin-content-datetime-model";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
  durationSeconds:number|null;startsAt:Date|null;endsAt:Date|null;deliveryId?:string|null};
 type MeetingZone=AdminContentTimeZone;
 function localDate(value:Date|null,zone:MeetingZone="Asia/Kolkata"){
  if(!value)return "";
- return new Intl.DateTimeFormat("sv-SE",{
+ return createDateFormatter("sv-SE", {
   timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date(value)).replace(" ","T");

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {Button} from "@/components/ui/button";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 type RetentionRow = {
   id: string;
@@ -23,7 +24,7 @@ function formatActivity(value: string) {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? "—"
-    : new Intl.DateTimeFormat("en-GB", {
+    : createDateFormatter("en-GB", {
         day: "2-digit", month: "short", year: "numeric", timeZone: "Asia/Kolkata",
       }).format(date);
 }

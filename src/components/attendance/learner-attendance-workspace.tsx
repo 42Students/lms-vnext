@@ -30,6 +30,8 @@ import {Input} from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { istDateFormatter, istDayMonthYearFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Course = {
   deliveryId: string;
@@ -209,7 +211,7 @@ export function LearnerAttendanceWorkspace({
     .sort((a,b)=>Date.parse(b.startsAt)-Date.parse(a.startsAt))
     .slice(0,10).map(row=>({
       at:row.startsAt,
-      label:new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.startsAt)),
+      label:istDateFormatter.format(new Date(row.startsAt)),
     }));
 
   const recovery = learnerAttendanceRecoveryProjection(summary.markedSessions,summary.present,threshold);
@@ -217,7 +219,7 @@ export function LearnerAttendanceWorkspace({
   const headroom = reached && threshold > 0
     ? Math.max(0,Math.floor((summary.present * 100 / threshold) - summary.markedSessions))
     : 0;
-  const monthLabel = new Intl.DateTimeFormat("en-IN", {
+  const monthLabel = createDateFormatter("en-IN", {
     month:"long",year:"numeric",timeZone:"Asia/Kolkata",
   }).format(month);
 
@@ -286,7 +288,7 @@ export function LearnerAttendanceWorkspace({
     <div className="min-w-0 space-y-4 md:space-y-6">
       {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body leading-[22px]">{urlNotice}</p> : null}
       {isUpdating ? <p role="status" aria-live="polite" className="border-b border-border py-2 text-sm text-body">
-        Updating attendance for {new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"Asia/Kolkata"}).format(month)}…
+        Updating attendance for {createDateFormatter("en-IN", {month:"long",year:"numeric",timeZone:"Asia/Kolkata"}).format(month)}…
       </p> : null}
       <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
@@ -443,11 +445,9 @@ export function LearnerAttendanceWorkspace({
           empty={<EmptyState title="No classes in this period" description="Select another month to see scheduled sessions."/>}
           columns={[
             {key:"date",header:"Date",mobilePriority:"primary" as const,
-              cell:(row)=><strong className="block text-foreground">{new Intl.DateTimeFormat("en-IN",{
-                timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
-              }).format(new Date(row.startsAt))}</strong>},
+              cell:(row)=><strong className="block text-foreground">{istDayMonthYearFormatter.format(new Date(row.startsAt))}</strong>},
             {key:"day",header:"Day",mobilePriority:"secondary" as const,
-              cell:(row)=><span className="text-foreground">{new Intl.DateTimeFormat("en-IN",{
+              cell:(row)=><span className="text-foreground">{createDateFormatter("en-IN", {
                 timeZone:"Asia/Kolkata",weekday:"long",
               }).format(new Date(row.startsAt))}</span>},
             {key:"class",header:"Class Start Time",mobilePriority:"secondary" as const,

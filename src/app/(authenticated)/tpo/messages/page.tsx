@@ -31,6 +31,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type SearchParams = {
   tab?: string | string[];
@@ -314,7 +315,7 @@ export default async function TpoMessagesPage({
                   detail.messages.map(item=><article key={item.id}
                     className={bubbleStyles["bubble"]+" "+(item.senderType==="TPO"?bubbleStyles["mine"]:"")}>
                     <p className="text-xs font-semibold text-muted-foreground">
-                      {item.senderType==="RECRUITER"?"Recruiter":"You"} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.createdAt)} IST
+                      {item.senderType==="RECRUITER"?"Recruiter":"You"} · {istDateTimeFormatter.format(item.createdAt)} IST
                     </p>
                     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-foreground">{item.body}</p>
                   </article>)}

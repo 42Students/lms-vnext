@@ -17,6 +17,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type AnnouncementTarget = {
   type: "COLLEGE" | "PROGRAM" | "DEPARTMENT" | "LEARNER" | "FACULTY" | "CLASS";
@@ -77,7 +78,7 @@ function announcementWhen(value: string | null | undefined): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   const nowYear = new Date().getFullYear();
-  const parts = new Intl.DateTimeFormat("en-IN", {
+  const parts = createDateFormatter("en-IN", {
     timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric",
     hour: "numeric", minute: "2-digit", hour12: true,
   }).formatToParts(date);

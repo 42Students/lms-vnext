@@ -9,13 +9,11 @@ import {users} from "@/db/schema";
 import {and,desc,eq,gte,inArray,isNull,sql} from "drizzle-orm";
 import {FacultyTodayPanel,type FacultyTodayTask,
  type FacultyTodayClass,type FacultyTodayDeadline} from "@/components/faculty/faculty-today-panel";
+import { istIsoDateFormatter, istTimeFormatter, istWeekdayDayMonthFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
-const dateKey=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
- timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
-}).format(date);
-const clock=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
-}).format(date);
+const dateKey=(date:Date)=>istIsoDateFormatter.format(date);
+const clock=(date:Date)=>istTimeFormatter.format(date);
 const shortClock=(date:Date)=>clock(date).replace(/\s*(am|pm)$/i,"");
 
 /** Newest Faculty Today prototype, bound to real authorized timetable and
@@ -37,10 +35,10 @@ export default async function TeacherIndex(){
   await getDb().select({code:colleges.code}).from(colleges)
    .where(eq(colleges.id,context.membership.collegeId)).limit(1)
    .then(rows=>rows[0]?.code?.trim()??""): "";
- const dateLabel=new Intl.DateTimeFormat("en-IN",{
+ const dateLabel=createDateFormatter("en-IN", {
   timeZone:"Asia/Kolkata",weekday:"long",day:"numeric",month:"long",
  }).format(now)+(collegeCode?" · "+collegeCode:"");
- const hour=Number(new Intl.DateTimeFormat("en-GB",{
+ const hour=Number(createDateFormatter("en-GB", {
   timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23",
  }).format(now));
  const greeting=hour<12?"morning":hour<17?"afternoon":"evening";
@@ -50,7 +48,7 @@ export default async function TeacherIndex(){
   "in "+(minutesToClass>=60?Math.floor(minutesToClass/60)+" "+(Math.floor(minutesToClass/60)===1?"hour":"hours"):"")+
    (minutesToClass>=60&&minutesToClass%60>0?" ":"")+
    (minutesToClass%60>0||minutesToClass===0?minutesToClass%60+" "+(minutesToClass%60===1?"minute":"minutes"):""):
-  "on "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(upcoming!.startsAt);
+  "on "+createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(upcoming!.startsAt);
  const nextClass=upcoming?
   "Next class "+when+": "+(upcoming.courseName??upcoming.title??"Scheduled class")+
   ", "+upcoming.sectionName+(upcoming.location?", "+upcoming.location:"")+".":null;
@@ -233,9 +231,7 @@ export default async function TeacherIndex(){
   ...assignmentCounts.map(item=>["assignment:"+item.id+":"+item.deliveryId,item.submitted] as const),
   ...quizCounts.map(item=>["quiz:"+item.id+":"+item.deliveryId,item.submitted] as const),
  ]);
- const dueDay=(at:Date)=>new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
- }).format(at);
+ const dueDay=(at:Date)=>istWeekdayDayMonthFormatter.format(at);
  const deadlines:FacultyTodayDeadline[]=upcomingDeadlines.map(item=>{
   const eligible=rosterSizes.get(item.deliveryId)??null;
   const submitted=submittedByKey.get(item.kind+":"+item.assessmentId+":"+item.deliveryId)??0;

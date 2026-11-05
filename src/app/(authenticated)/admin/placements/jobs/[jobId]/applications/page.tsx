@@ -25,6 +25,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 function adminHref(...args: Parameters<typeof driveApplicationsHref>) {
  return driveApplicationsHref(...args).replace("/college/placements/","/admin/placements/");
@@ -117,7 +118,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
   return <LastKnownGoodApplications key={snapshotKey} valid retryHref={retryHref}>
    <div className="min-w-0 space-y-4 md:space-y-6">
     
-    <PageHeader title={"Applications ("+data.total.toLocaleString("en-IN")+")"}
+    <PageHeader title={"Applications ("+formatNumberIN(data.total)+")"}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<div className="flex flex-wrap gap-2">
         <TextLink href="/admin/placements" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Back to Jobs</TextLink>
@@ -280,7 +281,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       }))}/>
     </div>
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-sm sm:flex-row sm:items-center sm:justify-between">
-      <span className="font-semibold">Applications ({data.total.toLocaleString("en-IN")})</span>
+      <span className="font-semibold">Applications ({formatNumberIN(data.total)})</span>
       <SuperAdminDriveApplicationsCsvControl
        href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${adminHref(jobId,query,true).split("/export")[1] ?? ""}`}
        limit={DRIVE_APPLICATION_EXPORT_CAP}/>
@@ -310,7 +311,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         hrefForPage={page=>adminHref(jobId,{...query,page})}/>
     </div>
     <p className="text-xs text-muted-foreground">
-      CSV uses formula-neutralized cells, includes filtered rows up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")},
+      CSV uses formula-neutralized cells, includes filtered rows up to {formatNumberIN(DRIVE_APPLICATION_EXPORT_CAP)},
       and includes a truncation notice if more matching rows exist.
     </p>
   </div></LastKnownGoodApplications>;

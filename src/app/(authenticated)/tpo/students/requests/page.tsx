@@ -21,6 +21,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type SearchParams = {
   status?: string | string[];
@@ -97,11 +99,7 @@ function humanize(value: string) {
 }
 
 function formatRequestedAt(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDateTimeFormatter.format(value);
 }
 
 export default async function TpoStudentRequestsPage({
@@ -337,7 +335,7 @@ export default async function TpoStudentRequestsPage({
               Request queue
             </Heading>
             <p className="mt-1 text-sm text-body">
-              {data.total.toLocaleString("en-IN")} matching request
+              {formatNumberIN(data.total)} matching request
               {data.total === 1 ? "" : "s"}
               {" · "}showing {firstItem}–{lastItem}
             </p>

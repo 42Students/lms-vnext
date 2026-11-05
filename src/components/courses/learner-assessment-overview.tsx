@@ -50,6 +50,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 type AssignmentResource = {
   id: string;
@@ -283,7 +284,7 @@ export function LearnerAssessmentOverview({
             const due=item.dueAt?new Date(item.dueAt):new Date(item.createdAt);
             const today=new Date(currentNowMs);
             if(!Number.isFinite(due.getTime()))return false;
-            const month=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
+            const month=createDateFormatter("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
             return month.format(due)===month.format(today);
           }).length} This month</Badge>
           <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0">

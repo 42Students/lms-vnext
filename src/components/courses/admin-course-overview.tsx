@@ -38,6 +38,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Img } from "@/components/ui/img";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { istDateFormatter } from "@/lib/format-date";
 
 type Workspace = Awaited<
   ReturnType<typeof getAdminCourseWorkspace>
@@ -461,10 +462,7 @@ export function AdminCourseOverview({
       key: "started",
       header: "Started",
       cell: (assignment) =>
-        new Intl.DateTimeFormat("en-IN", {
-          dateStyle: "medium",
-          timeZone: "Asia/Kolkata",
-        }).format(assignment.startedAt),
+        istDateFormatter.format(assignment.startedAt),
     },
     {
       key: "actions",

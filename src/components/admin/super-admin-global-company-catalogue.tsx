@@ -18,10 +18,12 @@ import {Tabs} from "@/components/ui/tabs";
 import { Img } from "@/components/ui/img";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Filters=z.infer<typeof adminCompaniesQuerySchema>;
 
-const formatLast=(date:Date|null)=>date?new Intl.DateTimeFormat("en-IN",{
+const formatLast=(date:Date|null)=>date?createDateFormatter("en-IN", {
  timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
 }).format(date):"Never posted";
 export function safeCompanyWebsite(raw:string|null){
@@ -100,7 +102,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
   <SuperAdminCompanySearch key={"GLOBAL:"+data.query.q+":"+data.query.verified}
    mode="GLOBAL" initialQuery={data.query.q} initialVerified={data.query.verified==="NOT_VERIFIED"}/>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-   <p role="status" className="text-sm text-body">Showing {data.rows.length.toLocaleString("en-IN")} of {data.total.toLocaleString("en-IN")} companies{data.query.q?" matching your search":""} · page {data.query.page} of {data.totalPages}</p>
+   <p role="status" className="text-sm text-body">Showing {formatNumberIN(data.rows.length)} of {formatNumberIN(data.total)} companies{data.query.q?" matching your search":""} · page {data.query.page} of {data.totalPages}</p>
    {data.rows.length?<ButtonLink variant="secondary" download="companies.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(csv)}>↓ Export CSV</ButtonLink>:
     <Button type="button" variant="secondary" disabled>Export CSV</Button>}
   </div>

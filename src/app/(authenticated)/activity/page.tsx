@@ -30,6 +30,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istIsoDateFormatter, istDateTimeFormatter } from "@/lib/format-date";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -132,9 +133,7 @@ export default async function ActivityPage({
       collegeOptionsFailed = true;
     }
   }
-  const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
-  }).format(date);
+  const istDay=(date:Date)=>istIsoDateFormatter.format(date);
   const today=istDay(new Date());
   const ago=(days:number)=>istDay(new Date(currentTimeMs()-days*86400000));
   const range=one(params["range"]);
@@ -299,9 +298,7 @@ export default async function ActivityPage({
   const pageCsv = [
     RAW_AUDIT_FORENSIC_HEADERS.map(value => activityPageCsvCell(value)).join(","),
     ...result.items.map(({event, actor}) => [
-      new Intl.DateTimeFormat("en-IN", {
-        timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
-      }).format(event.occurredAt),
+      istDateTimeFormatter.format(event.occurredAt),
       event.eventType,
       event.subjectType + " · " + (event.subjectLabel ?? event.subjectId),
       event.organizationId ?? "—",
@@ -590,9 +587,7 @@ export default async function ActivityPage({
               <tbody>
                 {result.items.map(({event,actor})=>(
                   <tr key={event.id} className="border-t border-[var(--lms-canvas-border)] align-top">
-                    <td className="whitespace-nowrap px-3 py-3">{new Intl.DateTimeFormat("en-IN",{
-                      timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-                    }).format(event.occurredAt)}</td>
+                    <td className="whitespace-nowrap px-3 py-3">{istDateTimeFormatter.format(event.occurredAt)}</td>
                     <td className="max-w-[240px] break-all px-3 py-3">{event.eventType}</td>
                     <td className="max-w-[220px] break-words px-3 py-3">
                       <span className="block text-xs text-muted-foreground">{event.subjectType}</span>

@@ -22,6 +22,8 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDayMonthYearFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 type Lead = {
   id: string;
@@ -83,7 +85,7 @@ const ACTIVITY_TYPES = ["CALL", "EMAIL", "MEETING", "NOTE"] as const;
 function activityDayIst(value:string){
  const time=new Date(value);
  return Number.isNaN(time.getTime())?"Date unavailable":
-  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(time);
+  istDayMonthYearFormatter.format(time);
 }
 
 
@@ -93,7 +95,7 @@ function leadSourceLabel(source:string|null){
 function leadDueAtIst(value:string){
  const date=new Date(value);
  if(Number.isNaN(date.getTime()))return "Date unavailable";
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",
+ return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",weekday:"short",
   day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(date);
 }
 function nextFollowupPreset(preset:"TOMORROW"|"FRIDAY"|"NEXT_MONDAY"){
@@ -520,7 +522,7 @@ export function RecruiterLeadDetailWorkspace({
            {lead.manualStage === "NOT_NOW" ? (
             <div role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm">
               Not now: {lead.notNowReason || "No reason recorded"}.
-              {lead.notNowUntil ? " Revisit on " + new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(lead.notNowUntil+"T12:00:00+05:30")) : ""}
+              {lead.notNowUntil ? " Revisit on " + istDayMonthYearFormatter.format(new Date(lead.notNowUntil+"T12:00:00+05:30")) : ""}
             </div>
           ) : null}
           {actionToast?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm leading-[22px]">{actionToast}</p>:null}

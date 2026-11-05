@@ -18,6 +18,9 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
+import { formatDateWith } from "@/lib/format-date";
 
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;subjectType?:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
@@ -36,7 +39,7 @@ function resourceActionLabel(eventType:string):string {
 const eventIstDay=(value:string|Date)=>{
  const stamp=new Date(value);
  return Number.isFinite(stamp.getTime())
-   ?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+   ?createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",
      weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(stamp)
    :"Date unavailable";
 };
@@ -427,7 +430,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
           <td className="p-2">{resourceActionLabel(event.eventType)}</td>
           <td className="p-2"><span className="block">{event.actorDisplayName??event.actorUserId??"System"}</span><span className="block text-xs text-muted-foreground">{actorTypeLabel(event.actorType)}</span></td>
           <td className="p-2"><time dateTime={new Date(event.occurredAt).toISOString()}>
-            {new Date(event.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST
+            {formatDateTimeIst(new Date(event.occurredAt))} IST
           </time></td>
         </tr>)}</tbody>
       </Table>
@@ -447,7 +450,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
          <p className="mt-1 text-xs text-muted-foreground">
            {event.actorDisplayName??"System"} ·{" "}
            <time dateTime={new Date(event.occurredAt).toISOString()}
-             title={new Date(event.occurredAt).toLocaleString(undefined,{dateStyle:"full",timeStyle:"long"})}>
+             title={formatDateWith(new Date(event.occurredAt), "en-IN", {dateStyle:"full",timeStyle:"long"})}>
              {mentorActivityRelativeTime(event.occurredAt,now)}
            </time>
          </p>

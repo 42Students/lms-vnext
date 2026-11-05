@@ -15,6 +15,8 @@ import {mentorPortfolioActivityExportHref} from "@/modules/projects/mentor-portf
 import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityImportanceLabel } from "@/modules/projects/mentor-portfolio-model";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Params = { search?:string|string[];assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 
@@ -115,7 +117,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         </div> : null}
       </form>
       <div className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-3 md:flex-row md:items-center md:justify-between">
-        <p className="m-0 text-sm text-body">{data.total.toLocaleString("en-IN")} recorded project event{data.total === 1 ? "" : "s"}</p>
+        <p className="m-0 text-sm text-body">{formatNumberIN(data.total)} recorded project event{data.total === 1 ? "" : "s"}</p>
         <div className="flex min-w-0 flex-col items-start gap-1 md:items-end">
           <TextLink data-unskin="" href={mentorPortfolioActivityExportHref(data.query)} download
             className="inline-flex min-h-11 max-w-full items-center break-words text-sm md:min-h-9">
@@ -144,7 +146,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
                 {event.projectTitle} →
               </TextLink>
               <time dateTime={event.occurredAt.toISOString()} className="text-xs text-muted-foreground">
-                {new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(event.occurredAt)} IST
+                {istDateTimeFormatter.format(event.occurredAt)} IST
               </time>
             </div>
           </li>)}</ol>}

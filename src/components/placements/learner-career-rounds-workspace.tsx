@@ -51,6 +51,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Kind = "ASSESSMENT" | "INTERVIEW";
 /** Legacy /schedule view aliases retain their original meaning. The combined
@@ -545,9 +546,7 @@ export function LearnerCareerRoundsWorkspace({
               <div><dt className="text-xs font-semibold text-muted-foreground">Date & time (IST)</dt>
                 <dd className="mt-1 text-foreground">
                   {date === null ? "Schedule pending" :
-                    new Intl.DateTimeFormat("en-IN", {
-                      dateStyle:"medium", timeStyle:"short", timeZone:"Asia/Kolkata",
-                    }).format(new Date(date))}
+                    istDateTimeFormatter.format(new Date(date))}
                 </dd>
               </div>
               <div><dt className="text-xs font-semibold text-muted-foreground">Location</dt>
@@ -632,9 +631,7 @@ export function LearnerCareerRoundsWorkspace({
                 </p>
                 {personalReminderAt ? (
                   <p role="status" className="text-xs font-semibold text-primary-text">
-                    Personal reminder marked · {new Intl.DateTimeFormat("en-IN", {
-                      dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-                    }).format(new Date(personalReminderAt))}
+                    Personal reminder marked · {istDateTimeFormatter.format(new Date(personalReminderAt))}
                   </p>
                 ) : null}
                 <Button

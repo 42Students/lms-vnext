@@ -16,6 +16,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateFormatter } from "@/lib/format-date";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
 const SHARE_COLUMNS=[
  ["APPLICATION_ID","Applicant ID"],["NAME","Name"],["ROLL_NUMBER","Roll number"],
@@ -162,7 +163,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    </div>:null}
    {links.length>0?<ul className="min-w-0 divide-y divide-border border-y border-border">{links.map(link=><li key={link.id}
     className="flex min-w-0 flex-col items-stretch gap-2 py-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
-    <span className="min-w-0 flex-1 break-words">Link {link.id.slice(0,8)} · Expiry {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(link.expiresAt))} ·
+    <span className="min-w-0 flex-1 break-words">Link {link.id.slice(0,8)} · Expiry {istDateFormatter.format(new Date(link.expiresAt))} ·
      {companyShareLifecycleLabel(companyShareLifecycleStatus(link,asOf))}</span>
     <span className="text-xs text-muted-foreground">
      {link.audit.views} views · {link.audit.exports} CSV downloads

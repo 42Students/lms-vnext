@@ -18,6 +18,8 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type SearchParams = {
   actorId?: string | string[];
@@ -69,9 +71,7 @@ export default async function TpoActorAuditPage({
     params.set("page", String(page));
     return "/tpo/audit/actors?" + params.toString();
   };
-  const dateTime = new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-  });
+  const dateTime = istDateTimeFormatter;
   const hasExactFilters = Boolean(parsed.data.actorId || parsed.data.entityType || parsed.data.entityId ||
     parsed.data.from || parsed.data.to);
   return <div className="min-w-0 space-y-4">
@@ -140,7 +140,7 @@ export default async function TpoActorAuditPage({
     </form>
     <section className="min-w-0 space-y-4">
       <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
-        {data.total.toLocaleString("en-IN")} matching canonical record(s)
+        {formatNumberIN(data.total)} matching canonical record(s)
       </Heading>
       <DataTable
         caption="Matching canonical placement audit records"

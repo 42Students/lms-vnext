@@ -28,6 +28,7 @@ import {LearnerSaveDriveButton} from "./learner-save-drive-button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateFormatter } from "@/lib/format-date";
 
 const PAGE_SIZE = 20;
 
@@ -386,7 +387,7 @@ export function LearnerJobsBrowse({
               {historicExpired.map(saved=><li key={saved.jobId} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3">
                 <div className="min-w-0"><strong className="block break-words">{saved.title?.trim()||"Untitled drive"}</strong>
                   <span className="text-xs text-body">{saved.status.replaceAll("_"," ")}
-                    {saved.deadline&&Number.isFinite(Date.parse(saved.deadline))?" · Deadline "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(saved.deadline)):""}
+                    {saved.deadline&&Number.isFinite(Date.parse(saved.deadline))?" · Deadline "+istDateFormatter.format(new Date(saved.deadline)):""}
                   </span>
                 </div>
                 <LearnerSaveDriveButton jobId={saved.jobId} jobTitle={saved.title?.trim()||"Untitled drive"} initialSaved surface="LIST"/>

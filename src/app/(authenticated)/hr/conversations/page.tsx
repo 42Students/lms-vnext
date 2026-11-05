@@ -31,10 +31,12 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[];thread?:string|string[];view?:string|string[]};
 
-function when(value:Date){return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);}
+function when(value:Date){return istDateTimeFormatter.format(value);}
 function timeAgo(value:Date,now:Date){
  const seconds=Math.round((value.getTime()-now.getTime())/1000);
  const abs=Math.abs(seconds);
@@ -145,7 +147,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <RecruiterConversationLiveRefresh collegeId={result.collegeId??undefined}/>
   <PageHeader title="Messages"
    description={result.status==="READY"
-    ? result.total.toLocaleString("en-IN")+" conversation"+(result.total===1?"":"s")+
+    ? formatNumberIN(result.total)+" conversation"+(result.total===1?"":"s")+
       " · "+result.unreadTotal+" unread message"+(result.unreadTotal===1?"":"s")
     : "Conversations with the placement cell, one per drive, plus a general one."}
    actions={<div className="flex flex-wrap items-center gap-3">
@@ -277,7 +279,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Mark visible unread conversations as read</Button>
      <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
     </form>:null}
-   <p className="text-sm text-body">Showing {result.first.toLocaleString("en-IN")}–{result.last.toLocaleString("en-IN")} of {result.total.toLocaleString("en-IN")} conversations · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
+   <p className="text-sm text-body">Showing {formatNumberIN(result.first)}–{formatNumberIN(result.last)} of {formatNumberIN(result.total)} conversations · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
    {result.items.length?<ol className="min-w-0 divide-y divide-border border-y border-border">
     {visibleRows.map(row=><li key={row.id} className="min-w-0 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
      <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1"><TextLink href={"/hr/conversations/"+row.id}

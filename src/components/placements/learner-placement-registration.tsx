@@ -12,6 +12,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateWith } from "@/lib/format-date";
 type Props = {
   registration: {
     stage: "NOT_INVITED" | "FINISHED" | "OPEN" | "CLOSED";
@@ -86,7 +87,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
       </Label>:null}
     </fieldset>
     {registration.stage==="OPEN"?<>
-      {registration.deadline?<p className="text-sm leading-[22px]">{LEARNER_REGISTRATION_COPY.deadline} {new Date(registration.deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",hour12:true})+" IST"}.</p>:null}
+      {registration.deadline?<p className="text-sm leading-[22px]">{LEARNER_REGISTRATION_COPY.deadline} {formatDateWith(new Date(registration.deadline), "en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",hour12:true})+" IST"}.</p>:null}
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||!choice||choice===registration.choice||(choice==="PLACEMENTS"&&!consent)} onClick={()=>void submit()}>
         {busy?"Saving…":registration.choice?LEARNER_REGISTRATION_COPY.update:LEARNER_REGISTRATION_COPY.register}
       </Button>

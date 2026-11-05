@@ -13,6 +13,7 @@ import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export async function generateMetadata({params}:{params:Promise<{publicId:string}>}){
  const {publicId}=await params;
  return {title:publicId+" · 42 Tracker"};
@@ -81,7 +82,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
    {events.length?<ol aria-label="audit findings entries" className="mt-3 divide-y divide-border border-y border-border text-sm">{events.map(event=>{
     const changes=independentFindingHistoryChanges(event.fromValue,event.toValue);
     return <li key={event.id} className="space-y-2 py-3">
-     <p className="font-semibold text-body">{auditFindingHistoryActionLabel(event.action,event.toValue)} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(event.createdAt)} IST</p>
+     <p className="font-semibold text-body">{auditFindingHistoryActionLabel(event.action,event.toValue)} · {istDateTimeFormatter.format(event.createdAt)} IST</p>
      <p className="break-words text-xs text-muted-foreground">Actor: {event.actorUserId??"System / import"}</p>
      {event.note?<p className="whitespace-pre-wrap break-words text-body">{event.note}</p>:null}
      {changes.length?<dl aria-label="Changed audit fields" className="grid gap-2 border-l-2 border-border pl-3">

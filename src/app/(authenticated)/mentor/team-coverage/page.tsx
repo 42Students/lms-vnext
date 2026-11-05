@@ -18,6 +18,7 @@ import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-s
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Params = {
   filter?: string | string[];
@@ -122,7 +123,7 @@ export default async function MentorTeamCoveragePage({
              <StatTile key={label} label={label} value={value} className="min-h-0 rounded-none border-0 bg-transparent px-0 py-2" />)}
          </section>
         <p className="text-sm text-body leading-[22px]">
-          {data.total.toLocaleString("en-IN")} matching project{data.total === 1 ? "" : "s"}
+          {formatNumberIN(data.total)} matching project{data.total === 1 ? "" : "s"}
         </p>
         {data.items.length === 0
           ? data.projectCount===0

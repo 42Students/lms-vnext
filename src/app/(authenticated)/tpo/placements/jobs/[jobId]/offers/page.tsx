@@ -23,6 +23,8 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -43,7 +45,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e}
  const selections=await getTpoSelectionWorkspace(context,p.jobId)
   .catch(e=>{if(e instanceof AuthorizationError)throw e;return null;});
- const formatIst=(iso:string|null)=>iso?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(iso))+" IST":"Not recorded";
+ const formatIst=(iso:string|null)=>iso?istDateTimeFormatter.format(new Date(iso))+" IST":"Not recorded";
  const root="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
  const searchQuery=parsed.data.q;
  const searchSuffix=(searchQuery?"&q="+encodeURIComponent(searchQuery):"")+(parsed.data.joining!=="ALL"?"&joining="+parsed.data.joining:"")+(parsed.data.kind!=="ALL"?"&kind="+parsed.data.kind:"")+(parsed.data.expiry!=="ALL"?"&expiry="+parsed.data.expiry:"")+(parsed.data.minCtcLpa!==undefined?"&minCtcLpa="+parsed.data.minCtcLpa:"")+(parsed.data.maxCtcLpa!==undefined?"&maxCtcLpa="+parsed.data.maxCtcLpa:"");
@@ -121,7 +123,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <p role="status" className="text-sm text-body leading-[1.6]">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<EmptyState title="No offers match this filter."/>:
    <section aria-label="Recorded offers" className="min-w-0 divide-y divide-border border-y border-border">{data.rows.map(row=><article key={row.id} className="min-w-0 py-4">
-    <div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><div className="min-w-0 flex-1"><Heading level={2} size="base" className="break-words leading-6 text-foreground">{row.name}</Heading><p className="break-words text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><StatusBadge tone={row.status==="ACCEPTED"?"success":row.status==="DECLINED"?"error":row.status==="PENDING"?"warning":"neutral"}>{row.status}</StatusBadge></div>
+    <div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><div className="min-w-0 flex-1"><Heading level={2} size="base" className="break-words leading-6 text-foreground">{row.name}</Heading><p className="break-words text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+formatNumberIN((row.annualCtcInr/100000))+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><StatusBadge tone={row.status==="ACCEPTED"?"success":row.status==="DECLINED"?"error":row.status==="PENDING"?"warning":"neutral"}>{row.status}</StatusBadge></div>
     <div className="mt-3 grid min-w-0 gap-3 text-sm sm:grid-cols-3">
       <div className="min-w-0"><p className="text-xs text-muted-foreground">Issued</p><p className="mt-1 break-words text-body">{formatIst(row.issued)}</p></div>
       <div className="min-w-0"><p className="text-xs text-muted-foreground">Offer expiry</p><p className="mt-1 break-words text-body">{formatIst(row.expires)}</p></div>

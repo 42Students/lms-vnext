@@ -28,6 +28,7 @@ import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-serv
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateWith } from "@/lib/format-date";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -177,7 +178,7 @@ export default async function TpoUnplacedReportPage({
            row?.profileFacts?.resume===false?"Missing":"Not confirmed",
           lastApplications.get(learner.membershipId)?.applications??0,
           lastApplications.get(learner.membershipId)?.stillInDrive?"Yes":"No",
-          lastApplications.get(learner.membershipId)?.lastSubmittedAt?.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"})??"Never"];
+          formatDateWith(lastApplications.get(learner.membershipId)?.lastSubmittedAt, "en-IN", {timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"})??"Never"];
         })}
         emptyDescription="No unplaced learners match this reporting scope. This does not prove that all learners have been placed across all seasons."
         compactControls

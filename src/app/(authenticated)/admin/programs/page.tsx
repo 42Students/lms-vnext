@@ -14,6 +14,7 @@ import { listDepartments } from "@/modules/departments/service";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 export default async function SuperAdminProgramsPage({
  searchParams,
@@ -50,7 +51,7 @@ export default async function SuperAdminProgramsPage({
         <PageHeader title="Programs"
           description="Read-only program catalogue for the selected scope. Select a college before creating or editing programs." />
         <p className="text-sm text-body" role="status">
-          {directory.total.toLocaleString("en-IN")} active programs across active colleges. Page {directory.page} of {directory.totalPages}.
+          {formatNumberIN(directory.total)} active programs across active colleges. Page {directory.page} of {directory.totalPages}.
         </p>
         {directory.items.length?<div className="min-w-0 overflow-x-auto border-y border-border">
           <Table className="min-w-[640px]">

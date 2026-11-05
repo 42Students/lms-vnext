@@ -32,8 +32,9 @@ describe("chat-12 verification round 2: legacy filter and accessible controls", 
   it("keeps TPO photos signed and upload-confirmed, with touch targets at least 44px", () => {
     const avatar = source("src/components/tpo/tpo-profile-avatar.tsx");
     const service = source("src/modules/placements/tpo-avatar-service.ts");
-    expect(avatar).toContain('className="absolute -bottom-1 -right-1 flex h-11 w-11');
-    expect(avatar).toContain('className="inline-flex min-h-11 items-center text-left md:min-h-9');
+    expect(avatar).toContain('<Button variant="ghost" size="icon" type="button" title="Change profile photo"');
+    expect(avatar).toContain('className="absolute -bottom-1 -right-1"');
+    expect(avatar).toContain('<Button variant="link" size="inline" type="button" className="text-left"');
     expect(avatar).toContain("const limit=5*1024*1024");
     expect(service).toContain("max(5*1024*1024)");
     expect(avatar).toContain("Confirm photo after scan");

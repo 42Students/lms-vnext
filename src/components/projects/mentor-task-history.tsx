@@ -3,6 +3,7 @@ import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
+import { createDateFormatter } from "@/lib/format-date";
 
 type HistoryEvent={id:string;eventType:string;summary:string;
  occurredAt:string;actorDisplayName:string|null};
@@ -56,7 +57,7 @@ export function MentorTaskHistory({projectId,taskId}:{
       {events.map(event=><li key={event.id}>
         {event.summary} · {event.actorDisplayName??"Recorded actor"}
         {" · "}<time dateTime={event.occurredAt}>
-          {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",
+          {createDateFormatter("en-IN", {day:"numeric",month:"short",
             year:"numeric",hour:"numeric",minute:"2-digit",
             timeZone:"Asia/Kolkata"}).format(new Date(event.occurredAt))} IST
         </time>

@@ -20,6 +20,7 @@ import { getSuperAdminTenantLifecycleDirectory } from "@/modules/colleges/admin-
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 export default async function TenantDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
@@ -99,7 +100,7 @@ export default async function TenantDirectory({searchParams}:{
    <Button type="submit" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Filter</Button>
   </form>
   <p className="m-0 break-words text-xs text-muted-foreground">
-   {data.total.toLocaleString("en-IN")} matching colleges · 25 per page · page {data.query.page} of {data.totalPages}.
+   {formatNumberIN(data.total)} matching colleges · 25 per page · page {data.query.page} of {data.totalPages}.
    Sorted by college name, then stable college identifier.
   </p>
   <DataTable<(typeof data.items)[number]>

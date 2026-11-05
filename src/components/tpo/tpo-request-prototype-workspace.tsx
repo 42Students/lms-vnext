@@ -3,6 +3,7 @@ import {TpoRequestDecisionControl} from "@/components/placements/tpo-request-dec
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type TpoPrototypeRequestRow={
  id:string;studentName:string;rollNumber:string|null;branchName:string|null;
@@ -20,7 +21,7 @@ function label(kind:string){
  } as Record<string,string>)[kind]??kind.replaceAll("_"," ").toLowerCase();
 }
 function when(date:Date){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+ return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",
   day:"numeric",month:"short",hour:"numeric",minute:"2-digit"
  }).format(date)+" IST";
 }

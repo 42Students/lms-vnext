@@ -16,6 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 export const dynamic="force-dynamic";
 export default async function BatchRegistrations({params,searchParams}:{
  params:Promise<{batchId:string}>;
@@ -63,7 +64,7 @@ export default async function BatchRegistrations({params,searchParams}:{
    {data.summary?<section aria-label="Sampled registration evidence" className="min-w-0 space-y-2 py-3"><Heading level={2} className="sr-only">Registration breakdown in sampled learners</Heading><dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{[["Sampled",data.summary.sample],["Choices recorded",data.summary.recorded],["Unrecorded",data.summary.unrecorded],["Self-service",data.summary.bySource.SELF],["Placement cell",data.summary.bySource.TPO],["Backfill",data.summary.bySource.BACKFILL],...TPO_REGISTRATION_CHOICES.map(choice=>[choice.replaceAll("_"," "),data.summary.byChoice[choice]] as const)].map(([label,value])=><div key={label} className="min-w-0 border-l-2 border-border px-3 py-2"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold tabular-nums">{value}</dd></div>)}</dl><p className="text-xs text-muted-foreground leading-5">Counts describe up to 500 first-loaded authorized learners before view filters, never full-cohort totals when the sample cap is reached.</p></section>:null}
    </Disclosure>
    <div className="flex flex-wrap items-center justify-between gap-2">
-    <p className="text-sm text-muted-foreground leading-[22px]">{data.total.toLocaleString("en-IN")} matching students in {data.sampleSize} sampled records. Page {data.filters.page}.</p>
+    <p className="text-sm text-muted-foreground leading-[22px]">{formatNumberIN(data.total)} matching students in {data.sampleSize} sampled records. Page {data.filters.page}.</p>
     <ButtonLink variant="secondary" href={"/api/placements/tpo/batches/"+batchId+"/registrations/export?"+new URLSearchParams({
      q:data.filters.q,choice:data.filters.choice,source:data.filters.source,recency:data.filters.recency,order:data.filters.order,pageSize:String(data.filters.pageSize),page:String(data.filters.page),
     }).toString()}>

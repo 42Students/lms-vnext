@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
+import { formatNumberIN } from "@/lib/safe-format";
 
 /** Scoped CSV download with true success/error feedback and truncation counts. */
 export function CollegeDriveApplicationsExport({href,matching,cap}:{
@@ -43,10 +44,10 @@ export function CollegeDriveApplicationsExport({href,matching,cap}:{
  return <div className="flex min-w-0 flex-col items-start gap-1">
   <Button type="button" variant="secondary" loading={downloading} disabled={downloading}
     className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>void download()}>
-   {downloading?"Preparing export…":`↓ Export CSV (up to ${cap.toLocaleString("en-IN")})`}
+   {downloading?"Preparing export…":`↓ Export CSV (up to ${formatNumberIN(cap)})`}
   </Button>
   {matching>cap?<p role="status" className="m-0 text-xs text-muted-foreground">
-   Only the first {cap.toLocaleString("en-IN")} of {matching.toLocaleString("en-IN")} matching applications are included.
+   Only the first {formatNumberIN(cap)} of {formatNumberIN(matching)} matching applications are included.
   </p>:null}
  </div>;
 }

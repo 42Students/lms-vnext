@@ -18,15 +18,14 @@ import { resolveLearnerOfferingDelivery } from "@/modules/courses/learner-offeri
 import { findOwnLearnerAssignment } from "@/modules/courses/learner-assignment-detail-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Props = {
   params: Promise<{ assignmentId: string }>;
   searchParams: Promise<{ deliveryId?: string | string[] }>;
 };
 function formatDate(date: Date | null) {
-  return date ? new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
-  }).format(date) : "No deadline";
+  return date ? istDateTimeFormatter.format(date) : "No deadline";
 }
 export default async function LearnerAssignmentDetail({ params, searchParams }: Props) {
   const [path, query] = await Promise.all([params, searchParams]);

@@ -31,6 +31,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function one(
   value: string | string[] | undefined,
@@ -186,9 +187,7 @@ export async function ProjectAdminReadinessPage({
             {key:"direction",header:"Override",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.overrideValue?"success":"warning"}>{row.overrideValue?"✓ Force unlocked":"! Force blocked"}</StatusBadge>},
             {key:"note",header:"Note",mobilePriority:"secondary",cell:row=>row.note},
             {key:"by",header:"By",mobilePriority:"secondary",cell:row=>row.by},
-            {key:"at",header:"At",mobilePriority:"secondary",cell:row=>new Intl.DateTimeFormat("en-IN",{
-              dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-            }).format(row.at)},
+            {key:"at",header:"At",mobilePriority:"secondary",cell:row=>istDateTimeFormatter.format(row.at)},
             {key:"action",header:"Action",mobilePriority:"action",cell:row=><TextLink
               className="inline-flex min-h-11 items-center"
               href={readinessPath+"?projectId="+encodeURIComponent(row.projectId)+"#manual-override"}>Manage</TextLink>},
@@ -262,8 +261,7 @@ export async function ProjectAdminReadinessPage({
                 <div><dt className="text-xs font-semibold text-body">Set by / at</dt>
                   <dd className="mt-1">{selectedReadiness.readinessOverride.overriddenBy||"—"}
                   {" · "}{selectedReadiness.readinessOverride.occurredAt?
-                    new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-                      timeZone:"Asia/Kolkata"}).format(new Date(selectedReadiness.readinessOverride.occurredAt)):"—"}</dd></div>
+                    istDateTimeFormatter.format(new Date(selectedReadiness.readinessOverride.occurredAt)):"—"}</dd></div>
               </dl>
               <div className="grid gap-3 border-t border-border pt-3 sm:grid-cols-2">
                 <div className="space-y-1">

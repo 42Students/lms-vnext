@@ -28,6 +28,8 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istWeekdayDayMonthFormatter, istDateFormatter, istDayMonthYearFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 /** User-facing acknowledgements belong to the interactive action controls,
  * not to this server-rendered conversation snapshot. Their verified response
  * outcomes map ADDED/OK/LEFT for participant/follow/mute/leave/topic actions
@@ -72,12 +74,10 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   person.membershipId!==context.membership?.id).map(person=>{
    const awayUntil=away.items.find(item=>item.membershipId===person.membershipId)?.awayUntil??null;
    return {membershipId:person.membershipId,displayName:person.displayName,
-    awayLabel:awayUntil?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(awayUntil):null};
+    awayLabel:awayUntil?istWeekdayDayMonthFormatter.format(awayUntil):null};
   });
  const awayUntil=away.items.find(row=>row.membershipId===otherMembershipId)?.awayUntil??null;
- const awayLabel=awayUntil?new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
- }).format(awayUntil):null;
+ const awayLabel=awayUntil?istWeekdayDayMonthFormatter.format(awayUntil):null;
  const rawAsk=Array.isArray(query.ask)?query.ask[0]:query.ask;
  const highlightAskId=rawAsk&&tpoThreadIdSchema.safeParse(rawAsk).success?rawAsk:undefined;
  const serverNow=new Date();
@@ -105,7 +105,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <p className="text-xs text-muted-foreground">This two-person conversation remains private. Opening it to the whole team and leaving a group conversation require multi-member topics; those controls are not offered for a private pair.</p>
   <TpoTeamThreadDetails threadId={result.thread.id} topic={result.thread.topic}
    counterpart={result.thread.counterpartName}
-   createdDate={new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(result.thread.createdAt)}
+   createdDate={istDateFormatter.format(result.thread.createdAt)}
    decisions={result.messages.filter(message=>message.decision&&!message.removed).length}
    openAsks={asks.status==="READY"?asks.items.filter(ask=>ask.status==="OPEN").length:0}
    awayLabel={awayLabel}/>
@@ -127,9 +127,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   {result.messages.length===0?<EmptyState title="No messages in this thread yet." description="Reply privately to start the conversation."/>:null}
   <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="min-w-0 space-y-3 border-t border-border pt-4">
    {result.messages.map((message,index)=>{
-    const day=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
-     timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
-    }).format(date);
+    const day=(date:Date)=>istDayMonthYearFormatter.format(date);
     const own=message.authorMembershipId===context.membership?.id;
     const showDay=index===0||day(result.messages[index-1]?.createdAt ?? message.createdAt)!==day(message.createdAt);
     return <li id={"team-message-"+message.id} key={message.id} className="min-w-0">
@@ -139,7 +137,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
       "mr-auto w-fit max-w-[94%] rounded-[var(--lms-control-radius)] rounded-bl-sm border border-border bg-surface px-3 py-2 md:max-w-[82%] lg:max-w-[74%]"}>
       <p className="text-xs text-muted-foreground">
        {own?"You":message.authorName?.trim()||"Team member"} ·
-       {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
+       {" "}{createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
       </p>
       {message.decision&&!message.removed?<StatusBadge tone="success">Decision</StatusBadge>:null}
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">

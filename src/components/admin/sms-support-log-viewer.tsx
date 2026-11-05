@@ -7,6 +7,7 @@ import {DataTable} from "@/components/ui/data-table";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Select} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 /** Support-only response: no full phone, recipient HMAC, provider payload,
  * template substitutions or credentials can leave the server. */
@@ -95,7 +96,7 @@ export function SmsSupportLogViewer(){
    empty={<p className="text-sm">No recorded SMS attempts match these filters.</p>}
    columns={[
     {key:"time",header:"Attempted",mobilePriority:"primary" as const,
-     cell:row=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.createdAt))+" IST"},
+     cell:row=>istDateTimeFormatter.format(new Date(row.createdAt))+" IST"},
     {key:"status",header:"Status",mobilePriority:"secondary" as const,
      cell:row=><StatusBadge tone={row.status==="ACCEPTED"?"success":
        row.status==="FAILED"?"error":"warning"}>{

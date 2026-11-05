@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 type PlacementRoleOptionItem = {
   id: string;
@@ -63,7 +64,7 @@ function humanize(value: string) {
 
 function money(value: number | null) {
   if (value == null) return null;
-  return new Intl.NumberFormat("en-IN", {
+  return createNumberFormatter("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,

@@ -12,6 +12,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Ask={
  id:string;title:string;status:string;dueAt:string|null;doneNote:string|null;
  askerMembershipId:string;assigneeMembershipId:string;
@@ -150,7 +151,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
     <p className="min-w-0 break-words font-semibold">{ask.title}</p>
     <p className="mt-1 text-xs text-muted-foreground">
      Ask · {ask.assigneeMembershipId===actorId?"you":recipientName}
-     {ask.dueAt?" · by "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(ask.dueAt))+" IST":""}
+     {ask.dueAt?" · by "+istDateTimeFormatter.format(new Date(ask.dueAt))+" IST":""}
      {" · "+label}
     </p>
     {ask.doneNote?<p className="mt-1 break-words text-xs">{ask.doneNote}</p>:null}

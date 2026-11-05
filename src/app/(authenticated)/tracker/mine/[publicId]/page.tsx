@@ -11,6 +11,7 @@ import {TrackerAdminError} from "@/modules/bug-tracker/admin-errors";
 import {trackerPublicIdSchema} from "@/modules/bug-tracker/admin-validation";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 export const dynamic="force-dynamic";
 export default async function MyTrackerReportDetail({
   params,
@@ -65,7 +66,7 @@ export default async function MyTrackerReportDetail({
       {report.evidenceLink?.startsWith("https://") ? <p className="mt-3 text-sm">
         <TextLink href={report.evidenceLink} rel="noopener noreferrer">Open linked evidence</TextLink>
       </p> : null}
-      <p className="mt-3 text-xs text-muted-foreground">Reported: <time dateTime={report.createdAt.toISOString()}>{report.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</time></p>
+      <p className="mt-3 text-xs text-muted-foreground">Reported: <time dateTime={report.createdAt.toISOString()}>{formatDateTimeIst(report.createdAt)}</time></p>
     </section>
     <section className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
       <Heading level={2} size="base" className="text-[var(--lms-heading)]">Screenshots ({screenshots.length})</Heading>
@@ -82,7 +83,7 @@ export default async function MyTrackerReportDetail({
       </Banner>:history.length===0?<p className="text-sm text-muted-foreground">No status changes yet.</p>:
         <ol className="space-y-3">{history.map(row=><li key={row.id} className="border-b border-border pb-3 text-sm">
           <span className="font-semibold">{row.type}</span>
-          <span className="ml-2 text-muted-foreground">{row.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
+          <span className="ml-2 text-muted-foreground">{formatDateTimeIst(row.createdAt)}</span>
         </li>)}</ol>}
     </section>
   </article>;

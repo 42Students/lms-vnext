@@ -16,6 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 export function LearnerBoardTaskDetailDialog({
   projectId, filters, task, sprintTitle, currentMembershipId, projectStatus, assigneeName, commentCount=0, submissionUrl=null,
@@ -101,9 +102,7 @@ export function LearnerBoardTaskDetailDialog({
         {activityEvents.length?<ol className="mt-2 space-y-2 text-xs text-body">
           {activityEvents.map((event,index)=><li key={index}>
             {event.summary} · {event.actorDisplayName??"Project member"} ·
-            {" "}{new Intl.DateTimeFormat("en-IN",{
-              dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-            }).format(event.occurredAt)}
+            {" "}{istDateTimeFormatter.format(event.occurredAt)}
           </li>)}
         </ol>:<p className="mt-2 text-xs text-muted-foreground">No task activity yet.</p>}
         </Disclosure>

@@ -28,6 +28,9 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { istDateTimeFormatter, istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
@@ -1120,12 +1123,10 @@ export function PlacementJobCreateForm({
     >
       <p role="status" aria-live="polite" className="max-w-[75ch] break-words text-xs leading-5 text-body">
         {pending?"Saving changes…":lastServerSavedAt&&partialJobId?
-          "Last saved on server at "+new Intl.DateTimeFormat("en-IN",{
-            dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-          }).format(new Date(lastServerSavedAt))+" IST · Draft created by your account; finish setup before publishing.":
+          "Last saved on server at "+istDateTimeFormatter.format(new Date(lastServerSavedAt))+" IST · Draft created by your account; finish setup before publishing.":
           partialJobId?"Draft exists on server · Last-saved timestamp unavailable; retry setup or open the draft.":
           lastLocalSaveAt?
-          "Changes not saved to the server · Browser backup at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST.":
+          "Changes not saved to the server · Browser backup at "+createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST.":
           "Not saved yet · Your changes are backed up locally until you create the draft."}
       </p>
 
@@ -1296,7 +1297,7 @@ export function PlacementJobCreateForm({
               {selectedEmployer?.memory?<Disclosure title="Company Memory" className="min-w-0"><aside aria-label="Company Memory" className="pt-3 text-sm">
                 <Heading level={3} className="text-foreground">Company Memory</Heading>
                 <p>{selectedEmployer.memory.pastDrives} past drives · {selectedEmployer.memory.joinedLearners} confirmed hires</p>
-                <p>Last drive: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
+                <p>Last drive: {istDateFormatter.format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
                 <p>Recent roles: {selectedEmployer.memory.recentRoles.join(", ")}</p>
                 {existingDrive?
                   <p role="alert" className="mt-2 font-semibold text-[var(--lms-gold-accent)]">
@@ -2154,7 +2155,7 @@ export function PlacementJobCreateForm({
           Calculating active learner targeting…</p>:null}
         {draftReach?.kind==="READY"?<div role="status" className="mt-2 space-y-3 text-sm">
           <p><strong className="tabular-nums text-lg text-foreground">
-           {draftReach.activeLearners.toLocaleString("en-IN")}</strong> active learners match the saved academic target choices.</p>
+           {formatNumberIN(draftReach.activeLearners)}</strong> active learners match the saved academic target choices.</p>
           <Disclosure title="Branch breakdown">
            {draftReach.branches.length?<ul className="max-h-44 space-y-1 overflow-y-auto text-xs">
             {draftReach.branches.map(branch=><li key={branch.programId}

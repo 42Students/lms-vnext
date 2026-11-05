@@ -1,6 +1,7 @@
 "use client";
 
 import type { listLearnerCourseClassAnnouncements } from "@/modules/courses/learner-course-announcements-service";
+import { formatDateWith } from "@/lib/format-date";
 
 type Announcement = Awaited<ReturnType<typeof listLearnerCourseClassAnnouncements>>[number];
 
@@ -20,7 +21,7 @@ export function LearnerCourseAnnouncements({ announcements }: { announcements: A
             <p className="text-sm font-semibold text-[var(--lms-primary-text)]">{a.title}</p>
             <p className="text-xs text-[var(--lms-muted-text)]">
               {a.senderName ?? "College staff"} &middot;{" "}
-              {new Date(a.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+              {formatDateWith(new Date(a.createdAt), "en-IN", { day: "numeric", month: "short", year: "numeric" })}
             </p>
           </div>
           {a.messageText ? (

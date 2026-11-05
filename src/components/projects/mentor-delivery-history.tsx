@@ -3,6 +3,7 @@
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type MentorDeliveryHistoryEntry={
  id:string;version:number;kind:string;occurredAt:string;
@@ -20,7 +21,7 @@ export function MentorDeliveryHistory({events}:{events:readonly MentorDeliveryHi
    {shown.length?<ol>{shown.map(event=><li key={event.id}>
      <strong>Version {event.version} · {event.kind.replaceAll("_"," ")}</strong>
      <span>{event.actorName||"Project team"} ·
-       {" "}{new Intl.DateTimeFormat("en-IN",{
+       {" "}{createDateFormatter("en-IN", {
          day:"numeric",month:"short",year:"numeric",hour:"numeric",
          minute:"2-digit",timeZone:"Asia/Kolkata",
        }).format(new Date(event.occurredAt))} IST</span>

@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type EventRow={id:string;action:string;label:string;occurredAt:string;
  revisionCount:number|null;actorName:string;actorRole:string|null;
  notes:string|null;feedback:string|null;attachmentCount:number};
@@ -32,8 +33,7 @@ export function ProjectDeliveryHistoryTimeline({projectId}:{projectId:string}){
  const format=(iso:string)=>{
   const date=new Date(iso);
   return Number.isFinite(date.getTime())?
-    new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
-      timeZone:"Asia/Kolkata"}).format(date)+" IST":"Date unavailable";
+    istDateTimeFormatter.format(date)+" IST":"Date unavailable";
  };
  return <section aria-label="Delivery history"
    className="mt-4 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">

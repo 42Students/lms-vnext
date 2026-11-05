@@ -2,6 +2,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {MentorSourceNotificationRead} from "@/components/projects/mentor-source-notification-read";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 function trustedAnnouncementAction(url:string|undefined|null,label:string|undefined|null){
  if(!url||!label)return null;
  try{
@@ -42,9 +43,7 @@ function announcementTimestamp(raw: AnnouncementFeedItem["createdAt"]): Date | n
 
 function announcementDateLabel(raw: AnnouncementFeedItem["createdAt"]): string {
   const date = announcementTimestamp(raw);
-  return date ? new Intl.DateTimeFormat("en-IN", {
-    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-  }).format(date) : "Date unavailable";
+  return date ? istDateTimeFormatter.format(date) : "Date unavailable";
 }
 
 export function AnnouncementFeed({

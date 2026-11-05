@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter, istDateFormatter } from "@/lib/format-date";
 export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
  jobId:string;title:string;currentDeadline:string|null;
 }){
@@ -14,9 +15,7 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [done,setDone]=useState("");
- const current=currentDeadline?new Intl.DateTimeFormat("en-IN",{
-  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
- }).format(new Date(currentDeadline))+" IST":"Not set";
+ const current=currentDeadline?istDateTimeFormatter.format(new Date(currentDeadline))+" IST":"Not set";
  async function save(){
   if(!value||busy)return;
   const deadline=new Date(value+"+05:30");
@@ -30,8 +29,7 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
    const result=await response.json().catch(()=>null);
    if(!response.ok)throw Error(response.status===409
     ?"Drive changed. Refresh its deadline and try again.":result?.error??"Could not extend deadline");
-   setDone("Deadline extended to "+new Intl.DateTimeFormat("en-IN",{
-    dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(result.deadline))+".");
+   setDone("Deadline extended to "+istDateFormatter.format(new Date(result.deadline))+".");
    setOpen(false);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Could not extend deadline");}
   finally{setBusy(false);}

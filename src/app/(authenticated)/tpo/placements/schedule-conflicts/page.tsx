@@ -13,13 +13,10 @@ import { tpoScheduleConflictsQuerySchema } from "@/modules/placements/tpo-schedu
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type SearchParams = { days?: string | string[] };
-const dateTime = new Intl.DateTimeFormat("en-IN", {
-  dateStyle: "medium",
-  timeStyle: "short",
-  timeZone: "Asia/Kolkata",
-});
+const dateTime = istDateTimeFormatter;
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }

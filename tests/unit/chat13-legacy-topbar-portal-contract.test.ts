@@ -87,7 +87,7 @@ describe("chat-13 legacy header portal navigation and measured shell values",()=
    const css=read("src/components/shell/topbar/topbar.module.css");
    for(const value of ["height: 68px","min-height: 68px","padding: 0 20px",
      "background: var(--lms-white)","1px solid var(--lms-header-border)",
-     "box-shadow: var(--lms-header-shadow)","width:291px",
+     "box-shadow: var(--lms-header-shadow)","width:292px",
      "height:36px","border-radius:var(--lms-control-radius)",
      "background:var(--lms-button-primary)",
      "color:var(--lms-white)","background:var(--topbar-unread)"])

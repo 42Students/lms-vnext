@@ -12,6 +12,8 @@ import {Select} from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 type Params={view?:string|string[];deliveryId?:string|string[];page?:string|string[]};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function Page({searchParams}:{searchParams:Promise<Params>}){
@@ -59,7 +61,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
    <Button type="submit" className="w-full lg:w-auto">Filter</Button>
    <TextLink href="/teacher/live-classes" className="inline-flex min-h-11 items-center justify-center p-2 text-sm md:min-h-[var(--lms-control-height)]">Clear</TextLink>
   </form>
-  <p className="text-sm leading-[1.6] text-body" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching registered live session{data.total===1?"":"s"}</p>
+  <p className="text-sm leading-[1.6] text-body" role="status" aria-live="polite">{formatNumberIN(data.total)} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"
    description="No published LIVE_CLASS content matches these filters in your current teaching Sections. Unregistered meetings are not invented."/>
    :<ul className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(s=><li key={s.deliveryId+":"+s.id}
@@ -67,9 +69,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
     <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{s.title}</Heading>
     <p className="text-sm text-body leading-[22px]">{s.courseName} · {s.sectionName}</p>
     <p className="text-sm text-body leading-[22px]">
-     {new Intl.DateTimeFormat("en-IN",{
-      dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-     }).format(s.startsAt)} IST
+     {istDateTimeFormatter.format(s.startsAt)} IST
     </p>
     {s.joinUrl?<ThirdPartyLink href={s.joinUrl} label="Open secure meeting link" />:<p className="text-xs text-muted-foreground leading-5">
      Secure meeting link unavailable. Only HTTPS links are exposed.

@@ -3,6 +3,7 @@ import type {TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lea
 import {tpoRecruiterFollowupSignal} from "@/modules/placements/tpo-recruiter-attention-model";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { createDateFormatter } from "@/lib/format-date";
 
 export type TpoRecruiterPrototypeColumn="recruiter"|"company"|"stage"|"next"|"last"|"owner";
 export const TPO_RECRUITER_PROTOTYPE_COLUMNS:readonly {key:TpoRecruiterPrototypeColumn;label:string}[]=[
@@ -20,7 +21,7 @@ function shortDate(raw:string|null){
  if(!raw)return "Not recorded";
  const date=new Date(raw);
  if(!Number.isFinite(date.getTime()))return "Unavailable";
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(date);
+ return createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(date);
 }
 
 const prototypeStage:Record<TpoRecruiterLeadStage,string>={

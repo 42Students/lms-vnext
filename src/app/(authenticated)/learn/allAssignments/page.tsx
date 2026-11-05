@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 type AssignmentSearchParams = { course?: string | string[]; page?:string|string[] };
 
@@ -138,7 +139,7 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
   const coursesCount = new Set(items.map(item => item.courseId)).size;
   const totalAssignments=overview.pagination?.totals.assignments??items.length;
   const totalPages=Math.max(1,Math.ceil(totalAssignments/20));
-  const thisMonth = new Intl.DateTimeFormat("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
+  const thisMonth = createDateFormatter("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
   const snapshotMonth = thisMonth.format(new Date(overview.snapshotNowMs));
   const createdThisMonth = items.filter(item => thisMonth.format(new Date(item.createdAt)) === snapshotMonth).length;
 

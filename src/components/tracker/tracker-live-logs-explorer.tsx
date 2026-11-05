@@ -18,13 +18,15 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { formatNumberIN } from "@/lib/safe-format";
+import { formatDateWith } from "@/lib/format-date";
 
 type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null;
   knownErrorId?:string|null;muted?:boolean|null};
 type Page={configured:boolean;items:Entry[];nextPageToken:string|null};
 function displayTime(raw:string){
  const value=new Date(raw);
- return Number.isFinite(value.getTime())?value.toLocaleString("en-IN",{
+ return Number.isFinite(value.getTime())?formatDateWith(value, "en-IN", {
   timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
   hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})+" IST":"Unknown time";
 }
@@ -383,11 +385,11 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
         Auto-refresh every 30 seconds
       </Label>
       {lastSuccessfulAt?<span className="text-xs text-muted-foreground">
-        Last loaded {lastSuccessfulAt.toLocaleTimeString("en-IN",{timeZone:"Asia/Kolkata"})} IST
+        Last loaded {formatDateWith(lastSuccessfulAt, "en-IN", { timeStyle: "medium", timeZone:"Asia/Kolkata"})} IST
       </span>:null}
     </div>
     <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-2 text-xs text-muted-foreground" role="status">
-      <span>{items.length.toLocaleString("en-IN")} events shown{nextPage?" · More available":""}{stale?" · Stale":""}</span>
+      <span>{formatNumberIN(items.length)} events shown{nextPage?" · More available":""}{stale?" · Stale":""}</span>
       <span>Configured deployment namespace · Updated {lastSuccessfulAt?displayTime(lastSuccessfulAt.toISOString()):"not yet"}</span>
     </div>
     <p className="text-xs text-muted-foreground">A release marker is required for deployment separators. Cloud Logging pages are limited to twelve redacted records; downloads disclose truncation.</p>

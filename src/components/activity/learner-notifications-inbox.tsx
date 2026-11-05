@@ -30,6 +30,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 
 function NotificationCategoryIcon({ category }: { category: LearnerNotificationCategory }) {
@@ -362,11 +363,7 @@ export function LearnerNotificationsInbox({
             </div>
             <div className="text-xs text-muted-foreground">
               <time dateTime={selected.createdAt}>
-                {new Intl.DateTimeFormat("en-IN", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                  timeZone: "Asia/Kolkata",
-                }).format(new Date(selected.createdAt))}
+                {istDateTimeFormatter.format(new Date(selected.createdAt))}
               </time>
             </div>
           </div>

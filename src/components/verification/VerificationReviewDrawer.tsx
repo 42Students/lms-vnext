@@ -21,6 +21,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { istDayMonthYearFormatter, formatDateTimeIst } from "@/lib/format-date";
 
 type HistoryItem={id:string;action:string;actorKind:string;actorName:string|null;
  note:string|null;occurredAt:string;priorVersion:number;nextVersion:number};
@@ -109,7 +110,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     </section>:null}
     <section className="rounded-[var(--lms-radius-card)] border border-border p-4">
      <Heading level={3} className="flex flex-wrap items-center gap-2">{row.section==="EDUCATION"?"Education":"Identity"} <span className="text-xs font-normal text-muted-foreground">{detail.review.status.replaceAll("_"," ")}</span></Heading>
-     {detail.review.decidedAt&&detail.review.status==="VERIFIED"?<p className="mt-1 text-sm text-muted-foreground">Verified by {(detail.review.history??[]).filter(item=>item.action==="VERIFIED").slice(-1)[0]?.actorName??"the college"} on {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(detail.review.decidedAt))}</p>:null}
+     {detail.review.decidedAt&&detail.review.status==="VERIFIED"?<p className="mt-1 text-sm text-muted-foreground">Verified by {(detail.review.history??[]).filter(item=>item.action==="VERIFIED").slice(-1)[0]?.actorName??"the college"} on {istDayMonthYearFormatter.format(new Date(detail.review.decidedAt))}</p>:null}
      <Heading level={4} className="mt-3">Submitted versus previously verified</Heading>
      <dl className="mt-3 min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{verificationSnapshotComparison(detail.review.submittedSnapshot,detail.review.verifiedSnapshot)
       .map(item=><div key={item.key} className="min-w-0 space-y-1 py-3">
@@ -182,7 +183,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
             :item.action==="SENT_BACK"?"Sent back by "+(item.actorName??item.actorKind)
             :item.action.replaceAll("_"," ")}</p>
           <p className="text-xs text-muted-foreground">
-            {new Date(item.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}
+            {formatDateTimeIst(new Date(item.occurredAt))}
           </p>
           {item.note&&<p className="whitespace-pre-wrap break-words">{item.note}</p>}
         </li>)}

@@ -13,6 +13,8 @@ import {ApplicantNotesPanel} from "@/components/placements/applicant-notes-panel
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
 export default async function TpoApplicantDetailPage({params}:Params){
  const context=await getCurrentRequestContext();
@@ -27,9 +29,9 @@ export default async function TpoApplicantDetailPage({params}:Params){
  const notes=await listTpoApplicantNotes(context,jobId,applicationId);
  const applicationFields:ReadonlyArray<readonly [string,string|null|undefined]>=[["Application",data.applicantStatus],["Screening",data.screening],
      ["Channel",data.application.channel],["Eligibility",data.application.eligibilityStatus],
-     ["Submitted",new Date(data.application.submittedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})+" IST"],
+     ["Submitted",formatDateTimeIst(new Date(data.application.submittedAt))+" IST"],
      ["Screening decided",data.application.screeningDecidedAt?
-      new Date(data.application.screeningDecidedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})+" IST":"Not recorded"]];
+      formatDateTimeIst(new Date(data.application.screeningDecidedAt))+" IST":"Not recorded"]];
  return <div className="min-w-0 space-y-6">
   <div id="applicant-detail" tabIndex={-1} className="scroll-mt-24 rounded-[var(--lms-control-radius)] focus-ring">
   <PageHeader eyebrow="TPO · Applicant detail"
@@ -61,7 +63,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
      <article key={r.roundId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <Heading level={3} className="text-foreground">{r.roundName}</Heading>
       <p className="mt-1 text-sm text-body">{r.kind} · {r.outcome} · Applied: {r.appliedAt?
-       new Date(r.appliedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}):"Time not recorded"}</p>
+       formatDateTimeIst(new Date(r.appliedAt)):"Time not recorded"}</p>
      </article>)}</div>}
   </Disclosure>
   <Disclosure title={<>Offer and joining evidence <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></>} preserveSummary summaryClassName="min-h-11">
@@ -71,8 +73,8 @@ export default async function TpoApplicantDetailPage({params}:Params){
      <article key={offer.offerId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <Heading level={3} className="text-foreground">{offer.roleTitle} · Version {offer.version}</Heading>
       <p className="mt-1 text-sm text-body">{offer.status} · Joining: {offer.joiningStatus??"Not confirmed"}
-       {" · "}Annual CTC: {offer.annualCtcInr===null?"Not recorded":"₹"+offer.annualCtcInr.toLocaleString("en-IN")}</p>
-      <p className="mt-1 text-xs text-body">Issued: {new Date(offer.issuedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})} IST</p>
+       {" · "}Annual CTC: {offer.annualCtcInr===null?"Not recorded":"₹"+formatNumberIN(offer.annualCtcInr)}</p>
+      <p className="mt-1 text-xs text-body">Issued: {formatDateTimeIst(new Date(offer.issuedAt))} IST</p>
      </article>)}</div>}
   </Disclosure>
   <p className="text-xs text-body">This view uses only recorded application, screening, APPLIED results and offer/joining states. Internal screening comments and staged round outcomes are not disclosed. Employer-final selection is not independently recorded.</p>

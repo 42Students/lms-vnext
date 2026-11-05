@@ -17,6 +17,7 @@ import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateFormatter } from "@/lib/format-date";
 type ManageTab="web-address"|"sign-in"|"branding"|"admins"|"activity";
 const manageTabs:readonly {id:ManageTab;label:string;path:string;description:string}[]=[
  {id:"web-address",label:"Web address",path:"subdomain",description:"Register and verify this college's domain before enabling sign-in."},
@@ -63,7 +64,7 @@ export default async function TenantDetail({params,searchParams}:{
   ["College status",item.status],["Organization status",item.organizationStatus],
   ["City",item.city??"Not recorded"],["State",item.state??"Not recorded"],
   ["Country",item.country??"Not recorded"],
-  ["Created (IST)",new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.createdAt)],
+  ["Created (IST)",istDateFormatter.format(item.createdAt)],
  ];
  const base="/admin/colleges/"+encodeURIComponent(item.id);
  const active=manageTabs.find(entry=>entry.id===tab)!;

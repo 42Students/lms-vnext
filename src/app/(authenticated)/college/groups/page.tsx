@@ -18,6 +18,7 @@ import {
 } from "@/modules/groups/admin-read-service";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 const STATUS_TONE = {
   ACTIVE: "success",
@@ -218,7 +219,7 @@ export default async function CollegeGroupsPage({
 
           <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
             <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">
-              Showing {(offset+1).toLocaleString("en-IN")}–{Math.min(offset+limit,total).toLocaleString("en-IN")} of {total.toLocaleString("en-IN")}
+              Showing {formatNumberIN((offset+1))}–{formatNumberIN(Math.min(offset+limit,total))} of {formatNumberIN(total)}
             </p>
             <Pagination label="Group pages" page={Math.floor(offset/limit)+1}
               pageCount={Math.ceil(total/limit)} hrefForPage={page=>query((page-1)*limit)} />

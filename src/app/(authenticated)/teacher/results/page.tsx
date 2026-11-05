@@ -16,6 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type Search = Record<string,string|string[]|undefined>;
 
@@ -105,7 +106,7 @@ export default async function FacultyAssessmentResultsPage({
       </TextLink>
     </form>
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
+      <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{formatNumberIN(data.total)} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
       <ButtonLink variant="secondary" href={facultyResultsCsvHref({...data.query,page:data.page})}
        className="w-full sm:w-auto">
        Export this page CSV (no learner names)

@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 /** Mirrors the legacy destructive/access-changing action keys. Count each
  * raw activity item, not distinct projects or condensed groups. */
@@ -108,7 +109,7 @@ function auditEntityType(raw:string){
  return type.replaceAll("_"," ").replaceAll("."," ")||"Entity";
 }
 function projectEventTime(value:Date){
- return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST";
+ return istDateTimeFormatter.format(value)+" IST";
 }
 /** Legacy payloads include arrays, nested maps and occasionally JSON serialized as text. */
 function auditDetailValue(value:unknown,depth=0):ReactNode{

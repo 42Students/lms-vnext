@@ -12,6 +12,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
+import { createNumberFormatter } from "@/lib/safe-format";
 
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
@@ -22,11 +24,11 @@ function priorityTone(priority: string): "error" | "warning" | "info" {
   return priority === "HIGH" ? "error" : priority === "MEDIUM" ? "warning" : "info";
 }
 function formatWhen(value: Date, timezone: string | null) {
-  return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: timezone ?? "Asia/Kolkata" }).format(value);
+  return createDateFormatter("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: timezone ?? "Asia/Kolkata" }).format(value);
 }
 function conversion(value: number, previous: number) {
   if (previous <= 0) return "—";
-  return new Intl.NumberFormat("en-IN", {
+  return createNumberFormatter("en-IN", {
     style: "percent",
     maximumFractionDigits: 1,
   }).format(value / previous);

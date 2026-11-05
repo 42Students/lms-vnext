@@ -12,6 +12,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Evidence={kind:"FILE"|"LINK";name:string;fileId:string|null;url:string|null};
 function attachment(item:unknown,index:number):Evidence{
@@ -27,7 +28,7 @@ function safeUrl(raw:string|null):string|null{
  catch{return null;}
 }
 function date(value:Date|null|undefined):string{
- return value?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value):"—";
+ return value?istDateTimeFormatter.format(value):"—";
 }
 const linkStyle="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-ring";
 

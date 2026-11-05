@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { contactRecordLinks } from "@/modules/people/college-contacts-links";
 import { getCollegeContactById } from "@/modules/people/college-contacts-service";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateFormatter } from "@/lib/format-date";
 
 export default async function CollegeContactDetail({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
@@ -14,7 +15,7 @@ export default async function CollegeContactDetail({params}:{params:Promise<{mem
  const contact=await getCollegeContactById(await getCurrentRequestContext(),membershipId);
  if(!contact)notFound();
  const links = contactRecordLinks(contact);
- const date=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(contact.joinedAt);
+ const date=istDateFormatter.format(contact.joinedAt);
  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
   <PageHeader title={contact.name}
    description="College-scoped public contact details. Private learner identity and contact data are not displayed."

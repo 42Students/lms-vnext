@@ -4,6 +4,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
+import { createDateFormatter } from "@/lib/format-date";
 
 /** The recipient-specific high-water marker and total come from PostgreSQL.
  * The client never stores a parallel localStorage cursor or guesses from
@@ -32,7 +33,7 @@ export function MentorActivitySinceLastVisit({projectId,lastSeenAt,newCount}:{
   {lastSeenAt!==null&&newCount!==null?
    <p role="status"><strong>{newCount} new</strong> recorded project events
      since you last marked this project seen
-     {" · "}{new Intl.DateTimeFormat("en-IN",{
+     {" · "}{createDateFormatter("en-IN", {
        day:"numeric",month:"short",hour:"numeric",minute:"2-digit",
        timeZone:"Asia/Kolkata",
      }).format(new Date(lastSeenAt))} IST.

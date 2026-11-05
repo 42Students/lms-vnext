@@ -11,6 +11,7 @@ import { projectResourceAuditAction } from "@/modules/projects/project-resource-
 import {formatProjectIstDateTime} from "@/modules/projects/project-date-time-format-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { formatDateWith } from "@/lib/format-date";
 
 type ResourceEvent = {
   id: string;
@@ -90,7 +91,7 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
       </span> },
     { key: "when", header: "When", mobilePriority: "secondary",
       cell: row => <time dateTime={row.event.occurredAt}
-        title={new Date(row.event.occurredAt).toLocaleString("en-IN",{
+        title={formatDateWith(new Date(row.event.occurredAt), "en-IN", {
           dateStyle:"full",timeStyle:"long",timeZone:"Asia/Kolkata",
         })}>{formatWhen(row.event.occurredAt)}</time> },
   ];

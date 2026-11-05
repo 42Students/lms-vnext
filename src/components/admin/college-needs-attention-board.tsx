@@ -11,6 +11,7 @@ import type { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-da
 import type { getCollegeClosingQuizzes } from "@/modules/admin-ui/college-dashboard-quizzes-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateIst, formatDateTimeIst } from "@/lib/format-date";
 
 type Attendance = Awaited<ReturnType<typeof getCollegeDashboardAttendance>>;
 type Risk = Awaited<ReturnType<typeof getCollegeDashboardLowAttendance>>;
@@ -97,7 +98,7 @@ export function CollegeNeedsAttentionBoard({ collegeId, data, generatedAt }: {
   const countSetup=setup?.reduce((sum,row)=>sum+row.count,0) ?? null;
   const gradeRows=grades?.map(row=>({
     key:row.courseId,title:row.courseName+" ("+row.courseCode+")",
-    detail:row.pending+" waiting · Oldest "+(row.oldest?.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})??"—"),
+    detail:row.pending+" waiting · Oldest "+(formatDateIst(row.oldest)??"—"),
   })) ?? [];
   const staffRows=staffing?.flatMap(row=>row.sections.map(section=>({
     key:row.courseId+":"+section,title:section+" · "+row.name,
@@ -107,7 +108,7 @@ export function CollegeNeedsAttentionBoard({ collegeId, data, generatedAt }: {
     <div className="flex flex-wrap items-end justify-between gap-2">
       <div>
         <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Needs attention</Heading>
-        <p className="mt-1 text-xs text-muted-foreground">Updated {new Date(snapshot.generatedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST
+        <p className="mt-1 text-xs text-muted-foreground">Updated {formatDateTimeIst(new Date(snapshot.generatedAt))} IST
           {risk ? " · Attendance threshold "+risk.threshold+"%" : ""}
         </p>
       </div>
@@ -132,7 +133,7 @@ export function CollegeNeedsAttentionBoard({ collegeId, data, generatedAt }: {
         shown={attendance?.unattended.length??0} pending={pending}>
         <AttentionList rows={attendance?.unattended.map(row=>({
           key:row.id,title:row.title+" · "+row.section,
-          detail:row.course+" · "+row.faculty+" · "+new Date(row.when).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+          detail:row.course+" · "+row.faculty+" · "+formatDateTimeIst(new Date(row.when)),
         }))??[]}/>
       </AttentionCard>
       <AttentionCard title="Low attendance" icon="!" count={risk?.total??null}
@@ -163,7 +164,7 @@ export function CollegeNeedsAttentionBoard({ collegeId, data, generatedAt }: {
         href="/college/courses" empty="No quizzes due in the next 7 days."
         shown={quizzes?.items.length??0} pending={pending}>
         <AttentionList rows={quizzes?.items.map(row=>({
-          key:row.id,title:row.title,detail:row.course+" · "+row.className+" · "+(row.dueAt?new Date(row.dueAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"No due date"),
+          key:row.id,title:row.title,detail:row.course+" · "+row.className+" · "+(row.dueAt?formatDateTimeIst(new Date(row.dueAt)):"No due date"),
         }))??[]}/>
       </AttentionCard>
     </div>

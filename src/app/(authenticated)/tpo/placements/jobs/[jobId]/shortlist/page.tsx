@@ -12,14 +12,13 @@ import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type SearchParams = { page?: string | string[] };
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
-const dateLabel = new Intl.DateTimeFormat("en-IN", {
-  dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-});
+const dateLabel = istDateTimeFormatter;
 
 export default async function TpoDriveShortlistPage({
   params, searchParams,

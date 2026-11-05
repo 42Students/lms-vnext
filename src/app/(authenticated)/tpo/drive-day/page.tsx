@@ -27,13 +27,15 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { formatDateTimeIst } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 
 function formatWhen(
   value: Date | null,
   timezone: string | null,
 ) {
   if (!value || !Number.isFinite(value.getTime())) return null;
-  return new Intl.DateTimeFormat("en-IN", {
+  return createDateFormatter("en-IN", {
     hour:"numeric",minute:"2-digit",hour12:true,
     timeZone:timezone??"Asia/Kolkata",
   }).format(value).toUpperCase();
@@ -110,9 +112,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                   <div>
                     <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{round.companyName} · {round.name}</Heading>
                     <p className="text-sm text-body leading-[22px]">{round.jobTitle} · Started {
-                      round.scheduledAt ? new Date(round.scheduledAt).toLocaleString("en-IN", {
-                        timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
-                      }) : "unknown"
+                      round.scheduledAt ? formatDateTimeIst(new Date(round.scheduledAt)) : "unknown"
                     } IST</p>
                     <p className="text-xs text-muted-foreground leading-5">{tpoLiveRoundVenueLabel(round.venue)}</p>
                     {tpoLiveRoundTiming(round,snapshot!.asOf).remainingMinutes!==null?<p className="text-xs text-muted-foreground leading-5">Elapsed {tpoLiveRoundTiming(round,snapshot!.asOf).elapsedMinutes} min · approximately {tpoLiveRoundTiming(round,snapshot!.asOf).remainingMinutes} min scheduled remaining. This is not an actual completion state.</p>:null}

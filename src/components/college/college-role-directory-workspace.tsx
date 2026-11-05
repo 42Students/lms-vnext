@@ -44,14 +44,13 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateFormatter } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
 function joinedLabel(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
+  return istDateFormatter.format(value);
 }
 
 export async function CollegeRoleDirectoryWorkspace({
@@ -275,7 +274,7 @@ export async function CollegeRoleDirectoryWorkspace({
         ].map(([label,value])=><StatTile key={label} variant="college" label={String(label)} value={value}/>)}
         <StatTile variant="college" label="Visible now" value={result.total}/>
         <p className="col-span-full text-xs text-muted-foreground leading-[20px]">
-          Visible now means {result.total.toLocaleString("en-IN")} matching the selected roster filters, not online presence.
+          Visible now means {formatNumberIN(result.total)} matching the selected roster filters, not online presence.
         </p>
       </section>
       <section className="min-w-0 border-t border-border pt-4" aria-label={title + " directory filters"}>
@@ -570,7 +569,7 @@ export async function CollegeRoleDirectoryWorkspace({
 
       <nav aria-label={title + " pagination"} className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
         <p className="text-sm text-muted-foreground leading-[22px]">
-          Page {result.filter.page.toLocaleString("en-IN")} of {result.totalPages.toLocaleString("en-IN")} · Showing {collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).first.toLocaleString("en-IN")}–{collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).last.toLocaleString("en-IN")} of {result.total.toLocaleString("en-IN")} memberships
+          Page {formatNumberIN(result.filter.page)} of {formatNumberIN(result.totalPages)} · Showing {formatNumberIN(collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).first)}–{formatNumberIN(collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).last)} of {formatNumberIN(result.total)} memberships
         </p>
         <div className="flex gap-2">
           {result.filter.page > 1 ? (

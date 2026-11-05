@@ -11,6 +11,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {TPO_EVERYONE_DESCRIPTION,TPO_EVERYONE_TITLE,TPO_EVERYONE_WELCOME} from "@/modules/placements/tpo-team-everyone-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 export const dynamic="force-dynamic";
 export default async function TpoEveryonePage({searchParams}:{
  searchParams:Promise<{page?:string|string[]}>,
@@ -37,7 +38,7 @@ export default async function TpoEveryonePage({searchParams}:{
     {result.rows.length?<ol aria-label="Everyone messages" className="min-w-0 divide-y divide-border">
       {result.rows.map(row=><li key={row.id} className="min-w-0 py-3">
        <p className="text-xs font-medium text-muted-foreground leading-[20px]">{row.authorMembershipId===context.membership?.id?"You":row.authorName} ·
-        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.createdAt)} IST</p>
+        {" "}{istDateTimeFormatter.format(row.createdAt)} IST</p>
        <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-[22px]">{row.body}</p>
       </li>)}
      </ol>:<EmptyState title={TPO_EVERYONE_WELCOME} description="Write the first message to Everyone below." />}

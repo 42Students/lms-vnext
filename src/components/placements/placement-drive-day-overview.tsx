@@ -3,6 +3,7 @@ import {DataTable} from "@/components/ui/data-table";
 import type { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { createDateFormatter } from "@/lib/format-date";
 
 type DriveDay = Awaited<ReturnType<typeof getPlacementDriveDay>>;
 function tone(status: string): "neutral" | "info" | "success" | "warning" | "error" {
@@ -13,7 +14,7 @@ function tone(status: string): "neutral" | "info" | "success" | "warning" | "err
 }
 function formatWhen(value: Date | null, timezone: string | null) {
   if (!value) return "Not scheduled";
-  return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: timezone ?? "Asia/Kolkata" }).format(value);
+  return createDateFormatter("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: timezone ?? "Asia/Kolkata" }).format(value);
 }
 export function PlacementDriveDayOverview({ driveDay, embedded = false }: { driveDay: DriveDay; embedded?: boolean }) {
   return <div className="min-w-0 space-y-4">

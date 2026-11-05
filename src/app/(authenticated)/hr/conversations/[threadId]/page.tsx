@@ -20,12 +20,15 @@ import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-requ
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateFormatter } from "@/lib/format-date";
+import { createDateFormatter } from "@/lib/format-date";
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
 const idSchema=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(10000);
 // Always display IST (the product time zone), including across UTC-midnight
 // and year boundaries. Read receipts are explicit, never a GET side-effect.
-const dateTime=(value:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",year:"numeric",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(value);
+const dateTime=(value:Date)=>createDateFormatter("en-IN", {timeZone:"Asia/Kolkata",year:"numeric",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(value);
 export default async function RecruiterConversationDetail({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
@@ -92,7 +95,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <TextLink href={"/hr/conversations?collegeId="+result.thread.collegeId}
    className="inline-flex min-h-11 md:min-h-9 items-center">Back to conversations</TextLink>
   </div>
-  <p className="text-sm text-body">{result.total.toLocaleString("en-IN")} messages · {result.unread.toLocaleString("en-IN")} unread placement cell messages · Page {result.page} of {result.pages}</p>
+  <p className="text-sm text-body">{formatNumberIN(result.total)} messages · {formatNumberIN(result.unread)} unread placement cell messages · Page {result.page} of {result.pages}</p>
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
   {changeRequestResult && !changeRequestResult.ok?
@@ -113,7 +116,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
           </p>:null}
           <p className="mt-1 text-xs text-muted-foreground">Discussion replies: {request.messages.length}</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(request.createdAt))}
+            {istDateFormatter.format(new Date(request.createdAt))}
           </p>
         </li>)}
       </ol></ScrollCue>

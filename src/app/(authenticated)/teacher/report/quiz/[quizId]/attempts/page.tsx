@@ -15,6 +15,8 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatNumberIN } from "@/lib/safe-format";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type Query={deliveryId?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[];view?:string|string[]};
 export default async function FacultyQuizAttemptPage({
@@ -56,7 +58,7 @@ export default async function FacultyQuizAttemptPage({
           : "Results are private to authorized Faculty; this page does not publish them."}
       </p>
       <p className="mt-2 text-sm text-body leading-[22px]">
-        {data.total.toLocaleString("en-IN")} recorded attempt{data.total===1?"":"s"} in this teaching Section.
+        {formatNumberIN(data.total)} recorded attempt{data.total===1?"":"s"} in this teaching Section.
         Question accuracy below uses each learner&apos;s latest attempt, not every retake.
       </p>
     </section>
@@ -109,9 +111,7 @@ export default async function FacultyQuizAttemptPage({
           Score {item.score}/{item.maxScore} · {item.correct}/{item.answered} answers correct
         </p>
         <p className="mt-1 text-xs text-muted-foreground leading-5">
-          Submitted {new Intl.DateTimeFormat("en-IN",{
-            dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
-          }).format(item.submittedAt)} IST
+          Submitted {istDateTimeFormatter.format(item.submittedAt)} IST
         </p>
         {item.questionResults.length===0
           ? <p className="mt-2 text-sm text-body leading-[22px]">No recorded question answers.</p>

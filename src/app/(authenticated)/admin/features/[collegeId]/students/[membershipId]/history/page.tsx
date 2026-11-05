@@ -12,6 +12,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { formatDateTimeIst } from "@/lib/format-date";
 export const dynamic="force-dynamic";
 export default async function StudentModuleRuleHistory({params,searchParams}:{params:Promise<{collegeId:string;membershipId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {collegeId,membershipId}=await params;
@@ -56,7 +57,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
    <ol className="min-w-0 divide-y divide-border border-y border-border">{result.items.map(item=><li key={item.id} className="min-w-0 py-4">
     <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
       <Heading level={2} size="base" className="min-w-0 break-words text-foreground">{item.module}</Heading>
-      <p className="shrink-0 text-xs text-muted-foreground">{item.occurredAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
+      <p className="shrink-0 text-xs text-muted-foreground">{formatDateTimeIst(item.occurredAt)}</p>
     </div>
     <p className="mt-2 break-words text-sm text-body">{item.change}</p>
     <p className="mt-2 break-words text-xs text-muted-foreground">{item.actorName}</p>

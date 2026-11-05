@@ -29,6 +29,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 function dutyDate(value: string) {
   // PostgreSQL DATE is rendered without constructing a client clock.
@@ -119,7 +120,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
             const until=awayByMember.get(member.membershipId);
             return until ? <li key={member.membershipId} className="min-w-0 break-words">
               <span className="font-semibold">{member.displayName}</span>{" is away until "}
-              <time dateTime={until.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(until)} IST</time>
+              <time dateTime={until.toISOString()}>{istDateTimeFormatter.format(until)} IST</time>
             </li> : null;
           })}
         </ul> : <p role="status" className="text-sm text-muted-foreground">No active away intervals are recorded.</p>}

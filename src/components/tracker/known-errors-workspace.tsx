@@ -17,15 +17,13 @@ import {knownErrorSafeSummary,knownErrorSafeSql} from "@/modules/log-alerts/know
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
+import { istDateTimeFormatter } from "@/lib/format-date";
 
 type KnownError = Awaited<ReturnType<typeof listKnownErrorsForAdmin>>[number];
 
 function formatInstant(value: Date | string | null) {
   if (!value || Number.isNaN(new Date(value).getTime())) return "—";
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    dateStyle: "medium", timeStyle: "short",
-  }).format(new Date(value));
+  return istDateTimeFormatter.format(new Date(value));
 }
 
 function KnownErrorCard({ item }: { item: KnownError }) {
