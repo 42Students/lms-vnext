@@ -29,7 +29,7 @@ describe("public account chooser and failure handling",()=>{
   const errors=source("src/components/public/error-recovery-actions.tsx");
   expect(errors).toContain('import { Button } from "@/components/ui/button"');
   const sharedButton=source("src/components/ui/button.tsx");
-  expect(sharedButton).toContain("focus-visible:outline-2");
+  expect(sharedButton).toContain("focus-ring");
   expect(sharedButton).toContain("max-md:min-h-11");
   expect(errors).toContain("Try again");
   expect(errors).toContain("Go back");

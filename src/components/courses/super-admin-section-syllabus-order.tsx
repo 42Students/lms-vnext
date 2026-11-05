@@ -138,7 +138,7 @@ export function SuperAdminSectionSyllabusOrder({
       onPointerUp={event=>pointerFinish(event,false)}
       onPointerCancel={event=>pointerFinish(event,true)}
       style={{touchAction:"none"}}
-      className="inline-flex min-h-11 min-w-11 cursor-grab touch-none select-none items-center justify-center rounded border border-border text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 md:min-h-9 md:min-w-9">
+      className="inline-flex min-h-11 min-w-11 cursor-grab touch-none select-none items-center justify-center rounded border border-border text-sm font-semibold text-body focus-ring disabled:opacity-50 md:min-h-9 md:min-w-9">
       <span aria-hidden="true">⠿</span>
      </Button>
      <Button type="button" variant="secondary" size="sm"

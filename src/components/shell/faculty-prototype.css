@@ -40,7 +40,7 @@
   padding-left:24px;
 }
 [data-prototype-portal="faculty"] .lms-desktop-sidebar .lms-sidebar-brand-link {
-  width:165px;
+  width:164px;
   justify-content:flex-start;
 }
 [data-prototype-portal="faculty"] .lms-desktop-sidebar .lms-sidebar-brand-mark {display:none;}
@@ -76,9 +76,9 @@
 [data-prototype-portal="faculty"] .lms-sidebar-role-details {display:none;}
 .faculty-proto-heading {font-size:24px;line-height:1.25;font-weight:700;letter-spacing:-.02em;color:var(--lms-heading);}
 .faculty-proto-subtitle {font-size:14px;line-height:1.6;color:var(--lms-text-muted);}
-.faculty-proto-action {display:inline-flex;align-items:center;justify-content:center;padding:8px 16px;min-height:42px;border-radius:8px;border:1px solid var(--lms-button-primary);background:var(--lms-button-primary);color:var(--lms-white);font-size:14px;font-weight:700;text-decoration:none;}
+.faculty-proto-action {display:inline-flex;align-items:center;justify-content:center;padding:8px 16px;min-height:44px;border-radius:8px;border:1px solid var(--lms-button-primary);background:var(--lms-button-primary);color:var(--lms-white);font-size:14px;font-weight:700;text-decoration:none;}
 .faculty-proto-action:hover {background:var(--lms-button-primary-hover);color:var(--lms-white);}
-.faculty-proto-secondary {display:inline-flex;align-items:center;justify-content:center;padding:8px 16px;min-height:42px;border-radius:8px;border:1px solid var(--lms-border);background:var(--lms-white);color:var(--lms-heading);font-size:14px;font-weight:600;}
+.faculty-proto-secondary {display:inline-flex;align-items:center;justify-content:center;padding:8px 16px;min-height:44px;border-radius:8px;border:1px solid var(--lms-border);background:var(--lms-white);color:var(--lms-heading);font-size:14px;font-weight:600;}
 .faculty-proto-secondary:hover {background:var(--lms-neutral-50);}
 .faculty-proto-table {width:100%;border:1px solid var(--lms-border);border-spacing:0;border-radius:14px;overflow:hidden;border-collapse:separate;}
 .faculty-proto-table th {padding:12px 16px;text-transform:uppercase;text-align:left;font-size:12px;letter-spacing:0;color:var(--lms-text-muted);background:var(--lms-neutral-50);border-bottom:1px solid var(--lms-border);}
@@ -166,7 +166,7 @@
 /* Screenshot #02: the default is a single full-width priority queue. */
 [data-prototype-portal="faculty"] .faculty-proto-today {max-width:none;margin:0;}
 [data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task-list{border-radius:14px;}
-[data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task{min-height:90px;}
+[data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task{min-height:92px;}
 [data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task h2{font-size:16px;}
 [data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-task-label{margin-bottom:1px;}
 [data-prototype-portal="faculty"] .faculty-proto-today details aside .faculty-proto-action,
@@ -178,7 +178,7 @@
 @media(min-width:768px){
  .lms-shell-frame[data-prototype-portal="faculty"] .lms-desktop-sidebar,
  .lms-shell-frame[data-prototype-portal="faculty"] .lms-desktop-sidebar:is(:hover,:focus-within){
-  width:205px;min-width:205px;max-width:205px;position:sticky;top:0;
+  width:204px;min-width:204px;max-width:204px;position:sticky;top:0;
   background:var(--lms-white);border-right:1px solid var(--lms-border);
  }
  .lms-shell-frame[data-prototype-portal="faculty"] .lms-sidebar-logo-row,
@@ -203,7 +203,7 @@
 }
 .lms-shell-frame[data-prototype-portal="faculty"] .lms-prototype-wordmark {
  display:block;position:relative;overflow:visible;
- width:48px;height:59px;font-size:0;line-height:1;color:transparent;
+ width:48px;height:60px;font-size:0;line-height:1;color:transparent;
  background: url("/assets/images/legacy-42lms-logo.svg") left 0 top 0 / 151px 37px no-repeat;
 }
 .lms-shell-frame[data-prototype-portal="faculty"] .lms-prototype-wordmark::after{
@@ -212,7 +212,7 @@
  font-weight:700;line-height:16px;text-align:center;letter-spacing:.05em;
 }
 .lms-shell-frame[data-prototype-portal="faculty"] header[aria-label="Application top bar"]{
- height:58px;min-height:58px;padding:0 24px;gap:12px;
+ height:60px;min-height:60px;padding:0 24px;gap:12px;
  border-bottom:1px solid var(--lms-border);box-shadow:none;background:var(--lms-white);
 }
 @media(min-width:768px){

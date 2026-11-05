@@ -86,14 +86,14 @@ export default async function BatchRegistrations({params,searchParams}:{
      {key:"actions",header:"Actions",mobileLabel:"Actions",mobilePriority:"action" as const,
       cell:row=><div className="flex min-w-0 flex-wrap gap-x-4 gap-y-1">
        <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations/"+encodeURIComponent(row.membershipId)+"/history"}
-        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Registration change history</Link>
+        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-ring">Registration change history</Link>
        <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review participation</Link>
+        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-ring">Review participation</Link>
       </div>},
     ]}/>
    {(data.filters.page>1||data.hasMore)?<nav aria-label="Registration pages" className="flex flex-wrap gap-2">
-    {data.filters.page>1?<Link href={url(data.filters.page-1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Previous</Link>:null}
-    {data.hasMore?<Link href={url(data.filters.page+1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Next</Link>:null}
+    {data.filters.page>1?<Link href={url(data.filters.page-1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Previous</Link>:null}
+    {data.hasMore?<Link href={url(data.filters.page+1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Next</Link>:null}
    </nav>:null}
   </>}
  </div>;

@@ -27,7 +27,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   );
   if(!parsed.success)return <section role="alert">
     <PageHeader title={"Invalid risk/readiness filters"} />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -43,7 +43,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
     <PageHeader eyebrow="Mentor · Project" title="At-risk & readiness drill-in"
       description={data.enabled?data.projectTitle+" · "+data.projectStatus:"Projects are disabled. No private task, meeting or delivery evidence was loaded."}
       actions={<Link data-unskin="" href={base}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
         Full project workspace
       </Link>}/>
     {!data.enabled?<section role="status" className="border-b border-border pb-4">
@@ -84,10 +84,10 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
           Filter
         </Button>
         {filtered?<Link href={base+"/risk-readiness"}
-          className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+          className="inline-flex min-h-11 items-center text-sm text-link underline focus-ring hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form></FilterBar>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
-        description="No matching stored signals were found. This is not a certificate of project safety or completeness." action={filtered?<Link href={base+"/risk-readiness"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>:<Link href={base} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Full project workspace</Link>}/>:
+        description="No matching stored signals were found. This is not a certificate of project safety or completeness." action={filtered?<Link href={base+"/risk-readiness"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Clear</Link>:<Link href={base} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Full project workspace</Link>}/>:
       <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
         <li key={row.key} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
@@ -98,7 +98,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
           </div>
           <p className="mt-2 break-words text-sm text-body leading-[22px]">{row.detail}</p>
           <Link href={row.href}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring hover:text-[var(--lms-primary-text)]">
             Open exact project workspace →
           </Link>
         </li>)}</ol>}

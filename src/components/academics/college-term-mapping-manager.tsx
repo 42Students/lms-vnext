@@ -449,7 +449,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
               <span className="font-semibold">{row.courseName?.trim() || data.courses.find(c => c.id === row.courseId)?.name || "Course " + row.courseId}</span>
               {row.staffingWarning && <div className="mt-1" title={row.staffingTooltip ?? "Open Faculty Assignment to resolve missing staff"}>
                 <span role="status" className="inline-flex items-center gap-1 rounded-full border border-warning px-2 py-0.5 text-xs font-semibold text-warning">
-                  <svg aria-hidden="true" viewBox="0 0 20 20" width="13" height="13" fill="currentColor">
+                  <svg aria-hidden="true" viewBox="0 0 20 20" width="14" height="14" fill="currentColor">
                     <path d="M10 2 1 18h18L10 2Zm0 5 1 6H9l1-6Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" />
                   </svg>
                   {row.staffingWarning}

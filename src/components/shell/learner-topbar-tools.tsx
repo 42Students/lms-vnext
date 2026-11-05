@@ -110,7 +110,7 @@ export function LearnerTopbarTools() {
                     setOpen(false);
                     setQuery("");
                   }}
-                  className="block min-h-11 min-w-0 px-3 py-3 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary-text)]"
+                  className="block min-h-11 min-w-0 px-3 py-3 hover:bg-[var(--lms-primary-subtle)] focus-ring-inset"
                 >
                   <p className="m-0 break-words text-sm font-semibold text-foreground">
                     {course.courseName}

@@ -33,7 +33,7 @@ export function FilterChip({
    data-slot="filter-chip" data-selected={selected}
    className={cx(
     filterChipGeometry,
-    "enabled:hover:!border-[var(--lms-primary)] enabled:hover:!bg-[var(--lms-primary-subtle)] enabled:hover:!text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
+    "enabled:hover:!border-[var(--lms-primary)] enabled:hover:!bg-[var(--lms-primary-subtle)] enabled:hover:!text-[var(--lms-primary-text)] focus-ring",
     "disabled:!cursor-not-allowed disabled:!border-[var(--lms-neutral-200)] disabled:!bg-[var(--lms-neutral-200)] disabled:!text-[var(--lms-neutral-500)] disabled:!opacity-100",
     tones[tone],
     selected&&"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
@@ -60,7 +60,7 @@ export function FilterChipLink({
 }:FilterChipLinkProps){
  const classes=cx(
   filterChipGeometry,
-  "transition-colors hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none",
+  "transition-colors hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring motion-reduce:transition-none",
   tones[tone],
   selected&&"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
   className,

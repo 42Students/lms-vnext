@@ -147,7 +147,7 @@ export function LearnerCareerRounds({
               ) : null}
               {meetingUrl ? <TextLink href={meetingUrl} rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm md:min-h-9">Open meeting ↗</TextLink> : null}
               {assessmentLink ? <TextLink href={assessmentLink} rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm md:min-h-9">Open employer assessment ↗</TextLink> : null}
-              <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(round.applicationId)} className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">View application</Link>
+              <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(round.applicationId)} className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-ring md:min-h-9">View application</Link>
             </div>
             {kind === "ASSESSMENT" ? (
               <p className="mt-3 text-sm text-body leading-[22px]" role="note">

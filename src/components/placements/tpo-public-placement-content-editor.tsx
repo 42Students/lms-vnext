@@ -83,7 +83,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
    </div>
   </fieldset>
   <details className="min-w-0 border-t border-border pt-3">
-   <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2">Public number order</summary>
+   <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold focus-ring">Public number order</summary>
   <ol aria-label="Public number order" className="space-y-2">
    {metricKeys.map((key,index)=><li key={key} className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
     <span>{index+1}. {PUBLIC_METRIC_LABELS[key]}</span>

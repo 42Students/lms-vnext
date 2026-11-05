@@ -70,7 +70,7 @@ export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly
     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
       {...(previousId!==undefined?{previousId}:{})}
       {...(nextId!==undefined?{nextId}:{})}/>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.id)} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">Open applicant</Link>
+    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.id)} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring sm:w-auto md:min-h-9">Open applicant</Link>
    </div>;}}/>
  </GridWorkspace>;
 }

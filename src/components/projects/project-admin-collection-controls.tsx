@@ -229,7 +229,7 @@ export function ProjectAdminFilters({
       </Button>
       <Link
         href={clearHref}
-        className="inline-flex min-h-11 w-auto items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+        className="inline-flex min-h-11 w-auto items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9"
       >
         Clear
       </Link>

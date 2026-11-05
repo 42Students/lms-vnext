@@ -22,7 +22,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  if(page===null)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title="Administrator activity history" actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="College admins"/>}/>
   <ErrorState title="Invalid history page" description="Choose a valid page without repeated or unrelated filters."
-   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear history filters</Link>}/>
+   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear history filters</Link>}/>
  </div>;
  const data=await listCollegeAdminHistory(context,collegeId,userId,page);
  const base="/admin/colleges/"+encodeURIComponent(collegeId)+"/admins";
@@ -49,9 +49,9 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
   </div>
   <nav aria-label="Administrator activity pages" className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
     {data.page>1?<Link href={"?page="+(data.page-1)}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Previous 100</Link>:null}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Previous 100</Link>:null}
     {data.truncated?<Link href={"?page="+(data.page+1)}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Next 100</Link>:null}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Next 100</Link>:null}
   </nav>
  </div>;
 }

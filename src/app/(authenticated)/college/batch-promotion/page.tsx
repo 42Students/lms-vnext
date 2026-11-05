@@ -65,7 +65,7 @@ export default async function CollegeBatchPromotionPage({
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
-      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
+      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>} />
   </div>;
   const [optionsResult,previewResult]=await Promise.allSettled([
     listCollegePromotionOptions(context,parsed.data,
@@ -261,7 +261,7 @@ export default async function CollegeBatchPromotionPage({
                   {blocker==="NEXT_TERM_NO_MAPPED_COURSES"?<>
                     Cannot promote: Semester {preview.plan.targetTermNumber} has no mapped courses.
                     Configure the semester curriculum first.{" "}
-                    <Link href="/college/semester-courses" className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">
+                    <Link href="/college/semester-courses" className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4">
                       Map semester courses
                     </Link>
                   </>:blocker.replaceAll("_"," ")}

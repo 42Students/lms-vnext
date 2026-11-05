@@ -274,13 +274,13 @@ export function LearnerJobsBrowse({
         <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
           <Button type="button" variant="secondary" size="sm" aria-pressed={filters.eligibleOnly}
             onClick={()=>updateQuery({eligible:filters.eligibleOnly?null:"1"})}
-            className={"!min-h-11 !rounded-full !px-3 !py-2 text-sm font-semibold !shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 md:!min-h-9 "+
+            className={"!min-h-11 !rounded-full !px-3 !py-2 text-sm font-semibold !shadow-none focus-ring md:!min-h-9 "+
               (filters.eligibleOnly?"!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-primary-text":"!border-border !bg-surface !text-body hover:!border-[var(--lms-primary)]")}>
             Eligible only <span className="text-xs opacity-80">{eligibleCount}</span>
           </Button>
           <Button type="button" variant="secondary" size="sm" aria-pressed={filters.closingSoon}
             onClick={()=>updateQuery({soon:filters.closingSoon?null:"1"})}
-            className={"!min-h-11 !rounded-full !px-3 !py-2 text-sm font-semibold !shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 md:!min-h-9 "+
+            className={"!min-h-11 !rounded-full !px-3 !py-2 text-sm font-semibold !shadow-none focus-ring md:!min-h-9 "+
               (filters.closingSoon?"!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-primary-text":"!border-border !bg-surface !text-body hover:!border-[var(--lms-primary)]")}>
             Closing soon <span className="text-xs opacity-80">{closingCount}</span>
           </Button>

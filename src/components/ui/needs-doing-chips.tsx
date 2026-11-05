@@ -32,7 +32,7 @@ const tones = {
 /** The old LMS's compact "Needs doing:" chips: genuine links or quick filters, never inert buttons. */
 export function NeedsDoingChips({ items, selectedKey, onSelect, label = "Needs doing:", className }: NeedsDoingChipsProps) {
   if (!items.length) return null;
-  const base = "inline-flex min-h-[36px] max-w-full items-center gap-[8px] rounded-[8px] px-[16px] py-[8px] text-[13px] font-medium! leading-[1.3] transition-colors duration-[var(--lms-motion-fast)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:shadow-(--lms-focus-ring) disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+  const base = "inline-flex min-h-[36px] max-w-full items-center gap-[8px] rounded-[8px] px-[16px] py-[8px] text-[13px] font-medium! leading-[1.3] transition-colors duration-[var(--lms-motion-fast)] focus-ring disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
   return (
     <div data-slot="needs-doing-chips" role="group" aria-label={label.replace(/:$/, "")} className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]", className)}>
       <span className="mr-1 text-[13px] font-semibold text-[var(--lms-neutral-500)]">{label}</span>

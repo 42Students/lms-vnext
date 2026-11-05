@@ -23,8 +23,8 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Learners needing preparation support" description="Readiness gaps from recorded placement evidence."
    actions={<div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
-    <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">All students</Link>
-    <Link href="/tpo/students/preparation-plan" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">View the college preparation course plan</Link>
+    <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline focus-ring md:w-auto md:min-h-9">All students</Link>
+    <Link href="/tpo/students/preparation-plan" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline focus-ring md:w-auto md:min-h-9">View the college preparation course plan</Link>
    </div>}/>
   <p className="text-sm text-body">{rows.length} evidence-based candidates on the current 25-row page, from {view.roster.total} matching learner journeys. This is not a verified employability, course-assignment or contact/consent list.</p>
   {!view.definitions.registrationsAvailable?<Alert tone="warning">Placement registration records are unavailable; participation evidence may be incomplete.</Alert>:null}
@@ -34,11 +34,11 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
    <Disclosure title="Manual follow-up draft" className="mt-3 min-w-0 border-t border-border pt-2" contentClassName="pt-3">
    <Textarea aria-label="Manual follow-up draft" readOnly rows={3} value={tpoPreparationNudgeMessage(row)} className="mt-[6px] min-h-32 w-full resize-y"/>
    </Disclosure>
-   <Link href={"/tpo/students/"+row.membershipId+"/history"} className="lms-inline-link mt-2 inline-flex min-h-11 w-full items-center justify-center text-link underline md:w-auto md:justify-start focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Review recorded placement history</Link>
+   <Link href={"/tpo/students/"+row.membershipId+"/history"} className="lms-inline-link mt-2 inline-flex min-h-11 w-full items-center justify-center text-link underline md:w-auto md:justify-start focus-ring md:min-h-9">Review recorded placement history</Link>
   </li>)}</ul>}
   <nav aria-label="Preparation candidate pages" className="flex flex-wrap gap-3">
-   {view.roster.page>1?<Link href={href(view.roster.page-1)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous page</Link>:null}
-   {view.roster.page<view.roster.totalPages?<Link href={href(view.roster.page+1)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next page</Link>:null}
+   {view.roster.page>1?<Link href={href(view.roster.page-1)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9">Previous page</Link>:null}
+   {view.roster.page<view.roster.totalPages?<Link href={href(view.roster.page+1)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9">Next page</Link>:null}
   </nav>
  </div>;
 }

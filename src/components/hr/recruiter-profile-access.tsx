@@ -82,14 +82,14 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
                   className="mt-2 flex min-w-0 flex-wrap gap-x-4 gap-y-1 text-sm">
                   {hrRecruiterGrantLinks(grant.collegeId).map(link=>(
                     <Link key={link.label} href={link.href}
-                      className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                      className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-ring">
                       {link.label}
                     </Link>
                   ))}
                 </nav>
               </div>
               <details className="min-w-0 md:shrink-0">
-              <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage access</summary>
+              <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Manage access</summary>
               <Button
                 variant="secondary"
                 type="button"

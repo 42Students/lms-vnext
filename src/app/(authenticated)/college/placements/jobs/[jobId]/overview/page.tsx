@@ -99,23 +99,23 @@ export default async function CollegeDriveOverviewPage({ params }: {
         </div>
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/settings`}
-           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-heading)] hover:bg-surface-subtle focus-visible:outline-2 md:min-h-9">
+           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-heading)] hover:bg-surface-subtle focus-ring md:min-h-9">
            <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 3 5 5-10 10-5 1 1-5L16 3Z"/></svg>
            Edit drive
           </Link>
           <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications`}
-           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 md:min-h-9">
+           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9">
            <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 5h18M3 12h18M3 19h18"/><path d="m16 8 4 4-4 4"/></svg>
            View applications
           </Link>
           <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications?stage=HIRED`}
-           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-heading)] hover:bg-surface-subtle focus-visible:outline-2 md:min-h-9">
+           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-heading)] hover:bg-surface-subtle focus-ring md:min-h-9">
            View hired candidates
           </Link>
         </div>
       </div>
       {drive.description?.trim()?<details className="group mt-3 max-w-[90ch] text-sm leading-[22px] text-body">
-       <summary className="list-none cursor-pointer focus-visible:outline-2">
+       <summary className="list-none cursor-pointer focus-ring">
         <span className="block whitespace-pre-wrap break-words [overflow-wrap:anywhere] line-clamp-3 group-open:hidden">{drive.description}</span>
         <span className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline"><span className="group-open:hidden">Show more</span><span className="hidden group-open:inline">Show less</span></span>
        </summary>

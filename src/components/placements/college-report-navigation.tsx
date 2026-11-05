@@ -13,7 +13,7 @@ export function CollegeReportNavigation(){
   <p className="text-xs text-muted-foreground">These reports use College Admin access and contain only data recorded for your college.</p>
   <div className="flex flex-wrap gap-3">
    {links.map(link=><Link key={link.href} href={link.href}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
      {link.label}</Link>)}
   </div>
  </nav>;

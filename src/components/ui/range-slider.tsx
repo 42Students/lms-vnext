@@ -29,7 +29,7 @@ export function RangeSlider({ label, className, id, error = false, readOnly, onP
         aria-invalid={error ? true : props["aria-invalid"]}
         className={cx(
           "min-w-[120px] flex-1 cursor-pointer accent-[var(--lms-primary)]",
-          "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
+          "focus-ring",
           "aria-invalid:accent-[var(--lms-error)] aria-invalid:focus-visible:outline-[var(--lms-error)]",
           "disabled:cursor-not-allowed disabled:opacity-100 disabled:accent-[var(--lms-neutral-400)] read-only:cursor-default motion-reduce:transition-none",
           className,

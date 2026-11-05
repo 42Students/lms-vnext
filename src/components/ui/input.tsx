@@ -24,7 +24,7 @@ export function Input({ className, error = false, ...props }: InputProps) {
         "enabled:not-read-only:hover:border-[var(--lms-field-hover-border)]",
         "read-only:cursor-default read-only:bg-[var(--lms-neutral-50)] read-only:hover:border-[var(--lms-canvas-border)]",
         "focus-visible:border-[var(--lms-primary)] focus-visible:shadow-(--lms-control-shadow)",
-        "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
+        "focus-ring",
         "disabled:cursor-not-allowed disabled:opacity-100 disabled:select-none",
         "disabled:border-[var(--lms-canvas-border)] disabled:bg-[var(--lms-neutral-50)] disabled:text-[var(--lms-neutral-400)]",
         "disabled:placeholder:text-[var(--lms-neutral-400)]",

@@ -105,7 +105,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
         <Disclosure title={scopeCount+" "+(scopeCount===1?"Teaching assignment":"Teaching assignments")} className="relative min-w-0">
           <ScrollCue axis="y" label="Teaching assignments" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {assignmentChoices.map(item=><li key={item.deliveryId}>
-              <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
+              <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-ring" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
                 {item.courseName} · {item.sectionName} · {item.academicPeriodName}
               </Link>
             </li>)}
@@ -152,7 +152,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
         </div>
         <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
           <noscript><Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button></noscript>
-          <Link href="/teacher/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] md:w-auto bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
+          <Link href="/teacher/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] md:w-auto bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {visibleRows.length} of {pagination.total} matching course Sections
           </p>
@@ -171,7 +171,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
           data-testid="teacher.courses.card.open"
-          className="group flex min-h-0 min-w-0 flex-col overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface shadow-(--lms-elevation-1) transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="group flex min-h-0 min-w-0 flex-col overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface shadow-(--lms-elevation-1) transition-colors hover:bg-primary-subtle focus-ring"
         >
           <FacultyCourseCover url={thumbnailUrl??null} title={course.courseName}/>
           <div className="flex min-w-0 flex-wrap items-start gap-3 px-4 pt-4">
@@ -234,7 +234,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
       )}
       {pagination.page<pagination.totalPages ? <div className="flex flex-col items-center gap-2 border-t border-border pt-4">
         <Link href={facultyCourseListHref({...query,page:pagination.page+1})}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-6 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-6 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9">
           Show more courses
         </Link>
         <p className="text-xs text-muted-foreground">Showing {visibleRows.length} of {pagination.total} matching sections · add up to 48 at a time</p>

@@ -72,7 +72,7 @@ export async function ProjectAdminSubmissionsPage({
       <ErrorState title="Invalid submission filters"
         description="Check the submission view, status, page and rows filters, or clear them to continue."
         action={<Link href={basePath + "/submissions"}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>} />
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear filters</Link>} />
     </div>;
   }
   const { view, ...safeQuery } = parsed.data;
@@ -118,7 +118,7 @@ export async function ProjectAdminSubmissionsPage({
       <ErrorState title="Submissions could not be loaded"
         description="The submissions list could not be loaded. Your filters have not changed."
         action={<Link href={queuePath+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry loading submissions</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Retry loading submissions</Link>}/>
     </div>;
   }
 
@@ -158,7 +158,7 @@ export async function ProjectAdminSubmissionsPage({
         title="Unsubmitted workspaces unavailable"
         description="The unsubmitted workspace list could not be loaded. Your filters have not changed."
         action={<Link href={projectAdminUnsubmittedHref(queuePath,query,query.page)}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry loading workspaces</Link>}/>:null}
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Retry loading workspaces</Link>}/>:null}
       {unsubmitted?<section className="min-w-0 space-y-3 border-b border-border pb-4">
         <FilterBar title="Filters"><ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/></FilterBar>
         <ListToolbar label="Unsubmitted workspaces" viewCount={unsubmitted.total}
@@ -182,7 +182,7 @@ export async function ProjectAdminSubmissionsPage({
               (projectAdminElapsedDays(row.updatedAt,renderedAt)===null?"—":projectAdminElapsedDays(row.updatedAt,renderedAt)+" days")},
             {key:"action",header:"Action",mobilePriority:"action",cell:row=>
               <Link href={basePath+"/"+row.id+"/delivery"}
-                className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open</Link>},
+                className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Open</Link>},
           ]}
           empty={<EmptyState title={basePath.startsWith("/admin/")?"Every active workspace has submitted":"No matching workspace has an outstanding submission"}
             description={query.q?"No matching workspaces on this page.":"All matching workspaces have a submission."} />}

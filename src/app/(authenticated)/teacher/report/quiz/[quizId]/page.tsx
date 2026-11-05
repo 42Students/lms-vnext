@@ -57,7 +57,7 @@ export default async function FacultyQuizReportPage({
         <ul className="space-y-2">{options.map(option=>
           <li key={option.deliveryId}>
             <Link href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+"?deliveryId="+encodeURIComponent(option.deliveryId)}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
               {option.courseName} · {option.lessonName} · {option.deliveryId.slice(0,8)}
             </Link>
           </li>)}</ul>
@@ -116,7 +116,7 @@ export default async function FacultyQuizReportPage({
         ]}
       />
           <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto md:min-h-9">
             Individual attempts &amp; question accuracy →
           </Link>
         </div>} />
@@ -142,19 +142,19 @@ export default async function FacultyQuizReportPage({
       <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
           Export attempted only
         </Link>
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
           Export not attempted only
         </Link>
       </nav>
       <div className="flex flex-wrap items-center gap-3">
         <Link href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
           "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
           Download question accuracy CSV
         </Link>
         <p className="text-xs text-muted-foreground leading-5">Question export includes aggregate accuracy only, capped at 500 questions.</p>

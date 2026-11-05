@@ -45,7 +45,7 @@ export default async function MentorTeamCoveragePage({
   });
   if (duplicated || !parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title="Team coverage" description="Invalid team coverage filters" />
-    <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear filters</Link>
+    <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link">Clear filters</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -57,7 +57,7 @@ export default async function MentorTeamCoveragePage({
     <PageHeader title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
       actions={<Link href="/mentor/projects"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
         Projects
       </Link>} />
     {!data.enabled
@@ -88,7 +88,7 @@ export default async function MentorTeamCoveragePage({
           </label>
           <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
             <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-            {hasFilters?<Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear</Link>:null}
+            {hasFilters?<Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring lms-inline-link">Clear</Link>:null}
           </div>
           <Disclosure title="More team coverage filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project state
@@ -127,10 +127,10 @@ export default async function MentorTeamCoveragePage({
           ? data.projectCount===0
             ? <EmptyState title="No currently assigned active projects"
                 description="There are no current non-archived project assignments for this mentor. No historical team or staffing status is inferred."
-                action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Projects</Link>} />
+                action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-ring">Projects</Link>} />
             : <EmptyState title="No projects match these filters"
                 description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments."
-                action={<Link href={hasFilters ? "/mentor/team-coverage" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{hasFilters ? "Clear filters" : "Projects"}</Link>} />
+                action={<Link href={hasFilters ? "/mentor/team-coverage" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-ring">{hasFilters ? "Clear filters" : "Projects"}</Link>} />
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
             <article key={item.projectId} className="py-[var(--lms-space-3)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -155,15 +155,15 @@ export default async function MentorTeamCoveragePage({
               </dl>
               <div className="mt-4 flex flex-wrap gap-4">
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=team"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring">
                   Team workspace →
                 </Link>
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-history"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring">
                   Membership history →
                 </Link>
                 <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-meetings"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring">
                   Team meeting log →
                 </Link>
               </div>

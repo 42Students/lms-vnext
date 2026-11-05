@@ -51,7 +51,7 @@ export default async function LearnerCourseProgressPage({
     <div className="min-w-0 space-y-6">
       <PageHeader title="Course progress by lesson" />
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/home"}
-        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
         ← Course overview
       </Link>
 
@@ -131,7 +131,7 @@ export default async function LearnerCourseProgressPage({
               <Link
                 href={"/learn/courses/" + encodeURIComponent(deliveryId) +
                   "/roadmap?lesson=" + encodeURIComponent(lesson.id)}
-                className="mt-4 inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                className="mt-4 inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
                 Open in learning path →
               </Link>
             </article>

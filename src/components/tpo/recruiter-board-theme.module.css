@@ -15,7 +15,7 @@
   padding: 12px;
 }
 .columnTitle {
-  min-height: 46px;
+  min-height: 48px;
   padding: 12px 12px;
   border-bottom: 1px solid var(--lms-border);
   background: var(--lms-neutral-100);

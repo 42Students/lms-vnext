@@ -57,7 +57,7 @@ export function CollegeDepartmentInsights({
           Export CSV
         </TextLink> : null}
         <Link href={attendance ? "/college/attendance" : "/college/placements"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">
           {attendance ? "Attendance workspace" : "Placements workspace"}
         </Link>
       </>}
@@ -71,7 +71,7 @@ export function CollegeDepartmentInsights({
             />
         </label>
         <Button variant="primary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
-        {data.query.q ? <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Clear</Link> : null}
+        {data.query.q ? <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 md:w-auto">Clear</Link> : null}
       </form>
     </section>
     <section aria-label="Department evidence results" className="min-w-0">
@@ -106,7 +106,7 @@ export function CollegeDepartmentInsights({
           These settings are policy context, not department attendance percentages.
         </p>
         <Link href="/college/attendance/settings"
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Attendance policy settings</Link>
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Attendance policy settings</Link>
         </Alert>
       </Disclosure>
     ) : null}

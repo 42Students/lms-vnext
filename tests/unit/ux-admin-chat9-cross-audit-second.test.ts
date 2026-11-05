@@ -135,7 +135,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   const page=source("src/components/placements/placement-calendar-workspace.tsx");
   expect(page).not.toContain("min-h-10");
   expect(source("src/components/ui/filter-chip.tsx")).toContain("min-h-11");
-  expect(page).toContain("focus-visible:outline-2");
+  expect(page).toContain("focus-ring");
   expect(page).toContain("min-h-11");
  });
  it("UX-admin-placements-jobs-03 employer portal never launches a raw popup",()=>{

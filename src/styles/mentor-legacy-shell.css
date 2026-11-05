@@ -20,7 +20,7 @@
 .lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-canvas"] {
   box-sizing: border-box;
   min-width: 0;
-  min-height: 495px;
+  min-height: 496px;
   padding: 24px;
   background: var(--lms-white);
   border: 1px solid var(--lms-border);
@@ -148,7 +148,7 @@
     opacity: 1;
     visibility: visible;
     width: auto;
-    max-width: 165px;
+    max-width: 164px;
     pointer-events: auto;
   }
   .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-role-details {
@@ -177,8 +177,8 @@
     box-sizing: border-box;
     width: 100%;
     max-width: none;
-    height: 85px;
-    min-height: 85px;
+    height: 84px;
+    min-height: 84px;
     padding: 0 24px;
     background: var(--lms-white);
     border: 0;

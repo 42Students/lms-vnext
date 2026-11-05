@@ -12,7 +12,7 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
       description="The round roster and progress could not be retrieved. No empty roster or result count has been inferred from this failure."
       action={<>
         <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
-        <Link href="/tpo/drive-day" className="lms-inline-link inline-flex min-h-11 items-center px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Drive Day</Link>
+        <Link href="/tpo/drive-day" className="lms-inline-link inline-flex min-h-11 items-center px-3 text-sm font-semibold text-link underline focus-ring md:min-h-9">Drive Day</Link>
       </>}
     />
   </div>;

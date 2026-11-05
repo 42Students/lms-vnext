@@ -222,7 +222,7 @@ export default async function TpoReportsPage({
         <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{group.eyebrow}</p><Heading level={2} size="lg">{group.heading}</Heading>
         <p className="text-sm text-body">{group.description}</p>
         <div className="grid gap-3 sm:grid-cols-2">
-          {group.cards.map(card => <Link key={card.path} href={card.path} className="group block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2">
+          {group.cards.map(card => <Link key={card.path} href={card.path} className="group block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-ring">
             <div className="flex items-start justify-between gap-3"><Heading level={3} className="text-link">{card.title}</Heading><span aria-hidden="true" className="text-link transition-transform group-hover:translate-x-1">→</span></div>
             <p className="mt-2 text-sm text-body">{card.description}</p>
           </Link>)}
@@ -243,7 +243,7 @@ export default async function TpoReportsPage({
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-ring"
           >
             Open management view
           </Link>
@@ -311,7 +311,7 @@ export default async function TpoReportsPage({
        <ol className="grid min-w-0 items-center gap-2 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]" role="group" aria-label="Placement journey steps and gaps">
         <li className="min-w-0">
          <Link href={reportHref("/tpo/reports/by-branch",workspace)} aria-label={"Looking for a job: "+looking}
-          className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2">
+          className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="block text-sm text-body">Looking for a job</span>
           <strong className="mt-1 block text-2xl tabular-nums text-link">{looking.toLocaleString("en-IN")}</strong>
           <span className="text-xs text-muted-foreground">100% baseline</span>
@@ -319,13 +319,13 @@ export default async function TpoReportsPage({
         </li>
         <li className="min-w-0">
          <Link href={reportHref("/tpo/reports/unplaced",workspace)}
-          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs font-semibold text-link sm:max-w-[145px] md:min-h-9">
+          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs font-semibold text-link sm:max-w-[144px] md:min-h-9">
           <span>Unplaced</span><strong className="tabular-nums">{Math.max(0,looking-placed).toLocaleString("en-IN")}</strong><span aria-hidden="true">→</span>
          </Link>
         </li>
         <li className="min-w-0">
          <Link href={reportHref("/tpo/reports/placement-summary",workspace)} aria-label={"Placed: "+placed+"; "+percent(placed)+" percent"}
-          className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2">
+          className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="block text-sm text-body">Placed</span>
           <strong className="mt-1 block text-2xl tabular-nums text-link">{placed.toLocaleString("en-IN")}</strong>
           <span className="text-xs text-muted-foreground">{percent(placed)}% of looking</span>
@@ -333,13 +333,13 @@ export default async function TpoReportsPage({
         </li>
         <li className="min-w-0">
          <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)}
-          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs font-semibold text-link sm:max-w-[145px] md:min-h-9">
+          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs font-semibold text-link sm:max-w-[144px] md:min-h-9">
           <span>Not accepted yet</span><strong className="tabular-nums">{Math.max(0,placed-accepted).toLocaleString("en-IN")}</strong><span aria-hidden="true">→</span>
          </Link>
         </li>
         <li className="min-w-0">
          <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} aria-label={"Accepted: "+accepted+"; "+percent(accepted)+" percent"}
-          className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2">
+          className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="block text-sm text-body">Accepted</span>
           <strong className="mt-1 block text-2xl tabular-nums text-link">{accepted.toLocaleString("en-IN")}</strong>
           <span className="text-xs text-muted-foreground">{percent(accepted)}% of looking</span>
@@ -404,7 +404,7 @@ export default async function TpoReportsPage({
             <div className="grid gap-3 md:grid-cols-2">
               {group.cards.map((card) => (
                 <Link key={card.path} href={reportHref(card.path,workspace)}
-                  className={"group block min-w-0 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 "+(card.path==="/tpo/reports/placement-summary"?"border-primary ring-1 ring-[var(--lms-primary)]":"border-border")}>
+                  className={"group block min-w-0 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-ring "+(card.path==="/tpo/reports/placement-summary"?"border-primary ring-1 focus-outline":"border-border")}>
                   {card.path==="/tpo/reports/placement-summary"?
                    <p className="mb-1 text-xs font-bold uppercase tracking-wide text-link">Start here</p>:null}
                   <div className="flex items-start justify-between gap-3">

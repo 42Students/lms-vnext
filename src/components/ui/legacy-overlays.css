@@ -98,7 +98,7 @@
 [data-slot="info-popover"] [role="tooltip"] {
   background: var(--lms-neutral-900);
   border-radius: 8px;
-  min-height: 27px;
+  min-height: 28px;
   padding: 6px 16px;
   color: var(--lms-white);
   font-size: 12px;
@@ -108,8 +108,8 @@
 [data-slot="info-popover"] [role="tooltip"] > [aria-hidden="true"] {
   left: auto;
   right: -2px;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   background: var(--lms-neutral-900);
 }
 /* docs/design/legacy-styles/components___antddesign.scss:66-79 */
@@ -204,7 +204,7 @@
 #lms-topbar-account-dialog {
   width: min(280px, calc(100vw - 24px));
   max-width: calc(100vw - 24px);
-  min-height: 150px;
+  min-height: 152px;
   padding: 16px 24px;
   border-radius: 6px;
   box-shadow: var(--lms-elevation-3);

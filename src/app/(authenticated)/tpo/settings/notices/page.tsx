@@ -36,12 +36,12 @@ export default async function TpoStudentNoticesSettings(){
    <Heading level={2} size="lg" id="section-college-placement-notices" className="text-[var(--lms-heading)]">College placement notices</Heading>
    <p className="text-sm text-body leading-[22px]" role="status">{view.publishedSummary}</p>
    <p className="text-xs text-muted-foreground leading-5">The count describes only the current announcements reader result, not confirmed individual delivery or read receipts.</p>
-   <Link href={view.noticeHref} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Manage actual placement announcements</Link>
+   <Link href={view.noticeHref} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 print:hidden">Manage actual placement announcements</Link>
   </section>
   <section aria-labelledby="section-preparation-and-readiness" className="min-w-0 space-y-3">
    <Heading level={2} size="lg" id="section-preparation-and-readiness" className="text-[var(--lms-heading)]">Preparation &amp; readiness</Heading>
    <p role="status" className="text-sm text-body leading-[22px]">{view.prepSummary}</p>
-   <Link href={view.prepHref} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Configure available preparation courses</Link>
+   <Link href={view.prepHref} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 print:hidden">Configure available preparation courses</Link>
   </section>
   </div>
   {communication.ready?<TpoSmsCapEditor key={ctx.membership?.collegeId??"unscoped"} initial={communication.smsMonthlyCap} version={communication.version}/>:
@@ -61,12 +61,12 @@ export default async function TpoStudentNoticesSettings(){
    <Heading level={2} size="lg" id="section-emails-switched-on" className="text-[var(--lms-heading)]">Emails switched on</Heading>
    <Alert tone="warning">Couldn&apos;t check which emails are switched on.</Alert>
    <p className="text-xs text-muted-foreground leading-5">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
-   <Link href="/tpo/settings/templates" className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">View available message templates</Link>
+   <Link href="/tpo/settings/templates" className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-ring md:min-h-9 print:hidden">View available message templates</Link>
   </section>
   </Disclosure>
   <nav aria-label="Notice and notification destinations" className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] text-sm print:hidden md:flex-row md:items-center">
-    <Link href={destinations.inbox} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Open personal notifications inbox</Link>
-    <Link href={destinations.preferences} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Review notification preferences</Link>
+    <Link href={destinations.inbox} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 print:hidden">Open personal notifications inbox</Link>
+    <Link href={destinations.preferences} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 print:hidden">Review notification preferences</Link>
   </nav>
  </div>;
 }

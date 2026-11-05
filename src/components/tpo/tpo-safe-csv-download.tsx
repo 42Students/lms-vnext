@@ -37,7 +37,7 @@ export function TpoSafeCsvDownload({href,filename,label}:{href:string;filename:s
  }
  return <span className="inline-flex max-w-full min-w-0 flex-col items-start gap-2 print:hidden">
   <Button variant="secondary" type="button" disabled={pending} onClick={()=>void download()}
-   className="min-h-11 max-w-full whitespace-normal break-words text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+   className="min-h-11 max-w-full whitespace-normal break-words text-left focus-ring md:min-h-9">
    {pending?"Preparing export…":label}
   </Button>
   {error?<InlineNotice tone="error" message={error}/>:null}

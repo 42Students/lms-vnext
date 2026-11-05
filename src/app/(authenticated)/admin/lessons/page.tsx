@@ -42,7 +42,7 @@ export default async function SuperAdminLessonsPage({
   if (!parsed.success||!validPageSize||!validAllCourses) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
-      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
@@ -62,7 +62,7 @@ export default async function SuperAdminLessonsPage({
     <ErrorState title="Lessons unavailable"
       description="The lesson directory could not be loaded. Your filters have not changed."
       action={<Link href={adminLearningHref("LESSONS",parsed.data)}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading lessons</Link>} />
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading lessons</Link>} />
   </div>;
   const data=dataResult.value;
   const hasCourseSelection=Boolean(data.query.courseCode)||allCourses;
@@ -164,7 +164,7 @@ export default async function SuperAdminLessonsPage({
         </Alert>:null}
       </div>
       <details className="min-w-0" open={Boolean(data.query.cohortCode)}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-[var(--lms-neutral-400)]">
             Choose batch
@@ -178,7 +178,7 @@ export default async function SuperAdminLessonsPage({
           </label>
         </div>
       </details>
-      <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/admin/lessons">Clear filters</Link>
+      <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-ring md:min-h-9" href="/admin/lessons">Clear filters</Link>
     </form>
     <p className="mt-3 text-sm text-muted-foreground">{hasCourseSelection?data.total.toLocaleString("en-IN"):"0"} matching lessons · on this page: {summary.authored} content records, {summary.published} published{" "}
       <Link href={selectedScopeHref(data.query)} className="font-semibold text-primary-text underline underline-offset-4">Reload results</Link>
@@ -194,7 +194,7 @@ export default async function SuperAdminLessonsPage({
     </p>:null}
     {hasCourseSelection&&listedLessons.length?<div className="mt-4 min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-border"
       role="region" aria-label="Lessons table" tabIndex={0}>
-      <Table className="min-w-[770px]">
+      <Table className="min-w-[772px]">
         <thead className="bg-[var(--lms-canvas-subtle)] text-[var(--lms-neutral-400)]">
           <tr>
             <th scope="col" className="whitespace-nowrap border-b border-border p-3 font-semibold">Lesson Name</th>
@@ -227,7 +227,7 @@ export default async function SuperAdminLessonsPage({
               <td className="p-3">
                 <StatusBadge tone={visible?"success":"neutral"}>{visible?"Visible":"Hidden"}</StatusBadge>
               </td>
-              <td className="min-w-[195px] p-3">
+              <td className="min-w-[196px] p-3">
                 {lesson.status==="ACTIVE"?<div className="flex flex-wrap items-center gap-2">
                   <LessonActions lesson={{id:lesson.id,name:lessonName,
                     description:lesson.description,sequence:lesson.sequence,
@@ -294,7 +294,7 @@ export default async function SuperAdminLessonsPage({
         hrefForPage={page=>selectedScopeHref({...data.query,page})}
         label="Lesson pages" showBoundaryLinks={false}/>:null}
     </div>
-    <Link href="/admin/courses" className="mt-4 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Courses</Link>
+    <Link href="/admin/courses" className="mt-4 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-ring">← Courses</Link>
       </section>
     </div>
   </div>;

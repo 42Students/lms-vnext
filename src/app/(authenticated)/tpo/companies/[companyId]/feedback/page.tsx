@@ -45,7 +45,7 @@ export default async function TpoCompanyFeedbackPage({
       <PageHeader title={data.companyName + " · Internal feedback"}
         description="Recorded TPO recruiter notes for contacts explicitly linked to this college-company relationship."
         actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-          className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center">
+          className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring md:min-h-9 w-full md:w-auto justify-center">
           ← Company details
         </Link>}/>
       {!data.available ? (
@@ -80,7 +80,7 @@ export default async function TpoCompanyFeedbackPage({
                   <li key={item.id} className="space-y-2 py-[var(--lms-space-4)]">
                     <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                       <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
-                        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">
                         {item.contactName}
                       </Link>
                       <time className="text-xs text-muted-foreground" dateTime={item.recordedAtIso}>
@@ -98,11 +98,11 @@ export default async function TpoCompanyFeedbackPage({
             <div className="flex flex-wrap gap-3">
               {data.page > 1 ? (
                 <Link href={base + "?page=" + (data.page - 1)}
-                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Previous</Link>
+                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">← Previous</Link>
               ) : null}
               {data.totalPages !== null && data.page < data.totalPages ? (
                 <Link href={base + "?page=" + (data.page + 1)}
-                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next →</Link>
+                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">Next →</Link>
               ) : null}
             </div>
           </nav>:null}

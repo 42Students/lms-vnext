@@ -6,6 +6,6 @@ export default function FeatureHistoryNotFound() {
   <PageHeader title="Recent module-access changes"/>
   <EmptyState title="Changes unavailable"
     description="This history page is not available in the selected college scope."
-    action={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to module access</Link>}/>
+    action={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Back to module access</Link>}/>
  </div>;
 }

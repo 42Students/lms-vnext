@@ -44,10 +44,10 @@ export function HrRoundEditorGrid({rows,scopeKey}:{
     const section = document.getElementById(row.editHref.slice(1));
     const details = section?.querySelector<HTMLDetailsElement>("details");
     if (details) details.open = true;
-   }} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   }} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">
     Edit round
    </Link>
-   <Link href={row.removeHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   <Link href={row.removeHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">
     Review round removal
    </Link>
   </div>:null}

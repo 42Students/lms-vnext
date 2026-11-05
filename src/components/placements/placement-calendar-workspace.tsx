@@ -512,7 +512,7 @@ function CalendarEventCard({
       {href ? (
         <Link
           href={href}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]"
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-ring"
         >
           {event.leadId
             ? "Open recruiter lead"
@@ -821,7 +821,7 @@ export async function PlacementCalendarWorkspace({
        {needsKnown?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
          {eventHref(event,audience)?<Link href={eventHref(event,audience)!}
           aria-label={"Open "+event.title+", "+eventTime(event.startsAt)+" IST"}
-          className="inline-flex min-h-11 max-w-full flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 max-w-full flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] font-semibold text-link hover:underline focus-ring">
            <span>{eventTime(event.startsAt)}</span><span>· {event.kind==="APPLICATION_DEADLINE"?"Today: ":""}{event.title}</span>
            {event.status==="DONE"||event.startsAt.getTime()<now.getTime()?
             <span className="font-normal text-muted-foreground">· done</span>:null}
@@ -849,7 +849,7 @@ export async function PlacementCalendarWorkspace({
           href={calendarHref(basePath,audience,state,{focus:state.focus===item.focus?null:item.focus})}
           aria-current={state.focus===item.focus?"true":undefined}
           title={item.focus==="OVERDUE"?"Last 90 days":item.label}
-          className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] hover:bg-primary-subtle focus-ring">
           <strong className="block text-lg">{item.value===null?"Unavailable":item.value}</strong>
           {item.label}{state.focus===item.focus?" · Selected":""}
         </Link>)}
@@ -915,7 +915,7 @@ export async function PlacementCalendarWorkspace({
           calendar remains an optional companion below the appointment list. */}
       {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
         {bookings?.failed ? <Banner tone="error" action={<Link href={calendarHref(basePath,audience,state,{})}
-           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry interviews</Link>}>
+           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text focus-ring">Retry interviews</Link>}>
           {bookings.stale?"Could not refresh interviews. Displaying the last verified appointments for this account and college; refresh to check current changes.":"Could not load candidate interviews right now. The calendar is still available."}
         </Banner>:null}
         {(!bookings?.failed||bookings.stale)?<SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false}/>:null}
@@ -1020,7 +1020,7 @@ export async function PlacementCalendarWorkspace({
           </label>
 
           {isTpo&&countSourceEvents.length>0?<details aria-label="Quick company filters" open={Boolean(state.company)} className="min-w-0 sm:col-span-2 lg:col-span-3">
-    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Companies in this period</summary>
+    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-link-text)] focus-ring">Companies in this period</summary>
     <div className="flex max-w-full flex-wrap items-center gap-2 pt-2">
     {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
       .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
@@ -1044,7 +1044,7 @@ export async function PlacementCalendarWorkspace({
             </label>
           ) : (
             <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(state.job || state.jobId || (state.roundKind && state.roundKind!=="INTERVIEW"))}>
-              <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Filters</summary>
+              <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Filters</summary>
               <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
               <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Round type
@@ -1088,7 +1088,7 @@ export async function PlacementCalendarWorkspace({
           </div>
           {!isTpo && (state.company || state.job || state.jobId || (state.roundKind && state.roundKind !== "INTERVIEW")) ? (
             <Link href={basePath + "?" + new URLSearchParams({date:state.anchor,view:state.view}).toString()}
-              className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto">
+              className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring sm:w-auto">
               Clear filters
             </Link>
           ) : null}
@@ -1134,7 +1134,7 @@ export async function PlacementCalendarWorkspace({
 
 
       <details aria-label="Next scheduled calendar event" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface">
-        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 px-4 text-sm font-semibold text-link focus-ring">
           Next scheduled <span className="text-muted-foreground">Show details ▾</span>
         </summary>
         <div className="border-t border-border px-4 pb-4 pt-2">
@@ -1197,7 +1197,7 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`} tabIndex={0}
-          className={"min-w-0 overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1rem),transparent_100%)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] "+(isTpo?calendarStyles["tpoMonthFrame"]:"")}
+          className={"min-w-0 overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,#000_0%,#000_calc(100%-1rem),transparent_100%)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-ring "+(isTpo?calendarStyles["tpoMonthFrame"]:"")}
         >
           <CalendarGrid variant="hairline" className={"min-w-[42rem] lg:min-w-[56rem] "+calendarStyles["calendarHairline"]}>
             {[
@@ -1263,7 +1263,7 @@ export async function PlacementCalendarWorkspace({
                       return <details key={event.id} className="group min-w-0 rounded-[var(--lms-control-radius)] bg-primary-subtle text-xs text-primary-text">
                        <summary title={eventLabel+" (open event details)"}
                         aria-label={eventLabel+"; press Enter to view details"}
-                        className="min-h-11 cursor-pointer list-none rounded-[var(--lms-control-radius)] px-2 py-1 font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                        className="min-h-11 cursor-pointer list-none rounded-[var(--lms-control-radius)] px-2 py-1 font-semibold hover:underline focus-ring">
                         <span className="block truncate">{eventTime(event.startsAt)}{event.status==="DONE"?" · Done":""}</span>
                         <span className="block truncate">{event.title}</span>
                        </summary>

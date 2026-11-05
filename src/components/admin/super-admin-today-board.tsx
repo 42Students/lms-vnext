@@ -44,7 +44,7 @@ function AttentionCard({item,loading,failed}:{item:Metric;loading:boolean;failed
     {item.count}
    </span>:null}
   </div>
-  <div className="min-h-[98px] space-y-3 px-4 py-3">
+  <div className="min-h-[100px] space-y-3 px-4 py-3">
    {loading?<div role="status" aria-label={"Loading "+item.title} className="space-y-3 animate-pulse">
     <span className="block h-4 w-[70%] rounded bg-[var(--lms-neutral-100)]"/>
     <span className="block h-4 w-[90%] rounded bg-[var(--lms-neutral-100)]"/>

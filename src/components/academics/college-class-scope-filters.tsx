@@ -25,18 +25,18 @@ export function CollegeClassScopeFilters({ programs, cohorts, selectedProgram = 
     startTransition(() => router.replace("/college/classes" + (params.size ? "?" + params.toString() : ""), { scroll: false }));
   }
   return <>
-    <label className="grid min-w-[165px] gap-1 text-[13px] font-semibold text-muted-foreground">
+    <label className="grid min-w-[164px] gap-1 text-[13px] font-semibold text-muted-foreground">
       Program
-      <Select name="programId" value={program} disabled={pending} className="min-h-9 w-[165px]"
+      <Select name="programId" value={program} disabled={pending} className="min-h-9 w-[164px]"
         onChange={event => { setProgram(event.target.value); setBatch(""); navigate(event.target.value, ""); }}>
         <option value="">All programs</option>
         {programs.map(item => <option key={item.id} value={item.id}>{item.name} ({item.code})</option>)}
       </Select>
     </label>
-    <label className="grid min-w-[165px] gap-1 text-[13px] font-semibold text-muted-foreground">
+    <label className="grid min-w-[164px] gap-1 text-[13px] font-semibold text-muted-foreground">
       Batch
       <Select name="cohortCode" value={batch} disabled={pending || !program || !eligible.length}
-        className="min-h-9 w-[165px]"
+        className="min-h-9 w-[164px]"
         onChange={event => { setBatch(event.target.value); navigate(program, event.target.value); }}>
         <option value="">{!program ? "Select a program first" : "All batches"}</option>
         {eligible.map(item => <option key={item.id} value={item.code}>{item.name} ({item.code})</option>)}

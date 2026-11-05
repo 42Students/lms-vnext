@@ -67,7 +67,7 @@ export async function CollegeWebAddressContent({ params }: {
        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Web address</Heading>
        <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain?reload=1"}
          className="inline-flex min-h-11 md:min-h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
-         <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+         <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
            <path d="M20 11a8 8 0 1 0-2.2 5.5"/><path d="M20 4v7h-7"/>
          </svg>
          Reload

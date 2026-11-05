@@ -107,7 +107,7 @@ export function HrRecruiterBell(){
 
  const unread=badgeUnread??state?.unread??0;
  const panelFooter=<><div role="group" aria-label="Recruiter notification actions" className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">See all notifications</Link>
+    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] focus-ring">See all notifications</Link>
     {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
       variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>

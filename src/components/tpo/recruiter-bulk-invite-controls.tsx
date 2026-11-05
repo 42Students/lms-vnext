@@ -72,7 +72,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    </ul>
    {reviewSnapshot===eligibleSnapshot&&eligible.length>0?<div role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
       Confirm issuing {eligible.length} new one-time invitation links. {eligible.filter(row=>Boolean(row.inviteSentAt)).length} previous link(s) will stop working.
-      <Button variant="ghost" type="button" className="lms-inline-link ml-3 min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" onClick={()=>{setReviewSnapshot(null);setNotice("");}}>Cancel</Button>
+      <Button variant="ghost" type="button" className="lms-inline-link ml-3 min-h-11 text-link underline focus-ring" onClick={()=>{setReviewSnapshot(null);setNotice("");}}>Cancel</Button>
     </div>:null}
    <Button type="button" className="min-h-11 md:min-h-9" disabled={busy||eligible.length===0||eligible.length>100}
     

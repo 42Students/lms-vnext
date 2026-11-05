@@ -21,7 +21,7 @@ export default async function TpoChangeRequestsPage({params}:{params:Promise<{jo
   <PageHeader eyebrow="TPO · Drive workspace" title={(data?.job.title??"Drive")+" · Change requests"}
    description="Track requested company changes, review replies and agree or decline with a permanent record."
    actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
-    className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Back to drive</Link>}/>
+    className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-ring md:min-h-9 md:w-auto">Back to drive</Link>}/>
   <section aria-label="Change request actions" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
    <p className="min-w-0 flex-1 text-sm text-body">Request a change without leaving this drive workspace. Discussion remains attached to this drive.</p>
    <Link href="#new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline md:min-h-9">

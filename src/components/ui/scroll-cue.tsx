@@ -67,7 +67,7 @@ export function ScrollCue({ children, axis, label, className, viewportClassName 
       aria-label={edges.scrollable ? label : undefined}
       tabIndex={edges.scrollable ? 0 : -1}
       className={cx(axis === "x" ? horizontalViewportClass : verticalViewportClass,
-        "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
+        "focus-ring",
         viewportClassName)}>{children}</div>
     {edges.start ? <span aria-hidden="true" data-scroll-fade="start" className={cx(
       "pointer-events-none absolute z-(--lms-z-sticky-inline) from-surface to-transparent motion-reduce:transition-none",

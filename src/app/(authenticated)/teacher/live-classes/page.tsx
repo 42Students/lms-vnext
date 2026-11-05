@@ -20,7 +20,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   page:first(raw.page)??undefined,
  });
  if(!parsed.success)return <section role="alert" className="space-y-3">
-  <PageHeader title={"Invalid live-class filters"} /><Link href="/teacher/live-classes" className="underline inline-flex min-h-11 items-center md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+  <PageHeader title={"Invalid live-class filters"} /><Link href="/teacher/live-classes" className="underline inline-flex min-h-11 items-center md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)]">Clear filters</Link>
  </section>;
  const data=await getFacultyLiveClasses(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
@@ -56,13 +56,13 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      </option>)}
     </Select></label>
    <Button type="submit" className="w-full lg:w-auto">Filter</Button>
-   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center justify-center p-2 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">Clear</Link>
+   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center justify-center p-2 text-sm text-[var(--lms-link-text)] focus-ring md:min-h-[var(--lms-control-height)]">Clear</Link>
   </form>
   <p className="text-sm leading-[1.6] text-body" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"
    description="No published LIVE_CLASS content matches these filters in your current teaching Sections. Unregistered meetings are not invented."/>
    :<ul className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(s=><li key={s.deliveryId+":"+s.id}
-     className="min-w-0 space-y-2 bg-transparent py-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] motion-reduce:transition-none">
+     className="min-w-0 space-y-2 bg-transparent py-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:focus-outline motion-reduce:transition-none">
     <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{s.title}</Heading>
     <p className="text-sm text-body leading-[22px]">{s.courseName} · {s.sectionName}</p>
     <p className="text-sm text-body leading-[22px]">
@@ -74,7 +74,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      Secure meeting link unavailable. Only HTTPS links are exposed.
     </p>}
     <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
-     className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 text-sm text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open course</Link>
+     className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 text-sm text-[var(--lms-link-text)] hover:underline focus-ring">Open course</Link>
    </li>)}</ul>}
   {data.totalPages > 1 ? <Pagination label="Live-class pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyLiveClassesHref({...data.query,page})}/> : null}
   <p className="max-w-prose text-xs leading-5 text-muted-foreground">

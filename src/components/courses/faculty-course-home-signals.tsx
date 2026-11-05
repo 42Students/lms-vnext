@@ -24,7 +24,7 @@ export function FacultyCourseHomeSignals({
   const firstPending =
     signals.pendingSubmissions[0] ?? null;
   const contextReady = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(deliveryId);
-  const actionClass = "inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] disabled:cursor-not-allowed disabled:opacity-50 md:min-h-[var(--lms-control-height)]";
+  const actionClass = "inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-ring disabled:cursor-not-allowed disabled:opacity-50 md:min-h-[var(--lms-control-height)]";
   const actionLabel = firstPending ? "Review work" : "Open course content";
   const actionIcon = firstPending
     ? <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><path d="M4 20h16M5 16l10-10 3 3-10 10H5v-3zM14 7l3 3" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -96,7 +96,7 @@ export function FacultyCourseHomeSignals({
               : `Some faculty course signals are incomplete (${missing.join(", ")}). Unknown metrics are shown as unavailable, not zero.`}
           </p>
           <Link href={facultyCourseTabHref(deliveryId,"home")+"?refreshSignals=1"}
-            className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
+            className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-[var(--lms-control-height)]">
             Retry signals
           </Link>
         </Alert>
@@ -178,7 +178,7 @@ export function FacultyCourseHomeSignals({
             </div>
             <Link
               href={`/teacher/courses/${deliveryId}/students`}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-ring md:min-h-[var(--lms-control-height)]"
             >
               View all {signals.atRiskTotal} students
             </Link>
@@ -202,7 +202,7 @@ export function FacultyCourseHomeSignals({
                     <p>Average grade: {learner.averageGradePercent===null?"No graded work":learner.averageGradePercent+"%"}</p>
                   </div>
                   <Link href={`/teacher/courses/${encodeURIComponent(deliveryId)}/students`}
-                    className="mt-2 inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">View students</Link>
+                    className="mt-2 inline-flex min-h-11 items-center text-primary-text underline focus-ring md:min-h-[var(--lms-control-height)]">View students</Link>
                 </Disclosure>
               </li>
             ))}
@@ -220,7 +220,7 @@ export function FacultyCourseHomeSignals({
           Current learner averages across graded assignments.
         </p>
         <Link href="/teacher/allAssignments"
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
+          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-ring md:min-h-[var(--lms-control-height)]">
           View all assessments
         </Link>
         {signals.performance.studentAverages.length<3?

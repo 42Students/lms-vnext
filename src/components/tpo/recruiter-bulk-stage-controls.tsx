@@ -243,7 +243,7 @@ export function RecruiterBulkStageControls({
           {reviewOpen&&reviewSignature===currentSignature?<div role="status" className="rounded-[8px] border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-warning-text)]">
             Confirm {selected.length} recruiter lead stage changes to {action==="CONTACTED"?"Contacted":action==="NEW"?"New":"Not now"}.
             {action==="NOT_NOW"?<p>Reason: {reason.trim()}{revisitDate?" · Revisit "+revisitDate:""}</p>:null}
-            <Button variant="secondary" type="button" className="lms-inline-link mt-2 min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" onClick={()=>setReviewOpen(false)}>Edit selection</Button>
+            <Button variant="secondary" type="button" className="lms-inline-link mt-2 min-h-11 text-link underline focus-ring" onClick={()=>setReviewOpen(false)}>Edit selection</Button>
           </div>:null}
           <p aria-live="polite" className="text-xs text-body">
             {selected.length} / 100 leads selected.

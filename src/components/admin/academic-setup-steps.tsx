@@ -25,13 +25,13 @@ export function AcademicSetupSteps({ step, showRefresh = true }: { step: 1 | 2 |
       </div>
       <div className="grid min-w-0 grid-cols-1 gap-2 text-sm sm:flex sm:flex-wrap sm:items-center">
         {showRefresh ? <AcademicDirectoryRefresh/> : null}
-        <Link href="/admin/academics" className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Academic Setup overview →</Link>
+        <Link href="/admin/academics" className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring">Academic Setup overview →</Link>
         {before ? <Link href={before.href}
-          className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring">
           ← Previous: {before.label}
         </Link> : <span aria-disabled="true" className="inline-flex min-h-11 md:min-h-9 items-center px-4 text-muted-foreground">Previous</span>}
         {after ? <Link href={after.href}
-          className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring">
           Next: {after.label} →
         </Link> : <span aria-disabled="true" className="inline-flex min-h-11 md:min-h-9 items-center px-4 text-muted-foreground">Next</span>}
       </div>

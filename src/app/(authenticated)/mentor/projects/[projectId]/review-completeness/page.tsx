@@ -20,7 +20,7 @@ export default async function MentorProjectReviewCompletenessPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title="Invalid review history selector" />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)] md:min-h-9 hover:text-[var(--lms-primary-text)]">
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">
       Return to assigned projects
     </Link>
   </section>;
@@ -30,7 +30,7 @@ export default async function MentorProjectReviewCompletenessPage({
     <PageHeader eyebrow="Mentor · Project Overview" title="Delivery review completeness"
       description={data.projectTitle??"Current assigned project"}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
         Delivery workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -42,7 +42,7 @@ export default async function MentorProjectReviewCompletenessPage({
         {" · "}Project state: {data.projectStatus}
       </p>
       {data.items.length===0?<EmptyState title="No registered delivery versions"
-        description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history." action={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">Delivery workspace</Link>}/>
+        description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history." action={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Delivery workspace</Link>}/>
       :<ol aria-label="Recorded delivery review versions" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
           <div className="flex flex-wrap items-center justify-between gap-3">

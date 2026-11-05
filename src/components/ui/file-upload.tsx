@@ -129,7 +129,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
         aria-describedby={describedBy}
         aria-errormessage={error && !unavailable ? `${id}-error` : props["aria-errormessage"]}
         aria-required={required || undefined}
-        className="block min-h-9 max-md:min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[14px] text-[var(--lms-form-ink)] file:mr-3 file:rounded-[var(--lms-radius-control)] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-3 file:py-2 file:text-sm file:font-semibold file:cursor-pointer file:transition-colors file:duration-[var(--lms-motion-fast)] hover:file:bg-[var(--lms-primary-subtle)] disabled:file:cursor-not-allowed disabled:file:opacity-50 file:text-[var(--lms-primary-text)] aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[var(--lms-error-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-invalid:focus-visible:outline-[var(--lms-error)] disabled:opacity-50 motion-reduce:transition-none" />}
+        className="block min-h-9 max-md:min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3 py-2 text-[14px] text-[var(--lms-form-ink)] file:mr-3 file:rounded-[var(--lms-radius-control)] file:border-0 file:bg-[var(--lms-primary-subtle)] file:px-3 file:py-2 file:text-sm file:font-semibold file:cursor-pointer file:transition-colors file:duration-[var(--lms-motion-fast)] hover:file:bg-[var(--lms-primary-subtle)] disabled:file:cursor-not-allowed disabled:file:opacity-50 file:text-[var(--lms-primary-text)] aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[var(--lms-error-subtle)] focus-ring aria-invalid:focus-visible:outline-[var(--lms-error)] disabled:opacity-50 motion-reduce:transition-none" />}
     {helper ? <p id={`${id}-help`} className="text-[13px] leading-5 text-[var(--lms-body-text)]">{helper}</p> : null}
     {showSelectedFiles && selectedNames.length > 0 && !pickerUnavailable && !disabled
       ? <ul aria-label="Selected files" className="space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
@@ -144,7 +144,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
       ? <div data-slot="image-upload-preview" data-preview-kind={imagePreviewKind}
           className={cx("border border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)]",
             imagePreviewKind === "profile"
-              ? "h-[194px] w-[175px] max-w-full overflow-hidden rounded-[8px]"
+              ? "h-[196px] w-[176px] max-w-full overflow-hidden rounded-[8px]"
               : "rounded-[10px] p-2")}>
           <img src={previewUrl} alt={`${label} preview`}
             className={imagePreviewKind === "profile" ? "h-full w-full object-cover object-center" : "max-h-40 max-w-full rounded-[6px] object-contain"} />

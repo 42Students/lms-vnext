@@ -14,7 +14,7 @@ export default function Page() {
         action={
           <Link
             href="/college/placements"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9"
           >
             Back to Placements
           </Link>

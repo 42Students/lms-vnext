@@ -115,10 +115,10 @@ describe("HR-BREAK-ROUND-PRINCIPAL-26 and UX-hr-round-results-02 page journey",(
     expect(output.tabHrefs.filter(href=>href.startsWith("/hr/round-results?"))).toHaveLength(8);
     const tabSource=readFileSync("src/components/ui/tabs.tsx","utf8");
     expect(tabSource).toContain("inline-flex min-h-11");
-    expect(tabSource).toContain("focus-visible:outline-2");
+    expect(tabSource).toContain("focus-ring");
     for(const action of targets){
       expect(action.className).toContain("min-h-11");
-      expect(action.className).toContain("focus-visible:outline-2");
+      expect(action.className).toContain("focus-ring");
     }
   });
 });

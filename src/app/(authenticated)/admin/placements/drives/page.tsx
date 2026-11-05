@@ -39,7 +39,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="Jobs Management (LMS)"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
-   action={<Link href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+   action={<Link href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
  </div>;
  // The retention identity includes actor, selected college AND validated
  // filters. It cannot reuse another college's or user's successful rows.
@@ -58,7 +58,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     ?"Your account cannot manage drives in this college."
     :"Failed to load jobs. Please try again. Your selected college and filters are preserved; no unverified or stale drive rows are displayed."}
    action={<Link href={loaded.denied?"/dashboard":adminDriveDirectoryHref(parsed.data)}
-    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">
+    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">
     {loaded.denied?"Back to dashboard":"Retry loading drives"}
    </Link>}
   />
@@ -94,7 +94,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:row=>{
     const expired=adminDriveIsExpired(adminDriveEffectiveDeadline(row.job),today);
     return <span className={"inline-flex items-center gap-1 "+(expired?"text-warning":"text-body")}>
-      <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"
+      <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18"/>
       </svg>
@@ -111,7 +111,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    className:"md:sticky md:right-0 md:z-(--lms-z-raised) md:min-w-[260px] md:bg-surface",
    cell:row=>{
     const base="/admin/placements/jobs/"+encodeURIComponent(row.job.id);
-    const linkClass="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]";
+    const linkClass="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring";
     return <div className="flex min-w-0 flex-col items-start gap-2">
       <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm">
         <Link href={base} aria-label={"Open job "+row.job.title} className={linkClass}>View</Link>
@@ -122,7 +122,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
         <div aria-label={"Delete job "+row.job.title}><SuperAdminDriveArchive jobId={row.job.id} title={row.job.title}/></div>
       </div>
       <details className="min-w-0 w-full border-t border-border pt-2 text-sm">
-        <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-ring">
           More actions · duplicate, deadline
         </summary>
         <div className="min-w-0 space-y-3 pt-3">
@@ -140,10 +140,10 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    description="Review and manage job postings for the selected college."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-end">
     <PageBackLink href="/admin/placements" label="Placement overview" />
-    <Link href="/admin/placements/retention" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retention report</Link>
-    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Look up a student&apos;s placement status →</Link>
+    <Link href="/admin/placements/retention" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Retention report</Link>
+    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Look up a student&apos;s placement status →</Link>
     <Link href="/admin/placements/new"
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Create Job</Link>
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-ring">Create Job</Link>
    </div>} />
   <section aria-label="Jobs Management list" className="min-w-0 space-y-3">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">

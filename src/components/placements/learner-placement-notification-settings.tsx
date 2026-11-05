@@ -67,7 +67,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
     </nav>
     <p className="mt-3 text-xs text-body">Legacy placement alerts are split into matching opportunities and application updates. Application updates include submitted, shortlisted, selected, rejected, waitlisted, offer issued and joining-status changes; academic and security notices remain independently enabled.</p>
     <div className="mt-4 divide-y divide-border border-t border-border">
-      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(matching?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(matching?"bg-primary-subtle":"hover:bg-surface-subtle")}>
         <Checkbox checked={matching} onChange={e=>setMatching(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Matching opportunities</span>
@@ -75,7 +75,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
             Choose whether to receive matching placement-job notifications.
           </span></span>
       </label>
-      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(updates?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(updates?"bg-primary-subtle":"hover:bg-surface-subtle")}>
         <Checkbox checked={updates} onChange={e=>setUpdates(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Application updates</span>

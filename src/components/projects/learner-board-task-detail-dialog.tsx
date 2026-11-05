@@ -63,7 +63,7 @@ export function LearnerBoardTaskDetailDialog({
       <div className="mt-[var(--lms-space-4)] flex min-w-0 justify-stretch sm:justify-end">
         <Link href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
           onClick={() => { navigatingRef.current.startNavigation(); }}
-          className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-center text-[14px] font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] sm:w-auto">Open task actions in Board</Link>
+          className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-center text-[14px] font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto">Open task actions in Board</Link>
       </div>
       <Heading level={3} size="sm" className="mt-[var(--lms-space-5)]">Submission</Heading>
       <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-body">
@@ -97,7 +97,7 @@ export function LearnerBoardTaskDetailDialog({
       <LearnerTaskStatusActions projectId={projectId} task={task} currentMembershipId={currentMembershipId} />
       <section className="mt-[var(--lms-space-5)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]" aria-label="Task Activity">
         <details className="min-w-0">
-         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Activity</summary>
+         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold focus-ring">Activity</summary>
         {activityEvents.length?<ol className="mt-2 space-y-2 text-xs text-body">
           {activityEvents.map((event,index)=><li key={index}>
             {event.summary} · {event.actorDisplayName??"Project member"} ·

@@ -167,7 +167,7 @@ export function PlacementBulkAddApplicants({
               {candidates.learners.map((candidate) => (
                 <label
                   key={candidate.membershipId}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 border-b border-border px-3 py-2 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
+                  className="flex min-h-11 cursor-pointer items-center gap-3 border-b border-border px-3 py-2 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-within:focus-outline has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
                 >
                   <Checkbox
                     checked={selected.has(candidate.membershipId)}

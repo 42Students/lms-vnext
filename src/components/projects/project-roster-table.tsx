@@ -70,7 +70,7 @@ export function ProjectRosterTable({ projectId, rows }: {
       </div>
     </div>
     {visible.length?<div role="region" aria-label="Project team roster table" tabIndex={0}
-      className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] focus-ring">
       <Table className="min-w-[780px] tabular-nums">
         <caption className="sr-only">Project team members; scroll horizontally to see all columns</caption>
         <thead className="bg-[var(--lms-neutral-50)] text-xs text-[var(--lms-neutral-400)]">

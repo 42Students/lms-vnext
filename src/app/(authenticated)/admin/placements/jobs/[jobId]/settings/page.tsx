@@ -223,7 +223,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   </section>:null}
   {job.legacyPostingDetails?<details className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]"
     aria-label="Additional job details">
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Additional job details</summary>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Additional job details</summary>
     <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
     <p className="text-xs text-muted-foreground">Informational posting terms; enforceable learner eligibility remains in the drive policy.</p>
     {job.legacyPostingDetails.responsibilities?<div>
@@ -262,7 +262,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   </section>:null}
   <div className="flex flex-wrap gap-4">
    <Link href="/admin/placements/organization-applications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Search organization applications →</Link>
-   <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Platform placement policy →</Link>
+   <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring">Platform placement policy →</Link>
   </div>
  </div>;
 }

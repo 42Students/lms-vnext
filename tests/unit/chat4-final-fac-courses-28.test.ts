@@ -32,7 +32,7 @@ describe("FAC-courses-28 roster parity with secure image fallback",()=>{
   expect(roster).toContain('aria-label={"View "+nameOf(learner)+" profile photo"}');
   expect(roster).toContain("onClick={()=>setPreview(learner)}");
   expect(roster).toContain('import { Button } from "@/components/ui/button"');
-  expect(read("src/components/ui/button.tsx")).toContain("focus-visible:outline-2");
+  expect(read("src/components/ui/button.tsx")).toContain("focus-ring");
   expect(roster).toContain('alt={"Profile photograph of "+nameOf(preview)}');
   expect(roster).toContain('<Dialog open={preview!==null}');
   expect(roster).toContain("No photo is available for this student.");

@@ -9,8 +9,8 @@ import { getFacultyReportsHub } from "@/modules/courses/faculty-reports-hub-serv
 import { Heading } from "@/components/ui/heading";
 
 type Search = { kind?: string | string[]; page?: string | string[] };
-const reportLink = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9";
-const textLink = "inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9";
+const reportLink = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:text-[var(--lms-primary-text)] focus-ring sm:w-auto md:min-h-9";
+const textLink = "inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9";
 
 export default async function FacultyReportsHubPage({
   params, searchParams,
@@ -84,7 +84,7 @@ export default async function FacultyReportsHubPage({
         <Button type="submit" variant="primary" className="w-full sm:w-auto">Filter</Button>
         {data.query.kind !== "ALL" ? <Link
           href={facultyReportHubHref({ ...data.query, kind: "ALL", page: 1 })}
-          className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
         >Clear</Link> : null}
       </form>
 

@@ -49,7 +49,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
  return <section className="space-y-3 border-t border-border pt-5">
   <Heading level={2} size="lg" className="text-foreground">Optional emails</Heading>
   <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
-  {fields.map(([key,label,help])=><label key={key} className={"flex min-h-12 min-w-0 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border-b border-border px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-sm transition-colors duration-[var(--lms-motion-fast)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] print:hidden "+(value[key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+  {fields.map(([key,label,help])=><label key={key} className={"flex min-h-12 min-w-0 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border-b border-border px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-sm transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline print:hidden "+(value[key]?"bg-primary-subtle":"hover:bg-surface-subtle")}>
    <span className="min-w-0 flex-1 break-words"><span className="font-medium">{label}</span><span className="block text-xs text-muted-foreground">{help}</span></span>
    <span className="shrink-0"><Checkbox aria-label={label} checked={value[key]} disabled={busy}
     onChange={e=>setValue(current=>({...current,[key]:e.target.checked}))}/></span>

@@ -80,7 +80,7 @@ export default async function RecruiterCompanyReportsPage({
           action={
             <Link
               href="/hr/company/reports"
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring"
             >
               Clear filters
             </Link>
@@ -99,7 +99,7 @@ export default async function RecruiterCompanyReportsPage({
       <ErrorState title="Could not load reports"
         description="The report data could not be loaded for this recruiter account and college. No incomplete totals are shown."
         action={<Link href="/hr/company/reports"
-          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-ring">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
             <path d="M20 11a8 8 0 1 0-2 5.5M20 4v7h-7"/>
@@ -135,7 +135,7 @@ export default async function RecruiterCompanyReportsPage({
                   href={recruiterCompanyReportsHref({
                     collegeId: grant.collegeId,
                   })}
-                  className="block min-h-11 border-b border-border py-3 hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                  className="block min-h-11 border-b border-border py-3 hover:bg-[var(--lms-table-hover)] focus-ring"
                 >
                   <span className="font-semibold text-link">
                     {grant.collegeName}
@@ -184,10 +184,10 @@ export default async function RecruiterCompanyReportsPage({
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
         actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:gap-4 max-md:flex-col max-md:items-stretch">
           <Link href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">
             Export report CSV
           </Link>
-          <Link href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-body underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          <Link href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-body underline underline-offset-4 focus-ring md:min-h-9">
             Drives →
           </Link>
         </div>}
@@ -281,7 +281,7 @@ export default async function RecruiterCompanyReportsPage({
             href={recruiterCompanyReportsHref({
               collegeId,
             })}
-            className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-body underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-body underline underline-offset-4 md:min-h-9 md:w-auto focus-ring"
           >
             Clear filters
           </Link>
@@ -355,7 +355,7 @@ export default async function RecruiterCompanyReportsPage({
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring"
               >
                 Previous
               </Link>
@@ -369,7 +369,7 @@ export default async function RecruiterCompanyReportsPage({
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring"
               >
                 Next
               </Link>

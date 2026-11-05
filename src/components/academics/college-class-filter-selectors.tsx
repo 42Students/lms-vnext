@@ -11,7 +11,7 @@ export function CollegeClassFilterSelectors({ programs, cohorts, programId, coho
   const [selectedProgram, setSelectedProgram] = useState(programId);
   return <>
     <label className="grid gap-2 text-[13px] font-semibold text-muted-foreground">Program
-      <Select name="programId" value={selectedProgram} className="min-h-9 w-full md:max-w-[165px]"
+      <Select name="programId" value={selectedProgram} className="min-h-9 w-full md:max-w-[164px]"
         onChange={event => {
           const form = event.currentTarget.form;
           const batch = form?.elements.namedItem("cohortCode");
@@ -24,7 +24,7 @@ export function CollegeClassFilterSelectors({ programs, cohorts, programId, coho
       </Select>
     </label>
     <label className="grid gap-2 text-[13px] font-semibold text-muted-foreground">Batch
-      <Select name="cohortCode" key={selectedProgram} defaultValue={cohortCode} className="min-h-9 w-full md:max-w-[165px]"
+      <Select name="cohortCode" key={selectedProgram} defaultValue={cohortCode} className="min-h-9 w-full md:max-w-[164px]"
         onChange={event => event.currentTarget.form?.requestSubmit()}>
         <option value="">All batches</option>
         {cohorts.filter(cohort => !selectedProgram || cohort.programId === selectedProgram).map(cohort =>

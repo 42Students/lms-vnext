@@ -117,7 +117,7 @@ export async function ProjectAdminReassignMentorPage({
             placeholder="Enter mentor name or email" className="w-full"/>
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9">Find mentor</Button>
-        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:underline">Clear mentor search</Link>:null}
+        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:underline">Clear mentor search</Link>:null}
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground md:col-span-full">
           <span>Mentors · page {mentorPage} · {mentors.length} result{mentors.length===1?"":"s"} on this page</span>
           <nav className="flex flex-wrap gap-3" aria-label="Eligible mentor pages">

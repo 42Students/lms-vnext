@@ -578,7 +578,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
     {mode==="INDIVIDUAL"&&currentPreflight?<section aria-label="Before creating: one workspace per student" className="border-b border-border pb-5 text-sm">
       <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Before creating: one workspace per student</Heading>
       <p>Class roster: {roster?.members.length??0} · Eligible students: {currentPreflight.eligible} · Already covered: {currentPreflight.alreadyCovered} · Duplicate roster entries: {currentPreflight.duplicates} · {currentPreflight.toCreate} to create</p>
-      <div className="max-h-72 min-w-0 overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
+      <div className="max-h-72 min-w-0 overflow-y-auto overscroll-contain focus-ring" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
         <DataTable
           caption="Learner creation preflight"
           rows={currentPreflight.items.slice((Math.min(preflightPage,
@@ -673,7 +673,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         : outcome.created.length<outcome.requested-outcome.alreadyCovered
           ? outcome.created.length+" workspace(s) created; "+(outcome.requested-outcome.alreadyCovered-outcome.created.length)+" student(s) failed. Review or export the report below before retrying."
           : "Created "+outcome.created.length+" workspace(s) for the class roster."}</p>
-      <div className="max-h-72 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" role="region" aria-label="Per-learner creation results" tabIndex={0}>
+      <div className="max-h-72 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] focus-ring" role="region" aria-label="Per-learner creation results" tabIndex={0}>
         <DataTable
           caption="Individual workspace creation results"
           rows={outcome.individualResults.slice((Math.min(resultPage,

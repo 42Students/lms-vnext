@@ -37,7 +37,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const requestedPage=typeof raw["page"]==="string"&&/^[1-9][0-9]{0,6}$/.test(raw["page"])
   ?Number(raw["page"]):1;
  const sort=raw["sort"]==="percent-desc"?"percent-desc":"percent-asc";
- const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Course Progress</Link>;
+ const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9">Back to Course Progress</Link>;
  if(!offeringId||invalidDelivery)return <div className="space-y-6">
   <PageHeader title="Course Progress"/>
   <ErrorState title="Choose a course offering" description="Course and class are required. Select a valid class and its taught course from Course Progress first; this page uses their authorized course offering, not separate legacy numeric IDs." action={back}/>
@@ -231,11 +231,11 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
             const progressState=percent===0?"Not started":percent!==null&&percent<40?"Below 40%":"Progress recorded";
             const progressColour=percent===0?"bg-[color:var(--lms-error)]":percent!==null&&percent<40?"bg-[color:var(--lms-info-blue)]":"bg-[color:var(--lms-success-strong)]";
             return percent===null?<span className="text-muted-foreground">Not measured</span>:
-              <div className="flex min-w-[190px] items-center gap-2">
+              <div className="flex min-w-[192px] items-center gap-2">
                 <div role="progressbar" aria-label={"Course completion for "+(row.studentName||"student")}
                   aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}
                   aria-valuetext={percent+" percent; "+progressState}
-                  className="h-2 w-[145px] overflow-hidden rounded-full bg-[var(--lms-neutral-100)]">
+                  className="h-2 w-[144px] overflow-hidden rounded-full bg-[var(--lms-neutral-100)]">
                   <div className={"h-full rounded-full "+progressColour} style={{width:percent+"%"}}/>
                 </div>
                 <span className="min-w-10 text-right font-medium">{percent}%</span>

@@ -69,7 +69,7 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
         <Link className="block text-sm font-bold text-[color:var(--lms-heading)] hover:underline" href={item.href}>{item.timeLabel} {item.title} · {item.sectionName}</Link>
         <p className="faculty-proto-subtitle">{item.location??"Room not provided"}{item.learnerCount!==null?" · "+item.learnerCount+" students":""}</p>
        </div>
-       {index===0?<Link className="faculty-proto-action shrink-0 !min-h-[34px] !px-[12px] !py-[6px] !text-xs" href={item.href}>{item.actionLabel}</Link>:
+       {index===0?<Link className="faculty-proto-action shrink-0 !min-h-[36px] !px-[12px] !py-[6px] !text-xs" href={item.href}>{item.actionLabel}</Link>:
         <span className="shrink-0 rounded-md bg-[color:var(--lms-neutral-100)] px-2 py-1 text-xs font-semibold text-[color:var(--lms-text-muted)]" title="Later scheduled class">Later</span>}
       </li>)}
      </ol>:<p className="faculty-proto-subtitle mt-3">No classes scheduled for today.</p>}

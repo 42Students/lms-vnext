@@ -27,7 +27,7 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
  if(!ready)return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader title="Companies · Today"/>
   <Alert tone="warning">Recruiter CRM is unavailable until its registered database migration is verified. No follow-ups have been treated as zero.</Alert>
-  <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open recruiter contacts</Link>
+  <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Open recruiter contacts</Link>
  </div>;
  const params=await searchParams;
  const scope=tpoCompaniesTodayScope(params.scope);
@@ -76,8 +76,8 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
    <PageHeader title="Companies · Today"/>
    <ErrorState title="Follow-up not available" description="That follow-up is not available in the current Today preview. It may have changed or be outside the loaded queue. No other recruiter was selected."
     action={<div className="flex flex-wrap gap-3">
-     <Link href="/tpo/follow-ups" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open all follow-ups</Link>
-     <Link href="/tpo/companies/today" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Return to Today</Link>
+     <Link href="/tpo/follow-ups" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Open all follow-ups</Link>
+     <Link href="/tpo/companies/today" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Return to Today</Link>
     </div>}/>
   </div>;
  const notContacted=leadsResult.status==="fulfilled"&&leadsResult.value!==null?

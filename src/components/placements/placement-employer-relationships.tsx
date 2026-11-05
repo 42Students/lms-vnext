@@ -422,7 +422,7 @@ export function PlacementEmployerRelationships({
                   {item.websiteUrl ?
                     <TextLink href={item.websiteUrl} rel="noopener noreferrer">
                       <span className="inline-flex items-center gap-1">
-                       <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"
+                       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"
                         fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                         <circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 4 3 14 0 18M12 3c-3 4-3 14 0 18"/>
                        </svg>
@@ -628,7 +628,7 @@ export function PlacementEmployerRelationships({
                       <td className="p-3">
                         <Link
                           href={`/college/placements/jobs/${encodeURIComponent(job.id)}/overview`}
-                          className="font-semibold text-link underline underline-offset-2 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                          className="font-semibold text-link underline underline-offset-2 hover:text-[var(--lms-primary-text)] focus-ring"
                         >
                           {job.title}
                         </Link>

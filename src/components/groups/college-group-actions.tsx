@@ -130,7 +130,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
         }}>Close</Button>
       ) : null}
       {(group.status === "DRAFT" || group.status === "CLOSED") ? (
-        <details className="relative min-w-0"><summary className="flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Archive</summary>
+        <details className="relative min-w-0"><summary className="flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body focus-ring md:min-h-9">Archive</summary>
           <Button size="sm" variant="danger" className="mt-2 min-h-11 md:min-h-9" disabled={pending} onClick={() => {
             setError(null); setConfirm("ARCHIVE");
           }}>Archive</Button>

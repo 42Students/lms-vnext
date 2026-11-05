@@ -70,7 +70,7 @@ type EditValues = {
   source: string;
 };
 // Anchor and Link destinations retain native navigation while adopting the shared secondary-button skin.
-const button = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold leading-5 text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:min-h-9 md:w-auto";
+const button = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold leading-5 text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-ring motion-reduce:transition-none md:min-h-9 md:w-auto";
 const SOURCES = [
   ["", "Added by hand / Imported"], ["ALUMNI", "Alumni"],
   ["REFERRAL", "Referral"], ["LINKEDIN", "LinkedIn"],
@@ -459,7 +459,7 @@ export function RecruiterLeadDetailWorkspace({
 
   return (
     <section className="min-w-0 space-y-5">
-      {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 focus-visible:underline">← Recruiter leads</Link>:null}
+      {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-ring md:min-h-9 focus-visible:underline">← Recruiter leads</Link>:null}
       {phase === "loading" ? (
         <GracefulPageLoading label="Loading recruiter lead" shape="card"/>
       ) : phase === "error" || !lead ? (
@@ -467,7 +467,7 @@ export function RecruiterLeadDetailWorkspace({
           <PageHeader title={error.includes("not found")?"This recruiter isn\u0027t in Engage":"Could not load recruiter details"} />
           <p>{error || "The recruiter contact could not be found or loaded."}</p>
            <p className="text-xs text-muted-foreground">The recruiter may be missing, or the activity and follow-up services may be unavailable. Your college scope remains unchanged.</p>
-          <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">
+          <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline">
             Go to Engage
           </Link>
           <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => void load()}>Retry</Button>
@@ -534,7 +534,7 @@ export function RecruiterLeadDetailWorkspace({
                <p className="text-xs text-muted-foreground leading-[20px]">Applied and offers below are stored drive counts, not verified placements.</p>
                <ul className="space-y-1">
                  {companySummary.drives.map(drive=><li key={drive.id}>
-                   <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
+                   <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
                    {" · "}<StatusBadge tone={drive.status==="PUBLISHED"?"success":"neutral"}>
                     {drive.status.replaceAll("_"," ")}
                    </StatusBadge>
@@ -547,7 +547,7 @@ export function RecruiterLeadDetailWorkspace({
                See company drives, applicant counts, offers and recruiter contacts in Company Memory.
              </p>
              <Link href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)}
-               className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">
+               className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring focus-visible:underline">
                Open company memory
              </Link>
              </div>
@@ -681,7 +681,7 @@ export function RecruiterLeadDetailWorkspace({
               {activities.length ? (
                 <ol className="ml-2 divide-y divide-border border-l-2 border-primary-subtle pl-4">
                   {activities.map((a,index) => (
-                    <li key={a.id} className="relative py-3 text-sm before:absolute before:-left-[22px] before:top-5 before:h-2 before:w-2 before:rounded-full before:bg-primary">
+                    <li key={a.id} className="relative py-3 text-sm before:absolute before:-left-[24px] before:top-5 before:h-2 before:w-2 before:rounded-full before:bg-primary">
                       {(!index||activityDayIst(activities[index-1]?.createdAt ?? a.createdAt)!==activityDayIst(a.createdAt))?
                         <Heading level={4} size="xs" className="mb-2 mt-4 uppercase tracking-wide text-muted-foreground">
                           {activityDayIst(a.createdAt)}
@@ -780,7 +780,7 @@ export function RecruiterLeadDetailWorkspace({
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 {duplicateLead?<p role="status" className="text-sm leading-[22px]">
                  Contact already exists: <Link href={"/tpo/recruiters/"+encodeURIComponent(duplicateLead.id)}
-                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">Open {duplicateLead.name}</Link>
+                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring focus-visible:underline">Open {duplicateLead.name}</Link>
                 </p>:null}
                 <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
                   <Button variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" type="button" disabled={saving} onClick={()=>closeEdit()}>Cancel</Button>

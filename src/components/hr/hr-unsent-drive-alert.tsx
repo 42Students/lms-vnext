@@ -45,7 +45,7 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
    </p>:null}
    <div className="mt-3 flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
    <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-primary hover:bg-primary-subtle focus-ring">
     Continue
    </Link>
    {hasDraft?<Button variant="ghost" type="button"

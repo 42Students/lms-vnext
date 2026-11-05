@@ -22,7 +22,7 @@ describe("HR-BREAK-BELL-RACE-30: selected college and revoked session cannot sho
   const html=renderToStaticMarkup(<RecruiterNotificationBell/>);
   expect(html).toContain('aria-label="Notifications"');
   expect(html).toContain("min-h-11");
-  expect(html).toContain("focus-visible:outline-2");
+  expect(html).toContain("focus-ring");
  });
  it("drops expired/foreign response instead of retaining a cached tenant list",()=>{
   const source=readFileSync("src/components/hr/recruiter-notification-bell.tsx","utf8");

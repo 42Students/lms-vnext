@@ -53,7 +53,7 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 ];
 
 // Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
-const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-5 text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-[var(--lms-motion-fast)] hover:border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
+const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-5 text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-[var(--lms-motion-fast)] hover:border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] hover:text-[var(--lms-primary)] focus-ring aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
 // Legacy mobile (<768px): one-line horizontally scrolling filter strip (SCSS:56-74).
 const placementFilterNavClass = "min-w-0 max-w-full flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
 
@@ -231,7 +231,7 @@ export default async function LearnerOffersPage({
         </Link>
       ) : null}
       <details className="border-t border-border pt-2" open={order!=="priority" || kind!=="all" || joiningFilter!=="all" || dueOnly || expiry!=="all" || undefined}>
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">More offer filters {hasActiveFacets ? "(active)" : ""}</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">More offer filters {hasActiveFacets ? "(active)" : ""}</summary>
         <div className="space-y-3 pt-3">
       <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer sorting" className="flex flex-wrap items-end gap-[8px]">
         {view!=="all"?<Input type="hidden" name="status" value={view}/>:null}

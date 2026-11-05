@@ -50,7 +50,7 @@ export function RecruiterFocusedReviewShortcuts({
 
   return previousHref || nextHref
     ? <details className="group mt-3 min-w-0 border-t border-border pt-2">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
           Keyboard shortcuts <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
         </summary>
         <p className="pb-2 text-[13px] leading-5 text-muted-foreground">Keyboard: N next, P previous, Esc close. S pass · W/H waitlist · R not selected · A absent · Z undo draft while results editor is focused. The placement cell applies official results.</p>

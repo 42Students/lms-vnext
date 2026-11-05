@@ -350,7 +350,7 @@ export default async function ActivityPage({
             Refresh
           </TextLink>
           {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
-            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]">
+            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]">
             Open audit findings board →
           </Link> : null}
           </div>
@@ -381,7 +381,7 @@ export default async function ActivityPage({
           <div role="group" aria-label="Activity category" className="inline-flex max-w-full flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1">
             {presetLinks.map(link=><Link key={link.id} href={link.href}
               aria-current={selectedPreset===link.id?"page":undefined}
-              className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9 "+
+              className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-xs font-semibold focus-ring md:min-h-9 "+
                 (selectedPreset===link.id?"bg-surface text-primary-text shadow-sm":"text-body hover:bg-surface")}>
               {link.name}</Link>)}
           </div>
@@ -393,7 +393,7 @@ export default async function ActivityPage({
               {key:"all",label:"All time",href:quick(undefined,undefined,selectedPreset,"ALL")},
             ] as const).map(item=><Link key={item.key} href={item.href}
               aria-current={selectedRange===item.key?"page":undefined}
-              className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9 "+
+              className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-xs font-semibold focus-ring md:min-h-9 "+
                 (selectedRange===item.key?"bg-surface text-primary-text shadow-sm":"text-body hover:bg-surface")}>{item.label}</Link>)}
           </div>
           <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
@@ -402,9 +402,9 @@ export default async function ActivityPage({
         {selectedPreset==="important"?<p className="text-xs text-muted-foreground">Deletions and restores, promotions, suspensions, impersonation, module access and feature changes, and identity views.</p>:null}
         <div role="group" aria-label="Activity display" className="flex flex-wrap gap-3 text-sm">
           <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"grouped"}).toString()}
-            aria-current={!rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Activity feed</Link>
+            aria-current={!rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Activity feed</Link>
           <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"raw"}).toString()}
-            aria-current={rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Raw Audit Logs</Link>
+            aria-current={rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Raw Audit Logs</Link>
         </div>
       </nav>:null}
       <details className="min-w-0 border-b border-border pb-3" open={explicitFilter||Boolean(one(params["collegeId"]))||rawMode}>
@@ -507,7 +507,7 @@ export default async function ActivityPage({
         </label>
         <details open={Boolean(one(params["eventType"])||one(params["subjectType"])||one(params["subjectId"])||one(params["actorName"])||one(params["q"])||one(params["actorUserId"])) || undefined}
           className="group min-w-0 border-t border-[var(--lms-canvas-border)] md:col-span-2 xl:col-span-4">
-          <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">More filters<span aria-hidden="true">⌄</span></summary>
+          <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-ring">More filters<span aria-hidden="true">⌄</span></summary>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
@@ -567,7 +567,7 @@ export default async function ActivityPage({
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           <Link
             href="/activity?view=important"
-            className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text underline underline-offset-4 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text underline underline-offset-4 md:w-auto focus-ring hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9"
           >
             Reset
           </Link>

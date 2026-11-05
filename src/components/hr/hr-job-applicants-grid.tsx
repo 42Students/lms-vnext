@@ -60,7 +60,7 @@ export function HrJobApplicantsGrid({rows,scopeKey}:{
   storageKey={"hr-shared-applicants:"+scopeKey}
   mobilePrimaryKeys={["applicant","screening","role","application"]}
   rowActions={row=><Link href={row.reviewHref}
-   className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring">
    Review applicant
   </Link>}
  />;

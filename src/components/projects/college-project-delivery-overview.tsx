@@ -30,7 +30,7 @@ function safeUrl(raw:string|null):string|null{
 function date(value:Date|null|undefined):string{
  return value?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value):"—";
 }
-const linkStyle="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2";
+const linkStyle="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-ring";
 
 export async function CollegeProjectDeliveryOverview({projectId,basePath="/college/projects"}:{projectId:string;basePath?:string}){
  const context=await getCurrentRequestContext();

@@ -56,7 +56,7 @@ export default async function CompanySharePage({
   <section aria-label="Restricted applicant share" className="mx-auto mt-12 max-w-[480px] space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
    <PageHeader title="This link is not valid any more." />
    <p className="text-sm text-body leading-[22px]">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
-   <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Home</Link>
+   <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Home</Link>
   </section>
  </main>;
  const columns=["APPLICATION_ID",...safeCompanyShareColumns(result.selectedColumns).filter(key=>key!=="APPLICATION_ID")] as const;
@@ -116,7 +116,7 @@ export default async function CompanySharePage({
    empty={<div role="status" className="flex flex-wrap items-center justify-between gap-3">
     <p className="text-sm text-body leading-[22px]">No applicants found.</p>
     {result.search?<Link href={companyShareApplicantHref(token,1,"")}
-      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>:null}
+      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>:null}
    </div>}/>
   <Pagination page={result.page} pageCount={result.totalPages}
    hrefForPage={href} label="Share pages"/>

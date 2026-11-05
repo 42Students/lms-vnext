@@ -14,7 +14,7 @@ describe("UX-tracker-shared-nav-02",()=>{
   expect(nav).toContain('<Tabs renderPanel={false} ariaLabel="42 Tracker"');
   expect(nav).toContain("pathname.startsWith");
   expect(nav).toContain("min-h-11");
-  expect(nav).toContain("focus-visible:outline-2");
+  expect(nav).toContain("focus-ring");
   const toggle=source("src/components/tracker/tracker-theme-toggle.tsx");
   expect(toggle).toContain("aria-pressed");
   expect(toggle).toContain("min-h-11");

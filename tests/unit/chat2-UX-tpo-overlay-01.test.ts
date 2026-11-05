@@ -28,7 +28,7 @@ describe("UX-tpo-overlay: focus-safe mobile and desktop workflows", () => {
     expect(source).toContain('href:"/tpo/more"');
     expect(source).toContain('<nav aria-label="TPO mobile footer"');
     expect(source).toContain('aria-current={active ? "page" : undefined}');
-    expect(source).toContain('focus-visible:outline-2');
+    expect(source).toContain('focus-ring');
     expect(source).toContain('min-h-16');
     expect(source).not.toContain('role="dialog"');
     expect(source).not.toContain("window.open");

@@ -428,7 +428,7 @@ export async function ProjectAdminAuditPage({
           </Button>
           <Link
             href={basePath + "/audit"}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9"
           >
             Reset
           </Link>
@@ -554,9 +554,9 @@ export async function ProjectAdminAuditPage({
               const workspaceId=linkedWorkspaceId({subjectId:event.subjectId,
                 subjectType:event.subjectType,metadata});
               return <tr key={event.id} className="border-b border-border align-top last:border-0">
-                <td className="min-w-[210px] p-3">
+                <td className="min-w-[212px] p-3">
                   <details>
-                    <summary className="cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary">
+                    <summary className="cursor-pointer font-semibold text-link focus-ring">
                       <StatusBadge tone={destructiveProjectAction(event.eventType)?"error":"info"}>
                         {projectActionLabel(event.eventType)}</StatusBadge>
                       <span aria-hidden="true" className="ml-2">▾</span>
@@ -569,7 +569,7 @@ export async function ProjectAdminAuditPage({
                     </div>
                   </details>
                 </td>
-                <td className="min-w-[195px] p-3">
+                <td className="min-w-[196px] p-3">
                   <p className="font-semibold">{event.subjectLabel||auditEntityType(event.subjectType)}</p>
                   <p className="mt-1 break-all text-xs text-muted-foreground">{event.subjectType} · {event.subjectId}</p>
                   <Link href={basePath+"/audit?"+(()=>{
@@ -581,7 +581,7 @@ export async function ProjectAdminAuditPage({
                   {workspaceId?<Link href={basePath+"/"+encodeURIComponent(workspaceId)+"/summary?from=audit"}
                     className="block min-h-9 text-xs font-semibold text-link underline">Open workspace</Link>:null}
                 </td>
-                <td className="min-w-[145px] p-3">
+                <td className="min-w-[144px] p-3">
                   <p>{item.actor?.displayName||"System"}</p>
                   {item.actor?.id?<p className="mt-1 break-all text-xs text-muted-foreground">{item.actor.id}</p>:null}
                 </td>

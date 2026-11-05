@@ -75,7 +75,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   const kinds=conflictKinds(row);
   return kinds.length?<StatusBadge tone="error">
    <span className="inline-flex items-center gap-1">
-    <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5m0 3h.01"/>
     </svg>

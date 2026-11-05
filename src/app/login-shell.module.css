@@ -46,8 +46,8 @@
 }
 .legacyLogo {
   display: block;
-  width: 151px;
-  height: 37px;
+  width: 152px;
+  height: 36px;
   object-fit: contain;
 }
 .collegeBrand {
@@ -339,7 +339,7 @@
   content: "+91";
   position: absolute;
   left: 12px;
-  bottom: 17px;
+  bottom: 16px;
   border-right: 1px solid var(--auth-border);
   padding-right: 12px;
   color: var(--auth-ink);
@@ -359,7 +359,7 @@
   .viewport:has(.collegeBrand) .card { width: min(100%, 420px); }
 }
 @media (max-width: 767px) {
-  .card :global(.login-form[data-step="contact"] label:has(input[type="tel"])::after) { bottom: 17px; }
+  .card :global(.login-form[data-step="contact"] label:has(input[type="tel"])::after) { bottom: 16px; }
   .viewport .center { width: 100%; }
   .card { width: 100%; }
 }

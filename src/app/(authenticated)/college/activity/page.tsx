@@ -60,7 +60,7 @@ export default async function CollegeActivityPage({
     <PageHeader title="Activity Log" />
     <ErrorState title="Invalid activity filters"
       description={invalidCollegeActivityCategory(raw["category"]) ?? "The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."}
-      action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>} />
+      action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data).catch((error:unknown)=>{
     if (error instanceof AuthorizationError) throw error;
@@ -164,7 +164,7 @@ export default async function CollegeActivityPage({
             className="min-h-11 md:min-h-9" />
         </label>
         <details className="min-w-0 md:col-span-2 lg:col-span-4" open={Boolean(data.query.actorUserId || data.query.actorName || data.query.subjectType || data.query.subjectId || data.query.from || data.query.to || (data.query.pageSize && data.query.pageSize !== "50"))}>
-          <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Activity log filters</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-ring">Activity log filters</summary>
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Actor user UUID
@@ -215,7 +215,7 @@ export default async function CollegeActivityPage({
           <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
             Apply filters
           </Button>
-          <Link href="/college/activity" className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <Link href="/college/activity" className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
             Clear
           </Link>
         </div>
@@ -247,7 +247,7 @@ export default async function CollegeActivityPage({
                   {group.count>1?<span className="rounded-md border border-[var(--lms-canvas-border)] px-2 py-1 text-xs font-semibold">{group.count} related events · several at once</span>:null}
                 </div>
                 <details className="group min-w-0 text-sm">
-                  <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">
+                  <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">
                     <span className="group-open:hidden">Details</span>
                     <span className="hidden group-open:inline">Hide details</span>
                   </summary>

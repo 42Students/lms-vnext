@@ -15,7 +15,7 @@
   box-shadow: var(--lms-elevation-2) !important;
 }
 .tile > p:first-child {
-  min-height: 30px;
+  min-height: 32px;
   color: var(--lms-text-muted) !important;
   font-size: 12px !important;
   font-weight: 600 !important;

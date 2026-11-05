@@ -303,7 +303,7 @@ export function SuperAdminHrAccountDialog({
               <fieldset className="mt-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
                 <legend className="sr-only">Colleges · optional additional access</legend>
                 <details className="group min-w-0">
-                  <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Colleges · optional additional access</summary>
+                  <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-ring">Colleges · optional additional access</summary>
                   <div className="space-y-[var(--lms-space-2)]">
                 <p className="text-xs text-muted-foreground">
                   You can add or remove colleges later. Only colleges connected to this same company are shown.

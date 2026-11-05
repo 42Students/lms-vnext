@@ -59,7 +59,7 @@ export function CollegeDashboardCards({ cards }: { cards: Cards }) {
     </div> : <div className="space-y-2">
       <EmptyState title="No college summary available" description="College summary metrics are not available in the selected scope."/>
       <p role="status" className="text-sm text-muted-foreground">Couldn't refresh college summary. Previous counts are not assumed to be zero.</p>
-      <Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry</Link>
+      <Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Retry</Link>
     </div>}
   </section>;
 }

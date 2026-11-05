@@ -63,7 +63,7 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
         (category.tab===null?"":"/applications?"+params.toString());
        return <Link key={item.jobId+"-"+index} href={href}
         aria-label={(item.learnerName?item.learnerName+", ":"")+item.jobTitle+", "+category.label+", "+item.count+" affected"}
-        className="flex min-h-11 md:min-h-[var(--lms-control-height)] min-w-0 items-center justify-between gap-3 rounded px-1 py-1 text-[13px] text-[color:var(--lms-warning-strong)] hover:bg-[color:var(--lms-gold-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-gold-accent)]">
+        className="flex min-h-11 md:min-h-[var(--lms-control-height)] min-w-0 items-center justify-between gap-3 rounded px-1 py-1 text-[13px] text-[color:var(--lms-warning-strong)] hover:bg-[color:var(--lms-gold-subtle)] focus-ring">
         <span className="min-w-0 truncate">{item.learnerName?<strong className="font-semibold">{item.learnerName} · </strong>:null}{item.companyName?item.companyName+" — ":""}{item.jobTitle}</span>
         <span className="flex shrink-0 items-center gap-1 text-xs text-[color:var(--lms-gold-accent)]">{item.detail??item.count+" affected"}
          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
@@ -79,7 +79,7 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
          <>Showing top {shown.length} of {category.affected} affected candidate records across {category.distinctDrives} flagged drives.</>:
          <>Showing top {shown.length} of {category.distinctDrives} flagged drives ({category.affected} affected records across the category).</>}
         {" "}Open a drive to review all matching candidates.</p>
-       <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center font-semibold underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-gold-accent)]">
+       <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center font-semibold underline focus-ring">
         +{Math.max(0,(category.sampleBasis==="learners"?category.affected:category.distinctDrives)-shown.length)} more {category.sampleBasis==="learners"?"records":"drives"} — browse all drives
        </Link>
       </div>:null}

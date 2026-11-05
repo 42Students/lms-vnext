@@ -91,7 +91,7 @@ export default async function DeletedAdminWorkspaceProjectsPage({
     {project.mentorFormer&&project.mentorName?<span className="block text-xs text-muted-foreground">Former mentor</span>:null}
     {!project.mentorName?<span className="block text-xs text-[var(--lms-warning-text)]">Assign a mentor after recovery</span>:null}
    </div>},
-  {key:"action",header:"Action",mobilePriority:"action",className:"min-w-[145px]",cell:project=>
+  {key:"action",header:"Action",mobilePriority:"action",className:"min-w-[144px]",cell:project=>
    <ProjectDeletedRowRestore projectId={project.id} title={project.title}
     expectedUpdatedAt={project.updatedAt.toISOString()} mentorName={project.mentorName}
     page={data.page} pageSize={data.pageSize} total={data.total}
@@ -106,7 +106,7 @@ export default async function DeletedAdminWorkspaceProjectsPage({
    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Deleted workspaces</Heading>
    <DataTable columns={columns} rows={data.items} getRowKey={project=>project.id}
     caption="Deleted workspaces" mobileMode="scroll"
-    className="min-w-0 [&_table]:min-w-[630px]"
+    className="min-w-0 [&_table]:min-w-[632px]"
     empty={<EmptyState title="No deleted workspaces for this college"/>}/>
    <div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 md:flex-row md:flex-wrap md:items-center md:justify-between">
     <p role="status" className="text-sm tabular-nums text-muted-foreground">

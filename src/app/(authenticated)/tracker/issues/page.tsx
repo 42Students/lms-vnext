@@ -42,7 +42,7 @@ export default async function TrackerIssuesPage({
           title="Issues"
           description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
-        <div className="flex min-h-11 items-center"><Link href="/tracker/issues/public" className="text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">View public issue summaries</Link></div>
+        <div className="flex min-h-11 items-center"><Link href="/tracker/issues/public" className="text-sm font-semibold text-primary-text underline focus-ring">View public issue summaries</Link></div>
   <TrackerAdminNav />
         <Banner tone="warning">
           <strong>Tracker database is not enabled.</strong>
@@ -164,7 +164,7 @@ export default async function TrackerIssuesPage({
           {page.items.map(issue=>(
             <article key={issue.id} role="listitem" className="min-w-0">
               <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)}
-                className="block min-w-0 rounded-[10px] border border-border bg-surface p-4 no-underline hover:border-[var(--lms-primary)] hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                className="block min-w-0 rounded-[10px] border border-border bg-surface p-4 no-underline hover:border-[var(--lms-primary)] hover:shadow-sm focus-ring">
                 <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
                   <Heading level={2} size="sm" className="m-0 break-words text-link">
                     {issue.publicId} · {[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")||issue.issueType}
@@ -201,7 +201,7 @@ export default async function TrackerIssuesPage({
         <div className="flex justify-center">
           <Link
             href={"/tracker/issues?" + next.toString()}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-ring"
           >
             {current.sort === "newest" ? "Older issues" : "Newer issues"}
           </Link>

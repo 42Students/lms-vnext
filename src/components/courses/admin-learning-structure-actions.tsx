@@ -525,14 +525,14 @@ export function LessonActions({
       <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button size="sm" variant="secondary" disabled={pending} onClick={openEdit}
          aria-label={"Edit lesson "+lesson.name} className="min-h-11 gap-1.5 md:min-h-9">
-         <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24"
+         <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
           strokeLinejoin="round"><path d="m15 5 4 4M4 20l5-1 11-11a2 2 0 0 0-4-4L5 15z"/></svg>
          Edit
         </Button>
         <Button size="sm" variant="danger" disabled={pending} onClick={openArchive}
          aria-label={"Delete lesson "+lesson.name} className="min-h-11 gap-1.5 md:min-h-9">
-         <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24"
+         <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
           strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M5 6l1 14h12l1-14M10 10v6m4-6v6"/></svg>
          Delete

@@ -9,7 +9,7 @@ describe("Faculty shared surface mobile and focus rollout",()=>{
   const disclosure=read("src/components/ui/disclosure.tsx");
   expect(disclosure).toContain("style={{minHeight:44}}");
   expect(disclosure).toContain("flex cursor-pointer");
-  expect(disclosure).toContain("focus-visible:outline-2");
+  expect(disclosure).toContain("focus-ring");
   expect(src).toContain("facultyCourseListHref(query)");
   expect(src).toContain("No teaching assignments found. Please contact your administrator.");
   expect(src).not.toContain("text-on-primary");
@@ -19,7 +19,7 @@ describe("Faculty shared surface mobile and focus rollout",()=>{
   expect(src).toContain('"No contacts found"');
   expect(src).toContain('"No college directory members are visible in this contact tab.');
   expect(src).toContain('label="Contacts pages"');
-  expect(src).toContain("focus-visible:outline-2");
+  expect(src).toContain("focus-ring");
   expect(read("src/components/ui/pagination.tsx")).toContain("min-h-11 min-w-11");
  });
  it("UX-teacher-reports-shared-02 uses both phone cards and desktop report rows with 44px paging",()=>{
@@ -35,7 +35,7 @@ describe("Faculty shared surface mobile and focus rollout",()=>{
   const src=read("src/components/courses/faculty-assessment-overview.tsx");
   expect(src).toContain("EmptyState");
   expect(src).toContain("min-h-11");
-  expect(src).toContain("focus-visible:outline-2");
+  expect(src).toContain("focus-ring");
   expect(src).not.toContain("text-on-primary");
  });
 });

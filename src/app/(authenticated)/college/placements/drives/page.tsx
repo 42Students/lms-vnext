@@ -51,7 +51,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   if (!query) return <div className="space-y-4">
     <PageHeader title="Jobs" />
     <ErrorState title="Invalid drive filters" description="Search, status, season, company or page is invalid."
-      action={<Link href="/college/placements/drives" className="inline-flex min-h-11 md:min-h-9 items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
+      action={<Link href="/college/placements/drives" className="inline-flex min-h-11 md:min-h-9 items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>} />
   </div>;
   let data: Awaited<ReturnType<typeof listCollegeDrives>>;
   try {
@@ -91,17 +91,17 @@ export default async function CollegeDrivesPage({ searchParams }: {
      </div>},
     {key:"type",header:"Type",className:"min-w-[100px]",cell:item=><StatusBadge tone="neutral">{item.type.replaceAll("_"," ")}</StatusBadge>},
     {key:"location",header:"Location",className:"min-w-[120px]",cell:item=>item.locations.join(", ")||"—"},
-    {key:"deadline",header:"Deadline",className:"min-w-[130px]",cell:item=>item.applicationDeadline?
+    {key:"deadline",header:"Deadline",className:"min-w-[132px]",cell:item=>item.applicationDeadline?
      <span className={"inline-flex items-center gap-1 "+(expired(item)?"text-[var(--lms-warning-text)] line-through":"")}>
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.7">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7">
        <rect x="3.5" y="5.5" width="17" height="15" rx="2"/><path d="M7.5 3v5M16.5 3v5M3.5 10.5h17"/>
       </svg>{formatter.format(item.applicationDeadline)}
      </span>:"—"},
-    {key:"posted",header:"Posted",className:"min-w-[130px]",cell:item=>formatter.format(item.publishedAt??item.createdAt)},
-    {key:"applicants",header:"Applicants",className:"min-w-[90px]",cell:item=>item.applicants},
+    {key:"posted",header:"Posted",className:"min-w-[132px]",cell:item=>formatter.format(item.publishedAt??item.createdAt)},
+    {key:"applicants",header:"Applicants",className:"min-w-[92px]",cell:item=>item.applicants},
     {key:"actions",header:"Actions",mobilePriority:"action",className:"min-w-[260px] md:sticky md:right-0 md:z-(--lms-z-raised) md:bg-surface",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
       <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/applications?returnTo="+encodeURIComponent(driveListHref(query))} aria-label={"View Applications for "+item.title}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View Applications</Link>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">View Applications</Link>
       {item.status==="DRAFT"
         ?<CollegeDriveEditDialog jobId={item.id} title={item.title} fullEditorHref={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}/>
         :<Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
@@ -126,7 +126,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
       actions={<div className="flex flex-wrap items-center gap-3">
         <CollegeDrivesRefreshButton/>
         <Link href="/college/placements/student-lookup"
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline-offset-4 hover:border-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline-offset-4 hover:border-primary hover:underline focus-ring md:min-h-9">
           Look up a student&apos;s placement status →
         </Link>
         {hasMembershipRole(context,"COLLEGE_ADMIN")?<CollegeDriveCreateDialog>
@@ -159,7 +159,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
       </label>
       <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4 xl:col-span-6"
         open={Boolean(query.deadlineAfter||query.deadlineBefore||query.minimumApplicants||query.sort!=="TITLE")||undefined}>
-        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Advanced filters</summary>
+        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring md:min-h-9">Advanced filters</summary>
         <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-3 md:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline from
         <DateInput mode="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
@@ -245,8 +245,8 @@ export default async function CollegeDrivesPage({ searchParams }: {
     </section>
     <nav aria-label="Drive pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
       <span>Page {data.query.page} of {data.totalPages} · {data.total===0?"0 jobs":((data.query.page-1)*data.query.pageSize+1)+"–"+Math.min(data.query.page*data.query.pageSize,data.total)+" of "+data.total+" jobs"}</span><div className="flex flex-wrap gap-3">
-        {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
-        {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
+        {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
+        {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
       </div>
     </nav>
   </div></CollegeDrivesCapture>;

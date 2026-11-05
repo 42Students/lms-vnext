@@ -274,7 +274,7 @@ export function CourseActions({
           aria-label={"Change course image for "+course.name}>Image</Button>
         {duplicateHref?<Link href={duplicateHref} aria-label={"Duplicate course "+course.name}
           title={"Duplicate "+course.name}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-ring md:min-h-9">
           <CourseActionIcon kind="duplicate"/> Duplicate
         </Link>:null}
         <Button size="sm" className="min-h-11 gap-1.5 md:min-h-9"

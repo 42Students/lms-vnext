@@ -134,7 +134,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     </div>
     <div className="flex flex-wrap items-center gap-3">
       <Link href={toggleConflictHref} role="button" aria-pressed={conflictOnly}
-        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 "+
+        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold focus-ring md:min-h-9 "+
           (conflictOnly?"border-[var(--lms-error)] bg-[color:var(--lms-error-surface)] text-[var(--lms-error)]":"border-[var(--lms-error)] text-[var(--lms-error)] hover:bg-[color:var(--lms-error-surface)]")}>
         {conflictOnly?"Show all interviews":"Conflicts ("+conflicts+")"}
       </Link>
@@ -259,8 +259,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     </section>
     <nav aria-label="Interview round pages" className="flex min-w-0 flex-col items-stretch justify-between gap-3 border-t border-border pt-[var(--lms-space-3)] text-sm text-body sm:flex-row sm:items-center">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex min-w-0 flex-wrap gap-3 max-md:[&_a]:flex-1 max-md:[&_a]:justify-center">
-        {query.page>1?<Link href={driveInterviewsHref(jobId,{...query,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
-        {query.page<data.totalPages?<Link href={driveInterviewsHref(jobId,{...query,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+        {query.page>1?<Link href={driveInterviewsHref(jobId,{...query,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring">Previous</Link>:null}
+        {query.page<data.totalPages?<Link href={driveInterviewsHref(jobId,{...query,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring">Next</Link>:null}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground leading-5">

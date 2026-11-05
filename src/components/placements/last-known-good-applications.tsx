@@ -18,7 +18,7 @@ export function LastKnownGoodApplications({valid,retryHref,children}:{
    <span>Unable to refresh applications. The previous page is shown below as outdated,
     read-only data and may have changed. Try again before taking any action.</span>
    <Link href={retryHref}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2">
+    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
     Retry applications
    </Link>
   </div>

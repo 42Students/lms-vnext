@@ -102,7 +102,7 @@ export function MentorTaskCreate({
           <Textarea value={description} maxLength={4000} onChange={e=>setDescription(e.target.value)} />
         </label>
         <details className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" open={Boolean(approach||criteria)||undefined}>
-          <summary className="min-h-11 w-fit cursor-pointer text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Approach and done criteria</summary>
+          <summary className="min-h-11 w-fit cursor-pointer text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] focus-ring">Approach and done criteria</summary>
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Approach (optional)
               <Textarea value={approach} maxLength={4000} onChange={event=>setApproach(event.target.value)} />

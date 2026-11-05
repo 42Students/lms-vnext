@@ -74,7 +74,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
       :company.websiteUrl?<span className="break-all text-xs text-muted-foreground">{company.websiteUrl}</span>:null}
      {company.companyId
       ?<Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Create drive</Link>
+        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-ring">Create drive</Link>
       :<span className="text-xs text-muted-foreground">Link company first</span>}
     </div>}
    />;

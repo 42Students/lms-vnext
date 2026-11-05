@@ -22,7 +22,7 @@ export function TpoTopbarMessages(){
   return ()=>{active=false;window.clearInterval(timer);document.removeEventListener("visibilitychange",refresh);};
  },[]);
  return <Link href="/tpo/messages" aria-label={"Messages"+(count!==null?", "+count+" unread":"")}
-  className="inline-flex min-h-11 max-w-full min-w-0 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+  className="inline-flex min-h-11 max-w-full min-w-0 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] focus-ring md:min-h-9">
   <span className="min-w-0 truncate">Messages</span>
   {shellUnreadBadge(count)?<Badge tone="error" className="shrink-0 whitespace-nowrap px-2 py-0.5 tabular-nums">{shellUnreadBadge(count)}</Badge>:null}
  </Link>;

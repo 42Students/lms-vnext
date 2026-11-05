@@ -554,10 +554,10 @@ export function CreateProjectControl({
             <Input type="search" value={rosterSearch} maxLength={120}
               aria-label="Search class learners" placeholder="Search learners by name or roll number"
               onChange={event => setRosterSearch(event.target.value)} />
-            <div tabIndex={0} aria-label="Class learner roster" className="mt-3 max-h-40 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            <div tabIndex={0} aria-label="Class learner roster" className="mt-3 max-h-40 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] focus-ring">
               {roster.filter(student => !rosterSearch.trim() ||
                 (student.displayName + " " + student.rollNumber).toLowerCase()
-                  .includes(rosterSearch.trim().toLowerCase())).map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 py-2 text-[13px] leading-5 text-body focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
+                  .includes(rosterSearch.trim().toLowerCase())).map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 py-2 text-[13px] leading-5 text-body focus-within:focus-outline">
                 <Checkbox checked={learnerMembershipIds.includes(student.membershipId)}
                   onChange={e=>setLearnerMembershipIds(old=>e.target.checked?
                     [...old,student.membershipId]:old.filter(id=>id!==student.membershipId))}/>

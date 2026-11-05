@@ -41,7 +41,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
         className="min-h-11 min-w-0 md:min-h-9"/>
     </label>
     <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4" open={Boolean(data.query.courseCode||data.query.deliveryId||data.query.scope!=="ALL"||data.view!=="ALL"||data.from||data.to)||undefined}>
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Filters</summary>
       <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-4">
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Course code (exact)
@@ -91,7 +91,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       </div>
     </details>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
+    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">Clear</Link>
   </form>
   <section aria-label="Persisted live classes" className="border-y border-border">
     <p className="border-b border-border p-4 text-sm text-muted-foreground">{data.total} matching live classes</p>
@@ -116,7 +116,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
         <p className="text-xs text-muted-foreground">{item.deliveryId?"Section-specific session":"Shared offering session"}</p>
         <p className="break-words text-sm text-body">Lesson: {item.lessonName} · {item.cohortName} · {item.periodName}</p>
         <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-          className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text hover:text-primary-hover hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text hover:text-primary-hover hover:underline focus-ring md:min-h-9">
           {item.courseName} ({item.courseCode})
         </Link>
       </article>)}</div>}

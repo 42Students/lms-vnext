@@ -33,7 +33,7 @@ export default async function AdminDeviceSessionsPage({params}:{
       {key:"expires",header:"Expires",mobilePriority:"secondary",cell:row=>format(row.expires_at)},
     ]}/>
   <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Administrator activity history →</Link>
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Administrator activity history →</Link>
   <AdminRevokeSessions collegeId={collegeId} userId={userId} count={data.devices.length}/>
  </div>;
 }

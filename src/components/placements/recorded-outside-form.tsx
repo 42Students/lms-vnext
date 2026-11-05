@@ -20,7 +20,7 @@ export function RecordedOutsideForm({collegeId,choices}:{
    <Input name="occurredAt" required type="datetime-local" className="w-full"/>
   </label>
   <details className="min-w-0 border-t border-border pt-2 md:col-span-2">
-   <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Optional reference and notes</summary>
+   <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9">Optional reference and notes</summary>
    <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2">
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">External reference (optional HTTPS)
    <Input name="externalReferenceUrl" type="url" maxLength={2000} placeholder="https://..." className="w-full"/>

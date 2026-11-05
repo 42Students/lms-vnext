@@ -29,7 +29,7 @@ export default async function PublicIssuesPage(){
    <header className="border-b border-border pb-4">
     <h1 className="text-[24px] font-semibold text-[var(--lms-heading)]">42 Tracker · Issues</h1>
     <p className="mt-2 text-sm text-body">Public issue summaries are published only after verification and an explicit review. Reporter details and private issue reports are never public.</p>
-    <Link href="/tracker" className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">Report issue (sign-in required)</Link>
+    <Link href="/tracker" className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring">Report issue (sign-in required)</Link>
    </header>
    {!result.ok?<p role="status" className="text-sm text-body">Public issue updates are temporarily unavailable. Try again later; individual reports stay private.</p>:
     result.items.length===0?<p role="status" className="text-sm text-body">There are no approved public issue summaries.</p>:

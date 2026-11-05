@@ -180,7 +180,7 @@ export function AddLessonContentDrawer({
               <Button variant="bare"
                 type="button"
                 aria-label={`Add ${category}`}
-                className="flex w-full min-h-11 items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm font-semibold text-body transition-colors hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="flex w-full min-h-11 items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm font-semibold text-body transition-colors hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring"
                 onClick={() => setSelectedCategory(category)}
               >
                 <span className="shrink-0 w-5 text-xs font-bold text-muted-foreground">
@@ -206,7 +206,7 @@ export function AddLessonContentDrawer({
               "/quizzes/manage?lesson=" +
               encodeURIComponent(lessonId)
             }
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:opacity-100 focus-ring"
             onClick={handleClose}
           >
             Open Quiz Builder
@@ -234,7 +234,7 @@ export function AddLessonContentDrawer({
               "/assignments/manage?lesson=" +
               encodeURIComponent(lessonId)
             }
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:opacity-100 focus-ring"
             onClick={handleClose}
           >
             Open Assignment Builder

@@ -61,7 +61,7 @@ export default async function SuperAdminTenantSetup({
   <ErrorState title="Invalid tenant setup filters"
    description="Select a valid setup step, search of at most 100 characters and page number."
    action={<Link href="/admin/tenants/setup"
-    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
+    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}/>
  </div>;
  const id=context.adminScope?.collegeId??null;
  const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
@@ -306,14 +306,14 @@ export default async function SuperAdminTenantSetup({
    <section id="college-readiness" aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <Heading level={2} size="lg" className="m-0 break-words leading-7 text-[var(--lms-heading)]">Launch checklist</Heading>
-     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Inspect persisted readiness →</Link>
+     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-x-6 gap-y-2 2xl:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <Heading level={3} className="mt-1 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{step.title}</Heading>
       <p className="mt-2 text-sm text-body">{step.description}</p>
-      <Link href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open workspace →</Link>
+      <Link href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Open workspace →</Link>
      </li>)}
     </ol>
    </section>

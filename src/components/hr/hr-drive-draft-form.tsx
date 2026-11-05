@@ -855,7 +855,7 @@ export function HrDriveDraftForm({
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </Button>
           <details className="min-w-0 md:basis-full">
-            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Draft tools</summary>
+            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Draft tools</summary>
             <div className="flex min-w-0 flex-col gap-2 pb-2 md:flex-row md:flex-wrap">
           <Button type="button" disabled={!result.success}
             variant="secondary"

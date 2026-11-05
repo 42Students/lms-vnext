@@ -32,9 +32,9 @@ export default async function SuperAdminApplicationsPage({searchParams}:{
    .then(value=>value).catch(()=>undefined);
  return <div className="min-w-0 space-y-4">
   <AdminScopedReadPage headerActions={<nav aria-label="Application views" className="flex min-w-0 flex-wrap items-center gap-3 text-sm">
-    <Link href="/admin/placements/applications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">Refresh applications</Link>
+    <Link href="/admin/placements/applications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring">Refresh applications</Link>
     {jobId?<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"+
-       (shortlisted?"?shortlisted=true":"")} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
+       (shortlisted?"?shortlisted=true":"")} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring">
       Open {shortlisted?"shortlisted":"job"} applications
     </Link>:null}
     {shortlisted&&!jobId?<span role="status" className="text-muted-foreground">

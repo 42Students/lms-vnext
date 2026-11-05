@@ -579,7 +579,7 @@ export function LearnerCourseDiscussion({
           ref={scrollRef}
           onScroll={handleScroll}
           role="region" aria-label="Course discussion messages" tabIndex={0}
-          className={moderate?"min-h-[180px] max-h-[min(65vh,650px)] overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-button-primary)]":"max-h-[min(62vh,640px)] min-h-[320px] overflow-y-auto overscroll-contain px-2 py-3 sm:px-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}
+          className={moderate?"min-h-[180px] max-h-[min(65vh,650px)] overflow-y-auto overscroll-contain focus-ring":"max-h-[min(62vh,640px)] min-h-[320px] overflow-y-auto overscroll-contain px-2 py-3 sm:px-3 focus-ring"}
         >
           {scopeUnavailable ? (
             <div className="flex min-h-64 flex-col items-center justify-center gap-2 p-4 text-center">

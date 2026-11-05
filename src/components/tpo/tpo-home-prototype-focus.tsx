@@ -58,7 +58,7 @@ export function TpoHomePrototypeFocus({
    {ranked.length?<ul className="divide-y divide-[color:var(--lms-neutral-100)]">{ranked.slice(0,6).map(need=>{
     const category=needCategory(need.type);
     return <li key={need.type+need.link} className="flex min-w-0 items-center gap-3 px-4 py-3 sm:px-5">
-     <span className={"w-[85px] shrink-0 rounded px-2 py-1 text-center text-xs font-bold tracking-[.05em] "+categoryClasses[category]}>{category}</span>
+     <span className={"w-[84px] shrink-0 rounded px-2 py-1 text-center text-xs font-bold tracking-[.05em] "+categoryClasses[category]}>{category}</span>
      <div className="min-w-0 flex-1"><Link href={need.link}
        className="break-words text-sm font-semibold text-[color:var(--lms-heading)] hover:text-[color:var(--lms-button-primary)] hover:underline">{need.title}</Link>
       <p className="mt-1 text-xs text-[color:var(--lms-text-muted)]">{need.count} {need.count===1?"item":"items"} awaiting action</p></div>

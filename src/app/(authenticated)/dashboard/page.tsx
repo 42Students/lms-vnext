@@ -79,7 +79,7 @@ function MetricCard({
   return href ? (
     <Link
       href={href}
-      className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-canvas-border)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+      className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-canvas-border)] hover:bg-primary-subtle focus-ring"
     >
       {content}
     </Link>
@@ -110,7 +110,7 @@ async function SuperAdminDashboard({
       </section>
       <nav aria-label="Platform operations" className="grid min-w-0 gap-4 sm:grid-cols-2">
         {PLATFORM_GLOBAL_LINKS.map(item=><Link key={item.href} href={item.href}
-          className="flex min-h-24 min-w-0 items-start justify-between gap-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="flex min-h-24 min-w-0 items-start justify-between gap-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)] hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="min-w-0 space-y-1">
             <span className="block text-base font-semibold text-[var(--lms-heading)]">{item.label}</span>
             <span className="block text-sm leading-[22px] text-body">{item.description}</span>
@@ -195,7 +195,7 @@ async function SuperAdminDashboard({
       {collegeId?<CollegeAtGlancePanel collegeId={collegeId} initial={glance}/>:null}
       {collegeId?<SuperAdminTodayBoard data={today}/>:null}
       <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Safety scope</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Safety scope</summary>
         <p className="mt-2 text-sm text-body leading-[1.6]">
           {scopeLabel}. Use the selector in the top bar before
           college-specific administration. Global system-role

@@ -306,11 +306,11 @@ export async function PlacementDriveWorkspace({
           <div className="flex min-w-0 w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
           {isSuperAdminDrive?<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/settings"+(applicationsHref?.includes("?returnTo=")?"?"+applicationsHref.split("?")[1]:"")}
              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">
-             <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 20h9"/><path d="m16.5 3.5 4 4L9 19l-5 1 1-5L16.5 3.5Z"/>
              </svg>Edit drive</Link>:null}
           {!isTpo ? <Link href={applicationsHref ?? "/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"}
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto md:min-h-9">
             {isSuperAdminDrive?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
              <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
@@ -325,31 +325,31 @@ export async function PlacementDriveWorkspace({
               className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)] md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
             {nextStep&&!isTpo ? (
               <Link href={nextStep.primary.href}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[color-mix(in_srgb,var(--lms-primary)_35%,transparent)] md:min-h-[var(--lms-control-height)]">
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:focus-outline md:min-h-[var(--lms-control-height)]">
                 {nextStep.primary.label}
               </Link>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applicants-pipeline"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
                 Applicants
               </Link>
             ) : null}
             {isTpo && job.status === "DRAFT" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
                 Edit draft
               </Link>
             ) : null}
             {isTpo ? <div role="group" aria-label="More drive actions">
               <div className="grid min-w-[min(14rem,calc(100vw_-_5rem))] max-w-full gap-2">
                 <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
-                  className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
+                  className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-ring transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
                   Export applicants
                 </Link>
                 <Link
                   href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
-                  className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
+                  className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-ring transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
                   Share with company
                 </Link>
                 {["CLOSED","CANCELLED","REJECTED"].includes(job.status)
@@ -358,26 +358,26 @@ export async function PlacementDriveWorkspace({
             </div>:null}
             {isTpo && job.status === "PUBLISHED" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/close-preview"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
                 Close drive
               </Link>
             ) : null}
             {isTpo && (job.status === "DRAFT" || job.status === "PUBLISHED") ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/cancel-preview"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
                 Cancel drive
               </Link>
             ) : null}
             {isTpo && job.status === "PUBLISHED" && job.applicationDeadline ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/extend-deadline"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
                 Extend deadline
               </Link>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Current shortlist &amp; CSV
               </Link>
@@ -385,7 +385,7 @@ export async function PlacementDriveWorkspace({
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/letters"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Offer letter evidence
               </Link>
@@ -393,7 +393,7 @@ export async function PlacementDriveWorkspace({
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/closeout"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Drive close-out report
               </Link>
@@ -401,7 +401,7 @@ export async function PlacementDriveWorkspace({
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/candidate-schedule"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Candidate round schedule
               </Link>
@@ -409,7 +409,7 @@ export async function PlacementDriveWorkspace({
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/joining"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]"
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Manage joining outcomes
               </Link>
@@ -418,7 +418,7 @@ export async function PlacementDriveWorkspace({
               href={isTpo
                 ? "/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applications-export"
                 : "/api/placements/jobs/" + encodeURIComponent(jobId) + "/applicants/export"}
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[color:var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[color-mix(in_srgb,var(--lms-primary)_35%,transparent)] md:min-h-[var(--lms-control-height)]"
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[color:var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:focus-outline md:min-h-[var(--lms-control-height)]"
             >
               {isTpo ? "Review and export applicants" : "Export applicants (CSV)"}
             </Link>
@@ -503,7 +503,7 @@ export async function PlacementDriveWorkspace({
          </div>
          {job.description?<div className="mt-4 border-t border-border pt-3">
            <details className="group text-sm text-body">
-             <summary className="float-right ml-3 inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">
+             <summary className="float-right ml-3 inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline focus-ring md:min-h-9">
                <span className="group-open:hidden">Show more</span><span className="hidden group-open:inline">Show less</span>
              </summary>
              <p className="line-clamp-3 whitespace-pre-wrap break-words leading-[22px] group-open:line-clamp-none">{job.description}</p>
@@ -556,7 +556,7 @@ export async function PlacementDriveWorkspace({
         <p className="mt-1 text-xs text-body leading-[20px]">{journey.definition}</p>
         <div className="mt-4 grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3 xl:grid-cols-6">
           {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
-            className="min-w-0 border-b border-r border-border p-3 text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] even:border-r-0 md:even:border-r md:[&:nth-child(3n)]:border-r-0 xl:[&:nth-child(3n)]:border-r xl:border-b-0 xl:last:border-r-0">
+            className="min-w-0 border-b border-r border-border p-3 text-foreground hover:bg-primary-subtle focus-ring-inset even:border-r-0 md:even:border-r md:[&:nth-child(3n)]:border-r-0 xl:[&:nth-child(3n)]:border-r xl:border-b-0 xl:last:border-r-0">
             <span className="block text-xs text-body">{stage.name}</span>
             <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
           </Link>)}
@@ -623,12 +623,12 @@ export async function PlacementDriveWorkspace({
       ) : null}
       {isTpo && driveDay.rounds.length>0 ? (
         <details className="group min-w-0 border-b border-border pb-4">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Enter round results <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Enter round results <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
           <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
             {driveDay.rounds.filter(round=>round.kind!=="TALK").map(round=>
               <Link key={round.id}
                 href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
                 {round.name}
               </Link>)}
           </div>
@@ -869,7 +869,7 @@ export async function PlacementDriveWorkspace({
         />
       )}
       <details className="group min-w-0 border-b border-border pb-4">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
           Drive day operations <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
         </summary>
         <p className="py-2 text-sm text-muted-foreground">Open a round to take attendance and record results on your phone on the day.</p>

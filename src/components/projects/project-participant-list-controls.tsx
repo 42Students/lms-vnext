@@ -94,7 +94,7 @@ export function ProjectParticipantListControls({
         <Select
           name="status"
           defaultValue={query.status ?? ""}
-          className="w-full sm:w-[170px]"
+          className="w-full sm:w-[172px]"
         >
           <option value="">All statuses</option>
           {(mentor || learner ? mentorStatusOptions : statusOptions).map(
@@ -118,7 +118,7 @@ export function ProjectParticipantListControls({
             defaultValue={
               query.attention ?? ""
             }
-            className="w-full sm:w-[210px]"
+            className="w-full sm:w-[212px]"
           >
             <option value="">
               All attention states
@@ -298,7 +298,7 @@ export function ProjectParticipantPagination({
           aria-disabled={page <= 1}
           tabIndex={page <= 1 ? -1 : undefined}
           className={
-            "inline-flex min-h-11 items-center rounded-lg border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] " +
+            "inline-flex min-h-11 items-center rounded-lg border border-border px-3 py-2 font-semibold focus-ring " +
             (page <= 1
               ? "pointer-events-none opacity-50"
               : "hover:bg-muted")
@@ -309,7 +309,7 @@ export function ProjectParticipantPagination({
         {pages.map(value=><Link key={value} href={href(value)}
           aria-current={value===page?"page":undefined}
           aria-label={"Page "+value}
-          className={"inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border px-3 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] "+
+          className={"inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border px-3 font-semibold focus-ring "+
             (value===page?"border-primary bg-primary-subtle text-primary-text":"border-border hover:bg-muted")}>
           {value}
         </Link>)}
@@ -325,7 +325,7 @@ export function ProjectParticipantPagination({
           }
           tabIndex={page >= totalPages ? -1 : undefined}
           className={
-            "inline-flex min-h-11 items-center rounded-lg border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] " +
+            "inline-flex min-h-11 items-center rounded-lg border border-border px-3 py-2 font-semibold focus-ring " +
             (page >= totalPages
               ? "pointer-events-none opacity-50"
               : "hover:bg-muted")

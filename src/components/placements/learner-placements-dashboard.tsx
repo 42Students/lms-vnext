@@ -138,7 +138,7 @@ export function LearnerPlacementsDashboard({
           </div>
           <Link
             href={quietHero?"/learn/profile":next.href}
-            className="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-6 text-base font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto"
+            className="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-6 text-base font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:w-auto"
           >
             {quietHero?"Update profile":legacyCta} →
           </Link>
@@ -317,7 +317,7 @@ export function LearnerPlacementsDashboard({
             <ul className="divide-y divide-border">
               {display.attention.map((event) => (
                 <li key={event.applicationId + ":" + event.roundId} className="py-3 first:pt-0 last:pb-0">
-                  <Link href={event.href} className="block rounded-md hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                  <Link href={event.href} className="block rounded-md hover:text-primary-text focus-ring">
                     <p className="text-sm font-semibold text-foreground">{event.roundName}</p>
                     <p className="mt-1 text-xs text-body">{event.companyName} · {formatWhen(event.when)}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -364,7 +364,7 @@ export function LearnerPlacementsDashboard({
                   {day.events.length===0 ? <p className="mt-1 text-xs text-muted-foreground">No rounds scheduled</p> :
                     <ul className="mt-2 space-y-2">{day.events.map(event=>(
                       <li key={event.applicationId+":"+event.roundId}>
-                        <Link href={event.href} className="block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                        <Link href={event.href} className="block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text focus-ring">
                           {event.companyName} · {event.roundName}
                           <span className="mt-1 block text-xs font-normal text-body">{formatWhen(event.when)}</span>
                         </Link>

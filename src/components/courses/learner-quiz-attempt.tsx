@@ -419,7 +419,7 @@ export function LearnerQuizAttempt() {
           <Button onClick={() => void load()} className="min-h-11 md:min-h-9">Try Again</Button>
           <Button type="button" variant="secondary" onClick={()=>window.location.reload()}
             className="min-h-11 md:min-h-9">Refresh page</Button>
-          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]">Back to quizzes</Link>
+          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-[var(--lms-control-height)]">Back to quizzes</Link>
         </div>
       </div>
     );
@@ -575,7 +575,7 @@ export function LearnerQuizAttempt() {
       </Drawer>
       <div className="grid min-w-0 md:grid-cols-[220px_minmax(0,1fr)]">
         <aside className="hidden min-w-0 border-r border-border p-4 md:block">
-          <Link href={returnTo} className="inline-flex min-h-11 w-[130px] items-center justify-center border border-border text-sm font-semibold text-primary-text">
+          <Link href={returnTo} className="inline-flex min-h-11 w-[132px] items-center justify-center border border-border text-sm font-semibold text-primary-text">
             42 LMS
           </Link>
           <p className="mt-4 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground leading-[20px]">Question Status</p>
@@ -617,7 +617,7 @@ export function LearnerQuizAttempt() {
                   const checked = (answers[current.id] ?? []).includes(option.id);
                   const ChoiceControl = current.type === "MULTIPLE_CHOICE" ? Checkbox : Radio;
                   return (
-                    <label key={option.id} className="flex min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-form-bg)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:border-primary focus-within:border-primary focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none">
+                    <label key={option.id} className="flex min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-form-bg)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:border-primary focus-within:border-primary focus-within:focus-outline motion-reduce:transition-none">
                       <ChoiceControl
                         name={current.id}
                         checked={checked}

@@ -18,7 +18,7 @@ const labels={
 } as const;
 
 function DateGlyph(){
- return <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15"
+ return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
   fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
   <rect x="3" y="5" width="18" height="16" rx="2"/>
   <path d="M7 3v4M17 3v4M3 10h18"/>
@@ -131,7 +131,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
       return <article key={job.id}
         className="group relative min-h-[152px] min-w-0 rounded-[12px] border border-[color:var(--lms-border)] bg-surface p-4 transition-[border-color,box-shadow,transform] duration-[var(--lms-motion-fast)] hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md focus-within:border-primary focus-within:shadow-md">
         <Link href={href} aria-label={"Open drive overview: "+job.title}
-          className="absolute inset-0 rounded-[12px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
+          className="absolute inset-0 rounded-[12px] focus-ring"/>
         <div className="pointer-events-none relative flex min-w-0 gap-3">
           <span aria-label={job.companyName+" avatar"}
             className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-[color:var(--lms-primary-subtle)] text-sm font-bold text-[var(--lms-primary-text)]">

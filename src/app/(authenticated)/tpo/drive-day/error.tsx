@@ -8,7 +8,7 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
     <PageHeader title="Drive day" />
     <ErrorState title="Couldn't load Drive Day"
       description="The requested records could not be retrieved. A load failure does not mean there are no records or that a reported total is zero."
-      action={<><Button type="button" variant="secondary" onClick={reset}>Retry</Button><Link href="/tpo/placements" className="lms-inline-link inline-flex min-h-11 items-center px-3 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Placements</Link></>}
+      action={<><Button type="button" variant="secondary" onClick={reset}>Retry</Button><Link href="/tpo/placements" className="lms-inline-link inline-flex min-h-11 items-center px-3 font-semibold text-link underline focus-ring md:min-h-9">Placements</Link></>}
     />
   </div>;
 }

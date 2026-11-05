@@ -147,7 +147,7 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
     onChange={e=>toggleVisible(e.target.checked)} disabled={busy}/>
    {allVisible?"Clear":"Select"} all {capped.length} students on this visible page
   </label>
-  <div role="region" aria-label="Bulk student selection" tabIndex={0} className="grid max-h-44 gap-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] md:grid-cols-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] print:hidden">
+  <div role="region" aria-label="Bulk student selection" tabIndex={0} className="grid max-h-44 gap-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] md:grid-cols-2 focus-ring print:hidden">
    {capped.map((learner,index)=><label key={learner.id}
      className={"flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm text-body "+(selected.includes(learner.id)?"bg-[var(--lms-primary-subtle)]":"")}>
     <Checkbox checked={selected.includes(learner.id)} disabled={busy}

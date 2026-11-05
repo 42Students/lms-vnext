@@ -45,7 +45,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
           {moreTabs.map(tab=>(
             <Link key={tab.href} href={tab.href}
               aria-current={selected===tab.href?"page":undefined}
-              className={`flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] px-3 py-2 text-sm font-semibold leading-5 text-primary-text break-words [overflow-wrap:anywhere] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none ${selected===tab.href?"bg-[var(--lms-primary-subtle)]":""}`}>
+              className={`flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] px-3 py-2 text-sm font-semibold leading-5 text-primary-text break-words [overflow-wrap:anywhere] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-ring motion-reduce:transition-none ${selected===tab.href?"bg-[var(--lms-primary-subtle)]":""}`}>
               {tab.label}
             </Link>
           ))}

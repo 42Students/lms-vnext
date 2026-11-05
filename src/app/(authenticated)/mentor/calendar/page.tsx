@@ -33,7 +33,7 @@ export default async function MentorCalendarPage({searchParams}:{
   }));
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid meeting filters"} />
-    <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-[var(--lms-control-height)]">Clear filters</Link>
+    <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link md:min-h-[var(--lms-control-height)]">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
@@ -176,7 +176,7 @@ export default async function MentorCalendarPage({searchParams}:{
       </label>
         </div>
       </Disclosure>
-      {activeCount>0?<Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>:null}
+      {activeCount>0?<Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>:null}
     </form>
     </FilterBar>
      <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -184,13 +184,13 @@ export default async function MentorCalendarPage({searchParams}:{
         sprint:parsed.data.sprint,join:parsed.data.join,projectId:parsed.data.projectId??"",attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
         projectState:parsed.data.projectState,
         search:parsed.data.search,period:parsed.data.period,
-      }).toString()} download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:min-h-9 hover:underline">
+      }).toString()} download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-ring motion-reduce:transition-none md:min-h-9 hover:underline">
         Export filtered meeting metadata CSV (max 200)
       </Link>
       {displayed.length>200?<span role="status">Export omits {displayed.length-200} meetings.</span>:null}
     </div>
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">    <p className="text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
-      {displayed.length===0 && activeCount>0 ? <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link> : null}
+      {displayed.length===0 && activeCount>0 ? <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">Clear</Link> : null}
     </div>
     </Disclosure>
   </div>;

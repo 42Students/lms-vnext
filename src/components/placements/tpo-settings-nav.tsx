@@ -26,8 +26,8 @@ export function TpoSettingsNav({active,compact=false,unsaved=false}:{
     <div className="flex min-w-0 flex-col items-stretch gap-1">{group.items.map(item=>
       <Link key={item.id} href={item.href} aria-current={active===item.id?"page":undefined}
         className={active===item.id
-          ?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border-l-2 border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-          :"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border-l-2 border-transparent px-3 text-sm text-body hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"}>
+          ?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border-l-2 border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-ring md:min-h-9"
+          :"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border-l-2 border-transparent px-3 text-sm text-body hover:bg-[var(--lms-primary-subtle)] focus-ring md:min-h-9"}>
         {item.label}
       </Link>)}</div>
    </section>)}

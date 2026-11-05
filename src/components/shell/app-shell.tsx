@@ -97,7 +97,7 @@ export async function AppShell({
       <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar relative z-(--lms-z-sticky-inline) hidden h-screen shrink-0 flex-col md:flex">
         <div className="lms-sidebar-logo-row flex h-20 shrink-0 items-center justify-center border-b border-[var(--lms-sidebar-border)] px-2">
           <Link href={homeHref} aria-label="42Students LMS home"
-            className="lms-sidebar-brand-link inline-flex h-11 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="lms-sidebar-brand-link inline-flex h-11 items-center justify-center rounded-lg focus-ring">
             <span className="lms-prototype-wordmark" aria-hidden="true">42LMS</span>
             <span className="lms-sidebar-brand-mark"><ShellLogoMark /></span>
              <span className="lms-sidebar-brand-wordmark"><ShellLogoWordmark /></span>

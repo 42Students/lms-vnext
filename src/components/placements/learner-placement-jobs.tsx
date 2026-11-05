@@ -759,7 +759,7 @@ export function LearnerPlacementJobs({
       {grouped.map(([driveId,roles]) => (
         <article key={driveId} className="relative min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-5 py-4 shadow-(--lms-elevation-1)"
           aria-label={roles[0]?.job.title ?? "Placement drive"}>
-          <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px] bg-[var(--lms-primary)]" />
+          <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[4px] bg-[var(--lms-primary)]" />
           <div className="divide-y divide-border/60">
           {roles.map((item,index) => {
         const firstRole=index===0;

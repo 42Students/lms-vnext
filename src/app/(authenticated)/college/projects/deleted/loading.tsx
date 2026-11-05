@@ -14,7 +14,7 @@ export default function DeletedWorkspacesLoading(){
    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Deleted workspaces</Heading>
    <p className="text-sm text-muted-foreground">Loading deleted workspaces…</p>
    <div className="min-w-0 overflow-x-auto">
-    <Table className="min-w-[630px]">
+    <Table className="min-w-[632px]">
      <caption className="sr-only">Loading the deleted workspaces table</caption>
      <thead><tr className="border-b border-border"><th className="py-3">Workspace</th><th>Mentor</th><th>Action</th></tr></thead>
      <tbody>{Array.from({length:6},(_,index)=><tr key={index} className="border-b border-border">

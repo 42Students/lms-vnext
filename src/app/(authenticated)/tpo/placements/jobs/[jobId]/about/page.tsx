@@ -53,7 +53,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    </div>
   </section>
   <details className="group border-b border-border pb-6">
-   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Why learners were excluded <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
+   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-ring [&::-webkit-details-marker]:hidden">Why learners were excluded <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
    <p className="mt-2 text-sm text-body">Up to 100 excluded registered learners shown; eligibility details may change as academic records are verified.</p>
    <ul className="mt-3 divide-y divide-border text-sm">{data.excluded.map((row,i)=>
     <li key={row.name+":"+i} className="py-3">
@@ -63,7 +63,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    {!data.excluded.length?<EmptyState title="No excluded registered learner details were found."/>:null}
   </details>
   <details className="group border-b border-border pb-6">
-   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Eligibility rules <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
+   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-ring [&::-webkit-details-marker]:hidden">Eligibility rules <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
    <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
     {rules.map(([label,value])=><div key={label} className="min-w-0 border-b border-border pb-3 text-sm">
      <dt className="text-body">{label}</dt><dd className="break-words font-semibold">{value===null?"Not restricted":value}</dd></div>)}
@@ -119,7 +119,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   {["CLOSED","CANCELLED"].includes(data.job.status)?<section className="border-b border-border pb-6">
    <Heading level={2}>Closed drive summary</Heading>
    <p className="mt-2 text-sm">{data.closeSummary.applications} recorded applications · {data.closeSummary.offers} offer versions.</p>
-   <Link className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px]" href={root+"/closeout"}>See the close-out report</Link>
+   <Link className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-ring" href={root+"/closeout"}>See the close-out report</Link>
   </section>:null}
   <section id="activity" aria-label="Drive activity" className="scroll-mt-24 border-b border-border pb-6">
    <Heading level={2}>Recent activity · last {data.feed.length} (maximum 100)</Heading>

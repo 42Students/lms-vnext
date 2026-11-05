@@ -26,7 +26,7 @@
 }
 .command { display:grid; grid-template-columns:auto minmax(220px,380px) 1fr; align-items:center; gap:12px; min-width:0; flex:1 1 auto; max-width:none; }
 .commandNoNew { grid-template-columns:minmax(220px,380px) 1fr; }
-.search { position: relative; min-width: 0; width:291px; max-width:100%; }
+.search { position: relative; min-width: 0; width:292px; max-width:100%; }
 .searchBox { display:flex; align-items:center; gap:8px; box-sizing:border-box; height:36px; width:100%; padding:0 12px; border:1px solid var(--lms-header-border); border-radius:var(--lms-control-radius); background:var(--topbar-search-bg); color:var(--topbar-muted); }
 .searchInput { min-width:0; width:100%; flex:1; padding:0; background:transparent; border:0; outline:none; font-family:inherit; font-size:12px; font-weight:400; line-height:1.4; color:var(--lms-heading); }
 .searchInput::placeholder { color:var(--topbar-placeholder); opacity:1; }
@@ -37,7 +37,7 @@
 .suggestion:hover { background:color-mix(in srgb, var(--lms-black) 4%, transparent); color:var(--topbar-ink); }
 .suggestion:active { background:color-mix(in srgb, var(--lms-black) 6%, transparent); }
 .suggestion:focus-visible { outline:2px solid var(--lms-primary-text); outline-offset:3px; background:var(--lms-neutral-50); color:var(--topbar-ink); }
-.new { display:inline-flex; height:36px; min-height:36px; width:82px; align-items:center; justify-content:center; gap:4px; flex:none; border-radius:var(--lms-control-radius); background:var(--lms-button-primary); color:var(--lms-white); font-family:inherit; font-size:14px; font-weight:600; line-height:1; white-space:nowrap; }
+.new { display:inline-flex; height:36px; min-height:36px; width:84px; align-items:center; justify-content:center; gap:4px; flex:none; border-radius:var(--lms-control-radius); background:var(--lms-button-primary); color:var(--lms-white); font-family:inherit; font-size:14px; font-weight:600; line-height:1; white-space:nowrap; }
 .new:hover { background:var(--lms-button-primary-hover); color:var(--lms-white); }
 .actions { display:flex; align-items:center; gap:8px; flex:none; }
 .iconButton { position:relative; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; width:36px; height:36px; min-width:36px; min-height:36px; border:1px solid var(--lms-header-border); border-radius:var(--lms-control-radius); background:var(--lms-white); color:var(--topbar-ink); }
@@ -45,10 +45,10 @@
 .badge { position:absolute; top:-6px; right:-6px; display:flex; justify-content:center; align-items:center; min-width:16px; height:16px; padding:0 4px; border-radius:999px; border:2px solid var(--lms-white); background:var(--topbar-unread); color:var(--lms-white); font-family:inherit; font-size:12px; font-weight:700; line-height:1; pointer-events:none; }
 .accountArea { display:flex; align-items:center; justify-content:flex-end; gap:12px; min-width:0; flex:none; }
 .orgName { max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--topbar-ink); font-family:inherit; font-size:12px; font-weight:600; line-height:1.4; }
-.avatar { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; flex:none; border:0; border-radius:50%; background:transparent; padding:2px; color:var(--lms-button-primary); font-family:inherit; font-size:13px; font-weight:700; line-height:1; }
-.avatarInner { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; flex:none; border:1px solid var(--topbar-avatar-border); border-radius:50%; background:var(--topbar-avatar-bg); }
+.avatar { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; flex:none; border:0; border-radius:50%; background:transparent; padding:2px; color:var(--lms-button-primary); font-family:inherit; font-size:13px; font-weight:700; line-height:1; }
+.avatarInner { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; flex:none; border:1px solid var(--topbar-avatar-border); border-radius:50%; background:var(--topbar-avatar-bg); }
 .avatar:hover .avatarInner { background:var(--topbar-avatar-hover); }
-.menu { position:absolute; top:calc(100% + 9px); right:0; z-index:var(--lms-z-popover); box-sizing:border-box; width:min(280px,calc(100vw - 24px)); min-height:150px; border:1px solid var(--lms-header-border); border-radius:6px; padding:16px 24px; background:var(--lms-white); box-shadow:var(--lms-elevation-3); }
+.menu { position:absolute; top:calc(100% + 9px); right:0; z-index:var(--lms-z-popover); box-sizing:border-box; width:min(280px,calc(100vw - 24px)); min-height:152px; border:1px solid var(--lms-header-border); border-radius:6px; padding:16px 24px; background:var(--lms-white); box-shadow:var(--lms-elevation-3); }
 .menuItem { display:flex; align-items:center; width:100%; min-height:44px; padding:8px 12px; border-radius:6px; color:var(--topbar-ink); font-family:inherit; font-size:13px; font-weight:600; line-height:1.4; text-align:left; }
 .menuItem:hover { background:var(--lms-primary-subtle); color:var(--lms-button-primary); }
 .menuItem:focus-visible { outline:2px solid var(--lms-primary-text); outline-offset:3px; background:var(--lms-primary-subtle); color:var(--lms-button-primary); }
@@ -68,17 +68,17 @@
   .orgName { max-width:180px; }
 }
 @media (max-width:767px) {
-  .bar { min-height:58px; height:auto; gap:8px; padding:max(7px,env(safe-area-inset-top,0px)) 10px 7px; }
+  .bar { min-height:60px; height:auto; gap:8px; padding:max(7px,env(safe-area-inset-top,0px)) 10px 7px; }
   .command { display:flex; align-items:center; width:auto; min-width:0; gap:8px; flex:1 1 0; }
   .commandNoNew { display:flex; }
   .search { width:36px; }
   .searchBox { width:36px; padding:0; justify-content:center; }
   .searchInput { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
   .searchHint { display:none; }
-  .searchOpen .search { position:absolute; left:10px; right:10px; top:8px; width:auto; z-index:var(--lms-z-overlay); }
+  .searchOpen .search { position:absolute; left:12px; right:12px; top:8px; width:auto; z-index:var(--lms-z-overlay); }
   .searchOpen .searchBox { width:100%; padding:0 12px; }
   .searchOpen .searchInput { position:static; width:auto; height:auto; opacity:1; pointer-events:auto; }
-  .new { width:38px; gap:0; }
+  .new { width:40px; gap:0; }
   .newLabel { display:none; }
   .actions { gap:6px; margin-left:auto; }
   .orgName { display:none; }
@@ -119,7 +119,7 @@
 .accountSubheading { margin:4px 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--topbar-placeholder); font-size:12px; }
 .accountSectionHeading { margin:0; padding:0 8px 8px; color:var(--topbar-placeholder); font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; }
 @media (max-width:767px) {
-  .recruiterBell > div > section, .learnerBell > div > section { position:fixed; top:58px; right:0; left:0; width:100vw; min-width:0; max-width:100vw; max-height:calc(100dvh - 58px); border-radius:0 0 12px 12px; }
+  .recruiterBell > div > section, .learnerBell > div > section { position:fixed; top:60px; right:0; left:0; width:100vw; min-width:0; max-width:100vw; max-height:calc(100dvh - 58px); border-radius:0 0 12px 12px; }
   .iconButton { min-width:36px; min-height:36px; }
 }
 
@@ -356,13 +356,13 @@
 .orgSwitcher { position:relative; min-width:0; flex:none; }
 .orgTrigger {
   display:inline-flex; align-items:center; justify-content:space-between; gap:8px;
-  min-height:38px; max-width:260px; border:1px solid var(--lms-header-border);
+  min-height:40px; max-width:260px; border:1px solid var(--lms-header-border);
   border-radius:8px; padding:0 8px; background:var(--lms-white);
   box-shadow:none; color:var(--lms-topbar-ink); cursor:pointer;
 }
 
 .orgTrigger .orgName {
-  display:block; min-width:0; max-width:234px;
+  display:block; min-width:0; max-width:236px;
   color:var(--lms-topbar-ink); font-size:12px; font-weight:600;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
@@ -385,8 +385,8 @@
 }
 
 @media (min-width:768px) and (max-width: 1279px) {
-  .orgSwitcher { min-width:170px; max-width:190px; }
-  .orgTrigger { max-width:190px; width:100%; }
+  .orgSwitcher { min-width:172px; max-width:192px; }
+  .orgTrigger { max-width:192px; width:100%; }
   .orgTrigger .orgName { max-width:160px; }
 }
 
@@ -397,7 +397,7 @@
 
 .orgPopover :global(#admin-scope-switcher),
 .orgPopover :global(#membership-switcher) {
-  min-height:38px;
+  min-height:40px;
   border-radius:8px;
   border-color:var(--lms-header-border);
   box-shadow:none;

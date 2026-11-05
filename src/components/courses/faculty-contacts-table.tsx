@@ -37,7 +37,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
           <div className="flex min-w-0 items-start gap-3">{avatar(item,name)}<div className="min-w-0 flex-1">
           <Heading level={2} size="sm" className="text-foreground">
             {href?<Link href={href}
-              className="inline-flex min-h-11 max-w-full items-center break-words text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{name}</Link>:name}
+              className="inline-flex min-h-11 max-w-full items-center break-words text-primary-text hover:underline focus-ring">{name}</Link>:name}
           </Heading>
           <p className="mt-1 text-sm leading-5 text-body">Email: Private</p>
           <p className="mt-1 text-sm leading-5 text-body">Contact: Private</p>
@@ -58,7 +58,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
         const href=contactHref(item.membershipId);
         return <tr key={item.membershipId}>
           <td className="min-w-40 font-semibold">
-            <div className="flex min-w-0 items-center gap-2">{avatar(item,name)}<div className="min-w-0">{href?<Link href={href} className="inline-flex min-h-9 items-center break-words text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{name}</Link>:name}
+            <div className="flex min-w-0 items-center gap-2">{avatar(item,name)}<div className="min-w-0">{href?<Link href={href} className="inline-flex min-h-9 items-center break-words text-primary-text hover:underline focus-ring">{name}</Link>:name}
               <span className="block text-xs font-normal text-muted-foreground">Department: {item.departmentName??"Not recorded"}</span>
             </div></div>
           </td>

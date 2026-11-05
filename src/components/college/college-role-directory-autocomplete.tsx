@@ -118,7 +118,7 @@ export function CollegeRoleDirectoryAutocomplete({
       </p>
       {(choices.length?choices:showingLive?[]:(popularResults.length?popularResults:popular).slice(0,6)).map(row=>
         <Button variant="bare" type="button" role="option" aria-selected={query===row.name}
-          key={row.membershipId} className="block min-h-9 w-full truncate rounded px-2 text-left text-sm text-body hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]"
+          key={row.membershipId} className="block min-h-9 w-full truncate rounded px-2 text-left text-sm text-body hover:bg-[var(--lms-primary-subtle)] focus-ring"
           onMouseDown={event=>event.preventDefault()} onClick={()=>void choose(row)}>
           {row.name}</Button>)}
       {!choices.length&&showingLive&&!loading?

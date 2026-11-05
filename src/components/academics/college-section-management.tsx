@@ -154,7 +154,7 @@ export function CollegeClassCreate({ cohorts, periods,
         {!cohorts.length
           ? <>No planned or active batches in this college. <Link href="/college/academics" className="font-semibold underline">Set up programs and batches</Link> first.</>
           : <>No usable academic periods in this college. Create a period first.{" "}
-            <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
+            <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
       : <form ref={formRef} noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)]">
@@ -404,7 +404,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
         onClick={()=>router.refresh()}>Reload list</Button>
     </div> : null}
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
-      title={'Edit class “'+row.name+'”'} className="max-w-[550px]" dismissible={false}>
+      title={'Edit class “'+row.name+'”'} className="max-w-[552px]" dismissible={false}>
       <form ref={editFormRef} noValidate onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2">

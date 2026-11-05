@@ -154,7 +154,7 @@ export default async function LearnerCourseTabPage({
       <PageHeader title="Not assigned to a class" />
       <Banner tone="warning" role="alert">
         <div className="flex items-start gap-3">
-          <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24"
+          <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
             strokeLinejoin="round" className="mt-0.5 shrink-0">
             <path d="M12 6c-3-2-6-2.5-9-2v15c3-.5 6 0 9 2m0-15c3-2 6-2.5 9-2v15c-3-.5-6 0-9 2m0-15v15"/>
@@ -296,7 +296,7 @@ export default async function LearnerCourseTabPage({
           </h1>
           <Link
             href="/learn/courses"
-            className="inline-flex shrink-0 min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:bg-[var(--lms-canvas-muted)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex shrink-0 min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:bg-[var(--lms-canvas-muted)] focus-ring"
           >
             {LEARNER_BACK_TO_COURSES}
           </Link>

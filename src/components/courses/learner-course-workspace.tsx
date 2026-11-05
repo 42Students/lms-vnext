@@ -69,7 +69,7 @@ function LearnerSyllabusItem({
  const completed=props.progress==="COMPLETED";
  return <section aria-label={title}
    className={"min-w-0 scroll-mt-28 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 "+
-    (props.highlighted?"ring-2 ring-[var(--lms-focus-ring)]":"")}>
+    (props.highlighted?"focus-outline":"")}>
   <div className="flex min-w-0 items-start gap-3">
    <span title={completed?"Completed":props.locked?"Content locked":"Not completed"}
     aria-label={completed?"Completed":props.locked?"Content locked":"Not completed"}
@@ -902,7 +902,7 @@ export function LearnerCourseWorkspace({
         {filters.map(item=><Link key={item.key} role="button"
           aria-pressed={activeFilter===item.key}
           href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${encodeURIComponent(item.key)}`}
-          className={"inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 "+
+          className={"inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus-ring md:min-h-9 "+
             (activeFilter===item.key
               ?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]"
               :"border-border bg-surface text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]")}>
@@ -919,7 +919,7 @@ export function LearnerCourseWorkspace({
                 <li key={lesson.id}>
                   <Link
                     href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${activeFilter}&lesson=${encodeURIComponent(lesson.id)}#lesson-${encodeURIComponent(lesson.id)}`}
-                    className="flex min-h-11 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                    className="flex min-h-11 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
                     <span className="min-w-0 break-words">{index+1}. {lesson.name}</span>
                     <span className="shrink-0 text-xs text-muted-foreground">{lesson.count} items</span>
                   </Link>
@@ -1066,13 +1066,13 @@ export function LearnerCourseWorkspace({
                 {focusLessonId===lesson.id?<nav aria-label="Lesson navigation"
                    className="mb-4 flex flex-wrap items-center gap-3 text-sm">
                   <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Learning Path</Link>
+                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Back to Learning Path</Link>
                   {workspace.lessons[lessonIndex-1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
                     "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex-1]!.id)}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous lesson</Link>:null}
+                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Previous lesson</Link>:null}
                   {workspace.lessons[lessonIndex+1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
                     "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex+1]!.id)}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next lesson</Link>:null}
+                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Next lesson</Link>:null}
                   <span>{lessonCompletion.stateKnown
                     ?lessonCompletion.completed+" of "+lessonCompletion.total+" complete"
                     :"Completion unavailable"}</span>

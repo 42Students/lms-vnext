@@ -4,7 +4,7 @@ const source=readFileSync(new URL("../../src/app/(authenticated)/tpo/notificatio
 describe("UX-tpo-notifications-01 /tpo/notifications",()=>{
   it("preserves legacy UI and signed-off phone and contrast contracts",()=>{
     expect(source).toContain("text-primary-text");
-    expect(source).toContain("focus-visible:outline-2");
+    expect(source).toContain("focus-ring");
     expect(source).not.toContain("text-on-primary");
     // 44px on touch screens; legacy 36px controls are allowed only above
     // the tablet breakpoint and must not reduce the phone hit target.

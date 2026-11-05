@@ -235,7 +235,7 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
      <Link href={party==="TPO"
        ?"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion?requestId="+encodeURIComponent(item.id)
        :"/recruiter/drives/"+encodeURIComponent(jobId)+"/messages?requestId="+encodeURIComponent(item.id)}
-       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2">
+       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-ring">
        Discuss in drive conversation
      </Link>
      <Disclosure title={"Discussion ("+item.messages.length+")"} defaultOpen={item.status==="OPEN"&&item.targetParty===party} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">

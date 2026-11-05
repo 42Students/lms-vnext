@@ -176,7 +176,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
             className="font-semibold text-[var(--lms-link-text)] underline">Go to Programs</Link>
         </> : <>
           Create a usable academic period before adding batches.{" "}
-          <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
+          <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Set up academic periods</Link>
         </>}
       </p>
       : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] lg:grid-cols-2">
@@ -402,7 +402,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       >
       <span aria-hidden="true">✎</span> Edit
     </Button>
-    <Link href={studentsHref} aria-label={"Manage students in " + row.name} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    <Link href={studentsHref} aria-label={"Manage students in " + row.name} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] focus-ring md:min-h-9">
       <span aria-hidden="true">♙</span> Students
     </Link>
     <Button variant="secondary" type="button" disabled={pending || row.status !== "PLANNED" ||

@@ -21,7 +21,7 @@ export default async function CollegeElectiveSlotDetail({params}:{
   const {slotId} = await params;
   if (!z.string().uuid().safeParse(slotId).success) notFound();
   const member = await resolveActingCollege(context, "academics.read");
-  const back = <Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to electives</Link>;
+  const back = <Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Back to electives</Link>;
   let slot: {
     id: string; name: string; description: string | null; version: number;
     credits: number; minPick: number; maxPick: number; status: string;

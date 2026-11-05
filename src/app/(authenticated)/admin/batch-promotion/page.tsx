@@ -29,7 +29,7 @@ export default async function SuperAdminBatchPromotionPage({
   if (!input.success) return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion" />
     <ErrorState title="Invalid batch promotion filters" description="Use consecutive years, e.g. 2026-27. Check the selected program and batch."
-      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-5">
@@ -189,7 +189,7 @@ export default async function SuperAdminBatchPromotionPage({
     previewFailed ? <ErrorState title="Couldn't verify promotion" description="Promotion preview failed. No promotion can be confirmed until the batch is rechecked."
       action={<Link href={pageHref(1)} className="font-semibold text-primary-text underline">Retry preview</Link>}/> :
     invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
-      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Reset selection</Link>} /> :
+      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Reset selection</Link>} /> :
     !preview || !summary ? <EmptyState title="Choose a batch" description="No learner data is fetched until you select a college-owned batch." /> :
     <>
       <section className="min-w-0 space-y-3 border-b border-border pb-5">
@@ -245,6 +245,6 @@ export default async function SuperAdminBatchPromotionPage({
         </div> : <EmptyState title="No enrolled learners" description="No registered learner enrollments were present for this batch." />}
       </Disclosure>
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">← Academics</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">← Academics</Link>
   </div>;
 }

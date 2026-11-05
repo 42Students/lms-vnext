@@ -129,7 +129,7 @@ export async function TpoTeamMessagesDirectory({
     <ul className="max-h-[65vh] divide-y divide-border overflow-y-auto">
      {visible.map(item=><li key={item.id}>
       <Link href={href(item.id)} aria-current={pickedId===item.id?"page":undefined}
-       className={"flex min-h-16 gap-2 px-3 py-3 focus-visible:outline-2 focus-visible:outline-primary hover:bg-primary-subtle "+
+       className={"flex min-h-16 gap-2 px-3 py-3 focus-ring hover:bg-primary-subtle "+
         (pickedId===item.id?"bg-primary-subtle":"")}>
        <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface-secondary text-xs font-semibold">
         {item.kind==="COMPANY"?"C":item.kind==="DRIVE"?"D":item.kind==="TOPIC"?"#":"T"}

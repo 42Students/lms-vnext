@@ -247,7 +247,7 @@ export function LearnerAssessmentOverview({
   if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
     return <Alert tone="error" role="alert">
       Couldn&apos;t load your class, so quizzes can&apos;t be shown.
-      <Link href="/learn/allQuizzes" className="inline-flex min-h-11 w-fit items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry</Link>
+      <Link href="/learn/allQuizzes" className="inline-flex min-h-11 w-fit items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Retry</Link>
     </Alert>;
   }
   if (visibleItems.length === 0) {
@@ -289,7 +289,7 @@ export function LearnerAssessmentOverview({
             {submittedQuizzes.length>0 ? (
               <>
                 <ul role="region" aria-label="Submitted quizzes, scroll for more" tabIndex={0}
-                  className="mt-2 max-h-48 space-y-1 overflow-y-auto overscroll-contain pr-2 text-xs font-normal focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                  className="mt-2 max-h-48 space-y-1 overflow-y-auto overscroll-contain pr-2 text-xs font-normal focus-ring">
                   {submittedQuizzes.map(item=><li key={item.deliveryId+":"+item.id}>{item.title}</li>)}
                 </ul>
                 {submittedQuizzes.length>5?<p className="mt-1 text-xs font-normal text-muted-foreground">
@@ -436,7 +436,7 @@ export function LearnerAssessmentOverview({
               return <article key={item.deliveryId+":"+item.id}
                 className="flex min-w-0 flex-col gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-4 py-4 sm:flex-row sm:items-start">
                 <div aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--lms-radius-md)] border border-border bg-primary-subtle">
-                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M7 3h10l3 3v15H4V3h3m9 0v4h4M8 11h8M8 15h5"/><path d="M9 3v5"/>
                   </svg>
                 </div>
@@ -567,7 +567,7 @@ export function LearnerAssessmentOverview({
                     ) : (
                       <Link
                         href={href}
-                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[color-mix(in_srgb,var(--lms-primary)_35%,transparent)] md:w-auto"
+                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:focus-outline md:w-auto"
                       >
                         {state.action}
                       </Link>
@@ -575,7 +575,7 @@ export function LearnerAssessmentOverview({
                     {item.kind === "QUIZ" ? (
                       <Link
                         href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto"
+                        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 md:w-auto"
                       >
                         Attempt history
                       </Link>
@@ -603,12 +603,12 @@ export function LearnerAssessmentOverview({
             <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Link
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto text-sm"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-ring md:min-h-9 md:w-auto text-sm"
             >
               Open in Learning Path
             </Link>
             <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto text-sm">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9 md:w-auto text-sm">
               Full assignment details
             </Link>
             </div>

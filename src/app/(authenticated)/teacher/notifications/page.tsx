@@ -181,7 +181,7 @@ export default async function FacultyNotificationsPage({
       {invalid?<Alert tone="error">
         The notification filters or page link are invalid.
         <Link href={FACULTY_INBOX+"?view="+view}
-          className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View all notifications</Link>
+          className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">View all notifications</Link>
       </Alert>:null}
       <section aria-labelledby="faculty-feed-heading" className="min-w-0 space-y-4">
         <Heading level={2} size="lg" id="faculty-feed-heading" className="text-[var(--lms-heading)]">
@@ -196,16 +196,16 @@ export default async function FacultyNotificationsPage({
           emptyText={onOlderPage?"No older notifications on this page":allEmpty?"No notifications yet":view==="unread"?"No unread notifications yet":
             "No "+(scopeTab==="all"?"new":scopeTab)+" notifications yet"}
           emptyAction={feed.length===0&&!allEmpty?<Link href={FACULTY_INBOX+"?view=all"}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
             View all
           </Link>:null}/> : null}
         {nextHref ? <div className="flex justify-start">
-          <Link href={nextHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <Link href={nextHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-ring">
             Older notifications
           </Link>
         </div>:null}
         {nextNoticeHref ? <div className="flex justify-start">
-          <Link href={nextNoticeHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <Link href={nextNoticeHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-ring">
             Older announcements
           </Link>
         </div> : null}

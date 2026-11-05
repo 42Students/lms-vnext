@@ -46,7 +46,7 @@ export default async function TpoPerformanceIntelligencePage({
           description="The selected reporting filters were invalid." />
         <Alert tone="error">
           No reports were loaded. <Link href="/tpo/reports/intelligence"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9">Clear filters</Link>
         </Alert>
       </div>
     );

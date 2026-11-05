@@ -54,7 +54,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
  if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
   <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-   {([["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]] as const).map(([label,href])=><li key={href} className="p-4"><Link href={href} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{label}</Link></li>)}
+   {([["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]] as const).map(([label,href])=><li key={href} className="p-4"><Link href={href} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring md:min-h-9">{label}</Link></li>)}
   </ul>
  </div>;
  const moduleAccess=await resolveOptionalModuleAccess(ctx);
@@ -246,7 +246,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
    <p className="text-sm text-muted-foreground">{next.text}</p>
-   <Link href={next.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-semibold text-[var(--lms-on-primary)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto motion-reduce:transition-none">{next.action}</Link>
+   <Link href={next.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-semibold text-[var(--lms-on-primary)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9 md:w-auto motion-reduce:transition-none">{next.action}</Link>
   </div>:<div className="mt-3 space-y-1">
    <p className="font-semibold text-[var(--lms-heading)]">Nothing is waiting on you.</p>
    <p className="text-sm leading-6 text-muted-foreground">New requests, results and replies show up here first.</p>
@@ -255,7 +255,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
  <section className="min-w-0 space-y-2" aria-label="Your placement work">
   <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">{rows.map(row=><li key={row.key}>
     <Link href={row.href} data-testid={"home.row."+row.key}
-     className="flex min-h-[66px] min-w-0 items-center gap-3 px-4 py-3 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+     className="flex min-h-[68px] min-w-0 items-center gap-3 px-4 py-3 text-body hover:bg-primary-subtle focus-ring">
      <span className="flex h-9 w-9 shrink-0 items-center justify-center" aria-hidden="true"><TpoHomeRowIcon kind={row.key}/></span>
      <span className="min-w-0 flex-1"><strong className="block break-words text-sm text-foreground">{row.title}</strong>
       <span className="mt-1 block break-words text-xs text-muted-foreground">{row.status}</span></span>
@@ -279,7 +279,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
     {label:rows[5]?.title ?? "Team",value:teamThreads?.status==="READY"?
       teamThreads.items.reduce((total,item)=>total+item.unreadCount,0):"—",detail:rows[5]?.status,href:rows[5]?.href},
   ].map((tile,index)=><Link key={tile.label} href={tile.href??"/tpo/home"}
-    className={"lms-inline-link flex min-w-0 flex-col gap-1 p-3 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary-text)] sm:p-4 " +
+    className={"lms-inline-link flex min-w-0 flex-col gap-1 p-3 text-body hover:bg-primary-subtle focus-ring-inset sm:p-4 " +
       (index<2?"border-b border-border lg:border-b-0 ":"")+
       (index%2===0?"border-r border-border ":"")+
       (index<3?"lg:border-r ":"lg:border-r-0 ")}>

@@ -77,7 +77,7 @@ export async function CollegeDriveAttentionBanner({jobId,attention}:{
           <span className="rounded-full bg-[color:var(--lms-gold-subtle)] px-2 py-0.5 text-xs">{flag.count}</span>
         </div>
         {rows.length>0?<ul className="mt-1 space-y-1 pl-2">{rows.map(row=><li key={row.id}>
-          <Link className="inline-flex min-h-11 items-center text-sm underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-warning-strong)] md:min-h-9"
+          <Link className="inline-flex min-h-11 items-center text-sm underline underline-offset-2 focus-ring md:min-h-9"
             href={base+"/applications?stage="+stage+"&applicationId="+encodeURIComponent(row.id)}>
             {row.name||"Applicant"} — Review application →
           </Link>
@@ -104,14 +104,14 @@ export async function CollegeDrivePipelineOverview({jobId,data}:{
       ["Settings",base+"/settings"],
     ] as const).map(([label,href])=><Link key={href} href={href} role="tab"
       aria-selected={label==="Overview"} tabIndex={label==="Overview"?0:-1}
-      className={"inline-flex min-h-11 items-center border-b-2 px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
+      className={"inline-flex min-h-11 items-center border-b-2 px-2 text-sm font-semibold focus-ring "+
        (label==="Overview"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
       {label}
     </Link>)}
   </nav>
 
   <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-border pb-3" aria-label="Additional drive actions">
-    <Link href={base+"/shortlisted"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    <Link href={base+"/shortlisted"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">
       View Shortlisted →
     </Link>
   </div>

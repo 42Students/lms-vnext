@@ -75,7 +75,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
       <ErrorState title="Failed to load template"
         description="This template could not be loaded. Check your active scope and retry; no version or college assignment details are shown."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(id.data)}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Retry template details</Link>}/>
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry template details</Link>}/>
     </div>;
   }
 
@@ -111,7 +111,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
             {detail.template.status==="PUBLISHED"&&context.adminScope?.collegeId&&
              detail.assignments.some(a=>a.collegeId===context.adminScope?.collegeId)?
              <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-primary">
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)] focus-ring">
               Use this template</Link>:
              <span role="status" className="text-xs text-muted-foreground">
               {context.adminScope?.collegeId?"Assign a published template to this college to create workspaces.":"Choose a college to use this template."}

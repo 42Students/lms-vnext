@@ -186,7 +186,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
         buttons?.[next]?.focus();
        }
       }}
-      className={"min-w-0 rounded-xl px-[16px] py-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-button-primary)] "+
+      className={"min-w-0 rounded-xl px-[16px] py-3 text-left transition-colors focus-ring "+
         (selected?"border-2 border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border border-[color:var(--lms-neutral-300)] bg-surface hover:bg-[color:var(--lms-primary-subtle)]")}>
       <span className="flex min-w-0 items-center justify-between gap-2">
        <span className="text-sm font-semibold text-[color:var(--lms-heading)]">{choice.label}</span>

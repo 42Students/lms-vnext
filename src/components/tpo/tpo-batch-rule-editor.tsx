@@ -92,7 +92,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
      aria-label={label} value={draft[key]??college[key]}
      onChange={event=>setRule(key,Number(event.target.value))}
      />
-    {draft[key]!==undefined?<Button variant="ghost" className="lms-inline-link min-h-11 w-full min-w-0 justify-center px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto" type="button" disabled={busy||readOnly}
+    {draft[key]!==undefined?<Button variant="ghost" className="lms-inline-link min-h-11 w-full min-w-0 justify-center px-3 text-link underline focus-ring md:min-h-9 md:w-auto" type="button" disabled={busy||readOnly}
      onClick={()=>setRule(key,college[key])}
      >Use the college&apos;s</Button>:null}
    </div>
@@ -115,7 +115,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
      <option value="OFFER_RELEASED">the offer is released</option>
      <option value="OFFER_ACCEPTED">the offer is accepted</option>
     </Select>
-    {draft.countsAsPlacedAt!==undefined?<Button variant="ghost" className="lms-inline-link min-h-11 w-full min-w-0 justify-center px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto" type="button" disabled={busy||readOnly}
+    {draft.countsAsPlacedAt!==undefined?<Button variant="ghost" className="lms-inline-link min-h-11 w-full min-w-0 justify-center px-3 text-link underline focus-ring md:min-h-9 md:w-auto" type="button" disabled={busy||readOnly}
      onClick={()=>setRule("countsAsPlacedAt",college.countsAsPlacedAt)}
      >Use the college&apos;s</Button>:null}
    </div>

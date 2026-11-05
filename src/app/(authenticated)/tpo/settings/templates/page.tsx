@@ -23,6 +23,6 @@ export default async function TpoCommunicationTemplatesPage() {
       <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Draft text<Textarea readOnly value={item.body} rows={5} className="mt-[6px] w-full resize-y"/></label>
       <p className="hidden whitespace-pre-wrap break-words text-sm print:block leading-[22px]">{item.body}</p>
     </section>)}</div>
-    <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline sm:w-auto sm:justify-start focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Review batches and their actual deadlines</Link>
+    <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline sm:w-auto sm:justify-start focus-ring md:min-h-9 print:hidden">Review batches and their actual deadlines</Link>
   </div>;
 }

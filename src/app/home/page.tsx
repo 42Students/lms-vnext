@@ -86,8 +86,8 @@ export default function HomeMarketingPage() {
     <section aria-labelledby="home-personalization" className="relative left-1/2 w-screen -translate-x-1/2 bg-[color:var(--lms-neutral-50)] px-5 py-16 md:py-24">
       <div className="mx-auto max-w-[1180px] text-center">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">Every individual is different</p>
-        <Heading level={2} id="home-personalization" className="mx-auto mt-5 max-w-[850px] text-[clamp(1.9rem,4vw,3.25rem)] leading-[1.25] tracking-tight text-[var(--lms-heading)]">Why should learning be the same?</Heading>
-        <p className="mx-auto mt-6 max-w-[750px] text-base leading-7 text-[var(--lms-body-text)]">
+        <Heading level={2} id="home-personalization" className="mx-auto mt-5 max-w-[852px] text-3xl md:text-5xl leading-[1.25] tracking-tight text-[var(--lms-heading)]">Why should learning be the same?</Heading>
+        <p className="mx-auto mt-6 max-w-[752px] text-base leading-7 text-[var(--lms-body-text)]">
           Students learn, practice and demonstrate their skills in different ways. 42 LMS
           keeps their courses, project work, mentor feedback and career preparation
           connected so everyone can follow a clear path forward.
@@ -102,7 +102,7 @@ export default function HomeMarketingPage() {
     <section aria-labelledby="home-integrations" className="relative left-1/2 w-screen -translate-x-1/2 bg-[color:var(--lms-primary-subtle)] px-5 py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] space-y-6">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">Connected workflows</p>
-        <Heading level={2} id="home-integrations" className="max-w-[800px] text-[clamp(1.6rem,3vw,2.25rem)] leading-tight text-[var(--lms-heading)]">The signals that matter, in one place</Heading>
+        <Heading level={2} id="home-integrations" className="max-w-[800px] text-2xl md:text-3xl leading-tight text-[var(--lms-heading)]">The signals that matter, in one place</Heading>
         <p className="max-w-[780px] text-base leading-7 text-[var(--lms-body-text)]">A shared view of student learning, projects and hiring coordination, grounded in real LMS workflows.</p>
         <ul className="flex flex-wrap gap-3" aria-label="Connected platform workflows">
           {workflowSignals.map(label => <li key={label} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--lms-border)] bg-surface px-4 py-2 text-sm font-semibold text-[var(--lms-heading)] shadow-(--lms-elevation-2)">
@@ -117,7 +117,7 @@ export default function HomeMarketingPage() {
       <div className="mx-auto max-w-[1180px] space-y-9">
         <div className="space-y-3 text-center">
           <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">Who it&apos;s for</p>
-          <Heading level={2} id="home-audiences" className="text-[clamp(1.7rem,3vw,2.4rem)] text-[var(--lms-heading)]">One platform. Two outcomes.</Heading>
+          <Heading level={2} id="home-audiences" className="text-2xl md:text-3xl text-[var(--lms-heading)]">One platform. Two outcomes.</Heading>
           <p className="text-[var(--lms-body-text)]">Connect the people developing talent with the people hiring it.</p>
         </div>
         <div className="grid gap-5 md:grid-cols-2">
@@ -136,7 +136,7 @@ export default function HomeMarketingPage() {
               {audience.outcomes.map(outcome => <li key={outcome} className={"rounded-full px-3 py-1.5 text-xs font-semibold " +
                 (index === 1 ? "bg-[color:color-mix(in_srgb,var(--lms-white)_15%,transparent)] text-[color:var(--lms-on-primary)]" : "bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary-hover)]")}>{outcome}</li>)}
             </ul>
-            <Link href={audience.href} className={"mt-7 inline-flex min-h-11 self-start items-center justify-center rounded-full px-5 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 " +
+            <Link href={audience.href} className={"mt-7 inline-flex min-h-11 self-start items-center justify-center rounded-full px-5 font-semibold focus-ring " +
               (index === 1 ? "bg-surface text-[color:var(--lms-brand-dark)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-[color:var(--lms-white)]" : "border border-[color:var(--lms-button-primary)] text-[color:var(--lms-button-primary)] hover:bg-[color:var(--lms-primary-subtle)]")}>
               For {audience.title}<span aria-hidden="true" className="ml-2">↗</span>
             </Link>
@@ -152,7 +152,7 @@ export default function HomeMarketingPage() {
     <section aria-labelledby="home-journey-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-surface px-5 py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] space-y-8">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">Continuous talent development</p>
-        <Heading level={2} id="home-journey-heading" className="text-[clamp(1.6rem,3vw,2.25rem)] text-[var(--lms-heading)]">Learn. Build. Demonstrate. Get hired.</Heading>
+        <Heading level={2} id="home-journey-heading" className="text-2xl md:text-3xl text-[var(--lms-heading)]">Learn. Build. Demonstrate. Get hired.</Heading>
         <p className="max-w-[760px] leading-7 text-[var(--lms-body-text)]">Follow the learner journey from academic work and project experience through to recruitment.</p>
         <ol className="flex flex-wrap items-center gap-3 rounded-[18px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] p-5">
           {["Learn", "Build", "Demonstrate", "Get hired"].map((step,index) => <li key={step} className="inline-flex min-h-11 items-center gap-3">

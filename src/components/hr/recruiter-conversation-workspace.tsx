@@ -77,7 +77,7 @@ export function RecruiterConversationWorkspace({
       {rows.map(row=><li key={row.id}><Link
        href={base+"&thread="+encodeURIComponent(row.id)+(q?"&q="+encodeURIComponent(q):"")}
        aria-current={row.id===selected?.id?"page":undefined}
-       className={"flex min-h-16 items-start gap-2 border-l-2 px-3 py-3 hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-[-2px] "+
+       className={"flex min-h-16 items-start gap-2 border-l-2 px-3 py-3 hover:bg-surface-secondary focus-ring-inset "+
         (row.id===selected?.id?"border-primary bg-primary-subtle":"border-transparent")}>
        <span className="min-w-0 flex-1">
         <strong className="block truncate text-sm text-foreground">{row.jobId?row.jobTitle:"General"}</strong>

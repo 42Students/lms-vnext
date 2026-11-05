@@ -44,21 +44,21 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
         description="Schedule recruiter follow-ups and log completed outcomes using registered CRM data."
         actions={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
           {data ? <ButtonLink variant="secondary" href={tpoFollowupQueueExportHref({scope,window,q})}>Export filtered follow-ups CSV</ButtonLink> : null}
-          <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Back to recruiter leads</Link>
+          <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-link underline focus-ring">← Back to recruiter leads</Link>
         </div>}
       />
       <div className="grid min-w-0 gap-3 md:grid-cols-2 md:items-start">
       <nav aria-label="Follow-up ownership" className="flex min-w-0 flex-wrap gap-2">
         {FOLLOWUP_SCOPES.map(view=><Link key={view} href={tpoFollowupQueueHref({scope:view,window,q})}
           aria-current={view===scope?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] focus-ring">
           {view==="MINE"?"My Work":"Placement Team"}
         </Link>)}
       </nav>
       <nav aria-label="Follow-up date window" className="flex min-w-0 flex-wrap gap-2">
         {FOLLOWUP_WINDOWS.map(view=><Link key={view} href={tpoFollowupQueueHref({scope,window:view,q})}
           aria-current={view===window?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)] focus-ring">
           {view==="DUE"?"Due now":"Next 7 days"}
         </Link>)}
       </nav>

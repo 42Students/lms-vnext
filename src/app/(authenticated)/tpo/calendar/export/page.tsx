@@ -41,7 +41,7 @@ export default async function TpoCalendarExportPage({
   const params = parsed.success ? new URLSearchParams(parsed.data) : null;
   return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
-      description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." actions={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center justify-center font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← TPO calendar</Link>}/>
+      description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." actions={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center justify-center font-semibold text-link hover:underline focus-ring md:min-h-9">← TPO calendar</Link>}/>
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">From (IST)
         <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>

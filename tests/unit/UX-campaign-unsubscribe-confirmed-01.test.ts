@@ -12,7 +12,7 @@ describe("UX-campaign-unsubscribe-confirmed-01 final preference state",()=>{
   expect(page).toContain('<Card as="section"');
   expect(page).toContain('role="status"');
   expect(page).toContain('min-h-dvh');
-  expect(page).toContain("focus-visible:outline-2");
+  expect(page).toContain("focus-ring");
  });
  it("retains explicit loading and safe error states",()=>{
   expect(read("src/app/campaign-unsubscribe/confirmed/loading.tsx")).toContain("<GracefulPageLoading");

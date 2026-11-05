@@ -39,7 +39,7 @@ function ActionGlyph({name}:{name:string}){
     ? "controls" : value.includes("tenant")||value.includes("college")||value.includes("department")
     ? "building" : "list";
   return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-    width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.7"
+    width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.7"
     strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     {kind==="calendar" ? <>
       <rect x="3" y="5" width="18" height="16" rx="2"/>
@@ -61,7 +61,7 @@ function ActionGlyph({name}:{name:string}){
 }
 
 function ActionArrow(){
-  return <svg viewBox="0 0 24 24" width="17" height="17" fill="none"
+  return <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
     aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>;
 }
@@ -102,10 +102,10 @@ function ActionLink({
     {subtitle ? <span className="min-w-0 text-xs text-muted-foreground">{subtitle}</span> : null}
   </>;
   const classes=mode==="quick"
-    ? "flex min-h-24 min-w-0 items-center gap-3 rounded-[8px] border border-border bg-surface p-4 text-left transition-[border-color,transform,box-shadow] duration-[var(--lms-motion-fast)] hover:-translate-y-px hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-col sm:justify-center sm:p-6 sm:text-center"
+    ? "flex min-h-24 min-w-0 items-center gap-3 rounded-[8px] border border-border bg-surface p-4 text-left transition-[border-color,transform,box-shadow] duration-[var(--lms-motion-fast)] hover:-translate-y-px hover:border-primary hover:shadow-sm focus-ring sm:flex-col sm:justify-center sm:p-6 sm:text-center"
     : mode==="setup"
-    ? "flex min-h-20 min-w-0 items-center gap-3 rounded-[8px] border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-[var(--lms-motion-fast)] hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2"
-    : "flex min-h-28 min-w-0 items-center gap-4 rounded-[8px] border border-border bg-surface p-5 transition-[border-color,transform,box-shadow] duration-[var(--lms-motion-fast)] hover:-translate-y-px hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2";
+    ? "flex min-h-20 min-w-0 items-center gap-3 rounded-[8px] border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-[var(--lms-motion-fast)] hover:border-primary hover:shadow-sm focus-ring"
+    : "flex min-h-28 min-w-0 items-center gap-4 rounded-[8px] border border-border bg-surface p-5 transition-[border-color,transform,box-shadow] duration-[var(--lms-motion-fast)] hover:-translate-y-px hover:border-primary hover:shadow-sm focus-ring";
   if (!href) {
     return <div aria-disabled="true" className={classes+" cursor-not-allowed opacity-60"}>
       {content}
@@ -130,7 +130,7 @@ export function CollegeAdminDashboardActions() {
   return <div className="space-y-6">
     <CollegeAdminQuickActions/>
     <details className="min-w-0 space-y-4 border-t border-border pt-4">
-      <summary className="flex min-h-11 cursor-pointer items-center text-lg font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      <summary className="flex min-h-11 cursor-pointer items-center text-lg font-semibold text-foreground focus-ring">
         {COLLEGE_SETUP_GUIDE_COPY.collapseLabel}
       </summary>
       <section aria-label="Setup Guide" className="space-y-4 pt-4">
@@ -191,7 +191,7 @@ export function SuperAdminCollegeDashboardActions() {
       ))}
     </div>
     <details className="min-w-0 border-t border-border pt-3">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">
         Other college workspaces
       </summary>
       <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2 md:grid-cols-3">

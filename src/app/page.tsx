@@ -290,7 +290,7 @@ function cssUrl(value: string) {
  * this server-side fallback stays visible even if the OTP client has not hydrated. */
 function LegacyLoginMascot() {
   return <div aria-hidden="true"
-    className="pointer-events-none absolute -right-1 -top-[138px] z-0 h-[195px] w-[173px] lg:-right-[140px] lg:top-[8px] lg:h-[262px] lg:w-[232px]">
+    className="pointer-events-none absolute -right-1 -top-[140px] z-0 h-[196px] w-[172px] lg:-right-[140px] lg:top-[8px] lg:h-[264px] lg:w-[232px]">
     <svg viewBox="0 0 232 262" className="h-full w-full" focusable="false">
       <defs>
         <linearGradient id="authRobotShell" x1="0" y1="0" x2="0" y2="1">

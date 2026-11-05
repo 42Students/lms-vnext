@@ -39,8 +39,8 @@ describe("UX-HR-COMPANY-TOUCH-42 keyboard accessible company/team tabs and colle
   expect(source).toContain('<NeedsDoingChips label="College access:"');
   const tabs=readFileSync("src/components/ui/tabs.tsx","utf8");
   expect(tabs).toContain("inline-flex min-h-11");
-  expect(tabs).toContain("focus-visible:outline-2");
-  expect(source).toContain("focus-visible:outline-2");
+  expect(tabs).toContain("focus-ring");
+  expect(source).toContain("focus-ring");
   expect(source).toContain('title="Company & Team"');
  });
 });

@@ -41,7 +41,7 @@ describe("PROJ-BREAK-mentor-page-01 rendered project workspace navigation",()=>{
   const html=renderToStaticMarkup(<MentorProjectTabs projectId="another/project?tab=admin"/>);
   expect(html).toContain("another%2Fproject%3Ftab%3Dadmin");
   expect(html).not.toContain('href="/mentor/projects/another/project');
-  expect(html).toContain("focus-visible:outline-2");
+  expect(html).toContain("focus-ring");
   expect(html).toContain('aria-current="page"');
  });
 });

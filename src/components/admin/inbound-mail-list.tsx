@@ -152,7 +152,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
         onKeyDown={event=>{
           if(event.key==="Enter"||event.key===" "){event.preventDefault();open(row);}
         }}
-        className="cursor-pointer border-b border-border transition-colors hover:bg-[var(--lms-neutral-50)] focus-visible:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="cursor-pointer border-b border-border transition-colors hover:bg-[var(--lms-neutral-50)] focus-visible:bg-[var(--lms-primary-subtle)] focus-ring-inset">
         <td className="whitespace-nowrap px-3 py-3 align-top text-xs text-body">
          <time dateTime={row.receivedAt}>{receivedLabel(row.receivedAt)}</time>
         </td>

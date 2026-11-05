@@ -45,7 +45,7 @@ export function LearnerRecentPlacementActivity({
           {events.map((event) => (
             <li key={event.id} className="py-3 first:pt-0 last:pb-0">
               <Link href={event.href}
-                className="block min-h-11 min-w-0 rounded-md py-2 hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="block min-h-11 min-w-0 rounded-md py-2 hover:text-primary-text focus-ring">
                 <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-center md:justify-between md:gap-4">
                   <span className="break-words text-sm font-semibold text-foreground">{event.heading}</span>
                   <time dateTime={event.occurredAt.toISOString()}

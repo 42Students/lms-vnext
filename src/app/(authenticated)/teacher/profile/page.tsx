@@ -85,7 +85,7 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title="Profile" actions={<div className="flex flex-wrap items-center gap-3">
         <FacultyProfileRefresh/>
-        <Link href="#faculty-profile-sections" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px]">Edit About &amp; profile sections →</Link>
+        <Link href="#faculty-profile-sections" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring">Edit About &amp; profile sections →</Link>
       </div>} />
       <section id="faculty-header" aria-label="Faculty profile identity" aria-busy={false} className="flex min-w-0 flex-wrap items-center gap-5 border-b border-[var(--lms-canvas-border)] pb-5">
         <FacultyAvatarUpload initialVersion={selfDocument?.version??0} initials={initials || "F"}/>
@@ -107,11 +107,11 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
       </section>
       <nav aria-label="Profile shortcuts" className="flex min-w-0 flex-col items-stretch gap-1 border-b border-[var(--lms-canvas-border)] pb-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
         <Link href="/teacher/profile/teaching"
-        className="inline-flex min-h-11 min-w-0 items-center justify-center px-2 text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:justify-start md:min-h-9">
+        className="inline-flex min-h-11 min-w-0 items-center justify-center px-2 text-sm font-semibold text-primary-text hover:underline focus-ring sm:justify-start md:min-h-9">
         Current teaching assignments →
         </Link>
         <Link href="/teacher/profile/contacts"
-        className="inline-flex min-h-11 min-w-0 items-center justify-center px-2 text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:justify-start md:min-h-9">
+        className="inline-flex min-h-11 min-w-0 items-center justify-center px-2 text-sm font-semibold text-primary-text hover:underline focus-ring sm:justify-start md:min-h-9">
         Contact details and editing availability
         </Link>
       </nav>

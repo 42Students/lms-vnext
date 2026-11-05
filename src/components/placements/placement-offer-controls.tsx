@@ -337,7 +337,7 @@ export function PlacementOfferControls({
 
       {isTpo ? (
         <details className="group min-w-0 border-b border-border pb-4">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-primary-text focus-ring [&::-webkit-details-marker]:hidden">
             TPO administrative offer actions
             <span aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180">⌄</span>
           </summary>

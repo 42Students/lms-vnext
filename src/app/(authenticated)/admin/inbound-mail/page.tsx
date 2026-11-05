@@ -57,7 +57,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   q:one(params["q"]),recipient:optional(params["recipient"]),page:one(params["page"]),
  });
  if(repeated||invalidPage||(oldShow&&!mappedShow)||(oldShow&&params["status"]!==undefined)||!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
-   <Alert tone="warning">Invalid filters. <Link href="/admin/inbound-mail" className="inline-flex items-center min-h-11 md:min-h-9 lms-inline-link font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Reset</Link></Alert></div>;
+   <Alert tone="warning">Invalid filters. <Link href="/admin/inbound-mail" className="inline-flex items-center min-h-11 md:min-h-9 lms-inline-link font-semibold text-link underline underline-offset-4 focus-ring hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Reset</Link></Alert></div>;
  const result=await listInboundMailForAdmin(context,parsed.data)
   .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
  if(!result.ok)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
@@ -70,7 +70,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  if(!data.available)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
   <Alert tone="warning">
    <p>Inbound mail storage has not been registered or deployed. The inbox is unavailable; this is not a zero-message result.</p>
-   <Link href="/admin/inbound-mail" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Retry</Link>
+   <Link href="/admin/inbound-mail" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring underline-offset-4">Retry</Link>
   </Alert></div>;
  const totalPages=data.total===null?null:Math.max(1,Math.ceil(data.total/50));
  const pageNumbers=totalPages===null?[]:Array.from(
@@ -117,9 +117,9 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
       className="min-h-11 w-full md:min-h-9" placeholder="Search sender, subject or text"/>
    </label>
    <Button type="submit" className="min-h-11 shrink-0 md:min-h-9">Search</Button>
-   {parsed.data.q?<Link href={next(1,true)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] md:min-h-9 md:w-auto">Clear</Link>:null}
+   {parsed.data.q?<Link href={next(1,true)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] md:min-h-9 md:w-auto">Clear</Link>:null}
    <details className="w-full min-w-0 basis-full" open={Boolean(parsed.data.recipient||parsed.data.kind||parsed.data.routingStatus)}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-font-sm)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Recipient inbox · Status</summary>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-font-sm)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring md:min-h-9">Recipient inbox · Status</summary>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-[var(--lms-space-3)] md:grid-cols-2">
      <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Recipient inbox
       <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-[6px] min-w-0" placeholder="inbox@example.edu"/></label>
@@ -149,12 +149,12 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
        "0 of "+data.total)+" matching messages · Page "+data.page+" of "+totalPages}
    </span>
    <div className="flex w-full min-w-0 items-center gap-[var(--lms-space-2)] md:w-auto">
-    {data.page>1?<Link className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] font-semibold md:min-h-9" href={next(data.page-1)}>Previous</Link>:null}
+    {data.page>1?<Link className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] font-semibold md:min-h-9" href={next(data.page-1)}>Previous</Link>:null}
     <div className="flex min-w-0 flex-1 items-center gap-[var(--lms-space-2)] overflow-x-auto pb-1 md:flex-none md:overflow-visible md:pb-0">
      {pageNumbers.map(n=><Link key={n} href={next(n)} aria-current={n===data.page?"page":undefined}
-       className={n===data.page?"inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-2 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9":"inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9"}>{n}</Link>)}
+       className={n===data.page?"inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 py-2 text-primary-text focus-ring md:min-h-9 md:min-w-9":"inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 md:min-w-9"}>{n}</Link>)}
     </div>
-    {data.hasMore?<Link className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] font-semibold md:min-h-9" href={next(data.page+1)}>Next</Link>:null}
+    {data.hasMore?<Link className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] font-semibold md:min-h-9" href={next(data.page+1)}>Next</Link>:null}
    </div>
   </nav>
  </div>;

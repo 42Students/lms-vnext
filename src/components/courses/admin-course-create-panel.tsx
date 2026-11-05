@@ -484,11 +484,11 @@ export function AdminCourseCreatePanel({
         <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{COLLEGE_COURSES_COPY.createTitle}</Heading>
         {departments.length===0?<p role="status" className="mt-3 text-sm text-body leading-[22px]">
           No departments in this college yet. Create a department before adding a course.{" "}
-          <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
+          <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
         </p>:null}
         {copy?<div role="status" aria-live="polite" className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}” — review the copy before creating it.</strong>
-          <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9"
             onClick={()=>{setCopyAnnouncement(false);router.replace(courseBasePath);}}>Cancel copy</Button>
           <p className="w-full text-xs text-muted-foreground leading-[20px]">Copy of {copy.name}. Review the unique course code and display metadata. The new course will not inherit learners, offerings, or permissions.</p>
           {copyAnnouncement?<p className="sr-only">Course metadata copied. The course name is ready to edit.</p>:null}

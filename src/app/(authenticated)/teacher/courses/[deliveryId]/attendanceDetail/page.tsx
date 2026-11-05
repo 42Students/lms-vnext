@@ -21,7 +21,7 @@ import { resolveFacultyAttendanceDeepLink } from "@/modules/attendance/faculty-a
 function AttendanceDetailLoading() {
  return <section className="flex min-h-48 items-center justify-center" aria-busy="true" aria-label="Loading attendance">
   <span role="status" className="inline-flex items-center gap-3 text-sm text-muted-foreground">
-   <svg aria-hidden="true" viewBox="0 0 24 24" width="34" height="34" fill="none"
+   <svg aria-hidden="true" viewBox="0 0 24 24" width="32" height="32" fill="none"
      stroke="currentColor" strokeWidth="2" className="animate-spin text-primary-text">
     <path d="M12 2a10 10 0 1 1-10 10"/>
    </svg>
@@ -125,13 +125,13 @@ async function FacultyCourseAttendanceContent({
       <nav aria-label="Course attendance shortcuts" className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
       <Link
         href={`/teacher/courses/${deliveryId}/home`}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] focus-ring"
       >
         ← Course workspace
       </Link>
 
       <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/session-coverage"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)] focus-ring">
         Review session coverage →
       </Link>
       </nav>

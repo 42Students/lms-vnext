@@ -27,7 +27,7 @@ export default async function CollegeVideosPage({
         <PageHeader eyebrow="College Admin · Courses & Content" title="Video" />
         <ErrorState title="Invalid video filters"
           description="The title, status or page filter is invalid. No content was loaded."
-          action={<Link href="/college/videos" className="min-h-11 md:min-h-9 inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline lms-inline-link hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
+          action={<Link href="/college/videos" className="min-h-11 md:min-h-9 inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline lms-inline-link hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Clear filters</Link>} />
       </div>
     );
   }
@@ -48,7 +48,7 @@ export default async function CollegeVideosPage({
            "border-transparent text-body hover:border-border hover:text-link")}>{tab.label}</Link>)}
     </nav>
     <PageHeader title="Video" description="Upload a video or link a YouTube video to a lesson." eyebrow="College Admin · Courses & Content"
-      actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Lessons</Link>} />
+      actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Lessons</Link>} />
     <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] lg:grid-cols-2">
       <section aria-label="Create a video" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Add a video</Heading>

@@ -11,12 +11,12 @@
 }
 .header { padding: 32px clamp(24px,5vw,72px); }
 .brand { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; text-decoration: none; }
-.legacyLogo { display: block; width: 151px; height: 37px; object-fit: contain; }
+.legacyLogo { display: block; width: 152px; height: 36px; object-fit: contain; }
 .center { display: flex; align-items: center; justify-content: center; padding: 12px 20px 52px; }
 .card { width: min(100%, 510px); padding: 40px 44px; border: 1px solid var(--lms-border, var(--lms-border)); border-radius: var(--lms-canvas-radius, 12px); background: var(--lms-surface, var(--lms-white)); box-shadow: none; text-align: center; }
-.icon { display: grid; margin: 0 auto 20px; min-width: 54px; width: max-content; height: 54px; padding: 0 12px; align-items: center; justify-content: center; border: 1px solid var(--lms-border, var(--lms-border)); border-radius: var(--lms-canvas-radius, 12px); background: var(--lms-primary-subtle, var(--lms-primary-subtle)); color: var(--lms-link-text, var(--lms-button-primary)); font-size: 24px; font-weight: 700; }
+.icon { display: grid; margin: 0 auto 20px; min-width: 56px; width: max-content; height: 56px; padding: 0 12px; align-items: center; justify-content: center; border: 1px solid var(--lms-border, var(--lms-border)); border-radius: var(--lms-canvas-radius, 12px); background: var(--lms-primary-subtle, var(--lms-primary-subtle)); color: var(--lms-link-text, var(--lms-button-primary)); font-size: 24px; font-weight: 700; }
 .heading { margin: 0; font-size: 30px; line-height: 40px; letter-spacing: -.02em; font-weight: 600; color: var(--lms-heading, var(--lms-heading)); }
-.message { margin: 12px auto 0; max-width: 390px; font-size: 14px; line-height: 24px; color: var(--lms-body-text, var(--lms-text-body)); }
+.message { margin: 12px auto 0; max-width: 392px; font-size: 14px; line-height: 24px; color: var(--lms-body-text, var(--lms-text-body)); }
 .reference { margin: 20px 0 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; font-size: 12px; color: var(--lms-muted-text, var(--lms-text-muted)); }
 .copy { border: 1px solid var(--lms-border, var(--lms-neutral-300)); border-radius: 8px; background: var(--lms-surface, var(--lms-white)); padding: 8px 12px; font-size: 12px; color: var(--lms-link-text, var(--lms-button-primary)); cursor: pointer; }
 .actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 28px; }

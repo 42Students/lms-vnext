@@ -51,7 +51,7 @@ function LearnerCourseCardSurface({
     </div>;
   }
   return <Link href={href}
-    className={baseClass + " transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}>
+    className={baseClass + " transition hover:border-primary hover:shadow-sm focus-ring"}>
     {children}
   </Link>;
 }
@@ -59,7 +59,7 @@ function LearnerCourseCardSurface({
 /** Compact keyboard-openable, anchored legacy metric pills. */
 function LearnerMetricPopover({title,children}:{title:string;children:ReactNode}){
  return <details className="group relative">
-  <summary className="inline-flex min-h-9 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-primary-text marker:hidden hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
+  <summary className="inline-flex min-h-9 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-primary-text marker:hidden hover:bg-primary-subtle focus-ring">
    {title} <span className="ml-2 text-muted-foreground" aria-hidden="true">⌄</span>
   </summary>
   <div className="absolute left-0 top-full z-(--lms-z-sticky-header) mt-1 w-[min(20rem,calc(100vw-3rem))] max-w-[calc(100vw-3rem)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm shadow-lg">
@@ -395,7 +395,7 @@ export function LearnerCourseList({
               {query ? (
                 <Button variant="bare" type="button" aria-label="Clear course search"
                   onClick={() => {setQuery("");setSearchWasTruncated(false);setVisibleLimit(PAGE_SIZE);}}
-                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">×</Button>
+                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted focus-ring">×</Button>
               ) : null}
             </div>
           </div>

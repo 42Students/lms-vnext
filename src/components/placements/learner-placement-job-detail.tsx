@@ -433,7 +433,7 @@ export function LearnerPlacementJobDetail({
 
         </div>
         <aside className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 lg:sticky lg:top-24" aria-label="Application actions">
-      <section id="job-role-options" tabIndex={-1} className="scroll-mt-24 space-y-4 focus:outline-2 focus:outline-[var(--lms-primary)]" aria-labelledby="role-options-title">
+      <section id="job-role-options" tabIndex={-1} className="scroll-mt-24 space-y-4 focus:focus-outline" aria-labelledby="role-options-title">
         <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
           <div>
             <Heading level={2} size="base" id="role-options-title" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">

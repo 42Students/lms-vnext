@@ -21,7 +21,7 @@ export default async function TpoCompanyPeoplePage({
   if (!company) notFound();
   return (
     <div className="min-w-0 space-y-4">
-      <PageHeader title={company.name+" · Contact people"} description="Persisted linked recruiter leads only, not an independent contacts directory." actions={<><Link className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+      <PageHeader title={company.name+" · Contact people"} description="Persisted linked recruiter leads only, not an independent contacts directory." actions={<><Link className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
       </Link></>}/>

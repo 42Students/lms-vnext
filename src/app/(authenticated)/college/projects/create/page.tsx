@@ -18,7 +18,7 @@ export default async function CollegeCreateProjectPage({
   const mode=selected==="teams"||selected==="cohort"?selected:"single";
   const context=await getCurrentRequestContext();
   const collegeId=getProjectAdminCollegeId(context);
-  const back=<Link href="/college/projects" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+  const back=<Link href="/college/projects" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">
     Back to workspaces
   </Link>;
   // Keep the Projects tab strip in the college shell while recovering scope.

@@ -68,7 +68,7 @@ export default async function TpoShortlistSharePreviewPage({
       description="Read-only, current submitted/shortlisted candidates. This is a TPO report, not a sent share or authorization for an external recipient."
       actions={<>
         <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Current internal shortlist</Link>
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring sm:w-auto md:min-h-9">← Current internal shortlist</Link>
         <ButtonLink variant="secondary" href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
           className="w-full sm:w-auto">Export capped CSV</ButtonLink>
       </>}
@@ -83,7 +83,7 @@ export default async function TpoShortlistSharePreviewPage({
       <Button type="submit" className="min-h-11 w-full px-6 sm:w-auto md:min-h-9">
         Search
       </Button>
-      <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link sm:w-auto underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
+      <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link sm:w-auto underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>
     </form>
     <p className="text-sm text-body">
       {data.total} currently shortlisted application(s) in this drive.
@@ -103,14 +103,14 @@ export default async function TpoShortlistSharePreviewPage({
       ]}/>
     </section>
     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(data.job.id)+"/share-audit"}
-     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] sm:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] sm:w-auto focus-ring md:min-h-9">
      View company-share access history
     </Link>
     <nav aria-label="Company-share link status filters"
       className="flex min-w-0 gap-2 overflow-x-auto pb-1 text-sm">
       {companyShareStatusSchema.options.map(status=><Link key={status}
        aria-current={shareStatus===status?"page":undefined}
-       className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)]"
+       className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)]"
        href={companyShareLinksHref(data.job.id,status,1,parsed.data.q,data.page)}>
        {companyShareStatusLabel(status)}
       </Link>)}

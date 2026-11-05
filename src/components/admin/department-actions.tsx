@@ -164,13 +164,13 @@ export function DepartmentActions({
       <Button variant="ghost" size="icon-sm" disabled={pending}
         aria-label={"Edit department "+name} title={"Edit department "+name}
         onClick={()=>{setNextName(name);setEditError("");setOpen(true);}}>
-        <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16.5 3.5l4 4L9 19H5v-4L16.5 3.5z"/></svg>
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16.5 3.5l4 4L9 19H5v-4L16.5 3.5z"/></svg>
       </Button>
       <Button variant="ghost" size="icon-sm" disabled={pending||hasDependencies}
         aria-label={"Archive department "+name} title={hasDependencies?dependencyDetail:"Archive department "+name+" (retains historical records)"}
         className="text-[var(--lms-error)]"
         onClick={()=>{setArchiveError("");setArchiveOpen(true);}}>
-        <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v7m4-7v7"/></svg>
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v7m4-7v7"/></svg>
       </Button>
       {countsUnknown?<Button type="button" size="sm" variant="secondary" disabled={pending}
         aria-label={"Refresh dependency counts for "+name} onClick={()=>router.refresh()}>Refresh counts</Button>:null}

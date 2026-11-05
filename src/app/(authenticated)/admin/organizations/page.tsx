@@ -45,7 +45,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     <PageHeader title="Organizations"/>
     <ErrorState title="Invalid organization directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/organizations" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+      action={<Link href="/admin/organizations" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const organizations = await listOrganizations(context).catch(()=>null);
   if(!organizations)return <div className="min-w-0 space-y-4">
@@ -95,7 +95,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
       key: "actions",
       header: "Actions",
       mobilePriority: "action",
-      className: "min-w-[210px] text-right",
+      className: "min-w-[212px] text-right",
       cell: (organization) =>
         can(context, "organization.manage", {
           organizationId: organization.id,

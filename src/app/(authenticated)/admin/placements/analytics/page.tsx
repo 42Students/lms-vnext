@@ -39,7 +39,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
      :parsed.error.issues[0]?.path[0]==="programId"?"Select a valid program."
      :parsed.error.issues[0]?.path[0]==="cohortId"?"Select a valid batch."
      :"Check the date format and selected analytics filters."}
-   action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear all</Link>}/>
+   action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear all</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  const collegeSelected=Boolean(context.adminScope?.collegeId);
@@ -93,7 +93,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.jobId.startsWith("total:")?<strong>{row.companyName} total</strong>:row.companyName},
   {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Job",mobilePriority:"secondary",cell:row=>row.jobId.startsWith("total:")?<strong>Company total</strong>:
    <Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)}
-    className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">
+    className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4">
      {row.jobTitle}</Link>},
   ...metricKeys.map((key,index)=>({
     key,header:COMPANY_HIRING_COLUMNS[index+2]??key,mobilePriority:"secondary" as const,
@@ -128,7 +128,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
       <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Applied to
        <DateInput mode="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-w-0" /></label>
      </div>
-     <div className="w-full min-w-0 sm:w-[205px]">{select("jobId","Job",filters?.jobs??[])}</div>
+     <div className="w-full min-w-0 sm:w-[204px]">{select("jobId","Job",filters?.jobs??[])}</div>
      <div className="w-full min-w-0 sm:w-[180px]">
       <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Drive or company
        <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="w-full" placeholder="Search jobs or companies" /></label>
@@ -201,7 +201,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <Heading level={2} className="text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Company-wise Hiring Report</Heading>
    <DataTable columns={columns} rows={visibleRows} getRowKey={row=>row.jobId}
     caption="Company-wise Hiring Report" mobileMode="scroll"
-    className="min-w-0 [&_table]:min-w-[950px]"
+    className="min-w-0 [&_table]:min-w-[952px]"
     empty={<EmptyState title={params.size?"No companies match these filters — try widening the date range or clearing filters":"No hiring data yet"}
      description={params.size?"Widen the selected date range or clear filters to review available hiring data.":"No hiring activity has been recorded for the "+scopeLabel+"."}
      action={params.size?<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Clear filters</Link>:undefined}/>}/>

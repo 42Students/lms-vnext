@@ -134,7 +134,7 @@ export async function ProjectAdminAtRiskPage({
         ] as const).map(([title, value, key]) =>
           <Link key={key} href={riskHref(basePath,query,query.riskBucket===key?null:key)}
             aria-current={query.riskBucket===key?"true":undefined}
-            className={"flex min-h-24 min-w-0 items-center gap-4 rounded-[var(--lms-canvas-radius)] border p-4 transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] "+
+            className={"flex min-h-24 min-w-0 items-center gap-4 rounded-[var(--lms-canvas-radius)] border p-4 transition-colors hover:bg-primary-subtle focus-ring "+
               (query.riskBucket===key?"border-primary bg-primary-subtle":"border-[var(--lms-canvas-border)] bg-surface")}>
             <span aria-hidden="true" className="text-2xl text-primary-text">{bucketIcon(key)}</span>
             <span className="min-w-0"><span className="block text-xs text-body">{title}</span>

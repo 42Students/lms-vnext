@@ -315,7 +315,7 @@ export function ReportNavigation({
         <Link
           key={link.href}
           href={reportHref(link.href, workspace)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:underline"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:underline"
         >
           {link.label}
         </Link>
@@ -324,7 +324,7 @@ export function ReportNavigation({
     </Disclosure> : <nav aria-label="Reports navigation" className="flex flex-wrap gap-2 print:hidden">
       {links.map((link) => (
         <Link key={link.href} href={reportHref(link.href, workspace)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:underline">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:underline">
           {link.label}
         </Link>
       ))}

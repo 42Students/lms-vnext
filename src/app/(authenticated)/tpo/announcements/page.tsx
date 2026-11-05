@@ -131,7 +131,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     </label>
     <TpoNoticeMessageCount formId="tpo-notice-create" outputId="tpo-notice-create-count"/>
     <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
-     <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
+     <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-ring">Button (optional)</summary>
      <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
      <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
       <Input name="buttonLabel" maxLength={60} placeholder="Register"
@@ -240,7 +240,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
        </label>
        <TpoNoticeMessageCount formId={"tpo-notice-edit-"+row.id} outputId={"tpo-notice-edit-"+row.id+"-count"}/>
        <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
-        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
+        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-ring">Button (optional)</summary>
         <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
         <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
          <Input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
@@ -326,9 +326,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
    <div className="flex w-full flex-wrap gap-2 sm:w-auto">
     {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page-1)}
-      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:underline">Previous</Link>:null}
+      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-ring hover:underline">Previous</Link>:null}
     {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page+1)}
-      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:underline">Show older</Link>:null}
+      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-ring hover:underline">Show older</Link>:null}
    </div>
   </nav>:null}
  </div>;

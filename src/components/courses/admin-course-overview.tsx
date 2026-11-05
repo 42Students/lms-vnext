@@ -108,17 +108,17 @@ export function AdminCourseOverview({
       cell:course=>{
        const parsed=courseThumbnailUrlSchema.safeParse(course.thumbnailUrl);
        const safeCover=parsed.success?parsed.data:null;
-       return <div className="h-[35px] w-[50px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
+       return <div className="h-[36px] w-[52px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
         {safeCover?
           <TextLink variant="bare" href={safeCover}
             aria-label={"Preview "+(course.name?.trim()||"Untitled course")+" cover"}
-            className="block h-full w-full focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]">
+            className="block h-full w-full focus-ring">
             <Img src={safeCover} alt={(course.name?.trim()||"Untitled course")+" cover"}
               width={50} height={35} loading="lazy" className="h-full w-full object-cover"/>
           </TextLink>:
           <span role="img" aria-label="Course preview unavailable"
             className="flex h-full items-center justify-center text-muted-foreground">
-            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none"
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none"
               stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2"/>
               <circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 5"/>
@@ -309,7 +309,7 @@ export function AdminCourseOverview({
               "/" +
               offering.id
             }
-            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none"
+            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-ring motion-reduce:transition-none"
           >
             Open learning
           </Link> : null}

@@ -52,11 +52,11 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
       </div>
     ),
   },
-  { key: "duration", header: "Duration", mobilePriority: "secondary", className:"min-w-[110px]", cell: (item) => programDurationYearsLabel(item.durationTerms) },
+  { key: "duration", header: "Duration", mobilePriority: "secondary", className:"min-w-[112px]", cell: (item) => programDurationYearsLabel(item.durationTerms) },
   { key: "department", header: "Department", mobilePriority: "secondary", cell: (item) => item.departmentName||"Name unavailable" },
   {
     key: "contents",
-    header: "Contents", className:"min-w-[250px]",
+    header: "Contents", className:"min-w-[252px]",
     cell: (item) => item.contents
       ? <div role="group" className="flex min-w-[220px] flex-wrap gap-1.5" aria-label={"Linked records for "+item.name}>
           {([
@@ -76,7 +76,7 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
     key: "actions",
     mobilePriority: "action",
     header: <span className="sr-only">Actions</span>,
-    className: "min-w-[165px] text-right",
+    className: "min-w-[164px] text-right",
     cell: (item) => <ProgramActions compactActions displayDurationYears program={{
       id: item.id,
       name: item.name,
@@ -218,7 +218,7 @@ export function AdminProgramDirectory({
         </p>
         {departments.length === 0 ? (
           <Alert tone="warning" className="mt-3">
-            <strong>No departments in this college yet</strong> · Create a department before adding a program. <Link href={departmentHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Go to Departments</Link>
+            <strong>No departments in this college yet</strong> · Create a department before adding a program. <Link href={departmentHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Go to Departments</Link>
           </Alert>
         ) : null}
         <div className="mt-4 grid min-w-0 grid-cols-1 gap-4">
@@ -268,7 +268,7 @@ export function AdminProgramDirectory({
         </div>
         <div className="mt-4 flex justify-stretch md:justify-end">
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending || departments.length === 0}>
-            {pending ? <span className="inline-flex items-center gap-2"><svg aria-hidden="true" className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" strokeDasharray="40 16"/></svg>Creating…</span> : <span className="inline-flex items-center gap-2"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>Create Program</span>}
+            {pending ? <span className="inline-flex items-center gap-2"><svg aria-hidden="true" className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" strokeDasharray="40 16"/></svg>Creating…</span> : <span className="inline-flex items-center gap-2"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>Create Program</span>}
           </Button>
         </div>
         </form>

@@ -70,7 +70,7 @@ type CompanyMemory = {
 type Phase = "loading" | "ready" | "error" | "migration-pending" | "not-found";
 
 const buttonStyle =
-  "lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9";
+  "lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-ring md:min-h-9";
 
 function dateLabel(value: string) {
   const date = new Date(value);
@@ -300,7 +300,7 @@ export function TpoCompanyMemoryWorkspace({
                     <div className="flex min-w-0 items-center gap-3">
 
                       <div className="min-w-0">
-                      <Link className="lms-inline-link inline-flex min-h-11 items-center break-words font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                      <Link className="lms-inline-link inline-flex min-h-11 items-center break-words font-medium text-link underline hover:underline focus-ring"
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
                       </Link>
@@ -372,7 +372,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
                   <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<renderedAt?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
-                  <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                  <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-ring"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}
               </ul>}
@@ -405,7 +405,7 @@ export function TpoCompanyMemoryWorkspace({
             ) : (
               <ol className="mt-3 space-y-3">
                 {company.timeline.map(item => (
-                  <li className="relative border-l-2 border-border pb-2 pl-4 before:absolute before:-left-[5px] before:top-2 before:size-2 before:rounded-full before:bg-primary" key={item.id}>
+                  <li className="relative border-l-2 border-border pb-2 pl-4 before:absolute before:-left-[4px] before:top-2 before:size-2 before:rounded-full before:bg-primary" key={item.id}>
                     <p className="break-words text-sm leading-6"><strong>{item.person}</strong> · {item.type.toLowerCase()}{item.note?": "+item.note:""}</p>
                     <p className="text-xs text-muted-foreground">{legacyActivityTime(item.createdAt)}</p>
                   </li>

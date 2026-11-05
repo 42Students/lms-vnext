@@ -275,7 +275,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId,kind,mentionMembers=[
     </label>)}
    </div>
   </details>:null}
-  <label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm transition-colors duration-[var(--lms-motion-fast)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
+  <label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
    <Checkbox checked={markDecision} disabled={busy}
     onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>
    Mark as decision

@@ -49,7 +49,7 @@ export function TpoRecruiterPrototypeRoster({
  return <section aria-label="Recruiter overview table" className="min-w-0 overflow-hidden bg-surface"
   data-testid="tpo.recruiter.prototype-roster">
   <div className="overflow-x-auto">
-   <Table className="min-w-[690px]">
+   <Table className="min-w-[692px]">
     <thead className="bg-[color:var(--lms-neutral-50)] text-xs font-bold uppercase tracking-wide text-muted-foreground">
      <tr>{TPO_RECRUITER_PROTOTYPE_COLUMNS.filter(column=>enabled.has(column.key)).map(column=>
        <th key={column.key} scope="col" className="border-b border-border px-3 py-3 font-bold">{column.label}</th>)}</tr>
@@ -69,13 +69,13 @@ export function TpoRecruiterPrototypeRoster({
         event.preventDefault();onSelect(lead.id);
        }
       }}
-      className={"cursor-pointer border-b border-border last:border-0 focus-visible:outline-2 focus-visible:outline-primary-text "+
+      className={"cursor-pointer border-b border-border last:border-0 focus-ring "+
        (focused?"bg-primary-subtle":"hover:bg-[color:var(--lms-neutral-50)]")}>
       {enabled.has("recruiter")?<td className="max-w-48 px-3 py-3">
        <div className="flex min-h-11 flex-col items-start justify-center gap-1 md:min-h-9">
         <Button variant="bare" type="button" onClick={()=>onSelect(lead.id)}
          aria-pressed={focused} aria-label={"View "+lead.name+" in the detail panel"}
-         className="min-h-11 break-words text-left font-semibold text-foreground hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-primary-text">{lead.name}</Button>
+         className="min-h-11 break-words text-left font-semibold text-foreground hover:underline md:min-h-9 focus-ring">{lead.name}</Button>
         {lead.designation?<small className="text-xs text-body">{lead.designation}</small>:null}
        </div>
       </td>:null}

@@ -78,7 +78,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <ErrorState title="Invalid applicant filters"
       description="The requested search, status, screening or page is invalid."
       action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}/>
   </div>;
   const [pipelineResult,filterResult,jobResult]=await Promise.allSettled([
     getCollegeApplicationPipeline(context,jobId,query),
@@ -199,7 +199,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
       </div>
       <details className="min-w-0" open={true}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Screening
         <Select name="screening" defaultValue={query.screening} className="min-h-11 w-full md:min-h-9">
@@ -256,7 +256,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       </p>
         </div>
       </details>
-      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
     </form>
     <nav className="flex min-w-0 flex-wrap items-center gap-3 text-sm" aria-label="Application views">
       <Link href={resetHref} className="font-semibold text-primary-text underline">All applications</Link>

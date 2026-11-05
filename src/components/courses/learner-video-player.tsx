@@ -255,7 +255,7 @@ export function LearnerVideoPlayer({
       <strong className="tabular-nums">{watchedPercent}% watched</strong>
      </div>
      <div role="progressbar" aria-label="Video watched progress" aria-valuemin={0} aria-valuemax={100}
-       aria-valuenow={watchedPercent} className="h-[3px] w-full overflow-hidden rounded-full bg-muted md:h-1">
+       aria-valuenow={watchedPercent} className="h-[4px] w-full overflow-hidden rounded-full bg-muted md:h-1">
       <div className="h-full bg-primary" style={{width:watchedPercent+"%"}}/>
      </div>
     </div>:null}

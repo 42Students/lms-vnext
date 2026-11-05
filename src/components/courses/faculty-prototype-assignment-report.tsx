@@ -64,7 +64,7 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
   <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
    <section className="rounded-xl border border-[color:var(--lms-border)] px-[20px] py-5">
     <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">Score distribution</Heading>
-    {metrics.graded? <div className="mt-4 flex min-h-[158px] items-end gap-2" role="img"
+    {metrics.graded? <div className="mt-4 flex min-h-[160px] items-end gap-2" role="img"
      aria-label={distribution.map(bucket=>bucket.label+": "+bucket.count).join(", ")}>
      {[...distribution].reverse().map(bucket=><div className="flex min-w-0 flex-1 flex-col items-center"
       key={bucket.label}>

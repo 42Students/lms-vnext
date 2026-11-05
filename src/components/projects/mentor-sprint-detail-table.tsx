@@ -53,7 +53,7 @@ export function MentorSprintDetailTable({projectId,rows}:{
     </div>
     {!matching.length?<p role="status">No sprints match these filters.</p>:
       <div className="min-w-0 overflow-x-auto">
-        <Table className="min-w-[730px]">
+        <Table className="min-w-[732px]">
           <caption className="sr-only">Recorded release and sprint detail, state and points</caption>
           <thead><tr className="border-b border-border">
             <th scope="col" className="p-2">Sprint</th>

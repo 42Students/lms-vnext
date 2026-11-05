@@ -137,7 +137,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         {pending ? "Validating…" : "Preview members"}
       </Button>
       <details className="min-w-0 border-t border-border pt-3">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">CSV contents</summary>
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">CSV contents</summary>
         <label className="mt-3 grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">CSV contents
           <Textarea rows={8} maxLength={524288} value={csv}
             onChange={(event) => { csvRevision.current++; setCsv(event.target.value); setResult(null); setImported(null); setError(""); }}

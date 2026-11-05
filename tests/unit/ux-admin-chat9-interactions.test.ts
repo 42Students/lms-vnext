@@ -25,7 +25,7 @@ describe("chat-9 UX last-third substantive interactions",()=>{
   expect(view).not.toContain("<main");
   expect(view).not.toContain("min-h-10");
   expect(view).not.toContain("text-[#26bac7]");
-  expect(view).toContain('focus-visible:outline-2');
+  expect(view).toContain('focus-ring');
   expect(view).toContain('<PageBackLink href={data.backHref} label="Back to directory"');
  });
  it("UX-admin-placements-student-lookup-03 enforces the accessible interaction contract",()=>{

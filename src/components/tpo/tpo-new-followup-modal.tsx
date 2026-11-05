@@ -147,7 +147,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
     if(menu){menu.open=false;menu.querySelector("summary")?.focus();}
     void show();
    }}
-   className="lms-inline-link block min-h-11 w-full rounded-[var(--lms-control-radius)] px-2 py-2 text-left text-sm text-link hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+   className="lms-inline-link block min-h-11 w-full rounded-[var(--lms-control-radius)] px-2 py-2 text-left text-sm text-link hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none focus-ring md:min-h-9">
    Follow-up
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)dismiss();}} title="New follow-up"

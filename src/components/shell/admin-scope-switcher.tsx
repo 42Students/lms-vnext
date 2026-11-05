@@ -120,7 +120,7 @@ export function AdminScopeSwitcher({choices,scope}:{
    </Select>
   </label>
   <details className="group min-w-0">
-   <summary className="flex min-h-9 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] max-md:min-h-11">Search colleges</summary>
+   <summary className="flex min-h-9 cursor-pointer items-center text-sm font-semibold text-body focus-ring max-md:min-h-11">Search colleges</summary>
    <label htmlFor={searchId} className="sr-only">Search colleges</label>
    <Input id={searchId} type="search" value={search}
     onChange={event=>setSearch(event.target.value)} placeholder="Search colleges"

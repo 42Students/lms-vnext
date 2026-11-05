@@ -59,7 +59,7 @@ export default async function FacultyAssignmentReportPage({
           {choices.map(item=><Link key={item.deliveryId}
             href={"/teacher/report/assignment/"+encodeURIComponent(parsed.assessmentId)+
               "?deliveryId="+encodeURIComponent(item.deliveryId)}
-            className="flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text underline focus-ring">
               {item.sectionName} · {item.courseName} · {item.lessonName}
             </Link>)}
         </nav>

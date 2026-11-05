@@ -30,7 +30,7 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
       {items.map(item=><Button variant="bare" key={item.index} type="button"
         aria-pressed={active?.index===item.index}
         onClick={()=>{setSelected(item.index);setPdfPage(1);setPdfZoom(100);}}
-        className="flex min-h-11 w-full items-start justify-between gap-2 border-b border-border px-3 py-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="flex min-h-11 w-full items-start justify-between gap-2 border-b border-border px-3 py-3 text-left focus-ring">
         <span><strong>{item.name}</strong>
           <small className="block">{item.type}</small>
           {item.change&&item.change!=="ORIGINAL"?<small className="block">

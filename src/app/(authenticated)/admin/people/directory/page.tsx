@@ -44,7 +44,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  }:{invalid:true});
  if(!query?.success) return <div className="space-y-4"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
-   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">Clear filters</Link>}/>
+   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-ring hover:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">Clear filters</Link>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
   <PageHeader title="People Directory"
@@ -62,7 +62,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     ?"Your account can no longer view these membership records."
     : "Something went wrong on our end. Please try again. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
-    className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">
+    className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">
     {loaded.denied?"Back to dashboard":"Retry loading users"}
    </Link>}/>
  </div>;
@@ -139,7 +139,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
    </div>
    <details className="min-w-0" open={query.data.membershipStatus!=="ALL" || query.data.platformStatus!=="ALL"}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Membership
       <Select name="membershipStatus" defaultValue={query.data.membershipStatus} className="min-h-11 w-full md:min-h-9">
@@ -153,7 +153,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      </label>
     </div>
    </details>
-   <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+   <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </form>
   <div className="flex flex-wrap items-end justify-between gap-3">
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground">

@@ -81,7 +81,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
           </div>
           <div className="min-w-0 flex-1">
             <Heading level={3} size="base" className="break-words text-foreground">
-              <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)} className="after:absolute after:inset-0 hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)} className="after:absolute after:inset-0 hover:text-link focus-ring">
                {job.title}
               </Link>
             </Heading>
@@ -97,7 +97,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
             <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/applications"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Applications</Link>
             <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/settings"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Edit</Link>
             <details className="ml-auto max-w-full">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 font-semibold text-link focus-visible:outline-2 md:min-h-9" aria-label={"More actions for "+job.title}>
+              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 font-semibold text-link focus-ring md:min-h-9" aria-label={"More actions for "+job.title}>
                <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
                <span className="sr-only">More actions</span>
               </summary>

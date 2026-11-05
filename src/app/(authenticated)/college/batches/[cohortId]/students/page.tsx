@@ -99,7 +99,7 @@ export default async function CollegeBatchStudentsPage({
         rows={students}
         getRowKey={item => item.membershipId}
         empty={<EmptyState title="No matching students" description="No students in this batch match the current search filters."
-          action={(q || sectionId) ? <Link href={"/college/batches/" + cohortId + "/students"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link> : undefined} />}
+          action={(q || sectionId) ? <Link href={"/college/batches/" + cohortId + "/students"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring">Clear filters</Link> : undefined} />}
         columns={[
           { key: "name", header: "Name", mobilePriority: "primary", cell: item => item.name ?? item.membershipId },
           { key: "roll", header: "Roll Number", mobilePriority: "secondary", cell: item => item.roll ?? "—" },

@@ -32,7 +32,7 @@ export function Select({ className, children, error = false, ...props }: SelectP
         "outline-none shadow-none transition-[border-color,box-shadow,background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)]",
         "enabled:hover:border-[var(--lms-field-hover-border)]",
         "focus-visible:border-[var(--lms-primary)] focus-visible:shadow-(--lms-control-shadow)",
-        "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
+        "focus-ring",
         "disabled:cursor-not-allowed disabled:select-none disabled:opacity-100",
         "disabled:border-[var(--lms-canvas-border)] disabled:bg-[var(--lms-neutral-50)] disabled:text-[var(--lms-neutral-400)]",
         "aria-invalid:border-[var(--lms-error)] aria-invalid:bg-[color-mix(in_srgb,var(--lms-error)_6%,transparent)]",

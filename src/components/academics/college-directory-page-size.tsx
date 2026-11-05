@@ -38,7 +38,7 @@ export function CollegeDirectoryPageSize({ current }: { current: number }) {
         params.set("pageSize", String(size));
         params.delete("page");
         startTransition(() => router.push(window.location.pathname + "?" + params.toString(), { scroll: false }));
-      }} className="min-h-9 w-[86px]">
+      }} className="min-h-9 w-[88px]">
       {sizes.map(size => <option key={size} value={size}>{size}</option>)}
     </Select>
     per page

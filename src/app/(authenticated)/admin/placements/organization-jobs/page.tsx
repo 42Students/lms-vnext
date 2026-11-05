@@ -20,7 +20,7 @@ function localDate(value:Date|null){
   timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
  }).format(value):"Not set";
 }
-const actionClass="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]";
+const actionClass="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface-subtle focus-ring";
 
 export default async function SuperAdminOrganizationJobsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;

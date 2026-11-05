@@ -399,7 +399,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    </div>
   </section>
   <details className="group min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+   <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-heading)] focus-ring [&::-webkit-details-marker]:hidden">
     Compensation and openings <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
    </summary>
    <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2 xl:grid-cols-3">

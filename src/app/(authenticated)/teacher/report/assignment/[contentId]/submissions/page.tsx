@@ -28,7 +28,7 @@ export default async function FacultyAssignmentSubmissionsPage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid Section submission filters"} />
-    <Link href="/teacher/allAssignments" className="text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+    <Link href="/teacher/allAssignments" className="text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-ring hover:text-[var(--lms-primary-text)]">
       Back to All Assignments
     </Link>
   </section>;
@@ -50,7 +50,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       actions={<Link href={"/teacher/report/assignment/"+
         encodeURIComponent(report.assignment.id)+"?deliveryId="+
         encodeURIComponent(report.assignment.deliveryId)}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:w-auto md:min-h-[var(--lms-control-height)] focus-ring hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
         Full Section report
       </Link>} />
     <form method="get" className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-end">
@@ -65,7 +65,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       </label>
       <Button type="submit" variant="primary" className="w-full md:w-auto">Search</Button>
       <Link href={facultySubmissionListHref({...query,q:"",page:1})}
-        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text md:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear search</Link>
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text md:w-auto md:min-h-[var(--lms-control-height)] focus-ring hover:text-[var(--lms-primary-text)]">Clear search</Link>
     </form>
     <Tabs ariaLabel="Submission grading filters" value={query.filter} renderPanel={false}
       items={(["ALL","GRADED","UNGRADED","LATE"] as const).map(filter=>({
@@ -87,7 +87,7 @@ export default async function FacultyAssignmentSubmissionsPage({
         {data.total.toLocaleString("en-IN")} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
       <div className="min-w-0 space-y-1">
-        <Link href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline md:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
+        <Link href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline md:w-auto md:min-h-[var(--lms-control-height)] focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
           Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
         </Link>
         <p className="max-w-prose text-xs leading-5 text-muted-foreground">{facultySubmissionCsvScopeNote(query)}</p>

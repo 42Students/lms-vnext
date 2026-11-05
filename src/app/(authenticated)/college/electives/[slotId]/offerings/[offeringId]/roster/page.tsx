@@ -86,7 +86,7 @@ export default async function ElectiveRoster({
     return {ok:false as const,value:null};
   });
   if(!read.ok)return <div className="mx-auto w-full max-w-[1000px] space-y-4">
-    <PageHeader title="Offering roster" actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Electives</Link>}/>
+    <PageHeader title="Offering roster" actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Back to Electives</Link>}/>
     <ErrorState title="Couldn't load the offering roster"
       description="The roster or teaching assignments are temporarily unavailable. No student or faculty changes were made."
       action={<Link href={href(slotId,offeringId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading roster</Link>}/>
@@ -227,7 +227,7 @@ export default async function ElectiveRoster({
     <PageHeader 
       title={"Offering roster · " + slot.name}
       description="Student, roll number, department, state, how they joined and since when, with confirmed movement between offerings."
-      actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
         Back to Electives</Link>} />
     <div className="flex min-w-0 flex-wrap items-center gap-x-[var(--lms-space-4)] gap-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm leading-5">
       <span>Seats: {offering.capacity ?? "Unlimited"}</span>

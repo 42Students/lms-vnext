@@ -40,11 +40,11 @@ function formatTokens(body:string,members:TeamPayload["members"]){
       const name=members.find(m=>m.membershipId.toLowerCase()===chunk.slice(8).toLowerCase())?.name;
       return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">@{name??"team member"}</span>;
     }
-    if(chunk.startsWith("#drive:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
+    if(chunk.startsWith("#drive:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-ring md:min-h-9 focus-visible:underline"
       href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</Link>;
-    if(chunk.startsWith("#company:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
+    if(chunk.startsWith("#company:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-ring md:min-h-9 focus-visible:underline"
       href={"/tpo/companies/"+encodeURIComponent(chunk.slice(9))}>{chunk}</Link>;
-    if(chunk.startsWith("#student:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
+    if(chunk.startsWith("#student:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-ring md:min-h-9 focus-visible:underline"
       href={"/tpo/students/"+encodeURIComponent(chunk.slice(9))+"/participation"}>{chunk}</Link>;
     if(chunk.startsWith("@")||chunk.startsWith("#"))
       return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">{chunk}</span>;
@@ -152,7 +152,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    </div>
    <div className="flex w-full min-w-0 shrink-0 flex-wrap items-center gap-2 text-sm sm:w-auto">
     {data?.status==="READY"?<Button variant="ghost" type="button" disabled={busy}
-      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9"
       onClick={()=>void mutate({action:"FOLLOW",following:!data.following})}>
       {data.following?"Following":"Follow"}
     </Button>:null}
@@ -187,20 +187,20 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
         {m.askOverdue?"Overdue ask":"Open ask"} · {data.members.find(person=>person.membershipId===m.askAssigneeMembershipId)?.name??"Team member"}
         {m.dueLabel?" · by "+m.dueLabel:""} · {m.askStatus??"OPEN"}
         {m.askStatus==="OPEN"&&m.askAssigneeMembershipId===actorMembershipId?
-         <Button variant="ghost" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" type="button" disabled={busy}
+         <Button variant="ghost" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9" type="button" disabled={busy}
            onClick={()=>void mutate({action:"ASK_DONE",messageId:m.id})}>Mark done</Button>:null}
         {m.askStatus==="OPEN"&&m.authorMembershipId===actorMembershipId?
-         <Button variant="ghost" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" type="button" disabled={busy}
+         <Button variant="ghost" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9" type="button" disabled={busy}
            onClick={()=>void mutate({action:"ASK_CANCEL",messageId:m.id})}>Cancel ask</Button>:null}
        </div>:null}
        {!m.deletedAt?<div className="mt-2 flex min-w-0 flex-col items-stretch gap-2 text-xs sm:flex-row sm:flex-wrap sm:items-center">
-         <Button variant="ghost" type="button" disabled={busy} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+         <Button variant="ghost" type="button" disabled={busy} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9"
            onClick={()=>void mutate({action:"DECISION",messageId:m.id,marked:!m.decision})}>
            {m.decision?"Take the decision mark off":"Mark as decision"}</Button>
          {m.authorMembershipId===actorMembershipId?<>
-           <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+           <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9"
              disabled={busy} onClick={()=>{setEditing(m.id);setEditBody(m.body);}}>Edit (within 15 minutes)</Button>
-           <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+           <Button variant="ghost" type="button" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9"
              disabled={busy} onClick={()=>setDeleting(m.id)}>Delete</Button>
          </>:null}
        </div>:null}
@@ -217,7 +217,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        }}}
        />
     </label>
-    <details className="group min-w-0 border-b border-border pb-3 text-sm"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 py-2 font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">Message options <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+    <details className="group min-w-0 border-b border-border pb-3 text-sm"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 py-2 font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Message options <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
     <div className="min-w-0 space-y-3 pt-2">
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mention a teammate
       <Select disabled={busy} defaultValue="" 

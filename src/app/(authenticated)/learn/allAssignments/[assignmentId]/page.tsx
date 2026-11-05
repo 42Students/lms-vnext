@@ -35,11 +35,11 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
   if (resolution.kind === "none") notFound();
   if (resolution.kind === "choose") return <div className="min-w-0 space-y-4">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-11 max-w-full items-center font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 max-w-full items-center font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">← All Assignments</Link>
     <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
     <ul className="min-w-0 divide-y divide-border border-y border-border">
       {resolution.options.map(option => <li key={option.deliveryId} className="min-w-0 py-2">
-        <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+        <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
           href={"/learn/allAssignments/" + encodeURIComponent(path.assignmentId) + "?deliveryId=" + encodeURIComponent(option.deliveryId)}>
           {option.courseName}
         </Link>
@@ -56,7 +56,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
     listOwnLearnerAssignmentResources(context,item.id,item.deliveryId),
   ]);
   return <div className="min-w-0 space-y-4 md:space-y-6">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-11 max-w-full items-center font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 max-w-full items-center font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">← All Assignments</Link>
     <PageHeader title={item.title} />
     <div className="grid min-w-0 grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-x-4 gap-y-2 border-b border-border pb-4 md:gap-x-6 md:pb-6">
       <section aria-labelledby="assignment-due-title" className="min-w-0">

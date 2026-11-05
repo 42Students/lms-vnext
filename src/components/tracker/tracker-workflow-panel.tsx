@@ -138,7 +138,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
         </label>
       </div>
       <details className="min-w-0 border-t border-border pt-3">
-        <summary className="min-h-11 cursor-pointer text-base font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Engineering details</summary>
+        <summary className="min-h-11 cursor-pointer text-base font-semibold text-primary-text focus-ring">Engineering details</summary>
         <p className="mb-4 text-sm text-body">Root cause, fix commits, regression coverage and production verification</p>
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
         <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
@@ -162,7 +162,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           </Select>
         </label>
         <details className="min-w-0 sm:col-span-2">
-          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Commit evidence</summary>
+          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring">Commit evidence</summary>
           <div className="grid min-w-0 gap-4 pt-2 sm:grid-cols-2">
         <label className="min-w-0 font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Root cause

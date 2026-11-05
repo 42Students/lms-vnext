@@ -61,7 +61,7 @@ export function SuperAdminDriveDirectoryFilters({q:initialQ,status:initialStatus
    </label>
    <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
    <Link href="/admin/placements/drives"
-     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
      Clear filters
    </Link>
  </form>;

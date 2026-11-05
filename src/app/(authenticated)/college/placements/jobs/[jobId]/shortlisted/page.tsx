@@ -50,7 +50,7 @@ export default async function CollegeDriveShortlistedPage({
       <PageHeader title="Shortlisted" />
       <ErrorState title="College assignment required"
         description="Your account is not assigned to this College Admin workspace. Ask your college administrator to assign the appropriate college role, then sign in again."
-        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to dashboard</Link>} />
+        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">Back to dashboard</Link>} />
     </div>;
   }
   const modules=await resolveOptionalModuleAccess(context);
@@ -59,7 +59,7 @@ export default async function CollegeDriveShortlistedPage({
     <PageHeader title="Shortlisted"/>
     <ErrorState title="Placements unavailable"
       description="Placements is turned off for this college. Ask a Super Admin to enable Placements in Module Access before reviewing shortlisted candidates."
-      action={<Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to college dashboard</Link>}/>
+      action={<Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">Back to college dashboard</Link>}/>
   </section>;
   const { jobId } = await params;
   const requested = await searchParams;
@@ -79,7 +79,7 @@ export default async function CollegeDriveShortlistedPage({
       action={<Link href={href({
         q: "", status: "SUBMITTED", stage: "ASSESSMENT", screening: "ALL",
         source: "ALL", skills: "", page: 1,
-      })} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
+      })} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">Clear filters</Link>} />
   </div>;
 
   let data: Awaited<ReturnType<typeof getCollegeApplicationPipeline>>;
@@ -144,7 +144,7 @@ export default async function CollegeDriveShortlistedPage({
     closeHref={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"}>
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <nav aria-label="Drive breadcrumbs" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Drives</Link>
+      <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center font-semibold text-link hover:underline focus-ring">Drives</Link>
       <span aria-hidden="true">/</span>
       <Link href={"/college/placements/jobs/"+encodeURIComponent(jobId)}
         className="font-semibold text-link hover:underline">{data.drive.title}</Link>
@@ -156,7 +156,7 @@ export default async function CollegeDriveShortlistedPage({
     <PageHeader title="Shortlisted" description={data.drive.title}
       actions={<Link href={driveApplicationsHref(jobId, {
         ...query, stage: "ALL", screening: "ALL", status: "ALL", page: 1,
-      })} className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">All applications</Link>} />
+      })} className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9 focus-ring">All applications</Link>} />
     <Tabs ariaLabel="Drive workspace" renderPanel={false} value="Applications" items={[
       {value:"Overview",label:"Overview",href:"/college/placements/jobs/"+encodeURIComponent(jobId)},
       {value:"Applications",label:"Applications",href:driveApplicationsHref(jobId,{...query,stage:"ALL",status:"ALL",page:1})},
@@ -204,11 +204,11 @@ export default async function CollegeDriveShortlistedPage({
       <input type="hidden" name="stage" value={query.stage} />
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Name, email, roll or role
-        <Input name="q" type="search" maxLength={100} defaultValue={query.q} className="min-h-11 min-w-0 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" />
+        <Input name="q" type="search" maxLength={100} defaultValue={query.q} className="min-h-11 min-w-0 md:min-h-9 focus-ring" />
       </label>
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Source
-        <Select name="source" defaultValue={query.source} className="min-h-11 min-w-0 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        <Select name="source" defaultValue={query.source} className="min-h-11 min-w-0 md:min-h-9 focus-ring">
           <option value="ALL">All sources</option>
           <option value="INTERNAL">Internal</option>
           <option value="EXTERNAL">External</option>
@@ -218,10 +218,10 @@ export default async function CollegeDriveShortlistedPage({
         initial={{...(query.departmentId!==undefined?{departmentId:query.departmentId}:{}),...(query.programId!==undefined?{programId:query.programId}:{}),...(query.cohortId!==undefined?{cohortId:query.cohortId}:{})}}
         departments={filters.departments} programs={filters.programs} cohorts={filters.cohorts}/> :
         <p role="alert" className="text-sm text-warning-text lg:col-span-2">Department, program and batch options could not be loaded. <Link className="underline" href={href({...query,page:1})}>Retry options</Link></p>}
-      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Filters</Button>
+      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9 focus-ring">Filters</Button>
       {filtered
         ? <Link href={href({ ...query, q: "", source: "ALL", departmentId:undefined, programId:undefined,cohortId:undefined, page: 1 })}
-            className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>
+            className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline md:min-h-9 focus-ring">Clear filters</Link>
         : null}
     </form>
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
@@ -254,14 +254,14 @@ export default async function CollegeDriveShortlistedPage({
         ? "Try another status, search, or cohort filter."
         : "There are no applications in this pipeline stage yet."}
       action={<Link href={href({ ...query, q: "", source: "ALL", departmentId:undefined,programId:undefined,cohortId:undefined,page: 1 })}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} /> : null}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">Clear filters</Link>} /> : null}
     <nav aria-label="Shortlisted pages" className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-3 text-sm sm:flex-row sm:items-center sm:justify-between">
       <span>Page {query.page} of {data.totalPages}</span>
       <div className="flex min-w-0 flex-wrap gap-3">
         {query.page > 1 ? <Link href={href({ ...query, page: query.page - 1 })}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link> : null}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">Previous</Link> : null}
         {query.page < data.totalPages ? <Link href={href({ ...query, page: query.page + 1 })}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link> : null}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">Next</Link> : null}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">

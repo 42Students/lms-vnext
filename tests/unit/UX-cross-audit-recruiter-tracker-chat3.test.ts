@@ -18,7 +18,7 @@ expect(s).toContain("setDraftDecision(\"RESTORE\")");
 expect(s).toContain("setDraftDecision(\"CLEAR\")");
 expect(s).toContain("restoreFromThisTab(true)");
 expect(s).toContain("<ConfirmDialog");
-expect(s).toContain('focus-visible:outline-2');
+expect(s).toContain('focus-ring');
 });
 it("UX-recruiter-drives-jobId-interview-slots-02" ,()=>{const s=read("src/components/placements/recruiter-interview-slot-form.tsx");
 expect(s).toContain("if(kind===\"CANCEL\"&&!confirmed){setConfirmCancel(true);return;}");

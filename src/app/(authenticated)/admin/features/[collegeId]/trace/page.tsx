@@ -112,7 +112,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           action={
             <Link
               href={basePath}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] w-full md:w-auto justify-center"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] w-full md:w-auto justify-center"
             >
               Clear filters
             </Link>
@@ -163,7 +163,7 @@ export default async function SuperAdminLearnerAccessTracePage({
       <PageHeader
         title={`${college.name} · Learner access trace`}
         description={`Explain why an active learner's Projects, Placements and Electives module settings resolve to On or Off. The selected college is fixed to ${college.code}.`}
-        actions={<Link href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← {college.name} access hierarchy</Link>}
+        actions={<Link href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← {college.name} access hierarchy</Link>}
       />
 
       <nav className="flex min-w-0 flex-wrap gap-2" aria-label="Module access trace sections">
@@ -238,7 +238,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
           <Link
             href={basePath}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]"
           >
             Clear
           </Link>
@@ -272,7 +272,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                 membershipId:learner.membershipId,
               })}
               aria-current={selected?.membershipId===learner.membershipId?"true":undefined}
-              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">
               {selected?.membershipId===learner.membershipId?"Selected":"Explain access →"}
             </Link>},
           ]}/>
@@ -299,7 +299,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                     ...(query.membershipId !== undefined ? {membershipId: query.membershipId} : {}),
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 ← Previous
               </Link>
@@ -318,7 +318,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                     ...(query.membershipId !== undefined ? {membershipId: query.membershipId} : {}),
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 Next →
               </Link>
@@ -345,7 +345,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>
 
             <Link href={`/admin/features/${encodeURIComponent(college.id)}?scope=MEMBERSHIP&scopeId=${encodeURIComponent(selected.membershipId)}`}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Inspect this learner&apos;s stored rules in the hierarchy →</Link>
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Inspect this learner&apos;s stored rules in the hierarchy →</Link>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               Resolution checks the current membership,
               section, cohort, program, department,
@@ -392,7 +392,7 @@ export default async function SuperAdminLearnerAccessTracePage({
            ].join(String.fromCharCode(10))),
            ].join(String.fromCharCode(10,10))}/>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
             Inspect membership overrides and locks →
           </Link>
           <nav aria-label="Selected learner access actions" className="flex min-w-0 flex-wrap gap-3">
@@ -459,7 +459,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                   {key:"level",header:"Resolution level",mobilePriority:"primary",cell:step=><>
                     <span className="font-semibold text-foreground">{scopeLabel(step.level)}</span>
                     {step.locked?<span aria-label="Locked scope" className="ml-2 inline-flex items-center gap-1 text-xs font-semibold text-warning-text">
-                      <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                        <rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>
                       </svg>Locked
                     </span>:null}

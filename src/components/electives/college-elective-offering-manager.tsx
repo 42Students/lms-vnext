@@ -179,7 +179,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
             <div role="cell" className="flex min-w-0 flex-wrap items-center gap-2">
               <Link href={"/college/electives/"+encodeURIComponent(slotId)+"/offerings/"+
                 encodeURIComponent(offering.offeringId)+"/roster"}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary focus-ring md:min-h-9">
                 Roster & faculty
               </Link>
               {offering.status==="ACTIVE"?<>

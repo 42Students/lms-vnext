@@ -96,7 +96,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
    <p role="note" className="border-b border-[color:var(--lms-border)] px-4 py-2 text-xs leading-5 text-[color:var(--lms-text-muted)]">
     Shared syllabus lessons are managed by your college. Add or edit content inside your assigned class without changing other Sections.
    </p>
-   <ol className="max-h-[454px] divide-y divide-[color:var(--lms-border)] overflow-y-auto overscroll-contain" aria-label="Course syllabus lessons">
+   <ol className="max-h-[456px] divide-y divide-[color:var(--lms-border)] overflow-y-auto overscroll-contain" aria-label="Course syllabus lessons">
     {lessons.map((lesson,index)=>{
      const count=lesson.contents.length+lesson.assignments.length+lesson.quizzes.length;
      const active=lesson.id===current?.id;

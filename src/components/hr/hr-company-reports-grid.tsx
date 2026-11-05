@@ -31,7 +31,7 @@ const driveHref=(row:HrCompanyReportSheetRow)=>"/hr/placements/jobs/"+encodeURIC
 const columns: readonly TpoGridColumn<HrCompanyReportSheetRow>[] = [
   {key:"drive",label:"Drive",read:row=>row.title+" · "+row.status,
     render:row=><div className="min-w-0 space-y-1">
-      <Link href={driveHref(row)} className="inline-flex min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      <Link href={driveHref(row)} className="inline-flex min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring"
         aria-label={`Open drive ${row.title}`}>{row.title}</Link>
       <StatusBadge className="ml-2" tone="neutral">{row.status}</StatusBadge>
       <span className="block text-xs text-muted-foreground">{row.employmentType.replaceAll("_"," ")}</span>
@@ -109,7 +109,7 @@ export function HrCompanyReportsGrid({rows,scopeKey}:{
     mobilePrimaryKeys={["drive","applied","offered","accepted","declined","joined"]}
     rowActions={row=><div className="flex flex-wrap items-center gap-2">
       <Link href={driveHref(row)}
-        className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-ring">
         Open drive
       </Link>
     </div>}/>

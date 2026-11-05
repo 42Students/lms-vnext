@@ -94,7 +94,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           </Disclosure>
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>
-          {data.query.q||data.query.programId||data.query.status!=="ALL"||data.query.pageSize!==25?<Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>:null}
+          {data.query.q||data.query.programId||data.query.status!=="ALL"||data.query.pageSize!==25?<Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>:null}
         </form>
       </section>
 
@@ -116,7 +116,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           columns={[
             {key:"batch",header:"Batch",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
-              <Link href={`/admin/batches/${encodeURIComponent(row.id)}/students`} aria-label={`Manage students in ${row.name}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage students →</Link>
+              <Link href={`/admin/batches/${encodeURIComponent(row.id)}/students`} aria-label={`Manage students in ${row.name}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring">Manage students →</Link>
             </div>},
             {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
             {key:"years",header:"Years",mobilePriority:"secondary",cell:row=>row.startDate||row.endDate?`${row.startDate?.slice(0,4)??"?"} – ${row.endDate?.slice(0,4)??"?"}`:"—"},
@@ -133,11 +133,11 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
         <nav aria-label="Batch pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.total===0?0:(data.query.page-1)*data.query.pageSize+1}-{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total.toLocaleString("en-IN")} · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
-            {data.query.page>1?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
-            {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
+            {data.query.page>1?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring text-sm" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
+            {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring text-sm" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
           </div>
         </nav>
-        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-ring">
           Batch Promotion →
         </Link>
       </section>

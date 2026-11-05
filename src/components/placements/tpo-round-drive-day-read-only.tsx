@@ -554,9 +554,9 @@ export function TpoRoundDriveDayReadOnly({
       </section>
 
       <nav aria-label="Round operational actions" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-center">
-        <Link href={destinations.results} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review round results →</Link>
-        <Link href={destinations.schedule} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Candidate schedule →</Link>
-        <Link href={destinations.noShows} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review explicit no-shows →</Link>
+        <Link href={destinations.results} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-ring md:min-h-9">Review round results →</Link>
+        <Link href={destinations.schedule} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-ring md:min-h-9">Candidate schedule →</Link>
+        <Link href={destinations.noShows} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-ring md:min-h-9">Review explicit no-shows →</Link>
         <ButtonLink variant="secondary" href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}>
           Export round attendance (CSV)
         </ButtonLink>
@@ -659,7 +659,7 @@ export function TpoRoundDriveDayReadOnly({
           rows={shownRows}
           getRowKey={student=>student.applicationId}
           empty={<EmptyState title="No eligible applicants currently appear in this round’s roster."
-            action={<Link href={destinations.schedule} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Candidate schedule →</Link>} />}
+            action={<Link href={destinations.schedule} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Candidate schedule →</Link>} />}
           columns={[
             {key:"student",header:"Student",mobilePriority:"primary" as const,
               cell:(student:(typeof data.rows)[number])=>student.displayName},
@@ -753,7 +753,7 @@ export function TpoRoundDriveDayReadOnly({
         />
       </Disclosure>
       <details className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
-        <summary className="min-h-11 cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">About round results</summary>
+        <summary className="min-h-11 cursor-pointer font-semibold text-link focus-ring md:min-h-9">About round results</summary>
         <p className="max-w-3xl pb-2">
           TPO operators can stage a PASS (shortlisted), FAIL (not selected),
           HOLD (waitlisted) or ABSENT outcome here. Staging is not publication:

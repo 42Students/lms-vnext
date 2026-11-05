@@ -66,7 +66,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
     {choices?<ButtonLink variant="primary" href="#register-student-heading"><span aria-hidden="true">＋</span>Register students</ButtonLink>:null}
-    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-on-primary active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-on-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-on-primary active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-on-primary focus-ring">
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
@@ -81,7 +81,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <Link href="/admin/students" className="font-semibold underline">Retry import history</Link></Alert>:null}
   <AdminScopedReadPage headingMode="section" intro={choices?
    <details id="register-student" className="group min-w-0 scroll-mt-24 border-y border-[var(--lms-canvas-border)]">
-    <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">
+    <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-heading)] focus-ring [&::-webkit-details-marker]:hidden">
      <span aria-hidden="true" className="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-border text-lg leading-none">＋</span>
      Register students (one at a time or bulk CSV)
      <span aria-hidden="true" className="ml-auto text-muted-foreground group-open:rotate-180">⌄</span>
@@ -98,7 +98,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       </div>
       <p className="text-sm leading-[22px] text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
       <details className="min-w-0 border-t border-border pt-3">
-       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Show CSV import form</summary>
+       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Show CSV import form</summary>
        <div className="min-w-0 pt-3"><CollegeStudentCsvImport choices={choices}/></div>
       </details>
      </section>
@@ -108,7 +108,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
   renderBulkActions={rows=><details className="min-w-0 border-b border-border pb-3">
-    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Bulk module access controls</summary>
+    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Bulk module access controls</summary>
     <div className="min-w-0 pt-3"><SuperAdminStudentBulkAccess collegeId={context.adminScope?.collegeId??""} learners={rows.map(row=>({id:row.id,name:row.title}))}/></div>
    </details>}
   renderRowActions={row=><div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-start [&>div]:w-full sm:[&>div]:w-auto">
@@ -122,7 +122,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       <Link href="/admin/otp-lockout"
        aria-label={"Clear OTP lockout for "+row.title+" using verified mobile number"}
        className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline md:min-h-9">
-       <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+       <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
         <rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>
        </svg>
        Clear OTP lockout

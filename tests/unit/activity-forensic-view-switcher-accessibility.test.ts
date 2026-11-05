@@ -20,7 +20,7 @@ describe("Activity Log forensic view switcher", () => {
       expect(end).toBeGreaterThan(start);
       const link = activitySource.slice(start, end);
       expect(link).toContain('className="inline-flex min-h-11 items-center');
-      expect(link).toContain('focus-visible:outline-2');
+      expect(link).toContain('focus-ring');
       expect(link).toContain('focus-visible:outline-offset-[3px]');
       expect(link).toContain('focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"');
     }

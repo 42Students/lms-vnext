@@ -23,7 +23,7 @@ export default async function SuperAdminAssignmentsPage({
   if (!query.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
     <ErrorState title="Invalid assignment filters" description="Check search, status and page."
-      action={<Link href="/admin/assignments" className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<Link href="/admin/assignments" className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const retryHref=adminAssessmentHref("ASSIGNMENT",query.data);
   const context = await getCurrentRequestContext();
@@ -31,7 +31,7 @@ export default async function SuperAdminAssignmentsPage({
     <PageHeader title="Assignments" />
     <ErrorState title="Assignment access denied"
       description="Your account cannot access Super Admin assignments."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Back to dashboard</Link>} />
+      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Back to dashboard</Link>} />
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
@@ -49,7 +49,7 @@ export default async function SuperAdminAssignmentsPage({
     <ErrorState title="Assignments could not be loaded"
       description="The assignment directory could not be loaded. Your filters have not changed."
       action={<Link href={retryHref}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading assignments</Link>} />
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading assignments</Link>} />
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">

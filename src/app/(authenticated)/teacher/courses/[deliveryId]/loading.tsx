@@ -20,7 +20,7 @@ export default function Loading() {
     </div>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-hidden="true">
       {Array.from({length:4},(_,index)=><div key={index}
-        className="min-h-[110px] space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+        className="min-h-[112px] space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
         <div className="h-4 w-2/3 animate-pulse rounded bg-muted"/>
         <div className="h-8 w-1/3 animate-pulse rounded bg-muted"/>
       </div>)}

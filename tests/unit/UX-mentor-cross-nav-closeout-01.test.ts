@@ -17,9 +17,9 @@ describe("Mentor cross audit delivery discovery and contrast",()=>{
  it("UX-mentor-cross-N02 ProjectList uses accessible text and keyboard focus on all roles",()=>{
   const src=read("src/components/projects/project-list.tsx");
   expect(src).toContain("hover:bg-primary-subtle");
-  expect(src).toContain("focus-visible:outline-2");
+  expect(src).toContain("focus-ring");
   expect(src).not.toContain("text-[#26bac7]");
-  expect(src).not.toContain("focus-visible:ring-[var(--lms-focus-ring)]");
+  expect(src).not.toContain("focus-visible:focus-outline");
  });
  it("UX-mentor-cross-N03 closeout submission is guarded and minimum-sized",()=>{
   const src=read("src/components/projects/mentor-project-closeout-control.tsx");

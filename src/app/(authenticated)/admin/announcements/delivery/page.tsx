@@ -21,7 +21,7 @@ export default async function NotificationDeliveryHistoryPage() {
   if (!collegeId) {
     return <div className="space-y-4">
       <PageHeader title="Notification delivery history" description="Choose a college in the header above to review its notification deliveries." />
-      <Link href="/admin/announcements" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to announcements</Link>
+      <Link href="/admin/announcements" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Back to announcements</Link>
     </div>;
   }
   const db = getDb();
@@ -40,7 +40,7 @@ export default async function NotificationDeliveryHistoryPage() {
     return <div className="space-y-4">
       <PageHeader title="Notification delivery history" description="Delivery tracking is not enabled for this deployment." />
       <p role="status">The notification delivery outbox is unavailable. No delivery changes were made.</p>
-      <Link href="/admin/announcements" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to announcements</Link>
+      <Link href="/admin/announcements" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Back to announcements</Link>
     </div>;
   }
   let entries: Array<{
@@ -69,7 +69,7 @@ export default async function NotificationDeliveryHistoryPage() {
   }) + " IST";
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Notification delivery history" description="The 50 most recently created delivery records in the selected college. Statuses reflect persisted delivery, not provider acceptance." />
-    <Link href="/admin/announcements" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to announcements</Link>
+    <Link href="/admin/announcements" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Back to announcements</Link>
     {entries.length === 0 ? <p role="status">No notification deliveries recorded for this college.</p> : (
       <div className="divide-y divide-border border-y border-border">
         {entries.map(entry => <article key={entry.id} className="space-y-2 py-4">

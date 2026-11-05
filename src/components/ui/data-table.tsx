@@ -142,7 +142,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[12px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] md:sticky md:top-0 md:z-(--lms-z-raised) md:bg-[var(--lms-white)] md:first:left-0 md:first:z-(--lms-z-sticky-inline)",col.className)}>
               {sortLinks.get(col.key) ? <Link href={sortLinks.get(col.key)!}
                 aria-label={"Sort by "+col.key+(col.sortDirection==="ascending"?" descending":" ascending")}
-                className="inline-flex items-center gap-2 rounded-sm underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
+                className="inline-flex items-center gap-2 rounded-sm underline-offset-2 hover:underline focus-ring">
                 {col.header}<span aria-hidden="true">{col.sortDirection==="ascending"?"▲":col.sortDirection==="descending"?"▼":"↕"}</span>
               </Link> : col.header}
             </th>)}
@@ -157,7 +157,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
                 <input type="checkbox" data-table-selection="row" name={selection.fieldName??"selected"} value={item.key}
                   form={selection.formId} disabled={!item.selectable}
                   aria-label={"Select record "+item.key}
-                  className="size-4 accent-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] disabled:opacity-50"/>
+                  className="size-4 accent-[var(--lms-primary)] focus-ring disabled:opacity-50"/>
               </label>
             </td> : null}
             {columns.map(col=>{
@@ -186,13 +186,13 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               <ul className="space-y-[var(--lms-space-2)]" aria-label="Fields on detail page">
                 {recoverable.filter(col=>item.detailLinks.get(col.key)).map(col=>
                   <li key={col.key}><Link href={item.detailLinks.get(col.key)!}
-                    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring">
                     {col.mobileLabel??col.header} · View details
                   </Link></li>)}
               </ul>
             </td>:null}
             {!horizontal && item.detailHref ? <td className="block min-w-0 py-1 md:hidden">
-              <Link href={item.detailHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View details</Link>
+              <Link href={item.detailHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring">View details</Link>
             </td>:null}
           </tr>)}
         </tbody>

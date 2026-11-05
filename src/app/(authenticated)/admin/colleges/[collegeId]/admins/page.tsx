@@ -99,13 +99,13 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
       {key:"access",header:"Access",mobilePriority:"action",cell:item=><Disclosure title="Access" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]"><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")} {...(item.name==null?{}:{displayName:item.name})}/></Disclosure>},
       {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link title="View active devices"
         href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)}
-        className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        className="inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9">
         Sessions
       </Link>},
       {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
         <Link title="View administrator history"
           href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)+"/history"}
-          className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9">
           History
         </Link>
         <span className="text-xs text-muted-foreground">

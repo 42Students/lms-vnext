@@ -19,7 +19,7 @@ export default async function FacultyLayout({
         Skip to faculty content
       </ButtonLink>
       <div id="faculty-page-content" tabIndex={-1}
-        className="min-w-0 scroll-mt-6 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="min-w-0 scroll-mt-6 focus-ring">
         {children}
       </div>
     </>

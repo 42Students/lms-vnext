@@ -110,7 +110,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
   {notice?<Alert tone="success" role="status">{notice}
     {createdLessonId?<p className="mt-2 text-sm">Content is saved separately. Add resources,
      assignments, videos or quizzes to the new lesson using the course content directory.
-     <Link href="/admin/resources" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Add lesson content →</Link>
+     <Link href="/admin/resources" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring">Add lesson content →</Link>
     </p>:null}
    </Alert>:null}
   <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!pathId||!name.trim()}>

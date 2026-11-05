@@ -80,7 +80,7 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
    <div className="flex flex-wrap gap-2 text-sm">
     <Button variant="secondary" type="button" onClick={()=>setSelected({states:[],programs:[],departments:[],finalYears:[]})}
      >Reset</Button>
-    <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear all</Link>
+    <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-ring md:min-h-9">Clear all</Link>
     <Button type="submit" >Show {count}</Button>
    </div>
   </form>

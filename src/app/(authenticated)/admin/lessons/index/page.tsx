@@ -59,7 +59,7 @@ export default async function GlobalLessonIndexPage({searchParams}:{
     <Link href={href(data.page)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Refresh</Link>
    </form>
    {data.items.length?<div className="overflow-x-auto">
-    <Table className="min-w-[630px]">
+    <Table className="min-w-[632px]">
      <thead className="bg-[var(--lms-canvas)]"><tr>
       <th scope="col" className="border-b border-border p-3">Organization</th>
       <th scope="col" className="border-b border-border p-3">College</th>

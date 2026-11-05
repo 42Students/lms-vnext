@@ -119,6 +119,6 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
   const w=workspace();
   expect(w).toContain('<caption className="sr-only">');
   expect(w).toContain("Attendance can be corrected after it begins.");
-  expect(w).toContain("focus-visible:outline-2");
+  expect(w).toContain("focus-ring");
  });
 });

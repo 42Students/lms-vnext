@@ -9,7 +9,7 @@ describe("CI10UX native disclosure touch and keyboard surface",()=>{
   expect(html).toContain('style="min-height:44px"');
   expect(html).toContain("Details");
   expect(html).toContain("group-open:rotate-180");
-  expect(html).toContain("focus-visible:outline-2");
+  expect(html).toContain("focus-ring");
  });
  it("retains custom rich summaries and caller spacing without a duplicate arrow",()=>{
   const html=renderToStaticMarkup(<Disclosure

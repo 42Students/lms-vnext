@@ -68,7 +68,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
     <p className="m-0 break-words text-sm text-muted-foreground leading-[22px]">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length && assignment ?
       <div className="min-w-0 overflow-x-auto border-y border-[var(--lms-canvas-border)]" role="region" aria-label="Assignment directory" tabIndex={0}>
-        <Table className="min-w-[1030px]">
+        <Table className="min-w-[1032px]">
           <caption className="sr-only">College assignments. Table scrolls horizontally on smaller screens.</caption>
           <thead><tr className="border-b border-border bg-muted text-xs font-semibold">
             {["Title","Course","Scope","Points","Deadline","Submissions","Actions"].map(column=>
@@ -91,7 +91,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
               <td className="sticky right-0 z-(--lms-z-raised) border-l border-border bg-surface px-3 py-3 shadow-(--lms-shadow-edge-start)">
                 <div className="flex min-w-[200px] flex-col items-start gap-2">
                   <Link href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open offering →</Link>
+                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Open offering →</Link>
                   <SuperAdminAssignmentSubmissionsDialog title={item.title} count={item.submittedLearners}>
                     <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
                       specificDeliveryId={item.deliveryId} maxPoints={item.points}
@@ -111,16 +111,16 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
         <thead className="bg-muted"><tr className="border-b border-border text-xs font-semibold">
           {["Title","Course","Status","Results","Audience","Points","Due"].map(column=>
             <th scope="col" key={column} className="whitespace-nowrap px-3 py-3">{column}</th>)}
-          <th scope="col" className="sticky right-0 z-(--lms-z-raised) min-w-[235px] border-l border-border bg-muted px-3 py-3 text-right shadow-(--lms-shadow-edge-start)">Actions</th>
+          <th scope="col" className="sticky right-0 z-(--lms-z-raised) min-w-[236px] border-l border-border bg-muted px-3 py-3 text-right shadow-(--lms-shadow-edge-start)">Actions</th>
         </tr></thead>
         <tbody className="divide-y divide-border">
           {data.items.map(item=><tr key={item.id} className="group align-top hover:bg-muted/40">
-            <td className="max-w-[230px] px-3 py-3 font-semibold break-words">{item.title.trim()||"Untitled quiz"}</td>
+            <td className="max-w-[232px] px-3 py-3 font-semibold break-words">{item.title.trim()||"Untitled quiz"}</td>
             <td className="max-w-[200px] px-3 py-3 break-words">{item.courseName.trim()||"Course"} ({item.courseCode})</td>
             <td className="px-3 py-3"><StatusBadge tone={item.status==="PUBLISHED"?"success":"neutral"}>{item.status}</StatusBadge></td>
             <td className="px-3 py-3"><StatusBadge tone={item.resultsPublished?"success":"neutral"}>
               {item.resultsPublished?"Released":"Withheld"}</StatusBadge></td>
-            <td className="max-w-[170px] px-3 py-3 break-words">
+            <td className="max-w-[172px] px-3 py-3 break-words">
               {item.deliverySpecific
                 ? "One section"+(item.sectionName?" · "+item.sectionName:"")
                 : "All eligible sections"}
@@ -128,9 +128,9 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
             <td className="px-3 py-3 tabular-nums">{item.points}</td>
             <td className="whitespace-nowrap px-3 py-3">{formatDue(item.dueAt)}</td>
             <td className="sticky right-0 z-(--lms-z-raised) border-l border-border bg-surface px-3 py-3 shadow-(--lms-shadow-edge-start) group-hover:bg-muted">
-              <div className="flex min-w-[215px] flex-col items-start gap-2">
+              <div className="flex min-w-[216px] flex-col items-start gap-2">
                 <Link href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                  className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open offering →</Link>
+                  className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Open offering →</Link>
                 <CollegeQuizActions quiz={{id:item.id,title:item.title,status:item.status,dueAt:item.dueAt}}/>
                 <div className="flex flex-wrap items-center gap-2">
                   <FacultyItemActions
@@ -173,6 +173,6 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
       confirmation before publishing grades. No answers, submission body, learner contacts
       or stored attachments are fetched by this directory.
     </p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-link hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-link hover:text-primary-hover focus-ring md:min-h-9 print:hidden">← Courses</Link>
   </div>;
 }

@@ -195,7 +195,7 @@ export function PublicRecruiterJoinForm({
             </div>
             <PageHeader title="This link is no longer valid" />
             <p className="mt-3 max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for a new one. Already joined? Sign in with your work email.</p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-ring">Sign in</Link>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
@@ -209,7 +209,7 @@ export function PublicRecruiterJoinForm({
             <p className="mt-3 text-sm text-body">
               {"Sign in with your work email, "+signInEmail+", on the college's placement address. We'll email you a code each time."}
             </p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-ring">Sign in</Link>
           </>
         ) : (
           <>

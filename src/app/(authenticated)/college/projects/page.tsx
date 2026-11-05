@@ -40,7 +40,7 @@ export default async function CollegeProjectsPage({
       <PageHeader title="Project workspaces" description="Select a college to continue."/>
       <ErrorState title="No college selected" role="alert"
         description="Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page."
-        action={<Link href="/dashboard" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to dashboard</Link>}/>
+        action={<Link href="/dashboard" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Back to dashboard</Link>}/>
     </div>;
   }
 
@@ -51,7 +51,7 @@ export default async function CollegeProjectsPage({
       <PageHeader title="Project workspaces" description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}
+        action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>}
       />
     </div>;
   }
@@ -103,7 +103,7 @@ export default async function CollegeProjectsPage({
       <ErrorState title="Workspaces could not be loaded"
         description="Failed to load project workspaces. Your search and filters were not changed."
         action={<Link href={"/college/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Retry</Link>}/>
     </div>;
   }
   const result=snapshotsResult.value;

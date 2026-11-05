@@ -221,7 +221,7 @@ function WorkspaceHealthSnapshot({ workspace, templateHref }: { workspace: Works
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge tone={tone(workspace.project.status)}>{label(workspace.project.status)}</StatusBadge>
           {workspace.project.templateVersionId && templateHref ? (
-            <Link href={templateHref} className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]"
+            <Link href={templateHref} className="rounded-[var(--lms-control-radius)] focus-ring"
               aria-label={"View template " + (workspace.templateTitle ?? "attached to workspace")}>
               <StatusBadge tone="neutral">
                 Template · {workspace.templateTitle ?? "Attached"}
@@ -711,7 +711,7 @@ export function ProjectWorkspace({
 
       {mode === "ADMIN" && show("readiness") ? (
         <Link href={(backHref.startsWith("/college/") ? "/college/projects/readiness" : "/admin/projects/readiness") + "?projectId=" + encodeURIComponent(workspace.project.id)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">
           Manage override
         </Link>
       ) : null}

@@ -19,7 +19,7 @@ import { AdminRetentionInlinePreview } from "@/components/placements/admin-reten
 import { Heading } from "@/components/ui/heading";
 
 const secondaryActionClass =
-  "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9";
+  "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[var(--lms-on-primary)] focus-ring md:min-h-9";
 
 export default async function AdminPlacementsPage({ searchParams }: {
   searchParams: Promise<{ staleDays?: string }>;
@@ -118,7 +118,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
         actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
           <Link
             href="/admin/placements/new"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary motion-safe:transition-colors motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary motion-safe:transition-colors motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-ring"
           >
             New drive
           </Link>
@@ -169,7 +169,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
           <div className="divide-y divide-border">
             {actionRows.slice(0, 20).map(({ job }) => (
               <details key={job.id} className="group min-w-0 py-[var(--lms-space-3)]">
-                <summary className="flex min-h-11 cursor-pointer flex-wrap items-center justify-between gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                <summary className="flex min-h-11 cursor-pointer flex-wrap items-center justify-between gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] text-sm font-semibold text-foreground focus-ring md:min-h-9">
                   <span className="min-w-0 break-words">{job.title} · {job.company.name}</span>
                   <StatusBadge tone={job.status === "PUBLISHED" ? "success" : job.status === "DRAFT" ? "warning" : "neutral"}>{job.status}</StatusBadge>
                 </summary>

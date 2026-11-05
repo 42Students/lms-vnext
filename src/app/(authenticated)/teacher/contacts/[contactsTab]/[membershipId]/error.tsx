@@ -14,7 +14,7 @@ export default function Error({ reset }: {
     </p>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
       <Button type="button" onClick={reset}>Retry</Button>
-      <Link href="/teacher/contacts" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+      <Link href="/teacher/contacts" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9">
         Back to Contacts
       </Link>
     </div>

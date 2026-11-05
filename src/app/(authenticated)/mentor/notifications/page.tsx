@@ -83,7 +83,7 @@ async function MentorNotificationsContent({
   const attentionOrder=mentorAttentionOrderSchema.safeParse(first(raw.attentionOrder)??"RECENT");
   if (!parsed.success||!kind.success||!projectId.success||!attentionOrder.success) return <section role="alert" className="min-w-0 max-w-full space-y-3">
     <PageHeader title="Invalid notification filters" />
-    <Link href={MENTOR_INBOX} className="inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Return to newest notifications</Link>
+    <Link href={MENTOR_INBOX} className="inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Return to newest notifications</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -222,7 +222,7 @@ async function MentorNotificationsContent({
         {allRelevantFailed?"No verified notification source could be loaded.":`Could not load: ${failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.`}
       </p>
       <Link href={retryHref}
-        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Retry sources</Link>
+        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-ring hover:text-[var(--lms-primary-text)]">Retry sources</Link>
     </Alert> : null}
     {allSourcesEmpty?<div role="status" className="flex items-center gap-3 border-b border-border py-6">
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
@@ -293,7 +293,7 @@ async function MentorNotificationsContent({
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter attention
         </Button>
-        {attentionFiltered?<Link href={MENTOR_INBOX+"?pill="+selectedPill} className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+        {attentionFiltered?<Link href={MENTOR_INBOX+"?pill="+selectedPill} className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form>
       {!projectAccess?.projects.enabled
         ? <p role="status" className="border-b border-border pb-4 text-sm text-body leading-[22px]">
@@ -306,7 +306,7 @@ async function MentorNotificationsContent({
           : <div className="min-w-0 divide-y divide-border border-b border-border">{shownAlerts.map(alert=>
               <article key={alert.key}
                 className="block min-h-11 min-w-0 py-4 transition md:min-h-[var(--lms-control-height)]">
-                <Link href={alert.href} className="block min-h-11 rounded focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                <Link href={alert.href} className="block min-h-11 rounded focus-ring">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <Heading level={3} className="min-w-0 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{alert.title}</Heading>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :

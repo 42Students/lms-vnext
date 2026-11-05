@@ -110,7 +110,7 @@ export default async function TpoAuditPage({
           action={
             <Link
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
             >
               Clear filters
             </Link>
@@ -224,7 +224,7 @@ export default async function TpoAuditPage({
         title="Audit log"
         description="A traceable history of placement decisions, changes, sharing and access across the workspace."
         actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-ring">
             Actor / entity filters and CSV →
           </Link>
 
@@ -395,7 +395,7 @@ export default async function TpoAuditPage({
             </Button>
             <Link
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
             >
               Clear filters
             </Link>
@@ -444,7 +444,7 @@ export default async function TpoAuditPage({
                 : "This page number is outside the available result range. Return to the first page or adjust the filters."
             }
             action={<Link href={summary.total===0?"/tpo/audit":tpoAuditHref({...paginationFilters,page:1})}
-              className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{summary.total===0?"Clear filters":"First page"}</Link>}
+              className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">{summary.total===0?"Clear filters":"First page"}</Link>}
           />
         ) : (
           <TpoAuditGrid key={context.membership.id+":"+gridRefreshQuery.toString()}
@@ -466,7 +466,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
               >
                 ← Previous
               </Link>
@@ -478,7 +478,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
               >
                 First page
               </Link>
@@ -490,7 +490,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
               >
                 Next →
               </Link>

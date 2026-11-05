@@ -83,7 +83,7 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
    <Button variant="secondary" type="button" onClick={()=>{setError(null);setNotice(null);setOpen(current=>!current);}} disabled={busy}
     className="min-h-11 w-full sm:w-auto md:min-h-9" aria-expanded={open}
     aria-label={"Suspend "+personLabel} title={"Suspend "+personLabel}>
-    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M9 12h6"/></svg>
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><path d="M9 12h6"/></svg>
     Suspend
    </Button>
    {open?<div role="region" aria-label={"Suspend "+personLabel} className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
@@ -105,7 +105,7 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
    aria-label={"Reactivate "+personLabel} title={"Reactivate "+personLabel}
    className="min-h-11 w-full sm:w-auto md:min-h-9"
    onClick={()=>{setError(null);setNotice(null);setConfirming("REACTIVATE");}}>
-   <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 12a8 8 0 1 0 2-5.4M4 4v5h5"/></svg>
+   <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 12a8 8 0 1 0 2-5.4M4 4v5h5"/></svg>
    Reactivate
   </Button>:
     <p className="text-xs text-muted-foreground">Ended membership · read only</p>}

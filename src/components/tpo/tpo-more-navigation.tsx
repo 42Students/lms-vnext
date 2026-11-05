@@ -83,9 +83,9 @@ export function TpoMoreNavigation(){
          item.href==="/tpo/messages"?counts?.messages:undefined;
        const badge=count===undefined?null:showBadge(count);
        return <Link key={item.href} href={item.href}
-        className="group flex min-h-16 min-w-0 items-center gap-3 border-t border-[var(--lms-canvas-border)] bg-surface px-3 py-[12px] transition-colors duration-[var(--lms-motion-fast)] first:border-t-0 hover:bg-[var(--lms-primary-subtle)] focus-visible:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] md:min-h-[68px] md:px-[16px] md:py-3">
+        className="group flex min-h-16 min-w-0 items-center gap-3 border-t border-[var(--lms-canvas-border)] bg-surface px-3 py-[12px] transition-colors duration-[var(--lms-motion-fast)] first:border-t-0 hover:bg-[var(--lms-primary-subtle)] focus-visible:bg-[var(--lms-primary-subtle)] focus-ring-inset md:min-h-[68px] md:px-[16px] md:py-3">
         <span aria-hidden="true"
-          className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[color:var(--lms-border)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-500)] md:size-[38px]">
+          className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[color:var(--lms-border)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-500)] md:size-[40px]">
          <MoreIcon href={item.href}/>
         </span>
         <span className="min-w-0 flex-1">

@@ -135,7 +135,7 @@ export default async function RecruiterRequestDrivePage({
   const requestResult=requestId?await listOwnRecruiterDriveRequests(context,collegeId)
    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})):null;
   if(requestResult&&!requestResult.ok)return <div className="min-w-0 space-y-4">
-    <PageHeader title="Request a drive" actions={<Link href="/hr/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">All drives</Link>}/>
+    <PageHeader title="Request a drive" actions={<Link href="/hr/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">All drives</Link>}/>
     <ErrorState title="Couldn't load your requests"
      description="Your existing request is temporarily unavailable. Your unsent draft has not changed."
      action={<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)+"&"+(query.fix?"fix":query.edit?"edit":"copy")+"="+encodeURIComponent(requestId!)}
@@ -170,14 +170,14 @@ export default async function RecruiterRequestDrivePage({
     </div>
     <nav className="min-w-0 space-y-2" aria-label="Recruiter drive links">
     <details className="min-w-0 border-t border-border pt-2">
-      <summary className="inline-flex min-h-11 w-full cursor-pointer items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">More drive destinations</summary>
+      <summary className="inline-flex min-h-11 w-full cursor-pointer items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9 md:w-auto">More drive destinations</summary>
       <div className="flex min-w-0 flex-col items-start gap-2 pb-2 md:flex-row md:flex-wrap">
     <Link href={hrSentProposalsHref(collegeId)}
-      className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 md:w-auto active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 md:w-auto active:text-[var(--lms-primary-hover)] focus-ring">
       View previously sent discussion proposals
     </Link>
     <Link href={"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(collegeId)}
-      className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-ring">
       Record an outside-platform drive
     </Link>
 

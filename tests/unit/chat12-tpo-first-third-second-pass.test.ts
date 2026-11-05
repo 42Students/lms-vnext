@@ -67,7 +67,7 @@ describe("UX-tpo-first-third-12 explicit denial, recovery and scope contracts",(
   expect(code).toContain("<TpoMoreNavigation");
   const nav=readFileSync(resolve(process.cwd(),"src/components/tpo/tpo-more-navigation.tsx"),"utf8");
   expect(nav).toContain('aria-label="More TPO destinations"');
-  expect(nav).toContain("focus-visible:outline-2");
+  expect(nav).toContain("focus-ring");
  });
  it("UX-tpo-drive-day-01 distinguishes learner coordinator from TPO operational scope",()=>{
   const code=page("/drive-day");

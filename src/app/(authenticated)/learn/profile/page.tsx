@@ -114,7 +114,7 @@ async function LearnerProfileContent({
               You changed this after it was verified. The verified details stay in use until you send the changes for review.
             </Banner>:null}
         </div>:<Banner tone="info" className="mt-2">Verification status is temporarily unavailable.</Banner>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review verification status</Link>
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">Review verification status</Link>
       </section>
       <LearnerProfileWorkspace
         initialSection={initialSection}
@@ -204,11 +204,11 @@ async function LearnerProfileContent({
       </section>
       <nav aria-label="Profile resources" className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
       <Link href="/learn/profile/academic-record"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-2 hover:underline focus-ring md:min-h-9">
         View my academic record →
       </Link>
       <Link href="/learn/profile/data-access"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-2 hover:underline focus-ring md:min-h-9">
         Who has my data →
       </Link>
       </nav>
@@ -232,7 +232,7 @@ async function LearnerProfileContent({
         </div>:<p role="status" className="mt-3 text-sm text-body">
           Verification requirements are temporarily unavailable. Open the verification page to retry.
         </p>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View my verification status →</Link>
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">View my verification status →</Link>
       </section>
       <section aria-label="Coding profiles" className="min-w-0 border-b border-border pb-6">
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Coding platform profiles</Heading>
@@ -250,8 +250,8 @@ async function LearnerProfileContent({
         )}
         <p className="mt-2 text-xs text-muted-foreground">Save GitHub under Social profiles; add other coding sites as URL-type entries under Additional information using the exact platform name.</p>
         <div className="flex flex-wrap gap-4">
-          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Edit GitHub →</Link>
-          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Edit coding links →</Link>
+          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">Edit GitHub →</Link>
+          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">Edit coding links →</Link>
         </div>
       </section>
     </div>

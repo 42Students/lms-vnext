@@ -35,11 +35,11 @@ export default async function SuperAdminBatchStudentsPage({params}:{
         {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>},
         {key:"students",header:"Students",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.learnerCount}</span>},
         {key:"capacity",header:"Capacity",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.capacity??"—"}</span>},
-        {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]" href={"/admin/academics/sections/"+encodeURIComponent(row.id)}>Manage roster and schedule →</Link>},
+        {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]" href={"/admin/academics/sections/"+encodeURIComponent(row.id)}>Manage roster and schedule →</Link>},
       ]}/>
     </Disclosure>
   </section>
 
-  <Link href={"/admin/classes?cohortCode="+encodeURIComponent(data.batch.code)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Manage batch classes →</Link>
+  <Link href={"/admin/classes?cohortCode="+encodeURIComponent(data.batch.code)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Manage batch classes →</Link>
  </div>;
 }

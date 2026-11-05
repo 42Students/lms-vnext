@@ -109,7 +109,7 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
   }
   return <div className="min-w-0 flex flex-wrap items-center gap-2 border-b border-border pb-3">
     <details aria-label="Saved issue views" className="relative min-w-0">
-      <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">
+      <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-ring md:min-h-9">
         <span aria-hidden="true">★</span> Saved views {views.length>0?`(${views.length})`:""}
       </summary>
       <div className="absolute left-0 top-full z-(--lms-z-sticky-header) mt-2 min-w-[240px] max-w-[min(90vw,360px)] rounded-[10px] border border-border bg-surface p-3 shadow-lg">

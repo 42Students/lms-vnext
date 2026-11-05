@@ -55,7 +55,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
 
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
    actions={<>
-    <Link href={root} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">← Back to drive</Link>
+    <Link href={root} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-ring md:w-auto md:min-h-9">← Back to drive</Link>
     <ButtonLink variant="secondary" href={csvHref} className="w-full md:w-auto">Export filtered CSV</ButtonLink>
    </>}/>
   <Banner tone="info">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</Banner>
@@ -75,10 +75,10 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner, email, roll, batch, branch or role
     <Input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="w-full min-w-0"/>
    </label><Button type="submit" className="min-h-11 w-full px-6 sm:w-auto md:min-h-9">Search</Button>
-   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline sm:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>:null}
+   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline sm:w-auto focus-ring md:min-h-9">Clear filters</Link>:null}
    </div>
    <details className="group min-w-0 border-t border-border pt-3">
-    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">
+    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
       Filters <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
     </summary>
     <div className="grid min-w-0 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -126,9 +126,9 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
       <div className="min-w-0"><p className="text-xs text-muted-foreground">Offer expiry</p><p className="mt-1 break-words text-body">{formatIst(row.expires)}</p></div>
       <div className="min-w-0"><p className="text-xs text-muted-foreground">Joining</p><p className="mt-1 break-words text-body">{row.joining??"Not applicable"}</p></div>
     </div>
-    <div className="mt-3 flex min-w-0 flex-wrap gap-2"><Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 sm:w-auto text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link></div>
+    <div className="mt-3 flex min-w-0 flex-wrap gap-2"><Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 sm:w-auto text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link></div>
     <details className="group mt-3 min-w-0 border-t border-border pt-2">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
         More offer details <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
       </summary>
       <div className="min-w-0 space-y-3 pb-2">
@@ -142,8 +142,8 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     <div><dt>Email</dt><dd>{row.email??"Not recorded"}</dd></div><div><dt>Phone</dt><dd>{row.phone??"Not recorded"}</dd></div><div><dt>Rules check</dt><dd title="Offer state only; consult the college placement rules for eligibility and held-offer limits.">{row.ruleCheck}</dd></div>
     {row.expiryIndicator!=="NOT_APPLICABLE"?<div><dt>Issued-offer expiry state</dt><dd>{row.expiryIndicator.replaceAll("_"," ").toLowerCase()}</dd></div>:null}</dl>
         <div className="flex min-w-0 flex-wrap gap-4 text-sm font-semibold">
-    <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
-    {row.status==="ACCEPTED"?<Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
+    <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
+    {row.status==="ACCEPTED"?<Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
       </div>
     </details>
 

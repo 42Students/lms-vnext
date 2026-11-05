@@ -12,7 +12,7 @@
 }
 .track {
   position: relative;
-  height: 3px !important;
+  height: 4px !important;
   overflow: hidden;
   border-radius: 0 !important;
   background: transparent !important;

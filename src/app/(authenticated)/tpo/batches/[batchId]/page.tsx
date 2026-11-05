@@ -131,7 +131,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
       Retry profiles
     </Link>
   </Banner>:null}
-  <Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center gap-2 justify-start text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+  <Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center gap-2 justify-start text-sm font-semibold text-link underline focus-ring md:min-h-9">
    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" className="size-4"><path d="M13 8H3m5-5L3 8l5 5" strokeLinecap="round" strokeLinejoin="round"/></svg>
    Placement eligibility
   </Link>
@@ -174,11 +174,11 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm text-body leading-[22px]">{next.detail}</p>
   <div className="flex flex-wrap gap-3">
    <Link href={"/tpo/batches/"+batchId+next.href}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-ring md:min-h-9">
     {next.button} →
    </Link>
    {registrations.available&&(registrations.registered??0)>0?<Link href={"/tpo/batches/"+batchId+"/students"}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-link lms-inline-link hover:underline focus-ring md:min-h-9">
     {registrations.registered} students registered: continue on Students →
    </Link>:null}
   </div>
@@ -205,23 +205,23 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm leading-[22px]">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>
-  <Link href={"/tpo/batches/"+batchId+"/students"} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open Students</Link>
+  <Link href={"/tpo/batches/"+batchId+"/students"} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring md:min-h-9">Open Students</Link>
  </section>
   </div>
   <TpoBatchWorkspaceTabs batchId={batchId} active="" students={registrations.activeLearners} />
 
  {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
   Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
-   className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" data-testid="batch.suggest-do">Do it</Link>
+   className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9" data-testid="batch.suggest-do">Do it</Link>
   </p>:ready&&!lifecycle?.invitedAt&&invitePreview.invitable>0?<p data-testid="batch.suggest"
    className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
    Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
-    className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
+    className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
   </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
-   Suggested: remind them to register <Link href="#batch-reminder" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
+   Suggested: remind them to register <Link href="#batch-reminder" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
   </p>:null}
  {own?<Link data-testid="batch.act" href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-ring md:min-h-9">
    {own.total} {own.total===1?"student is":"students are"} decided individually
    {own.uncertain>0?", "+own.uncertain+" need class review":own.different===0?", all the same as their class or batch":", "+own.different+" differ from their class or batch"} →
   </Link>:<p role="status" className="text-sm text-body leading-[22px]">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
@@ -231,7 +231,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
       <p className="text-sm text-body leading-[22px]">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
       {decision.reason?<p className="text-xs text-muted-foreground leading-5">Reason: {decision.reason}</p>:null}
     </div>
-    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-ring md:min-h-9">
       {lifecycle?.finishedAt?"Review batch decision":"Set batch decision"} →
     </Link>
   </div>

@@ -15,7 +15,7 @@
 .item:hover,.item[aria-selected=true]{background:var(--lms-primary-subtle)}
 .item span:nth-child(2){display:flex;flex-direction:column;gap:4px}.item strong{font-size:14px}
 .item small{font-size:12px;color:var(--lms-text-muted)}
-.red,.teal{height:10px;width:10px;margin-top:4px;border-radius:50%;background:var(--lms-error-text)}
+.red,.teal{height:12px;width:12px;margin-top:4px;border-radius:50%;background:var(--lms-error-text)}
 .teal{background:var(--lms-button-primary)}
 .detail{padding:24px 28px;display:flex;flex-direction:column;gap:16px}
 .detail h2{margin:0;font-size:24px;font-weight:700}
@@ -28,7 +28,7 @@
 .noteLabel{display:flex;flex-direction:column;gap:8px;font-weight:700;font-size:13px}
 .noteLabel textarea{width:100%;box-sizing:border-box;border:1px solid var(--lms-neutral-300);border-radius:8px;padding:12px 12px;color:var(--lms-heading);font:14px Lato,Arial,sans-serif}
 .actions{display:flex;flex-wrap:wrap;gap:8px}
-.primary,.secondary{display:inline-flex;min-height:38px;align-items:center;justify-content:center;padding:0 16px;border:1px solid var(--lms-button-primary);border-radius:8px;background:var(--lms-button-primary);color:var(--lms-white);font:700 13px Lato,Arial,sans-serif;cursor:pointer;text-decoration:none}
+.primary,.secondary{display:inline-flex;min-height:40px;align-items:center;justify-content:center;padding:0 16px;border:1px solid var(--lms-button-primary);border-radius:8px;background:var(--lms-button-primary);color:var(--lms-white);font:700 13px Lato,Arial,sans-serif;cursor:pointer;text-decoration:none}
 .secondary{background:var(--lms-white);border-color:var(--lms-neutral-300);color:var(--lms-text-body)}
 .primary:disabled,.secondary:disabled{opacity:.5;cursor:not-allowed}
 .empty{display:flex;flex-direction:column;gap:12px;padding:28px 20px;text-align:center;color:var(--lms-text-muted);font-size:14px}
@@ -58,7 +58,7 @@
 .personHead{display:flex;min-width:0;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .personHead h2{margin:0}
 .personActions{display:flex;flex-wrap:wrap;gap:8px}
-.personActions a{min-height:38px}
+.personActions a{min-height:40px}
 @media(max-width: 991px){.grid{grid-template-columns:1fr}}
 
 /* Verified original Companies > Today screenshot: compact queue + detail. */
@@ -109,7 +109,7 @@
 .companyAttention>.helper{padding:8px 16px 0}
 
 /* Companies > Today: one selectable queue and source-backed contextual panes. */
-.replyDot{height:10px;width:10px;margin-top:4px;border-radius:50%;background:var(--lms-warning)}
+.replyDot{height:12px;width:12px;margin-top:4px;border-radius:50%;background:var(--lms-warning)}
 .companyDetail,.replyDetail{display:flex;min-width:0;flex-direction:column;gap:16px}
 .replyBody{border:1px solid var(--lms-border);border-radius:10px;background:var(--lms-neutral-50);padding:16px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--lms-text-body);line-height:1.6}
 .companyDetail .context{background:var(--lms-primary-subtle)}

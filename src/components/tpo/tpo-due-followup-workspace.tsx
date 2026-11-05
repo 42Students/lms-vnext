@@ -195,7 +195,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
               <article key={row.id} className="min-w-0 space-y-3 py-4">
                 <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
+                    <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9 focus-visible:underline"
                       href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</Link>
                     {row.companyName ? <p className="text-sm text-body">{row.companyName}</p> : null}
                     <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

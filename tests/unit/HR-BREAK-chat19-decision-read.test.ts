@@ -24,7 +24,7 @@ describe("HR-BREAK-DECISION-READ-46 verified recruiter decision receipt",()=>{
   expect(source).toContain("isVerifiedRecruiterDecisionReadReceipt(payload,id)");
   expect(source).toContain("disabled={busy||complete}");
   expect(source).toContain("min-h-11");
-  expect(source).toContain("focus-visible:outline-2");
+  expect(source).toContain("focus-ring");
  });
  it("only marks complete and refreshes after a valid persisted receipt",()=>{
   const source=readFileSync("src/components/hr/recruiter-decision-read-button.tsx","utf8");

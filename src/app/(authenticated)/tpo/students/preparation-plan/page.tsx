@@ -21,8 +21,8 @@ export default async function TpoPreparationCoursePlan(){
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Preparation course plan" description="Course readiness settings and the current active catalog."
    actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-    <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Back to learners needing support</Link>
-    <Link href="/tpo/settings/prep-readiness" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Open existing preparation settings editor</Link>
+    <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline hover:text-[var(--lms-primary-text)] focus-ring sm:w-auto md:min-h-9">Back to learners needing support</Link>
+    <Link href="/tpo/settings/prep-readiness" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline hover:text-[var(--lms-primary-text)] focus-ring sm:w-auto md:min-h-9">Open existing preparation settings editor</Link>
    </div>}/>
   <p className="text-sm text-body leading-[22px]">This lists the college placement cell&apos;s recorded readiness-course selection. It is a planning preview, not a course enrollment, assignment, learner completion record, or outreach workflow.</p>
   {!plan.ready?<Alert tone="warning">{!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}</Alert>:<>

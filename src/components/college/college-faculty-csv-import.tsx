@@ -83,7 +83,7 @@ export function CollegeFacultyCsvImport(){
           className="w-full md:w-auto">Download CSV template</ButtonLink>
       </div>
       <details className="min-w-0 border-t border-border pt-3 print:hidden">
-        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">CSV contents</summary>
+        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring md:min-h-9">CSV contents</summary>
         <div className="min-w-0 space-y-3 pt-3">
           <p className="break-words font-mono text-xs leading-5">{header}</p>
           <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">CSV contents

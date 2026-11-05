@@ -11,7 +11,7 @@ export default function LearnerAssignmentDetailError({reset}:{
     <Alert tone="error">A load failure is not treated as an empty assignment.</Alert>
     <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
-      <Link href="/learn/allAssignments" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">All Assignments</Link>
+      <Link href="/learn/allAssignments" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring sm:w-auto md:min-h-9">All Assignments</Link>
     </div>
   </div>;
 }

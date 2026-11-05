@@ -48,7 +48,7 @@ export default async function LearnerPlacementPreparationPage({
     <PageHeader title="Placement preparation"
       description="A checklist of information and activity actually recorded for your account."
       actions={<Link href="/learn/my-placements"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-ring md:min-h-9">
         My Placements
       </Link>} />
     {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}

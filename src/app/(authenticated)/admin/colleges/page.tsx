@@ -128,7 +128,7 @@ const columns: DataTableColumn<CollegeRow>[] = [
     cell: (college) => (
       <div className="flex min-w-0 flex-wrap justify-start gap-2 md:justify-end">
         <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">
           Manage
         </Link>
         {college.canManage?<CollegeEditDialog college={college} />:null}
@@ -136,13 +136,13 @@ const columns: DataTableColumn<CollegeRow>[] = [
           <div className="grid min-w-0 gap-[var(--lms-space-2)]">
         <Link role="menuitem"
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]"
         >
           Readiness
         </Link>
         <Link role="menuitem"
           href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]"
         >
           Branding
         </Link>
@@ -174,7 +174,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     <PageHeader title="Colleges"/>
     <ErrorState title="Invalid college directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const [collegesResult,organizationsResult]=await Promise.all([
     listColleges(context).then(value=>({ok:true as const,value}))
@@ -265,7 +265,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       <PageHeader
         title="Colleges"
         description="Active colleges are constrained by the selected Super Admin safety scope."
-        actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Search tenant directory →</Link>}
+        actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9">Search tenant directory →</Link>}
       />
       {!organizationsResult.ok?<Banner tone="warning" role="status"
         action={<Link href={href(page)}
@@ -321,8 +321,8 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         </Select>
        </label>
        <Button type="submit" className="w-full md:w-auto">Search</Button>
-       <Link href="/admin/colleges" className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4">Clear search</Link>
-       <Link href={href(page)} className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4">Refresh directory</Link>
+       <Link href="/admin/colleges" className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9 underline-offset-4">Clear search</Link>
+       <Link href={href(page)} className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9 underline-offset-4">Refresh directory</Link>
       </form>
       <p role="status" className="text-sm text-muted-foreground tabular-nums">{q||state||city||orgId?matches.length+" of "+rows.length:rows.length} colleges · Page {page} of {pages}</p>
       <p className="text-xs text-muted-foreground">{popularityRead.ok

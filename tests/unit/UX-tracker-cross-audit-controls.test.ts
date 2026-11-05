@@ -8,19 +8,19 @@ describe("Cross-audit Tracker directory and actions",()=>{
   for(const x of ['<Input name="q"','<Select name="area" multiple','<Select name="status" multiple','<Select name="severity" multiple','<Select name="kind" multiple','<Button type="submit" variant="primary"'])expect(s).toContain(x);
   expect(s).toContain('aria-label="tracker audit findings filters"');
   expect(s).toContain('<Pagination label="Audit findings pages"');
-  expect(s).toContain('className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9 focus-visible:outline-2');
+  expect(s).toContain('className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9 focus-ring');
   expect(s).toContain('<IndependentAuditFindingsBoard rows={data.items}');
  });
  it("UX-tracker-issues-02 issue detail link works on touch and keyboard without hover",()=>{
   const s=src("src/app/(authenticated)/tracker/issues/page.tsx");
   expect(s).toContain('href={"/tracker/issues/"+encodeURIComponent(issue.publicId)}');
-  expect(s).toContain('focus-visible:outline-2 focus-visible:outline-offset-[3px]');
+  expect(s).toContain('focus-ring');
   expect(s).toContain('role="listitem"');
  });
  it("UX-tracker-audit-findings-publicId-02 similar-findings action is keyboard-visible",()=>{
   const s=src("src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx");
   expect(s).toContain('>Looks similar</Link>');
-  expect(s).toContain('focus-visible:outline-2 focus-visible:outline-offset-[3px]');
+  expect(s).toContain('focus-ring');
   expect(s).toContain('focus-visible:outline-[var(--lms-primary-text)]');
  });
  for(const [name,file] of [["bulk","src/components/tracker/tracker-issue-bulk-actions.tsx"],["workflow","src/components/tracker/tracker-workflow-panel.tsx"],["logs","src/components/tracker/tracker-issue-logs-panel.tsx"]] as const){
@@ -30,7 +30,7 @@ describe("Cross-audit Tracker directory and actions",()=>{
    if(file.endsWith("tracker-issue-bulk-actions.tsx")){
      // Shared controls supply focus styles, rather than duplicating classes in callers.
      expect(s).toContain('import { Button } from "@/components/ui/button"');
-     expect(src("src/components/ui/button.tsx")).toContain("focus-visible:outline-2");
+     expect(src("src/components/ui/button.tsx")).toContain("focus-ring");
    }else expect(s).toContain("focus-visible:");
   });
  }

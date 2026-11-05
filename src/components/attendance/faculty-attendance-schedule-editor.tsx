@@ -130,7 +130,7 @@ export function FacultyAttendanceScheduleEditor({
     </div>
     <details key={action + (selected?.id ?? "")}
       className="min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
-      <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-ring">
         Additional session details
       </summary>
       <div className="grid min-w-0 gap-4 pb-3 pt-2">

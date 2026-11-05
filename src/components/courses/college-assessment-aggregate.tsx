@@ -117,7 +117,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
             sections={data.directorySections} initialCourseCode={data.query.courseCode??""}
             initialDeliveryId={data.query.deliveryId??""}/>
           <details open={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
-            <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Assessment directory filters</summary>
+            <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-ring">Assessment directory filters</summary>
             <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
           <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Batch / cohort code (exact)
@@ -195,7 +195,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
             description={data.total===0?"Try adjusting your filters.":"Return to an earlier page."}/>}
           columns={isAssignment?[
             {key:"title",header:"Title",mobilePriority:"primary" as const,
-              cell:(item:CollegeAssessmentAggregateItem)=><div className="max-w-[230px] break-words">
+              cell:(item:CollegeAssessmentAggregateItem)=><div className="max-w-[232px] break-words">
                 <strong>{item.title.trim()||"Untitled"}</strong>
                 <span className="mt-1 block text-xs text-muted-foreground">{item.status}</span>
               </div>},
@@ -214,12 +214,12 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
             {key:"deadline",header:"Deadline",mobilePriority:"secondary" as const,
               cell:(item:CollegeAssessmentAggregateItem)=><span className="whitespace-nowrap">{formatDue(item.dueAt)}</span>},
             {key:"submissions",header:"Submissions",mobilePriority:"secondary" as const,
-              cell:(item:CollegeAssessmentAggregateItem)=><div className="min-w-[145px] space-y-1">
+              cell:(item:CollegeAssessmentAggregateItem)=><div className="min-w-[144px] space-y-1">
                 <p>{item.submittedLearners}/{item.eligibleLearners} submitted</p>
                 <p>{item.gradedLearners} graded · {Math.max(0,item.submittedLearners-item.gradedLearners)} not graded</p>
               </div>},
             {key:"actions",header:"Actions",mobilePriority:"action" as const,
-              className:"md:sticky md:right-0 md:z-(--lms-z-sticky-inline) md:bg-surface min-w-[230px]",
+              className:"md:sticky md:right-0 md:z-(--lms-z-sticky-inline) md:bg-surface min-w-[232px]",
               cell:(item:CollegeAssessmentAggregateItem)=><div className="flex flex-wrap gap-2">
                 <SuperAdminAssignmentSubmissionsDialog title={item.title||"Untitled"} count={item.submittedLearners}>
                   <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
@@ -231,7 +231,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               </div>},
           ]:[
             {key:"title",header:"Title",mobilePriority:"primary" as const,
-              cell:(item:CollegeAssessmentAggregateItem)=><strong className="block max-w-[225px] break-words">
+              cell:(item:CollegeAssessmentAggregateItem)=><strong className="block max-w-[224px] break-words">
                 {item.title.trim()||"Untitled quiz"}</strong>},
             {key:"course",header:"Course",mobilePriority:"secondary" as const,
               cell:(item:CollegeAssessmentAggregateItem)=><Link
@@ -253,7 +253,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               cell:(item:CollegeAssessmentAggregateItem)=><span className="whitespace-nowrap">{formatDue(item.dueAt)}</span>},
             {key:"actions",header:"Actions",mobilePriority:"action" as const,
               className:"md:sticky md:right-0 md:z-(--lms-z-sticky-inline) md:bg-surface min-w-[240px]",
-              cell:(item:CollegeAssessmentAggregateItem)=><div className="flex min-w-[210px] flex-col gap-2">
+              cell:(item:CollegeAssessmentAggregateItem)=><div className="flex min-w-[212px] flex-col gap-2">
                 <CollegeQuizActions quiz={item}/>
                 <div className="flex flex-wrap items-center gap-2">
                   <QuizListActions item={item}/>

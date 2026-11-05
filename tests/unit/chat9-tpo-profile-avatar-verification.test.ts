@@ -14,7 +14,7 @@ describe("TPO profile photo: legacy square avatar with accessible editing",()=>{
   expect(component).toContain('aria-label="Change profile photo"');
   expect(component).toContain("flex h-11 w-11 items-center justify-center rounded-full");
   expect(component).toContain("min-h-11 items-center text-left");
-  expect(component).toContain("focus-visible:outline-2");
+  expect(component).toContain("focus-ring");
   expect(component).toContain('type="file" accept="image/png,image/jpeg,image/webp"');
  });
  it("does not publish an unscanned upload or drop optimistic version checking",()=>{

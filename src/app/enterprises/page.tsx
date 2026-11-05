@@ -51,7 +51,7 @@ export default function EnterprisesPage(){
    <div className="mx-auto grid max-w-[1180px] items-start gap-10 lg:grid-cols-[1.2fr_.8fr]">
     <div className="min-w-0">
      <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">For Enterprises</p>
-     <Heading level={2} id="enterprises-audience-heading" className="mt-3 text-[clamp(1.5rem,3vw,2.125rem)] leading-tight text-[var(--lms-heading)]">Learning and recruiting connected to real work</Heading>
+     <Heading level={2} id="enterprises-audience-heading" className="mt-3 text-2xl md:text-3xl leading-tight text-[var(--lms-heading)]">Learning and recruiting connected to real work</Heading>
      <p className="mt-4 max-w-[67ch] text-base leading-7 text-[var(--lms-body-text)]">Give teams a clear way to learn, practice, document outcomes and collaborate with campus placement cells.</p>
      <ul className="mt-6 grid gap-3 text-sm leading-6 text-[var(--lms-body-text)]">
       {[
@@ -79,7 +79,7 @@ export default function EnterprisesPage(){
   </section>
   <section aria-labelledby="enterprise-integrations-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-[var(--lms-primary-subtle)] px-5 py-14 md:py-20">
    <div className="mx-auto max-w-[1180px] space-y-5">
-    <Heading level={2} id="enterprise-integrations-heading" className="text-[clamp(1.5rem,3vw,2.125rem)] text-[var(--lms-heading)]">Connected learning and hiring workflows</Heading>
+    <Heading level={2} id="enterprise-integrations-heading" className="text-2xl md:text-3xl text-[var(--lms-heading)]">Connected learning and hiring workflows</Heading>
     <p className="max-w-[75ch] text-sm leading-6 text-[var(--lms-body-text)]">42 LMS workflows are available inside the platform. External GitHub, Slack, Teams, CRM and ERP integration is not advertised as a live feature.</p>
     <ul className="flex flex-wrap gap-3">
      {["Assessments","Assignments","Projects","Interviews","Courses","Learner profiles",

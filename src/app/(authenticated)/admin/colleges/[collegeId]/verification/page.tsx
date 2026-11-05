@@ -58,7 +58,7 @@ export default async function AdminCollegeVerification({
   actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>;
  if(!parsed?.success)return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
   <ErrorState title="Invalid verification filters" description="Choose a valid set of verification filters."
-   action={<Link href={base} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Reset filters</Link>}/>
+   action={<Link href={base} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Reset filters</Link>}/>
  </div>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>;
  try{data=await listCollegeVerificationQueue(context,parsed.data,college.id);}
@@ -73,7 +73,7 @@ export default async function AdminCollegeVerification({
     description={e instanceof VerificationUnavailableError?
      "Verification storage is not yet available. No queue decisions can be made.":
      e instanceof VerificationQueueLimitError?"The verification queue exceeds its safe scan cap. Narrow server-side filters before reviewing.":"Could not load the queue. Retry without losing your selected filters."}
-    action={<Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4" href={retryHref}>Retry</Link>}/>
+    action={<Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4" href={retryHref}>Retry</Link>}/>
   </div>;
  }
  const policyResult=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})

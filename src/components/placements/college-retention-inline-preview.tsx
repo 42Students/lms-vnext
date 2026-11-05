@@ -62,7 +62,7 @@ export function CollegeRetentionInlinePreview(){
       Showing first {data.rows.length} of {data.totalStaleCount} records. Open the full report to review other matches.
      </p>:null}
      <Link href="/college/placements/retention?olderThanDays=180"
-      className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2">
+      className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
       Open full retention report →
      </Link>
     </div>:null}

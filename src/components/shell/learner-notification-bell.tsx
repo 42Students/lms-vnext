@@ -102,7 +102,7 @@ export function LearnerNotificationBell(){
     <ul className="mt-2 space-y-2">
      {due.slice(0,3).map(item=><li key={item.key}>
       <Link href={item.href} onClick={()=>setOpen(false)}
-       className="block min-h-11 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+       className="block min-h-11 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body hover:bg-primary-subtle focus-ring">
        {item.body}
       </Link></li>)}
     </ul>
@@ -115,7 +115,7 @@ export function LearnerNotificationBell(){
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
      return <li key={row.notification.id}>
       <Link href={target} onClick={()=>setOpen(false)}
-        className="block min-h-11 min-w-0 px-3 py-3 text-sm text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="block min-h-11 min-w-0 px-3 py-3 text-sm text-body hover:bg-primary-subtle focus-ring">
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
        <span className="mt-1 block min-w-0 line-clamp-2 break-words leading-[1.5] text-muted-foreground">{row.notification.body}</span>

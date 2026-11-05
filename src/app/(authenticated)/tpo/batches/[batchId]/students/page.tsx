@@ -38,9 +38,9 @@ const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export default async function BatchStudents({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{page?:string|string[];q?:string|string[];classId?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[];order?:string|string[]}>}){
  const {batchId}=await params,raw=await searchParams;
  const parsed=pageSchema.safeParse(Array.isArray(raw.page)?raw.page[0]:raw.page??1);
- if(!parsed.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid page number" description="Choose a valid roster page." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/batches/"+batchId+"/students"}>Start again</Link>}/></div>;
+ if(!parsed.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid page number" description="Choose a valid roster page." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring" href={"/tpo/batches/"+batchId+"/students"}>Start again</Link>}/></div>;
  const view=parseBatchStudentSearchParams(raw);
- if(!view.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid student search" description="Check the roster filters and search values." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link>}/></div>;
+ if(!view.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid student search" description="Check the roster filters and search values." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring" href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link>}/></div>;
  const {classId: selectedClassId,...otherFilters}=view.data;
  const filters={...otherFilters,...(selectedClassId===undefined?{}:{classId:selectedClassId})};
  const ctx=await getCurrentRequestContext();
@@ -118,7 +118,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    <strong>Suggested: make them eligible</strong>
    <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
    <Link href={batchStudentPageHref(batchId,1,{...filters,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
-     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Show me</Link>
+     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">Show me</Link>
  </Alert>:null}
  <p className="text-xs text-muted-foreground leading-5">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
   Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
@@ -193,7 +193,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
        <TpoBatchInlineDecision membershipId={student.membershipId}
         batchId={batchId} expected={student.direct}/>:null}
       <Link href={"/tpo/students/"+encodeURIComponent(student.membershipId)+"/participation"}
-       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring">
        Open learner participation
       </Link>
      </div>},
@@ -221,7 +221,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  </section>
  </Disclosure>
 
- {(result.page>1||result.hasMore)?<nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Previous</Link>:null}
- {result.hasMore?<Link href={href(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Next</Link>:null}</nav>:null}
+ {(result.page>1||result.hasMore)?<nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Previous</Link>:null}
+ {result.hasMore?<Link href={href(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link underline focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Next</Link>:null}</nav>:null}
  </div>;
 }

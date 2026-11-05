@@ -91,7 +91,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
         actions={
           <Link
             href="/tpo/settings/trusted"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-ring"
           >
             Trusted Companies
           </Link>
@@ -213,7 +213,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
           {([{key:"WORK",label:"Most work first"},{key:"OVERDUE",label:"Overdue first"},{key:"NAME",label:"Name"}] as const).map(option=>(
             <Link key={option.key} href={"/tpo/settings/team?sort="+option.key}
               aria-current={sort===option.key?"page":undefined}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{option.label}</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-ring md:min-h-9">{option.label}</Link>
           ))}
         </nav>
         {!workload.ready?<Alert tone="warning">Ask workload is not available yet. Drive Day duties remain visible; no zero workload is assumed.</Alert>:null}
@@ -260,7 +260,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
                   <Disclosure title="View duty dates" className="min-w-0" contentClassName="pt-2">
                   {member.studentDuties.map(duty=><p key={duty.jobId+":"+duty.onDate} className="text-xs text-body">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(duty.jobId)}
-                      className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                      className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-ring">
                       {duty.jobTitle}
                     </Link>
                     {" · "}{dutyDate(duty.onDate)}

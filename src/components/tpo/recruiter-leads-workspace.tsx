@@ -214,7 +214,7 @@ function friendlyError(status: number, payload: { error?: string }) {
 }
 
 const inputStyle = "min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-foreground md:min-h-9";
-const buttonStyle = "inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] disabled:cursor-not-allowed disabled:opacity-50";
+const buttonStyle = "inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring disabled:cursor-not-allowed disabled:opacity-50";
 const primaryStyle = "inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50";
 
 export function RecruiterLeadsWorkspace({
@@ -779,7 +779,7 @@ export function RecruiterLeadsWorkspace({
           <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
             <Button variant="bare" type="button" aria-expanded={needsExpanded} aria-controls="engage-needs-content"
               onClick={()=>setNeedsExpanded(open=>!open)}
-              className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary-text underline focus-ring md:min-h-9">
               Needs doing <span aria-hidden="true">{needsExpanded?"▴":"▾"}</span>
             </Button>
             <div id="engage-needs-content" hidden={!needsExpanded} className="space-y-2">
@@ -1138,7 +1138,7 @@ export function RecruiterLeadsWorkspace({
                       </Select>
                       {company.people.length?company.people.map(person=>
                         <Link key={person.id}
-                          className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                          className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-ring"
                           href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>
                       ):<Button variant="secondary" type="button" className="min-h-11"
                         onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</Button>}
@@ -1152,7 +1152,7 @@ export function RecruiterLeadsWorkspace({
             <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
             <section className="min-w-0 rounded-xl border border-border bg-surface" aria-label="Recruiter leads table">
             <div className="flex flex-wrap items-center gap-2 border-b border-border p-3" aria-label="Recruiter table tools">
-             <label className="min-w-[210px] flex-1">
+             <label className="min-w-[212px] flex-1">
               <span className="sr-only">Search name, company, email or phone</span>
               <Input type="search" value={query} onChange={event=>updateFilter("query",event.target.value)}
                placeholder="Search name, company, email or phone" aria-label="Search recruiters"
@@ -1252,7 +1252,7 @@ export function RecruiterLeadsWorkspace({
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
                 <section key={column} className={
                   boardStyles["column"]+" "+
-                  (draggedBoardId&&column==="CONTACTED"?"ring-2 ring-primary":"")
+                  (draggedBoardId&&column==="CONTACTED"?"focus-outline":"")
                  }
                   onDragOver={event=>{
                     if(column==="CONTACTED"&&draggedBoardId&&!boardMoving)event.preventDefault();
@@ -1277,7 +1277,7 @@ export function RecruiterLeadsWorkspace({
                         onDragEnd={()=>setDraggedBoardId(null)}
                         title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
                         <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
-                          className="block text-link lms-inline-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                          className="block text-link lms-inline-link underline-offset-2 hover:underline focus-ring">
                         <span className="block font-medium">{lead.name||"Unnamed contact"}</span>
                          {lead.designation?<span className="block text-xs text-muted-foreground">{lead.designation}</span>:null}
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>
@@ -1299,7 +1299,7 @@ export function RecruiterLeadsWorkspace({
                            <div role="group" aria-label={"Update "+(lead.name||"recruiter")} className="mt-2 min-w-0 space-y-2 break-words [overflow-wrap:anywhere]">
                              <RecruiterInlineStage lead={lead} onUpdated={()=>void load()} />
                              <RecruiterInlineOwner lead={lead} onUpdated={()=>void load()} />
-                             <Link className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-control-radius)] px-3 text-[var(--lms-teal-deep)] underline hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                             <Link className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-control-radius)] px-3 text-[var(--lms-teal-deep)] underline hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-ring"
                                href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
                              <Button variant="ghost" type="button" className="min-h-11 w-full justify-center md:min-h-9"
                                onClick={event=>{
@@ -1382,7 +1382,7 @@ export function RecruiterLeadsWorkspace({
                 This saves a new college contact and records an auditable creation event.
               </p>
               {form.followupDate?<p>First follow-up: {form.followupDate.replace("T"," ")} (IST)</p>:null}
-              <Button variant="secondary" type="button" className="mt-2 text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" onClick={()=>setReviewingCreate(false)}>
+              <Button variant="secondary" type="button" className="mt-2 text-link underline lms-inline-link focus-ring" onClick={()=>setReviewingCreate(false)}>
                 Edit details
               </Button>
             </div>:null}

@@ -29,7 +29,7 @@ export default async function HrMessagesPage({searchParams}:{
    actions={<Link href="/hr/conversations"
      className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto">Recruiter conversations</Link>}/>
   <ErrorState title="Invalid inbox filter" description="Review the college, search and unread options." role="alert"
-   action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)] md:min-h-9">Reset</Link>}/>
+   action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Reset</Link>}/>
  </div>;
  const result=await listHrNotifications(context,query.data);
  const time=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
@@ -44,7 +44,7 @@ export default async function HrMessagesPage({searchParams}:{
      </Link>
      {result.status==="READY"?<Link
        href={"/api/placements/recruiter/notifications/export?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)}
-       className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto hover:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+       className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto hover:text-[var(--lms-primary-hover)] focus-ring">
        Export scoped notifications CSV
      </Link>:null}
    </>}/>
@@ -87,7 +87,7 @@ export default async function HrMessagesPage({searchParams}:{
        <div className="flex flex-wrap items-center justify-between gap-2">
          <Heading level={2} size="lg" className="text-[var(--lms-heading)] leading-[1.4]">
            <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
-             className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{group.title}</Link>
+             className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">{group.title}</Link>
          </Heading>
          <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
        </div>
@@ -112,12 +112,12 @@ export default async function HrMessagesPage({searchParams}:{
       </p>
       <div className="flex flex-wrap gap-2">
        {result.page>1?<Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page-1)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Previous</Link>:null}
        {result.page<result.pages?<Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page+1)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Next</Link>:null}
       </div>
     </nav>
-   <p className="text-xs text-muted-foreground leading-5"><Link href="/hr/messages" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
+   <p className="text-xs text-muted-foreground leading-5"><Link href="/hr/messages" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
   </>}
  </div>;
 }

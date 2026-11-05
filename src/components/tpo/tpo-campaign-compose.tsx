@@ -132,7 +132,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
      {TPO_CAMPAIGN_COMPOSE_PRESETS.map(preset=>
       <Button variant="bare" type="button" key={preset.id} onClick={()=>selectPreset(preset)}
-       className="min-h-11 rounded-xl border border-border bg-surface p-3 text-left hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary">
+       className="min-h-11 rounded-xl border border-border bg-surface p-3 text-left hover:bg-primary-subtle focus-ring">
        <strong className="block text-sm text-foreground">{preset.title}</strong>
        <span className="mt-1 block text-xs text-muted-foreground">{preset.description}</span>
       </Button>)}

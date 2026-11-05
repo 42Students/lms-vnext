@@ -45,7 +45,7 @@ export default async function LearnerProfileDataAccessPage({
   getOwnLearnerTpoSharePage(context,tpoPage),
  ]);
  return <div className="min-w-0 space-y-5">
-  <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Profile</Link>
+  <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-ring">← Profile</Link>
   <PageHeader title="Who has my data" description="Your saved academic details, access boundaries and recorded changes."/>
   <p className="max-w-3xl text-xs leading-5 text-muted-foreground">
     The old learner academic-record and data-access GET endpoints are represented by
@@ -67,7 +67,7 @@ export default async function LearnerProfileDataAccessPage({
    <Heading level={2} size="base" id="data-access-academic-record" className="leading-6 text-[var(--lms-heading)]">Academic record</Heading>
    <p className="mt-2 max-w-3xl break-words text-sm leading-[22px] text-body">Your current college may manage your program enrollment and class records. This is not a published transcript or proof of degree completion.</p>
    <p className="mt-2 max-w-3xl break-words text-sm leading-[22px] text-body">Current program: {academic.enrollment?.program??"Not recorded"}</p>
-   <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View academic record →</Link>
+   <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-ring">View academic record →</Link>
   </section>
   <section aria-labelledby="data-access-company-shares" className="min-w-0 border-t border-border pt-4">
    <Heading level={2} size="base" id="data-access-company-shares" className="leading-6 text-[var(--lms-heading)]">Shared with companies</Heading>

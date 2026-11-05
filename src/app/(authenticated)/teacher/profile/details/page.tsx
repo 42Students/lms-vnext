@@ -38,7 +38,7 @@ export default async function FacultyProfileDetailsPage({searchParams}:{
   <Breadcrumbs items={[{label:"Profile",href:"/teacher/profile"},{label:"About & details"}]}/>
   <PageHeader title="About & details"
    description="Your self-managed profile sections, separate from college-managed employment information."
-   actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">← Profile</Link>} />
+   actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring sm:w-auto md:min-h-9">← Profile</Link>} />
   {!ready?<section role="status" className="min-w-0 border-y border-[var(--lms-canvas-border)] py-5">
    <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Profile editing unavailable</Heading>
    <p className="mt-2 max-w-prose text-sm leading-[22px] text-body">Private Faculty profile storage awaits an approved database migration. No edits will be sent or saved until it is ready.</p>
@@ -76,7 +76,7 @@ export default async function FacultyProfileDetailsPage({searchParams}:{
     </section>
     <details className="group min-w-0 border-y border-[var(--lms-canvas-border)] py-4"
       open={section==="about"||undefined}>
-      <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-ring">
         Edit / Add profile sections <span aria-hidden="true">⌄</span>
       </summary>
       <p className="mt-2 text-xs text-muted-foreground">You can edit About, personal details,

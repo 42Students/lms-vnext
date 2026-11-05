@@ -237,7 +237,7 @@ export function ActivityCenter({
     return <EmptyState
       title={emptyTitle??(emptyActionHref.includes("/projects")?"No activity recorded yet":"Nothing important happened in this period.")}
       description={emptyDescription??"No activity in this period. Try another date, category or search."}
-      action={<Link href={emptyActionHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reset</Link>}
+      action={<Link href={emptyActionHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground underline focus-ring">Reset</Link>}
     />;
   }
 
@@ -366,14 +366,14 @@ export function ActivityCenter({
                 <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">
                   <Link
                     href={`/activity/${item.event.id}`}
-                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground md:min-h-9 md:w-auto motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground md:min-h-9 md:w-auto motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-ring"
                   >
                     View details
                   </Link>
                 </div>
               </div>
               <details className="group mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-                <summary className="inline-flex min-h-9 cursor-pointer list-none items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">
+                <summary className="inline-flex min-h-9 cursor-pointer list-none items-center font-semibold text-link underline focus-ring [&::-webkit-details-marker]:hidden">
                  <span className="group-open:hidden">Details</span><span className="hidden group-open:inline">Hide details</span>
                 </summary>
                 <dl className="mt-2 grid gap-1 md:grid-cols-2">
@@ -421,7 +421,7 @@ export function ActivityCenter({
         <div className="flex justify-center">
           <Link
             href={nextHref}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 md:w-auto text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 md:w-auto text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-ring"
           >
             Load older activity ({nextRemaining} remaining) · next page
           </Link>

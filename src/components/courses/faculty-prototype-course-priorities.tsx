@@ -88,7 +88,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
     Needs you · <span>{course.sectionName}</span>
    </Heading>
    {priorities.map(item=><article key={item.id}
-     className="flex min-h-[67px] flex-wrap items-center justify-between gap-4 border-b border-[color:var(--lms-neutral-100)] px-5 py-4 last:border-b-0">
+     className="flex min-h-[68px] flex-wrap items-center justify-between gap-4 border-b border-[color:var(--lms-neutral-100)] px-5 py-4 last:border-b-0">
     <div className="min-w-0 flex-1">
      <Heading level={3} size="sm" className="leading-5 text-[color:var(--lms-heading)]">{item.title}</Heading>
      <p className="faculty-proto-subtitle">{item.detail}</p>

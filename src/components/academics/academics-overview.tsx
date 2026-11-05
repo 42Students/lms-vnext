@@ -23,7 +23,7 @@ function AcademicEmpty({ action }: { action: string }) {
   return (
     <div role="status" aria-live="polite" className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
       <p className="m-0 text-[var(--lms-font-base)] text-[var(--lms-body-text)]">No records to show.</p>
-      <Link href={{"Create period":"#academic-create-period","Create program":"#academic-create-program","Create cohort":"#academic-create-cohort","Create section":"#academic-create-section"}[action] ?? "#academic-create-period"} className="inline-flex min-h-11 items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+      <Link href={{"Create period":"#academic-create-period","Create program":"#academic-create-program","Create cohort":"#academic-create-cohort","Create section":"#academic-create-section"}[action] ?? "#academic-create-period"} className="inline-flex min-h-11 items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring md:min-h-9">
         {action}
       </Link>
     </div>
@@ -374,7 +374,7 @@ export function AcademicsOverview({
             </p>
           </div>
           {programsDirectoryHref ? (
-            <Link href={programsDirectoryHref} className="inline-flex min-h-11 items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            <Link href={programsDirectoryHref} className="inline-flex min-h-11 items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring md:min-h-9">
               Open Programs directory
             </Link>
           ) : null}

@@ -90,7 +90,7 @@ export function CollegeGroupDetailWrites({
       {!hasSpace?<Alert tone="warning">Group capacity is full. No manual promotion is available.</Alert>:null}
     </div>
     <details className="min-w-0 border-t border-border pt-3">
-      <summary className="min-h-11 cursor-pointer py-2 text-lg font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Eligibility rule</summary>
+      <summary className="min-h-11 cursor-pointer py-2 text-lg font-semibold text-foreground focus-ring md:min-h-9">Eligibility rule</summary>
       <div className="min-w-0 space-y-3 pt-3">
       <p className="text-sm text-body leading-[22px]">Edit the supported V1 criteria as JSON. At least one criterion is required. Saving does not run a refresh or change membership.</p>
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rule criteria

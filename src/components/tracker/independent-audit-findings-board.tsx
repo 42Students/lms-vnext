@@ -79,10 +79,10 @@ export function IndependentAuditFindingsBoard({rows,view}:{
    <p className="mt-1 break-words text-xs text-muted-foreground">
     {f.externalId} · {f.area} · {f.kind} · {f.environment??"Not given"}
    </p></div>},
-  {key:"status",header:"Status",mobilePriority:"secondary",className:"md:w-[150px]",cell:f=>
+  {key:"status",header:"Status",mobilePriority:"secondary",className:"md:w-[152px]",cell:f=>
    <StatusBadge tone={statusTone(f.status)}>{statuses[f.status]??f.status}</StatusBadge>},
-  {key:"assigned",header:"Assigned",mobilePriority:"secondary",className:"md:w-[130px]",cell:f=>f.assignee||"Nobody"},
-  {key:"reported",header:"Reported",mobilePriority:"secondary",className:"md:w-[170px]",cell:f=>
+  {key:"assigned",header:"Assigned",mobilePriority:"secondary",className:"md:w-[132px]",cell:f=>f.assignee||"Nobody"},
+  {key:"reported",header:"Reported",mobilePriority:"secondary",className:"md:w-[172px]",cell:f=>
    <div><span className="block">{istDate(f.foundAt)}</span>
    <span className="text-xs text-muted-foreground">{f.foundBy??"Not given"}</span></div>},
  ];

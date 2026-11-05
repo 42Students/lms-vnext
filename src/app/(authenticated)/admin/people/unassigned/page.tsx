@@ -22,7 +22,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   if (!unassignedIdentityScopeAllowed(context.adminScope)) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Users without college memberships" />
     <EmptyState title="Clear the admin scope" description="These users have no college membership. Clear the organization and college selection in the header to inspect global identities." />
-    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)] underline-offset-4">← Users & Roles</Link>
+    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring hover:text-[var(--lms-primary)] underline-offset-4">← Users & Roles</Link>
   </div>;
   const raw = await searchParams;
   const validKeys=new Set(["q","platformStatus","role","page"]);
@@ -34,7 +34,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   if (!parsed.success) return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Users without college memberships" />
     <ErrorState title="Invalid user filters" description="Review search, status, role and page."
-    action={<Link href="/admin/people/unassigned" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+    action={<Link href="/admin/people/unassigned" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const loaded = await listSuperAdminUnassignedUsers(context, parsed.data)
     .then(value => ({ok:true as const,value}))
@@ -47,7 +47,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
         ? "Your account can no longer view global identities."
         : "These users could not be loaded. Your validated filters were preserved."}
       action={<Link href={loaded.denied ? "/dashboard" : adminUnassignedUsersHref(parsed.data)}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">
         {loaded.denied ? "Back to dashboard" : "Retry loading users"}
       </Link>}
     />

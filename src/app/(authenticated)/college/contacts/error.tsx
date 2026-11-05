@@ -21,6 +21,6 @@ export default function CollegeContactsError({ reset }: { error: Error & { diges
     </div>:null}
     <ErrorState title="Couldn't load contacts" description="Something went wrong on our end. Please refresh the page or try again shortly."
     action={<><Button variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>
-      <Link href="/college/contacts" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link></>} />
+      <Link href="/college/contacts" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link></>} />
   </>;
 }

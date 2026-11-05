@@ -220,7 +220,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"status",header:"Validation",mobilePriority:"secondary",cell:item=><span>
                         <StatusBadge tone={item.error?"error":existingNumbers.has(item.row)?"info":skipRows.includes(item.row)?"warning":"success"}>{item.error??(existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}</StatusBadge>
                         {existing.find(entry=>entry.row===item.row)?
-                          <Link className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline" href={"/tpo/recruiters/"+encodeURIComponent(existing.find(entry=>entry.row===item.row)!.leadId)}>Open</Link>:null}
+                          <Link className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline" href={"/tpo/recruiters/"+encodeURIComponent(existing.find(entry=>entry.row===item.row)!.leadId)}>Open</Link>:null}
                       </span>},
                       {key:"include",header:"Include",mobilePriority:"action",cell:item=><label className="inline-flex min-h-11 items-center gap-2 text-sm"><Checkbox aria-label={"Include row "+item.row}
                         disabled={!item.lead||existingNumbers.has(item.row)||busy||Boolean(result)}
@@ -280,7 +280,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="created"?"success":item.status==="duplicate"?"info":item.status==="invalid"?"error":"warning"}>{item.status}</StatusBadge>},
                       {key:"details",header:"Details",mobilePriority:"secondary",cell:item=>item.leadId?
                         <Link href={"/tpo/recruiters/"+encodeURIComponent(item.leadId)}
-                          className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">
+                          className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring focus-visible:underline">
                           Open created lead
                         </Link>:(item.reason??"—")},
                     ]}/>

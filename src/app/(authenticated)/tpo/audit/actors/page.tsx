@@ -52,7 +52,7 @@ export default async function TpoActorAuditPage({
   if (!parsed.success) {
     return <section role="alert" className="min-w-0 space-y-3">
       <PageHeader title="Invalid audit filters" />
-      <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/tpo/audit/actors">
+      <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring md:min-h-9" href="/tpo/audit/actors">
         Clear filters
       </Link>
     </section>;
@@ -82,7 +82,7 @@ export default async function TpoActorAuditPage({
           Export matching CSV (first 2,000)
         </ButtonLink>
         <Link href="/tpo/audit"
-          className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9 md:w-auto">
           ← All audit sources
         </Link>
       </>}/>
@@ -132,7 +132,7 @@ export default async function TpoActorAuditPage({
       </Disclosure>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         <Button type="submit" className="w-full sm:w-auto">Apply filters</Button>
-        <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
           Reset filters
         </Link>
       </div>
@@ -152,7 +152,7 @@ export default async function TpoActorAuditPage({
           action={<Link href={data.total===0
               ?(hasExactFilters?"/tpo/audit/actors":"/tpo/audit")
               :urlForPage(data.totalPages)}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] focus-ring md:min-h-9">
             {data.total===0?(hasExactFilters?"Reset filters":"← All audit sources"):"Choose an earlier page."}
           </Link>}/>} 
         columns={[
@@ -167,7 +167,7 @@ export default async function TpoActorAuditPage({
           {key:"entity",header:"Entity ID",mobileLabel:"Entity ID",mobilePriority:"action",
            cell:(row)=>tpoAuditEntityHref(row.entityType,row.entityId)?
             <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!}
-             className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+             className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
              Open {row.entityType.replaceAll("_"," ")} →
             </Link>:
             <span title="No safe direct page is registered for this entity type">{row.entityId}</span>},

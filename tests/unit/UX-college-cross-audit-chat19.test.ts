@@ -17,7 +17,7 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
  for(const route of focusRoutes){
   it("COL-XA-01 "+route+" exposes keyboard focus and contrast-safe link text",()=>{
    const source=page(route);
-   expect(source,route).toContain("focus-visible:outline-2");
+   expect(source,route).toContain("focus-ring");
    // Links use semantic legacy-clone tokens rather than one hard-coded teal.
    expect(source,route).toMatch(/text-link|text-primary-text|text-\[var\(--lms-teal-deep\)\]/);
    expect(source,route).toContain("min-h-11");
@@ -64,7 +64,7 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
    expect(shared).toContain("const visibleOnPhone");
    expect(shared).toContain("<Disclosure");
    expect(shared).toContain('<ScrollCue axis="x"');
-   expect(shared).toContain("focus-visible:outline-2");
+   expect(shared).toContain("focus-ring");
   });
  }
  const inputRoutes=[
@@ -85,8 +85,8 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
    const select=readFileSync(join(process.cwd(),"src/components/ui/select.tsx"),"utf8");
    expect(input).toContain("max-md:min-h-11");
    expect(select).toContain("max-md:text-[16px]");
-   expect(input).toContain("focus-visible:outline-2");
-   expect(select).toContain("focus-visible:outline-2");
+   expect(input).toContain("focus-ring");
+   expect(select).toContain("focus-ring");
   });
  }
  it("COL-XA-05 replaces interview window prompts with a named modal and retained reason",()=>{

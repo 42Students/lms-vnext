@@ -150,7 +150,7 @@ export function SuperAdminTemplateCreateForm(){
     className="w-full"/>
   </label>
   <details className="min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Overview and submission</summary>
+   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-ring">Overview and submission</summary>
    <fieldset className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
     <legend className="sr-only">Overview and submission</legend>
     {([{key:"courseLabel",label:"Course label"},{key:"phase",label:"Phase"}] as const)
@@ -184,7 +184,7 @@ export function SuperAdminTemplateCreateForm(){
    </Select>
   </label>
   <details className="min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Additional descriptions</summary>
+   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-ring">Additional descriptions</summary>
    <div className="mt-3 grid min-w-0 gap-4">
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task acceptance criteria (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="w-full"/>
@@ -204,7 +204,7 @@ export function SuperAdminTemplateCreateForm(){
    </div>
   </details>
   <details className="min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Starting resource link (optional)</summary>
+   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-ring">Starting resource link (optional)</summary>
    <fieldset className="mt-3 min-w-0 space-y-3">
    <legend className="sr-only">Starting resource link (optional)</legend>
    <p className="text-xs text-muted-foreground">Add a public HTTP(S) resource. Both title and URL are required when adding one.</p>

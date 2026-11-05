@@ -44,7 +44,7 @@ export default async function CollegeDepartmentsPage() {
       <PageHeader
         title="Departments"
         description="Create, find, export and manage the departments in your college."
-        actions={<Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Academic periods and sections →</Link>}
+        actions={<Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Academic periods and sections →</Link>}
       />
       <Tabs ariaLabel="Academic Setup" value="departments" renderPanel={false} items={[
         {value:"departments",label:"Departments",href:"/college/departments"},

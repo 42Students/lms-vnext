@@ -82,10 +82,10 @@ export default function RequestDemoPage() {
           <p className="mb-3 text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--lms-primary-text)]">
             Request a Demo
           </p>
-          <h1 id="request-demo-title" className="mb-[16px] text-[clamp(26px,4vw,38px)] font-semibold leading-[1.25] text-[var(--lms-heading)]">
+          <h1 id="request-demo-title" className="mb-[16px] text-2xl md:text-3xl font-semibold leading-[1.25] text-[var(--lms-heading)]">
             See 42 LMS in action
           </h1>
-          <p className="text-[clamp(16px,2vw,18px)] leading-[1.6] text-[var(--lms-body-text)]">
+          <p className="text-base md:text-lg leading-[1.6] text-[var(--lms-body-text)]">
             Tell us a little about your organization and we&apos;ll set up a personalized walkthrough.
           </p>
         </header>

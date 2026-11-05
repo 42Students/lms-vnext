@@ -56,6 +56,6 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
     upliftPct:college.upliftPct,minResponseHours:college.minResponseHours}}
   initialOverride={stored.data} expectedVersion={lifecycle?.updatedAt.toISOString()??"none"}
   readOnly={!ready||Boolean(lifecycle?.finishedAt)}/>:<p role="alert">Batch rules could not be read safely. Refresh before editing.</p>}
- <Link href="/tpo/settings/rules" className="lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View college placement rules</Link>
+ <Link href="/tpo/settings/rules" className="lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm text-link underline focus-ring md:min-h-9">View college placement rules</Link>
  </div>;
 }

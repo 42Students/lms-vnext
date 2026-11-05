@@ -18,6 +18,6 @@ describe("UX-tracker-audit-findings-01",()=>{
   expect(board).toContain("No findings match");
   expect(source).toContain("independentFindingHref");
   expect(source).toContain("requirePermission(ctx,\"admin-scope.select\")");
-  expect(source).toContain("focus-visible:outline-2");
+  expect(source).toContain("focus-ring");
  });
 });

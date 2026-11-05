@@ -47,7 +47,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   if(!parsed) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Tenant Settings"/>
     <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
-      action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
+      action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}/>
   </div>;
   const requestedScope=typeof raw["scope"]==="string"?raw["scope"]:null;
   const viewScope=requestedScope??(context.adminScope?.collegeId?"COLLEGE":
@@ -65,7 +65,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings unavailable"
         description="The settings inventory could not be loaded. Your filters have not changed."
-        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Retry loading settings</Link>}/>
+        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry loading settings</Link>}/>
     </div>;
   const {selectedCollegeName,sections:allSections}=platform.value;
   const sections=filterPlatformInventory(allSections,parsed);
@@ -103,7 +103,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
         actions={<Link href="/admin/settings/auth"
-          className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Authentication and privileged access checklist →</Link>}
+          className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Authentication and privileged access checklist →</Link>}
       />
 
       <section aria-label="Tenant Settings overview" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
@@ -220,10 +220,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           </Select>
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-        <Link href="/admin/settings" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+        <Link href="/admin/settings" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring">Clear</Link>
       </form>
       {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."
-        action={<Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-full md:w-auto md:min-h-9">Clear filters</Link>}/> : null}
+        action={<Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring w-full md:w-auto md:min-h-9">Clear filters</Link>}/> : null}
       {sections.length ? <nav
         aria-label="Settings sections"
         className="flex min-w-0 gap-[var(--lms-tab-gap)] xl:gap-[40px] overflow-x-auto border-b border-[var(--lms-canvas-border)] pb-0"
@@ -232,7 +232,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <TextLink variant="bare"
             key={section.id}
             href={`#${section.id}`}
-            className="relative inline-flex min-h-11 md:min-h-[29px] shrink-0 items-center justify-center whitespace-nowrap border-0 px-0 pb-[12px] pt-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 after:transition-[width,opacity] after:duration-[var(--lms-motion-fast)] hover:text-[var(--lms-primary-text)] hover:after:w-full hover:after:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:after:transition-none"
+            className="relative inline-flex min-h-11 md:min-h-[28px] shrink-0 items-center justify-center whitespace-nowrap border-0 px-0 pb-[12px] pt-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[4px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 after:transition-[width,opacity] after:duration-[var(--lms-motion-fast)] hover:text-[var(--lms-primary-text)] hover:after:w-full hover:after:opacity-100 focus-ring motion-reduce:after:transition-none"
           >
             {section.title}
           </TextLink>

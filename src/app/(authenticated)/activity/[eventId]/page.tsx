@@ -83,7 +83,7 @@ export default async function ActivityDetailPage({
           </div>
         </dl>
         <details className="min-w-0 border-t border-border pt-3">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">More event details</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">More event details</summary>
           <dl className="grid min-w-0 gap-4 pb-3 pt-3 text-sm md:grid-cols-2">
           <div>
             <dt className="font-semibold text-muted-foreground">Subject ID</dt>
@@ -133,7 +133,7 @@ export default async function ActivityDetailPage({
       <SubjectEventHistory context={context} subjectType={event.subjectType} subjectId={event.subjectId}/>
 
       <details className="min-w-0 border-t border-border pt-4">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Legacy audit gap notice</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Legacy audit gap notice</summary>
         <p className="mt-2 text-sm leading-6 text-body">
           The legacy admin audit table also persisted an actor role snapshot,
           request IP, and user agent. Those are not currently persisted by

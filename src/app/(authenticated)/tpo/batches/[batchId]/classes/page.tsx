@@ -14,7 +14,7 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
  return <div className="min-w-0 space-y-4">
   <PageHeader title={"Classes · "+data.batch.name}
    description="Class decisions are inherited by students without a direct eligibility override."
-   actions={<Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← All batches</Link>}/>
+   actions={<Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline focus-ring md:min-h-9">← All batches</Link>}/>
   <TpoBatchWorkspaceTabs batchId={batchId} active="classes"/>
   {!data.ready?<Alert tone="warning">Batch lifecycle storage is unavailable. Decisions cannot be saved.</Alert>:null}
   {data.finished?<Alert tone="warning">This batch is finished. Eligibility decisions are read-only.</Alert>:null}
@@ -24,7 +24,7 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
       <div><Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{row.name}</Heading><p className="text-xs text-muted-foreground leading-5">{row.code} · {row.students} student{row.students===1?"":"s"}</p></div>
       <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/students?classId="+encodeURIComponent(row.id)}
-        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View students →</Link>
+        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">View students →</Link>
     </div>
     <p className="text-sm leading-[22px]">Effective: <strong>{row.effectiveDecision.replaceAll("_"," ")}</strong>
      {row.decision==="NOT_DECIDED"?" · Follows the batch":" · Class override"}</p>

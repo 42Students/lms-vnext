@@ -45,7 +45,7 @@ export default function UniversitiesPage(){
       <div className="min-w-0 space-y-5">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--lms-primary-text)]">Built for universities</p>
         <Heading level={2} id="university-audience-heading"
-          className="text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.25] text-[var(--lms-heading)]">
+          className="text-2xl md:text-3xl leading-[1.25] text-[var(--lms-heading)]">
           Support the complete student journey
         </Heading>
         <p className="max-w-xl text-base leading-7 text-[var(--lms-body-text)]">

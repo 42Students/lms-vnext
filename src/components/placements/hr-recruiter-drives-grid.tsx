@@ -52,22 +52,22 @@ export function HrRecruiterDrivesGrid({rows,scopeKey}:{
   storageKey={"hr-recruiter-drives:"+scopeKey}
   mobilePrimaryKeys={["drive","jobType","status","deadline"]}
   rowActions={row=><div className="flex flex-wrap items-center gap-2">
-   <Link href={row.applicantsHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   <Link href={row.applicantsHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">
     {row.sharedApplicants} shared applicants
    </Link>
-   <Link href={row.offersHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   <Link href={row.offersHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">
     {row.offers} offers
    </Link>
-   {row.unansweredRequests>0?<Link href={row.requestsHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   {row.unansweredRequests>0?<Link href={row.requestsHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">
     Answer {row.unansweredRequests} open {row.unansweredRequests===1?"request":"requests"}
    </Link>:null}
-   <Link href={row.openHref} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   <Link href={row.openHref} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring">
     Open hiring flow
    </Link>
-   <Link href={row.hireAgainHref} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   <Link href={row.hireAgainHref} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring">
     {row.hireAgainLabel}
    </Link>
-   <Link href={row.messagesHref} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   <Link href={row.messagesHref} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring">
     Answer
    </Link>
   </div>}

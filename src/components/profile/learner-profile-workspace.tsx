@@ -623,7 +623,7 @@ export function LearnerProfileWorkspace(props: {
           <Button className="w-full md:w-auto" variant="primary" onClick={openDetails}>Edit profile</Button>
         </div>
         <details className="mt-4 border-t border-border pt-2">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Profile image and resume availability</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Profile image and resume availability</summary>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <div className="min-w-0 border-t border-border pt-3">
             <p className="m-0 text-sm font-semibold text-foreground">Profile image</p>
@@ -685,7 +685,7 @@ export function LearnerProfileWorkspace(props: {
             <li key={item.section}>
               <Link
                 href={"/learn/profile?section=" + encodeURIComponent(item.section)}
-                className="flex min-h-11 md:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                className="flex min-h-11 md:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:focus-outline"
                 onClick={() => {
                   if (props.initialSection === item.section) {
                     window.document.getElementById(item.section)?.scrollIntoView({

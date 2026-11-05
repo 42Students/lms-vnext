@@ -18,7 +18,7 @@ describe("Super Admin application drawer graceful actions",()=>{
  it("GR-91 provides a keyboard-reachable, visibly focused Refresh and Copy link action",()=>{
   const s=read("src/components/placements/college-application-detail-drawer.tsx");
   expect(s).toContain('<Button variant="secondary" type="button"');
-  expect(read("src/components/ui/button.tsx")).toContain("focus-visible:outline-2");
+  expect(read("src/components/ui/button.tsx")).toContain("focus-ring");
   expect(s).toContain("Copy assessment link");
   expect(s).toContain("Refresh");
  });

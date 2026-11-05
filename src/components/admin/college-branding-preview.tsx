@@ -56,9 +56,9 @@ function SignInStylePreview({
         ) : (
           <span aria-hidden="true" className="h-4 w-4 shrink-0 rounded-[4px] border border-[color:color-mix(in_srgb,var(--lms-button-primary)_33%,transparent)] bg-[color:color-mix(in_srgb,var(--lms-button-primary)_13%,transparent)]" />
         )}
-          <span aria-hidden="true" className="h-[5px] w-[50px] rounded-sm bg-[color:var(--lms-heading)]"/>
+          <span aria-hidden="true" className="h-[4px] w-[52px] rounded-sm bg-[color:var(--lms-heading)]"/>
         </div>
-        <div aria-hidden="true" className="mb-2 h-[6px] w-[34px] rounded-sm bg-[color:var(--lms-heading)]"/>
+        <div aria-hidden="true" className="mb-2 h-[6px] w-[36px] rounded-sm bg-[color:var(--lms-heading)]"/>
         <div aria-hidden="true" className="mb-[6px] h-3 rounded-[4px] border border-[color:var(--lms-neutral-300)]"/>
         <div aria-hidden="true" className="h-3 rounded-[4px] bg-[color:var(--lms-button-primary)]"/>
       </div>
@@ -229,7 +229,7 @@ export function CollegeBrandingPreview({
             {(["desktop","mobile"] as const).map(mode=><Button variant="bare" type="button" key={mode}
               aria-pressed={previewMode===mode}
               onClick={()=>setPreviewMode(mode)}
-              className={"min-h-11 md:min-h-9 rounded-md px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
+              className={"min-h-11 md:min-h-9 rounded-md px-4 text-sm font-semibold focus-ring "+
                 (previewMode===mode?"bg-primary text-[var(--lms-on-primary)]":"bg-transparent text-body hover:bg-primary-subtle")}>
               {mode==="desktop"?"Desktop":"Mobile"}
             </Button>)}

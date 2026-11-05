@@ -276,7 +276,7 @@ export function CollegeBrandingForm({
           <Heading level={2} size="lg" className="m-0 text-[var(--lms-heading)]">Look and feel</Heading>
           <Button type="button" variant="secondary" size="sm" disabled={!collegeId||saving||fetching}
             onClick={()=>void reloadBranding()} aria-label="Reload branding">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
               strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M20 7v5h-5M4 17v-5h5"/>
               <path d="M5.5 9a7 7 0 0 1 12.2-2L20 12M4 12l2.3 5a7 7 0 0 0 12.2-2"/>
@@ -340,9 +340,9 @@ export function CollegeBrandingForm({
                   alt="Logo preview" className="h-4 w-4 object-contain" referrerPolicy="no-referrer"/>:
                   <span className="inline-block h-4 w-4 rounded bg-[color:color-mix(in_srgb,var(--lms-button-primary)_13%,transparent)] shadow-(--lms-ring-inset-subtle)"
                     aria-label={collegeName.slice(0,2).toUpperCase()+" initials fallback"}/>}
-                <span className="h-[5px] w-[50px] rounded-sm bg-[color:var(--lms-heading)]"/>
+                <span className="h-[4px] w-[52px] rounded-sm bg-[color:var(--lms-heading)]"/>
               </div>
-              <div className="mb-2 h-[6px] w-[34px] rounded-sm bg-[color:var(--lms-heading)]"/>
+              <div className="mb-2 h-[6px] w-[36px] rounded-sm bg-[color:var(--lms-heading)]"/>
               <div className="mb-[6px] h-3 rounded-sm border border-[color:var(--lms-neutral-300)]"/>
               <div className="h-3 rounded-sm bg-[color:var(--lms-button-primary)]"/>
             </div>
@@ -353,7 +353,7 @@ export function CollegeBrandingForm({
         </div>
         {canEdit?<Button type="submit" loading={saving} disabled={saving||saveInFlight||fetching||Boolean(loadError)||!collegeId}
            className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
            strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
            <path d="M4 3h14l3 3v15H3V3h1zm2 0v7h12V3M7 21v-8h10v8"/>
           </svg>

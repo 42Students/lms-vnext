@@ -237,9 +237,9 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
    selection={{selected,onChange:setSelected,allIds:visible.map(row=>row.kind+":"+row.id)}}
    rowActions={row=>row.entityHref?
     <Link href={scopedAuditHref(row.entityHref)}
-      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open item →</Link>:
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring">Open item →</Link>:
     row.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)}
-      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open job →</Link>:
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring">Open job →</Link>:
      <span aria-label="No linked item" className="text-xs text-muted-foreground">—</span>}
   />
   {notice?<p role="status" className="text-xs text-muted-foreground">{notice}</p>:null}

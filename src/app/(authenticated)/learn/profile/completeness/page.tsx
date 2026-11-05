@@ -42,7 +42,7 @@ export default async function ProfileCompleteness({searchParams}:{
         Academic identity: {academic.title}. Sections are based on your own current college profile.
       </p>
       <details className="mt-3 border-t border-border pt-2">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Identity data and checklist limits</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Identity data and checklist limits</summary>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
         National identity details are optional and are not required for this checklist. Sensitive identity storage and verification are not available through this view.
       </p>
@@ -53,7 +53,7 @@ export default async function ProfileCompleteness({searchParams}:{
         href={"/learn/profile/completeness?show="+option.value}
         aria-current={readiness.show===option.value ? "page" : undefined}
         className={
-          "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-[var(--lms-neutral-200)] px-4 py-2 text-[13px] font-semibold leading-5 transition-[color,background,border-color] duration-[var(--lms-motion-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9 " +
+          "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[8px] border border-[var(--lms-neutral-200)] px-4 py-2 text-[13px] font-semibold leading-5 transition-[color,background,border-color] duration-[var(--lms-motion-fast)] focus-ring motion-reduce:transition-none md:min-h-9 " +
           (readiness.show===option.value ? "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)]" :
             "border-[var(--lms-neutral-200)] bg-transparent text-[var(--lms-neutral-500)] hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-primary)]")
         }>
@@ -67,7 +67,7 @@ export default async function ProfileCompleteness({searchParams}:{
       </p> : <ul className="mt-4 divide-y divide-border border-y border-border">
         {readiness.items.map(item=><li key={item.section} className="min-w-0">
           <Link href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 min-w-0 flex-col items-start gap-2 px-1 py-3 text-sm text-foreground hover:bg-primary-subtle sm:flex-row sm:items-center sm:justify-between sm:gap-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            className="flex min-h-11 min-w-0 flex-col items-start gap-2 px-1 py-3 text-sm text-foreground hover:bg-primary-subtle sm:flex-row sm:items-center sm:justify-between sm:gap-3 focus-ring">
             <span className="min-w-0 break-words">{item.label}
               {(["personal-details","contacts","education","skills"].includes(item.section))?
                 <span className="ml-2 text-xs font-semibold text-muted-foreground">Required</span>:null}

@@ -58,7 +58,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         description={classes ? "Create class sections and manage their students, capacity and recurring sessions." :
           "Manage elective slots, course offerings and eligible students."}
         actions={<Link href="/college/academics"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
           Academic workspace
         </Link>}
       />
@@ -94,7 +94,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         <form id="college-structure-directory-filters" method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
           {classes && data.kind === "CLASSES" ? <CollegeClassScopeFilters programs={data.programs} cohorts={classOptions?.cohorts ?? []}
             selectedProgram={data.query.programId} selectedBatch={data.query.cohortCode} /> : null}
-          {!classes ? <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[165px]">
+          {!classes ? <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[164px]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 w-full md:min-h-9">
@@ -106,7 +106,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               ))}
             </Select>
           </label> : null}
-          {!classes ? <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[165px]">
+          {!classes ? <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[164px]">
             Status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 w-full md:min-h-9">
@@ -116,7 +116,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
             </Select>
           </label> : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[165px]">
+            <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[164px]">
               Semester
               <Select name="semesterNumber" defaultValue={String(data.query.semesterNumber ?? "")}
                 className="min-h-11 w-full md:min-h-9">
@@ -387,7 +387,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               Filter
             </Button>
             {filtered ? <Link href={path}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
               Clear
             </Link> : null}
           </div>
@@ -434,8 +434,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                   <span title={item.description ?? ""} className="block max-w-[180px] truncate">{item.description || "—"}</span>},
                 {key:"enrollment",header:"Students",mobilePriority:"secondary",cell:item=>item.activeLearners === null
                   ? <span role="status" className="text-warning-text">Unavailable</span> : item.activeLearners},
-                {key:"manage",header:"Actions",mobilePriority:"action",className:"min-w-[250px]",cell:item=>
-                  <div className="flex min-w-[250px] flex-wrap items-center gap-[var(--lms-space-2)]">
+                {key:"manage",header:"Actions",mobilePriority:"action",className:"min-w-[252px]",cell:item=>
+                  <div className="flex min-w-[252px] flex-wrap items-center gap-[var(--lms-space-2)]">
                     <Link href={"/college/classes/recurring-preview?classId="+encodeURIComponent(item.id)}
                       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text"
                       title={"Schedule sessions for "+item.name} aria-label={"Schedule recurring sessions for "+item.name}>Schedule</Link>
@@ -480,8 +480,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                   <StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>
                     {item.status==="ACTIVE"?"Active":"Archived"}
                   </StatusBadge>},
-                {key:"actions",header:"Actions",mobilePriority:"action",className:"min-w-[250px]",cell:item=>
-                  <div className="flex min-w-[250px] flex-wrap items-center gap-2">
+                {key:"actions",header:"Actions",mobilePriority:"action",className:"min-w-[252px]",cell:item=>
+                  <div className="flex min-w-[252px] flex-wrap items-center gap-2">
                     <Link href={"/college/electives/"+encodeURIComponent(item.id)}
                       className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
                       Open

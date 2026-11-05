@@ -254,7 +254,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar {
   display: block;
-  height: 3px;
+  height: 4px;
 }
 [data-slot="tabs"] [data-slot="scroll-cue"][data-axis="x"] > div:first-child::-webkit-scrollbar-thumb {
   /* Legacy-skin.css:511-514 gives a generic important thumb fill and

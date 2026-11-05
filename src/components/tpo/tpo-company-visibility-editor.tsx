@@ -52,7 +52,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
       className="peer absolute inset-0 z-(--lms-z-raised) h-full w-full cursor-pointer opacity-0"
       checked={values[key as keyof Choice]}
       onChange={e=>setValues(current=>({...current,[key]:e.target.checked}))}/>
-    <span aria-hidden="true" className="h-6 w-11 rounded-full border border-border bg-muted transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-disabled:opacity-50"/>
+    <span aria-hidden="true" className="h-6 w-11 rounded-full border border-border bg-muted transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:focus-outline peer-disabled:opacity-50"/>
     <span aria-hidden="true" className="pointer-events-none absolute left-0.5 top-0.5 size-5 rounded-full bg-surface shadow transition-transform peer-checked:translate-x-5"/>
    </span>
   </label>)}
@@ -65,7 +65,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
       className="peer absolute inset-0 z-(--lms-z-raised) h-full w-full cursor-pointer opacity-0"
       checked={values[key as keyof Choice]}
       onChange={event=>setValues(current=>({...current,[key]:event.target.checked}))}/>
-    <span aria-hidden="true" className="h-6 w-11 rounded-full border border-border bg-muted transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-disabled:opacity-50"/>
+    <span aria-hidden="true" className="h-6 w-11 rounded-full border border-border bg-muted transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:focus-outline peer-disabled:opacity-50"/>
     <span aria-hidden="true" className="pointer-events-none absolute left-0.5 top-0.5 size-5 rounded-full bg-surface shadow transition-transform peer-checked:translate-x-5"/>
    </span>
     </label>)}

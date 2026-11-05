@@ -72,7 +72,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     : collegeContactFilterMessage(error);
   return <div className="min-w-0 space-y-[var(--lms-space-4)]"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid contact filters" description={description}
-   action={<Link href="/college/contacts" className="inline-flex items-center min-h-11 md:min-h-9 underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Reset contact filters</Link>}/></div>;}
+   action={<Link href="/college/contacts" className="inline-flex items-center min-h-11 md:min-h-9 underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-ring w-full md:w-auto">Reset contact filters</Link>}/></div>;}
  const loaded=await Promise.all([
   listCollegeContacts(context,filter),listCollegeContactFilterOptions(context),
  ]).then(res=>({ok:true as const,res}),error=>({ok:false as const,error}));
@@ -95,7 +95,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
   <PageHeader title="People Directory"
    description="A read-only contact lookup for the selected college. Use the management pages for registration, profile changes, access, suspension or teaching allocation."
-   actions={<div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)]"><Link href="/college/students" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Student accounts</Link><Link href="/college/faculty" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Faculty accounts</Link><Link href="/college/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Teaching assignments</Link></div>}/>
+   actions={<div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)]"><Link href="/college/students" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Student accounts</Link><Link href="/college/faculty" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Faculty accounts</Link><Link href="/college/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Teaching assignments</Link></div>}/>
   <Tabs ariaLabel="Contacts categories" renderPanel={false} value={filter.tab}
    items={[
     {value:"ALL",label:"All contacts",href:collegeContactsTabHref(filter,"ALL")},
@@ -104,7 +104,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    ]}/>
   <Banner tone="info">Student contact details are masked here and in CSV exports. Account management is separate.</Banner>
   {filter.membershipId&&<Banner tone="info"
-   action={<Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Show matching contact directory</Link>}>
+   action={<Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Show matching contact directory</Link>}>
    Showing the bookmarked contact record only.
   </Banner>}
   <div className="flex min-w-0 flex-wrap items-baseline gap-x-[var(--lms-space-4)] gap-y-[var(--lms-space-2)] text-xs leading-5 text-muted-foreground">
@@ -254,14 +254,14 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    </Disclosure>
    <Button variant="secondary" type="submit" className="min-h-11 w-full md:hidden">Search contacts</Button>
    <Link href={clearedCollegeContactsHref(filter.tab)}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>
+    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>
   </form>
   </FilterBar>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)]">
    <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
    <Link href={"/api/college/contacts/export?"+new URLSearchParams({
     tab:filter.tab,q:filter.q,...(filter.membershipId?{membershipId:filter.membershipId}:{}),...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,profile:filter.profile,enrollment:filter.enrollment,teaching:filter.teaching,teachingRole:filter.teachingRole,rollPresence:filter.rollPresence,registrationPresence:filter.registrationPresence,titlePresence:filter.titlePresence,departmentPresence:filter.departmentPresence,classPresence:filter.classPresence,...(filter.cohortId?{cohortId:filter.cohortId}:{}),...(filter.programId?{programId:filter.programId}:{}),...(filter.sectionId?{sectionId:filter.sectionId}:{}),...(filter.facultyDepartmentId?{facultyDepartmentId:filter.facultyDepartmentId}:{}),...(filter.employmentType?{employmentType:filter.employmentType}:{}),...(filter.facultyTitleQ?{facultyTitleQ:filter.facultyTitleQ}:{}),sort:filter.sort,
-   }).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+   }).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">
     Export filtered contacts CSV
    </Link>
   </div>
@@ -269,15 +269,15 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
    <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
    {results.items.length===0?<EmptyState title={emptyTitle} description={emptyDescription}
-      action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Clear filters in this tab</Link>}/>:
+      action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters in this tab</Link>}/>:
     <DataTable rows={results.items} getRowKey={contact=>contact.membershipId}
       caption="Contacts" empty={<EmptyState title={emptyTitle} description={emptyDescription}
-        action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Clear filters in this tab</Link>}/>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
+        action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters in this tab</Link>}/>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
       columns={[
         {key:"name",header:"Name",mobileLabel:"Name",mobilePriority:"primary" as const,
          cell:contact=><Link href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
           aria-label={"View contact "+contact.name}
-          className="inline-flex min-h-11 items-center gap-3 font-semibold text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="inline-flex min-h-11 items-center gap-3 font-semibold text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] focus-ring">
           <ContactAvatar initial={contact.avatarInitial} tint={contact.avatarTint}/>
           <span className="break-words">{contact.name}</span></Link>},
         {key:"email",header:"Email",mobileLabel:"Email",mobilePriority:"secondary" as const,
@@ -309,9 +309,9 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      <span aria-disabled="true" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-muted-foreground opacity-60">Next</span>}
    </nav>
    <div className="flex flex-wrap gap-2">
-    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 bg-surface hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">First</Link>:null}
+    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 bg-surface hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring">First</Link>:null}
     <Pagination page={filter.page} pageCount={pageCount} hrefForPage={page=>collegeContactsHref({...filter,page})} label="Contact directory pages"/>
-    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 bg-surface hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Last</Link>:null}
+    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 bg-surface hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring">Last</Link>:null}
    </div>
   </div>
  </div>;

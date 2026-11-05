@@ -24,7 +24,7 @@ export default async function CollegeSemesterCoursesPage() {
     <PageHeader title="Semester–Course Mapping"
       description="Define the curriculum for each semester and spot courses that still need faculty coverage."
       actions={<Link href="/college/courses"
-        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-primary-text)] transition-[background-color,border-color] duration-[var(--lms-motion-fast)] md:min-h-9 motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-primary-text)] transition-[background-color,border-color] duration-[var(--lms-motion-fast)] md:min-h-9 motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
         Course offerings
       </Link>} />
     <nav aria-label="Academic setup" className="flex min-w-0 flex-wrap items-center gap-4 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">

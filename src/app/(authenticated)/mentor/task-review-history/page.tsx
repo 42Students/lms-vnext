@@ -31,7 +31,7 @@ export default async function MentorTaskReviewHistoryPage({
   });
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid review history filters"} />
-    <Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const context=await getCurrentRequestContext();
   if(!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
@@ -42,7 +42,7 @@ export default async function MentorTaskReviewHistoryPage({
     <PageHeader eyebrow="Mentor · Task Board" title="Reviewed task submissions"
       description="Registered task decisions on projects currently assigned to you."
       actions={<Link href="/mentor/task-reviews"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
         Pending task reviews
       </Link>} />
     {!data.enabled ? <section role="status"
@@ -65,7 +65,7 @@ export default async function MentorTaskReviewHistoryPage({
         </label>
         <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
           <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-          {hasFilters?<Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+          {hasFilters?<Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
         </div>
         <Disclosure title="More review history filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task priority
@@ -92,7 +92,7 @@ export default async function MentorTaskReviewHistoryPage({
         <Link data-unskin="" href={"/api/mentor/task-review-history/export?"+
           new URLSearchParams({decision:data.query.decision,priority:data.query.priority,
             order:data.query.order,search:data.query.search}).toString()}
-          download className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          download className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
           Export reviewed task decisions CSV (max 200)
         </Link>
         {data.total>200?<span role="status">
@@ -102,7 +102,7 @@ export default async function MentorTaskReviewHistoryPage({
       </div>
       {data.items.length===0 ? <EmptyState title="No reviewed task submissions"
         description="No registered approved or changes-requested task versions match this filter and your current project assignments. Unmigrated history is not inferred."
-        action={<Link href={hasFilters ? "/mentor/task-review-history" : "/mentor/task-reviews"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{hasFilters ? "Clear filters" : "Pending task reviews"}</Link>} />
+        action={<Link href={hasFilters ? "/mentor/task-review-history" : "/mentor/task-reviews"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-ring">{hasFilters ? "Clear filters" : "Pending task reviews"}</Link>} />
       : <ol aria-label="mentor task review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -118,12 +118,12 @@ export default async function MentorTaskReviewHistoryPage({
           </p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=board"}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring">
             Open authorized Board →
           </Link>
           <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+
             "/tasks/"+encodeURIComponent(item.taskId)+"/feedback"}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring">
             Recorded feedback →
           </Link>
           </div>

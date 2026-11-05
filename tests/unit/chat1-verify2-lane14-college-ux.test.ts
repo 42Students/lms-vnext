@@ -11,7 +11,7 @@ describe("lane 14 P1 verification: college placement and graduation states",()=>
     expect(page).toContain('title="Placements unavailable"');
     expect(page).toContain("Ask a Super Admin to enable Placements in Module Access");
     expect(page).toContain('href="/college"');
-    expect(page).toContain('focus-visible:outline-2');
+    expect(page).toContain('focus-ring');
   });
   it("G2-9-002-036 shows the historic graduation message only after a confirmed write",()=>{
     const sourceText=source("src/components/academics/college-cohort-management.tsx");

@@ -92,7 +92,7 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
      <span className="rounded-full border border-border px-3 py-2">All matching offer versions · {total}</span>
     </div>
     <div className="min-w-0 overflow-x-auto" role="region" aria-label="Offer versions on this page">
-     <Table className="min-w-[510px]">
+     <Table className="min-w-[512px]">
       <thead className="bg-surface-secondary text-xs uppercase tracking-wide text-muted-foreground">
        <tr><th className="p-3">Student</th><th className="p-3">Offer</th><th className="p-3">Letter / joining</th></tr>
       </thead>

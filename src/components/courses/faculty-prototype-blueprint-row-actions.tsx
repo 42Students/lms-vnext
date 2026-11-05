@@ -74,7 +74,7 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
    ?<FacultyContentEditor item={selectedEditor.item} compact/>
    :<FacultyAssessmentEditor assessment={selectedEditor.item} compact/>}
   {archivePossible?<Button variant="bare" type="button"
-   className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-[color:var(--lms-border)] bg-surface text-lg text-[color:var(--lms-text-body)] hover:border-[color:var(--lms-error-text)] hover:text-[color:var(--lms-error-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-button-primary)]"
+   className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-[color:var(--lms-border)] bg-surface text-lg text-[color:var(--lms-text-body)] hover:border-[color:var(--lms-error-text)] hover:text-[color:var(--lms-error-strong)] focus-ring"
    aria-label={"Remove "+item.title} title={"Archive "+item.title}
    disabled={busy||unknown} onClick={()=>{setError(null);setConfirm(true);}}>×</Button>:null}
   <ConfirmDialog open={confirm}

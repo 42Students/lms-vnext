@@ -51,7 +51,7 @@ export default async function TpoNotificationsPage({
     return (
       <section className="min-w-0 space-y-4">
         <PageHeader title="Invalid notification filters" />
-        <Alert tone="error"><Link href={TPO_NOTIFICATIONS_PATH} className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        <Alert tone="error"><Link href={TPO_NOTIFICATIONS_PATH} className="inline-flex min-h-11 items-center text-primary-text underline focus-ring">
           Return to newest notifications
         </Link></Alert>
       </section>
@@ -133,7 +133,7 @@ export default async function TpoNotificationsPage({
             <div className="flex justify-stretch md:justify-center">
               <Link
                 href={nextHref}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-primary hover:bg-primary-subtle focus-ring md:w-auto"
               >
                 Show older
               </Link>

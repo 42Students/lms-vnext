@@ -37,7 +37,7 @@ export default async function MentorSprintProgressPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title="Sprint progress" description="Invalid sprint progress filters" />
-    <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-9">Clear filters</Link>
+    <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link md:min-h-9">Clear filters</Link>
   </section>;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
@@ -47,7 +47,7 @@ export default async function MentorSprintProgressPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Sprint progress"
       description="Registered sprint, release and task status across your current project assignments."
-      actions={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+      actions={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
         Mentoring projects
       </Link>} />
     {!data.enabled ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
@@ -67,7 +67,7 @@ export default async function MentorSprintProgressPage({
         </label>
         <div className="flex min-w-0 flex-wrap items-center gap-2 max-md:col-span-1 md:col-span-1">
           <Button type="submit" variant="primary" className="w-full min-h-11 md:w-auto md:min-h-9">Filter</Button>
-          {hasFilters?<Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-9">Clear</Link>:null}
+          {hasFilters?<Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring lms-inline-link md:min-h-9">Clear</Link>:null}
         </div>
         <Disclosure title="More sprint filters" defaultOpen={hasAdvancedFilters} className="min-w-0 md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-4">
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint status
@@ -106,7 +106,7 @@ export default async function MentorSprintProgressPage({
             projectId:data.query.projectId??"",taskAttention:data.query.taskAttention,
             order:data.query.order,
           }).toString()}
-          download className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          download className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
           Export filtered sprint CSV (max 100)
         </Link>
         {data.total>100?<span role="status">
@@ -116,7 +116,7 @@ export default async function MentorSprintProgressPage({
       </div>
       {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
         description="No sprints matched the selected state and current mentor assignments. Unmaterialized or missing pre-migration work is not counted."
-        action={<Link href={hasFilters ? "/mentor/sprint-progress" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{hasFilters ? "Clear filters" : "Mentoring projects"}</Link>} />
+        action={<Link href={hasFilters ? "/mentor/sprint-progress" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-ring">{hasFilters ? "Clear filters" : "Mentoring projects"}</Link>} />
       : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
         <article key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
@@ -143,7 +143,7 @@ export default async function MentorSprintProgressPage({
               ? "Unknown (no tasks)" : item.tasks.completionPercent + "%"} of persisted tasks marked Done
           </p>
           <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=sprints"}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
             Open authorized sprint workspace →
           </Link>
         </article>)}</div>}

@@ -39,7 +39,7 @@ export default async function MentorLandingPage() {
       <ButtonLink variant="primary" href="/mentor?retry=1" className="mt-6">
         Retry access check
       </ButtonLink>:
-      <Link href="/mentor/notifications" className="mt-6 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+      <Link href="/mentor/notifications" className="mt-6 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9">
         View notifications
       </Link>}
   </section>;

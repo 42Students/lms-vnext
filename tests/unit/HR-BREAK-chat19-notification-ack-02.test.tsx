@@ -31,7 +31,7 @@ describe("HR-BREAK-NOTIFICATIONS-02: recruiter receipt double submit and revocat
   />);
   expect(html).toContain("Mark as read");
   expect(html).toContain("min-h-11");
-  expect(html).toContain("focus-visible:outline-2");
+  expect(html).toContain("focus-ring");
   expect(html).not.toContain("min-h-10");
  });
  it("handler owns a synchronous single-flight and terminal success guard, without changing POST scope",()=>{

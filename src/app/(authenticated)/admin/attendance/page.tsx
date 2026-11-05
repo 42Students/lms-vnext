@@ -59,7 +59,7 @@ export default async function SuperAdminAttendancePage({
       <PageHeader title="Attendance" description="Attendance oversight for the selected college."/>
       <ErrorState title="Invalid attendance month"
         description="Choose a month in YYYY-MM format and retry."
-        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] w-full md:w-auto justify-center">Reset month filter</Link>}/>
+        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] w-full md:w-auto justify-center">Reset month filter</Link>}/>
     </div>;
   }
   const optionsResult=await getAdminAttendanceOptions(context,collegeId)

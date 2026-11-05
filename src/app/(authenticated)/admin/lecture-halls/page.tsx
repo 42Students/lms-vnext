@@ -101,7 +101,7 @@ export default async function SuperAdminLectureHallsPage({
     <PageHeader  title="Lecture Halls" />
     <ErrorState title="Invalid lecture hall filters"
       description="Search, status, capacity or page selection is invalid. No records were loaded."
-      action={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
 
   // Departments are optional filter metadata: their failure must not hide
@@ -175,7 +175,7 @@ export default async function SuperAdminLectureHallsPage({
           <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Search</Button>
         </div>
         <details className="group min-w-0" open={Boolean(query.departmentId || query.roomType !== "ALL" || query.pageSize !== 10 || query.minimumCapacity || query.maximumCapacity || query.upcoming !== "ALL") || undefined}>
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
           <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
             <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
               <Select name="departmentId" defaultValue={query.departmentId ?? ""} className="min-h-11 w-full md:min-h-9">
@@ -208,7 +208,7 @@ export default async function SuperAdminLectureHallsPage({
         </details>
       </form>
       <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-2)]">
-        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Clear</Link>
+        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Clear</Link>
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
           <ButtonLink variant="secondary" href={csvHref} download>Export all matching CSV</ButtonLink>
           <form action="/admin/lecture-halls" method="get" aria-label="Refresh Lecture Halls 2">

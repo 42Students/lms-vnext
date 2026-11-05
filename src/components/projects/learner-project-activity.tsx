@@ -40,7 +40,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     <Heading level={2} size="base" id="learner-project-activity-heading" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Activity</Heading>
     <details className="border-b border-border" open={Boolean(parsed.success &&
       (category !== "ALL" || parsed.data.from || parsed.data.to))}>
-      <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+      <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">
         Filter activity by type and dates
       </summary>
     <form method="get" action={route} className="grid min-w-0 grid-cols-1 gap-3 pb-5 pt-3 md:grid-cols-2 lg:grid-cols-5">

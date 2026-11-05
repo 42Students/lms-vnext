@@ -877,7 +877,7 @@ export function FacultyAttendanceWorkspace({
                                 if (event.key === "Escape") { event.currentTarget.open = false; event.stopPropagation(); }
                               }} onMouseEnter={event => { event.currentTarget.open = true; }}
                                 onMouseLeave={event => { event.currentTarget.open = false; }}>
-                                <summary className="cursor-pointer list-none focus-visible:outline-2 focus-visible:outline-primary"
+                                <summary className="cursor-pointer list-none focus-ring"
                                   aria-label={state.label + ". Show session attendance details"}>
                                   <StatusBadge tone={tone}>{state.ratio ?? state.code}</StatusBadge>
                                 </summary>

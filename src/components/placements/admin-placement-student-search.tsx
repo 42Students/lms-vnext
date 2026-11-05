@@ -141,7 +141,7 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
           id={listId + "-" + index} role="option" aria-selected={choice.membershipId === selectedId}
           onMouseDown={event => event.preventDefault()} onMouseEnter={() => setActive(index)}
           onClick={() => choose(choice)}
-          className={`flex w-full flex-col items-start rounded px-3 py-2 text-left text-sm hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] ${active === index ? "bg-[var(--lms-primary-subtle)]" : ""}`}>
+          className={`flex w-full flex-col items-start rounded px-3 py-2 text-left text-sm hover:bg-[var(--lms-primary-subtle)] focus-ring ${active === index ? "bg-[var(--lms-primary-subtle)]" : ""}`}>
           <span className="block font-semibold">{choice.label}</span>
           <span className="block text-xs text-muted-foreground">{choice.roll || choice.email || ""}</span>
         </Button>)}

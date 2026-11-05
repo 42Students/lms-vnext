@@ -259,7 +259,7 @@ export function SuperAdminHrDetailDrawer({
             </div>
 
             <div className="mt-4 min-w-0 overflow-x-auto" role="region" aria-label="College access and history" tabIndex={0}>
-             <Table className="min-w-[590px]">
+             <Table className="min-w-[592px]">
               <thead><tr className="border-b border-border bg-surface-subtle">
                <th scope="col" className="px-3 py-2 font-semibold">College</th>
                <th scope="col" className="px-3 py-2 font-semibold">Access</th>
@@ -275,7 +275,7 @@ export function SuperAdminHrDetailDrawer({
                   grant.verificationStatus==="VERIFIED"?"Inactive":"Unverified";
                 const current=account.grants.some(item=>item.id===grant.id);
                 return <tr key={grant.id} className="border-b border-border align-middle">
-                 <td className="max-w-[230px] break-words px-3 py-3 font-semibold">{grant.collegeName}</td>
+                 <td className="max-w-[232px] break-words px-3 py-3 font-semibold">{grant.collegeName}</td>
                  <td className="px-3 py-3"><StatusBadge tone={status==="Active"?"success":status==="Unverified"?"warning":"neutral"}>{status}</StatusBadge></td>
                  <td className="px-3 py-3 text-xs text-body">
                   {grant.validUntil?<span className="rounded-md border border-border px-2 py-1">{grant.validUntil.slice(0,10)} (through 11:59 PM IST)</span>:

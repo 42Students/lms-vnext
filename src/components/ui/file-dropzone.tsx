@@ -82,7 +82,7 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     {showImagePreview&&dropPreviewFile&&dropPreviewUrl&&!unavailable
       ? <div data-slot="image-drop-preview" data-preview-kind={imagePreviewKind}
           className={cx("mt-2 border border-[var(--lms-neutral-200)] bg-surface",
-            imagePreviewKind === "profile" ? "h-[194px] w-[175px] max-w-full overflow-hidden rounded-[8px]" : "rounded-[10px] p-2")}>
+            imagePreviewKind === "profile" ? "h-[196px] w-[176px] max-w-full overflow-hidden rounded-[8px]" : "rounded-[10px] p-2")}>
           <img src={dropPreviewUrl} alt={`${label} preview`}
             className={imagePreviewKind === "profile" ? "h-full w-full object-cover object-center" : "max-h-40 max-w-full rounded-[6px] object-contain"} />
         </div> : null}

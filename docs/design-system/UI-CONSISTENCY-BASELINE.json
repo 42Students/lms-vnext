@@ -1,1315 +1,66 @@
 {
  "schemaVersion": 1,
  "files": {
-  "src/app/(authenticated)/account/security/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/activity/[eventId]/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/activity/[eventId]/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/activity/page.tsx": {
-   "focus-style-off": 19
-  },
-  "src/app/(authenticated)/admin/academics/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/announcements/delivery/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/announcements/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/admin/assignments/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/attendance/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/batch-promotion/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/admin/batches/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/admin/classes/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx": {
-   "focus-style-off": 3
-  },
   "src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx": {
    "raw-control": 1
   },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx": {
-   "focus-style-off": 24
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx": {
-   "icon-size-off": 1
-  },
-  "src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/admin/colleges/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/companies/page.tsx": {
-   "focus-style-off": 24
-  },
-  "src/app/(authenticated)/admin/course-progress/page.tsx": {
-   "focus-style-off": 11
-  },
-  "src/app/(authenticated)/admin/course-progress/students/page.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/courses/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/faculty-assignment/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/faculty/page.tsx": {
-   "focus-style-off": 4
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/history/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/page.tsx": {
-   "focus-style-off": 20
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx": {
-   "focus-style-off": 10
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx": {
-   "focus-style-off": 21,
-   "icon-size-off": 1
-  },
-  "src/app/(authenticated)/admin/features/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/admin/hr/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/inbound-mail/page.tsx": {
-   "focus-style-off": 24
-  },
-  "src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx": {
-   "focus-style-off": 3
-  },
   "src/app/(authenticated)/admin/lecture-halls/page.tsx": {
-   "raw-control": 1,
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/lessons/index/page.tsx": {
-   "size-off-grid": 1
-  },
-  "src/app/(authenticated)/admin/lessons/page.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/admin/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/notification-delivery/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/organizations/page.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/people/directory/[membershipId]/audit/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/admin/people/directory/[membershipId]/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/people/directory/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/admin/people/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/admin/people/unassigned/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/placements/analytics/page.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/placements/applications/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/admin/placements/drives/page.tsx": {
-   "focus-style-off": 21,
-   "icon-size-off": 1
-  },
-  "src/app/(authenticated)/admin/placements/interviews/page.tsx": {
-   "focus-style-off": 4
-  },
-  "src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/admin/placements/organization-jobs/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/placements/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/placements/retention/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/placements/screenings/[applicationId]/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/placements/seasons/[seasonId]/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/admin/programs/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/projects/page.tsx": {
-   "focus-style-off": 10
-  },
-  "src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/projects/templates/[templateId]/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx": {
-   "focus-style-off": 5
-  },
-  "src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/projects/templates/page.tsx": {
-   "focus-style-off": 17
-  },
-  "src/app/(authenticated)/admin/projects/workspaces/deleted/page.tsx": {
-   "size-off-grid": 2
-  },
-  "src/app/(authenticated)/admin/projects/workspaces/new/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/quizzes/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/admin/semester-courses/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/semesters/page.tsx": {
-   "focus-style-off": 18
+   "raw-control": 1
   },
   "src/app/(authenticated)/admin/settings/page.tsx": {
-   "link-bare": 1,
-   "size-off-grid": 2,
-   "focus-style-off": 17
-  },
-  "src/app/(authenticated)/admin/students/page.tsx": {
-   "focus-style-off": 12,
-   "icon-size-off": 1
-  },
-  "src/app/(authenticated)/admin/tenants/create/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/admin/tenants/directory/page.tsx": {
-   "focus-style-off": 24
-  },
-  "src/app/(authenticated)/admin/tenants/setup/page.tsx": {
-   "focus-style-off": 9
+   "link-bare": 1
   },
   "src/app/(authenticated)/authenticated-print.css": {
    "important": 35
   },
-  "src/app/(authenticated)/college-admin/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/activity/page.tsx": {
-   "focus-style-off": 11
-  },
-  "src/app/(authenticated)/college/announcements/page.tsx": {
-   "focus-style-off": 24
-  },
-  "src/app/(authenticated)/college/assignments/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/attendance/corrections/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/college/attendance/departments/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/attendance/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/batch-promotion/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/batches/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/college/classes/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/college/college-profile/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/companies/page.tsx": {
-   "focus-style-off": 5
-  },
-  "src/app/(authenticated)/college/contacts/[membershipId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/contacts/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/contacts/page.tsx": {
-   "focus-style-off": 36
-  },
-  "src/app/(authenticated)/college/course-progress/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/courses/offerings/[offeringId]/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/departments/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/college/electives/[slotId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/electives/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/faculty-assignment/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/college/faculty/[membershipId]/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/college/groups/[groupId]/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/college/groups/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/hiring-dashboard/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/college/lecture-halls/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/lessons/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/live-classes/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/college/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/people/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/people/manage/page.tsx": {
-   "focus-style-off": 27
-  },
-  "src/app/(authenticated)/college/placements/announcements/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/placements/applications/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/placements/audit/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/placements/companies/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/placements/drives/page.tsx": {
-   "size-off-grid": 3,
-   "focus-style-off": 17,
-   "icon-size-off": 1
-  },
-  "src/app/(authenticated)/college/placements/interviews/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/college/placements/job-settings/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx": {
-   "focus-style-off": 4
-  },
-  "src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx": {
-   "focus-style-off": 36
-  },
-  "src/app/(authenticated)/college/placements/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/placements/retention/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/placements/screenings/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/placements/student-lookup/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/placements/team/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/profile/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/projects/create/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/projects/deleted/loading.tsx": {
-   "size-off-grid": 1
-  },
-  "src/app/(authenticated)/college/projects/deleted/page.tsx": {
-   "size-off-grid": 2
-  },
-  "src/app/(authenticated)/college/projects/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx": {
-   "focus-style-off": 4
-  },
-  "src/app/(authenticated)/college/projects/templates/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/college/resources/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/college/semester-courses/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/semesters/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/college/students/[membershipId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/college/videos/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/dashboard/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/hr/activity/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/hr/calendar/page.tsx": {
-   "focus-style-off": 33
-  },
-  "src/app/(authenticated)/hr/company/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/hr/company/reports/page.tsx": {
-   "focus-style-off": 22
-  },
-  "src/app/(authenticated)/hr/conversations/[threadId]/page.tsx": {
-   "focus-style-off": 27
-  },
-  "src/app/(authenticated)/hr/conversations/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/hr/drives/new/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/hr/drives/page.tsx": {
-   "focus-style-off": 48
-  },
-  "src/app/(authenticated)/hr/drives/proposals/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/hr/home/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/hr/layout.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/hr/notifications/page.tsx": {
-   "focus-style-off": 18
-  },
   "src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx": {
-   "raw-control": 1,
-   "focus-style-off": 82
-  },
-  "src/app/(authenticated)/hr/placements/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/hr/profile/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/hr/round-results/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/hr/round-results/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/allAssignments/[assignmentId]/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/learn/attendance/calendar/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/learn/attendance/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/calendar/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx": {
-   "focus-style-off": 3
+   "raw-control": 1
   },
   "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx": {
-   "raw-control": 1,
-   "focus-style-off": 3,
-   "icon-size-off": 1
-  },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/progress/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/learn/courses/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/my-placements/announcements/page.tsx": {
-   "focus-style-off": 38
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/learn/my-placements/applications/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/learn/my-placements/assessments/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/my-placements/assessments/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/learn/my-placements/assessments/results/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/my-placements/interviews/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/my-placements/jobs/[jobId]/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/my-placements/offers/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/learn/my-placements/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/learn/my-placements/preparation/page.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/learn/my-placements/rules/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/learn/my-placements/support/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/learn/profile/completeness/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/learn/profile/data-access/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/learn/profile/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/learn/profile/verification/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/learn/projects/[projectId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/mentor/activity/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/mentor/calendar/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/mentor/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/mentor/notifications/page.tsx": {
-   "focus-style-off": 12
+   "raw-control": 1
   },
   "src/app/(authenticated)/mentor/page.tsx": {
-   "raw-control": 1,
-   "focus-style-off": 3
+   "raw-control": 1
   },
   "src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx": {
-   "focus-style-off": 15,
    "important": 4
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/error.tsx": {
-   "focus-style-off": 3
   },
   "src/app/(authenticated)/mentor/projects/[projectId]/learner-preview/page.tsx": {
    "raw-control": 1
   },
-  "src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx": {
-   "focus-style-off": 3
-  },
   "src/app/(authenticated)/mentor/projects/[projectId]/page.tsx": {
-   "raw-control": 1,
-   "focus-style-off": 30
+   "raw-control": 1
   },
   "src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx": {
-   "focus-style-off": 18,
    "important": 4
   },
-  "src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/mentor/projects/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/mentor/reports/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/mentor/review-history/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/mentor/reviews/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/mentor/sprint-progress/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/mentor/task-review-history/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/mentor/task-reviews/page.tsx": {
-   "focus-style-off": 24
-  },
   "src/app/(authenticated)/mentor/team-coverage/page.tsx": {
-   "focus-style-off": 24,
    "important": 6
-  },
-  "src/app/(authenticated)/superadmin/[...legacy]/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/superadmin/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teach/courses/[deliveryId]/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/teach/layout.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teach/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/allQuizzes/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/calendar/error.tsx": {
-   "focus-style-off": 2
   },
   "src/app/(authenticated)/teacher/calendar/loading.tsx": {
    "raw-control": 1
   },
   "src/app/(authenticated)/teacher/calendar/page.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 15,
    "important": 1
-  },
-  "src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx": {
-   "focus-style-off": 6,
-   "icon-size-off": 1
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/not-found.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx": {
-   "focus-style-off": 21
   },
   "src/app/(authenticated)/teacher/courses/[deliveryId]/layout.tsx": {
    "raw-control": 1
   },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/loading.tsx": {
-   "size-off-grid": 1
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/notices/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/reports/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/reports/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/students/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/[deliveryId]/students/not-found.tsx": {
-   "focus-style-off": 3
-  },
   "src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx": {
    "raw-control": 2
-  },
-  "src/app/(authenticated)/teacher/courses/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/courses/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/layout.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/live-classes/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/live-classes/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/live-classes/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/teacher/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/notifications/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/notifications/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/teacher/profile/contacts/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/profile/contacts/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/profile/contacts/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/profile/details/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/profile/details/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/profile/details/page.tsx": {
-   "focus-style-off": 5
-  },
-  "src/app/(authenticated)/teacher/profile/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/profile/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/profile/page.tsx": {
-   "focus-style-off": 8
-  },
-  "src/app/(authenticated)/teacher/profile/teaching/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/profile/teaching/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/profile/teaching/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx": {
-   "focus-style-off": 3
   },
   "src/app/(authenticated)/teacher/report/assignment/[contentId]/grade/page.tsx": {
    "raw-control": 1,
    "important": 16
   },
-  "src/app/(authenticated)/teacher/report/assignment/[contentId]/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx": {
-   "focus-style-off": 11
-  },
-  "src/app/(authenticated)/teacher/report/quiz/[quizId]/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/report/quiz/[quizId]/not-found.tsx": {
-   "focus-style-off": 3
-  },
   "src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx": {
-   "focus-style-off": 15,
    "important": 4
   },
-  "src/app/(authenticated)/teacher/response-followups/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/response-followups/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/response-followups/page.tsx": {
-   "focus-style-off": 20
-  },
-  "src/app/(authenticated)/teacher/results/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/results/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/teacher/results/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/tpo/announcements/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/tpo/audit/actors/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/audit/actors/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/tpo/audit/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/page.tsx": {
-   "focus-style-off": 27
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/tpo/batches/page.tsx": {
-   "focus-style-off": 45
-  },
-  "src/app/(authenticated)/tpo/calendar/export/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/calendar/interviews/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/calendar/rounds/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/companies/[companyId]/page.tsx": {
-   "focus-style-off": 27
-  },
-  "src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/companies/archived/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/tpo/companies/archived/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/companies/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/tpo/companies/page.tsx": {
-   "focus-style-off": 24
-  },
-  "src/app/(authenticated)/tpo/companies/today/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/drive-day/[roundId]/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/tpo/drive-day/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/tpo/drive-day/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/find/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/tpo/find/page.tsx": {
-   "focus-style-off": 18
-  },
-  "src/app/(authenticated)/tpo/follow-ups/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/tpo/follow-ups/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/home/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/tpo/home/page.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/tpo/messages/[threadId]/error.tsx": {
-   "focus-style-off": 2
-  },
-  "src/app/(authenticated)/tpo/messages/page.tsx": {
-   "focus-style-off": 1
-  },
-  "src/app/(authenticated)/tpo/not-found.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/notifications/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx": {
-   "focus-style-off": 8
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx": {
-   "focus-style-off": 24
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx": {
-   "focus-style-off": 21
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/placements/lifecycle/page.tsx": {
-   "size-off-grid": 4,
-   "focus-style-off": 36
-  },
-  "src/app/(authenticated)/tpo/placements/new/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/placements/overview/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/reports/[slug]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/reports/intelligence/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/reports/leads/page.tsx": {
-   "focus-style-off": 6
-  },
   "src/app/(authenticated)/tpo/reports/page.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 11
-  },
-  "src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/requests/page.tsx": {
-   "size-off-grid": 3,
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/tpo/settings/notices/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/tpo/settings/notifications/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/tpo/settings/rules/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/settings/team/page.tsx": {
-   "focus-style-off": 8
-  },
-  "src/app/(authenticated)/tpo/settings/templates/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tpo/students/page.tsx": {
-   "focus-style-off": 42
-  },
-  "src/app/(authenticated)/tpo/students/preparation-plan/page.tsx": {
-   "focus-style-off": 6
-  },
-  "src/app/(authenticated)/tpo/students/preparation-prep/page.tsx": {
-   "focus-style-off": 15
-  },
-  "src/app/(authenticated)/tpo/students/requests/page.tsx": {
-   "focus-style-off": 36
-  },
-  "src/app/(authenticated)/tpo/team/everyone/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tracker/audit-findings/page.tsx": {
-   "focus-style-off": 12
+   "focus-style-off": 1
   },
   "src/app/(authenticated)/tracker/issues/[publicId]/page.tsx": {
    "raw-control": 1
-  },
-  "src/app/(authenticated)/tracker/issues/page.tsx": {
-   "focus-style-off": 9
-  },
-  "src/app/(authenticated)/tracker/mine/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/(authenticated)/tracker/page.tsx": {
-   "focus-style-off": 3
   },
   "src/app/api/tracker/logs/known-errors/[signatureId]/route.ts": {
    "important": 1
@@ -1317,113 +68,59 @@
   "src/app/campaign-unsubscribe/[token]/page.tsx": {
    "raw-control": 1
   },
-  "src/app/campaign-unsubscribe/confirmed/page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/company-share/[token]/error.tsx": {
-   "focus-style-off": 3
-  },
-  "src/app/company-share/[token]/not-found.tsx": {
-   "focus-style-off": 3
-  },
   "src/app/company-share/[token]/page.tsx": {
-   "raw-control": 2,
-   "focus-style-off": 6
-  },
-  "src/app/enterprises/page.tsx": {
-   "font-size-off-scale": 2
+   "raw-control": 2
   },
   "src/app/globals.css": {
    "important": 4
   },
   "src/app/home/page.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 3,
-   "font-size-off-scale": 4
+   "focus-style-off": 1
   },
   "src/app/jobs/external/[slug]/page.tsx": {
    "raw-control": 1
   },
   "src/app/page.tsx": {
-   "link-bare": 8,
-   "size-off-grid": 4
+   "link-bare": 8
   },
   "src/app/placements/page.tsx": {
-   "raw-control": 1,
-   "size-off-grid": 1
-  },
-  "src/app/quiz/page.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 3
+   "raw-control": 1
   },
   "src/app/request-demo/page.tsx": {
-   "raw-control": 1,
-   "font-size-off-scale": 2
+   "raw-control": 1
   },
   "src/app/roll-number-login/page.tsx": {
    "raw-control": 1
   },
   "src/app/tracker/issues/public/page.tsx": {
-   "raw-control": 1,
-   "focus-style-off": 3
+   "raw-control": 1
   },
   "src/app/universities/page.tsx": {
-   "font-size-off-scale": 2
+   "font-size-off-scale": 1
   },
   "src/app/verify-email/page.tsx": {
    "button-bare": 1,
    "raw-control": 1
   },
   "src/components/academics/academics-actions.tsx": {
-   "focus-style-off": 6,
    "important": 8
   },
   "src/components/academics/academics-create-panel.tsx": {
    "important": 8
   },
-  "src/components/academics/academics-overview.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/academics/college-class-filter-selectors.tsx": {
-   "size-off-grid": 2
-  },
-  "src/components/academics/college-class-scope-filters.tsx": {
-   "size-off-grid": 4
-  },
   "src/components/academics/college-cohort-management.tsx": {
-   "focus-style-off": 6,
    "important": 2
-  },
-  "src/components/academics/college-directory-page-size.tsx": {
-   "size-off-grid": 1
-  },
-  "src/components/academics/college-hall-booking-action.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/academics/college-hall-cancellation-action.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/academics/college-section-management.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 3
   },
   "src/components/academics/college-semester-management.tsx": {
    "important": 1
   },
-  "src/components/academics/college-structure-directory.tsx": {
-   "size-off-grid": 7,
-   "focus-style-off": 6
-  },
   "src/components/academics/college-term-mapping-manager.tsx": {
-   "icon-size-off": 1,
    "important": 1
   },
   "src/components/academics/learner-class-schedule.module.css": {
    "important": 41
   },
   "src/components/academics/learner-class-schedule.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 6,
    "important": 8
   },
   "src/components/academics/legacy-class-month-grid.module.css": {
@@ -1432,97 +129,36 @@
   "src/components/academics/section-operations.tsx": {
    "important": 1
   },
-  "src/components/activity/activity-center.tsx": {
-   "focus-style-off": 12
-  },
   "src/components/activity/learner-notifications-inbox.tsx": {
    "focus-style-off": 2,
    "important": 35
   },
   "src/components/activity/notification-list.tsx": {
-   "focus-style-off": 10,
    "important": 1
-  },
-  "src/components/activity/notification-toolbar.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/admin/academic-module-scope-inventory.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/admin/academic-setup-steps.tsx": {
-   "focus-style-off": 9
-  },
-  "src/components/admin/admin-dashboard-actions.tsx": {
-   "focus-style-off": 12,
-   "icon-size-off": 2
-  },
-  "src/components/admin/admin-learner-profile-sections.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/admin/admin-program-directory.tsx": {
-   "size-off-grid": 3,
-   "focus-style-off": 3,
-   "icon-size-off": 1
   },
   "src/components/admin/admin-scoped-live-search.tsx": {
    "button-bare": 4
   },
-  "src/components/admin/admin-scoped-read-page.tsx": {
-   "focus-style-off": 38
-  },
   "src/components/admin/college-branding-form.tsx": {
-   "size-off-grid": 3,
-   "icon-size-off": 2,
    "important": 2
   },
   "src/components/admin/college-branding-preview.tsx": {
-   "button-bare": 1,
-   "size-off-grid": 3,
-   "focus-style-off": 2
-  },
-  "src/components/admin/college-closing-quizzes-card.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/admin/college-create-form.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/admin/college-dashboard-cards.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/admin/college-dashboard-section-failure.tsx": {
-   "focus-style-off": 3
+   "button-bare": 1
   },
   "src/components/admin/college-logo-uploader.tsx": {
    "important": 18
   },
-  "src/components/admin/college-setup-checklist.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/admin/college-signin-method-form.tsx": {
-   "button-bare": 1,
-   "focus-style-off": 3
-  },
-  "src/components/admin/department-actions.tsx": {
-   "icon-size-off": 2
+   "button-bare": 1
   },
   "src/components/admin/department-directory.tsx": {
-   "button-bare": 1,
-   "size-off-grid": 2,
-   "focus-style-off": 6
+   "button-bare": 1
   },
   "src/components/admin/inbound-mail-list.tsx": {
-   "focus-style-off": 3,
    "important": 1
   },
-  "src/components/admin/launch-readiness-checklist.tsx": {
-   "focus-style-off": 2
-  },
   "src/components/admin/learner-module-access-drawer.tsx": {
-   "focus-style-off": 6,
    "important": 2
-  },
-  "src/components/admin/lecture-hall-manager.tsx": {
-   "focus-style-off": 3
   },
   "src/components/admin/legacy-college-stat.module.css": {
    "important": 17
@@ -1536,9 +172,6 @@
   "src/components/admin/person-membership-actions.tsx": {
    "important": 1
   },
-  "src/components/admin/scoped-membership-lifecycle-actions.tsx": {
-   "icon-size-off": 2
-  },
   "src/components/admin/super-admin-batch-students-dialog.tsx": {
    "important": 1
   },
@@ -1551,55 +184,20 @@
   "src/components/admin/super-admin-faculty-assignment-create.tsx": {
    "important": 1
   },
-  "src/components/admin/super-admin-global-company-catalogue.tsx": {
-   "size-off-grid": 1
-  },
-  "src/components/admin/super-admin-hr-account-dialog.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/admin/super-admin-hr-accounts.tsx": {
-   "button-bare": 3,
-   "size-off-grid": 1,
-   "focus-style-off": 16
+   "button-bare": 3
   },
   "src/components/admin/super-admin-hr-detail-drawer.tsx": {
-   "size-off-grid": 2,
    "important": 1
-  },
-  "src/components/admin/super-admin-interview-operations.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/admin/super-admin-placement-detail-view.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/admin/super-admin-platform-block-action.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/admin/super-admin-student-bulk-access.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/admin/super-admin-today-board.tsx": {
-   "size-off-grid": 1
   },
   "src/components/admin/tenant-domain-manager.tsx": {
    "important": 1
   },
   "src/components/admin/tenant-settings-editor.tsx": {
-   "button-bare": 1,
-   "focus-style-off": 6
-  },
-  "src/components/announcements/super-admin-college-broadcast-form.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/attendance/admin-attendance-workspace.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/attendance/faculty-attendance-schedule-editor.tsx": {
-   "focus-style-off": 3
+   "button-bare": 1
   },
   "src/components/attendance/faculty-attendance-workspace.tsx": {
    "raw-control": 1,
-   "focus-style-off": 1,
    "important": 12
   },
   "src/components/attendance/faculty-prototype-attendance.tsx": {
@@ -1607,76 +205,36 @@
    "link-bare": 2,
    "important": 6
   },
-  "src/components/attendance/learner-attendance-workspace.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/auth/device-list.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/auth/learner-roll-number-login.tsx": {
    "button-bare": 1
   },
   "src/components/auth/login-form.tsx": {
    "raw-control": 1,
-   "focus-style-off": 3,
    "important": 2
   },
   "src/components/auth/session-response-guard.tsx": {
    "button-bare": 1
   },
-  "src/components/college/college-department-insights.tsx": {
-   "focus-style-off": 9
-  },
-  "src/components/college/college-faculty-csv-import.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/college/college-faculty-lifecycle-action.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/college/college-faculty-schedule-reassign.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/college/college-legacy-group-tabs.tsx": {
-   "focus-style-off": 6
-  },
   "src/components/college/college-person-profile-overview-modal.tsx": {
    "important": 1
   },
   "src/components/college/college-role-directory-autocomplete.tsx": {
-   "button-bare": 1,
-   "focus-style-off": 2
-  },
-  "src/components/college/college-role-directory-workspace.tsx": {
-   "focus-style-off": 57
-  },
-  "src/components/college/college-student-register-form.tsx": {
-   "focus-style-off": 3
+   "button-bare": 1
   },
   "src/components/courses/add-lesson-content-drawer.tsx": {
    "button-bare": 6,
-   "focus-style-off": 9,
    "important": 1
   },
-  "src/components/courses/admin-assessment-read-directory.tsx": {
-   "size-off-grid": 5,
-   "focus-style-off": 8
-  },
   "src/components/courses/admin-course-actions.tsx": {
-   "focus-style-off": 2,
    "important": 2
   },
   "src/components/courses/admin-course-create-panel.tsx": {
-   "focus-style-off": 6,
    "important": 3
   },
   "src/components/courses/admin-course-overview.tsx": {
-   "link-bare": 1,
-   "size-off-grid": 2,
-   "focus-style-off": 5,
-   "icon-size-off": 1
+   "link-bare": 1
   },
   "src/components/courses/admin-learning-structure-actions.tsx": {
-   "icon-size-off": 2,
    "important": 1
   },
   "src/components/courses/assignment-submission-control.tsx": {
@@ -1685,27 +243,11 @@
   "src/components/courses/college-archived-lesson-restore.tsx": {
    "important": 1
   },
-  "src/components/courses/college-assessment-aggregate.tsx": {
-   "size-off-grid": 5,
-   "focus-style-off": 3
-  },
-  "src/components/courses/college-content-aggregate.tsx": {
-   "focus-style-off": 6
-  },
   "src/components/courses/college-content-authoring-control.tsx": {
    "button-bare": 3
   },
   "src/components/courses/college-learner-progress-report.module.css": {
    "important": 2
-  },
-  "src/components/courses/college-learner-progress-report.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/courses/college-learning-directory.tsx": {
-   "focus-style-off": 21
-  },
-  "src/components/courses/college-live-classes-directory.tsx": {
-   "focus-style-off": 9
   },
   "src/components/courses/college-quiz-create.tsx": {
    "important": 2
@@ -1722,22 +264,11 @@
   "src/components/courses/faculty-assessment-editor.tsx": {
    "important": 5
   },
-  "src/components/courses/faculty-assessment-overview.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 15
-  },
   "src/components/courses/faculty-assignment-editor.tsx": {
    "important": 1
   },
   "src/components/courses/faculty-assignment-review.tsx": {
-   "button-bare": 1,
-   "focus-style-off": 5
-  },
-  "src/components/courses/faculty-choice-quiz-builder.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/courses/faculty-contacts-table.tsx": {
-   "focus-style-off": 4
+   "button-bare": 1
   },
   "src/components/courses/faculty-content-editor.tsx": {
    "important": 4
@@ -1746,29 +277,13 @@
    "important": 6
   },
   "src/components/courses/faculty-course-home-signals.tsx": {
-   "button-bare": 1,
-   "focus-style-off": 15
+   "button-bare": 1
   },
   "src/components/courses/faculty-course-item-viewer.tsx": {
    "important": 2
   },
-  "src/components/courses/faculty-course-list.tsx": {
-   "focus-style-off": 12
-  },
-  "src/components/courses/faculty-course-tab-navigation.tsx": {
-   "focus-style-off": 9
-  },
-  "src/components/courses/faculty-course-workspace.tsx": {
-   "focus-style-off": 27
-  },
   "src/components/courses/faculty-item-actions.tsx": {
    "important": 1
-  },
-  "src/components/courses/faculty-lesson-authoring.tsx": {
-   "focus-style-off": 9
-  },
-  "src/components/courses/faculty-lesson-video-manager.tsx": {
-   "focus-style-off": 3
   },
   "src/components/courses/faculty-prototype-assessment-directory.tsx": {
    "button-bare": 1,
@@ -1777,16 +292,13 @@
   },
   "src/components/courses/faculty-prototype-assignment-report.tsx": {
    "raw-control": 2,
-   "size-off-grid": 1,
    "important": 17
   },
   "src/components/courses/faculty-prototype-blueprint-row-actions.tsx": {
-   "button-bare": 2,
-   "focus-style-off": 3
+   "button-bare": 2
   },
   "src/components/courses/faculty-prototype-blueprint.tsx": {
    "button-bare": 2,
-   "size-off-grid": 1,
    "important": 13
   },
   "src/components/courses/faculty-prototype-course-directory.tsx": {
@@ -1795,7 +307,6 @@
    "important": 4
   },
   "src/components/courses/faculty-prototype-course-priorities.tsx": {
-   "size-off-grid": 1,
    "important": 3
   },
   "src/components/courses/faculty-prototype-lesson-items.tsx": {
@@ -1812,9 +323,6 @@
   "src/components/courses/faculty-quiz-review.tsx": {
    "important": 1
   },
-  "src/components/courses/faculty-report-csv-download.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/courses/faculty-report-legacy-charts.module.css": {
    "important": 13
   },
@@ -1824,26 +332,14 @@
   "src/components/courses/learner-assessment-metrics.module.css": {
    "important": 17
   },
-  "src/components/courses/learner-assessment-overview.tsx": {
-   "focus-style-off": 18,
-   "icon-size-off": 1
-  },
   "src/components/courses/learner-course-discussion.tsx": {
-   "focus-style-off": 6,
    "important": 19
   },
   "src/components/courses/learner-course-list.tsx": {
-   "button-bare": 1,
-   "focus-style-off": 9
-  },
-  "src/components/courses/learner-course-overview.tsx": {
-   "focus-style-off": 20
+   "button-bare": 1
   },
   "src/components/courses/learner-course-progress.module.css": {
    "important": 2
-  },
-  "src/components/courses/learner-course-workspace.tsx": {
-   "focus-style-off": 17
   },
   "src/components/courses/learner-live-class-link.tsx": {
    "important": 5
@@ -1852,77 +348,31 @@
    "important": 6
   },
   "src/components/courses/learner-quiz-attempt.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 6,
    "important": 3
   },
   "src/components/courses/learner-roadmap-item-dialog.tsx": {
-   "focus-style-off": 5,
    "important": 1
-  },
-  "src/components/courses/learner-video-player.tsx": {
-   "size-off-grid": 1
   },
   "src/components/courses/legacy-upload-meter.module.css": {
    "important": 5
   },
-  "src/components/courses/quiz-attempt-control.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/courses/super-admin-content-directory-page.tsx": {
-   "focus-style-off": 10
-  },
-  "src/components/courses/super-admin-lesson-create.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/courses/super-admin-section-syllabus-order.tsx": {
-   "button-bare": 1,
-   "focus-style-off": 2
+   "button-bare": 1
   },
   "src/components/electives/college-elective-offering-manager.tsx": {
-   "focus-style-off": 2,
    "important": 3
   },
   "src/components/faculty/faculty-today-panel.tsx": {
    "button-bare": 2,
    "raw-control": 1,
-   "size-off-grid": 1,
    "important": 4
   },
-  "src/components/groups/college-group-actions.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/groups/college-group-detail-writes.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/groups/college-group-import-preview.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/hr/hr-company-reports-grid.tsx": {
-   "focus-style-off": 5
-  },
   "src/components/hr/hr-drive-draft-form.tsx": {
-   "focus-style-off": 3,
    "important": 2
   },
-  "src/components/hr/hr-job-applicants-grid.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/hr/hr-proposal-history-grid.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/hr/hr-recruiter-bell.tsx": {
-   "focus-style-off": 6,
+   "focus-style-off": 3,
    "important": 13
-  },
-  "src/components/hr/hr-round-editor-grid.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/hr/hr-selection-proposal-composer.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/hr/hr-unsent-drive-alert.tsx": {
-   "focus-style-off": 3
   },
   "src/components/hr/recruiter-calendar-legacy.module.css": {
    "important": 8
@@ -1939,11 +389,7 @@
   },
   "src/components/hr/recruiter-conversation-workspace.tsx": {
    "button-bare": 2,
-   "raw-control": 1,
-   "focus-style-off": 2
-  },
-  "src/components/hr/recruiter-decision-read-button.tsx": {
-   "focus-style-off": 3
+   "raw-control": 1
   },
   "src/components/hr/recruiter-drive-funnel.module.css": {
    "important": 7
@@ -1958,17 +404,7 @@
    "button-bare": 1
   },
   "src/components/hr/recruiter-notification-bell.tsx": {
-   "focus-style-off": 6,
    "important": 11
-  },
-  "src/components/hr/recruiter-profile-access.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/hr/recruiter-request-cancel-button.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/hr/recruiter-round-inline-editor.tsx": {
-   "focus-style-off": 2
   },
   "src/components/hr/recruiter-today-prototype.module.css": {
    "important": 5
@@ -1977,18 +413,10 @@
    "button-bare": 2,
    "raw-control": 1
   },
-  "src/components/marketing/marketing-header-client.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 9,
-   "icon-size-off": 1
-  },
   "src/components/marketing/marketing-layout.tsx": {
    "link-bare": 1,
    "raw-control": 1,
-   "size-off-grid": 2,
-   "focus-style-off": 12,
-   "font-size-off-scale": 3,
-   "icon-size-off": 1
+   "font-size-off-scale": 1
   },
   "src/components/people/faculty-avatar-upload.tsx": {
    "button-bare": 1
@@ -1997,19 +425,13 @@
    "important": 1
   },
   "src/components/placements/admin-placement-student-search.tsx": {
-   "focus-style-off": 2,
    "important": 3
-  },
-  "src/components/placements/college-application-pipeline-controls.tsx": {
-   "size-off-grid": 1
   },
   "src/components/placements/college-company-create.tsx": {
    "important": 2
   },
   "src/components/placements/college-drive-attention-cards.tsx": {
    "button-bare": 1,
-   "focus-style-off": 2,
-   "icon-size-off": 1,
    "important": 1
   },
   "src/components/placements/college-drive-create-dialog.tsx": {
@@ -2018,33 +440,11 @@
   "src/components/placements/college-drive-edit-dialog.tsx": {
    "important": 1
   },
-  "src/components/placements/college-drive-pipeline-overview.tsx": {
-   "focus-style-off": 7
-  },
   "src/components/placements/college-hiring-date-filters.tsx": {
    "button-bare": 1
   },
   "src/components/placements/college-hiring-funnel.tsx": {
-   "link-bare": 1,
-   "focus-style-off": 21
-  },
-  "src/components/placements/college-interview-appointments.tsx": {
-   "icon-size-off": 1
-  },
-  "src/components/placements/college-report-navigation.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/placements/college-retention-inline-preview.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/placements/college-shortlisted-last-good.tsx": {
-   "focus-style-off": 4
-  },
-  "src/components/placements/hr-recruiter-drives-grid.tsx": {
-   "focus-style-off": 18
-  },
-  "src/components/placements/last-known-good-applications.tsx": {
-   "focus-style-off": 2
+   "link-bare": 1
   },
   "src/components/placements/learner-application-resume-link.tsx": {
    "button-bare": 1
@@ -2059,53 +459,28 @@
    "important": 3
   },
   "src/components/placements/learner-career-rounds.tsx": {
-   "focus-style-off": 3,
    "important": 1
   },
   "src/components/placements/learner-jobs-browse.tsx": {
-   "focus-style-off": 4,
    "important": 26
   },
-  "src/components/placements/learner-placement-alerts.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/placements/learner-placement-job-detail.tsx": {
-   "raw-control": 1,
-   "focus-style-off": 2
+   "raw-control": 1
   },
   "src/components/placements/learner-placement-jobs.tsx": {
-   "button-bare": 1,
-   "size-off-grid": 1
+   "button-bare": 1
   },
   "src/components/placements/learner-placement-journey.tsx": {
-   "link-bare": 1,
-   "focus-style-off": 3
+   "link-bare": 1
   },
   "src/components/placements/learner-placement-metrics.module.css": {
    "important": 34
   },
-  "src/components/placements/learner-placement-notification-settings.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/placements/learner-placement-registration.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/placements/learner-placement-requests.tsx": {
-   "focus-style-off": 4
-  },
   "src/components/placements/learner-placements-dashboard.tsx": {
-   "palette-class": 1,
-   "focus-style-off": 9
-  },
-  "src/components/placements/learner-recent-placement-activity.tsx": {
-   "focus-style-off": 2
+   "palette-class": 1
   },
   "src/components/placements/learner-save-drive-button.tsx": {
-   "button-bare": 2,
-   "focus-style-off": 3
-  },
-  "src/components/placements/learner-schedule-reschedule.tsx": {
-   "focus-style-off": 25
+   "button-bare": 2
   },
   "src/components/placements/legacy-calendar-theme.module.css": {
    "important": 8
@@ -2113,56 +488,15 @@
   "src/components/placements/legacy-tpo-report-stats.module.css": {
    "important": 16
   },
-  "src/components/placements/placement-bulk-add-applicants.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/placements/placement-calendar-workspace.tsx": {
-   "focus-style-off": 27
-  },
   "src/components/placements/placement-draft-edit-form.tsx": {
    "link-bare": 1
   },
-  "src/components/placements/placement-drive-day-overview.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/placements/placement-drive-workspace.tsx": {
-   "focus-style-off": 56,
-   "icon-size-off": 1
-  },
   "src/components/placements/placement-employer-relationships.tsx": {
-   "button-bare": 1,
-   "focus-style-off": 3,
-   "icon-size-off": 1
-  },
-  "src/components/placements/placement-job-create-form.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 3
-  },
-  "src/components/placements/placement-offer-controls.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/placements/placement-report-ui.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/placements/public-join-preview-retry.tsx": {
-   "focus-style-off": 3
+   "button-bare": 1
   },
   "src/components/placements/public-recruiter-join-form.tsx": {
    "button-bare": 1,
-   "focus-style-off": 6,
    "important": 1
-  },
-  "src/components/placements/recorded-outside-form.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/placements/recruiter-focused-review-shortcuts.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/placements/recruiter-placement-portfolio.tsx": {
-   "focus-style-off": 24
-  },
-  "src/components/placements/recruiter-result-review-grid.tsx": {
-   "focus-style-off": 3
   },
   "src/components/placements/report-bar-chart.module.css": {
    "important": 3
@@ -2170,104 +504,35 @@
   "src/components/placements/super-admin-bulk-drive-actions.tsx": {
    "important": 3
   },
-  "src/components/placements/super-admin-drive-directory-filters.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/placements/super-admin-drive-quick-search.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/placements/super-admin-drive-tabs.tsx": {
-   "focus-style-off": 2
-  },
   "src/components/placements/super-admin-hiring-funnel.module.css": {
    "important": 3
   },
-  "src/components/placements/super-admin-needs-attention.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/placements/tpo-applicant-review-drawer.tsx": {
-   "focus-style-off": 9
-  },
-  "src/components/placements/tpo-bulk-round-result-recorder.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/placements/tpo-drive-change-requests.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/placements/tpo-drive-edit-form.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/placements/tpo-drive-saved-views.tsx": {
-   "focus-style-off": 2
-  },
   "src/components/placements/tpo-drive-workspace-nav.tsx": {
-   "focus-style-off": 3,
    "important": 3
   },
-  "src/components/placements/tpo-interview-slot-planner.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/placements/tpo-public-placement-content-editor.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/placements/tpo-report-invalid-filters.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/placements/tpo-request-bulk-decision.tsx": {
-   "focus-style-off": 6,
    "important": 3
   },
   "src/components/placements/tpo-round-apply-control.tsx": {
    "important": 1
   },
-  "src/components/placements/tpo-round-drive-day-read-only.tsx": {
-   "focus-style-off": 10
-  },
-  "src/components/placements/tpo-settings-nav.tsx": {
-   "focus-style-off": 6
-  },
   "src/components/placements/tpo-week-hour-calendar.module.css": {
    "important": 25
   },
   "src/components/placements/tpo-week-hour-calendar.tsx": {
-   "focus-style-off": 6,
    "important": 2
-  },
-  "src/components/profile/learner-profile-workspace.tsx": {
-   "focus-style-off": 5
   },
   "src/components/profile/learner-skill-catalog-input.tsx": {
    "important": 8
   },
-  "src/components/projects/class-team-workspace-creator.tsx": {
-   "focus-style-off": 6
-  },
   "src/components/projects/college-project-delivery-overview.tsx": {
-   "link-bare": 4,
-   "focus-style-off": 2
-  },
-  "src/components/projects/college-project-student-roster-dialog.tsx": {
-   "focus-style-off": 3,
-   "icon-size-off": 1
+   "link-bare": 4
   },
   "src/components/projects/learner-board-interactive.tsx": {
-   "focus-style-off": 8,
    "important": 1
-  },
-  "src/components/projects/learner-board-task-detail-dialog.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/projects/learner-board-task-index.tsx": {
-   "focus-style-off": 4
   },
   "src/components/projects/learner-own-task-controls.tsx": {
    "important": 1
-  },
-  "src/components/projects/learner-project-activity.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/projects/learner-project-mobile-filters.tsx": {
-   "size-off-grid": 5
   },
   "src/components/projects/legacy-project-board.module.css": {
    "important": 20
@@ -2275,34 +540,19 @@
   "src/components/projects/legacy-project-tabs.module.css": {
    "important": 2
   },
-  "src/components/projects/mentor-board-task-detail-dialog.tsx": {
-   "focus-style-off": 5
-  },
-  "src/components/projects/mentor-delivery-lock-control.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/projects/mentor-evidence-gallery.tsx": {
-   "button-bare": 3,
-   "focus-style-off": 2
+   "button-bare": 3
   },
   "src/components/projects/mentor-lane-board.tsx": {
    "button-bare": 1,
-   "focus-style-off": 3,
    "important": 4
-  },
-  "src/components/projects/mentor-meeting-notes-editor.tsx": {
-   "focus-style-off": 3
   },
   "src/components/projects/mentor-meetings-calendar.tsx": {
    "button-bare": 3,
    "link-bare": 1
   },
   "src/components/projects/mentor-product-backlog.tsx": {
-   "focus-style-off": 20,
    "important": 2
-  },
-  "src/components/projects/mentor-projects-unavailable.tsx": {
-   "focus-style-off": 4
   },
   "src/components/projects/mentor-prototype-home.tsx": {
    "raw-control": 1
@@ -2311,70 +561,19 @@
    "important": 2
   },
   "src/components/projects/mentor-sprint-detail-table.tsx": {
-   "button-bare": 1,
-   "size-off-grid": 1
-  },
-  "src/components/projects/mentor-task-create.tsx": {
-   "focus-style-off": 3
+   "button-bare": 1
   },
   "src/components/projects/mentor-task-delete-control.tsx": {
    "important": 3
   },
-  "src/components/projects/mentor-task-details-edit.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/projects/mentor-xlsx-evidence-preview.tsx": {
    "button-bare": 1
-  },
-  "src/components/projects/project-admin-at-risk-page.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/projects/project-admin-audit-page.tsx": {
-   "size-off-grid": 3,
-   "focus-style-off": 3
-  },
-  "src/components/projects/project-admin-collection-controls.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/projects/project-admin-readiness-page.tsx": {
-   "focus-style-off": 13
-  },
-  "src/components/projects/project-admin-reassign-mentor-page.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/projects/project-admin-submissions-page.tsx": {
-   "focus-style-off": 12
-  },
-  "src/components/projects/project-admin-workspace-list.tsx": {
-   "focus-style-off": 4
   },
   "src/components/projects/project-admin-workspace-quick-view.tsx": {
    "important": 10
   },
-  "src/components/projects/project-create-control.tsx": {
-   "focus-style-off": 5
-  },
-  "src/components/projects/project-final-delivery-controls.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/projects/project-list.tsx": {
-   "focus-style-off": 7
-  },
-  "src/components/projects/project-meeting-controls.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/projects/project-mentor-workload-table.tsx": {
    "button-bare": 1
-  },
-  "src/components/projects/project-participant-list-controls.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 9
-  },
-  "src/components/projects/project-readiness-override-form.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/projects/project-resource-controls.tsx": {
-   "focus-style-off": 3
   },
   "src/components/projects/project-resource-files-panel.tsx": {
    "important": 1
@@ -2382,45 +581,22 @@
   "src/components/projects/project-resource-list.tsx": {
    "important": 1
   },
-  "src/components/projects/project-roster-table.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/projects/project-workspace.tsx": {
-   "link-bare": 1,
-   "focus-style-off": 6
-  },
-  "src/components/projects/super-admin-template-create-form.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/projects/super-admin-template-rollback-control.tsx": {
-   "focus-style-off": 1
+   "link-bare": 1
   },
   "src/components/public/graceful-error-boundary.tsx": {
    "button-bare": 1,
-   "raw-control": 1,
-   "focus-style-off": 8
+   "raw-control": 1
   },
   "src/components/public/graceful-screen.tsx": {
    "button-bare": 1,
    "raw-control": 1
   },
   "src/components/shell/account-actions.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/shell/admin-scope-switcher.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/shell/app-shell.tsx": {
-   "focus-style-off": 3
+   "focus-style-off": 1
   },
   "src/components/shell/faculty-prototype.css": {
    "font-size-off-scale": 1
-  },
-  "src/components/shell/learner-notification-bell.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/shell/learner-topbar-tools.tsx": {
-   "focus-style-off": 3
   },
   "src/components/shell/mobile-navigation.tsx": {
    "important": 5
@@ -2444,9 +620,6 @@
   "src/components/shell/topbar/tpo-quick-create.tsx": {
    "important": 2
   },
-  "src/components/shell/tpo-topbar-messages.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/tpo/legacy-batch-eligibility.module.css": {
    "important": 4
   },
@@ -2459,138 +632,51 @@
   "src/components/tpo/legacy-tpo-notification-feed.module.css": {
    "important": 10
   },
-  "src/components/tpo/recruiter-bulk-invite-controls.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/tpo/recruiter-bulk-owner-controls.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/tpo/recruiter-bulk-stage-controls.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/tpo/recruiter-invite-landing.tsx": {
-   "focus-style-off": 5,
    "important": 1
   },
-  "src/components/tpo/recruiter-lead-csv-import.tsx": {
-   "focus-style-off": 6
-  },
   "src/components/tpo/recruiter-lead-detail-workspace.tsx": {
-   "link-bare": 2,
-   "size-off-grid": 1,
-   "focus-style-off": 18
+   "link-bare": 2
   },
   "src/components/tpo/recruiter-leads-workspace.tsx": {
-   "button-bare": 2,
-   "size-off-grid": 1,
-   "focus-style-off": 19
+   "button-bare": 2
   },
   "src/components/tpo/recruiter-prototype-inspector.tsx": {
    "button-bare": 1
   },
   "src/components/tpo/recruiter-prototype-roster.tsx": {
-   "button-bare": 1,
-   "size-off-grid": 1,
-   "focus-style-off": 2
+   "button-bare": 1
   },
   "src/components/tpo/recruiter-prototype-stage-ribbon.tsx": {
-   "button-bare": 1,
-   "focus-style-off": 1
+   "button-bare": 1
   },
   "src/components/tpo/tpo-academic-import-workspace.tsx": {
    "important": 1
   },
-  "src/components/tpo/tpo-applications-spreadsheet.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/tpo/tpo-audit-grid.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/tpo/tpo-batch-eligibility-import.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/tpo/tpo-batch-facet-filters.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/tpo/tpo-batch-rule-editor.tsx": {
-   "focus-style-off": 4
-  },
-  "src/components/tpo/tpo-bell-panel.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 9,
-   "icon-size-off": 1
-  },
-  "src/components/tpo/tpo-bulk-action-panel.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/tpo/tpo-campaign-compose.tsx": {
-   "button-bare": 3,
-   "focus-style-off": 1
+   "button-bare": 3
   },
   "src/components/tpo/tpo-campaign-prototype-sidebar.tsx": {
    "button-bare": 2
   },
   "src/components/tpo/tpo-companies-spreadsheet.tsx": {
-   "button-bare": 2,
-   "focus-style-off": 2
+   "button-bare": 2
   },
   "src/components/tpo/tpo-companies-today.tsx": {
    "button-bare": 10,
    "link-bare": 3
   },
-  "src/components/tpo/tpo-company-memory-workspace.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 9
-  },
-  "src/components/tpo/tpo-company-team-conversation.tsx": {
-   "focus-style-off": 21
-  },
-  "src/components/tpo/tpo-company-visibility-editor.tsx": {
-   "focus-style-off": 4
-  },
   "src/components/tpo/tpo-conversation-bubble.module.css": {
    "important": 10
   },
   "src/components/tpo/tpo-drive-offers-prototype-review.tsx": {
-   "button-bare": 1,
-   "size-off-grid": 1
+   "button-bare": 1
   },
   "src/components/tpo/tpo-drive-students-prototype-review.tsx": {
-   "button-bare": 4,
-   "size-off-grid": 1
-  },
-  "src/components/tpo/tpo-due-followup-workspace.tsx": {
-   "focus-style-off": 2
+   "button-bare": 4
   },
   "src/components/tpo/tpo-find-shortcut.tsx": {
-   "focus-style-off": 6,
    "important": 4
-  },
-  "src/components/tpo/tpo-header-indicators.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 2
-  },
-  "src/components/tpo/tpo-home-prototype-focus.tsx": {
-   "size-off-grid": 1
-  },
-  "src/components/tpo/tpo-keyboard-shortcuts.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/tpo/tpo-messages-tabs.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/tpo/tpo-mobile-footer.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/tpo/tpo-more-navigation.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 3
-  },
-  "src/components/tpo/tpo-my-notification-preferences-editor.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/tpo/tpo-new-followup-modal.tsx": {
-   "focus-style-off": 2
   },
   "src/components/tpo/tpo-notice-audience-picker.tsx": {
    "button-bare": 1
@@ -2604,48 +690,20 @@
   "src/components/tpo/tpo-notice-read-progress.tsx": {
    "important": 2
   },
-  "src/components/tpo/tpo-optional-emails-editor.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/tpo/tpo-profile-avatar.tsx": {
-   "button-bare": 2,
-   "focus-style-off": 3
+   "button-bare": 2
   },
   "src/components/tpo/tpo-recruiter-message-reply.tsx": {
    "button-bare": 1
   },
-  "src/components/tpo/tpo-roster-verification-bulk.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/tpo/tpo-safe-csv-download.tsx": {
-   "focus-style-off": 2
-  },
-  "src/components/tpo/tpo-selected-review-queue.tsx": {
-   "focus-style-off": 2
-  },
   "src/components/tpo/tpo-settings-team-manage.tsx": {
    "button-bare": 1
-  },
-  "src/components/tpo/tpo-spreadsheet-grid.tsx": {
-   "focus-style-off": 8
-  },
-  "src/components/tpo/tpo-student-quick-panel.tsx": {
-   "focus-style-off": 21
   },
   "src/components/tpo/tpo-student-roster-inspector.tsx": {
    "button-bare": 1
   },
-  "src/components/tpo/tpo-students-spreadsheet.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/tpo/tpo-team-forms.tsx": {
-   "focus-style-off": 2
-  },
   "src/components/tpo/tpo-team-message-actions.tsx": {
    "important": 1
-  },
-  "src/components/tpo/tpo-team-messages-directory.tsx": {
-   "focus-style-off": 1
   },
   "src/components/tpo/tpo-team-people-prototype.tsx": {
    "button-bare": 1,
@@ -2655,69 +713,39 @@
    "raw-control": 1
   },
   "src/components/tpo/tpo-topbar-new-menu.tsx": {
-   "focus-style-off": 4
-  },
-  "src/components/tpo/tpo-unified-job-types-editor.tsx": {
-   "icon-size-off": 1
+   "focus-style-off": 1
   },
   "src/components/tracker/independent-audit-findings-board.tsx": {
-   "size-off-grid": 3,
    "important": 1
   },
   "src/components/tracker/known-errors-workspace.tsx": {
    "important": 1
   },
-  "src/components/tracker/tracker-admin-nav.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/tracker/tracker-issue-logs-panel.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/tracker/tracker-issue-saved-views.tsx": {
-   "focus-style-off": 2
-  },
   "src/components/tracker/tracker-live-logs-explorer.tsx": {
    "important": 10
   },
   "src/components/tracker/tracker-report-form.tsx": {
-   "raw-control": 1,
-   "focus-style-off": 9
+   "raw-control": 1
   },
   "src/components/tracker/tracker-screenshot-gallery.tsx": {
    "important": 1
   },
-  "src/components/tracker/tracker-workflow-panel.tsx": {
-   "focus-style-off": 6
-  },
-  "src/components/ui/action-pagination.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/ui/avatar.tsx": {
    "focus-style-off": 1
-  },
-  "src/components/ui/badge.tsx": {
-   "size-off-grid": 1,
-   "focus-style-off": 3
   },
   "src/components/ui/bottom-sheet.tsx": {
    "focus-style-off": 2,
    "important": 2
   },
-  "src/components/ui/breadcrumbs.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/ui/button.tsx": {
-   "focus-style-off": 10,
+   "focus-style-off": 1,
    "important": 2
   },
   "src/components/ui/checkbox.tsx": {
-   "focus-style-off": 4
+   "focus-style-off": 1
   },
   "src/components/ui/confirm-action-dialog.tsx": {
    "important": 5
-  },
-  "src/components/ui/data-table.tsx": {
-   "focus-style-off": 12
   },
   "src/components/ui/date-input.tsx": {
    "focus-style-off": 8,
@@ -2726,80 +754,43 @@
   "src/components/ui/dialog.tsx": {
    "important": 6
   },
-  "src/components/ui/disabled-reason.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/ui/disclosure.tsx": {
-   "focus-style-off": 8
-  },
   "src/components/ui/drawer.tsx": {
    "important": 16
   },
   "src/components/ui/dropdown.tsx": {
-   "focus-style-off": 3,
    "important": 9
   },
-  "src/components/ui/error-state.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/ui/file-dropzone.tsx": {
-   "size-off-grid": 2,
    "important": 3
   },
   "src/components/ui/file-upload.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 4,
+   "focus-style-off": 1,
    "important": 3
   },
   "src/components/ui/filter-chip.tsx": {
-   "focus-style-off": 6,
    "important": 8
   },
-  "src/components/ui/inline-notice.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/ui/input-group.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/ui/input.tsx": {
-   "focus-style-off": 4
+   "focus-style-off": 1
   },
   "src/components/ui/legacy-overlays.css": {
    "important": 4
   },
-  "src/components/ui/list-row.tsx": {
-   "size-off-grid": 1
-  },
   "src/components/ui/list-toolbar.tsx": {
    "important": 4
   },
-  "src/components/ui/menu.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/ui/multi-select.tsx": {
    "important": 8
-  },
-  "src/components/ui/needs-doing-chips.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/ui/page-back-link.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/ui/pagination.tsx": {
-   "focus-style-off": 3
   },
   "src/components/ui/password-input.tsx": {
    "focus-style-off": 2,
    "important": 2
   },
   "src/components/ui/radio.tsx": {
-   "focus-style-off": 4
+   "focus-style-off": 1
   },
   "src/components/ui/range-slider.tsx": {
-   "focus-style-off": 4
-  },
-  "src/components/ui/scroll-cue.tsx": {
-   "focus-style-off": 3
+   "focus-style-off": 1
   },
   "src/components/ui/search-field.tsx": {
    "focus-style-off": 2,
@@ -2810,50 +801,27 @@
    "important": 38
   },
   "src/components/ui/segmented-control.tsx": {
-   "focus-style-off": 4,
+   "focus-style-off": 1,
    "important": 2
   },
   "src/components/ui/select.tsx": {
-   "focus-style-off": 4
+   "focus-style-off": 1
   },
   "src/components/ui/selection-controls.tsx": {
-   "size-off-grid": 3,
-   "focus-style-off": 4
+   "focus-style-off": 1
   },
   "src/components/ui/split-button.tsx": {
    "focus-style-off": 4,
    "important": 7
   },
-  "src/components/ui/stat-tile.tsx": {
-   "focus-style-off": 3
-  },
-  "src/components/ui/status-badge.tsx": {
-   "size-off-grid": 2,
-   "focus-style-off": 3
-  },
-  "src/components/ui/table-select-all.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/ui/tabs.tsx": {
-   "size-off-grid": 5,
-   "focus-style-off": 9,
    "important": 4
   },
-  "src/components/ui/text-link.tsx": {
-   "focus-style-off": 3
-  },
   "src/components/ui/textarea.tsx": {
-   "focus-style-off": 4
-  },
-  "src/components/ui/third-party-link.tsx": {
-   "focus-style-off": 3
+   "focus-style-off": 1
   },
   "src/components/ui/toast.tsx": {
-   "focus-style-off": 5
-  },
-  "src/components/ui/tooltip.tsx": {
-   "size-off-grid": 4,
-   "focus-style-off": 3
+   "focus-style-off": 2
   },
   "src/components/verification/TpoVerificationPrototypeQueue.tsx": {
    "button-bare": 1

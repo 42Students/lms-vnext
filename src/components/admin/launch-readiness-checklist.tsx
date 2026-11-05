@@ -26,7 +26,7 @@ function ReadinessRow({item,blocking}:{item:Advisory;blocking:boolean}){
    <p className="mt-1 text-sm text-body">{item.reason}</p>
    <p className="mt-1 text-sm text-body"><strong>What to do:</strong> {item.fix}</p>
   </div>
-  <Link href={item.href} className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+  <Link href={item.href} className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-link underline focus-ring md:min-h-9">
    Fix →</Link>
  </li>;
 }

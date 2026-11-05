@@ -92,7 +92,7 @@ export default async function PublicPlacementsPage() {
             <>
               <dl className="mt-8 flex flex-wrap gap-8" aria-label="Public placements statistics">
                 {visibleMetrics.map(metric=>(
-                  <div key={metric.key} className="min-w-[110px] max-w-full">
+                  <div key={metric.key} className="min-w-[112px] max-w-full">
                     <dt className="text-sm text-muted-foreground">{metric.label}</dt>
                     <dd className="mt-1 break-words text-2xl font-semibold tabular-nums text-foreground">
                       {metric.value}

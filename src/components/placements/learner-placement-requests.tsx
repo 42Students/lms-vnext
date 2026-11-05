@@ -400,7 +400,7 @@ export function LearnerPlacementRequests({
 
       <div role="group" aria-label="What do you need?" className="min-w-0 divide-y divide-border py-2">
         <details id="round-reschedule" open={Boolean(initialRoundId) || undefined} className="group min-w-0 scroll-mt-24 py-2">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-foreground hover:bg-primary-subtle focus-ring [&::-webkit-details-marker]:hidden">
             Round reschedule <span aria-hidden="true" className="text-link">⌄</span>
           </summary>
           <div className="min-w-0 max-w-3xl px-2 pb-4">
@@ -546,7 +546,7 @@ export function LearnerPlacementRequests({
         </details>
 
         <details className="group min-w-0 py-2">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-foreground hover:bg-primary-subtle focus-ring [&::-webkit-details-marker]:hidden">
             Offer deadline extension <span aria-hidden="true" className="text-link">⌄</span>
           </summary>
           <div className="min-w-0 max-w-3xl px-2 pb-4">

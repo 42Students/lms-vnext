@@ -230,7 +230,7 @@ export function RecruiterBulkOwnerControls({
           {reviewOpen&&reviewSignature===currentSignature?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm leading-[22px]">
             Assign {selections.length} recruiter lead(s) to {owners.find(item=>item.membershipId===ownerId)?.displayName??"selected staff member"}.
             Each changed lead receives an audit record.
-            <Button variant="secondary" type="button" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" onClick={()=>setReviewOpen(false)}>Edit</Button>
+            <Button variant="secondary" type="button" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-ring" onClick={()=>setReviewOpen(false)}>Edit</Button>
           </p>:null}
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <span className="text-body">{selections.length} / 100 selected</span>

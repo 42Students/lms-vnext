@@ -62,7 +62,7 @@ export default async function SuperAdminProjectsPage({
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}
+        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}
       />
     </div>;
   }
@@ -117,7 +117,7 @@ export default async function SuperAdminProjectsPage({
       <ErrorState title="Failed to load project workspaces"
         description="Couldn't refresh workspaces. The workspace list could not be loaded. Your search and filters were not changed; retry to load the current scoped results."
         action={<Link href={"/admin/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Retry loading workspaces</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry loading workspaces</Link>}
       />
     </div>;
   }
@@ -148,15 +148,15 @@ export default async function SuperAdminProjectsPage({
             version:template.version,summary:template.summary,
           }))} />
         <Link href="/admin/projects/workspaces/new"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
           Create workspace
         </Link>
         <Link href="/admin/projects/reassign-mentor"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
           Bulk reassign mentor
         </Link>
         <Link href="/admin/projects/deleted"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
           Deleted workspaces
         </Link>
         </div>} />

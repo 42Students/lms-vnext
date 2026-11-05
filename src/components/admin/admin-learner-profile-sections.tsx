@@ -17,7 +17,7 @@ export function AdminLearnerProfileSections({name,sections}:{
   <div className="min-w-0 divide-y divide-border border-y border-border">
    {sections.map((section,index)=><details key={section.key} open={index===0||index===1||index===2}
     className="min-w-0 group">
-    <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 px-2 py-3 text-sm font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 px-2 py-3 text-sm font-semibold text-[var(--lms-heading)] focus-ring">
      <span>{section.label}</span>
      <span className="shrink-0 text-xs font-normal text-muted-foreground">
       {section.present?"On file":"Not recorded"}

@@ -191,7 +191,7 @@ export function ProjectList({
         const course=item.courseLabel?.trim()||"Project";
         const mentor=item.mentorName?.trim()||"Mentor";
         return <Link key={item.id} href={item.href??basePath+"/"+encodeURIComponent(item.id)}
-          className="group flex min-w-0 flex-col rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:p-5">
+          className="group flex min-w-0 flex-col rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:p-5">
           <div className="flex min-w-0 items-center justify-between gap-2">
             <span className={"inline-flex max-w-full items-center rounded px-2 py-0.5 text-xs font-semibold "+
               (archived?"bg-muted text-muted-foreground":stalled?"bg-error-subtle text-error":
@@ -246,7 +246,7 @@ export function ProjectList({
         <Link
           key={item.id}
           href={item.href ?? basePath + "/" + item.id}
-          className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"group flex min-w-0 flex-col py-4 first:pt-0 last:pb-0 transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:py-5":"group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}
+          className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"group flex min-w-0 flex-col py-4 first:pt-0 last:pb-0 transition-colors hover:bg-primary-subtle focus-ring sm:py-5":"group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] focus-ring"}
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">

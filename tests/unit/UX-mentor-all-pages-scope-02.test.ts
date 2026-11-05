@@ -176,7 +176,7 @@ describe("UX-mentor-all-pages-scope-02 mentor page-state and scope coverage",()=
         // The mentor landing is a semantic, accessible route-level fallback
         // and uses a Next Link rather than importing a shared page control.
         expect(src).toContain('import Link from "next/link"');
-        expect(src).toContain("focus-visible:outline-2");
+        expect(src).toContain("focus-ring");
       }else {
         expect(src).toContain("PageHeader");
         expect(src).toMatch(/@\/components\/(?:ui|projects|activity)/);

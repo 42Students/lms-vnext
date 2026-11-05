@@ -100,7 +100,7 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
          row.resumeAvailable===false?"No recorded resume":"Not available in this view"}</td>
        <td className="px-3 py-3 text-xs font-semibold">
         {label(row,jobStatus)}
-        {row.flags.length?<span className="block max-w-[210px] break-words pt-1 font-normal text-muted-foreground">
+        {row.flags.length?<span className="block max-w-[212px] break-words pt-1 font-normal text-muted-foreground">
           {row.flags.join(" · ")}
         </span>:null}
        </td>

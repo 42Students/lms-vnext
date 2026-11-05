@@ -9,12 +9,12 @@ function assertNativeControls(route:string){
   const classes=match[0].match(/className="([^"]+)"/)?.[1];
   if(!classes)continue;
   expect(classes, route+" native field must have 16px phone typography").toContain("text-base");
-  expect(classes, route+" native field needs visible keyboard focus").toContain("focus-visible:outline-2");
+  expect(classes, route+" native field needs visible keyboard focus").toContain("focus-ring");
  }
  for(const match of source.matchAll(/<Link\b[^>]*>/g)){
   const classes=match[0].match(/className="([^"]+)"/)?.[1];
   if(!classes)continue;
-  expect(classes, route+" link needs visible keyboard focus").toContain("focus-visible:outline-2");
+  expect(classes, route+" link needs visible keyboard focus").toContain("focus-ring");
  }
 }
 describe("Faculty reporting native control UX",()=>{

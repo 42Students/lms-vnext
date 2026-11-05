@@ -127,7 +127,7 @@ function ContentItem({
   ];
 
   return (
-    <article id={"course-item-"+item.id} aria-label={item.contentType.replaceAll("_"," ")+" "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
+    <article id={"course-item-"+item.id} aria-label={item.contentType.replaceAll("_"," ")+" "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] focus-outline":"")}>
       {focused?<StatusBadge tone="info">Selected content</StatusBadge>:null}
       <FacultyCourseItemViewer title={item.title} kind={item.contentType}
         notes={item.notes} externalHref={externalHref} youtubeEmbed={youtubeEmbed}
@@ -216,7 +216,7 @@ function AssignmentItem({
 }) {
 
   return (
-    <article id={"course-item-"+item.id} aria-label={"Assignment "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
+    <article id={"course-item-"+item.id} aria-label={"Assignment "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] focus-outline":"")}>
       {focused?<StatusBadge tone="info">Selected assignment</StatusBadge>:null}
       <FacultyCourseItemViewer title={item.title} kind="ASSIGNMENT" notes={item.description}
         dueAt={item.dueAt?.toISOString()??null}/>
@@ -284,7 +284,7 @@ function AssignmentItem({
 
       <Link
         href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
-        className="mt-3 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+        className="mt-3 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring md:min-h-9"
       >
         Assignment Report
       </Link>
@@ -310,7 +310,7 @@ function QuizItem({
 }) {
 
   return (
-    <article id={"course-item-"+item.id} aria-label={"Quiz "+item.title+(item.status==="DRAFT"?", draft, hidden from students":"")} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
+    <article id={"course-item-"+item.id} aria-label={"Quiz "+item.title+(item.status==="DRAFT"?", draft, hidden from students":"")} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] focus-outline":"")}>
       {focused?<StatusBadge tone="info">Selected quiz</StatusBadge>:null}
       <FacultyCourseItemViewer title={item.title} kind="QUIZ" notes={item.description}
         dueAt={item.dueAt?.toISOString()??null}/>
@@ -386,7 +386,7 @@ function QuizItem({
 
       <Link
         href={`/teacher/report/quiz/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
-        className="mt-3 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+        className="mt-3 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring md:min-h-9"
       >
         Quiz Report
       </Link>
@@ -439,13 +439,13 @@ export function FacultyCourseWorkspace({
         {view!=="BLUEPRINT"?(      <nav aria-label="Overview actions" className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
         >
           Section reports hub
         </Link>
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
         >
           Current Section students
         </Link>
@@ -515,22 +515,22 @@ export function FacultyCourseWorkspace({
 
       <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")}
-          className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
+          className="rounded-[var(--lms-control-radius)] focus-ring">
           <Metric label="Lessons" value={summary.lessons}
             detail="Open your Blueprint lessons →"/>
         </Link>
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=LECTURES"}
-          className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
+          className="rounded-[var(--lms-control-radius)] focus-ring">
           <Metric label="Content" value={summary.contents}
             detail="Browse lectures and section materials →"/>
         </Link>
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=ASSESSMENTS"}
-          className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
+          className="rounded-[var(--lms-control-radius)] focus-ring">
           <Metric label="Assignments" value={summary.assignments}
             detail="Browse lesson assignments →"/>
         </Link>
         <Link href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/quizzes"}
-          className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
+          className="rounded-[var(--lms-control-radius)] focus-ring">
           <Metric label="Quizzes" value={summary.quizzes}
             detail="Review quizzes and learner results →"/>
         </Link>
@@ -699,7 +699,7 @@ export function FacultyCourseWorkspace({
                       <details id={"faculty-lesson-add-"+lesson.id}
                         open={Boolean(initialCreateMode&&selectedLessonId===lesson.id)}
                         className="mb-3 rounded-[var(--lms-control-radius)] border border-border bg-surface">
-                        <summary className="min-h-11 cursor-pointer select-none px-3 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">
+                        <summary className="min-h-11 cursor-pointer select-none px-3 py-2 text-sm font-semibold text-primary-text focus-ring">
                           + Add content
                         </summary>
                         <div className="border-t border-border p-3">

@@ -39,7 +39,7 @@ export function LearnerRoadmapItemDialog({
   }
   setOpen(openNow);
  }
- return <section aria-label={title} className={highlighted?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-focus-ring)]":""}>
+ return <section aria-label={title} className={highlighted?"rounded-[var(--lms-control-radius)] focus-outline":""}>
   <nav aria-label={"Lesson item: "+title} id={navigationId}>
   <Button type="button" variant="secondary" aria-haspopup="dialog"
    aria-expanded={open} aria-disabled={locked}
@@ -47,7 +47,7 @@ export function LearnerRoadmapItemDialog({
     if(locked){setLockedNotice(true);return;}
     setLockedNotice(false);setOpen(true);
    }}
-   className="min-h-14 w-full min-w-0 flex-col items-stretch gap-2 px-4 py-3 text-left sm:flex-row sm:items-center sm:justify-between focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+   className="min-h-14 w-full min-w-0 flex-col items-stretch gap-2 px-4 py-3 text-left sm:flex-row sm:items-center sm:justify-between focus-ring">
    <span className="min-w-0 break-words [overflow-wrap:anywhere]">
     <span className="block text-xs font-semibold uppercase text-muted-foreground">
      {caption??kind} · {progress.replaceAll("_"," ").toLowerCase()}

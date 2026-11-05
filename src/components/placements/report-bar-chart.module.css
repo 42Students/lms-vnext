@@ -33,7 +33,7 @@
   text-align: right;
 }
 .track {
-  height: 11px !important;
+  height: 12px !important;
   border-radius: 999px;
   background-color: var(--lms-header-border) !important;
 }

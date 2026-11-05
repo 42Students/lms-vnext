@@ -42,7 +42,7 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
   const field="min-h-11 md:min-h-9 min-w-0";
   return <section className="min-w-0 border-t border-border pt-3" aria-label="Book lecture hall">
     <details className="min-w-0">
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Book class session</summary>
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-foreground focus-ring md:min-h-9">Book class session</summary>
       <div className="min-w-0 space-y-3 pt-3">
     <p className="mt-2 text-sm text-body">Dates and times use IST. A booking is only confirmed after rechecking persisted overlaps.</p>
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:

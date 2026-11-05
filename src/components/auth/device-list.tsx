@@ -110,7 +110,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
 
       {others > 0 ? (
         <details className="border-t border-[var(--lms-canvas-border)] py-4">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Sign out everywhere else</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Sign out everywhere else</summary>
           <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 md:items-start">
           <Button
             variant="danger"

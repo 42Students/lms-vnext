@@ -48,7 +48,7 @@ export default async function TpoDriveJoiningPage({
         title={tracker.job.title + " · Joining outcomes"}
         description="Record joining outcomes only for persisted accepted offers. All edits reuse the audited joining-history API."
         actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(tracker.job.id)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-ring md:w-auto md:min-h-9">
           ← Back to drive workspace
         </Link>}
       />
@@ -73,7 +73,7 @@ export default async function TpoDriveJoiningPage({
                   <p className="mt-1 text-sm text-body leading-[22px]">{item.roleTitle}</p>
                   <Link
                     href={"/tpo/students/" + encodeURIComponent(item.membershipId) + "/history"}
-                    className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                    className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
                     Learner placement history →
                   </Link>
                 </div>

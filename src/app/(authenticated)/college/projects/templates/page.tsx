@@ -64,7 +64,7 @@ export default async function CollegeProjectTemplatesPage({
   <ErrorState title="Templates could not be loaded"
    description="The assigned template catalogue could not be loaded. Your search was not changed."
    action={<Link href={pageHref(q,1,preservedFrom)}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
     Retry loading templates
    </Link>}/>
  </div>;
@@ -124,7 +124,7 @@ export default async function CollegeProjectTemplatesPage({
           }},
         {key:"action",header:"Action",mobileLabel:"Action",mobilePriority:"action",
           cell:template=><Link href={basePath+"/"+encodeURIComponent(template.templateId)}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
             View &amp; use
           </Link>},
       ]}
@@ -133,7 +133,7 @@ export default async function CollegeProjectTemplatesPage({
     description={q?"No templates match this search. Try another title or slug.":
      "No templates are available to this college yet. Ask a Super Admin to publish and assign one."}
     action={q?<Link href={basePath}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
      Clear search
     </Link>:undefined}/>}
    <nav aria-label="Template catalogue pages"
@@ -142,11 +142,11 @@ export default async function CollegeProjectTemplatesPage({
      {" of "}{templates.length} templates</p>
     {totalPages>1?<div className="flex flex-wrap items-center gap-3">
      {page>1?<Link href={pageHref(q,page-1,preservedFrom)}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
       Previous</Link>:<span aria-disabled="true" className="opacity-50">Previous</span>}
      <span className="tabular-nums">Page {page} of {totalPages}</span>
      {page<totalPages?<Link href={pageHref(q,page+1,preservedFrom)}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
       Next</Link>:<span aria-disabled="true" className="opacity-50">Next</span>}
     </div>:null}
    </nav>

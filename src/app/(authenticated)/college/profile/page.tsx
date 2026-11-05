@@ -47,11 +47,11 @@ export default async function CollegeAdminProfilePage({
     <nav aria-label="Related profile links"
       className="flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-4 md:flex-row md:flex-wrap md:items-center md:gap-4">
       <Link href="/account/security"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Signed-in devices</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Signed-in devices</Link>
       <Link href="/college/domains"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Tenant domains</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Tenant domains</Link>
       <Link href="/college/college-profile"
-        className="inline-flex min-h-11 items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Edit college display and support contacts</Link>
+        className="inline-flex min-h-11 items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Edit college display and support contacts</Link>
     </nav>
   </div>;
 }

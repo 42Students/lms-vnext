@@ -28,7 +28,7 @@ export function StatTile({ label, value, detail, href, className, variant = "def
       {children}
     </>
   );
-  const classes = cx("block min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] shadow-none sm:p-[var(--lms-canvas-padding)]", safeHref ? "min-h-11 transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none" : "", className);
+  const classes = cx("block min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] shadow-none sm:p-[var(--lms-canvas-padding)]", safeHref ? "min-h-11 transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] focus-ring motion-reduce:transition-none" : "", className);
   const styledClasses = cx(classes, variant === "college" ? "rounded-[var(--lms-radius-card)] border-[var(--lms-canvas-border)] bg-surface px-4 py-3" : "");
   return safeHref ? <Link href={safeHref} className={styledClasses} data-slot="stat-tile">{content}</Link> :
     <section className={styledClasses} data-slot="stat-tile">{content}</section>;

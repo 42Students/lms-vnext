@@ -35,8 +35,8 @@
   z-index: 1;
   top: 24px;
   left: clamp(16px, 4vw, 64px);
-  width: 151px;
-  height: 37px;
+  width: 152px;
+  height: 36px;
   pointer-events: none;
   background: url("/assets/images/legacy-42lms-logo.svg") left center / contain no-repeat;
 }

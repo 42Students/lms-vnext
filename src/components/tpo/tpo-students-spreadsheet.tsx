@@ -287,7 +287,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
-    <Button variant="ghost" type="button" className="lms-inline-link min-h-11 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    <Button variant="ghost" type="button" className="lms-inline-link min-h-11 text-link underline focus-ring"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
       Open student panel
     </Button>
@@ -297,9 +297,9 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none",outcomeLabel:null,outcomeDetail:null}}
       available={afterCollegeAvailable} labels={afterCollegeLabels} />
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
-      aria-label={"Placement history for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline">Placement history</Link>
+      aria-label={"Placement history for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-      aria-label={"Change participation for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline">Change participation</Link>
+      aria-label={"Change participation for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline">Change participation</Link>
    </div>}/>
   </GridWorkspace>
   {preview&&!inspectorClosed?<TpoStudentRosterInspector student={preview}

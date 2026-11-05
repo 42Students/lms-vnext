@@ -68,7 +68,7 @@ export function HrSelectionProposalComposer({
   }
   return (
     <details className="min-w-0 border-b border-border pb-4">
-      <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
+      <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring">
         Prepare selection list
       </summary>
       <div className="mt-3 space-y-4">

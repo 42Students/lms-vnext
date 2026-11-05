@@ -8,7 +8,7 @@ export default function FacultyQuizReportError({reset}:{error:Error&{digest?:str
  <p className="max-w-prose text-sm leading-6 text-body">We could not load the report. Check that you still have an active teaching assignment for this Section.</p>
  <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
   <Button type="button" onClick={reset} className="w-full sm:w-auto">Retry report</Button>
-  <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Back to all quizzes</Link>
+  <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring sm:w-auto md:min-h-9">Back to all quizzes</Link>
  </div>
  </section>;
 }

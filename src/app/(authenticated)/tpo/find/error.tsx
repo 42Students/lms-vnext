@@ -8,7 +8,7 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
   <PageHeader title="Find a student, recruiter or company" />
   <ErrorState title="Could not load this page" description="Record search is unavailable."
    action={<><Button variant="secondary" type="button" onClick={reset}>Retry</Button>
-    <Link href="/tpo/home" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">TPO home</Link></>}
+    <Link href="/tpo/home" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">TPO home</Link></>}
   />
  </div>;
 }

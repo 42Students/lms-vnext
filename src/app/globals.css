@@ -167,6 +167,42 @@
   --color-info: var(--lms-info);
 }
 
+/* The one focus style. Never hand-write outline/ring classes (guarded by ux:consistency). */
+@utility focus-outline {
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 3px;
+  box-shadow: var(--lms-focus-ring);
+}
+@utility focus-outline-inset {
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: -2px;
+}
+@utility focus-outline-error {
+  outline: 2px solid var(--lms-error);
+  outline-offset: 3px;
+  box-shadow: var(--lms-focus-ring-error);
+}
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--lms-primary-text);
+    outline-offset: 3px;
+    box-shadow: var(--lms-focus-ring);
+  }
+}
+@utility focus-ring-inset {
+  &:focus-visible {
+    outline: 2px solid var(--lms-primary-text);
+    outline-offset: -2px;
+  }
+}
+@utility focus-ring-error {
+  &:focus-visible {
+    outline: 2px solid var(--lms-error);
+    outline-offset: 3px;
+    box-shadow: var(--lms-focus-ring-error);
+  }
+}
+
 /* Named utilities resolve to tokens so shadow-md, lg: etc. stay consistent everywhere. */
 @theme inline {
   --breakpoint-lg: 992px;
@@ -485,8 +521,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
  * 12px/700 and 90px minimum width (components___common.scss:995-1005).
  * Generic role tags use the separate pill radius token, never .ln-status. */
 [data-slot="status-badge"] {
-  min-height: 22px;
-  min-width: 90px;
+  min-height: 24px;
+  min-width: 92px;
   border-radius: 6px;
   padding: 2px 16px;
   font-size: 12px;
@@ -494,7 +530,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   line-height: 18px;
 }
 [data-slot="badge"] {
-  min-height: 22px;
+  min-height: 24px;
   border-radius: var(--lms-radius-pill);
   padding: 1px 8px;
   font-size: 12px;
@@ -1037,7 +1073,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   border: 1px solid var(--lms-neutral-900);
   border-radius: 8px;
   padding: 6px 16px;
-  min-height: 27px;
+  min-height: 28px;
   font-size: 12px;
   line-height: 16px;
   box-shadow: var(--lms-tooltip-shadow);

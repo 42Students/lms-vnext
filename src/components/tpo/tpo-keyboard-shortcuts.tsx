@@ -38,7 +38,7 @@ export function TpoKeyboardShortcuts({showTrigger=true}:{showTrigger?:boolean}={
  },[router,open]);
  const keyClass="inline-flex min-h-7 min-w-7 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-2 text-xs font-semibold text-[var(--lms-body-text)]";
  return <>{showTrigger?<Button variant="secondary" type="button" aria-label="Keyboard shortcuts" onClick={()=>setOpen(true)}
-  className="min-h-11 min-w-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:min-w-9">?</Button>:null}
+  className="min-h-11 min-w-11 focus-ring md:min-h-9 md:min-w-9">?</Button>:null}
   <Drawer title="Keyboard shortcuts" open={open} onOpenChange={setOpen}
    description="Press a key, then the next one. They do nothing while you are typing in a box.">
    <div className="min-w-0 space-y-5">

@@ -99,7 +99,7 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
  const columns:DataTableColumn<(typeof items)[number]>[]=[
   {key:"job",header:"Job",mobilePriority:"primary",cell:item=><div className="min-w-0">
     <Link href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?collegeId="+encodeURIComponent(context.adminScope!.collegeId!)}
-      className="block font-semibold text-link underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2">
+      className="block font-semibold text-link underline underline-offset-2 focus-ring">
       {item.title}</Link>
     <span className="block text-xs text-muted-foreground">{item.subtitle.split(" · ").slice(1).join(" · ")}</span>
    </div>},
@@ -121,7 +121,7 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
   {key:"interviewer",header:"Interviewer",cell:item=>detail(item,"Interviewer")},
   {key:"mode",header:"Mode",cell:item=>detail(item,"Mode").replaceAll("_"," ")},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><Link href={item.href??calendarHref}
-    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">Open appointment</Link>},
+    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Open appointment</Link>},
  ];
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Interviews"

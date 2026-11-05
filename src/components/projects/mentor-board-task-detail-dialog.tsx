@@ -65,9 +65,9 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
        className="inline-flex min-h-11 max-w-full items-center break-words sm:ml-[var(--lms-space-2)]">Open submitted evidence</TextLink>:null}
     </li>)}</ul>:<p className="text-xs text-muted-foreground">No submissions yet</p>}
    <Link href={"/mentor/projects/"+projectId+"?tab=delivery"}
-    className="mt-[var(--lms-space-3)] inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-center text-[14px] font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto">Open delivery review</Link>
+    className="mt-[var(--lms-space-3)] inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-center text-[14px] font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto">Open delivery review</Link>
   </section>
-  <section className="mt-[var(--lms-space-5)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]"><details className="min-w-0"><summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Activity</summary>
+  <section className="mt-[var(--lms-space-5)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]"><details className="min-w-0"><summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold focus-ring">Activity</summary>
    {recent.length?<ol className="mt-2 space-y-2">{recent.slice(0,20).map(item=>
     <li key={item.id} className="border-l-2 border-border pl-2 text-xs">{item.summary} ·
       {" "+(item.actorDisplayName??"System")} ·

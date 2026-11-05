@@ -83,7 +83,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     </div>:null}
    <details className="min-w-0 border-t border-border pt-2 print:hidden" open={Boolean(q.departmentId||q.programId||q.cohortId||q.from||q.to||
       data.filters.errors.departments||data.filters.errors.programs||data.filters.errors.cohorts)||undefined}>
-     <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filters</summary>
+     <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Filters</summary>
      {(["departments","programs","cohorts"] as const).map(key=>data.filters.errors[key]?
       <p key={key} role="alert" className="mt-2 text-sm text-warning-text">
        {data.filters.errors[key]}{" "}
@@ -95,19 +95,19 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
     <input type="hidden" name="jobId" value={selectedJobId??""}/>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
-     <Select name="departmentId" value={department} onChange={event=>{setDepartment(event.target.value);setProgram("");}} className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
+     <Select name="departmentId" value={department} onChange={event=>{setDepartment(event.target.value);setProgram("");}} className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] focus-ring md:min-h-9 sm:text-sm">
       <option value="">All departments</option>
       {data.filters.departments.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
     </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
-     <Select name="programId" value={program} onChange={event=>setProgram(event.target.value)} className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
+     <Select name="programId" value={program} onChange={event=>setProgram(event.target.value)} className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] focus-ring md:min-h-9 sm:text-sm">
       <option value="">All programs</option>
       {permittedPrograms.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
     </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
-     <Select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
+     <Select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] focus-ring md:min-h-9 sm:text-sm">
       <option value="">All batches</option>
       {data.filters.cohorts.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
@@ -126,7 +126,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     <div className="flex min-w-0 flex-col items-stretch gap-2 md:col-span-2 md:flex-row md:items-center lg:col-span-5">
      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
      <Link href={collegeHiringAnalyticsHref({})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear all</Link>
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm hover:bg-primary-subtle focus-ring md:min-h-9">Clear all</Link>
     </div>
      </form>
    </details>
@@ -148,7 +148,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    {data.totalApplications===0?<div className="space-y-2">
     <p>{filtered?"No data for the selected filters":"No applications yet to show in the hiring funnel"}</p>
     <Link href={collegeHiringAnalyticsHref({})}
-     className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] max-md:inline-flex max-md:min-h-11 max-md:items-center">Clear filters</Link>
+     className="font-semibold text-primary-text underline focus-ring max-md:inline-flex max-md:min-h-11 max-md:items-center">Clear filters</Link>
    </div>:<div className="space-y-3">
     {order.map(stage=><div key={stage} className={reportStyles["chartRow"]}>
       <div className="min-w-0 space-y-1">
@@ -238,7 +238,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     </div> : null}
    {data.companyRows.length>0?
     <details aria-label="Company-wise report totals" className="min-w-0 border-t border-border pt-2">
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">All drives · Totals</summary>
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-foreground focus-ring md:min-h-9">All drives · Totals</summary>
      <SummaryStrip label="Company-wise report totals"
       steps={[["Total",data.totalApplications] as const,
         ...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]

@@ -193,7 +193,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
   {suggestions.length>0?<ul aria-label="Matching learners" className="mt-2 max-h-60 w-full max-w-[min(320px,calc(100vw-120px))] overflow-auto rounded-[var(--lms-control-radius)] border border-border bg-surface shadow-sm">
    {suggestions.map(student=><li key={student.membershipId} className="border-b border-border last:border-0">
     <Button type="button" variant="ghost" onClick={()=>void lookup(search,student.membershipId)}
-     className="min-h-11 w-full justify-start rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+     className="min-h-11 w-full justify-start rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm hover:bg-primary-subtle focus-ring">
      {student.displayName||"#"+student.membershipId.slice(0,8)} · {student.rollNumber||"No roll number"}
     </Button>
    </li>)}
@@ -332,7 +332,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
      onClick={()=>void lookup(search,detail.membershipId)} disabled={loading}>
      Recheck access after a change
     </Button>
-    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
      href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(detail.membershipId)}>
      Open full access trace →
     </Link>

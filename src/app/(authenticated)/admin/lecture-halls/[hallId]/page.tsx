@@ -54,7 +54,7 @@ export default async function SuperAdminLectureHallAvailability({
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title={result?.hall.name ?? "Room availability"}
       description="Read-only scheduled bookings. An empty schedule is not proof of a free room."
-      actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Back to Lecture Halls</Link>} />
+      actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring active:text-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Back to Lecture Halls</Link>} />
 
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:gap-[var(--lms-space-4)]">
       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From (IST)

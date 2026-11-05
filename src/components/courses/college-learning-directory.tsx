@@ -43,7 +43,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
         {...(!lessons ? {description:COLLEGE_COURSE_TAB_COPY.progressDescription} : {})}
         actions={
           <Link href="/college/courses"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
             Course offerings
           </Link>
         }
@@ -67,7 +67,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
             Search {lessons?"lesson names or course details":"courses or cohorts"} within the selected college.
           </p>
           <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)] md:col-span-3" open={activeAdvanced || undefined}>
-            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Advanced filters</summary>
+            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Advanced filters</summary>
             <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-4">
           {lessons?<label className="grid min-w-32 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Rows per page
@@ -564,7 +564,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
             </div>
           </details>
           <Button type="submit" className="min-h-11 w-full px-6 md:min-h-9 md:w-auto">Filter</Button>
-          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
             Clear
           </Link>
         </form>
@@ -599,7 +599,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                 {key:"course",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.course,mobilePriority:"secondary" as const,
                   cell:item=><div className="min-w-0">
                     <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
                       {item.courseName} ({item.courseCode})
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
@@ -614,7 +614,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                       <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
                         visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
                     <Link href={collegeOfferingProgressHref(item.offeringId)}
-                      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
                       View recorded course activity
                     </Link>
                   </div>},
@@ -648,12 +648,12 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                 {key:"course",header:"Course / offering",mobilePriority:"primary" as const,
                   cell:item=><div className="min-w-0">
                     <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
                       {item.courseName} ({item.courseCode})
                     </Link>
                     <p className="text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
                     <Link href={collegeOfferingLessonsHref(item.offeringId)}
-                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
                       View authored lessons
                     </Link>
                   </div>},

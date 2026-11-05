@@ -40,7 +40,7 @@ export default async function FacultyCalendarPage({
       raw.startDate>raw.endDate;
     return <section role="alert" className="space-y-3">
     <PageHeader title={reversed?"startDate must be before or equal to endDate":invalidDate} />
-    <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-ring md:min-h-9">
       Clear filters
     </Link>
   </section>;
@@ -75,7 +75,7 @@ export default async function FacultyCalendarPage({
   const selected=grid.query.deliveryId;
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Class Schedule" actions={<Link href="/teacher/live-classes"
-      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">
       View live classes
     </Link>} />
     {prototypeRead.available?<FacultyPrototypeSchedule
@@ -100,7 +100,7 @@ export default async function FacultyCalendarPage({
        <summary className="cursor-pointer text-sm font-semibold text-[var(--lms-warning-text)]">Failed to load course data</summary>
        <Alert tone="warning" className="mt-2">
          Calendar events may be incomplete. Your loaded class schedule remains available below.
-         <Link href={facultyMonthHref(grid.query)} className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry class schedule</Link>
+         <Link href={facultyMonthHref(grid.query)} className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Retry class schedule</Link>
        </Alert>
      </details>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
        <ol className="divide-y divide-border border-y border-border">{nextClasses.map(item=><li key={item.id}
@@ -112,7 +112,7 @@ export default async function FacultyCalendarPage({
            }).format(item.startsAt)} IST · {item.sectionName}</p>
           </div>
           {item.deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open course →</Link>:
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-ring md:min-h-9">Open course →</Link>:
            <span className="text-xs text-muted-foreground">Section-wide class</span>}
          </li>)}</ol>}
     </section>
@@ -161,7 +161,7 @@ export default async function FacultyCalendarPage({
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </Alert>:null}
       <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className={monthStyles.scroll}>
-        <CalendarGrid variant="hairline" className={monthStyles.grid+" max-md:!min-w-[770px]"}>
+        <CalendarGrid variant="hairline" className={monthStyles.grid+" max-md:!min-w-[772px]"}>
           {names.map((name,index)=><div key={name} className={monthStyles.weekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{name}</div>)}
           {grid.days.map(day=><section key={day.key}
             aria-label={day.key+" IST"} data-outside={!day.inMonth} data-today={day.key===todayIst} className={monthStyles.day}>
@@ -179,7 +179,7 @@ export default async function FacultyCalendarPage({
                 </p>
                 {event.deliveryId?<Link
                   href={"/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/home"}
-                  className="text-xs font-semibold text-primary-text hover:underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Course Section</Link>
+                  className="text-xs font-semibold text-primary-text hover:underline inline-flex min-h-11 items-center focus-ring md:min-h-9">Course Section</Link>
                 :<span className="text-xs text-muted-foreground">Section-wide session</span>}
               </article>)}
             </div>

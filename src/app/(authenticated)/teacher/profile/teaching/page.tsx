@@ -24,7 +24,7 @@ export default async function FacultyTeachingProfilePage({
   });
   if(!parsed.success)return <section role="alert" className="min-w-0 space-y-4">
     <PageHeader title={"Invalid teaching profile filters"} />
-    <Link href="/teacher/profile/teaching" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+    <Link href="/teacher/profile/teaching" className="text-primary-text underline inline-flex min-h-11 items-center focus-ring hover:text-[var(--lms-primary-text)]">
       Clear filters
     </Link>
   </section>;
@@ -34,7 +34,7 @@ export default async function FacultyTeachingProfilePage({
     <PageHeader title="Current teaching assignments"
       description={"Registered teaching deliveries for "+data.title+" in this college."}
       actions={<Link href="/teacher/profile"
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:border-primary hover:bg-primary-subtle focus-ring">
         Profile overview
       </Link>} />
     <section aria-labelledby="section-college-managed-employment-details" className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
@@ -59,7 +59,7 @@ export default async function FacultyTeachingProfilePage({
       <Button type="submit" variant="primary" className="w-full sm:w-auto">
         Search
       </Button>
-      <Link href="/teacher/profile/teaching" className="inline-flex min-h-11 w-full items-center justify-center px-3 sm:w-auto md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+      <Link href="/teacher/profile/teaching" className="inline-flex min-h-11 w-full items-center justify-center px-3 sm:w-auto md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text focus-ring hover:text-[var(--lms-primary-text)]">
         Clear
       </Link>
     </form>
@@ -79,7 +79,7 @@ export default async function FacultyTeachingProfilePage({
             Academic period status: {row.academicPeriodStatus}
           </p>
           <Link href={"/teacher/courses/"+encodeURIComponent(row.deliveryId)+"/home"}
-            className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] hover:underline focus-ring">
             Open assigned course →
           </Link>
         </article>)}</div>}
@@ -87,9 +87,9 @@ export default async function FacultyTeachingProfilePage({
       <p className="text-sm text-muted-foreground leading-[22px]">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page>1 && <Link href={ownFacultyTeachingHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Previous</Link>}
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-ring hover:text-[var(--lms-primary-text)]">Previous</Link>}
         {data.page<data.totalPages && <Link href={ownFacultyTeachingHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Next</Link>}
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-ring hover:text-[var(--lms-primary-text)]">Next</Link>}
       </div>
     </nav> : null}
     <p className="max-w-prose text-xs leading-5 text-muted-foreground">

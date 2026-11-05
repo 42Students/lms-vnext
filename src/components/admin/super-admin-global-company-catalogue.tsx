@@ -69,7 +69,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
   </div>},
   {key:"domains",header:"Domains",mobilePriority:"secondary",cell:row=><span className="break-all">{row.domains.length?row.domains.join(", "):"None"}</span>},
   {key:"added",header:"Added by",cell:row=><span>{row.addedByLabel??"-"}</span>},
-  {key:"colleges",header:"Colleges",className:"w-[90px]",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.companyCollegeCount}</span>},
+  {key:"colleges",header:"Colleges",className:"w-[92px]",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.companyCollegeCount}</span>},
   {key:"drives",header:"Drives",className:"w-[80px]",cell:row=><span className="tabular-nums">{row.driveCount}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
     {row.companyStatus==="ARCHIVED"?<SuperAdminCompanyRestore id={row.companyId} name={row.name}/>:<>

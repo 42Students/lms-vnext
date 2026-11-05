@@ -33,7 +33,7 @@ export function TpoMobileFooter() {
           (link.label === "Engage" && pathname.startsWith("/tpo/companies"));
         return <Link key={link.label} href={link.href} title={link.label}
           aria-current={active ? "page" : undefined}
-          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 min-w-0 flex-col items-center justify-center px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] " + (active ? "active" : "")}>
+          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 min-w-0 flex-col items-center justify-center px-1 py-1 text-center focus-ring-inset " + (active ? "active" : "")}>
           <Image src={link.icon} alt="" width={24} height={24}
             className="lms-tpo-mobile-footer-icon"/>
           <span className="lms-tpo-mobile-footer-label">{link.label}</span>

@@ -40,7 +40,7 @@ export default async function CollegeCompaniesPage({
   const parsed=parseCollegeCompaniesQuery(await searchParams);
   if(!parsed.success) return <div className="min-w-0 max-w-full overflow-x-clip space-y-4"><PageHeader title="Companies"/>
     <ErrorState title="Invalid company search" description="Check search text or page."
-      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear company filters</Link>}/>
+      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Clear company filters</Link>}/>
   </div>;
   const query=parsed.data;
   // A failed company read must never look like an empty company directory.
@@ -125,7 +125,7 @@ export default async function CollegeCompaniesPage({
       {([["LAST_ACTIVE","Last active"],["COMPANY","Company"],["DRIVES","Drives"]] as const).map(([value,label])=>
         <Link key={value} href={collegeCompaniesHref({...query,sort:value,page:1})}
           aria-current={query.sort===value?"true":undefined}
-          className={"inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 font-semibold hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] "+
+          className={"inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 font-semibold hover:bg-primary-subtle focus-ring "+
             (query.sort===value?"border-[var(--lms-primary)] bg-primary-subtle text-primary-text":"border-border text-body")}>
           {label}{query.sort===value?" ↓":""}
         </Link>)}

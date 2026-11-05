@@ -128,7 +128,7 @@ export default async function HrProfilePage({ searchParams }: {
         hideHeading
       />
         <details className="min-w-0 border-t border-border pt-3">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Current college access</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Current college access</summary>
           <div className="min-w-0 overflow-x-auto pb-4 pt-3">
           <DataTable
             caption="Current college access"

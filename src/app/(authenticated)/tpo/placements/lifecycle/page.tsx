@@ -163,7 +163,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <Link href={exportHref("ALL")} className="rounded-[var(--lms-control-radius)] px-3 py-2 font-semibold text-primary-text hover:bg-primary-subtle">Export all matching drives (CSV)</Link>
           </nav>
         </Dropdown>
-        <Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[color-mix(in_srgb,var(--lms-primary)_35%,transparent)] md:min-h-9 md:w-auto"><span aria-hidden="true" className="mr-2 text-base font-bold">＋</span>Create drive</Link>
+        <Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:focus-outline md:min-h-9 md:w-auto"><span aria-hidden="true" className="mr-2 text-base font-bold">＋</span>Create drive</Link>
       </>} />
     {data.needsReviewCount>0?<section aria-label="Recruiters asked for a drive"
      data-testid="tpo.drives.request-cards" className="space-y-2">
@@ -474,8 +474,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
          </div>
         </details>
         <nav aria-label="Drive request pagination" className="flex justify-between">
-          {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Previous</Link>:<span/>}
-          {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Next</Link>:null}
+          {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Previous</Link>:<span/>}
+          {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Next</Link>:null}
         </nav>
       </section>
     ) : <>
@@ -568,11 +568,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <p className="text-sm text-body">Select up to 25 drives shown on this page to export or act on those rows. Closing or cancelling requires a separate server-verified preview and confirmation.</p>
           <div className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)]" role="region"
             aria-label="Drives data table" tabIndex={0}>
-            <Table className="min-w-[1150px]">
+            <Table className="min-w-[1152px]">
               <caption className="sr-only">Drives in the selected status tab. Scroll horizontally for all columns and drive actions.</caption>
               <thead className="bg-[var(--lms-neutral-50)] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
                 <tr className="border-b border-[var(--lms-canvas-border)]">
-                  <th scope="col" aria-sort={data.sort==="COMPANY"?"ascending":"none"} className="min-w-[210px] px-3 py-3">
+                  <th scope="col" aria-sort={data.sort==="COMPANY"?"ascending":"none"} className="min-w-[212px] px-3 py-3">
                     <Link href={{...pageHref(1),query:{...pageHref(1).query,sort:"COMPANY"}}}
                       className="font-semibold text-primary-text underline underline-offset-4">Drive</Link>
                   </th>
@@ -580,7 +580,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                   <th scope="col" className="min-w-[112px] px-3 py-3">Mode</th>
                   {data.display==="DETAILED"?<th scope="col" className="min-w-[120px] px-3 py-3">Owner</th>:null}
                   <th scope="col" className="min-w-[120px] px-3 py-3">Job type</th>
-                  {data.display==="DETAILED"?<th scope="col" className="min-w-[125px] px-3 py-3">Pay</th>:null}
+                  {data.display==="DETAILED"?<th scope="col" className="min-w-[124px] px-3 py-3">Pay</th>:null}
                   <th scope="col" className="px-3 py-3 text-right">Applied</th>
                   <th scope="col" aria-sort={data.sort==="DEADLINE_ASC"?"ascending":data.sort==="DEADLINE_DESC"?"descending":"none"}
                     className="min-w-[160px] px-3 py-3">
@@ -589,7 +589,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                       className="font-semibold text-primary-text underline underline-offset-4">Deadline</Link>
                   </th>
                   <th scope="col" className="px-3 py-3">Status</th>
-                  <th scope="col" className="min-w-[190px] px-3 py-3">Actions</th>
+                  <th scope="col" className="min-w-[192px] px-3 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--lms-canvas-border)]">
@@ -632,20 +632,20 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Open drive</Link>
                 <Dropdown mobileSheet align="end" label={"More for "+job.company} trigger="···">
                    <nav aria-label={"Drive links for "+job.title} className="min-w-48 space-y-1">
-                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
-                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/placements/jobs/"+job.id+"/rounds"}>Rounds and schedule</Link>
-                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/placements/jobs/"+job.id+"/offers"}>Offers</Link>
-                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-ring" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-ring" href={"/tpo/placements/jobs/"+job.id+"/rounds"}>Rounds and schedule</Link>
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-ring" href={"/tpo/placements/jobs/"+job.id+"/offers"}>Offers</Link>
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-ring"
                       href={"/tpo/placements/jobs/"+job.id+"/applications-export"}>Export applicants</Link>
-                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                    <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-ring"
                       href={"/tpo/placements/jobs/"+job.id+"/share-preview"}>Share with company</Link>
                     {job.status==="PUBLISHED"?<Link
-                      className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                      className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-ring"
                       href={"/tpo/placements/jobs/"+job.id+"/extend-deadline"}>
                       Set or extend deadline
                     </Link>:null}
                     {job.status==="PUBLISHED"?<Link
-                      className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+                      className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-ring"
                       href={"/tpo/placements/jobs/"+job.id+"/close-preview"}>
                       Review and close drive
                     </Link>:null}
@@ -675,8 +675,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
          </details>
         </div>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
-       {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:<span/>}
-       {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+       {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Previous</Link>:<span/>}
+       {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Next</Link>:null}
       </nav>
     </>}
     </section>

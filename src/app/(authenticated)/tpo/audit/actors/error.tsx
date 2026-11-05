@@ -14,7 +14,7 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
       action={<>
         <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
         <Link href="/tpo/audit"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
           ← All audit sources
         </Link>
       </>}

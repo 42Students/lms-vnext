@@ -178,7 +178,7 @@ export function TpoSpreadsheetGrid<Row>({
  }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
   {!integratedWorkspace?<details className="min-w-0 border-b border-border pb-3">
-    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Columns</summary>
+    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link md:min-h-9 focus-ring">Columns</summary>
     <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
    </details>:null}
   {!integratedWorkspace&&rows.length>0?<Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={copyVisibleRows}>Copy visible TSV</Button>:null}
@@ -196,13 +196,13 @@ export function TpoSpreadsheetGrid<Row>({
     <thead className="bg-[var(--lms-white)] text-[var(--lms-neutral-400)]"><tr>{selection?<th scope="col" className="sticky left-0 z-(--lms-z-sticky-header) w-12 min-w-12 bg-[var(--lms-table-header)] px-2 py-2" ><Checkbox aria-label="Select all filtered students" checked={fullySelected} indeterminate={partlySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)} aria-sort={sort?.key===col.key?(sort.direction==="asc"?"ascending":"descending"):undefined}>
      {col.sortKind?<Button variant="ghost" type="button" aria-label={"Sort "+col.label}
       aria-pressed={sort?.key===col.key}
-      className="inline-flex min-h-11 md:min-h-9 items-center gap-1 font-semibold text-link focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]"
+      className="inline-flex min-h-11 md:min-h-9 items-center gap-1 font-semibold text-link focus-ring"
       onClick={()=>setSort(previous=>previous?.key===col.key
         ? previous.direction==="asc"?{key:col.key,direction:"desc"}:null
         : {key:col.key,direction:"asc"})}>
       {col.label}<span aria-hidden="true">{sort?.key===col.key?(sort.direction==="asc"?"↑":"↓"):"↕"}</span>
      </Button>:<span>{col.label}</span>}
-     {viewKey?<details className="mt-2 min-w-0 border-t border-border pt-1 text-xs font-normal"><summary className="min-h-9 cursor-pointer py-2 text-xs font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Column tools</summary><div className="flex min-w-0 flex-wrap gap-2 pt-2">
+     {viewKey?<details className="mt-2 min-w-0 border-t border-border pt-1 text-xs font-normal"><summary className="min-h-9 cursor-pointer py-2 text-xs font-semibold text-link focus-ring">Column tools</summary><div className="flex min-w-0 flex-wrap gap-2 pt-2">
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.max(100,colWidth(col.key)-40)})}
        disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="min-h-11 min-w-11 md:min-h-9 md:min-w-9">−</Button>
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.min(500,colWidth(col.key)+40)})}

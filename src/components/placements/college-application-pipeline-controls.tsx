@@ -277,7 +277,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    </span>;
   }},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=>
-   <div className="flex min-w-[210px] flex-wrap items-center gap-2">
+   <div className="flex min-w-[212px] flex-wrap items-center gap-2">
     <Button type="button" variant="secondary" onClick={()=>void openDetail(row.id)}
      aria-label={"View Details for "+(row.name||"learner")} disabled={busy}
      className="min-h-11 text-xs md:min-h-9">View Details</Button>

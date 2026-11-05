@@ -60,14 +60,14 @@ export default async function TpoDriveShortlistPage({
         description="Current SHORTLISTED screening decisions for submitted applications belonging to active college learners."
         actions={<>
           <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Drive workspace</Link>
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-ring sm:w-auto md:min-h-9">← Drive workspace</Link>
           <ButtonLink variant="secondary" href={"/api/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist/export"}
             className="w-full sm:w-auto">Export shortlist CSV</ButtonLink>
         </>}
       />
       <Link
         href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview"}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto hover:underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto hover:underline hover:bg-primary-subtle focus-ring md:min-h-9"
       >
         Recruiter-visible shortlist report →
       </Link>

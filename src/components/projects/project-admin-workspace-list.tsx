@@ -159,7 +159,7 @@ export function ProjectAdminWorkspaceList({
       <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-5">
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
-            <Link href={workspaceSummaryHref(item,basePath)} className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{workspaceTitle(item)}</Link>
+            <Link href={workspaceSummaryHref(item,basePath)} className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-ring md:min-h-9">{workspaceTitle(item)}</Link>
             <StatusBadge tone={tone(item.status,item.riskReasons)}>{workspaceStatus(item,basePath)}</StatusBadge>
           </div>
           <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.summary ?? "Project workspace."}</p>
@@ -192,7 +192,7 @@ export function ProjectAdminWorkspaceList({
               <div className="mt-2"><TemplateLink item={item} basePath={basePath}/></div>
               <Heading level={2} size="base" className="mt-2 line-clamp-2 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
                 <Link href={workspaceSummaryHref(item,basePath)}
-                  className="inline-flex min-h-11 items-center break-words rounded-sm underline-offset-4 hover:text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                  className="inline-flex min-h-11 items-center break-words rounded-sm underline-offset-4 hover:text-primary-text hover:underline focus-ring md:min-h-9">
                   {workspaceTitle(item)}
                 </Link>
               </Heading>

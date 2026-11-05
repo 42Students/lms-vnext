@@ -22,7 +22,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
  const href=(page:number)=>"/tpo/calendar/interviews?"+new URLSearchParams({days:String(data.days),page:String(page),...(data.q?{q:data.q}:{})}).toString();
  return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Interview rounds" title="Interview schedule readiness"
-   description="Pending and scheduled round-level interviews. Candidate-specific slots are not recorded here." actions={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">← Calendar</Link>}/>
+   description="Pending and scheduled round-level interviews. Candidate-specific slots are not recorded here." actions={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9 lms-inline-link">← Calendar</Link>}/>
   <form action="/tpo/calendar/interviews" method="get"
     className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]" aria-label="Filter interviews">
    <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Search company, drive or round
@@ -55,8 +55,8 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
        scheduledAt:r.scheduledAt,mode:r.mode,venue:r.venue,meetingUrl:r.meetingUrl??null}}/>:null}
    </article>)}</section>}
   {(data.page>1||data.limited)?<nav aria-label="Interview round pages" className="flex flex-wrap gap-3">
-   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous 200</Link>:null}
-   {data.limited?<Link href={href(data.page+1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next 200</Link>:null}
+   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Previous 200</Link>:null}
+   {data.limited?<Link href={href(data.page+1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Next 200</Link>:null}
   </nav>:null}
   <p className="text-xs text-[var(--lms-muted-text)] leading-5">No interviewer identities, per-candidate slots or calendar invitations are invented from the round schedule.</p>
  </div>;

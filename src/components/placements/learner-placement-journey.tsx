@@ -176,7 +176,7 @@ export function LearnerPlacementJourney({
         <div className="grid min-w-0 gap-3 md:grid-cols-2">
           {items.map(item=>(
             <TextLink variant="bare" key={item.applicationId} href={"#placement-application-"+encodeURIComponent(item.applicationId)}
-              className="block min-h-11 min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:shadow-(--lms-elevation-1) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-[var(--lms-control-height)]">
+              className="block min-h-11 min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:shadow-(--lms-elevation-1) focus-ring motion-reduce:transition-none md:min-h-[var(--lms-control-height)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="min-w-0 break-words text-sm font-semibold text-foreground">{item.companyName} · {item.jobTitle}</span>
                 <StatusBadge tone={item.applicationStatus==="WITHDRAWN"||item.screening.status==="REJECTED"?"error":"info"}>

@@ -18,7 +18,7 @@ export default function FacultyQuizzesOverviewError({
       </p>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         <Button onClick={reset}>Retry</Button>
-        <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9">
           My teaching Courses
         </Link>
       </div>

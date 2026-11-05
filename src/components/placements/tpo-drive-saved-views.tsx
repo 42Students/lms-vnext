@@ -44,7 +44,7 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   catch{setError("Browser storage is unavailable.");}
  }
  return <details aria-label="Saved drive views" className="min-w-0 border-b border-border pb-3">
-  <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">My saved views</summary>
+  <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-link focus-ring md:min-h-9">My saved views</summary>
   <div className="min-w-0 pt-2">
   <p className="mt-1 text-xs text-body">Save up to {MAX} named filter links in this browser for your college account. They do not change records or share filters with colleagues.</p>
   <div className="mt-3 flex min-w-0 flex-col gap-2 md:flex-row">

@@ -11,7 +11,7 @@ describe("learner assignment list recovery preserves legacy messaging and access
  it("offers a mobile-sized keyboard-accessible retry on the same learner route",()=>{
   expect(source).toContain('href="/learn/allAssignments?retry=1"');
   expect(source).toContain('min-h-11 items-center');
-  expect(source).toContain('focus-visible:outline-2');
+  expect(source).toContain('focus-ring');
  });
  it("does not swallow unauthorized membership errors",()=>{
   expect(source).toContain('error instanceof AuthorizationError || error instanceof CoursesServiceError');

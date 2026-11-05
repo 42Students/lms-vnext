@@ -369,7 +369,7 @@ export function LearnerAttendanceWorkspace({
             </p>
             {learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month) ? (
               <Link href={learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month)!}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring md:min-h-9">
                 Full course attendance history →
               </Link>
             ) : null}

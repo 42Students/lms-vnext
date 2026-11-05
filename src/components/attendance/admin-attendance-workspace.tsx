@@ -673,7 +673,7 @@ export function AdminAttendanceWorkspace({
                                   else openCorrectionTarget({ learner, session: first, record });
                                 }}
                                 title={!multiple && new Date(first.startsAt).getTime()>loadedAt ? "This class has not started. Attendance can be corrected after it begins." : undefined}
-                                className="min-h-11 border-transparent bg-transparent px-1 text-body disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                                className="min-h-11 border-transparent bg-transparent px-1 text-body disabled:cursor-not-allowed focus-ring md:min-h-9"
                               >
                                 <StatusBadge tone={multiple ? "neutral" : state.tone}>
                                   {multiple ? (ratio?.counted

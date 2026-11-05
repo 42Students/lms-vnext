@@ -79,7 +79,7 @@ export function RecruiterRequestCancelButton({
     <div className="mt-2 min-w-0">
       {cancelled ? null : (
         <details className="min-w-0">
-          <summary className="flex min-h-11 w-full max-w-full cursor-pointer items-center break-words md:w-fit text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+          <summary className="flex min-h-11 w-full max-w-full cursor-pointer items-center break-words md:w-fit text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">
             Manage request
           </summary>
           <div className="mt-1 min-w-0">

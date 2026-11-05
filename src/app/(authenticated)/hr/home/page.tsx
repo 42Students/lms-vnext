@@ -47,7 +47,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const parsed = querySchema.safeParse({collegeId:(await searchParams).collegeId});
   if (!parsed.success) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Today" />
     <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
-      action={<Link href="/hr/home" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Choose again</Link>} /></div>;
+      action={<Link href="/hr/home" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Choose again</Link>} /></div>;
   const recruiter = context.recruiter;
   const grants = recruiter.grants;
   const selectedId = parsed.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
@@ -107,12 +107,12 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </div>:<Alert tone="warning">College details are temporarily unavailable. Missing information is not zero.</Alert>}
         {rich?.errors.length?<p role="status" className="text-xs text-muted-foreground">Could not load: {rich.errors.join(", ")}. Retry to refresh.</p>:null}
         <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-ring">
           Open recruiter Today
         </Link>
       </article>;
     })}</section>}
-    <Link href="/hr/profile" className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Your profile</Link>
+    <Link href="/hr/profile" className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-ring">Your profile</Link>
   </div>;
   }
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.

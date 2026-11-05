@@ -65,7 +65,7 @@ export default async function CollegeLectureHallsPage({
           title="Invalid lecture hall filters"
           description="The room search, status, type, department or page is invalid. No records were loaded."
           action={
-            <Link href="/college/lecture-halls" className="font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            <Link href="/college/lecture-halls" className="font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
               Clear filters
             </Link>
           }
@@ -199,7 +199,7 @@ export default async function CollegeLectureHallsPage({
             </Select>
           </label>
           <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4" open={Boolean(query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL")||undefined}>
-            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Filters</summary>
             <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-3">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Minimum seats
@@ -230,7 +230,7 @@ export default async function CollegeLectureHallsPage({
               Filter
             </Button>
             <Link href="/college/lecture-halls"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
               Clear
             </Link>
           </div>

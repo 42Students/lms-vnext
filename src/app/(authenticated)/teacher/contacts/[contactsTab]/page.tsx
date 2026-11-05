@@ -59,7 +59,7 @@ export default async function FacultyContactsPage({
         <PageHeader title="Invalid directory filters" />
         <Link
           href={`/teacher/contacts/${contactsTab}`}
-          className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="inline-flex min-h-11 items-center text-primary-text underline focus-ring md:min-h-9"
         >
           Return to Contacts
         </Link>
@@ -99,7 +99,7 @@ export default async function FacultyContactsPage({
             ? "You no longer have access to these contacts."
             : "Something went wrong on our end. Please try again."}
           action={loaded.denied
-            ? <Link href={retryHref} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            ? <Link href={retryHref} className="font-semibold text-primary-text underline focus-ring">
                 Back to teaching
               </Link>
             : <FacultyContactsRetry />}

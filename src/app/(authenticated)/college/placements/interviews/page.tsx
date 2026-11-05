@@ -35,7 +35,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   companyId:first(raw.companyId)||undefined,departmentId:first(raw.departmentId)||undefined,
   sort:first(raw.sort)??"EARLIEST",page:first(raw.page)??"1",pageSize:first(raw.pageSize)??"20"};
  const valid=collegeInterviewFilters.safeParse(input);
- if(!valid.success)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
+ if(!valid.success)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>}/></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data).catch(error=>{
   reportPageReadFailure({
     event:"college.interview_directory_failed",
@@ -119,7 +119,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     </label>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
       <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Apply filters</Button>
-      <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center justify-center text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>
+      <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center justify-center text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>
     </div>
     <Disclosure title="Advanced filters"
       defaultOpen={Boolean(valid.data.companyId || valid.data.departmentId || valid.data.status!=="ALL" || valid.data.mode!=="ALL" || valid.data.type!=="ALL" || valid.data.sort!=="UPCOMING")}
@@ -235,9 +235,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     </div>
    </section>
    <nav aria-label="Interview result pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm">
-    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
+    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Previous</Link>:null}
     <span>Page {valid.data.page} of {data.pageCount}</span>
-    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Next</Link>:null}
    </nav>
   </>}
  </div>;

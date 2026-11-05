@@ -83,7 +83,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
         <Button type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={reset}>Try again</Button>
         <Link href={homeHref}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:underline">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link md:min-h-9 md:w-auto focus-ring hover:underline">
           Go to home
         </Link>
       </div>
@@ -111,10 +111,10 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       </p>
       <div className="flex min-w-0 flex-wrap justify-center gap-3">
         <Button variant="bare" type="button" onClick={safeBack}
-          className="inline-flex min-h-11 items-center justify-center rounded-full border border-[color:var(--lms-primary-hover)] bg-surface px-6 py-3 text-sm font-semibold text-[color:var(--lms-primary-hover)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-hover)]">
+          className="inline-flex min-h-11 items-center justify-center rounded-full border border-[color:var(--lms-primary-hover)] bg-surface px-6 py-3 text-sm font-semibold text-[color:var(--lms-primary-hover)] hover:bg-[color:var(--lms-primary-subtle)] focus-ring">
           Go back
         </Button>
-        <Link href="/" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[color:var(--lms-primary-hover)] bg-[color:var(--lms-primary-hover)] px-6 py-3 text-sm font-semibold text-[color:var(--lms-on-primary)] no-underline hover:bg-[color:var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-hover)]">
+        <Link href="/" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[color:var(--lms-primary-hover)] bg-[color:var(--lms-primary-hover)] px-6 py-3 text-sm font-semibold text-[color:var(--lms-on-primary)] no-underline hover:bg-[color:var(--lms-primary-text)] focus-ring">
           Go to Home
         </Link>
       </div>

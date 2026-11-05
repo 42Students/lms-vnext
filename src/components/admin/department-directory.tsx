@@ -21,7 +21,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 
 function countText(value:number|null|undefined){return value==null?"—":String(value);}
 function usageChip(label:string,value:number|null|undefined){
- return <span className="inline-flex min-h-7 items-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+ return <span className="inline-flex min-h-7 items-center rounded focus-ring"
   tabIndex={0} role="note" aria-label={value==null?
    label+" count unavailable; refresh before archiving.":value+" active "+label}
   title={value==null?"Dependency count unavailable; refresh before archiving.":value+" active "+label}>
@@ -90,7 +90,7 @@ export function DepartmentDirectory({
         Departments retrieved · {result.total} of {rows.length} {rows.length === 1 ? "result" : "results"}
       </p>
       {result.items.length?<div role="region" aria-label="Existing departments table" tabIndex={0}
-        className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] focus-ring">
         <Table className="min-w-[660px]">
           <caption className="sr-only">Departments and dependency counts; scroll horizontally to see all columns</caption>
           <thead className="bg-[var(--lms-neutral-50)] text-xs text-muted-foreground"><tr>
@@ -105,8 +105,8 @@ export function DepartmentDirectory({
             <th scope="col" className="w-[160px] border-b border-border px-3 py-2 text-right font-semibold">Actions</th>
           </tr></thead>
           <tbody>{result.items.map(row=><tr key={row.id} className="border-b border-border align-middle last:border-b-0 hover:bg-[var(--lms-neutral-50)]">
-            <th scope="row" className="min-w-[145px] break-words px-3 py-3 font-semibold text-foreground">{row.name}</th>
-            <td className="min-w-[250px] px-3 py-3">
+            <th scope="row" className="min-w-[144px] break-words px-3 py-3 font-semibold text-foreground">{row.name}</th>
+            <td className="min-w-[252px] px-3 py-3">
               <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                 {usageChip(row.usage?.programs===1?"program":"programs",row.usage?.programs)}
                 {usageChip(row.usage?.courses===1?"course":"courses",row.usage?.courses)}

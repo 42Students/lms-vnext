@@ -20,7 +20,7 @@ export default async function FacultyDiscussionHistoryPage({
   const parsed=parseFacultyDiscussionHistoryLocation(deliveryId,raw);
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid discussion history filters"} />
-    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Back to Courses</Link>
+    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-ring hover:text-[var(--lms-primary-text)]">Back to Courses</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getFacultyDiscussionHistory(context,parsed.data);
@@ -28,7 +28,7 @@ export default async function FacultyDiscussionHistoryPage({
     <PageHeader eyebrow="Faculty · Discussion audit" title="Discussion moderation history"
       description={[data.delivery.courseName,data.delivery.sectionName].join(" · ")}
       actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-[var(--lms-control-height)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-[var(--lms-control-height)]">
         Discussions
       </Link>} />
     <form role="search" aria-label="discussion history filters" method="get" className="grid min-w-0 gap-[8px] border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
@@ -43,7 +43,7 @@ export default async function FacultyDiscussionHistoryPage({
       </label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">Filter</Button>
       <Link href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
-        className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+        className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-ring">Clear</Link>
     </form>
     <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} recorded event{data.total===1?"":"s"}</p>
     {data.items.length===0?<EmptyState title="No registered moderation history"

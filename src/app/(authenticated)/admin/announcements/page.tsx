@@ -55,7 +55,7 @@ export default async function AnnouncementsPage({
   if (!params) {
     return <div className="min-w-0 space-y-6">
       <PageHeader title="Announcements" description="Review and publish college notices." />
-      <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Reset filters</Link></p>
+      <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring underline-offset-4">Reset filters</Link></p>
     </div>;
   }
 
@@ -275,7 +275,7 @@ export default async function AnnouncementsPage({
         </label>
         <div className="order-last min-w-0 md:col-span-3">
           <details className="group min-w-0 border-t border-[var(--lms-canvas-border)]">
-            <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Filters <span aria-hidden="true">⌄</span></summary>
+            <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-ring">Filters <span aria-hidden="true">⌄</span></summary>
             <div className="grid min-w-0 gap-3 pb-4 md:grid-cols-2 xl:grid-cols-4">
         <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Visibility
           <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-[6px]">
@@ -306,7 +306,7 @@ export default async function AnnouncementsPage({
           </details>
         </div>
         <Button type="submit" className="w-full md:w-auto">Search</Button>
-        <Link href="/admin/announcements" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Clear</Link>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Clear</Link>
       </form>
       {!targetsResult.ok?<Banner tone="warning" role="status"
         action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry targets</Link>}>
@@ -355,10 +355,10 @@ export default async function AnnouncementsPage({
         ...(params.senderType ? {senderType:params.senderType} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
-      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Export this filtered page (CSV)</Link>
+      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Export this filtered page (CSV)</Link>
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
+          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
             Older announcements
           </Link>
         </div>

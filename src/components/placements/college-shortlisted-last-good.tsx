@@ -15,8 +15,8 @@ export function CollegeShortlistedLastGood({available,children,retryHref,closeHr
  useEffect(()=>{if(available)setLastGood(children);},[available,children]);
  if(available)return <>{children}</>;
  const actions=<nav aria-label="Shortlisted refresh recovery" className="flex flex-wrap gap-4">
-  <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry</Link>
-  <Link href={closeHref} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Close</Link>
+  <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">Retry</Link>
+  <Link href={closeHref} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">Close</Link>
  </nav>;
  return <section aria-label="Shortlisted data refresh" className="min-w-0 space-y-4">
   <ErrorState title="Could not refresh shortlisted applications"

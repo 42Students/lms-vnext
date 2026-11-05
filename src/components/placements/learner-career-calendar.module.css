@@ -207,7 +207,7 @@
   outline: 2px solid var(--lms-primary-text) !important;
   outline-offset: -2px !important;
 }
-.scheduleGrid { min-width: 630px !important; }
+.scheduleGrid { min-width: 632px !important; }
 @media (min-width: 768px) { .scheduleGrid { min-width: 0 !important; } }
 .blockedDay { background: color-mix(in srgb, var(--lms-error-text) 15%, transparent) !important; }
 .blockedDay:hover { background: color-mix(in srgb, var(--lms-error-text) 22%, transparent) !important; }

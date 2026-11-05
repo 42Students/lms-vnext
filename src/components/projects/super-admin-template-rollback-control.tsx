@@ -60,7 +60,7 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
    Unlike the old LMS snapshot rollback, this does not restore published,
    archived or deleted state. Publish the new revision separately.</p>
   <p className="text-xs font-semibold text-body">Review impact before rollback: {impact.pinnedWorkspaceCount} pinned workspaces keep their versions; {impact.existingWorkspacesRewritten} are changed by this rollback.</p>
-  <dl aria-label="Workspace impact preview" tabIndex={0} className="grid gap-2 border-y border-border py-3 text-sm sm:grid-cols-2 focus-visible:outline-2 focus-visible:outline-primary">
+  <dl aria-label="Workspace impact preview" tabIndex={0} className="grid gap-2 border-y border-border py-3 text-sm sm:grid-cols-2 focus-ring">
     {([
       ["Assigned colleges",impact.assignedCollegeCount],
       ["Workspaces pinned to a version",impact.pinnedWorkspaceCount],

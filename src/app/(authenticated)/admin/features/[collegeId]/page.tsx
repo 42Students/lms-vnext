@@ -60,7 +60,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <ErrorState title="Invalid module access filters"
           description="The module, scope or requested page is invalid. No college module rules were loaded."
           action={<Link href={"/admin/features/"+encodeURIComponent(collegeId)}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 md:min-h-9">
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 md:min-h-9">
             Clear filters
           </Link>} />
       </div>
@@ -133,7 +133,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       <PageHeader
         title="Module Access"
         description={`Manage Projects and Placements for ${college.name} (${college.code}), with a college-scoped hierarchy and effective locks.`}
-        actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← Feature Controls</Link>}
+        actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← Feature Controls</Link>}
       />
 
       <Banner tone="info">
@@ -166,13 +166,13 @@ export default async function SuperAdminCollegeModuleAccessPage({
           Find an active learner to trace the module-access decision through membership, academic scopes, college, organization, global rules and defaults.
         </p>
         <Link href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">
           Open learner access trace →
         </Link>
       </nav>
 
       <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
         View audited college module changes →
       </Link>
       <section className="grid min-w-0 gap-x-6 gap-y-0 md:grid-cols-2 xl:grid-cols-3">
@@ -265,7 +265,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         </label>
         </Disclosure>
         <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">Filter overrides</Button>
-        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Reset</Link>
+        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Reset</Link>
       </form>
 
       <section className="min-w-0 space-y-3">
@@ -395,7 +395,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page > 1 ? (
               <Link
                 href={pageHref(result.page - 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 ← Previous
               </Link>
@@ -403,7 +403,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             {result.page < result.totalPages ? (
               <Link
                 href={pageHref(result.page + 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 Next →
               </Link>

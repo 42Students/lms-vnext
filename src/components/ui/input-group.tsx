@@ -24,7 +24,7 @@ export function InputGroup({ prefix, suffix, prefixInteractive = false, suffixIn
       className={cx(
         "flex w-full min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-field-radius)]",
         "border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-3",
-        "focus-within:border-[var(--lms-primary)] focus-within:shadow-(--lms-control-shadow) has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-[3px] has-[:focus-visible]:outline-[var(--lms-primary-text)]",
+        "focus-within:border-[var(--lms-primary)] focus-within:shadow-(--lms-control-shadow) has-[:focus-visible]:focus-outline",
         "has-[[aria-invalid=true]]:border-[var(--lms-error)] has-[[aria-invalid=true]]:bg-[color-mix(in_srgb,var(--lms-error)_6%,transparent)]",
         "has-[[aria-invalid=true]]:focus-within:shadow-(--lms-focus-ring-error)",
         "has-[:disabled]:cursor-not-allowed has-[:disabled]:bg-[var(--lms-neutral-50)] has-[:disabled]:text-[var(--lms-neutral-400)]",

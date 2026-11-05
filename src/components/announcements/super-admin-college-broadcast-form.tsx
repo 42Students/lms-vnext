@@ -118,7 +118,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   {messageTouched&&!message.trim()?<p role="alert" className="text-sm text-danger-text">Write the announcement</p>:null}
   <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Announcement {message.length}/8000</p>
   <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)]">
-   <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
+   <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-ring">Button (optional)</summary>
    <fieldset className="min-w-0 space-y-[var(--lms-space-3)]"><legend className="sr-only">Button (optional)</legend>
    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Button label
     <Input disabled={pending} value={buttonLabel} maxLength={60} onChange={e=>setButtonLabel(e.target.value)} placeholder="Read more"/>

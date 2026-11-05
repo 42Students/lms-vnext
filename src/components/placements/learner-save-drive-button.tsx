@@ -61,7 +61,7 @@ export function LearnerSaveDriveButton({
   <Button variant="bare" type="button" data-saved={saved?"true":"false"} aria-pressed={saved}
    aria-label={accessibleName} title={tooltip} disabled={busy||!known}
    onClick={()=>void toggle()}
-   className={"inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-transparent bg-transparent transition-colors hover:border-border hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 md:size-9 "+
+   className={"inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-transparent bg-transparent transition-colors hover:border-border hover:bg-[color:var(--lms-primary-subtle)] focus-ring disabled:cursor-not-allowed disabled:opacity-50 md:size-9 "+
      (saved?"text-[var(--lms-primary-text)]":"text-[color:var(--lms-text-muted)]")}
   >
    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"

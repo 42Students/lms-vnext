@@ -161,7 +161,7 @@ export function NotificationList({
               }}
               aria-label={"Open notification: "+(item.title||"Notification")+", "+notificationCategory(item)}
               loading={pendingId===item.id}
-              className="w-full min-h-12 justify-start rounded-[10px] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-4 py-4 text-left whitespace-normal shadow-none hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:py-4">
+              className="w-full min-h-12 justify-start rounded-[10px] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-4 py-4 text-left whitespace-normal shadow-none hover:bg-[var(--lms-primary-subtle)] focus-ring md:py-4">
               <div className="flex min-w-0 items-start gap-3">
                <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -175,8 +175,8 @@ export function NotificationList({
              </Button>:<article
               key={item.id}
               className={readEndpoint==="/api/learn/notifications"
-                ? "min-w-0 rounded-[12px] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
-                : "min-w-0 rounded-[12px] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"}
+                ? "min-w-0 rounded-[12px] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:focus-outline"
+                : "min-w-0 rounded-[12px] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:focus-outline"}
             >
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
@@ -205,7 +205,7 @@ export function NotificationList({
                   {safeInternalAction(item.actionHref) ? (
                       <Link
                         href={safeInternalAction(item.actionHref)!}
-                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:flex-none"
+                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9 md:flex-none"
                       >
                         {legacyActionLabel(item)}
                       </Link>

@@ -33,11 +33,11 @@ export default async function CollegeHiringDashboardPage({
     return <div className="min-w-0 overflow-x-clip space-y-4">
       <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}
       actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
         Placement Evidence by Department
       </Link>} />
       <ErrorState title="Invalid report search" description="No placement metrics were loaded."
-        action={<Link href="/college/hiring-dashboard" className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto md:min-h-9">Clear filters</Link>} />
+        action={<Link href="/college/hiring-dashboard" className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto md:min-h-9">Clear filters</Link>} />
     </div>;
   }
   const workspaceRequest=getPlacementReportWorkspace(context,{
@@ -95,7 +95,7 @@ export default async function CollegeHiringDashboardPage({
     </nav>
     <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}
       actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
         Placement Evidence by Department
       </Link>} />
     <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
@@ -121,7 +121,7 @@ export default async function CollegeHiringDashboardPage({
         selectedJobId={workspace?.selectedJobId??query.data.jobId??null}/>
     </section>:null}
     <details className="min-w-0 border-t border-border pt-2">
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Reporting methodology</summary>
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Reporting methodology</summary>
       {workspace?<ReportScopeNote note={workspace.registrationScopeNote}/>:
         <p className="text-sm text-muted-foreground">Methodology will appear after the report reloads.</p>}
     </details>

@@ -260,7 +260,7 @@ export default async function TpoMessagesPage({
               <Link href={threadHref(item.id)}
                 aria-label={item.participantName+" — "+item.subject}
                 aria-current={active?.id===item.id?"page":undefined}
-                className={"flex min-h-16 gap-3 px-4 py-3 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary "+
+                className={"flex min-h-16 gap-3 px-4 py-3 hover:bg-primary-subtle focus-ring "+
                   (active?.id===item.id?"bg-primary-subtle":"")}>
                 <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-body">
                   {item.participantName.slice(0,1).toUpperCase()}

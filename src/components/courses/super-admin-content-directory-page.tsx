@@ -58,7 +58,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  if(!parsed.success||invalidLessonQuery)return <div className="min-w-0 space-y-4">
   <PageHeader title={title}/>
   <ErrorState title="Invalid content filters" description="Review search, status and page."
-   action={<Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
+   action={<Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))return <div className="min-w-0 space-y-4">
@@ -92,7 +92,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <ErrorState title="Content directory unavailable"
    description="The selected college content could not be loaded. Your filters are unchanged."
    action={<Link href={adminContentHref(kind,parsed.data)}
-    className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry loading content</Link>}/>
+    className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Retry loading content</Link>}/>
  </div>;
  const data=dataResult.value;
  const authoringRows=lessonsResult.status==="fulfilled"?lessonsResult.value:[];
@@ -206,7 +206,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     <Button type="submit" className="min-h-11 w-full self-end sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
    </div>
    <details className="min-w-0" open>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-4">
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / offering
       <Select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 md:min-h-9">
@@ -232,7 +232,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      </label>
     </div>
    </details>
-   <Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
+   <Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Clear filters</Link>
   </form>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
    <p className="m-0 break-words text-sm text-muted-foreground">
