@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Table } from "@/components/ui/table";
 function maskPhone(value:string){const digits=value.replace(/\D/g,"");return digits.length<6?"Call student":digits.slice(0,2)+"x".repeat(digits.length-4)+digits.slice(-2);}
 
 
@@ -80,7 +81,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
    <Button variant="secondary" className="shrink-0" aria-label="Download roster CSV"
     type="button" onClick={exportCsv} disabled={!students.length}>Download list</Button>
   </div>
-  <div className="faculty-proto-table-wrap"><table className="faculty-proto-table">
+  <Table>
    <thead><tr><th>Student</th><th>Roll no</th>
     <th title="Published course content completion">Progress</th><th>Attendance</th><th>Assignments</th><th>Contact</th></tr></thead>
    <tbody>{students.map(student=>{
@@ -111,7 +112,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
      </div></td>
     </tr>;
    })}</tbody>
-  </table></div>
+  </Table>
   {!students.length?<p className="faculty-proto-subtitle">No students match your search.</p>:null}
   <p className="faculty-proto-subtitle">Phone and email are visible only for students in your authorized class.
    Selecting a phone number or email opens your call or mail app. The roster CSV intentionally omits private contacts.

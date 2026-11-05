@@ -5,6 +5,7 @@ import {useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type Item={id:string;time:string;event:string;message:string;path:string;requestId:string|null};
 type LogPage={configured:boolean;items:Item[];nextPageToken:string|null;anchorAt?:string};
@@ -45,8 +46,8 @@ export function TrackerIssueLogsPanel({publicId}:{publicId:string}){
      >
       {busy?"Loading nearby logs…":notice.startsWith("Could not")?"Retry":"Load warnings and errors from that moment"}
     </Button>
-    {busy?<div role="status" aria-label="Loading nearby logs" className="animate-pulse space-y-2">
-      <div className="h-5 w-2/3 rounded bg-muted"/><div className="h-5 w-full rounded bg-muted"/>
+    {busy?<div role="status" aria-label="Loading nearby logs" className="space-y-2">
+      <SkeletonBlock className="h-5 w-2/3" /><SkeletonBlock className="h-5 w-full" />
     </div>:null}
     {notice?<p role={notice.startsWith("Could not")?"alert":"status"} className="text-sm text-body leading-[22px]">{notice}</p>:null}
     {loaded&&!logs.length?<p className="text-sm text-body leading-[22px]">No warnings or errors were logged around that time.</p>:null}

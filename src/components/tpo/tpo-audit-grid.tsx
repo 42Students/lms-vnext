@@ -14,6 +14,7 @@ import type {TpoAuditRow} from "@/modules/placements/tpo-audit-service";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { createDateFormatter } from "@/lib/format-date";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 /** Quartz receives only scoped audit rows already supplied to this view. */
 const TpoAuditQuartz=dynamic<TpoSpreadsheetGridProps<TpoAuditRow>>(
  ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<TpoAuditRow>),
@@ -21,7 +22,7 @@ const TpoAuditQuartz=dynamic<TpoSpreadsheetGridProps<TpoAuditRow>>(
    <p className="text-sm text-muted-foreground">Loading audit sheet…</p>
    <div aria-hidden="true" className="space-y-2">{[1,2,3,4,5,6,7,8].map(row=>
      <div key={row} className="grid grid-cols-3 gap-3 border-b border-border px-3 py-3">
-       {[1,2,3].map(cell=><span key={cell} className="h-5 animate-pulse rounded bg-muted"/>)}
+       {[1,2,3].map(cell=><SkeletonBlock key={cell} className="h-5" />)}
      </div>)}</div>
   </div>},
 );

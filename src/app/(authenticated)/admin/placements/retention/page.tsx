@@ -13,13 +13,14 @@ import {ErrorState} from "@/components/ui/error-state";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { formatDateWith } from "@/lib/format-date";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 type RetentionParams={searchParams:Promise<{details?:string}>};
 function RetentionLoading(){
  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading retention review">
   <PageHeader title="Data retention report"/>
   <div aria-hidden="true" className="space-y-3">
    {[1,2,3,4,5].map(index=><div key={index} className="grid grid-cols-4 gap-3 border-b border-border p-3">
-    {[1,2,3,4].map(cell=><span key={cell} className="h-6 animate-pulse rounded bg-muted"/>)}
+    {[1,2,3,4].map(cell=><SkeletonBlock key={cell} className="h-6" />)}
    </div>)}
   </div>
  </div>;

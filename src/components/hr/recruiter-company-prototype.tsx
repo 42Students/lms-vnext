@@ -8,6 +8,7 @@ import styles from "./recruiter-company-prototype.module.css";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
+import { Table } from "@/components/ui/table";
 type TeamMember={userId:string;displayName:string|null;email:string|null;title:string|null;isYou:boolean;capabilities:readonly string[]};
 type Choice={collegeId:string;collegeName:string};
 export function RecruiterCompanyPrototype({
@@ -89,12 +90,12 @@ export function RecruiterCompanyPrototype({
        <TextLink variant="bare" href={reportHref} className={styles.link}>Full report ›</TextLink>
       </div>
       {!reportAvailable?<p role="alert" className={styles.muted}>Hiring metrics could not be verified. Open Full report to retry; unavailable counts are not zero.</p>:
-       hiring.length?<div className={styles.tableWrap}><table className={styles.table}>
+       hiring.length?<Table>
         <thead><tr><th>DRIVE</th><th>APPLIED</th><th>CLEARED</th><th>OFFERED</th><th>JOINED</th><th>RATE</th></tr></thead>
         <tbody>{hiring.map(row=><tr key={row.id}><th scope="row"><Link href={"/recruiter/drives/"+encodeURIComponent(row.id)}>{row.title}</Link><small>{row.status==="PUBLISHED"?"Live":"Closed"}</small></th>
           <td>{row.applied}</td><td>{row.cleared===null?"—":row.cleared}</td>
           <td>{row.offered}</td><td>{row.joined}</td><td>{row.joiningRate===null?"—":row.joiningRate+"%"}</td>
-        </tr>)}</tbody></table></div>:<p className={styles.muted}>No authorized published or closed hiring drives at this college.</p>}
+        </tr>)}</tbody></Table>:<p className={styles.muted}>No authorized published or closed hiring drives at this college.</p>}
       {reportAvailable?<p className={styles.muted}>
        Cleared counts require an applied PASS outcome in every completed evaluative round; “—” means no verified count. Rates are joined applicants divided by applications.
        {hasMore?" Only the first 10 recent drives appear here; the report contains the rest.":""}

@@ -17,15 +17,16 @@ import { notFound, redirect } from "next/navigation";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 function NotificationsLoading() {
   return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading notifications">
     <PageHeader title="Notifications"/>
-    <div className="flex gap-2" aria-hidden="true"><span className="h-8 w-24 animate-pulse rounded-lg bg-muted"/><span className="h-8 w-24 animate-pulse rounded-lg bg-muted"/></div>
+    <div className="flex gap-2" aria-hidden="true"><SkeletonBlock className="h-8 w-24" /><SkeletonBlock className="h-8 w-24" /></div>
     <ul className="space-y-2" aria-hidden="true">{[1,2,3,4,5].map(id=><li key={id}
       className="flex items-start gap-3 rounded-lg border border-border px-4 py-3">
-      <span className="h-9 w-9 shrink-0 animate-pulse rounded-lg bg-muted"/>
-      <div className="w-full space-y-2"><span className="block h-4 w-2/5 animate-pulse rounded bg-muted"/><span className="block h-3 w-4/5 animate-pulse rounded bg-muted"/></div>
+      <SkeletonBlock className="h-9 w-9 shrink-0" />
+      <div className="w-full space-y-2"><SkeletonBlock className="block h-4 w-2/5" /><SkeletonBlock className="block h-3 w-4/5" /></div>
     </li>)}</ul>
   </div>;
 }

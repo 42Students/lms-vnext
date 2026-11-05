@@ -167,7 +167,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   </div>
   <div className="grid min-w-0 gap-4 lg:grid-cols-2 lg:items-start">
  <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
-  className="scroll-mt-24 space-y-3 border-b border-[var(--lms-canvas-border)] py-4 target:animate-pulse">
+  className="scroll-mt-24 space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
   <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Next step</Heading>
   <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{next.title}</Heading>
   <p className="text-sm text-body leading-[22px]">{next.detail}</p>

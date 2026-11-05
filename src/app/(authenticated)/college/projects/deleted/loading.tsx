@@ -2,6 +2,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 /** Six legacy-width table placeholders distinguish pending reads from empty success. */
 export default function DeletedWorkspacesLoading(){
@@ -18,9 +19,9 @@ export default function DeletedWorkspacesLoading(){
      <caption className="sr-only">Loading the deleted workspaces table</caption>
      <thead><tr className="border-b border-border"><th className="py-3">Workspace</th><th>Mentor</th><th>Action</th></tr></thead>
      <tbody>{Array.from({length:6},(_,index)=><tr key={index} className="border-b border-border">
-      <td className="py-4"><span aria-hidden="true" className="block h-4 w-48 animate-pulse rounded bg-muted motion-reduce:animate-none"/></td>
-      <td><span aria-hidden="true" className="block h-4 w-32 animate-pulse rounded bg-muted motion-reduce:animate-none"/></td>
-      <td><span aria-hidden="true" className="block h-8 w-24 animate-pulse rounded bg-muted motion-reduce:animate-none"/></td>
+      <td className="py-4"><SkeletonBlock className="block h-4 w-48" /></td>
+      <td><SkeletonBlock className="block h-4 w-32" /></td>
+      <td><SkeletonBlock className="block h-8 w-24" /></td>
      </tr>)}</tbody>
     </Table>
    </div>

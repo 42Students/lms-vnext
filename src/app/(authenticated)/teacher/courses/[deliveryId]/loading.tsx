@@ -11,8 +11,7 @@ export default function Loading() {
     <PageBackLink href="/teacher/courses" label="Back to courses"/>
     <PageHeader title="Course" description="Course workspace"/>
     <div className="flex min-w-0 flex-wrap gap-2 border-b border-[var(--lms-canvas-border)] pb-3" aria-hidden="true">
-      {Array.from({length:5},(_,index)=><span key={index}
-        className="h-9 w-24 animate-pulse rounded-[var(--lms-control-radius)] bg-muted"/>)}
+      {Array.from({length:5},(_,index)=><SkeletonBlock key={index} className="h-9 w-24" />)}
     </div>
     <div className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4" aria-hidden="true">
       <SkeletonBlock className="h-6 w-48" />

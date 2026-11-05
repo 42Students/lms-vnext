@@ -1183,8 +1183,7 @@ export function RecruiterLeadsWorkspace({
             {exportFeedback?<p role="status" className="px-3 py-2 text-xs text-body">{exportFeedback}</p>:null}
             <TpoRecruiterPrototypeRoster rows={sortedVisible} selectedId={focusedLead?.id??null}
              columns={compactColumns} onSelect={setFocusedRecruiterId} now={new Date()}/>
-            <details ref={advancedRosterRef} className="m-3 rounded-lg border border-border p-3" data-testid="tpo.recruiter.advanced-grid">
-             <summary className="cursor-pointer text-sm font-semibold text-link">Advanced spreadsheet, views, exports and bulk actions</summary>
+            <Disclosure title="Advanced spreadsheet, views, exports and bulk actions" detailsProps={{ ref: advancedRosterRef, "data-testid": "tpo.recruiter.advanced-grid" }} className="m-3">
              {needsPanel}
              <p className="my-3 text-xs text-body">Select contacts before a bulk action. Invitations, changes and sends still require their own explicit confirmation.</p>
              {bulkPanel}
@@ -1240,7 +1239,7 @@ export function RecruiterLeadsWorkspace({
               </>}
 
             </GridWorkspace>
-            </details>
+            </Disclosure>
             </section>
             {focusedLead?<TpoRecruiterPrototypeInspector lead={focusedLead}
              onDismiss={()=>setFocusedRecruiterId("")}/>:

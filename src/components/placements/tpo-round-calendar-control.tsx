@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
+import { Disclosure } from "@/components/ui/disclosure";
 type Choice = {
   id: string; jobId: string; jobTitle: string; companyName: string; name: string;
   kind: string; status: string; updatedAt: string; scheduledAt: string | null;
@@ -137,13 +138,12 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
       </div>
       {blockedDay?<Alert tone="warning">This day is blocked in placement settings. Review the clash before scheduling a round.</Alert>:null}
       {!blockedDatesAvailable?<Alert tone="warning">Blocked-date storage is unavailable; schedule clashes cannot be verified.</Alert>:null}
-      <details open={cancelExpanded} onToggle={event=>setCancelExpanded(event.currentTarget.open)} className="min-w-0 border-t border-border pt-2">
-       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-body md:min-h-9">Cancellation reason (for Cancel only)</summary>
+      <Disclosure title="Cancellation reason (for Cancel only)" defaultOpen={cancelExpanded} detailsProps={{ onToggle: event=>setCancelExpanded(event.currentTarget.open) }} className="min-w-0">
       <div className="min-w-0">
         <Textarea aria-label="Cancellation reason (for Cancel only)" value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000}
           className="mt-2 min-h-24 w-full min-w-0" />
       </div>
-      </details>
+      </Disclosure>
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Button variant="primary" disabled={pending} type="button" onClick={() => review("SCHEDULE")}
           className="min-h-11 w-full px-4 md:w-auto md:min-h-9">

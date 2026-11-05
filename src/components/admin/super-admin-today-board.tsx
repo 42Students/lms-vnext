@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {SUPER_ADMIN_TODAY_LABELS,type SuperAdminTodayMetrics} from "@/modules/colleges/admin-today-attention-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 /** Scope comes exclusively from the parent dashboard's authenticated server
  * read. Refresh re-executes that read; it never accepts a client college ID. */
@@ -45,10 +46,10 @@ function AttentionCard({item,loading,failed}:{item:Metric;loading:boolean;failed
    </span>:null}
   </div>
   <div className="min-h-[100px] space-y-3 px-4 py-3">
-   {loading?<div role="status" aria-label={"Loading "+item.title} className="space-y-3 animate-pulse">
-    <span className="block h-4 w-[70%] rounded bg-[var(--lms-neutral-100)]"/>
-    <span className="block h-4 w-[90%] rounded bg-[var(--lms-neutral-100)]"/>
-    <span className="block h-4 w-[55%] rounded bg-[var(--lms-neutral-100)]"/>
+   {loading?<div role="status" aria-label={"Loading "+item.title} className="space-y-3">
+    <SkeletonBlock className="block h-4 w-[70%]" />
+    <SkeletonBlock className="block h-4 w-[90%]" />
+    <SkeletonBlock className="block h-4 w-[55%]" />
    </div>:failed?<p role="status" className="text-sm text-muted-foreground">
      Couldn't load this. Refresh to try again.
    </p>:clear?<p className="flex items-start gap-2 text-sm text-[var(--lms-success)]"><CheckIcon/>{item.empty}</p>:

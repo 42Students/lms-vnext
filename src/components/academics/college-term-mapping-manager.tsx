@@ -17,6 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type MappingRead = {
   terms: readonly { id: string; name: string; termNumber: number; programId: string; programName: string; departmentId: string; isActive: boolean }[];
@@ -496,8 +497,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
     {refreshing && !currentMappings.length ? <div role="status" aria-label="Loading semester mappings"
       className="overflow-x-auto rounded border border-border p-3">
       {Array.from({ length: 6 }, (_, row) => <div key={row} className="flex min-w-[500px] gap-3 border-b border-border py-3 last:border-0">
-        {Array.from({ length: 6 }, (_, col) => <span key={col} aria-hidden="true"
-          className="h-4 flex-1 animate-pulse rounded bg-muted" />)}
+        {Array.from({ length: 6 }, (_, col) => <SkeletonBlock key={col} className="h-4 flex-1" />)}
       </div>)}
     </div> : null}
     {error && !confirm ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}

@@ -238,8 +238,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
    placed={studentStats?.summary.placed??null}
    pool={studentStats?.summary.placementPool??null}
    now={calendarNow}/>
- <details className="min-w-0 rounded-xl border border-border bg-surface" data-testid="tpo.home.other-tools">
-  <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-heading">Other placement tools and indicators</summary>
+ <Disclosure title="Other placement tools and indicators" detailsProps={{ "data-testid": "tpo.home.other-tools" }} className="min-w-0">
   <div className="space-y-4 border-t border-[color:var(--lms-neutral-100)] p-4">
  <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start md:gap-6">
  <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
@@ -289,6 +288,6 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
   </div>
  </Disclosure>
   </div>
- </details>
+ </Disclosure>
  </div>;
 }

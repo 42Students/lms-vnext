@@ -21,6 +21,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { Table } from "@/components/ui/table";
 
 /** SA-academics-people-26/27: all operations scoped to the selected active college. */
 export default async function SuperAdminLectureHallsPage({
@@ -62,7 +63,7 @@ export default async function SuperAdminLectureHallsPage({
         <Button type="submit">Search</Button>
       </form>
       <section aria-label="Organization lecture halls" className="min-w-0 overflow-x-auto">
-        <table className="w-full min-w-[36rem] text-left text-sm">
+        <Table className="min-w-[36rem]">
           <thead><tr>
             <th scope="col" className="p-3">College</th>
             <th scope="col" className="p-3">Room</th>
@@ -76,7 +77,7 @@ export default async function SuperAdminLectureHallsPage({
               <td className="p-3">{hall.capacity}</td>
               <td className="p-3">{hall.status}</td>
             </tr>)}</tbody>
-        </table>
+        </Table>
         {organizationDirectory.items.length===0?
           <p className="p-4 text-sm">No lecture halls match this search.</p>:null}
       </section>

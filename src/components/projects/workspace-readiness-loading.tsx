@@ -15,8 +15,8 @@ export function WorkspaceReadinessLoading({basePath}:{basePath:string}){
    <div className="space-y-3" aria-hidden="true">
      {Array.from({length:6},(_,index)=><div key={index}
        className="flex min-h-11 items-center gap-4 rounded-lg border border-border px-3 py-2">
-       <span className="h-4 w-28 shrink-0 animate-pulse rounded bg-surface-secondary"/>
-       <span className="h-4 min-w-0 flex-1 animate-pulse rounded bg-surface-secondary"/>
+       <SkeletonBlock className="h-4 w-28 shrink-0" />
+       <SkeletonBlock className="h-4 min-w-0 flex-1" />
      </div>)}
    </div>
    <TextLink href={basePath} className="inline-flex min-h-11 items-center md:min-h-9">

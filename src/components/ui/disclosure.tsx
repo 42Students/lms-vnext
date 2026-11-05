@@ -1,11 +1,11 @@
-import type { ReactNode } from "react";
+import type { ComponentPropsWithRef, ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 
 /** Semantic keyboard disclosure. Native details handles Enter/Space and
  * reduces motion to the shared opacity-only fade in globals.css. */
 export function Disclosure({
   title, children, className, defaultOpen = false,
-  id, summaryAriaLabel, summaryTitle, ariaLabel, summaryClassName, contentClassName, preserveSummary = false,
+  id, summaryAriaLabel, summaryTitle, ariaLabel, summaryClassName, contentClassName, preserveSummary = false, detailsProps, summaryProps,
 }: {
   /** Rich summaries retain count/metadata without hand-rolled details. */
   title: ReactNode;
@@ -20,10 +20,13 @@ export function Disclosure({
   contentClassName?: string;
   /** Keep page-specific rich lesson summaries without adding a second chevron. */
   preserveSummary?: boolean;
+  /** Pass-through for test ids, onToggle, ref, aria-labelledby and drag handlers on the details element. */
+  detailsProps?: Omit<ComponentPropsWithRef<"details">, "children" | "className" | "open" | "id">;
+  summaryProps?: Omit<ComponentPropsWithRef<"summary">, "children" | "className" | "title">;
 }) {
-  return <details id={id} aria-label={ariaLabel} data-slot="disclosure" open={defaultOpen || undefined}
+  return <details id={id} aria-label={ariaLabel} data-slot="disclosure" open={defaultOpen || undefined} {...detailsProps}
     className={cx("group min-w-0 border-t border-[var(--lms-canvas-border)]", className)}>
-    <summary aria-label={summaryAriaLabel} title={summaryTitle} style={{minHeight:44}}
+    <summary aria-label={summaryAriaLabel} title={summaryTitle} style={{minHeight:44}} {...summaryProps}
       className={cx(
         preserveSummary
           ? "cursor-pointer list-none focus-ring"

@@ -26,7 +26,7 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
  const total=active.reduce((n,category)=>n+category.affected,0);
  if(loading)return <section aria-label="Needs attention" role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
   <p className="text-sm font-semibold">Checking drives that need attention</p>
-  <div className="mt-3 animate-pulse space-y-3" aria-hidden="true">{[0,1,2].map(i=><div key={i} className="h-7 rounded bg-surface-secondary"/>)}</div>
+  <div className="mt-3 space-y-3" aria-hidden="true">{[0,1,2].map(i=><div key={i} className="h-7 rounded bg-surface-secondary"/>)}</div>
  </section>;
  if(!available)return <section aria-label="Needs attention" role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-error bg-[var(--lms-error-subtle)] p-4 text-sm">
   <span>Couldn't check for anything that needs attention.</span>

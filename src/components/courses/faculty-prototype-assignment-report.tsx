@@ -4,6 +4,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { istIsoDateFormatter, istWeekdayDayMonthFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
+import { Table } from "@/components/ui/table";
 
 type Report=Awaited<ReturnType<typeof getFacultyAssignmentReport>>;
 const istDay=(date:Date)=>istIsoDateFormatter.format(date);
@@ -90,8 +91,7 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
     <TextLink variant="bare" className="faculty-proto-secondary min-h-9 px-3 py-1.5 text-xs"
      href={csvHref}>Download as spreadsheet</TextLink>
    </header>
-   <div className="faculty-proto-table-wrap">
-    <table className="faculty-proto-table rounded-none border-0">
+   <Table>
      <thead><tr><th>Student</th><th>Score</th><th>Handed in</th><th><span className="sr-only">Actions</span></th></tr></thead>
      <tbody>{submissions.map(item=>{
       const graded=item.gradingStatus==="GRADED"&&item.pointsAwarded!==null;
@@ -115,8 +115,7 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
         encodeURIComponent(student.membershipId)}>View student</TextLink></td>
      </tr>):null}
      </tbody>
-    </table>
-   </div>
+    </Table>
    {!submissions.length&&!missingLearners.length?<p className="faculty-proto-subtitle p-5">
     {report.rosterUnavailable?"No known submissions. The roster could not be verified.":"No submissions yet."}</p>:null}
   </section>

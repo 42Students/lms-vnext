@@ -38,6 +38,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter, istTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Course = {
   deliveryId: string;
@@ -869,14 +870,11 @@ export function FacultyAttendanceWorkspace({
                             className={`relative px-3 py-3 text-center ${state.code === "MIXED" ? "partial" : ""}`}
                           >
                             {day.sessions.length > 1 ? (
-                              <details className="relative" onKeyDown={event => {
-                                if (event.key === "Escape") { event.currentTarget.open = false; event.stopPropagation(); }
-                              }} onMouseEnter={event => { event.currentTarget.open = true; }}
-                                onMouseLeave={event => { event.currentTarget.open = false; }}>
-                                <summary className="cursor-pointer list-none focus-ring"
-                                  aria-label={state.label + ". Show session attendance details"}>
+                              <Disclosure title={<>
                                   <StatusBadge tone={tone}>{state.ratio ?? state.code}</StatusBadge>
-                                </summary>
+                                </>} detailsProps={{ onKeyDown: event => {
+                                if (event.key === "Escape") { event.currentTarget.open = false; event.stopPropagation(); }
+                              }, onMouseEnter: event => { event.currentTarget.open = true; }, onMouseLeave: event => { event.currentTarget.open = false; } }} summaryAriaLabel={state.label + ". Show session attendance details"} className="relative" preserveSummary>
                                 <div className="absolute bottom-full left-0 z-(--lms-z-sticky-header) min-w-48 rounded-lg border border-border bg-surface p-2 text-xs shadow-lg">
                                   <Table>
                                     <thead><tr><th scope="col" className="pr-3">Session Time</th><th scope="col">Attendance</th></tr></thead>
@@ -889,7 +887,7 @@ export function FacultyAttendanceWorkspace({
                                     })}</tbody>
                                   </Table>
                                 </div>
-                              </details>
+                              </Disclosure>
                             ) : <StatusBadge tone={tone}>{state.code}</StatusBadge>}
                           </td>
                         );

@@ -9,6 +9,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { istWeekdayDayMonthFormatter } from "@/lib/format-date";
+import { Table } from "@/components/ui/table";
 export type AssessmentRow={
  key:string;kind:"Assignment"|"Quiz";deliveryId:string;title:string;courseCode:string;sectionName:string;
  dueAt:string|null;status:string;handedIn:number;eligible:number|null;toGrade:number|null;
@@ -64,7 +65,7 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
     {courses.map(section=><option value={section.deliveryId} key={section.deliveryId}>{section.label}</option>)}
    </Select>
   </div>
-  <div className="faculty-proto-table-wrap"><table className="faculty-proto-table">
+  <Table>
    <thead><tr><th>Title</th><th>Course · Class</th><th>Due</th><th>Handed in</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead>
    <tbody>{visible.map(item=>{
     const draft=item.status==="DRAFT";
@@ -90,7 +91,7 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
      </div></td>
     </tr>;
    })}</tbody>
-  </table></div>
+  </Table>
   {visible.length===0?<p className="faculty-proto-subtitle rounded-lg border border-[color:var(--lms-border)] p-5">No assessments match these filters.</p>:null}
  </section>;
 }

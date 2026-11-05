@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { Table } from "@/components/ui/table";
 
 type CourseRow = {
  id:string;
@@ -97,8 +98,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
    {(["All","Regular","Elective"] as const).map(option=>
     <Button variant="chip" key={option} type="button" onClick={()=>setKind(option)} aria-pressed={kind===option}>{option==="Elective"?"Electives":option} {counts[option]}</Button>)}
   </div>
-  <div className="faculty-proto-table-wrap">
-   <table className="faculty-proto-table">
+  <Table>
     <thead><tr><th>Course</th><th>Classes</th><th>To do</th><th>Attendance</th><th><span className="sr-only">Open</span></th></tr></thead>
     <tbody>{visible.map(course=><tr key={course.id}>
      <td>{course.classLinks.length===1?<TextLink variant="bare" className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>
@@ -117,8 +117,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
      <td>{course.classLinks.length===1?<TextLink variant="bare" className="faculty-proto-secondary min-h-9 px-3 py-1.5 text-xs" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>Open</TextLink>
       :<span className="text-sm font-semibold text-[color:var(--lms-button-primary)]">Choose class</span>}</td>
     </tr>)}</tbody>
-   </table>
-  </div>
+   </Table>
   {visible.length===0?<div role="status" className="faculty-proto-subtitle rounded-lg border border-[color:var(--lms-border)] p-5">
    {courses.length===0?<p>No teaching assignments found. Please contact your administrator.</p>:
     <p>{q.trim()?"No courses match your search":"No assigned courses match this course type."}</p>}

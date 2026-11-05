@@ -32,7 +32,7 @@ function ProfileLoading() {
     <PageHeader title="Profile"/>
     <div className="rounded-lg border border-border p-5" aria-hidden="true">
       <div className="flex items-center gap-4">
-        <span className="h-16 w-16 shrink-0 animate-pulse rounded-full bg-muted"/>
+        <SkeletonBlock className="h-16 w-16 shrink-0" />
         <div className="w-full space-y-3">
           <SkeletonBlock className="h-5 w-1/3" />
           <SkeletonBlock className="h-4 w-1/2" />

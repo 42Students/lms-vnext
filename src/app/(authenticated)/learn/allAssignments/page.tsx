@@ -24,8 +24,8 @@ function AssignmentsLoading() {
     <div className="min-w-0 max-w-full space-y-4" aria-busy="true" aria-label="Loading assignments">
       <PageHeader title="All Assignments" description="Loading assignments…" />
       <div className="flex flex-wrap gap-2" aria-hidden="true">
-        <span className="h-7 w-32 animate-pulse rounded-lg bg-muted" />
-        <span className="h-7 w-24 animate-pulse rounded-lg bg-muted" />
+        <SkeletonBlock className="h-7 w-32" />
+        <SkeletonBlock className="h-7 w-24" />
       </div>
       <ul className="space-y-3" aria-hidden="true">
         {Array.from({ length: 5 }, (_, index) => (

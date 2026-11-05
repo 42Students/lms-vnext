@@ -22,6 +22,7 @@ import { knownErrorListSchema } from "@/modules/log-alerts/validation";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { formatDateTimeIst } from "@/lib/format-date";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function LockKeyhole({className = ""}: {className?: string}) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" width={26} height={26}
@@ -176,8 +177,7 @@ export default async function TrackerLogsPage({
            </nav> : null}
          </> : <Alert tone="warning">Known errors persistence is not enabled or its migration replay has not been verified. This does not mean there are no errors. Live logging above remains available independently.</Alert>}
        </section>
-       <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-        <summary id="telegram-alert-tools" className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold text-[var(--lms-heading)] md:min-h-9">Telegram alert tools</summary>
+       <Disclosure title="Telegram alert tools" summaryProps={{ id: "telegram-alert-tools" }} className="min-w-0">
         <div className="min-w-0 space-y-3 pt-3">
           {knownErrors ? (
             <TrackerTelegramManualPanel items={items} configured={telegramReady} deploy={deploy} />
@@ -186,7 +186,7 @@ export default async function TrackerLogsPage({
           )}
           {!telegramReady ? <Alert tone="info">Telegram alerts are not configured.</Alert> : null}
         </div>
-      </details>
+      </Disclosure>
     </div>
   );
 }

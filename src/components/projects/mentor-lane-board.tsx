@@ -435,22 +435,18 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     <div className="prototype-mentor-board-list-heading" aria-hidden="true">
       <span>Task</span><span>Assignee</span><span>Sprint</span><span>State</span><span>Points</span>
     </div>
-    {sprintListGroups.map(group=><details key={group.id}
-      className="prototype-mentor-board-sprint-group" open={group.status==="ACTIVE"||group.tasks.some(task=>task.id===focusedId)}
-      onDragOver={event=>{
+    {sprintListGroups.map(group=><Disclosure title={<>
+        <strong>{group.title}</strong>
+        <span>{group.allCount} tasks · {group.status.replaceAll("_"," ")}</span>
+      </>} defaultOpen={group.status==="ACTIVE"||group.tasks.some(task=>task.id===focusedId)} key={group.id} detailsProps={{ onDragOver: event=>{
         if(!readOnly&&!busy&&(group.id==="BACKLOG"||creationSprints.some(row=>row.id===group.id)))
           event.preventDefault();
-      }}
-      onDrop={event=>{
+      }, onDrop: event=>{
         if(readOnly||busy)return;
         event.preventDefault();
         const id=event.dataTransfer.getData("text/plain");
         if(id)void moveToSprint(id,group.id==="BACKLOG"?null:group.id);
-      }}>
-      <summary>
-        <strong>{group.title}</strong>
-        <span>{group.allCount} tasks · {group.status.replaceAll("_"," ")}</span>
-      </summary>
+      } }} preserveSummary>
       {group.tasks.map(task=>{
       const rowSprint=task.sprintId?bySprint.get(task.sprintId):null;
       const canMove=!readOnly&&!busy&&rowSprint?.status==="ACTIVE"&&
@@ -485,7 +481,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       }))}>
       Show 20 more in {group.title} · {group.remaining} remaining
     </Button>:null}
-    </details>)}
+    </Disclosure>)}
   </div>:null}
   <aside className="prototype-mentor-board-detail" aria-label="Selected task details">
     {focused?<>

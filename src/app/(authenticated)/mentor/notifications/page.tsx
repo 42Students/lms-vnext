@@ -53,7 +53,7 @@ function MentorNotificationsLoading() {
     <PageHeader title="Notifications" />
     <div className="space-y-3" aria-hidden="true">
       {[1,2,3].map(value=><div key={value} className="flex items-start gap-3 border-b border-border py-4">
-        <span className="h-9 w-9 shrink-0 animate-pulse rounded-lg bg-muted" />
+        <SkeletonBlock className="h-9 w-9 shrink-0" />
         <div className="w-full space-y-2"><SkeletonBlock className="h-4 w-2/5" />
           <SkeletonBlock className="h-3 w-4/5" /></div>
       </div>)}

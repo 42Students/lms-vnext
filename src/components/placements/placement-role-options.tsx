@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { createNumberFormatter } from "@/lib/safe-format";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type PlacementRoleOptionItem = {
   id: string;
@@ -381,11 +382,9 @@ export function PlacementRoleOptions({
       </div>
 
       {editable ? (
-        <details className="min-w-0 border-t border-border py-4" open={editorOpen}
-          onToggle={event => setEditorOpen(event.currentTarget.open)}>
-          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">
+        <Disclosure title={<>
             {editingId ? "Edit additional role" : "Add another role"}
-          </summary>
+          </>} defaultOpen={editorOpen} detailsProps={{ onToggle: event => setEditorOpen(event.currentTarget.open) }} className="min-w-0">
           <div className="min-w-0 pb-3 pt-2">
             <p className="mb-3 text-xs text-muted-foreground">
               Eligibility and drive rounds remain shared; the application itself is bound to this exact role.
@@ -565,7 +564,7 @@ export function PlacementRoleOptions({
             ) : null}
           </div>
           </div>
-        </details>
+        </Disclosure>
       ) : null}
       <ConfirmDialog
         open={archiveTarget !== null}

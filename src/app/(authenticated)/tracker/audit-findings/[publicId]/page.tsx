@@ -77,8 +77,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
 
     </div>
   </Disclosure>
-  <details aria-labelledby="section-audit-event-history" className="border-b border-[var(--lms-canvas-border)] pb-4">
-   <summary id="section-audit-event-history" className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground md:min-h-9">Audit event history</summary>
+  <Disclosure title="Audit event history" detailsProps={{ "aria-labelledby": "section-audit-event-history" }} summaryProps={{ id: "section-audit-event-history" }}>
    {events.length?<ol aria-label="audit findings entries" className="mt-3 divide-y divide-border border-y border-border text-sm">{events.map(event=>{
     const changes=independentFindingHistoryChanges(event.fromValue,event.toValue);
     return <li key={event.id} className="space-y-2 py-3">
@@ -96,11 +95,10 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
      </dl>:null}
     </li>;
    })}</ol>:<p role="status" className="mt-3 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">No history</p>}
-  </details>
-  <details aria-labelledby="section-fix-commits" className="border-b border-[var(--lms-canvas-border)] pb-4">
-   <summary id="section-fix-commits" className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground md:min-h-9">Fix commits</summary>
+  </Disclosure>
+  <Disclosure title="Fix commits" detailsProps={{ "aria-labelledby": "section-fix-commits" }} summaryProps={{ id: "section-fix-commits" }}>
    {finding.fixCommits.length?<ul className="mt-2 divide-y divide-border border-y border-border">{finding.fixCommits.map(commit=><li key={commit.repo+":"+commit.sha}
     className="break-all py-3 text-sm text-body">{commit.repo} · {commit.sha}</li>)}</ul>:<p role="status" className="mt-2 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">None yet</p>}
-  </details>
+  </Disclosure>
  </div>;
 }

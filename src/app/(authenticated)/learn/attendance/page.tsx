@@ -15,16 +15,17 @@ import {
 } from "@/modules/attendance/learner-service";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type AttendanceParams={month?:string|string[];deliveryId?:string|string[]};
 function AttendanceLoading() {
  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading attendance">
   <PageHeader title="Attendance"/>
-  <div aria-hidden="true" className="flex flex-wrap gap-2"><span className="h-8 w-24 animate-pulse rounded-lg bg-muted"/><span className="h-8 w-32 animate-pulse rounded-lg bg-muted"/></div>
+  <div aria-hidden="true" className="flex flex-wrap gap-2"><SkeletonBlock className="h-8 w-24" /><SkeletonBlock className="h-8 w-32" /></div>
   <div role="presentation" aria-hidden="true" className="overflow-x-auto rounded-lg border border-border">
    <div className="min-w-[500px] space-y-3 p-4">
     {[1,2,3,4,5].map(key=><div key={key} className="grid grid-cols-5 gap-3">
-      {[1,2,3,4,5].map(cell=><span key={cell} className="h-7 animate-pulse rounded bg-muted"/>)}
+      {[1,2,3,4,5].map(cell=><SkeletonBlock key={cell} className="h-7" />)}
     </div>)}
    </div>
   </div>
