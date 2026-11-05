@@ -194,3 +194,12 @@ test("canonical security workflow runs for every pull request and main push",()=
   // Path filtering makes a nominally required check never report on some PRs.
   assert.doesNotMatch(triggers,/^    paths(?:-ignore)?:/m);
 });
+
+/**
+ * SEC-18-002 red-phase enforcement witness.
+ * Deliberately failing ONLY on disposable PR branch to confirm required checks
+ * prevent merging. This block must be removed before review/merge.
+ */
+test("SEC-18-002 red-phase enforcement witness",()=>{
+  assert.fail("Intentional CI failure: required status check must block this PR");
+});
