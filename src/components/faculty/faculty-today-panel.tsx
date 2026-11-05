@@ -28,9 +28,9 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
  return <section className="faculty-proto-today min-w-0 space-y-5">
   <header>
    <p className="faculty-proto-subtitle">{dateLabel}</p>
-   <h1 className="faculty-proto-heading mt-1">
+   <Heading level={1} className="faculty-proto-heading mt-1">
     Good {greeting}{firstName?", "+firstName:""}. {active.length} {active.length===1?"thing needs":"things need"} you.
-   </h1>
+   </Heading>
    <p className="faculty-proto-subtitle mt-1">{nextClass??"Your current classes, grading and deadlines are below."}</p>
   </header>
   <div className="grid min-w-0 items-start gap-[20px] xl:grid-cols-[minmax(0,1fr)_300px]">
@@ -44,7 +44,7 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
       </div>
       <div className="flex shrink-0 flex-wrap items-center gap-2">
        <Link className="faculty-proto-action" href={item.href}>{item.action}</Link>
-       <Button variant="bare" type="button" className="faculty-proto-secondary"
+       <Button variant="secondary" type="button"
         onClick={()=>setLater(ids=>[...ids,item.id])}
         title="Hide for this visit; does not set a reminder">Later</Button>
       </div>
@@ -54,7 +54,7 @@ export function FacultyTodayPanel({tasks,firstName,dateLabel,nextClass,greeting,
      <p className="faculty-proto-subtitle mt-2">Your current teaching priorities are up to date.</p>
      <Link className="faculty-proto-link mt-3 inline-block" href="/teacher/courses">View courses</Link>
     </div>}
-    {later.length>0?<Button variant="bare" type="button" className="mt-4 text-sm font-semibold text-[color:var(--lms-button-primary)] underline"
+    {later.length>0?<Button variant="link" size="inline" type="button" className="mt-4"
      onClick={()=>setLater([])}>Show {later.length} hidden {later.length===1?"item":"items"}</Button>:null}
    </div>
    <aside className="grid min-w-0 gap-4" aria-label="Today's classes and this week">

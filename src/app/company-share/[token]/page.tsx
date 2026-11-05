@@ -38,7 +38,7 @@ export default async function CompanySharePage({
   const canEmailCode=context?await canEmailAuthorizedCompanyShareCode(context,token).catch(()=>false):false;
   return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
   <section className="mx-auto mt-12 min-w-0 max-w-[480px] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
-   <h1 className="mb-4 break-words text-xl font-semibold leading-7 text-[var(--lms-heading)]">Applicants for {result.title}</h1>
+   <Heading level={1} size="xl" className="mb-4 break-words leading-7 text-[var(--lms-heading)]">Applicants for {result.title}</Heading>
    <p className="mb-4 break-words text-sm leading-[22px] text-body">Shared with {result.companyName}. Enter the six-character code the placement cell sent you.</p>
    {access==="invalid"?<p role="alert" className="mb-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-error)] bg-[color-mix(in_srgb,var(--lms-error)_6%,transparent)] px-3 py-2 text-sm text-error">That code did not work, or this share is no longer available.</p>:null}
    <ShareCodeForm action={"/company-share/"+encodeURIComponent(token)+"/access"}/>
@@ -91,7 +91,7 @@ export default async function CompanySharePage({
   <div className="relative z-[2] min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
   <section aria-label="Shared applicant summary" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-    <h1 className="min-w-0 break-words text-xl font-semibold leading-7 text-[var(--lms-heading)]">{result.total.toLocaleString("en-IN")} applicants for {result.title}</h1>
+    <Heading level={1} size="xl" className="min-w-0 break-words leading-7 text-[var(--lms-heading)]">{result.total.toLocaleString("en-IN")} applicants for {result.title}</Heading>
     <ButtonLink variant="secondary" href={publicApplicantExportHref(token,result.search)}>Download list</ButtonLink>
    </div>
    {result.shortlistBy?<p role="status" className="flex items-start gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm text-body leading-[22px]"><span aria-hidden="true" className="font-bold text-[var(--lms-info)]">ⓘ</span><span>Please shortlist by {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.shortlistBy))}.</span></p>:null}

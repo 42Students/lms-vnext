@@ -271,7 +271,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         <span className="text-xs uppercase tracking-wide text-muted-foreground">Issue reported</span>
         <StatusBadge tone="success">Saved</StatusBadge>
       </div>
-      <h1 className="font-semibold text-2xl leading-8 text-[var(--lms-heading)]">{created}</h1>
+      <Heading level={1} size="2xl" className="leading-8 text-[var(--lms-heading)]">{created}</Heading>
       <p className="text-sm text-body leading-[22px]">The issue is saved. You can continue testing immediately.</p>
       <p className="text-sm text-muted-foreground" role="status">Screenshots: {screenshots.filter(row=>row.state==="UPLOADED").length}
         {" "}of {screenshots.length} attached{uploading?" · Uploading…":""}.</p>

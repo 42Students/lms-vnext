@@ -9,6 +9,8 @@ import {resolveRequestTenant} from "@/modules/auth/request-tenant";
 import {getPublicCollegeBranding} from "@/modules/colleges/branding-service";
 import {effectiveCollegeSignInCapabilities} from "@/modules/colleges/public-signin-policy-service";
 import {LoginForm} from "@/components/auth/login-form";
+import {TextLink} from "@/components/ui/text-link";
+import {ButtonLink} from "@/components/ui/button-link";
 
 vi.mock("next/headers",()=>({headers:vi.fn()}));
 vi.mock("next/navigation",()=>({
@@ -91,7 +93,7 @@ describe("chat-16 real public sign-in page security and tenant rendering",()=>{
   expect(textOf(page)).toContain("This address may be correct");
   expect(textOf(page)).toContain("its settings didn't load");
   expect(elements(page).some(el=>el.type===LoginForm)).toBe(false);
-  const links=elements(page).filter(el=>el.type==="a");
+  const links=elements(page).filter(el=>el.type==="a"||el.type===TextLink||el.type===ButtonLink);
   expect(links.some(el=>(el.props as {href?:string}).href==="https://42lms.com/login")).toBe(true);
  });
  it("UX-chat16-auth-recovery-07 explains expired, revoked and legacy handoff sessions without exposing tokens",async()=>{

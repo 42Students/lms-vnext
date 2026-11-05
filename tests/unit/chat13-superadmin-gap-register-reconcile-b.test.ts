@@ -20,7 +20,7 @@ describe("chat-13 Super Admin Projects reconciliation contracts",()=>{
  it("SA-placements-projects-66 preserves scoped Super Admin Projects source behavior",()=>{
   const file=read("src/components/projects/project-admin-readiness-page.tsx");
   expect(file).toContain("listCollegeReadinessReleases");
-  expect(file).toContain(">Releases</h3>");
+  expect(file).toContain(">Releases</Heading>");
  });
  it("SA-placements-projects-67 preserves scoped Super Admin Projects source behavior",()=>{
   const file=read("src/components/projects/project-readiness-override-form.tsx");

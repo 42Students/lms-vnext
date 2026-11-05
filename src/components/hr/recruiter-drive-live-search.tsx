@@ -30,8 +30,7 @@ export function RecruiterDriveLiveSearch({initialQuery,currentHref}:{
         aria-label="Search drives by role"
         placeholder="Search by role" className="min-h-11 w-full md:min-h-9"/>
     </label>
-    {query?<Button variant="bare" type="button" onClick={()=>setQuery("")}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
+    {query?<Button variant="link" size="inline" type="button" onClick={()=>setQuery("")}
       aria-label="Clear drive search">Clear</Button>:null}
   </div>;
 }

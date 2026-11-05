@@ -56,7 +56,7 @@ export function RecruiterJoiningReportForm({
    <Checkbox className="mt-1" checked={confirm} onChange={event=>setConfirm(event.target.checked)}/>
    Send this report to the college placement cell for verification. It will not overwrite the official outcome.
   </label>
-  <Button variant="bare" type="submit" disabled={!ready} className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface-secondary px-4 text-sm font-semibold text-primary-text disabled:cursor-not-allowed disabled:opacity-40">
+  <Button variant="secondary" size="md" type="submit" disabled={!ready}>
    Send joining report
   </Button>
  </form>;

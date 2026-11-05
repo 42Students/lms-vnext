@@ -368,7 +368,7 @@ export function PlacementEmployerRelationships({
               <span role="columnheader">Contact</span>
               <span role="columnheader">Website</span>
               <span role="columnheader" aria-sort={driveSort==="none"?"none":driveSort==="desc"?"descending":"ascending"}>
-               <Button variant="bare" type="button" className="inline-flex min-h-11 items-center gap-1 font-semibold text-link underline md:min-h-9"
+               <Button variant="link" size="inline" type="button"
                  onClick={()=>setDriveSort(current=>current==="desc"?"asc":"desc")}>
                 Drives <span aria-hidden="true">{driveSort==="asc"?"↑":driveSort==="desc"?"↓":"↕"}</span>
                </Button>

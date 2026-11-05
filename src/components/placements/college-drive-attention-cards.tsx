@@ -91,9 +91,9 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
         </Link>
        </li>)}
       </ul>
-      {rows.length>3?<Button variant="bare" type="button" aria-expanded={Boolean(expanded[category])}
+      {rows.length>3?<Button variant="link" size="inline" type="button" aria-expanded={Boolean(expanded[category])}
         onClick={()=>setExpanded(current=>({...current,[category]:!current[category]}))}
-        className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-link underline md:min-h-9">
+        className="mt-3">
         {expanded[category]?"Show less":"+"+(rows.length-3)+" more"}
       </Button>:null}
     </section>;

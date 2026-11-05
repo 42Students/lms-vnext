@@ -126,7 +126,7 @@ export function MarketingHero({eyebrow,title,description,showExploreLink=true,su
   <div className={"mx-auto grid max-w-[1180px] gap-8 px-5 "+(home?"lg:grid-cols-[1.2fr_.8fr] lg:items-center":"")}>
    <div className="min-w-0 max-w-[760px] space-y-6">
     <p className="text-sm font-semibold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">{/^For enterprises$/i.test(eyebrow)?"For Enterprises":/^For universities$/i.test(eyebrow)?"For Universities":eyebrow}</p>
-    <h1 id="marketing-hero-heading" className="max-w-[760px] break-words text-3xl md:text-5xl font-bold leading-[1] tracking-tight text-[var(--lms-heading)]">{title}</h1>
+    <Heading level={1} size="3xl" id="marketing-hero-heading" className="max-w-[760px] break-words md:text-5xl leading-[1] tracking-tight text-[var(--lms-heading)]">{title}</Heading>
     <p className="max-w-[720px] break-words text-base leading-7 text-[var(--lms-body-text)] md:text-lg md:leading-8">{description}</p>
     {!audience?<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
      <Link href="/request-demo" className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--lms-primary)] px-6 font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-primary-hover)] focus-ring">Request a Demo <span aria-hidden="true" className="ml-2">↗</span></Link>

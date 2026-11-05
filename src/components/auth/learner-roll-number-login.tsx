@@ -70,8 +70,8 @@ export function LearnerRollNumberLogin() {
       <Button type="submit" disabled={busy} className="w-full">
         {busy ? "Verifying…" : "Verify and sign in"}
       </Button>
-      <Button variant="bare" type="button" disabled={busy}
-        className="block text-sm text-primary-text underline"
+      <Button variant="link" size="inline" type="button" disabled={busy}
+        className="block"
         onClick={() => { setAttempt(null); setCode(""); setMessage(""); }}>
         Request another code
       </Button>

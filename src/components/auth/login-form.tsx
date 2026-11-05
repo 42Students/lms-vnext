@@ -11,6 +11,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {safeReturnTo} from "@/lib/return-to";
 import {loginRetryWindowIst} from "@/modules/auth/login-retry-time-model";
 import { TextLink } from "@/components/ui/text-link";
+import { Heading } from "@/components/ui/heading";
 
 type Channel = "PHONE" | "EMAIL";
 
@@ -505,9 +506,9 @@ export function LoginForm({
 
   return (
     <div className="login-form w-full max-w-md" data-legacy-superadmin={legacySuperAdmin||undefined} data-step={accountChoices?"account":attempt ? "code" : "contact"} role="region" aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
-      <h1 className="m-0 text-[30px] font-semibold leading-10 tracking-tight text-[var(--lms-heading)]">
+      <Heading level={1} size="3xl" className="m-0 leading-10 tracking-tight text-[var(--lms-heading)]">
         {accountChoices?"Choose your account":legacySuperAdmin?(attempt?"OTP sent to your Mobile Number":"Mobile Number"):(attempt?"Enter your code":"Sign in")}
-      </h1>
+      </Heading>
       <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
         {accountChoices?"Available accounts for your verified sign-in. Select a college and role to continue.":legacySuperAdmin?(attempt?"Use the code sent to your registered mobile number.":"Enter your registered mobile number to receive an OTP."):
          attempt ? "We sent a code to "+attempt.maskedContact+".":

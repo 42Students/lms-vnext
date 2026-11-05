@@ -7,6 +7,7 @@ import { friendlyReference } from "@/lib/friendly-error";
 import styles from "./public-screen.module.css";
 import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
+import { Heading } from "@/components/ui/heading";
 
 /** Shared error, forbidden, offline and maintenance screen; copy and recovery stay intact. */
 export function GracefulScreen({ title, message, homeHref = "/dashboard", retry, requestId, homeLabel = "Go to home" }: {
@@ -49,9 +50,9 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
         <section className={styles["card"]} aria-labelledby="public-screen-title">
           {legacyStatus?<div className={styles["legacyHeading"]}>
             <span className={styles["statusNumeral"]} aria-hidden="true">{statusCode}</span>
-            <h1 id="public-screen-title" className={styles["legacyTitle"]}>
+            <Heading level={1} id="public-screen-title" className={styles["legacyTitle"]}>
               {statusCode===404?"Page Not Found":"Server Error"}
-            </h1>
+            </Heading>
           </div>:<>
             <div aria-hidden="true" className={styles["icon"]}>!</div>
             <PageHeader id="public-screen-title" title={title} />

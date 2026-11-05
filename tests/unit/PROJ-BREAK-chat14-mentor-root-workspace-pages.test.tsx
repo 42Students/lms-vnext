@@ -43,6 +43,7 @@ vi.mock("@/components/ui/page-header",()=>({
 }));
 vi.mock("@/components/ui/button",()=>({
  Button:({children}:{children:ReactNode})=><button>{children}</button>,
+ buttonClasses:()=>"",
 }));
 vi.mock("@/components/ui/input",()=>({Input:()=> <input aria-label="Search"/>}));
 vi.mock("@/components/ui/select",()=>({

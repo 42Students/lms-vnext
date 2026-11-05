@@ -24,7 +24,7 @@ describe("G2-15-002-030: college placement learner resume privacy",()=>{
   expect(route).toContain("grantCollegeStudentPlacementResume(context,membershipId)");
   expect(route).toContain("NextResponse.redirect(grant.url,{status:303");
   expect(route).toContain('"Referrer-Policy":"no-referrer"');
-  expect(page).toContain('selectedProfile?.resumeAvailable?<a');
+  expect(page).toContain('selectedProfile?.resumeAvailable?<TextLink');
   expect(page).toContain("View verified resume");
   expect(page).toContain("Resume replacement is learner-owned");
   expect(page).toContain('href={"/api/placements/college/students/"+encodeURIComponent(selectedStudent.membershipId)+"/resume"}');

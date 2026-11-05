@@ -86,9 +86,9 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
      <tbody className="divide-y divide-border">
       {filtered.map(row=><tr key={row.id} className={focused?.id===row.id?"bg-primary-subtle":undefined}>
        <td className="px-3 py-3">
-        <Button variant="bare" type="button" onClick={()=>select(row.id)}
+        <Button variant="link" size="inline" type="button" onClick={()=>select(row.id)}
          aria-current={focused?.id===row.id?"true":undefined}
-         className="min-h-11 text-left font-semibold text-link underline underline-offset-2 md:min-h-9">
+         className="text-left">
          {row.student??"Name unavailable"}
         </Button>
         <span className="block break-words text-xs text-muted-foreground">
@@ -160,14 +160,12 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
        Only submitted pending or held applications in a published drive can be reviewed.
       </p>}
      <nav aria-label="Review next applicant" className="flex flex-wrap gap-2 border-t border-border pt-3">
-      <Button variant="bare" type="button" disabled={selectedIndex<=0}
-       onClick={()=>{const next=filtered[selectedIndex-1];if(next)select(next.id);}}
-       className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-body disabled:opacity-50 md:min-h-9">
+      <Button variant="secondary" size="md" type="button" disabled={selectedIndex<=0}
+       onClick={()=>{const next=filtered[selectedIndex-1];if(next)select(next.id);}}>
        Previous
       </Button>
-      <Button variant="bare" type="button" disabled={selectedIndex<0||selectedIndex>=filtered.length-1}
-       onClick={()=>{const next=filtered[selectedIndex+1];if(next)select(next.id);}}
-       className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-body disabled:opacity-50 md:min-h-9">
+      <Button variant="secondary" size="md" type="button" disabled={selectedIndex<0||selectedIndex>=filtered.length-1}
+       onClick={()=>{const next=filtered[selectedIndex+1];if(next)select(next.id);}}>
        Skip to next
       </Button>
      </nav>

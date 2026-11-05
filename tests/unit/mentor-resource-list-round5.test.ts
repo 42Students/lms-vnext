@@ -18,7 +18,7 @@ describe("mentor resource list parity",()=>{
   expect(source("src/components/projects/project-resource-open-link.tsx")).toContain("This resource has an invalid address.");
   const opener=source("src/components/projects/project-resource-open-link.tsx");
   expect(opener).toContain("safeProjectExternalHref(url)");
-  expect(opener).toContain('<a href={safe} rel="noopener noreferrer"');
+  expect(opener).toContain('<TextLink href={safe} rel="noopener noreferrer"');
   expect(opener).not.toContain("window.open(");
   expect(opener).not.toContain('target="_blank"');
  });

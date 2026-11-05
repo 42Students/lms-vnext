@@ -33,8 +33,7 @@ export function RecruiterCompanyChangeRequest({collegeId,companyName,kind,teamma
     <Checkbox checked={ack} onChange={event=>setAck(event.target.checked)}/>
     This request does not immediately change verified company information or teammate access.
    </label>
-   <Button variant="bare" type="submit" disabled={!ack||message===null}
-    className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface-secondary px-3 text-sm font-semibold text-primary-text disabled:cursor-not-allowed disabled:opacity-40">
+   <Button variant="secondary" size="md" type="submit" disabled={!ack||message===null}>
     Send to placement cell
    </Button>
   </form>

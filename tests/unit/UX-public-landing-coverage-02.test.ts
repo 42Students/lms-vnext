@@ -14,15 +14,17 @@ describe("chat-16 public route responsive and accessible state coverage",()=>{
   expect(header).toContain('href="/request-demo"');
   expect(kit).toContain("min-h-11");
   expect(kit).toContain("min-w-0");
-  expect(kit).toContain("focus-visible:outline-2");
+  expect(kit).toContain("focus-ring");
  });
  it("UX-request-demo-02 is keyboard reachable and does not collect unprotected form data",()=>{
   const page=read("src/app/request-demo/page.tsx");
   expect(page).toContain("<MarketingLayout>");
   expect(page).toContain('const DEMO_MAILTO = "mailto:"');
   expect(page).toContain('href={DEMO_MAILTO}');
-  expect(page).toContain("min-h-11");
-  expect(page).toContain("focus-visible:outline-2");
+  // The demo action is the shared ButtonLink: touch height and focus ring come from Button.
+  expect(page).toContain('<ButtonLink variant="secondary" href={DEMO_MAILTO}');
+  expect(read("src/components/ui/button.tsx")).toContain("max-md:min-h-11");
+  expect(read("src/components/ui/button.tsx")).toContain("focus-ring");
   expect(page).toContain("Email us to book a demo");
   expect(page).not.toContain("<form");
   expect(page).not.toContain('method="post"');

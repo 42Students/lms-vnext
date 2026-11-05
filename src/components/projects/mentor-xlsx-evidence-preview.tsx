@@ -65,8 +65,7 @@ export function MentorXlsxEvidencePreview({href,name}:{
    only when every populated data row contains a numeric value. They are not
    interpreted as grades, submissions or official trial results.
   </p>
-  <Button variant="bare" type="button" disabled={loading} onClick={()=>void load()}
-    className="rounded border border-border px-3 py-2 text-sm font-semibold disabled:opacity-60">
+  <Button variant="secondary" size="md" type="button" disabled={loading} onClick={()=>void load()}>
     {loading?"Reading spreadsheet…":summary?"Reload spreadsheet summary":"Load spreadsheet summary"}
   </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

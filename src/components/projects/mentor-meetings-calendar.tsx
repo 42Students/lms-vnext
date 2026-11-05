@@ -378,8 +378,8 @@ export function MentorMeetingsCalendar({
           </small>
         </label>
         <Heading level={2}>{listScope==="ASKED"?"Meeting requests":"Upcoming"}</Heading>
-        {upcoming.length ? upcoming.map(item=><Button variant="bare" key={item.id}
-          type="button" className="prototype-mentor-meeting-option"
+        {upcoming.length ? upcoming.map(item=><Button variant="menu-item" key={item.id}
+          type="button"
           aria-pressed={selected?.id===item.id}
           onClick={()=>setSelectedId(item.id)}>
           <span>{dateLabel(item.startsAt,viewerTimeZone)}<small>{clockLabel(item.startsAt,viewerTimeZone)??"Time pending"}</small></span>
@@ -388,8 +388,8 @@ export function MentorMeetingsCalendar({
           </span>
         </Button>):<p className={styles.empty}>No upcoming meetings.</p>}
         <Heading level={2}>{listScope==="NOTES_MISSING"?"Past · notes to finish":"Past and cancelled"}</Heading>
-        {visiblePast.length ? visiblePast.map(item=><Button variant="bare" key={item.id}
-          type="button" className="prototype-mentor-meeting-option"
+        {visiblePast.length ? visiblePast.map(item=><Button variant="menu-item" key={item.id}
+          type="button"
           aria-pressed={selected?.id===item.id}
           onClick={()=>setSelectedId(item.id)}>
           <span>{dateLabel(item.startsAt,viewerTimeZone)}</span>

@@ -111,7 +111,7 @@ describe("UX-kit-scroll-motion owner invisible-scrollbar contracts", () => {
     for(const key of ["--lms-motion-fast: 150ms","--lms-motion-base: 250ms",
       "lms-drawer-in","lms-sheet-in","lms-toast-in","lms-skeleton-shimmer",
       "@media (prefers-reduced-motion: reduce)"]){expect(css).toContain(key);}
-    expect(ui("selection-controls")).not.toContain("duration-[var(--lms-motion-fast)]");
+    expect(ui("selection-controls")).not.toContain("duration-[120ms]");
   });
   it("UX-kit-scroll-motion-09 observes every direct scroll content child, not only the first",()=>{
     const cue=ui("scroll-cue");

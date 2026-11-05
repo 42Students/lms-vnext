@@ -5,8 +5,8 @@ describe("UX-tpo-drive-day-roundid-no-shows-01 /tpo/drive-day/[roundId]/no-shows
   it("preserves legacy UI and signed-off phone and contrast contracts",()=>{
     expect(source).not.toContain("text-[#26bac7]");
     // High-contrast foreground is correct when paired with a primary background.
-    expect(source).toContain("border-primary bg-primary");
-    expect(source).toContain("text-on-primary");
+    expect(source).toContain('<ButtonLink variant="primary"');
+    expect(readFileSync(new URL("../../src/components/ui/button.tsx",import.meta.url),"utf8")).toContain("bg-[var(--lms-button-primary)] text-[var(--lms-on-primary)]");
     expect(source).toContain("min-h-11");
     expect(source).toContain("md:min-h-9");
     expect(source).toMatch(/<PageHeader\b|<h1\b|redirect\(/);

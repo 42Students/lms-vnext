@@ -62,9 +62,9 @@ export function LearnerPlacementJobDetail({
   const summary = learnerJobDetailSummary(items);
   if (!summary) return <section role="alert" aria-live="assertive"
     aria-labelledby="drive-unavailable" className="space-y-4 p-5">
-    <h1 id="drive-unavailable" tabIndex={-1} className="text-lg font-semibold">
+    <Heading level={1} size="lg" id="drive-unavailable" tabIndex={-1}>
       This drive is unavailable
-    </h1>
+    </Heading>
     <p className="text-sm text-body">
       This drive may be hidden or the eligibility preview could not be loaded.
       No application was submitted or changed.

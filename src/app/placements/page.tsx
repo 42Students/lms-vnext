@@ -9,6 +9,7 @@ import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,formatPublicPlacementMetric}
 import { getPublicPlacementStatistics } from "@/modules/placements/public-page/read-service";
 import { publicPlacementTableReady } from "@/modules/placements/public-page/readiness";
 import { readOptionalPublicPlacementData } from "@/modules/placements/public-page/optional-read-model";
+import { Heading } from "@/components/ui/heading";
 
 /** Public route: never loads private placements, identities, or employer contacts.
  * A verified public publication producer and code delivery are still required
@@ -80,9 +81,9 @@ export default async function PublicPlacementsPage() {
       <main data-testid="placements.public" className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
         <section className="min-w-0 rounded-[8px] border border-border bg-surface p-5 shadow-none sm:p-6"
           aria-labelledby="placements-public-heading">
-          <h1 id="placements-public-heading" className="m-0 break-words text-[24px] font-semibold leading-tight text-[color:var(--lms-heading)] sm:text-[30px]">
+          <Heading level={1} size="2xl" id="placements-public-heading" className="m-0 break-words leading-tight text-[color:var(--lms-heading)] sm:text-[30px]">
             {college?.collegeName??"College placements"}
-          </h1>
+          </Heading>
           {published&&content?.about ? (
             <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-body">
               {content.about}

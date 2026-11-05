@@ -284,7 +284,7 @@ export function TpoCompaniesToday({
      </div>
      <div className={styles.actions}>
       <Link href={"/tpo/companies/"+encodeURIComponent(selectedCompany.companyId)} className={styles.primary}>Review company trust on its record</Link>
-      <Button variant="bare" type="button" onClick={laterAndNext} className={styles.secondary}>Later &amp; next</Button>
+      <Button variant="secondary" type="button" onClick={laterAndNext}>Later &amp; next</Button>
      </div>
      <p className={styles.helper}>Reviewing this company does not automatically verify it or change recruiter access. Later &amp; next changes selection only.</p>
     </div>:selectedReply?<div className={styles.replyDetail} data-testid="tpo.today.reply-detail">
@@ -300,7 +300,7 @@ export function TpoCompaniesToday({
      <div className={styles.actions}>
       <Link href={"/tpo/messages?tab=recruiters&status=REPLY&thread="+encodeURIComponent(selectedReply.id)}
        className={styles.primary}>{selectedReply.accessEnded?"Open history":"Answer in Messages"}</Link>
-      <Button variant="bare" type="button" onClick={laterAndNext} className={styles.secondary}>Later &amp; next</Button>
+      <Button variant="secondary" type="button" onClick={laterAndNext}>Later &amp; next</Button>
      </div>
      <p className={styles.helper}>Open Messages to reply. Merely selecting this item never sends email or marks a message handled.</p>
     </div>:null}
@@ -317,8 +317,8 @@ export function TpoCompaniesToday({
      <div className={styles.context}><span className={styles.eyebrow}>{leadInfo?.stage?"RECRUITER · "+leadInfo.stage.replaceAll("_"," "):"RECORDED FOLLOW-UP"}</span>
        <strong>{current.note?.trim()||"A recorded recruiter follow-up is due."}</strong></div>
      <p className={styles.sub}>Due {when(current.dueAt)}. Review the full recruiter record for company trust and verification before changing access.</p>
-     <div className={styles.actions}><Button variant="bare" type="button" disabled={pending} className={styles.secondary} onClick={()=>setConfirm("TOMORROW")}>Tomorrow</Button>
-      <Button variant="bare" type="button" disabled={pending} className={styles.primary} onClick={laterAndNext}>Later &amp; next</Button></div>
+     <div className={styles.actions}><Button variant="secondary" type="button" disabled={pending} onClick={()=>setConfirm("TOMORROW")}>Tomorrow</Button>
+      <Button variant="primary" type="button" disabled={pending} onClick={laterAndNext}>Later &amp; next</Button></div>
      <p className={styles.helper}>Later &amp; next moves to the next item without changing the current reminder.</p>
      <div className={styles.facts}><div><span className={styles.eyebrow}>RECRUITER STATUS</span><p>{leadInfo?.stage?leadInfo.stage.replaceAll("_"," "):"See recruiter history"}</p></div>
       <div><span className={`${styles.eyebrow} uppercase`}>Company</span><p>{current.companyName??"Not linked"} · Review company trust on its record</p></div></div>
@@ -351,9 +351,9 @@ export function TpoCompaniesToday({
          placeholder="What happened? This is saved in the recruiter history."/>
      </label>
      <div className={styles.actions}>
-      <Button variant="bare" type="button" disabled={pending||!note.trim()} className={styles.primary}
+      <Button variant="primary" type="button" disabled={pending||!note.trim()}
        onClick={()=>setConfirm("DONE")}>Done & next</Button>
-      <Button variant="bare" type="button" disabled={pending} className={styles.secondary}
+      <Button variant="secondary" type="button" disabled={pending}
        onClick={()=>setConfirm("TOMORROW")}>Tomorrow, 10 AM</Button>
       {contact?<TextLink variant="bare" href={contact} className={styles.secondary}>Call recruiter ↗</TextLink>:null}
      </div>

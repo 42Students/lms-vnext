@@ -119,7 +119,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
      className="mt-3 inline-flex min-h-11 items-center break-all text-sm md:min-h-9">Company website</TextLink>:null}
  </aside>:<aside className="min-w-0 rounded-xl border border-border bg-surface p-4 text-sm text-body">
   <p>Choose a company in the table to see its summary.</p>
-  <Button variant="bare" type="button" className="mt-2 min-h-11 font-semibold text-link underline"
+  <Button variant="link" size="inline" type="button" className="mt-2"
    onClick={()=>{setFocusedKey(null);setDismissed(false);}}>Show first company</Button>
  </aside>}
  </div>;

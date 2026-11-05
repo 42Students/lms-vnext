@@ -75,8 +75,7 @@ export function LearnerSaveDriveButton({
   {error?<span role="alert" className="max-w-56 text-xs font-semibold text-error">{error}</span>:null}
   {!known?<span className="inline-flex flex-wrap items-center gap-2 text-xs text-body">
     Saved drives are temporarily unavailable; retry loading.
-    <Button variant="bare" type="button" onClick={()=>router.refresh()}
-      className="min-h-11 font-semibold text-link underline md:min-h-9">Retry</Button>
+    <Button variant="link" size="inline" type="button" onClick={()=>router.refresh()}>Retry</Button>
   </span>:null}
  </span>;
 }

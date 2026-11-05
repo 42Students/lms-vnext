@@ -5,7 +5,7 @@ import {safeLearnerResourceMaterialHref} from "@/modules/courses/lesson-resource
 describe("UX-LEARN-RESOURCE-10 mobile and keyboard resource material workflow",()=>{
  it("keeps all interactive material inputs and actions at least 44px high",()=>{
   const source=readFileSync("src/components/courses/lesson-resource-materials-control.tsx","utf8");
-  expect(source).toContain('className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline');
+  expect(source).toContain('className="inline-flex min-h-11 items-center text-xs md:min-h-9">Open</TextLink>');
   expect(source).toContain('className="min-h-11 md:min-h-9" disabled={busy}');
   expect(source.match(/className="min-h-11 md:min-h-9"/g)?.length).toBeGreaterThanOrEqual(4);
   expect(source).not.toContain("min-h-10");

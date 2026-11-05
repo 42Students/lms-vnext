@@ -45,7 +45,7 @@ describe("legacy College Admin full sidebar + group href contract",()=>{
     const nav=readFileSync(join(process.cwd(),"src/components/projects/project-admin-nav.tsx"),"utf8");
     expect(nav).toContain('if (basePath === "/college/projects") return null;');
     const collegeNav=readFileSync(join(process.cwd(),"src/components/college/college-legacy-group-tabs.tsx"),"utf8");
-    expect(collegeNav).toContain('<h2 className="sr-only">{group.title}</h2>');
+    expect(collegeNav).toContain('<Heading level={2} className="sr-only">{group.title}</Heading>');
   });
   it("links all six formerly orphaned pages from an authorized College page",()=>{
     const anchors=[

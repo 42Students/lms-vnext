@@ -118,7 +118,7 @@ export default async function MentorProjectPage({
             {workspace.project.title.trim().slice(0,2).toUpperCase() || "42"}
           </span>
           <div className="min-w-0">
-            <h1>{workspace.project.title}</h1>
+            <Heading level={1}>{workspace.project.title}</Heading>
             <p>{workspace.project.courseLabel || "Project"} · {studentCount} {studentCount===1?"student":"students"} · <strong>{projectStatus}</strong></p>
           </div>
           <div className="prototype-mentor-header-actions">

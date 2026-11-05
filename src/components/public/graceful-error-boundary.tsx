@@ -104,7 +104,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       window.location.assign(new URL("/",window.location.origin).href);
     };
     return <main role="alert" className="flex min-h-dvh w-full min-w-0 flex-col items-center justify-center bg-[color:var(--lms-neutral-50)] p-8 text-center">
-      <h1 className="m-0 text-[64px] font-bold leading-none text-[color:var(--lms-primary-hover)]">500</h1>
+      <Heading level={1} className="m-0 text-[64px] leading-none text-[color:var(--lms-primary-hover)]">500</Heading>
       <Heading level={2} size="2xl" className="mb-2 mt-4 leading-[32px] text-[color:var(--lms-neutral-900)]">Server Error</Heading>
       <p className="mb-8 max-w-[420px] text-sm leading-[22px] text-[color:var(--lms-text-muted)]">
         Something went wrong on our side. Please try again in a moment.

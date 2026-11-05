@@ -637,7 +637,7 @@ export function FacultyAttendanceWorkspace({
         </Button>
       </div>:null}
       <section aria-label="Attendance toolbar" className="border-b border-border pb-4">
-        <h1 className="sr-only">Attendance</h1>
+        <Heading level={1} className="sr-only">Attendance</Heading>
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
           <p className="text-sm font-semibold text-foreground">
             {workspace.course.courseName} · {workspace.course.sectionName} · {workspace.course.academicPeriodName}

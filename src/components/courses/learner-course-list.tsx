@@ -393,9 +393,9 @@ export function LearnerCourseList({
                 }}
               />
               {query ? (
-                <Button variant="bare" type="button" aria-label="Clear course search"
+                <Button variant="ghost" size="icon" type="button" aria-label="Clear course search"
                   onClick={() => {setQuery("");setSearchWasTruncated(false);setVisibleLimit(PAGE_SIZE);}}
-                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted focus-ring">×</Button>
+                  className="absolute right-2 top-1/2 -translate-y-1/2">×</Button>
               ) : null}
             </div>
           </div>

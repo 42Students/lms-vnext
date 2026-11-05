@@ -50,7 +50,7 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     expect(list).toContain("ProjectResourceOpenLink");
     const link=read("src/components/projects/project-resource-open-link.tsx");
     expect(link).toContain("safeProjectExternalHref(url)");
-    expect(link).toContain('<a href={safe} rel="noopener noreferrer"');
+    expect(link).toContain('<TextLink href={safe} rel="noopener noreferrer"');
     expect(link).not.toContain("window.open(");
     expect(link).not.toContain('target="_blank"');
   });
@@ -92,7 +92,7 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     const page=read("src/app/(authenticated)/mentor/calendar/page.tsx");
     const calendar=read("src/components/projects/mentor-meetings-calendar.tsx");
     expect(page).toContain("Every scheduled meeting across your assigned projects, in one place.");
-    expect(calendar).toContain(">Join link</a>");
+    expect(calendar).toContain(">Join link</TextLink>");
     expect(calendar).not.toContain("Awaiting your response in the project workspace.");
     expect(calendar).toContain("No upcoming meetings.");
     expect(calendar).toContain("No past meetings yet.");

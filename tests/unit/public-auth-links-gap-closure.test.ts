@@ -88,7 +88,7 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
   expect(page).toContain("Email us to book a demo");
   expect(page).toContain('const DEMO_EMAIL = "hello@42lms.com"');
   expect(page).toContain('const DEMO_MAILTO = "mailto:" + DEMO_EMAIL');
-  expect(page).toContain("<a href={DEMO_MAILTO}");
+  expect(page).toContain('<ButtonLink variant="secondary" href={DEMO_MAILTO}');
   expect(page).not.toContain("<form");
  });
  it("PUB-auth-public-67 mobile privacy URL serves the historical policy with contact and effective date",()=>{

@@ -40,7 +40,7 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
  });
  it("TPO-batches-40 uses the expected legacy import heading and confirm button",()=>{
   const page=source("src/components/tpo/tpo-batch-eligibility-import.tsx");
-  expect(page).toContain(">Import eligibility</h2>");
+  expect(page).toContain(">Import eligibility</Heading>");
   expect(page).toContain('preview?"Confirm matched decisions":"Preview import"');
   expect(page).toContain("<ConfirmDialog open={discardPending}");
   expect(page).not.toContain(">Confirm import</button>");

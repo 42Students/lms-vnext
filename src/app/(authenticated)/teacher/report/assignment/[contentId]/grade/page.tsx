@@ -43,7 +43,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
    <Link className="faculty-proto-secondary" href={"/teacher/report/assignment/"+encodeURIComponent(assignment.id)+
      "?deliveryId="+encodeURIComponent(assignment.deliveryId)}>Class report</Link>
   </div>
-  <div><h1 className="faculty-proto-heading">{assignment.title}</h1>
+  <div><Heading level={1} className="faculty-proto-heading">{assignment.title}</Heading>
    <p className="faculty-proto-subtitle">{assignment.courseCode} · {assignment.sectionName} · {assignment.dueAt?"due "+stamp(assignment.dueAt):"no due date"} · {assignment.maxPoints} points · {metrics.submitted}{percent===null?"":" of "+percent} handed in, {ungraded.length} to grade</p>
   </div>
   <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(280px,0.38fr)_minmax(0,1fr)]">

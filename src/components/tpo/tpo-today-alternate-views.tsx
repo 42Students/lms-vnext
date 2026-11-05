@@ -89,7 +89,7 @@ export function TpoTodayAlternateViews({
   {view==="brief"?<header className="flex flex-wrap items-center justify-between gap-4">
    <div>
     <p className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">{formatDay(now,"long")} · {scope==="MINE"?"Yours and unassigned":"Everyone's work"}</p>
-    <h1 className="mt-1 text-[24px] font-bold leading-tight">{taskCount} things need you today</h1>
+    <Heading level={1} size="2xl" className="mt-1 leading-tight">{taskCount} things need you today</Heading>
    </div>
    <Link className="inline-flex min-h-11 items-center rounded-lg bg-[color:var(--lms-button-primary)] px-5 text-[13px] font-bold text-[color:var(--lms-on-primary)]" href={startHref}>Start · {taskCount} things</Link>
   </header>:null}

@@ -288,7 +288,7 @@ export function PublicRecruiterJoinForm({
                   </label>
                   <div className="flex min-w-0 flex-col items-stretch gap-2">
                     <Button type="submit" loading={pending} className="w-full">Join {college} placements</Button>
-                    <Button variant="bare" type="button" disabled={pending} onClick={()=>void sendCode()} className="min-h-11 w-full px-2 text-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover disabled:opacity-50 md:min-h-9">Send a new code</Button>
+                    <Button variant="link" size="inline" type="button" disabled={pending} onClick={()=>void sendCode()} className="w-full text-center">Send a new code</Button>
                   </div>
                 </>
               )}

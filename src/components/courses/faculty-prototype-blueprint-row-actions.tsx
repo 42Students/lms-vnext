@@ -73,8 +73,8 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
   {selectedEditor.type==="CONTENT"
    ?<FacultyContentEditor item={selectedEditor.item} compact/>
    :<FacultyAssessmentEditor assessment={selectedEditor.item} compact/>}
-  {archivePossible?<Button variant="bare" type="button"
-   className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-[color:var(--lms-border)] bg-surface text-lg text-[color:var(--lms-text-body)] hover:border-[color:var(--lms-error-text)] hover:text-[color:var(--lms-error-strong)] focus-ring"
+  {archivePossible?<Button variant="secondary" size="md" type="button"
+   className="min-w-9"
    aria-label={"Remove "+item.title} title={"Archive "+item.title}
    disabled={busy||unknown} onClick={()=>{setError(null);setConfirm(true);}}>×</Button>:null}
   <ConfirmDialog open={confirm}
@@ -86,7 +86,7 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
    {error?<p role="alert" className="text-sm text-[color:var(--lms-error-text)]">{error}</p>:null}
   </ConfirmDialog>
   {error&&!confirm?<p role="alert" className="max-w-44 text-xs text-[color:var(--lms-error-text)]">{error}</p>:null}
-  {unknown?<Button variant="bare" type="button" className="text-xs font-semibold text-[color:var(--lms-button-primary)] underline"
+  {unknown?<Button variant="link" size="inline" type="button"
    onClick={()=>window.location.reload()}>Reload to verify</Button>:null}
  </div>;
 }

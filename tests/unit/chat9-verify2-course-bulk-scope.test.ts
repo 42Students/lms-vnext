@@ -14,7 +14,7 @@ describe("Super Admin course visibility and cross-page selection",()=>{
   expect(source).toContain('const storageKey="lms:college-bulk-course-selection:"+collegeId');
  });
  it("uses legacy course-level visibility wording and preserves staff records",()=>{
-  expect(source).toContain('>Visible to students</h3>');
+  expect(source).toContain('>Visible to students</Heading>');
   expect(source).toContain("Off hides the selected courses and their published lessons from students.");
   expect(source).toContain("The course records remain active for staff.");
   expect(source).toContain("COURSE_AND_PUBLISHED_CONTENT_VISIBILITY");

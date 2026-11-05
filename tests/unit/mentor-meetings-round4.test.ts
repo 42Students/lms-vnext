@@ -7,7 +7,7 @@ const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("mentor meetings and attention",()=>{
  it("MEN-projects-meetings-67 matches meeting subtitle and join action",()=>{
   expect(source("src/app/(authenticated)/mentor/calendar/page.tsx")).toContain("Every scheduled meeting across your assigned projects, in one place.");
-  expect(source("src/components/projects/mentor-meetings-calendar.tsx")).toContain(">Join link</a>");
+  expect(source("src/components/projects/mentor-meetings-calendar.tsx")).toContain(">Join link</TextLink>");
  });
  it("MEN-projects-meetings-68 marks same-day ended scheduled meeting MISSED",()=>{
   const m={id:"m",projectId:"p",projectTitle:"P",projectStatus:"ACTIVE",title:"M",status:"SCHEDULED" as const,

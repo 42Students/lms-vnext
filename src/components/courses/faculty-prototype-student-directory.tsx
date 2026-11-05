@@ -77,7 +77,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
      className={"faculty-proto-pill"+(view==="BEHIND"?" !border-[color:var(--lms-button-primary)] !text-[color:var(--lms-button-primary)]":"")}>
       Behind {completion?.behindTotal??"—"}</Button>
    </div>
-   <Button variant="bare" className="faculty-proto-secondary shrink-0" aria-label="Download roster CSV"
+   <Button variant="secondary" className="shrink-0" aria-label="Download roster CSV"
     type="button" onClick={exportCsv} disabled={!students.length}>Download list</Button>
   </div>
   <div className="faculty-proto-table-wrap"><table className="faculty-proto-table">

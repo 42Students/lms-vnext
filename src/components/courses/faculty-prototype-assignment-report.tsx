@@ -46,7 +46,7 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
  return <section aria-label="Faculty prototype assignment report" className="space-y-4">
   <Link className="faculty-proto-link" href="/teacher/assessments">‹ Assignments &amp; quizzes</Link>
   <header className="flex flex-wrap items-end justify-between gap-3">
-   <div><h1 className="faculty-proto-heading">{assignment.title?.trim()||"Untitled assignment"}</h1>
+   <div><Heading level={1} className="faculty-proto-heading">{assignment.title?.trim()||"Untitled assignment"}</Heading>
     <p className="faculty-proto-subtitle mt-1">{assignment.courseCode} · {assignment.sectionName} · {assignment.dueAt?
       "due "+dayLabel(assignment.dueAt):"No due date"}</p>
    </div>

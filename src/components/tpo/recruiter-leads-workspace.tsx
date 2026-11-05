@@ -777,9 +777,8 @@ export function RecruiterLeadsWorkspace({
 
   const needsPanel=(
           <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
-            <Button variant="bare" type="button" aria-expanded={needsExpanded} aria-controls="engage-needs-content"
-              onClick={()=>setNeedsExpanded(open=>!open)}
-              className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary-text underline focus-ring md:min-h-9">
+            <Button variant="link" size="inline" type="button" aria-expanded={needsExpanded} aria-controls="engage-needs-content"
+              onClick={()=>setNeedsExpanded(open=>!open)}>
               Needs doing <span aria-hidden="true">{needsExpanded?"▴":"▾"}</span>
             </Button>
             <div id="engage-needs-content" hidden={!needsExpanded} className="space-y-2">
@@ -1243,7 +1242,7 @@ export function RecruiterLeadsWorkspace({
              onDismiss={()=>setFocusedRecruiterId("")}/>:
              <aside className="min-w-0 rounded-xl border border-border bg-surface p-4 text-sm text-body">
               <p>Select a recruiter in the roster to see the next action.</p>
-              <Button variant="bare" type="button" className="mt-2 min-h-11 font-semibold text-link underline"
+              <Button variant="link" size="inline" type="button" className="mt-2"
                onClick={()=>setFocusedRecruiterId(null)}>Show first recruiter</Button>
              </aside>}
             </div>

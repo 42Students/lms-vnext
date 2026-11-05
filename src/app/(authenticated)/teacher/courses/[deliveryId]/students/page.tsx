@@ -48,7 +48,7 @@ export default async function FacultyCourseStudentsPage({
     if(error instanceof CoursesServiceError||error instanceof AuthorizationError||
        error instanceof ZodError)throw error;
     return <div className="min-w-0 space-y-5">
-      <h1 className="sr-only">Students</h1>
+      <Heading level={1} className="sr-only">Students</Heading>
       <Heading level={2} size="xl" className="leading-7 text-[var(--lms-heading)]">Class list</Heading>
       <Alert tone="error">
         <strong>We couldn&apos;t load the class roster. Check your connection and try again.</strong>
@@ -66,7 +66,7 @@ export default async function FacultyCourseStudentsPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-5">
-      <h1 className="sr-only">Students</h1>
+      <Heading level={1} className="sr-only">Students</Heading>
       <p className="sr-only">{delivery.courseName} · {delivery.sectionName} · {delivery.academicPeriodName}</p>
       <FacultyPrototypeStudentDirectory
         learners={roster} signals={signalResult} deliveryId={delivery.deliveryId}/>

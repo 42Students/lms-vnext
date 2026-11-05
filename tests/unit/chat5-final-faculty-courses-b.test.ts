@@ -40,7 +40,7 @@ describe("chat-5 final sprint: teaching surface and discussion parity",()=>{
   expect(blueprint).toContain("<details");
   expect(blueprint).toContain('<summary className="min-h-11 cursor-pointer');
   expect(blueprint).toContain("+ Add content");
-  expect(blueprint).toContain("<h2");
+  expect(blueprint).toContain("<Heading level={2}");
  });
  it("FAC-courses-R03 shows assigned Credits and Instructor in the course overview even when descriptive text is empty",()=>{
   const workspace=src("src/components/courses/faculty-course-workspace.tsx");

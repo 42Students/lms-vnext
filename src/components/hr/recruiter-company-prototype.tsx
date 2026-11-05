@@ -33,7 +33,7 @@ export function RecruiterCompanyPrototype({
   </nav>:null}
   <header className={styles.head}>
     <p>In {collegeName}</p>
-    <h1>{companyName}{verified?<span className={styles.verified}>✓ Verified</span>:null}</h1>
+    <Heading level={1}>{companyName}{verified?<span className={styles.verified}>✓ Verified</span>:null}</Heading>
     <p>What {collegeName} sees about your company, your team here, and your hiring at {collegeName}.</p>
   </header>
   <div className={styles.grid}>

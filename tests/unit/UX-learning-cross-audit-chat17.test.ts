@@ -115,7 +115,7 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     expect(p).toContain("Copy the destination below to try another browser.");
     expect(p).not.toContain('target="_blank"');
     expect(p).toContain("showFallback");
-    expect(p).toContain("focus-visible:outline-2");
+    expect(p).toContain("focus-ring");
   });
   it("UX-learn-profile-confirm-03 protects seven dirty/delete flows with shared confirmation (LX-10)", () => {
     const p = readComponent("profile/learner-profile-workspace.tsx");
@@ -139,7 +139,7 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     expect(p).toContain("setDraft(\"\")");
     expect(p).not.toContain('role="dialog"');
     expect(p).toContain("min-h-11");
-    expect(p).toContain("text-base font-semibold text-foreground");
+    expect(p).toContain('size="base" className="text-foreground"');
   });
   it("UX-learn-live-class-03 disables expired meeting but uses WebView-safe join (LX-12)", () => {
     const p=readComponent("courses/learner-live-class-link.tsx");

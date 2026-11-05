@@ -27,7 +27,7 @@ describe("UX-college-roster-data-tables-01 responsive roster and faculty detail"
   });
   it("/college/faculty/[membershipId] retains every course and assignment history attribute",()=>{
     const s=read("faculty/[membershipId]");
-    expect(s).toContain('>Faculty teaching assignments</h2>');
+    expect(s).toContain('>Faculty teaching assignments</Heading>');
     expect(s).toContain('caption="Persisted teaching assignments"');
     expect(s).toMatch(/mobilePriority:\s*"primary"/);
     expect(s).toContain("item.offeringId");

@@ -136,9 +136,9 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
  return <section aria-label="Faculty prototype attendance" className="space-y-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div className="flex flex-wrap gap-2" role="group" aria-label="Attendance view">
-    <Button variant="bare" type="button" className="faculty-proto-pill" aria-pressed={view==="mark"}
+    <Button variant="chip" type="button" aria-pressed={view==="mark"}
      onClick={()=>setView("mark")}>Mark attendance</Button>
-    <Button variant="bare" type="button" className="faculty-proto-pill" aria-pressed={view==="month"}
+    <Button variant="chip" type="button" aria-pressed={view==="month"}
      onClick={()=>setView("month")}>This month</Button>
    </div>
   </div>
@@ -169,7 +169,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
      <label className="sr-only" htmlFor="faculty-attendance-search">Find a student by name</label>
      <Input id="faculty-attendance-search" value={search} onChange={e=>setSearch(e.target.value)}
       placeholder="Find a student by name" className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm"/>
-     <Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>setMarks(new Map(scopeRecords.map(s=>[s.membershipId,"PRESENT" as const])))}
+     <Button variant="secondary" type="button" onClick={()=>setMarks(new Map(scopeRecords.map(s=>[s.membershipId,"PRESENT" as const])))}
       disabled={!writable||!scopeRecords.length}>Mark everyone present</Button>
      <Link className="faculty-proto-secondary" href={base+"?sessionId="+encodeURIComponent(selected.id)+"&schedule=1#faculty-attendance-scheduling"}>Schedule a class</Link>
     </div>
@@ -214,8 +214,8 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
     <p className="faculty-proto-subtitle">Showing {visible.length} of {scopeRecords.length}.
      {unmarked>0?" "+unmarked+" unmarked; each learner must be explicitly marked before saving.":""}</p>
     <div className="flex flex-wrap gap-2">
-     {outcomeUncertain?<Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>router.refresh()}>Refresh attendance</Button>:null}
-     <Button variant="bare" type="button" className="faculty-proto-action" disabled={!writable||unmarked!==0||!changed}
+     {outcomeUncertain?<Button variant="secondary" type="button" onClick={()=>router.refresh()}>Refresh attendance</Button>:null}
+     <Button variant="primary" type="button" disabled={!writable||unmarked!==0||!changed}
       onClick={beforeSubmit}>{submitting?"Submitting…":selected.attendanceStatus==="MARKED"?"Submit correction":"Submit attendance"}</Button>
     </div>
    </footer>
@@ -228,8 +228,8 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
     <p className="faculty-proto-subtitle my-3">Save {markedPresent} present and {markedAbsent} absent marks for the complete roster?
      {selected.attendanceStatus==="MARKED"?" This creates an audited correction.":""}</p>
     <div className="flex justify-end gap-2">
-     <Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>setConfirming(false)}>Cancel</Button>
-     <Button variant="bare" type="button" className="faculty-proto-action" onClick={()=>void submit()}>Confirm and save</Button>
+     <Button variant="secondary" type="button" onClick={()=>setConfirming(false)}>Cancel</Button>
+     <Button variant="primary" type="button" onClick={()=>void submit()}>Confirm and save</Button>
     </div>
    </div>
   </div>:null}

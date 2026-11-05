@@ -6,6 +6,7 @@ import type {FacultyCourseListRow} from "./faculty-course-list";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type CourseRow = {
  id:string;
@@ -73,7 +74,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
  return <section aria-label="Courses in the new Faculty prototype" className="space-y-5">
   <div className="flex flex-wrap items-center justify-between gap-4">
    <div className="min-w-0">
-    <h1 className="faculty-proto-heading">Courses</h1>
+    <Heading level={1} className="faculty-proto-heading">Courses</Heading>
     <p className="faculty-proto-subtitle mt-1">{counts.All} {counts.All===1?"course":"courses"} you teach {period==="all"?"across periods":"this semester"}, {new Set(scope.flatMap(c=>c.deliveries)).size} classes. <span className="sr-only">{totalAssignments} teaching assignment records.</span></p>
    </div>
    <div className="flex min-w-0 flex-wrap gap-2">
@@ -93,8 +94,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
   </div>
   <div className="flex flex-wrap gap-2" role="group" aria-label="Course type">
    {(["All","Regular","Elective"] as const).map(option=>
-    <Button variant="bare" key={option} type="button" onClick={()=>setKind(option)} aria-pressed={kind===option}
-     className="faculty-proto-pill">{option==="Elective"?"Electives":option} {counts[option]}</Button>)}
+    <Button variant="chip" key={option} type="button" onClick={()=>setKind(option)} aria-pressed={kind===option}>{option==="Elective"?"Electives":option} {counts[option]}</Button>)}
   </div>
   <div className="faculty-proto-table-wrap">
    <table className="faculty-proto-table">

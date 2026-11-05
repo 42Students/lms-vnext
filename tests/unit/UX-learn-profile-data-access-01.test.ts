@@ -17,7 +17,7 @@ describe("UX-learn-profile-data-access-01 /learn/profile/data-access",()=>{
   expect(page).toContain('href="/learn/profile"');
   expect(page).toContain("min-h-11");
   expect(page).toContain("<PageHeader");
-  expect(page).toContain("<h2");
+  expect(page).toContain("<Heading level={2}");
   expect(page).toContain('role="status"');
   expect(page).toContain("No recorded membership changes to display.");
   expect(page).toContain('timeZone:"Asia/Kolkata"');

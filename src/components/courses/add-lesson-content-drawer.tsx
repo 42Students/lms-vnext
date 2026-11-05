@@ -177,10 +177,10 @@ export function AddLessonContentDrawer({
         >
           {visibleCategories.map((category, index) => (
             <li key={category}>
-              <Button variant="bare"
+              <Button variant="secondary" size="md"
                 type="button"
                 aria-label={`Add ${category}`}
-                className="flex w-full min-h-11 items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm font-semibold text-body transition-colors hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring"
+                className="flex w-full"
                 onClick={() => setSelectedCategory(category)}
               >
                 <span className="shrink-0 w-5 text-xs font-bold text-muted-foreground">
@@ -211,9 +211,9 @@ export function AddLessonContentDrawer({
           >
             Open Quiz Builder
           </Link>
-          <Button variant="bare"
+          <Button variant="link" size="inline"
             type="button"
-            className="block text-sm font-semibold text-primary-text underline"
+            className="block"
             onClick={() => setSelectedCategory(null)}
           >
             ← Back to content types
@@ -239,9 +239,9 @@ export function AddLessonContentDrawer({
           >
             Open Assignment Builder
           </Link>
-          <Button variant="bare"
+          <Button variant="link" size="inline"
             type="button"
-            className="block text-sm font-semibold text-primary-text underline"
+            className="block"
             onClick={() => setSelectedCategory(null)}
           >
             ← Back to content types
@@ -253,9 +253,8 @@ export function AddLessonContentDrawer({
       {authoringMode === "YOUTUBE" && selectedCategory === "Videos" ? (
         <div className="min-w-0">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-            <Button variant="bare"
+            <Button variant="link" size="inline"
               type="button"
-              className="text-sm font-semibold text-primary-text underline"
               onClick={() => setSelectedCategory(null)}
             >
               ← Back to content types
@@ -294,9 +293,9 @@ export function AddLessonContentDrawer({
       {authoringMode === "RESOURCE" ? (
         <div className="min-w-0">
           {selectedCategory !== null ? (
-            <Button variant="bare"
+            <Button variant="link" size="inline"
               type="button"
-              className="mb-4 text-sm font-semibold text-primary-text underline"
+              className="mb-4"
               onClick={() => setSelectedCategory(null)}
             >
               ← Back to content types
@@ -321,9 +320,9 @@ export function AddLessonContentDrawer({
       {authoringMode === "LIVE_CLASS" ? (
         <div className="min-w-0">
           {selectedCategory !== null ? (
-            <Button variant="bare"
+            <Button variant="link" size="inline"
               type="button"
-              className="mb-4 text-sm font-semibold text-primary-text underline"
+              className="mb-4"
               onClick={() => setSelectedCategory(null)}
             >
               ← Back to content types

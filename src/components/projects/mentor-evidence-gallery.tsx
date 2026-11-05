@@ -52,8 +52,7 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
       </p>:null}
       {pdfSrc?<div role="group" aria-label="PDF page and zoom"
         className="flex flex-wrap items-center gap-2">
-        <Button variant="bare" type="button" disabled={pdfPage<=1}
-          className="rounded border border-border px-3 py-2"
+        <Button variant="secondary" size="md" type="button" disabled={pdfPage<=1}
           onClick={()=>setPdfPage(old=>Math.max(1,old-1))}>
           Previous page
         </Button>
@@ -66,8 +65,7 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
                 setPdfPage(Math.min(999,Math.max(1,value)));
             }}/>
         </label>
-        <Button variant="bare" type="button" disabled={pdfPage>=999}
-          className="rounded border border-border px-3 py-2"
+        <Button variant="secondary" size="md" type="button" disabled={pdfPage>=999}
           onClick={()=>setPdfPage(old=>Math.min(999,old+1))}>
           Next page
         </Button>

@@ -8,6 +8,7 @@ import {
 import {recruiterTodayHeadline} from "@/modules/placements/recruiter-today-headline-model";
 import styles from "./recruiter-today-prototype.module.css";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type WeekEvent={id:string;kind:string;title:string;jobTitle:string;href:string;when:string};
 type Waiting={id:string;title:string;detail:string;href?:string};
@@ -59,7 +60,7 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
   return <div className={styles.root} data-testid="recruiter.today">
     <header className={styles.heading}>
       <span className={styles.meta}>{props.dateLabel}</span>
-      <h1>{headline}</h1>
+      <Heading level={1}>{headline}</Heading>
       {subtitle?<span className={styles.subtitle}>{subtitle}</span>:null}
     </header>
     <div className={styles.layout}>

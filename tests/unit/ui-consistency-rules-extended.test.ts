@@ -26,7 +26,7 @@ describe("ui consistency rules: extended categories", () => {
     expect(rules("src/x.css", "a{box-shadow:var(--lms-shadow-sm)}")).toEqual([]);
     expect(rules("src/x.css", "a{z-index:70}b{z-index:var(--lms-z-modal)}c{z-index:1}")).toEqual(["z-index-literal"]);
     expect(rules("src/x.css", "a{color:var(--lms-heading)!important}")).toEqual(["important"]);
-    expect(rules("src/x.tsx", 'className="!w-20 focus:!outline-2" const x = a && !b')).toEqual(["important", "important"]);
+    expect(rules("src/x.tsx", 'className="!w-20 hover:!px-2" const x = a && !b')).toEqual(["important", "important"]);
     expect(rules("src/x.css", "a{transition:color .2s ease}b{transition:color var(--lms-motion-fast) var(--lms-motion-ease)}")).toEqual(["motion-literal"]);
     expect(rules("src/x.css", "@keyframes spin{from{opacity:0}}")).toEqual(["keyframes-local"]);
     expect(rules("src/styles/motion.css", "@keyframes spin{from{opacity:0}}")).toEqual([]);

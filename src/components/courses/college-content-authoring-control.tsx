@@ -517,7 +517,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   {dependencyErrors.length>0?<div role="alert" className="rounded border border-warning p-3 text-sm">
    <p className="font-semibold">Some authoring options are unavailable</p>
    <ul className="list-disc pl-5">{dependencyErrors.map(item=><li key={item}>{item} unavailable</li>)}</ul>
-   <Button variant="bare" type="button" className="mt-2 font-semibold text-link underline" onClick={()=>router.refresh()}>Retry missing options</Button>
+   <Button variant="link" size="inline" type="button" className="mt-2" onClick={()=>router.refresh()}>Retry missing options</Button>
   </div>:null}
   <div className="flex flex-wrap items-center gap-3">
    <Heading level={2} className={kind==="LIVE_CLASS"||kind==="RESOURCE"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Videos":kind==="RESOURCE"?"Resources":"Live Classes"}</Heading>
@@ -528,7 +528,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <p>Create a course offering, learning path and lesson before adding content.</p>
     <p>Start from Course, then choose an active Offering and add a Lesson. The content editor becomes available as soon as a lesson exists.</p>
     <Link href="/college/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Go to Courses</Link>
-    <Button variant="bare" type="button" onClick={()=>router.refresh()} className="ml-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry course and lesson options</Button>
+    <Button variant="link" size="inline" type="button" onClick={()=>router.refresh()} className="ml-3">Retry course and lesson options</Button>
   </div>}
   {open&&(kind!=="YOUTUBE"||videoMode==="YOUTUBE") ? kind==="RESOURCE"?
     <Dialog open={open} onOpenChange={value=>{if(!value)closeEditor();}}
@@ -626,9 +626,8 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     }}/>
     Include all types when reordering this Lesson (other types cannot be edited here)
    </label>
-   <Button variant="bare" type="button" disabled={existingBusy} onClick={()=>
-     loadExisting(new URLSearchParams(window.location.search))}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+   <Button variant="link" size="inline" type="button" disabled={existingBusy} onClick={()=>
+     loadExisting(new URLSearchParams(window.location.search))}>
      {existingBusy?"Refreshing…":"Retry / Refresh content list"}
    </Button>
    {existingError?<p role="alert" className="text-sm text-error">{existingError}</p>:null}

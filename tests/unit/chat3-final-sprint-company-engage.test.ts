@@ -17,7 +17,7 @@ describe("chat-3 final sprint Engage company navigation and communication",()=>{
   expect(workspace).toContain("Create drive");
   expect(workspace).toContain("Add contact");
   expect(workspace).toContain("<TpoCompanyTeamConversation");
-  expect(workspace).toContain(">Timeline</h2>");
+  expect(workspace).toContain(">Timeline</Heading>");
  });
  it("TPO-companies-15 verifies scoped legacy company workflows",()=>{
   expect(read("src/components/tpo/recruiter-leads-workspace.tsx")).toContain("/api/placements/tpo/companies/communication");

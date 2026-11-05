@@ -54,7 +54,7 @@ describe("learner/projects round-two gap verification",()=>{
   const s=source("src/components/projects/project-resource-open-link.tsx");
   expect(s).toContain("This resource has no link or file attached yet.");
   expect(s).toContain("This resource has an invalid address.");
-  expect(s).toContain("<a href={safe}");
+  expect(s).toContain("<TextLink href={safe}");
   expect(s).not.toContain("window.open(");
   expect(s).not.toContain('target="_blank"');
   expect(s).toContain('rel="noopener noreferrer"');

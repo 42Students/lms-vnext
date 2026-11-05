@@ -30,6 +30,7 @@ import {
   listLearnerCourseDeliveries,
   listLearnerCourseInstructors,
 } from "@/modules/courses/learner-course-service";
+import { Heading } from "@/components/ui/heading";
 
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -291,9 +292,9 @@ export default async function LearnerCourseTabPage({
     <div role="region" aria-label="Course workspace" className={"learn-projects learn-course-layout learn-course-layout--" + activeTab + " min-w-0 max-w-full space-y-4"}>
       <header data-slot="page-header" className="mb-2 flex w-full min-w-0 flex-col gap-1 border-b border-[var(--lms-canvas-border)] pb-4 md:mb-4">
         <div className="flex w-full min-w-0 items-baseline justify-between gap-4">
-          <h1 className="m-0 min-w-0 max-w-full shrink break-words text-[20px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-heading)] md:text-[30px]">
+          <Heading level={1} size="xl" className="m-0 min-w-0 max-w-full shrink break-words leading-[1.3] tracking-[-0.02em] text-[var(--lms-heading)] md:text-[30px]">
             {activeTab === "roadmap" ? "Learning Path" : courseTitle}
-          </h1>
+          </Heading>
           <Link
             href="/learn/courses"
             className="inline-flex shrink-0 min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:bg-[var(--lms-canvas-muted)] focus-ring"

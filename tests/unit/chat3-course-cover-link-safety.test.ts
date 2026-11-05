@@ -19,8 +19,8 @@ describe("legacy course cover link safety",()=>{
  it("renders only validated links and gives bad legacy covers an accessible fallback",()=>{
   const page=readFileSync("src/components/courses/admin-course-overview.tsx","utf8");
   expect(page).toContain("courseThumbnailUrlSchema.safeParse(course.thumbnailUrl)");
-  expect(page).toContain("<a href={safeCover}");
-  expect(page).toContain("<img src={safeCover}");
+  expect(page).toContain('<TextLink variant="bare" href={safeCover}');
+  expect(page).toContain("<Img src={safeCover}");
   expect(page).toContain('aria-label="Course preview unavailable"');
   expect(page).not.toContain('course.thumbnailUrl?.startsWith("https://")');
  });

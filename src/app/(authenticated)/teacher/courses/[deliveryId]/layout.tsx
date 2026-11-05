@@ -10,6 +10,7 @@ import { FacultyCourseTabNavigation } from "@/components/courses/faculty-course-
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import { legacyFacultyCourseRouteIntent } from "@/modules/courses/faculty-course-navigation";
 import { TextLink } from "@/components/ui/text-link";
+import { Heading } from "@/components/ui/heading";
 
 export default async function FacultyCourseTabLayout({
   children,
@@ -68,7 +69,7 @@ export default async function FacultyCourseTabLayout({
        <Link href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-[color:var(--lms-button-primary)] hover:underline">
         ‹ Courses
        </Link>
-       <h1 className="faculty-proto-heading mt-1">{active.courseName}</h1>
+       <Heading level={1} className="faculty-proto-heading mt-1">{active.courseName}</Heading>
        <p className="faculty-proto-subtitle mt-1">
         {active.courseCode}
         {active.cohortName?" · "+active.cohortName:""}

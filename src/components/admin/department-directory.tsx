@@ -58,8 +58,8 @@ export function DepartmentDirectory({
             <Input id="department-directory-search" type="search" placeholder="Search departments"
               value={search} className="min-h-11 w-full pr-12 md:min-h-9"
               onChange={event=>{setSearch(event.target.value);setPage(1);}}/>
-            {search?<Button variant="bare" type="button" title="Clear search" aria-label="Clear search" onClick={()=>{setSearch("");setPage(1);}}
-              className="absolute right-2 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:text-foreground">×</Button>:
+            {search?<Button variant="ghost" size="icon" type="button" title="Clear search" aria-label="Clear search" onClick={()=>{setSearch("");setPage(1);}}
+              className="absolute right-2 top-1/2 -translate-y-1/2">×</Button>:
               <span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">⌕</span>}
           </div>
           {filtered.length?<ButtonLink variant="secondary" href={exportHref} download="departments.csv">

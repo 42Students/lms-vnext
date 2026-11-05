@@ -98,9 +98,9 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
       </thead>
       <tbody className="divide-y divide-border">
        {rows.map(row=><tr key={row.id} className={selected?.id===row.id?"bg-primary-subtle":undefined}>
-        <td className="p-3"><Button variant="bare" type="button" onClick={()=>setSelectedId(row.id)}
+        <td className="p-3"><Button variant="link" size="inline" type="button" onClick={()=>setSelectedId(row.id)}
          aria-current={selected?.id===row.id?"true":undefined}
-         className="min-h-11 text-left font-semibold text-link underline md:min-h-9">
+         className="text-left">
           {row.name}
          </Button>
          <span className="block break-words text-xs text-muted-foreground">

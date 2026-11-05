@@ -47,8 +47,7 @@ export function MentorSprintDetailTable({projectId,rows}:{
           {releases.map(value=><option key={value} value={value}>{value}</option>)}
         </Select>
       </label>
-      {(status!=="ALL"||release!=="ALL")?<Button variant="bare" type="button"
-        className="min-h-11 text-sm font-semibold text-link underline"
+      {(status!=="ALL"||release!=="ALL")?<Button variant="link" size="inline" type="button"
         onClick={()=>{setStatus("ALL");setRelease("ALL");}}>Clear filters</Button>:null}
     </div>
     {!matching.length?<p role="status">No sprints match these filters.</p>:

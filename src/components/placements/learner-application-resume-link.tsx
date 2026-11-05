@@ -32,9 +32,9 @@ export function LearnerApplicationResumeLink({applicationId}:{applicationId:stri
    ?<TextLink href={state.url}>
       View scanned application resume (temporary private link) ↗
     </TextLink>
-   :<Button variant="bare" type="button" onClick={()=>void load()}
+   :<Button variant="link" size="inline" type="button" onClick={()=>void load()}
       disabled={state.status==="LOADING"}
-      className="min-h-11 text-left font-semibold text-primary-text underline">
+      className="text-left">
       {state.status==="LOADING"?"Checking resume…":"Check current application resume"}
     </Button>}
   {state.status==="ABSENT"?<span role="status" className="block">

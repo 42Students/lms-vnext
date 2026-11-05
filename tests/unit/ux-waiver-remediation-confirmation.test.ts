@@ -13,7 +13,8 @@ describe("UX expiring legacy waiver remediation",()=>{
   expect(read("src/components/projects/super-admin-template-overview-editor.tsx")).toContain('className="mt-1 w-full min-h-16"');
   expect(read("src/components/projects/super-admin-template-resource-editor.tsx")).toContain('className="mt-1 w-full min-h-20"');
   expect(read("src/components/projects/college-project-summary-editor-full.tsx")).toContain('className="mt-1 w-full min-h-24"');
-  expect(read("src/components/announcements/announcement-feed.tsx")).toContain("min-h-11 items-center rounded-md border border-border");
+  expect(read("src/components/announcements/announcement-feed.tsx")).toContain('<ButtonLink variant="secondary"');
+  expect(read("src/components/ui/button.tsx")).toContain("max-md:min-h-11");
   expect(read("src/components/placements/placement-drive-controls.tsx")).toContain("flex min-h-11 items-center text-sm");
  });
 });

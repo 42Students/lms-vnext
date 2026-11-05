@@ -34,7 +34,7 @@ export default async function MentorLearnerVisibilityPreview({
      ← Back to Mentor project
    </Link>
    <div>
-     <h1 className="text-2xl font-semibold">Student-visible project preview</h1>
+     <Heading level={1} size="2xl">Student-visible project preview</Heading>
      <p className="mt-2 text-sm text-muted-foreground">
        This is a read-only visibility check, not a signed-in student's account.
        Personal assignments, learner permissions, inbox state and external provider

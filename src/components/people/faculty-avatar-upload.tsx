@@ -107,7 +107,7 @@ export function FacultyAvatarUpload({initialVersion,initials}:{initialVersion:nu
     onChange={event=>{const file=event.currentTarget.files?.[0];
      if(file)void upload(file);event.currentTarget.value="";}}/>
   </label>
-  <Button variant="bare" type="button" className="text-sm font-semibold text-link underline"
+  <Button variant="link" size="inline" type="button"
    aria-expanded={showLink} onClick={()=>setShowLink(value=>!value)}>Import from image link</Button>
   {showLink?<div className="flex max-w-sm flex-col gap-2">
    <label className="text-xs font-semibold" htmlFor="faculty-avatar-link">HTTPS image URL</label>

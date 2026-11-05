@@ -12,6 +12,7 @@ import {getSuperAdminTenantLifecycleDetail} from "@/modules/colleges/admin-tenan
 import {can} from "@/modules/permissions/policy";
 import { getSuperAdminCollegeBrandingPreview } from "@/modules/colleges/admin-branding-preview-service";
 import { collegeIdSchema } from "@/modules/colleges/validation";
+import { Heading } from "@/components/ui/heading";
 
 export default async function SuperAdminCollegeBrandingPage({
   params,
@@ -23,7 +24,7 @@ export default async function SuperAdminCollegeBrandingPage({
   const { collegeId } = await params;
   if (!collegeIdSchema.safeParse(collegeId).success) {
     return <section className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
-      <h1 className="text-lg font-semibold text-foreground">Look and feel</h1>
+      <Heading level={1} size="lg" className="text-foreground">Look and feel</Heading>
       <p role="status" className="mt-3 text-sm font-semibold text-body">Pick a college first</p>
       <p className="mt-1 text-sm text-body">
         Branding belongs to one college. Choose a college in the header so changes can&apos;t land on the wrong one.

@@ -114,16 +114,16 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
      "Class-only content reordering needs verified ordering support. Use the full editor for publishing and sequencing tools."}
    </p>
    {dirty?<div className="flex flex-wrap gap-2">
-    <Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>{
+    <Button variant="secondary" type="button" onClick={()=>{
      setOrdered([...baseline.current]);setMessage(null);
     }} disabled={saving}>Reset</Button>
-    <Button variant="bare" type="button" className="faculty-proto-action" onClick={save}
+    <Button variant="primary" type="button" onClick={save}
      disabled={!canChange}>{saving?"Saving…":"Save order"}</Button>
    </div>:null}
   </div>
   {message?<p role={message.ok?"status":"alert"} className={"mb-3 rounded-lg p-3 text-sm "+
    (message.ok?"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success-strong)]":"bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-strong)]")}>{message.text}</p>:null}
-  {outcomeUnknown?<Button variant="bare" type="button" className="faculty-proto-secondary mb-3"
+  {outcomeUnknown?<Button variant="secondary" type="button" className="mb-3"
    onClick={()=>window.location.reload()}>Reload lesson to verify saved order</Button>:null}
   <ol key={localVersion} className="divide-y divide-[color:var(--lms-neutral-100)]" aria-label="Lesson content order">
    {displayed.map(item=>{

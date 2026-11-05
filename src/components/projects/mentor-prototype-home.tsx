@@ -11,6 +11,7 @@ import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar
 import {selectMentorHomeWeekMeetings,mentorHomeMeetingDisplayTitle} from "@/modules/projects/mentor-home-week-meetings-model";
 import {mentorHomeGreeting} from "@/modules/projects/mentor-home-greeting-model";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 
 type FocusItem = MentorProjectAttention;
 
@@ -103,9 +104,9 @@ export function MentorPrototypeHome({
         <p>{teamCount} {teamCount===1?"team":"teams"} · {uniqueLearnerCount} distinct {uniqueLearnerCount===1?"student":"students"} ·
           {" "}{learnerAssignmentCount} learner team {learnerAssignmentCount===1?"seat":"seats"} ·
           {" "}{membershipCount} total project memberships</p>
-        <h1>{active.length
+        <Heading level={1}>{active.length
           ? active.length+" "+(active.length===1?"thing needs":"things need")+" you."
-          : "You’re all caught up."}</h1>
+          : "You’re all caught up."}</Heading>
         <p className="mt-2 text-sm text-muted-foreground">
           {courseLabels.length?
             "Your recorded courses: "+courseLabels.slice(0,4).join(" · ")+

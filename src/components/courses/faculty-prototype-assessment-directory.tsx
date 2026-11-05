@@ -6,6 +6,7 @@ import type {getFacultyAssessmentOverview} from "@/modules/courses/faculty-asses
 import {facultyAssessmentSectionOptions,facultyAssessmentRowsForSection} from "@/modules/courses/faculty-assessment-section-filter-model";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 export type AssessmentRow={
  key:string;kind:"Assignment"|"Quiz";deliveryId:string;title:string;courseCode:string;sectionName:string;
  dueAt:string|null;status:string;handedIn:number;eligible:number|null;toGrade:number|null;
@@ -42,7 +43,7 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
  ] as const;
  return <section className="space-y-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><h1 className="faculty-proto-heading">Assignments &amp; quizzes</h1>
+   <div><Heading level={1} className="faculty-proto-heading">Assignments &amp; quizzes</Heading>
     <p className="faculty-proto-subtitle mt-1">Everything you have set, across all your courses. One list instead of two pages.</p>
    </div>
    <div className="flex flex-wrap gap-2">
@@ -52,7 +53,7 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
   </div>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <nav aria-label="Assessment type" className="flex flex-wrap gap-2">
-    {tabs.map(tab=><Button variant="bare" key={tab.value} type="button" className="faculty-proto-pill"
+    {tabs.map(tab=><Button variant="chip" key={tab.value} type="button"
      aria-pressed={kind===tab.value} onClick={()=>selectKind(tab.value)}>
      {tab.label} {tab.count}</Button>)}
    </nav>

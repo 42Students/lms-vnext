@@ -15,7 +15,7 @@ describe("chat-13 stale cloud CI report regression fences",()=>{
  it("SA-placements-projects-36 preserves recruiter lifecycle labels even when controls change",()=>{
   const ui=read("src/components/admin/super-admin-hr-accounts.tsx");
   expect(ui).toContain('aria-label="Recruiter account lifecycle"');
-  expect(ui).toContain('<h2 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h2>');
+  expect(ui).toContain('<Heading level={2} size="base" className="text-foreground">Recruiter account lifecycle</Heading>');
  });
  it("SA-placements-projects-14 validates cross-level section cascade in the form",()=>{
   const form=read("src/components/placements/placement-job-create-form.tsx");

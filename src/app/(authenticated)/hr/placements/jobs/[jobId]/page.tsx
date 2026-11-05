@@ -330,9 +330,9 @@ export default async function HrPlacementJobPage({
       <header className="flex min-w-0 flex-wrap items-start justify-between gap-4 border-b border-border pb-4">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="m-0 break-words text-[20px] font-semibold leading-tight text-[var(--lms-heading)] md:text-[30px]">
+            <Heading level={1} size="xl" className="m-0 break-words leading-tight text-[var(--lms-heading)] md:text-[30px]">
               {workspace.job.title} · {workspace.college.name}
-            </h1>
+            </Heading>
             <StatusBadge tone={workspace.job.status==="PUBLISHED"?"success":
               workspace.job.status==="DRAFT"?"warning":
               workspace.job.status==="CANCELLED"?"error":"neutral"}>

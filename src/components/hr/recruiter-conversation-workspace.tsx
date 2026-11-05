@@ -27,7 +27,7 @@ export function RecruiterConversationWorkspace({
  return <main data-testid="recruiter.messages.workspace" className="min-w-0 space-y-4">
   <RecruiterConversationLiveRefresh collegeId={collegeId} threadId={selected?.id}/>
   <header className="flex flex-wrap items-end justify-between gap-3">
-   <h1 className="text-2xl font-bold text-foreground">Messages</h1>
+   <Heading level={1} size="2xl" className="text-foreground">Messages</Heading>
    <p className="text-sm text-muted-foreground">
     With your college placement cell · {unreadTotal} unread message{unreadTotal===1?"":"s"}
    </p>
@@ -68,7 +68,7 @@ export function RecruiterConversationWorkspace({
      <Input id="recruiter-message-search" name="q" type="search"
       defaultValue={q} maxLength={120} placeholder="Search by drive or message"/>
      <div className="flex justify-between gap-3 text-xs">
-      <Button variant="bare" type="submit" className="min-h-9 font-semibold text-primary-text underline">Search</Button>
+      <Button variant="link" size="inline" type="submit">Search</Button>
       {q?<Link href={base} className="inline-flex min-h-9 items-center text-primary-text underline">Clear</Link>:null}
      </div>
     </form>
@@ -133,7 +133,7 @@ export function RecruiterConversationWorkspace({
     "Start a general conversation with the placement cell, or open a drive to discuss its hiring process."}</p>
      {!q&&!generalPreviewUnavailable?<form method="post" action="/api/placements/recruiter/conversations/open">
        <input type="hidden" name="collegeId" value={collegeId}/>
-       <Button variant="bare" type="submit" className="inline-flex min-h-11 items-center rounded-lg border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+       <Button variant="primary" size="md" type="submit">
         Open general conversation
        </Button>
      </form>:<Link href={base} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear search</Link>}

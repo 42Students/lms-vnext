@@ -138,9 +138,9 @@ export default async function TrackerIssueDetailPage({
               issue.status==="NEW"?"warning":"info"}>{legacyLabel(issue.status,STATUS_TEXT)}</StatusBadge>
             {issue.resolution?<StatusBadge>{legacyLabel(issue.resolution,RESOLUTION_TEXT)}</StatusBadge>:null}
           </div>
-          <h1 className="m-0 max-w-4xl break-words text-xl font-semibold text-foreground sm:text-2xl">
+          <Heading level={1} size="xl" className="m-0 max-w-4xl break-words text-foreground sm:text-2xl">
             {[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")||"Unknown location"}
-          </h1>
+          </Heading>
           <p className="text-sm text-muted-foreground">Reported by {issue.reporterName} · {when(issue.createdAt)}</p>
         </div>
         <div className="flex min-w-40 shrink-0 items-start gap-2 lg:flex-col">

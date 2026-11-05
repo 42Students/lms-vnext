@@ -57,8 +57,7 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
      {todayClasses} {todayClasses===1?"class":"classes"} today · {thisWeekClasses} this week · {nextMessage}
     </p></div>
    <div className="flex flex-wrap gap-2" role="group" aria-label="Calendar views">
-    {(["Week","Day","Month"] as const).map(v=><Button variant="bare" key={v} type="button"
-      className="faculty-proto-pill" aria-pressed={view===v} onClick={()=>setView(v)}>{v}</Button>)}
+    {(["Week","Day","Month"] as const).map(v=><Button variant="chip" key={v} type="button" aria-pressed={view===v} onClick={()=>setView(v)}>{v}</Button>)}
     <label className="sr-only" htmlFor="faculty-calendar-course">Filter class schedule by course</label>
     <Select id="faculty-calendar-course" value={course} onChange={e=>setCourse(e.target.value)}
      className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm">
@@ -70,10 +69,10 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
      {" – "}
      {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",day:"numeric",month:"short"}).format(date(keys.at(-1)!))}
     </span>
-    <Button variant="bare" type="button" className="faculty-proto-secondary" disabled={previous<minDate}
+    <Button variant="secondary" type="button" disabled={previous<minDate}
       onClick={()=>setDay(previous)} aria-label={"Previous "+view}>←</Button>
-    <Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>setDay(today)}>Today</Button>
-    <Button variant="bare" type="button" className="faculty-proto-secondary" disabled={next>maxDate}
+    <Button variant="secondary" type="button" onClick={()=>setDay(today)}>Today</Button>
+    <Button variant="secondary" type="button" disabled={next>maxDate}
       onClick={()=>setDay(next)} aria-label={"Next "+view}>→</Button>
    </div>
   </div>

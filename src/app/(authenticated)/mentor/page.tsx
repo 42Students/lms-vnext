@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { hasActiveMembership, hasMembershipRole } from "@/modules/identity/context";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +30,9 @@ export default async function MentorLandingPage() {
        (failed?"border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] text-warning":"border-[var(--lms-info)] bg-[var(--lms-info-subtle)] text-primary-text")}>
       {failed?"!":"ⓘ"}
     </span>
-    <h1 className="min-w-0 max-w-full text-pretty text-2xl font-semibold leading-8 text-[var(--lms-heading)]">
+    <Heading level={1} size="2xl" className="min-w-0 max-w-full text-pretty leading-8 text-[var(--lms-heading)]">
       {failed?"Could not verify Projects access":"Projects is currently unavailable"}
-    </h1>
+    </Heading>
     <p className="mt-3 max-w-[560px] text-pretty text-sm leading-[22px] text-body">
       {failed?"The LMS could not check your college module settings. This does not mean Projects is disabled.":"Projects is disabled for this account. You can still check notifications."}
     </p>

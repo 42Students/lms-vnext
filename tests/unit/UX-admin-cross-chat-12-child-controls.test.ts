@@ -2,7 +2,7 @@ import {readFileSync} from "node:fs";
 import {describe,it,expect} from "vitest";
 const files=["src/components/announcements/announcement-admin-workspace.tsx","src/components/admin/college-admin-lifecycle-action.tsx","src/components/admin/college-feature-rule-editor.tsx","src/components/admin/student-rule-editor.tsx","src/components/admin/college-branding-form.tsx"];
 describe("UX-admin first-third delegated child controls",()=>{
- it("keeps announcement links in the same WebView tab and uses shared Select",()=>{const s=readFileSync(files[0],"utf8");const anchors=s.match(/<a\b/g)??[];
+ it("keeps announcement links in the same WebView tab and uses shared Select",()=>{const s=readFileSync(files[0],"utf8");const anchors=s.match(/<(?:a|TextLink|ButtonLink)\b/g)??[];
   const safe=s.match(/rel="noopener noreferrer"/g)??[];
   expect(anchors.length).toBeGreaterThan(0);
   expect(anchors.length).toBe(safe.length);

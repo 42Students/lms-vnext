@@ -29,7 +29,7 @@ describe("chat-11 college and mentor interaction contracts",()=>{
    expect(open).toContain("href={safe}");
   expect(open).toContain("This resource has an invalid address.");
   expect(open).toContain('rel="noopener noreferrer"');
-  expect(open).toContain("<a href={safe}");
+  expect(open).toContain("<TextLink href={safe}");
   expect(src("src/components/projects/project-workspace.tsx")).toContain("<ProjectResourceList projectId=");
   expect(src("src/components/projects/project-resource-list.tsx")).toContain('linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}');
   expect(src("src/components/projects/project-resource-controls.tsx")).toContain('"Resource added."');
