@@ -5,22 +5,8 @@ name: Security - canonical 493-control coverage and evidence gate
 on:
   pull_request:
     branches: [main]
-    paths:
-      - "docs/tracker.json"
-      - "docs/security/control-catalog.md"
-      - "scripts/tracker.mjs"
-      - "scripts/security/control-progress.mjs"
-      - "tests/security-control-progress.test.mjs"
-      - ".github/workflows/security-control-progress.yml"
   push:
     branches: [main]
-    paths:
-      - "docs/tracker.json"
-      - "docs/security/control-catalog.md"
-      - "scripts/tracker.mjs"
-      - "scripts/security/control-progress.mjs"
-      - "tests/security-control-progress.test.mjs"
-      - ".github/workflows/security-control-progress.yml"
   workflow_dispatch:
 
 permissions:
