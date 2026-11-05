@@ -11596,7 +11596,17 @@
         "state": "UNASSESSED"
       },
       "SEC-05-005": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-05",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "b30515da6207a7360910d3fe12b7e90e92c25637",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42007907024",
+            "scope": "Scoped college People editor: eight mocked actor, active-college, archived-tenant and foreign-person read/write regression cases; focused authorization workflow success at test SHA, merged in PR #228 as e8f976ee6cbc06f5bff6a2cc92992da89a2f4c53. This is NOT disposable-PG/production-wide certification."
+          }
+        ],
+        "nextProof": "Enumerate every object-serving API and storage boundary; verify authoritative tenant ancestry and same-tenant object ownership with disposable PostgreSQL adversarial tests."
       },
       "SEC-05-006": {
         "state": "UNASSESSED"
@@ -11605,7 +11615,17 @@
         "state": "UNASSESSED"
       },
       "SEC-05-008": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-05",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "b30515da6207a7360910d3fe12b7e90e92c25637",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42007907024",
+            "scope": "Scoped college People editor: eight mocked actor, active-college, archived-tenant and foreign-person read/write regression cases; focused authorization workflow success at test SHA, merged in PR #228 as e8f976ee6cbc06f5bff6a2cc92992da89a2f4c53. This is NOT disposable-PG/production-wide certification."
+          }
+        ],
+        "nextProof": "Extend cross-tenant mutation negative tests to all route methods and background effects; prove zero database, queue, storage and notification side effects using valid foreign IDs."
       },
       "SEC-05-009": {
         "state": "UNASSESSED"
@@ -11661,10 +11681,30 @@
         "state": "UNASSESSED"
       },
       "SEC-05-020": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-05",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "b30515da6207a7360910d3fe12b7e90e92c25637",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42007907024",
+            "scope": "Scoped college People editor: eight mocked actor, active-college, archived-tenant and foreign-person read/write regression cases; focused authorization workflow success at test SHA, merged in PR #228 as e8f976ee6cbc06f5bff6a2cc92992da89a2f4c53. This is NOT disposable-PG/production-wide certification."
+          }
+        ],
+        "nextProof": "Prove immediate suspension, removal and role-revocation enforcement for every privileged writer and reader with real concurrent transactions and multi-replica sessions."
       },
       "SEC-05-021": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-05",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "b30515da6207a7360910d3fe12b7e90e92c25637",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42007907024",
+            "scope": "Scoped college People editor: eight mocked actor, active-college, archived-tenant and foreign-person read/write regression cases; focused authorization workflow success at test SHA, merged in PR #228 as e8f976ee6cbc06f5bff6a2cc92992da89a2f4c53. This is NOT disposable-PG/production-wide certification."
+          }
+        ],
+        "nextProof": "Prove archived college and organization cannot access all operational data, grants, host routing, scheduled jobs or exports using real restricted PostgreSQL and deployed configuration."
       },
       "SEC-05-022": {
         "state": "UNASSESSED"
@@ -12303,7 +12343,17 @@
         "state": "UNASSESSED"
       },
       "SEC-14-011": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-05",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "b30515da6207a7360910d3fe12b7e90e92c25637",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42007907024",
+            "scope": "Scoped college People editor: eight mocked actor, active-college, archived-tenant and foreign-person read/write regression cases; focused authorization workflow success at test SHA, merged in PR #228 as e8f976ee6cbc06f5bff6a2cc92992da89a2f4c53. This is NOT disposable-PG/production-wide certification."
+          }
+        ],
+        "nextProof": "Audit and adversarially test every College Admin action (profiles, academics, placements and exports), including active roles, foreign tenant IDs and concurrent privilege revocation."
       },
       "SEC-14-012": {
         "state": "UNASSESSED"
