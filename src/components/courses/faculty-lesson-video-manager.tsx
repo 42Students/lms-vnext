@@ -27,6 +27,7 @@ import { uploadFacultyLessonThumbnail, uploadFacultyLessonVideo } from "./facult
 import { FacultyVideoPreview } from "./faculty-video-preview";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Action = (signal: AbortSignal) => Promise<void>;
 type VideoConfirmation = {kind: "DELETE"; video: ManagedVideo} | {kind: "REPLACE"; video: ManagedVideo; file: File};
@@ -359,8 +360,7 @@ export function FacultyLessonVideoManager({
               {video.lessonContentId?"Publish to students":"Add to lesson & publish"}
             </Button>
           </div>
-          <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
-            <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring md:min-h-9">More video actions</summary>
+          <Disclosure title="More video actions" className="min-w-0">
             <div className="flex min-w-0 flex-wrap gap-2 pt-2">
               <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit||(video.publishStatus==="DRAFT"&&(!facultyVideoMayPublish(video)||!video.lessonContentId))}
               onClick={()=>change(video,{publishStatus:facultyVideoPublishAction(video)})}>
@@ -412,7 +412,7 @@ export function FacultyLessonVideoManager({
             </div>
           </div>
 
-          </details>
+          </Disclosure>
           {!canEdit?<Alert tone="info">Shared video · read only in this Section.</Alert>:null}
           {previewId===video.id&&deliveryId?<FacultyVideoPreview key={video.id} videoId={video.id} deliveryId={deliveryId}/>:null}
           {video.lessonContentId?<Alert tone="info">

@@ -13,6 +13,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {Select} from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export const dynamic="force-dynamic";
 
@@ -59,7 +60,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
       </Link>)}
    </nav>:null}
   <nav className="min-w-0" aria-label="Verification exports">
-   <details className="border-b border-border pb-3"><summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Export verification records</summary>
+   <Disclosure title="Export verification records">
    <div className="flex min-w-0 flex-wrap gap-2 py-2">
     {queue.available&&queue.enabled&&queue.permitted?
      <div className="flex flex-wrap gap-2">
@@ -71,11 +72,10 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
         }).toString()} filename={"tpo-verification-"+tab.toLowerCase()+".csv"} label={label+" CSV"} />)}
      </div>:null}
    </div>
-   </details>
+   </Disclosure>
   </nav>
   <form method="get" action="/tpo/verification" className="min-w-0 border-b border-border pb-3" aria-label="Filter verification">
-   <details>
-    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-primary-text md:min-h-9">Filter the queue</summary>
+   <Disclosure title="Filter the queue">
     <div className="grid min-w-0 grid-cols-1 gap-3 pb-4 sm:grid-cols-2 lg:grid-cols-4">
    <Label stack>Status
     <Select name="tab" defaultValue={query.tab} className="min-h-11 md:min-h-9">
@@ -90,8 +90,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    <Label stack>Student or roll number
     <Input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 min-w-0 w-full md:min-h-9" />
    </Label>
-   <details className="min-w-0 sm:col-span-2 lg:col-span-4">
-    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">More filters</summary>
+   <Disclosure title="More filters" className="min-w-0 sm:col-span-2 lg:col-span-4">
     <div className="grid min-w-0 grid-cols-1 gap-3 py-3 sm:grid-cols-2 lg:grid-cols-4">
    <Label stack>Request kind
     <Select name="waitingState" defaultValue={query.waitingState} className="min-h-11 md:min-h-9">
@@ -126,11 +125,11 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     </Select>
    </Label>
     </div>
-   </details>
+   </Disclosure>
    <Button type="submit" className="min-h-11 w-full md:min-h-9">Apply filters</Button>
    <Link href="/tpo/verification" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline md:min-h-9">Reset filters</Link>
     </div>
-   </details>
+   </Disclosure>
   </form>
   {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
    <p role="status" className="text-sm text-body leading-[22px]">

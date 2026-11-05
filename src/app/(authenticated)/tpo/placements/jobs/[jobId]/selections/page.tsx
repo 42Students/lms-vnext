@@ -11,6 +11,7 @@ import {getTpoSelectionWorkspace} from "@/modules/placements/tpo-drive-selection
 import {getPlacementDriveDay} from "@/modules/placements/drive-day-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export const dynamic="force-dynamic";
 export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:string}>}){
@@ -75,10 +76,9 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
     <section id="selections-release-actions" aria-label="Record, verify and release selections">
       <TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections} roleOptions={data.roleOptions}/>
     </section>
-    <details className="group min-w-0 border-t border-border pt-3">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Import the company's selection list <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+    <Disclosure title={<>Import the company's selection list <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
       <div className="pt-3"><TpoSelectionImport jobId={jobId} candidates={data.candidates}/></div>
-    </details>
+    </Disclosure>
   </div>}
  </div>;
 }

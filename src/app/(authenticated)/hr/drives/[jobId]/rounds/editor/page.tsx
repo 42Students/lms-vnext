@@ -15,6 +15,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 const KINDS=[["TALK","Discussion"],["TEST","Test"],["VENDOR_TEST","Vendor test"],["GD","Group discussion"],["INTERVIEW","Interview"]] as const;
 export default async function HrRoundsEditorPage({params}:{
  params:Promise<{jobId:string}>;
@@ -38,8 +39,7 @@ export default async function HrRoundsEditorPage({params}:{
     <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Back to Drives</Link>
    </nav>} />
   <section id="add-round" className="min-w-0 border-b border-border pb-4">
-   <details open={rounds.length===0} className="min-w-0">
-    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] md:min-h-9 md:text-[24px] md:leading-[32px] lg:text-[var(--lms-font-3xl)] lg:leading-[40px] focus-ring">Add a round</summary>
+   <Disclosure title="Add a round" defaultOpen={rounds.length===0} className="min-w-0">
     <div className="mt-3 min-w-0">
    <form action={endpoint} method="post" className="grid min-w-0 gap-3 md:grid-cols-2">
     <Input type="hidden" name="action" value="CREATE"/>
@@ -62,7 +62,7 @@ export default async function HrRoundsEditorPage({params}:{
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:col-span-2 md:w-auto md:justify-self-start">Add round</Button>
    </form>
     </div>
-   </details>
+   </Disclosure>
   </section>
   <section className="min-w-0 space-y-3">
    <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Current rounds ({rounds.length})</Heading>
@@ -84,8 +84,7 @@ export default async function HrRoundsEditorPage({params}:{
      (round.editable?"":"md:hidden")}>
     <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between md:hidden"><Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{round.sequence}. {round.name}</Heading>
      <span className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone={round.status==="PENDING"?"warning":round.status==="COMPLETED"?"success":"neutral"}>{round.status}</StatusBadge></span></div>
-    {round.editable?<details className="min-w-0">
-     <summary className="flex min-h-11 min-w-0 cursor-pointer items-center break-words font-semibold text-primary-text focus-ring md:min-h-9">Change {round.sequence}. {round.name}</summary>
+    {round.editable?<Disclosure title={<>Change {round.sequence}. {round.name}</>} className="min-w-0">
      <form action={endpoint} method="post" className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
       <Input type="hidden" name="action" value="UPDATE"/><Input type="hidden" name="roundId" value={round.id}/>
       <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
@@ -104,7 +103,7 @@ export default async function HrRoundsEditorPage({params}:{
       </Label>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto md:justify-self-start">Save changes</Button>
      </form>
-     </details>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
+     </Disclosure>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
     {round.editable?<Link
       href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
       className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:hidden md:min-h-9">

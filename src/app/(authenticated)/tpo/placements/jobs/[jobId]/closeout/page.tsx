@@ -7,6 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getTpoDriveCloseout } from "@/modules/placements/tpo-drive-closeout-service";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function TpoDriveCloseoutPage({
   params,
@@ -53,11 +54,10 @@ export default async function TpoDriveCloseoutPage({
       No applications are persisted for this drive. Other zero counts reflect that
       source, not an assumption about off-platform recruiting.
     </Alert> : null}
-    <details className="text-sm text-body leading-[1.6]">
-      <summary className="inline-flex min-h-11 cursor-pointer list-none items-center font-semibold focus-ring [&::-webkit-details-marker]:hidden">Selected is unavailable because no canonical final-selection event is <span aria-hidden="true" className="ml-2">⌄</span></summary>
+    <Disclosure title={<>Selected is unavailable because no canonical final-selection event is <span aria-hidden="true" className="ml-2">⌄</span></>} preserveSummary summaryClassName="inline-flex min-h-11 items-center">
       <p className="mt-2 max-w-prose">stored independently of round PASS and offer issuance. Accepted means
       a currently ACCEPTED offer; joined requires an explicit JOINED outcome.
       The summary excludes externally recorded or unmigrated placement facts.</p>
-    </details>
+    </Disclosure>
   </div>;
 }

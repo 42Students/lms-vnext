@@ -15,6 +15,7 @@ import { mentorMeetingCeremonyLabel, mentorMeetingScheduleError, parseMentorMeet
 import {emptyMentorMeetingFacilitation,mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import {projectMeetingTransitionPayload} from "@/modules/projects/project-meeting-transition-payload-model";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Meeting = {
   id: string;
@@ -674,8 +675,7 @@ export function ScheduleProjectMeetingControl({
               </Select>
             </Label>
           </div>
-          <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
-            <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-link-text)] focus-ring">Meeting notes, retrospective and follow-ups</summary>
+          <Disclosure title="Meeting notes, retrospective and follow-ups" defaultOpen className="min-w-0">
             <fieldset className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             {([
               ["notes","Notes"],["actionItems","Follow-up actions"],
@@ -766,7 +766,7 @@ export function ScheduleProjectMeetingControl({
               </Select>
             </Label>
             </fieldset>
-          </details>
+          </Disclosure>
           {error ? (
             <p
               role="alert"

@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type CancelFeedback = { tone: "success" | "error"; message: string } | null;
 
@@ -78,10 +79,7 @@ export function RecruiterRequestCancelButton({
   return (
     <div className="mt-2 min-w-0">
       {cancelled ? null : (
-        <details className="min-w-0">
-          <summary className="flex min-h-11 w-full max-w-full cursor-pointer items-center break-words md:w-fit text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">
-            Manage request
-          </summary>
+        <Disclosure title="Manage request" className="min-w-0">
           <div className="mt-1 min-w-0">
             <Button
               variant="secondary"
@@ -94,7 +92,7 @@ export function RecruiterRequestCancelButton({
               {busy ? "Cancelling…" : "Cancel request"}
             </Button>
           </div>
-        </details>
+        </Disclosure>
       )}
       <ConfirmDialog
         open={confirmOpen}

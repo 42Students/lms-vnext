@@ -178,10 +178,9 @@ export function TpoSpreadsheetGrid<Row>({
     .catch(()=>setClipboardMessage("Clipboard unavailable. Use Export CSV instead."));
  }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
-  {!integratedWorkspace?<details className="min-w-0 border-b border-border pb-3">
-    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link md:min-h-9 focus-ring">Columns</summary>
+  {!integratedWorkspace?<Disclosure title="Columns" className="min-w-0">
     <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
-   </details>:null}
+   </Disclosure>:null}
   {!integratedWorkspace&&rows.length>0?<Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={copyVisibleRows}>Copy visible TSV</Button>:null}
   {sort?<Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>setSort(null)} aria-label="Clear grid sorting">Clear grid sort</Button>:null}
   {clipboardMessage?<InlineNotice tone={clipboardMessage.startsWith("Clipboard unavailable")?"error":"success"} message={clipboardMessage}/>:null}
@@ -203,7 +202,7 @@ export function TpoSpreadsheetGrid<Row>({
         : {key:col.key,direction:"asc"})}>
       {col.label}<span aria-hidden="true">{sort?.key===col.key?(sort.direction==="asc"?"↑":"↓"):"↕"}</span>
      </Button>:<span>{col.label}</span>}
-     {viewKey?<details className="mt-2 min-w-0 border-t border-border pt-1 text-xs font-normal"><summary className="min-h-9 cursor-pointer py-2 text-xs font-semibold text-link focus-ring">Column tools</summary><div className="flex min-w-0 flex-wrap gap-2 pt-2">
+     {viewKey?<Disclosure title="Column tools" className="mt-2 min-w-0"><div className="flex min-w-0 flex-wrap gap-2 pt-2">
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.max(100,colWidth(col.key)-40)})}
        disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="min-h-11 min-w-11 md:min-h-9 md:min-w-9">−</Button>
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.min(500,colWidth(col.key)+40)})}
@@ -211,7 +210,7 @@ export function TpoSpreadsheetGrid<Row>({
       <FilterChip type="button" onClick={()=>updateLayout(col.key,{pinned:!columnView[col.key]?.pinned})}
        aria-pressed={Boolean(columnView[col.key]?.pinned)} aria-label={(columnView[col.key]?.pinned?"Unpin ":"Pin ")+col.label}
        className="min-w-11">{columnView[col.key]?.pinned?"Unpin":"Pin"}</FilterChip>
-     </div></details>:null}
+     </div></Disclosure>:null}
     </th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
     <tbody>{orderedRows.map(row=><tr key={rowKey(row)} aria-selected={selection?.selected.includes(rowKey(row))||undefined}
      onClick={event=>{

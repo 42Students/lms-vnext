@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Choices = {
   programs: {id:string;name:string}[];
@@ -146,8 +147,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       <span className="text-xs font-normal text-muted-foreground">Determined by your selected college workspace; cannot be changed for this registration.</span>
     </Label>
     {choices.programs.length===0?<Alert tone="warning">No active programs are available for the selected college. Registration is unavailable until academic options are configured.</Alert>:null}
-    <details className="group min-w-0 border-t border-border pt-4 sm:col-span-2">
-      <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Gender · Date of Birth · Address</summary>
+    <Disclosure title="Gender · Date of Birth · Address" className="min-w-0 sm:col-span-2">
       <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2">
     <Label stack>Gender
       <Select value={gender} onChange={e=>setGender(e.target.value as typeof gender)} className={field}>
@@ -164,7 +164,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
         className="min-w-0"/>
     </Label>
       </div>
-    </details>
+    </Disclosure>
     <div className="sticky bottom-0 z-(--lms-z-raised) flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 sm:col-span-2 md:flex-row md:flex-wrap md:items-center">
       <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">
         {pending?"Registering…":"Register student"}

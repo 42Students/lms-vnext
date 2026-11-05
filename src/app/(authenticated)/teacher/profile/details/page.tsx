@@ -9,6 +9,7 @@ import { FacultyProfileEditor } from "@/components/people/faculty-profile-editor
 import { facultyProfileDocumentStorageReady } from "@/modules/people/faculty-profile-readiness";
 import { loadOwnFacultyProfileDocumentStaged } from "@/modules/people/faculty-profile-self.staged";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 export const dynamic="force-dynamic";
 export default async function FacultyProfileDetailsPage({searchParams}:{
  searchParams:Promise<{section?:string|string[]}>
@@ -74,17 +75,15 @@ export default async function FacultyProfileDetailsPage({searchParams}:{
           </dd></div>
       </dl>
     </section>
-    <details className="group min-w-0 border-y border-[var(--lms-canvas-border)] py-4"
-      open={section==="about"||undefined}>
-      <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-ring">
+    <Disclosure title={<>
         Edit / Add profile sections <span aria-hidden="true">⌄</span>
-      </summary>
+      </>} defaultOpen={section==="about"||undefined} className="min-w-0" preserveSummary summaryClassName="inline-flex min-h-11 items-center gap-2">
       <p className="mt-2 text-xs text-muted-foreground">You can edit About, personal details,
         contacts, education, experience and research records independently. College-managed identity,
         employment, login email and login phone are read-only.</p>
       <div className="mt-4"><FacultyProfileEditor initialDocument={profile.document}
         initialVersion={profile.version}/></div>
-    </details>
+    </Disclosure>
     <p className="text-xs text-muted-foreground">Profile saves show a section-specific status and
       an error with a reload option when the saved version changes.
       You can also manage these sections on the <Link href="/teacher/profile"

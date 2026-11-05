@@ -30,6 +30,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const HR_DRAFT_PREVIEW_FIELDS=[
  ["minimumAnnualCtcInr","Minimum CTC"],
@@ -855,8 +856,7 @@ export function HrDriveDraftForm({
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </Button>
-          <details className="min-w-0 md:basis-full">
-            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Draft tools</summary>
+          <Disclosure title="Draft tools" className="min-w-0 md:basis-full">
             <div className="flex min-w-0 flex-col gap-2 pb-2 md:flex-row md:flex-wrap">
           <Button type="button" disabled={!result.success}
             variant="secondary"
@@ -873,7 +873,7 @@ export function HrDriveDraftForm({
               setDraft(emptyHrDriveDraft());setBranchInput("");setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
             }}>Start over</Button>
             </div>
-          </details>
+          </Disclosure>
         </div>
         {showPreview && !result.success ? (
           <Alert tone="error" title="Review the draft:" className="mt-4">

@@ -15,6 +15,7 @@ import {legacyGridExportFilename,legacySavedViewExportFilename} from "@/modules/
 import {gridClipboardTsv} from "./grid-export";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
 type GridWorkspaceProps<Row>={
@@ -197,8 +198,7 @@ export function GridWorkspace<Row>({
     onClick={externalFilters?externalFilters.onToggle:()=>setFilterOpen(value=>!value)}>
     Filters{(externalFilters?.count??activeFilters.length)>0?" ("+(externalFilters?.count??activeFilters.length)+")":""}
    </Button>:null}
-   <details className="min-w-0 w-full border-b border-border pb-2 sm:w-auto sm:border-0 sm:pb-0">
-    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link md:min-h-9">Table tools</summary>
+   <Disclosure title="Table tools" className="min-w-0 w-full sm:w-auto">
     <div className="flex min-w-0 flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap sm:items-center">
    {savedViews?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" aria-expanded={viewsOpen}
     aria-controls={id+"-views"} onClick={()=>setViewsOpen(value=>!value)}>Views</Button>:null}
@@ -211,7 +211,7 @@ export function GridWorkspace<Row>({
    {selection&&rollOf?<Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" aria-expanded={pasteOpen}
     aria-controls={id+"-paste"} onClick={()=>setPasteOpen(value=>!value)}>Paste roll numbers</Button>:null}
     </div>
-   </details>
+   </Disclosure>
    {extraActions}
   </div>
   {activeFilters.length?<div className="flex flex-wrap gap-2" aria-label="Active grid filters">

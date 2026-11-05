@@ -10,6 +10,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getOwnTpoProfile } from "@/modules/placements/tpo-self-profile-service";
 import { formatTpoProfileRole } from "@/modules/placements/tpo-utility-model";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export const dynamic = "force-dynamic";
 
@@ -68,10 +69,7 @@ export default async function TpoProfilePage() {
         </div>
       </section>
 
-      <details className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-6">
-        <summary className="min-h-11 cursor-pointer font-semibold leading-10 text-[var(--lms-heading)]">
-          College membership details
-        </summary>
+      <Disclosure title="College membership details">
         <dl className="mt-3 min-w-0">
           <ProfileField label="College" value={profile.collegeName} />
           <ProfileField label="College code" value={profile.collegeCode} />
@@ -89,7 +87,7 @@ export default async function TpoProfilePage() {
           Your department appears only when your current college membership has a faculty department record.
           Account and membership records are managed by your college.
         </p>
-      </details>
+      </Disclosure>
     </div>
   </div>;
 }

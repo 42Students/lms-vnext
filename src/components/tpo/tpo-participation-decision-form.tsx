@@ -13,6 +13,7 @@ import {
   type TpoParticipationChange,
 } from "@/modules/placements/tpo-participation-model";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Status = TpoParticipationChange["status"];
 
@@ -125,8 +126,7 @@ export function TpoParticipationDecisionForm({
         </Label>
       ) : null}
 
-      <details className="min-w-0 border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm leading-6 text-body">
-        <summary className="min-h-11 cursor-pointer font-semibold text-foreground">This is not a registration-choice editor.</summary>
+      <Disclosure title="This is not a registration-choice editor." className="min-w-0">
          <p className="mt-1">
           Higher studies, entrepreneurship, competitive exams and placement
           consent are separate cohort-registration choices. That database
@@ -135,7 +135,7 @@ export function TpoParticipationDecisionForm({
           create a Higher Studies declaration or consent record.
           Clearing this override resumes the class/batch inherited decision.
         </p>
-      </details>
+      </Disclosure>
 
       {feedback ? (
         <p

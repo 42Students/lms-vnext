@@ -9,6 +9,7 @@ import {isConfirmedRecruiterLeaveResponse} from "@/modules/placements/recruiter-
 import Link from "next/link";
 import {hrRecruiterGrantLinks} from "@/modules/placements/hr-recruiter-grant-navigation-model";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Grant = {
   id: string;
@@ -88,8 +89,7 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
                   ))}
                 </nav>
               </div>
-              <details className="min-w-0 md:shrink-0">
-              <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Manage access</summary>
+              <Disclosure title="Manage access" className="min-w-0 md:shrink-0">
               <Button
                 variant="secondary"
                 type="button"
@@ -100,7 +100,7 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
               >
                 {leaving === grant.id ? "Leaving…" : "Leave Access"}
               </Button>
-              </details>
+              </Disclosure>
             </div>
           ))}
         </div>

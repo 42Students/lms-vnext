@@ -18,6 +18,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {readRecruiterThreadMessages,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
 import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
+import { Disclosure } from "@/components/ui/disclosure";
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
 const idSchema=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(10000);
@@ -96,8 +97,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   {changeRequestResult && !changeRequestResult.ok?
     <Alert tone="warning">Change request updates are temporarily unavailable. Messages remain available; refresh to try again.</Alert>:null}
   {changeRequests?.party==="COMPANY" && changeRequests.requests.length>0?
-    <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-      <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] md:min-h-9 md:text-[24px] md:leading-[32px] lg:text-[var(--lms-font-3xl)] lg:leading-[40px]">Change requests · {changeRequests.requests.length}</summary>
+    <Disclosure title={<>Change requests · {changeRequests.requests.length}</>} className="min-w-0">
       <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
       <ScrollCue axis="y" label="Drive change request updates" className="mt-3" viewportClassName="max-h-56"><ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {changeRequests.requests.slice(0,8).map(request=><li key={request.id}
@@ -120,7 +120,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
         className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
         Review requests, answers and decisions
       </Link>
-    </details>:null}
+    </Disclosure>:null}
   <ol aria-label="Employer and placement cell messages" className="min-w-0 max-w-3xl divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {messages.map(message=><li key={message.id}
     className="min-w-0 py-4 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">

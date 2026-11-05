@@ -14,6 +14,7 @@ import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { placementRoundIdSchema } from "@/modules/placements/validation";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function TpoNoShowReportPage({
   params,
@@ -66,17 +67,14 @@ export default async function TpoNoShowReportPage({
             >
               Export explicit no-shows CSV
             </ButtonLink>
-            <details className="min-w-0 sm:relative">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground marker:hidden focus-ring md:min-h-9 [&::-webkit-details-marker]:hidden">
-                Attendance export
-              </summary>
+            <Disclosure title="Attendance export" className="min-w-0 sm:relative">
               <div className="mt-2 bg-surface sm:absolute sm:right-0 sm:z-(--lms-z-sticky-inline) sm:w-64 sm:rounded-[var(--lms-control-radius)] sm:border sm:border-border sm:p-2 sm:shadow-sm">
                 <ButtonLink variant="secondary" href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
                   className="w-full">
                   Export complete attendance CSV
                 </ButtonLink>
               </div>
-            </details>
+            </Disclosure>
             <Link href={roundHref}
               className="lms-inline-link inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-link underline-offset-4 hover:underline focus-ring md:min-h-9">
               ← Back to round overview
@@ -133,15 +131,14 @@ export default async function TpoNoShowReportPage({
           ]}
         />
       </section>
-      <details className="min-w-0 border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
-        <summary className="min-h-11 cursor-pointer font-semibold text-link focus-ring md:min-h-9">Round report notes</summary>
+      <Disclosure title="Round report notes" className="min-w-0">
         <p className="max-w-3xl pb-2">
           Round status: {data.round.status}. Scheduled: {" "}
           {data.round.scheduledAt ? formatTime.format(data.round.scheduledAt) + " IST" : "Not scheduled"}.
           This report does not infer absences from failed interviews, missing marks, or
           external attendance sources.
         </p>
-      </details>
+      </Disclosure>
     </div>
   );
 }

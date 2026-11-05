@@ -12,6 +12,7 @@ import {projectTemplateGlobalActions} from "@/modules/projects/template-global-a
 import { projectMutation } from "./project-api";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export function CreateProjectTemplateControl() {
   const router = useRouter();
@@ -173,8 +174,7 @@ export function CreateProjectTemplateControl() {
               placeholder="campus-project"
             />
           </Label>
-          <details className="border-t border-[var(--lms-canvas-border)] pt-3">
-            <summary className="cursor-pointer py-2 text-[13px] font-semibold text-body">Additional template details</summary>
+          <Disclosure title="Additional template details">
           <Label className="mt-3 block min-w-0">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Summary
@@ -199,7 +199,7 @@ export function CreateProjectTemplateControl() {
               }
             />
           </Label>
-          </details>
+          </Disclosure>
           <div className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-4 md:grid-cols-2 lg:grid-cols-3">
             <Label>
               <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">

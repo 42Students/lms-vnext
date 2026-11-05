@@ -12,6 +12,7 @@ import { ZodError } from "zod";
 import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function FacultyCourseStudentsPage({
   params,searchParams,
@@ -70,8 +71,7 @@ export default async function FacultyCourseStudentsPage({
       <p className="sr-only">{delivery.courseName} · {delivery.sectionName} · {delivery.academicPeriodName}</p>
       <FacultyPrototypeStudentDirectory
         learners={roster} signals={signalResult} deliveryId={delivery.deliveryId}/>
-      <details className="border-t border-[color:var(--lms-border)] pt-4">
-        <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">Detailed roster, contacts and CSV export</summary>
+      <Disclosure title="Detailed roster, contacts and CSV export">
         <div className="mt-4">
       <FacultyCourseRoster
         key={delivery.deliveryId}
@@ -81,7 +81,7 @@ export default async function FacultyCourseStudentsPage({
         advanced
       />
         </div>
-      </details>
+      </Disclosure>
     </div>
   );
 }

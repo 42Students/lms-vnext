@@ -12,6 +12,7 @@ import {LearnerVerificationSubmit} from "@/components/profile/learner-verificati
 import {LearnerVerificationWithdraw} from "@/components/profile/learner-verification-withdraw";
 import {learnerVerificationDateLabel,learnerVerificationSubmissionDateFallback} from "@/modules/placements/learner-verification-date-model";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const details = [
   { key: "education", section:"EDUCATION", heading: "Education", edit: "/learn/profile?section=education" },
@@ -41,8 +42,7 @@ export default async function LearnerVerificationPage() {
     <PageHeader title="Profile verification"
       description="Your own Education and Identity review status. A saved detail does not mean it is verified." />
     <section aria-label="Current identity document comparison" className="border-t border-border pt-4">
-      <details>
-        <summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Compare saved identity and verification evidence</summary>
+      <Disclosure title="Compare saved identity and verification evidence">
         <p className="mt-2 text-xs text-muted-foreground">
           Masked values below come from your current saved profile, not an approved identity snapshot.
           For privacy, a verified identity number is never repeated in this summary.
@@ -52,7 +52,7 @@ export default async function LearnerVerificationPage() {
           <div><dt className="font-semibold">PAN (current)</dt><dd className="mt-1">{document?mask(document.identity.panNumber):"Unavailable"}</dd></div>
         </dl>
         <p className="mt-2 text-xs text-body">Document readiness is shown in your private evidence receipts below. A clean scan does not mean the college has verified an identity.</p>
-      </details>
+      </Disclosure>
     </section>
     <section aria-labelledby="own-private-receipts" className="border-t border-border pt-5">
       <Heading level={2} size="base" id="own-private-receipts" className="text-[var(--lms-heading)]">Your saved private evidence receipts</Heading>
@@ -121,12 +121,11 @@ export default async function LearnerVerificationPage() {
             Review or edit my education details
           </Link>
         </section>:null}
-        {item.section==="EDUCATION"&&row.verifiedEducation.length>0?<details className="mt-3 border-t border-border pt-3">
-          <summary className="cursor-pointer text-sm font-semibold text-link">Last verified education snapshot</summary>
+        {item.section==="EDUCATION"&&row.verifiedEducation.length>0?<Disclosure title="Last verified education snapshot" className="mt-3">
           <ul className="mt-2 list-disc pl-5 text-sm text-body">{row.verifiedEducation.map((entry,index)=><li key={index}>
             {entry.qualification||"Qualification"} · {[entry.institution,entry.grade].filter(Boolean).join(" · ")||"No recorded details"}
           </li>)}</ul>
-        </details>:null}
+        </Disclosure>:null}
         {row.decidedByName?<p className="mt-2 text-xs text-muted-foreground">Reviewed by: {row.decidedByName}</p>:null}
         {row.verifiedAt?<p className="mt-1 text-xs text-muted-foreground">Verified at: {learnerVerificationDateLabel(row.verifiedAt)}</p>:null}
         {item.section==="IDENTITY"?<Link href="/learn/profile?section=identity"

@@ -18,6 +18,7 @@ import { projectMutation } from "./project-api";
 import {canSaveMentorResourceEntry,mentorResourceEffectiveStatus} from
  "@/modules/projects/mentor-resource-entry-model";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type CanonicalResourceType="FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT";
 type LegacyResourceType="PDF"|"DOC"|"PPT"|"VIDEO";
@@ -137,8 +138,7 @@ function ResourceForm({
           Saving this metadata does not upload a file. If the URL and description
           are empty, a draft is created for later completion.
         </p>:null}
-      {!isLearner ? <details className="min-w-0 md:col-span-2 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]" open={metadata.status!=="ACTIVE"||metadata.resourceType!=="LINK"||metadata.pinned||Boolean(metadata.accessNotes||metadata.sprintId||metadata.taskId)}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-ring">Resource details</summary>
+      {!isLearner ? <Disclosure title="Resource details" defaultOpen={metadata.status!=="ACTIVE"||metadata.resourceType!=="LINK"||metadata.pinned||Boolean(metadata.accessNotes||metadata.sprintId||metadata.taskId)} className="min-w-0 md:col-span-2">
         <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-4)]">
         <Label stack className="min-w-0">Type
           <Select value={metadata.resourceType}
@@ -182,7 +182,7 @@ function ResourceForm({
             onChange={event=>onMetadata({...metadata,accessNotes:event.target.value})}/>
         </Label>
         </div>
-      </details> : null}
+      </Disclosure> : null}
       {!isLearner ? <Label stack className="min-w-0 md:col-span-2">
         Visible to
         <Select value={visibility} onChange={event => onVisibility(event.target.value as "TEAM" | "MENTOR_ONLY")}

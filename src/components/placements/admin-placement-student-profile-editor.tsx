@@ -10,6 +10,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {apiFetch} from "@/lib/api-fetch";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Skill={id:string;name:string;proficiency:""|"Beginner"|"Intermediate"|"Advanced"|"Expert"};
 type Preferences={
@@ -82,8 +83,7 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
   void submit("SET_PREFERENCES",{preferences:{...preferences,rolePreferences:parsed}});
  }
  return <div className="space-y-1">
-  <details className="border-b border-border py-2">
-   <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Skills</summary>
+  <Disclosure title="Skills">
    <div className="space-y-3 pt-3">
     {skills.length?<ul className="divide-y divide-border border-y border-border">{skills.map((skill,index)=>
      <li key={skill.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
@@ -115,9 +115,8 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
     </div>:<Button variant="secondary" disabled={pending||skills.length>=100}
       onClick={()=>{setName(" ");setError("");}}>+ Add skill</Button>:null}
    </div>
-  </details>
-  <details className="border-b border-border py-2">
-   <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Job Preferences</summary>
+  </Disclosure>
+  <Disclosure title="Job Preferences">
    <div className="space-y-3 pt-3 text-sm">
     {!editingPreferences?<div className="grid gap-2 sm:grid-cols-2">
      <p><strong>Roles:</strong> {preferences.rolePreferences.join(", ")||"Not provided"}</p>
@@ -177,7 +176,7 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
        onClick={()=>setEditingPreferences(true)}>Edit job preferences</Button>}
     </div>:null}
    </div>
-  </details>
+  </Disclosure>
   {error?<p role="alert" className="text-sm text-error">{error} Refresh the student record before retrying a conflicting change.</p>:null}
   <ConfirmDialog open={removeIndex!==null} pending={pending}
    onOpenChange={value=>{if(!value&&!pending)setRemoveIndex(null);}}

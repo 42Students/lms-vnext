@@ -26,6 +26,7 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Search = { request?:string|string[]; cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];tab?:string|string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];recruiterDriveMode?:string|string[];employmentType?:string|string[];jobTypeLabel?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -252,8 +253,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </Label>
       </div>
       <div className="flex min-w-0 flex-wrap items-start gap-3">
-        <details open={advancedFiltersActive} className="min-w-0 w-full flex-1 basis-full sm:basis-0">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Filters</summary>
+        <Disclosure title="Filters" defaultOpen={advancedFiltersActive} className="min-w-0 w-full flex-1 basis-full sm:basis-0">
           <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 lg:grid-cols-3">
           <Heading level={3} className="sm:col-span-2 lg:col-span-3 text-foreground">Drive</Heading>
       <Heading level={3} className="sm:col-span-2 lg:col-span-3 mt-2 text-foreground">People</Heading>
@@ -359,7 +359,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </Label>
 
           </div>
-        </details>
+        </Disclosure>
         <Button type="submit" className="w-full sm:w-auto">Apply</Button>
       </div>
     </form>
@@ -437,8 +437,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           </div>}
          </section>
         </div>:null}
-        <details className="border-t border-border pt-2">
-         <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link">Advanced recruiter request list and change history</summary>
+        <Disclosure title="Advanced recruiter request list and change history">
          <div className="pt-3">
         {data.requestRows.length===0?<EmptyState title="No drive requests waiting" description="No recruiter drive requests need review."
             action={<Link href="/tpo/placements/lifecycle?view=DRAFT" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Drafts</Link>}/>:
@@ -456,8 +455,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
              <Link href={"/tpo/recruiters?search="+encodeURIComponent(item.recruiterEmail??"")}
               className="text-primary-text underline">Open recruiter</Link>
             </section>
-            {item.changes?<details aria-label="What changed since the last request" className="mt-3 border-t border-border pt-3 text-sm">
-              <summary className="min-h-11 cursor-pointer font-semibold md:min-h-9">What changed since the last request</summary>
+            {item.changes?<Disclosure title="What changed since the last request" ariaLabel="What changed since the last request" className="mt-3">
               <div className="space-y-2 pb-2">
               {!item.changes.some(change=>change.changed)?<p>Nothing that we compare changed.</p>:
                <dl className="grid gap-2">{item.changes.filter(change=>change.changed).map(change=><div key={change.label} className="border-b border-border py-2">
@@ -466,14 +464,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 <dd>Now: {change.after||"Not provided"}</dd>
                </div>)}</dl>}
               </div>
-            </details>:null}
+            </Disclosure>:null}
             {item.status==="REQUEST"||item.status==="SENT_BACK"?
               <TpoDriveRequestActions requestId={item.id} status={item.status}/>:
               item.approvedJobId?<Link href={"/tpo/placements/jobs/"+item.approvedJobId}
                 className="text-primary-text underline">Open draft</Link>:null}
           </article>)}
          </div>
-        </details>
+        </Disclosure>
         <nav aria-label="Drive request pagination" className="flex justify-between">
           {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Previous</Link>:<span/>}
           {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Next</Link>:null}
@@ -558,10 +556,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           Ordered and filtered through the same authorized lifecycle query. Counts are recorded application, round and offer facts, not inferred shortlist totals.
           <Link href="/tpo/placements/recorded-outside" className="ml-1 font-semibold text-link underline">Record an outside drive</Link>.
          </p>
-         <details className="min-w-0 border-t border-border pt-2">
-          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link">
-           Advanced drive table, bulk actions and exports
-          </summary>
+         <Disclosure title="Advanced drive table, bulk actions and exports" className="min-w-0">
           <div className="min-w-0 pt-3">
         <form action="/api/placements/tpo/drives/export" method="get" aria-label="Selected drive export" className="grid gap-3">
           {Array.from(exportParams.entries()).map(([key,value])=><Input type="hidden" key={key} name={key} value={value}/>)}
@@ -673,7 +668,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           </div>
         </form>
           </div>
-         </details>
+         </Disclosure>
         </div>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
        {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Previous</Link>:<span/>}

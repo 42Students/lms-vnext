@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Slot={id:string;startsAt:string;endsAt:string;room:string;panel:string|null;status:string;
  applicationId:string|null;version:number};
 type Learner={applicationId:string;name:string|null;roll:string|null};
@@ -93,8 +94,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     </Button>
    </div>)}
   </div>:null}
-  <details open={slots.length===0} className="group min-w-0 border-t border-border pt-4">
-   <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-[var(--lms-link-text)] focus-ring md:min-h-9">Interview day setup</summary>
+  <Disclosure title="Interview day setup" defaultOpen={slots.length===0} className="min-w-0">
   <div className="min-w-0 border-t border-border pt-4">
    <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Generate interview day</Heading>
    <p className="mt-1 text-sm text-body leading-[22px]">Create unassigned start-time slots in each room. Existing bookings stay unchanged; overlapping room times are refused.</p>
@@ -121,8 +121,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      Clear {free.length} unbooked slot(s)</Button>
    </div>
   </div>
-  <details className="group min-w-0 border-t border-border pt-3">
-   <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Assign rooms by roll range <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+  <Disclosure title={<>Assign rooms by roll range <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
    <p className="mt-1 text-sm text-body leading-[22px]">Preview the affected roll range, then assign a room. Overlapping room bookings are skipped and reported.</p>
    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     <Label stack>From roll<Input value={fromRoll} onChange={e=>setFromRoll(e.target.value)}
@@ -140,8 +139,8 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    <Button variant="secondary" type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>setConfirmRequest({title:"Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"?",description:"Collision checks will skip blocked moves.",body:{action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom}})} className="mt-3 min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
     Previewed · Assign room
    </Button>
-  </details>
-  </details>
+  </Disclosure>
+  </Disclosure>
   <div className="min-w-0 border-t border-border pt-4">
    <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Interview slots · {booked.length} booked · {free.length} available · {waiting.length} students unassigned</Heading>
    <p className="mt-1 text-sm text-body leading-[22px]">Booking, changing or cancelling a student slot sends a placement notification and records an audit event.</p>
@@ -169,8 +168,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
         onClick={()=>setConfirmRequest({title:"Cancel booked interview slot?",description:"Booking, changing or cancelling a student slot sends a placement notification and records an audit event.",body:{action:"CANCEL",slotId:slot.id,expectedVersion:slot.version,reason:"Cancelled by placement cell"}})}>Cancel</Button>
       </div>}
      </div>
-     <details className="group min-w-0 border-t border-border pt-2">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Change room <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+     <Disclosure title={<>Change room <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
       <div className="flex min-w-0 flex-col gap-2 pt-2 sm:flex-row sm:items-end">
       <Label className="min-w-0 flex-1">Change room
        <Input value={roomChange[slot.id]??slot.room} onChange={e=>setRoomChange(p=>({...p,[slot.id]:e.target.value}))}
@@ -179,7 +177,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
        onClick={()=>void action({action:"ASSIGN_ROOM",slotId:slot.id,expectedVersion:slot.version,room:roomChange[slot.id]})}
        className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50">Save room</Button>
       </div>
-     </details>
+     </Disclosure>
     </article>;
    })}</div>
    {!slots.length?<EmptyState title="No interview slots generated for this round yet."/>:null}

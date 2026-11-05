@@ -30,6 +30,7 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -408,10 +409,9 @@ export default async function ActivityPage({
             aria-current={rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Raw Audit Logs</Link>
         </div>
       </nav>:null}
-      <details className="min-w-0 border-b border-border pb-3" open={explicitFilter||Boolean(one(params["collegeId"]))||rawMode}>
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link underline md:min-h-9">
+      <Disclosure title={<>
           {rawMode?"Audit Logs — advanced search":"More filters"}
-        </summary>
+        </>} defaultOpen={explicitFilter||Boolean(one(params["collegeId"]))||rawMode} className="min-w-0">
       <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         <input type="hidden" name="view" value={selectedPreset} />
         {rawMode?<input type="hidden" name="mode" value="raw"/>:null}
@@ -506,9 +506,7 @@ export default async function ActivityPage({
             defaultValue={one(params["to"])}
           />
         </Label>
-        <details open={Boolean(one(params["eventType"])||one(params["subjectType"])||one(params["subjectId"])||one(params["actorName"])||one(params["q"])||one(params["actorUserId"])) || undefined}
-          className="group min-w-0 border-t border-[var(--lms-canvas-border)] md:col-span-2 xl:col-span-4">
-          <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-ring">More filters<span aria-hidden="true">⌄</span></summary>
+        <Disclosure title={<>More filters<span aria-hidden="true">⌄</span></>} defaultOpen={Boolean(one(params["eventType"])||one(params["subjectType"])||one(params["subjectId"])||one(params["actorName"])||one(params["q"])||one(params["actorUserId"])) || undefined} className="min-w-0 md:col-span-2 xl:col-span-4" preserveSummary summaryClassName="flex min-h-11 items-center justify-between">
           <div className="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
         <Label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
@@ -563,7 +561,7 @@ export default async function ActivityPage({
           />
         </Label>
           </div>
-        </details>
+        </Disclosure>
         <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] md:col-span-2 xl:col-span-4">
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           <Link
@@ -574,7 +572,7 @@ export default async function ActivityPage({
           </Link>
         </div>
       </form>
-      </details>
+      </Disclosure>
 
       {rawMode ? (
         <section aria-labelledby="raw-audit-log" className="min-w-0 space-y-3">

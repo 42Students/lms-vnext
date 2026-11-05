@@ -19,6 +19,7 @@ import {parseTpoEligibilitySheetCsv} from "@/modules/placements/tpo-eligibility-
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type ImportRow=ReturnType<typeof parseTpoEligibilitySheetCsv>[number];
 type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
  index:number;status:"matched"|"unusable";reason:string|null;membershipId:string|null;expectedVersion:string|null;
@@ -105,22 +106,22 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
       onClick={()=>void (preview?commit():previewChanges())}>
       {busy?"Working…":preview?"Confirm matched decisions":"Preview import"}
     </Button>}><div className="min-w-0 space-y-3">
-  <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link focus-ring">CSV format and matching rules</summary>
+  <Disclosure title="CSV format and matching rules" className="min-w-0">
     <p className="max-w-[70ch] break-words text-sm text-muted-foreground leading-[22px]">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
-  </details>
+  </Disclosure>
   <p aria-label="Eligibility import steps" className="text-xs text-muted-foreground leading-[20px]">Choose CSV or paste rows → Preview matched and unusable rows → Skip or resolve unmatched rows → Confirm matched decisions.</p>
   <div className="space-y-2">
    <FileUpload ref={fileInput} className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Choose or drop eligibility CSV" maxBytes={1_500_000}
       accept=".csv,text/csv" disabled={busy} onFiles={files=>void chooseFile(files?.[0]??null)}/>
    {chosenName?<p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground leading-[20px]">Selected: {chosenName}</p>:null}
-   <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Template and Excel instructions</summary>
+   <Disclosure title="Template and Excel instructions" className="min-w-0">
    <p className="text-xs text-muted-foreground leading-[20px]">For Excel files, use Save As → CSV (UTF-8) before import.</p>
-   <TextLink download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="lms-inline-link inline-flex min-h-11 items-center text-sm md:min-h-9 print:hidden">Download a template</TextLink></details>
+   <TextLink download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="lms-inline-link inline-flex min-h-11 items-center text-sm md:min-h-9 print:hidden">Download a template</TextLink></Disclosure>
   </div>
-  <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Paste CSV contents</summary><Label className="block print:hidden">CSV contents
+  <Disclosure title="Paste CSV contents" className="min-w-0"><Label className="block print:hidden">CSV contents
    <Textarea className="mt-1 min-h-32 w-full min-w-0 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");setAcknowledged(false);setSkippedByUser([]);setChosenName("");}} disabled={busy} maxLength={1500000}/>
-  </Label></details>
+  </Label></Disclosure>
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold leading-[22px]">{preview.ready} matched; {preview.skipped} cannot use.</p>
    {unresolved>0?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-warning-text leading-[22px]">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
@@ -157,11 +158,11 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     <span>Page {previewPage} of {previewPages}</span>
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy||previewPage*8>=preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length} onClick={()=>setPreviewPage(p=>p+1)} >Next</Button>
    </nav>:null}
-   <details className="min-w-0 border-b border-border pb-2 print:hidden"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">More actions</summary><div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+   <Disclosure title="More actions" className="min-w-0 print:hidden"><div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>fileInput.current?.click()} >Choose another file</Button>
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>setDiscardPending(true)} >Discard review</Button>
    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void copyPreview()} >Copy preview outcomes CSV</Button>
-   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void previewChanges()} >Preview import</Button></div></details>
+   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void previewChanges()} >Preview import</Button></div></Disclosure>
    <Label variant="choice" className="flex min-h-11 items-start gap-2 print:hidden">
      <Checkbox className="mt-1"
        checked={acknowledged} disabled={busy}

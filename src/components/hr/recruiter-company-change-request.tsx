@@ -5,16 +5,16 @@ import {recruiterCompanyChangeRequest} from "@/modules/placements/recruiter-comp
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Props={collegeId:string;companyName:string;kind:"PROFILE"|"TEAM";
  teammate?:{email:string|null;name:string|null}};
 export function RecruiterCompanyChangeRequest({collegeId,companyName,kind,teammate}:Props){
  const [detail,setDetail]=useState("");
  const [ack,setAck]=useState(false);
  const message=recruiterCompanyChangeRequest({companyName,kind,detail,teammate});
- return <details className="mt-2 min-w-0 rounded-lg border border-border p-2">
-  <summary className="min-h-9 cursor-pointer py-2 text-sm font-semibold text-primary-text underline">
+ return <Disclosure title={<>
    {kind==="TEAM"?"Change access":"Edit company details"}
-  </summary>
+  </>} className="mt-2 min-w-0">
   <form method="post" action="/api/placements/recruiter/conversations/open"
    aria-label={kind==="TEAM"?"Request teammate access change":"Request company profile correction"}
    className="mt-3 space-y-2">
@@ -38,5 +38,5 @@ export function RecruiterCompanyChangeRequest({collegeId,companyName,kind,teamma
     Send to placement cell
    </Button>
   </form>
- </details>;
+ </Disclosure>;
 }

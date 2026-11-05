@@ -16,6 +16,7 @@ import { filterLearnerProjectActivity, learnerProjectActivityCategories,
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type ActivityRow = {
   id: string; eventType: string; summary: string; occurredAt: Date;
@@ -39,11 +40,8 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
   const route = "/learn/projects/" + encodeURIComponent(projectId);
   return <section aria-labelledby="learner-project-activity-heading" className="space-y-4">
     <Heading level={2} size="base" id="learner-project-activity-heading" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Activity</Heading>
-    <details className="border-b border-border" open={Boolean(parsed.success &&
+    <Disclosure title="Filter activity by type and dates" defaultOpen={Boolean(parsed.success &&
       (category !== "ALL" || parsed.data.from || parsed.data.to))}>
-      <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">
-        Filter activity by type and dates
-      </summary>
     <form method="get" action={route} className="grid min-w-0 grid-cols-1 gap-3 pb-5 pt-3 md:grid-cols-2 lg:grid-cols-5">
       <input type="hidden" name="tab" value="activity" />
       <Label>Activity type
@@ -63,7 +61,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Apply</Button>
       <Link data-unskin="" href={route + "?tab=activity"} className="inline-flex min-h-11 md:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:underline">Clear</Link>
     </form>
-    </details>
+    </Disclosure>
     {parsed.success && pageRows.length > 0 ? (
       <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <Label className="min-w-0 flex-1">Find in this activity page

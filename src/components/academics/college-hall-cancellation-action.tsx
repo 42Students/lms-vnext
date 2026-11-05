@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {hallCancellationPrompt} from "@/modules/academics/college-hall-cancel-model";
 import {Input} from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}:{
   hallId:string;sessionId:string;title:string;updatedAt:string;
 }){
@@ -32,8 +33,7 @@ export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}
       finally{pendingRef.current=false;}
     });
   }
-  return <details className="mt-3 min-w-0">
-    <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring md:min-h-9">Cancel booking</summary>
+  return <Disclosure title="Cancel booking" className="mt-3 min-w-0">
     <div className="grid min-w-0 grid-cols-1 items-end gap-2 pt-2 md:grid-cols-[minmax(0,1fr)_auto]">
     <Label stack className="min-w-0">Cancellation reason
       <Input value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
@@ -46,5 +46,5 @@ export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}
     {error?<p role="alert" className="w-full text-xs text-error md:col-span-2">{error}</p>:null}
     </div>
     {dialog}
-  </details>;
+  </Disclosure>;
 }

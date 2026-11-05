@@ -17,6 +17,7 @@ import {placementLearnerRequests} from "@/db/schema";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function TpoDriveRoundsPage({
   params,searchParams,
@@ -150,14 +151,13 @@ export default async function TpoDriveRoundsPage({
               className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
               Slots and rooms · {countFor(proposals,round.id)+countFor(requests,round.id)} need review
             </Link>:null}
-            <details className="group mt-3 min-w-0 border-t border-border pt-2">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Round instructions and links <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+            <Disclosure title={<>Round instructions and links <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="mt-3 min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
               <div className="flex min-w-0 flex-col gap-2 pb-2 sm:flex-row sm:flex-wrap">
             {round.whatToBring ? <p className="mt-3 text-sm text-body">Bring: {round.whatToBring}</p> : null}
             {round.meetingUrl ? <ThirdPartyLink href={round.meetingUrl} label="Meeting link"/> : null}
             {round.testUrl ? <ThirdPartyLink href={round.testUrl} label="Test link"/> : null}
               </div>
-            </details>
+            </Disclosure>
           </article>;
         })}
       </div>}

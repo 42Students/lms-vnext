@@ -22,6 +22,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, adminDriveIsExpired, adminDriveIstDate, adminDriveEffectiveDeadline } from "@/modules/placements/admin-drive-directory-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function SuperAdminDrivesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -122,17 +123,14 @@ export default async function SuperAdminDrivesPage({searchParams}:{
         <SuperAdminDriveRowStatusAction jobId={row.job.id} title={row.job.title} status={row.job.status}/>
         <div aria-label={"Delete job "+row.job.title}><SuperAdminDriveArchive jobId={row.job.id} title={row.job.title}/></div>
       </div>
-      <details className="min-w-0 w-full border-t border-border pt-2 text-sm">
-        <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-ring">
-          More actions · duplicate, deadline
-        </summary>
+      <Disclosure title="More actions · duplicate, deadline" className="min-w-0 w-full">
         <div className="min-w-0 space-y-3 pt-3">
           <SuperAdminDriveDuplicate jobId={row.job.id} title={row.job.title}/>
           {row.job.status==="PUBLISHED"?<SuperAdminDriveDeadline
             jobId={row.job.id} deadline={row.job.applicationDeadline?.toISOString()??null}/>:null}
           <p className="text-xs text-muted-foreground">Archive and access changes are audited for this college.</p>
         </div>
-      </details>
+      </Disclosure>
     </div>;
    }},
  ];

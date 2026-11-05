@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Select} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type InterviewRound={id:string;name:string;sequence:number};
 type DraftInterviewSlot={
@@ -164,8 +165,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
    <Input name="capacity" type="number" min={1} max={100} defaultValue={1}
     required className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9"/>
   </Label>
-  <details className="min-w-0 border-t border-border py-2 sm:col-span-2">
-   <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-body md:min-h-9">Panel label (not a learner name) · Meeting location</summary>
+  <Disclosure title="Panel label (not a learner name) · Meeting location" className="min-w-0 sm:col-span-2">
    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2">
     <Label stack className="min-w-0">Panel label (not a learner name)
      <Input name="panelLabel" maxLength={160} className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9"/>
@@ -174,7 +174,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
      <Input name="meetingLocation" maxLength={500} className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9"/>
     </Label>
    </div>
-  </details>
+  </Disclosure>
   {queued.length?<div className="sm:col-span-2 space-y-2" aria-live="polite">
     <p className="text-sm font-semibold text-foreground">Time blocks ready to propose ({queued.length})</p>
     <ol className="space-y-2">

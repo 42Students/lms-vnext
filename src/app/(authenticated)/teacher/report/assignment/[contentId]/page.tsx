@@ -113,8 +113,7 @@ export default async function FacultyAssignmentReportPage({
       />
       </nav>
       <FacultyPrototypeAssignmentReport report={report}/>
-      <details className="border-t border-[color:var(--lms-border)] pt-4">
-        <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">Advanced report analysis, full student records and grading tools</summary>
+      <Disclosure title="Advanced report analysis, full student records and grading tools">
         <div className="mt-5 space-y-5">
       <PageHeader title={assignment.title?.trim()||"Untitled assignment"}
         description={assignment.courseName}/>
@@ -256,7 +255,7 @@ export default async function FacultyAssignmentReportPage({
         />
       </section>
         </div>
-      </details>
+      </Disclosure>
     </div>
   );
 }

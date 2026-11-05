@@ -19,6 +19,7 @@ import {tpoRoundResultViewSchema,filterTpoRoundResultRows} from "@/modules/place
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Props={params:Promise<{jobId:string;roundId:string}>;searchParams:Promise<{q?:string|string[];status?:string|string[];outcome?:string|string[];role?:string|string[];page?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoRoundResultTablePage({params,searchParams}:Props){
@@ -65,10 +66,9 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   </section>
   <TpoRoundApplyControl jobId={jobId} roundId={roundId}/>
   <p className="text-sm text-body"><TextLink href="#bulk-round-results">Paste or select learner results ↓</TextLink> · <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"} className="text-link underline">Round schedule and venue</Link></p>
-  <details id="bulk-round-results" open className="group min-w-0 border-b border-border pb-4">
-    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
+  <Disclosure title={<>
       Bulk stage round results · paste rolls / select outcomes <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-    </summary>
+    </>} defaultOpen id="bulk-round-results" className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
     <div className="pt-3">
   <p className="mb-3 text-sm text-body">Stage results for this roster page (up to 500 learners). Move to another page for the remaining candidates.</p>
   <TpoBulkRoundResultRecorder roundId={roundId}
@@ -77,15 +77,14 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
       displayName:row.student??"Learner",...(row.rollNumber===undefined?{}:{rollNumber:row.rollNumber}),
       resultStatus:row.resultStatus}))}/>
     </div>
-  </details>
-  <details className="group min-w-0 border-b border-border pb-4">
-    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
+  </Disclosure>
+  <Disclosure title={<>
       Import company round results <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-    </summary>
+    </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
     <div className="pt-3">
   <TpoRoundResultsImport jobId={jobId} roundId={roundId}/>
     </div>
-  </details>
+  </Disclosure>
   <p className="text-sm text-body leading-[22px]">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
   {data.truncated?<Alert tone="info">Showing roster page {data.page} of {data.totalPages}; counts above include every eligible application. Filter and stage within each page.</Alert>:null}
   <form method="get" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-end" aria-label="Filter results">
@@ -132,13 +131,12 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
        View applicant details →
       </Link>
      </div>
-     {row.editable?<details className="group min-w-0">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
+     {row.editable?<Disclosure title={<>
         Stage result <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-      </summary>
+      </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
       <div className="pt-3"><TpoRoundResultEntryForm key={row.resultId??"unrecorded"} roundId={roundId} applicationId={row.applicationId}
         currentResultId={row.resultId}/></div>
-     </details>:
+     </Disclosure>:
       <p className="text-sm text-body leading-[22px]">Result entry is unavailable for this round or an already applied result.</p>}
     </article>)}
    </section>}

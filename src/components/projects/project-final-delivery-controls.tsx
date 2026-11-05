@@ -24,6 +24,7 @@ import {savedDeliverySubmissionReadiness} from "@/modules/projects/saved-deliver
 import {finalDeliveryUserError} from "@/modules/projects/final-delivery-user-error";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Submission = {
   id: string;
@@ -392,8 +393,7 @@ export function LearnerFinalDeliveryControl({
               }
             />
           </Label>
-          <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-ring">Demo URL · Notes</summary>
+          <Disclosure title="Demo URL · Notes" className="min-w-0">
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-4)]">
           <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -423,7 +423,7 @@ export function LearnerFinalDeliveryControl({
             />
           </Label>
           </div>
-          </details>
+          </Disclosure>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
             <p className="m-0 text-sm font-semibold text-body">Additional files &amp; links</p>
             <ProjectDeliveryFileUploader projectId={projectId}
@@ -434,8 +434,7 @@ export function LearnerFinalDeliveryControl({
               <Button className="w-full sm:w-auto" type="button" size="sm" variant="secondary" disabled={pending}
                 onClick={()=>setAttachments(rows=>rows.filter((_,i)=>i!==index))}>Remove</Button>
             </div>)}
-            <details className="min-w-0">
-             <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-ring">Add link</summary>
+            <Disclosure title="Add link" className="min-w-0">
              <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             <Label stack className="min-w-0">Title
               <Input value={linkName} maxLength={255} onChange={event=>setLinkName(event.target.value)}/>
@@ -451,7 +450,7 @@ export function LearnerFinalDeliveryControl({
               Add link
             </Button>
              </div>
-            </details>
+            </Disclosure>
           </div>
           {error ? (
             <p

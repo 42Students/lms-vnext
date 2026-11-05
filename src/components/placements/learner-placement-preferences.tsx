@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Preferences = {
   preferredRoleTitles: string[];
@@ -260,8 +261,7 @@ export function LearnerPlacementPreferences({
           </Select>
         </Label>
       </div>
-      <details className="min-w-0 border-t border-border py-3">
-       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Additional preferences</summary>
+      <Disclosure title="Additional preferences" className="min-w-0">
        <div className="grid min-w-0 gap-4 py-3 sm:grid-cols-2">
         <Label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -363,7 +363,7 @@ export function LearnerPlacementPreferences({
           </Label>
         </div>
        </div>
-      </details>
+      </Disclosure>
       <div className="border-t border-border py-4">
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
           size="sm"

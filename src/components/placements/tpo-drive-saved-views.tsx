@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Disclosure } from "@/components/ui/disclosure";
 type Saved={name:string;query:string};
 const MAX=8;
 export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
@@ -43,8 +44,7 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
   try{localStorage.removeItem(key);setViews([]);setCopied("");setError("");}
   catch{setError("Browser storage is unavailable.");}
  }
- return <details aria-label="Saved drive views" className="min-w-0 border-b border-border pb-3">
-  <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-link focus-ring md:min-h-9">My saved views</summary>
+ return <Disclosure title="My saved views" ariaLabel="Saved drive views" className="min-w-0">
   <div className="min-w-0 pt-2">
   <p className="mt-1 text-xs text-body">Save up to {MAX} named filter links in this browser for your college account. They do not change records or share filters with colleagues.</p>
   <div className="mt-3 flex min-w-0 flex-col gap-2 md:flex-row">
@@ -73,5 +73,5 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
     Clear all saved views
   </Button>:null}
   </div>
- </details>;
+ </Disclosure>;
 }

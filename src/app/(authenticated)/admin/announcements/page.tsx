@@ -32,6 +32,7 @@ import { ANNOUNCEMENT_SENDER_TYPES } from "@/modules/announcements/validation";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function currentTimeMs() {
   return Date.now();
@@ -275,8 +276,7 @@ export default async function AnnouncementsPage({
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-[6px] w-full"/>
         </Label>
         <div className="order-last min-w-0 md:col-span-3">
-          <details className="group min-w-0 border-t border-[var(--lms-canvas-border)]">
-            <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-ring">Filters <span aria-hidden="true">⌄</span></summary>
+          <Disclosure title={<>Filters <span aria-hidden="true">⌄</span></>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between">
             <div className="grid min-w-0 gap-3 pb-4 md:grid-cols-2 xl:grid-cols-4">
         <Label>Visibility
           <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-[6px]">
@@ -304,7 +304,7 @@ export default async function AnnouncementsPage({
           </Select>
         </Label>
             </div>
-          </details>
+          </Disclosure>
         </div>
         <Button type="submit" className="w-full md:w-auto">Search</Button>
         <Link href="/admin/announcements" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Clear</Link>

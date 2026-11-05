@@ -24,6 +24,7 @@ import { getTpoLiveDriveDaySummary, getTpoDriveDayQueue } from "@/modules/placem
 import { TpoDriveDayTodayList } from "@/components/tpo/tpo-drive-day-today-list";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function formatWhen(
   value: Date | null,
@@ -78,10 +79,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           failed={todayError}
           cacheKey={context.user.id + ":" + context.membership.collegeId + ":" + window.start.toISOString().slice(0, 10)}
         />
-        <details className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
-          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link">
-            Live attendance and on-site monitoring
-          </summary>
+        <Disclosure title="Live attendance and on-site monitoring" className="min-w-0">
           <div className="space-y-4 pt-3">
         {!snapshot?<TpoDriveDayLoadWarning/>:null}
         <Heading level={2} size="lg">Rounds happening now</Heading>
@@ -141,7 +139,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           </div>
         )}
           </div>
-        </details>
+        </Disclosure>
       </div>
     );
   }

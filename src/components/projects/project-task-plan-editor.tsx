@@ -13,6 +13,7 @@ import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 import type { ProjectTaskPlanRow } from "@/modules/projects/project-task-plan-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type SourceTask = ProjectTaskPlanRow & {
   status: string;
@@ -164,11 +165,10 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
           (sourceSprint && (sourceSprint.status === "COMPLETED" ||
             sourceSprint.releaseStatus === "SHIPPED"));
         const rowDirty = JSON.stringify(row) !== JSON.stringify(baseline[index]);
-        return <details key={task.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-2">
-          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">
+        return <Disclosure title={<>
             {row.title || "Untitled task"} · {row.key} {locked ? " · Read only" : ""}
             {rowDirty ? " · Edited" : ""}
-          </summary>
+          </>} className="min-w-0">
           <fieldset disabled={pending || Boolean(locked)} className="grid min-w-0 gap-3 py-3 md:grid-cols-2">
             <Label>Key
               <Input className="mt-1" maxLength={120} value={row.key}
@@ -236,7 +236,7 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
                 onClick={() => undo(row.id)}>Undo row</Button>
             </div>
           </fieldset>
-        </details>;
+        </Disclosure>;
       })}
       {invalid || duplicatedKeys ? <p role="alert" className="text-sm text-error">
         {missingTitleAt >= 0 ? "Item " + (missingTitleAt + 1) + ": Title required. " : ""}

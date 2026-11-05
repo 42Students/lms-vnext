@@ -10,6 +10,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { getOwnLearnerApplicationCompany } from "@/modules/placements/learner-application-detail-service";
 import { placementApplicationIdSchema } from "@/modules/placements/validation";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function LearnerApplicationCompanyPage({
   params,
@@ -92,15 +93,14 @@ export default async function LearnerApplicationCompanyPage({
             </dd>
           </div>
         </dl>
-        <details className="mt-4 border-t border-border pt-2">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Employer access privacy details</summary>
+        <Disclosure title="Employer access privacy details" className="mt-4">
           <Banner tone="info" className="mt-3">
           What the company sees here is limited to the verified public employer profile
           associated with your own application. This is not a live employer-access audit.
           Your private files, personal contacts and other learners&apos; applications
           are never included in this preview.
           </Banner>
-        </details>
+        </Disclosure>
       </section>
     </div>
   );

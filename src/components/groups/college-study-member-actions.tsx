@@ -14,6 +14,7 @@ import {
   collegeStudyMemberLabel, type CollegeStudyMemberAction,
 } from "@/modules/groups/college-member-management-model";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export function CollegeStudyMemberActions({
   groupId, name, members, available,
@@ -84,9 +85,9 @@ export function CollegeStudyMemberActions({
       </Label>
       <Button type="submit" loading={pending} className="min-h-11 w-full md:col-span-2 md:min-h-9 lg:col-span-1 lg:w-auto" disabled={pending}>Review add</Button>
     </form>
-    <details className="border-b border-border pb-3 text-xs text-muted-foreground"><summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9">Membership policy</summary><p>
+    <Disclosure title="Membership policy"><p>
       Adding to a full group follows the registered group waitlist policy. Only active same-college learners are eligible.
-    </p></details>
+    </p></Disclosure>
     <div className="divide-y divide-border">
       {members.every(member=>member.state==="REMOVED") ? <EmptyState title="No active group members" description="No active group members are recorded."/> : null}
       {members.filter((member) => member.state !== "REMOVED").map((member) =>

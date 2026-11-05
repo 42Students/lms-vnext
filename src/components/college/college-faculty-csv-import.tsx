@@ -19,6 +19,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Row={row:number;status:string;detail:string;membershipId?:string};
 type Report={preview:boolean;valid:number;invalid:number;structuralErrors:string[];results:Row[]};
@@ -83,8 +84,7 @@ export function CollegeFacultyCsvImport(){
         <ButtonLink variant="secondary" download="faculty-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(header+"\n")}
           className="w-full md:w-auto">Download CSV template</ButtonLink>
       </div>
-      <details className="min-w-0 border-t border-border pt-3 print:hidden">
-        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring md:min-h-9">CSV contents</summary>
+      <Disclosure title="CSV contents" className="min-w-0 print:hidden">
         <div className="min-w-0 space-y-3 pt-3">
           <p className="break-words font-mono text-xs leading-5">{header}</p>
           <Label stack>CSV contents
@@ -94,7 +94,7 @@ export function CollegeFacultyCsvImport(){
         }} className="font-mono text-xs"/>
           </Label>
         </div>
-      </details>
+      </Disclosure>
       {error&&<Alert tone="error">{error}</Alert>}
     </section>
     {report&&<section className="min-w-0 space-y-4 border-t border-border pt-[16px]">

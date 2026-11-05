@@ -9,6 +9,7 @@ import {getDriveChangeRequestDiscussionContext} from "@/modules/placements/tpo-d
 import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function TpoDriveDiscussion({params,searchParams}:{
  params:Promise<{jobId:string}>;
@@ -71,11 +72,10 @@ export default async function TpoDriveDiscussion({params,searchParams}:{
     <Link href={"/tpo/messages/"+encodeURIComponent(thread.id)}
       className="inline-flex min-h-11 w-full shrink-0 items-center justify-center self-start rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-ring sm:w-auto md:min-h-9">Open conversation</Link>
     <div className="w-full sm:basis-full">
-      <details className="border-t border-border pt-2">
-        <summary className="cursor-pointer text-sm font-semibold text-link">Reply in this drive discussion</summary>
+      <Disclosure title="Reply in this drive discussion">
         <TpoRecruiterMessageReply threadId={thread.id} actorUserId={context.user.id} unread={thread.unread>0} {...(quote===undefined?{}:{quote})}/>
         <p className="mt-1 text-xs text-muted-foreground">Showing the latest three messages here. Open the full conversation to review earlier messages and quote context.</p>
-      </details>
+      </Disclosure>
     </div>
    </li>)}</ul>
    </section>}

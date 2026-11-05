@@ -23,6 +23,7 @@ import {listAdminScopedPeople} from "@/modules/admin-ui/super-admin-scoped-peopl
 import {getSuperAdminPeopleFilterOptions} from "@/modules/admin-ui/super-admin-people-filter-options";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Disclosure } from "@/components/ui/disclosure";
 const statuses=["ALL","ACTIVE","SUSPENDED","ENDED"] as const;
 export default async function SuperAdminStudentsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -80,12 +81,11 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   {choicesUnavailable?<Alert tone="warning">Registration and bulk-import academic choices could not be loaded. Those actions are disabled until the selected college's options can be verified. <Link href="/admin/students" className="font-semibold underline">Retry registration options</Link></Alert>:null}
   {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <Link href="/admin/students" className="font-semibold underline">Retry import history</Link></Alert>:null}
   <AdminScopedReadPage headingMode="section" intro={choices?
-   <details id="register-student" className="group min-w-0 scroll-mt-24 border-y border-[var(--lms-canvas-border)]">
-    <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-heading)] focus-ring [&::-webkit-details-marker]:hidden">
+   <Disclosure title={<>
      <span aria-hidden="true" className="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-border text-lg leading-none">＋</span>
      Register students (one at a time or bulk CSV)
      <span aria-hidden="true" className="ml-auto text-muted-foreground group-open:rotate-180">⌄</span>
-    </summary>
+    </>} id="register-student" className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center gap-2">
     <div className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] p-[var(--lms-space-4)] lg:grid-cols-2">
      <section aria-labelledby="register-student-heading" className="min-w-0 space-y-3 border-b border-border pb-4 lg:border-b-0 lg:border-r lg:pr-4">
       <Heading level={2} size="base" id="register-student-heading" className="leading-6 text-[var(--lms-heading)]">Register New Student</Heading>
@@ -97,20 +97,18 @@ export default async function SuperAdminStudentsPage({searchParams}:{
        {historyUnavailable?<StatusBadge tone="warning">History unavailable</StatusBadge>:<SuperAdminStudentImportHistory runs={importRuns}/>}
       </div>
       <p className="text-sm leading-[22px] text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
-      <details className="min-w-0 border-t border-border pt-3">
-       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Show CSV import form</summary>
+      <Disclosure title="Show CSV import form" className="min-w-0">
        <div className="min-w-0 pt-3"><CollegeStudentCsvImport choices={choices}/></div>
-      </details>
+      </Disclosure>
      </section>
     </div>
-   </details>:null} {...(peopleFilters ? {peopleFilters:{...peopleFilters,kind:"LEARNER" as const}} : {})} title="Registered Students" path="/admin/students" statuses={statuses}
+   </Disclosure>:null} {...(peopleFilters ? {peopleFilters:{...peopleFilters,kind:"LEARNER" as const}} : {})} title="Registered Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="students.csv"
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
-  renderBulkActions={rows=><details className="min-w-0 border-b border-border pb-3">
-    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Bulk module access controls</summary>
+  renderBulkActions={rows=><Disclosure title="Bulk module access controls" className="min-w-0">
     <div className="min-w-0 pt-3"><SuperAdminStudentBulkAccess collegeId={context.adminScope?.collegeId??""} learners={rows.map(row=>({id:row.id,name:row.title}))}/></div>
-   </details>}
+   </Disclosure>}
   renderRowActions={row=><div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-start [&>div]:w-full sm:[&>div]:w-auto">
     <ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>
     {peopleFilters?<><CollegePersonEditAction membershipId={row.id} kind="LEARNER"/><StudentClassMoveAction membershipId={row.id} name={row.title}/></>:null}

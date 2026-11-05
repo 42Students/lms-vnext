@@ -10,6 +10,7 @@ import {Alert} from "@/components/ui/alert";
 import {apiFetch} from "@/lib/api-fetch";
 import { Table } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Skill={id:string;name:string;proficiency:""|"Beginner"|"Intermediate"|"Advanced"|"Expert"};
 type Preferences={
@@ -52,16 +53,14 @@ export function AdminPlacementProfileEditor({membershipId,initialSkills,initialP
   finally{setBusy(false);}
  }
  return <div className="space-y-4" aria-label="Authorized student profile sections">
-  <details className="border-b border-border pb-3" open>
-   <summary className="cursor-pointer py-2 text-sm font-semibold">Resume</summary>
+  <Disclosure title="Resume" defaultOpen>
    <p className="mt-2 text-sm text-body">{resumeAvailable
     ?"Verified resume is on file. Use the signed private-document viewer in the authorized learner record."
     :resumeScanStatus==="PENDING"?"Resume scan pending; no private download is exposed."
     :"No scanned resume is available for this learner."}</p>
    <p className="mt-1 text-xs text-muted-foreground">Private resume replacement requires the existing verified upload/receipt workflow; direct file URLs are not accepted.</p>
-  </details>
-  <details className="border-b border-border pb-3" open>
-   <summary className="cursor-pointer py-2 text-sm font-semibold">Skills ({skills.length})</summary>
+  </Disclosure>
+  <Disclosure title={<>Skills ({skills.length})</>} defaultOpen>
    <div className="mt-2 overflow-x-auto">
     <Table className="min-w-[360px]">
      <thead><tr className="border-b border-border">
@@ -81,9 +80,8 @@ export function AdminPlacementProfileEditor({membershipId,initialSkills,initialP
    </div>
    <Button type="button" variant="secondary" className="mt-3"
     disabled={busy||skills.length>=100} onClick={()=>{setEditing(-1);setName("");setProficiency("");setError("");}}>Add skill</Button>
-  </details>
-  <details className="border-b border-border pb-3" open>
-   <summary className="cursor-pointer py-2 text-sm font-semibold">Job Preferences</summary>
+  </Disclosure>
+  <Disclosure title="Job Preferences" defaultOpen>
    <div className="mt-3 grid max-w-xl gap-3">
     <Label stack>Preferred roles (comma separated)
      <Input value={roleText} maxLength={1500} disabled={busy}
@@ -99,7 +97,7 @@ export function AdminPlacementProfileEditor({membershipId,initialSkills,initialP
       preferredEmploymentCity:city.trim(),
      }})}>Save job preferences</Button>
    </div>
-  </details>
+  </Disclosure>
   <Dialog open={editing!==null} onOpenChange={open=>{if(!open&&!busy)setEditing(null);}}
    title={editing===-1?"Add skill":"Edit skill"} description="Changes are scoped to this student and audited."
    footer={<div className="flex justify-end gap-2">

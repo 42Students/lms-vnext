@@ -721,10 +721,7 @@ export function PlacementDraftEditForm({
           <Button type="button" variant="secondary" disabled={dateRows.length>=20}
             onClick={()=>{setDateRows(items=>[...items,{id:nextRowId.current++,label:"",date:""}]);markDirty();}}>Add date{dateRows.length>=20?" (max 20)":""}</Button>
         </section>
-        <details className="min-w-0 border-t border-border pt-3">
-          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">
-            Additional posting details and assessment
-          </summary>
+        <Disclosure title="Additional posting details and assessment" className="min-w-0">
           <div className="grid min-w-0 gap-4 py-3 sm:grid-cols-2">
            <Label className="sm:col-span-2">Responsibilities
             <Textarea name="responsibilities" rows={3} maxLength={15000}
@@ -743,9 +740,8 @@ export function PlacementDraftEditForm({
            <p className="sm:col-span-2 text-xs text-muted-foreground">The assessment link and deadline are separate from the employer application URL. Assessment must follow the application deadline; existing expired dates may remain unchanged when editing unrelated terms.</p>
            
           </div>
-        </details>
-        <details className="min-w-0 border-t border-border pt-3">
-         <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Candidate Preferences — informational</summary>
+        </Disclosure>
+        <Disclosure title="Candidate Preferences — informational" className="min-w-0">
          <p className="py-2 text-xs text-muted-foreground">Preferred degree, specialization, graduation year, minimum GPA and city describe ideal applicants. Unlike Eligibility rules below, these do not gate learner applications.</p>
          <div className="grid min-w-0 gap-4 pb-4 sm:grid-cols-2">
           {([["preferredDegree","Preferred degree",value.job.legacyPostingDetails?.candidatePreferences?.preferredDegree??""],
@@ -784,10 +780,9 @@ export function PlacementDraftEditForm({
              onClick={()=>{setRuleRows(items=>[...items,{id:nextRowId.current++,label:"",value:""}]);markDirty();}}>Add custom rule</Button>
           </div>
          </div>
-        </details>
+        </Disclosure>
 
-        <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
-          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Target Audience — enforced eligibility rules</summary>
+        <Disclosure title="Target Audience — enforced eligibility rules" className="min-w-0">
           <div className="min-w-0 pb-4">
           <p className="mt-1 text-xs leading-5 text-body">
             Leave programs and cohorts unselected to keep the opportunity college-wide.
@@ -1001,7 +996,7 @@ export function PlacementDraftEditForm({
             </Label>
           </div>
           </div>
-        </details>
+        </Disclosure>
 
         {formError?<p role="alert" className="text-sm text-error">{formError}</p>:null}
         <div className="min-w-0 border-t border-border pt-4">

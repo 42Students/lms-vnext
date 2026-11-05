@@ -13,6 +13,7 @@ import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel
 import {CollegeHiringFunnel} from "@/components/placements/college-hiring-funnel";
 import {CollegeReportNavigation} from "@/components/placements/college-report-navigation";
 import {CollegeHiringDateFilters} from "@/components/placements/college-hiring-date-filters";
+import { Disclosure } from "@/components/ui/disclosure";
 const LEGACY_ANALYTICS_DESCRIPTION="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below.";
 
 /** Dedicated legacy Analytics surface: tenant-owned observed placement metrics. */
@@ -120,10 +121,9 @@ export default async function CollegeHiringDashboardPage({
         selectedSeasonId={workspace?.selectedSeasonId??query.data.seasonId??null}
         selectedJobId={workspace?.selectedJobId??query.data.jobId??null}/>
     </section>:null}
-    <details className="min-w-0 border-t border-border pt-2">
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Reporting methodology</summary>
+    <Disclosure title="Reporting methodology" className="min-w-0">
       {workspace?<ReportScopeNote note={workspace.registrationScopeNote}/>:
         <p className="text-sm text-muted-foreground">Methodology will appear after the report reloads.</p>}
-    </details>
+    </Disclosure>
   </div>;
 }

@@ -29,6 +29,7 @@ import {buildRecruiterReportFunnel} from "@/modules/placements/recruiter-company
 import {hrCompanyReportPageSignals} from "@/modules/placements/hr-report-page-signals-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type SearchParams = {
   collegeId?: string | string[];
@@ -228,10 +229,7 @@ export default async function RecruiterCompanyReportsPage({
         </div>
       </section>
 
-      <details className="min-w-0 border-b border-border pb-4 md:pb-6" open={query.status !== "ALL" || pageSize !== 25}>
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] md:min-h-9 md:text-[24px] md:leading-[32px] lg:text-[var(--lms-font-3xl)] lg:leading-[40px]">
-          Drive report filters
-        </summary>
+      <Disclosure title="Drive report filters" defaultOpen={query.status !== "ALL" || pageSize !== 25} className="min-w-0">
 
         <form
           method="get"
@@ -287,10 +285,9 @@ export default async function RecruiterCompanyReportsPage({
             Clear filters
           </Link>
         </form>
-      </details>
+      </Disclosure>
 
-      <details className="min-w-0 border-b border-border pb-4 md:pb-6">
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] md:min-h-9 md:text-[24px] md:leading-[32px] lg:text-[var(--lms-font-3xl)] lg:leading-[40px]">Current page hiring totals</summary>
+      <Disclosure title="Current page hiring totals" className="min-w-0">
         <p className="mt-1 text-xs text-muted-foreground">
           Totals cover only the visible authorized drive rows on this page, not every company drive.
           Outstanding means currently issued offers; these counts may represent multiple offer versions.
@@ -299,7 +296,7 @@ export default async function RecruiterCompanyReportsPage({
           steps={Object.entries(hrCompanyReportPageSignals(jobs)).map(([label,value])=>({
             label,value,
           }))}/>
-      </details>
+      </Disclosure>
 
       <section className="min-w-0 space-y-3">
         <div>

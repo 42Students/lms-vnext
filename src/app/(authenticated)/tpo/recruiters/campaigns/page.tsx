@@ -19,6 +19,7 @@ import {tpoCampaignHistoryTime,tpoCampaignHistoryStatus} from "@/modules/messagi
 import {TPO_CAMPAIGN_RECIPIENT_CAP_COPY,TPO_CAMPAIGN_PROVIDER_DISABLED_COPY} from "@/modules/messaging/tpo-campaign-legacy-compat";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type PageProps = {searchParams:Promise<{page?:string|string[];purpose?:string|string[]}>};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
@@ -77,10 +78,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
     </p>}
    </section>
   </div>
-  <details className="rounded-xl border border-border bg-surface">
-   <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-link">
-    Advanced history, filters and provider receipt ledger
-   </summary>
+  <Disclosure title="Advanced history, filters and provider receipt ledger">
    <div className="min-w-0 space-y-4 border-t border-border p-4">
   <p className="text-sm text-body leading-[22px]">
    To send one, select recruiters in the table and choose Act, then Send an email.
@@ -153,6 +151,6 @@ export default async function CampaignHistory({searchParams}:PageProps){
     {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Next</Link>:null}
   </nav>
    </div>
-  </details>
+  </Disclosure>
  </div>;
 }

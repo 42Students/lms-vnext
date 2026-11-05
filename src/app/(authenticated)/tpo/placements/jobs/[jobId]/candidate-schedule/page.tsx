@@ -14,6 +14,7 @@ import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invali
 import {
   getTpoCandidateScheduleReadiness,
 } from "@/modules/placements/tpo-candidate-schedule-service";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const dateFormat = new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
@@ -48,8 +49,7 @@ export default async function TpoCandidateSchedulePage({
       {slotsReady ? "Candidate-specific slot booking is available from each interview round. Room-time conflicts are checked at assignment." :
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
     </Banner>
-    <details className="border-b border-border pb-6" open={warning.state === "UNAVAILABLE" || warning.collisions > 0 || warning.unknown > 0 || warning.warnings.length > 0}>
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)] focus-ring">Persisted venue collision assessment</summary>
+    <Disclosure title="Persisted venue collision assessment" defaultOpen={warning.state === "UNAVAILABLE" || warning.collisions > 0 || warning.unknown > 0 || warning.warnings.length > 0}>
       {warning.state === "UNAVAILABLE" ?
         <Alert tone="warning">Assessment unavailable; no conflict-free claim is made.</Alert>
         : <p className="mt-2 text-sm text-body leading-[22px]">
@@ -63,7 +63,7 @@ export default async function TpoCandidateSchedulePage({
           {warning.warnings.flatMap(entry => entry.messages.map((message, i) =>
             <li key={entry.roundId + "-" + i}>{message}</li>))}
         </ul> : null}
-    </details>
+    </Disclosure>
     <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0">
       {drive.rounds.filter(round=>round.kind==="INTERVIEW").map(round=>
         <Link key={round.id} href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/slots"}

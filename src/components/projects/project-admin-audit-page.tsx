@@ -28,6 +28,7 @@ import {getProjectResourceHistory} from "@/modules/projects/resource-history-ser
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 /** Mirrors the legacy destructive/access-changing action keys. Count each
  * raw activity item, not distinct projects or condensed groups. */
@@ -332,10 +333,9 @@ export async function ProjectAdminAuditPage({
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link hover:bg-primary-subtle md:min-h-9"
           aria-label={"Clear entity filter for "+subjectId}>Filtered to: {subjectId} <span aria-hidden="true">×</span></Link>:null}
       </nav>
-      <details className="group min-w-0 border-b border-border pb-4" open={Boolean(eventType || importance || subjectType || subjectId || to)}>
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">
+      <Disclosure title={<>
           <span>Filters</span><span aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-180">⌄</span>
-        </summary>
+        </>} defaultOpen={Boolean(eventType || importance || subjectType || subjectId || to)} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2 md:min-h-9">
       <form
         className="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-3"
         action={basePath + "/audit"}
@@ -435,7 +435,7 @@ export async function ProjectAdminAuditPage({
           </Link>
         </div>
       </form>
-      </details>
+      </Disclosure>
 
       <section aria-label="Audit page summary" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3">
         {([
@@ -493,10 +493,7 @@ export async function ProjectAdminAuditPage({
                 Resource order: {event.resourceOrder}
               </p> : null}
               {event.beforeJson || event.afterJson ? (
-                <details className="min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 py-2">
-                  <summary className="min-h-9 cursor-pointer font-semibold text-primary-text">
-                    View resource change details
-                  </summary>
+                <Disclosure title="View resource change details" className="min-w-0">
                   <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
                     <div className="min-w-0">
                       <Heading level={3} size="xs" className="mb-2 text-muted-foreground">Before</Heading>
@@ -507,7 +504,7 @@ export async function ProjectAdminAuditPage({
                       {auditDetailValue(event.afterJson)}
                     </div>
                   </div>
-                </details>
+                </Disclosure>
               ) : null}
             </li>)}
           </ol>}
@@ -556,19 +553,18 @@ export async function ProjectAdminAuditPage({
                 subjectType:event.subjectType,metadata});
               return <tr key={event.id} className="border-b border-border align-top last:border-0">
                 <td className="min-w-[212px] p-3">
-                  <details>
-                    <summary className="cursor-pointer font-semibold text-link focus-ring">
+                  <Disclosure title={<>
                       <StatusBadge tone={destructiveProjectAction(event.eventType)?"error":"info"}>
                         {projectActionLabel(event.eventType)}</StatusBadge>
                       <span aria-hidden="true" className="ml-2">▾</span>
-                    </summary>
+                    </>} preserveSummary>
                     <div className="mt-2 space-y-2 break-words text-xs text-body">
                       <p>{event.summary}</p>
                       <p>Action key: <code className="break-all">{event.eventType}</code></p>
                       <p>Event ID: <code className="break-all">{event.id}</code></p>
                       <div className="border-t border-border pt-2">{auditDetailValue(metadata)}</div>
                     </div>
-                  </details>
+                  </Disclosure>
                 </td>
                 <td className="min-w-[196px] p-3">
                   <p className="font-semibold">{event.subjectLabel||auditEntityType(event.subjectType)}</p>

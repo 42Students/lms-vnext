@@ -15,6 +15,7 @@ import {projectTemplateBlueprintSchema,type ProjectTemplateBlueprint} from "@/mo
 import {projectMutation} from "./project-api";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Resource=ProjectTemplateBlueprint["resources"][number];
 const cls="mt-1 w-full";
 function slug(value:string){
@@ -159,10 +160,9 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     <span>Removed {removed.row.title||"resource"} (unsaved).</span>
     <Button type="button" variant="link" onClick={undo} disabled={pending}>Undo remove</Button>
    </div>:null}
-   {visibleRows.map(({row,index:i})=><details key={row.key+":"+i} className="min-w-0 border-b border-border py-2" open={rowErrors[i]?.length?true:undefined}>
-    <summary className="flex min-h-11 cursor-pointer items-center gap-2 break-words text-sm font-semibold text-[var(--lms-heading)]">
+   {visibleRows.map(({row,index:i})=><Disclosure title={<>
       {row.title||"Untitled resource"} <span className="ml-auto text-xs font-normal text-muted-foreground">Resource {i+1}{rowErrors[i]?.length?" · Fix "+rowErrors[i].length+" error(s)":""}</span>
-    </summary>
+    </>} defaultOpen={rowErrors[i]?.length?true:undefined} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center gap-2">
     {rowErrors[i]?.length?<ul role="alert" className="list-disc space-y-1 px-5 py-2 text-xs text-danger-text">
       {rowErrors[i].map((issue,index)=><li key={index}>{issue}</li>)}
     </ul>:null}
@@ -208,7 +208,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Remove</Button>
     </div>
     </fieldset>
-   </details>)}
+   </Disclosure>)}
    <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
     <Button type="button" variant="secondary" disabled={pending||rows.length>=200} className="min-h-11 w-full border-dashed sm:min-h-9 sm:w-auto" onClick={add} >Add resource</Button>
     <Button type="button" variant="primary" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={pending} onClick={()=>void save()}

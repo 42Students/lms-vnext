@@ -12,6 +12,7 @@ import {IndependentFindingCopyAction} from "@/components/tracker/independent-fin
 import {auditFindingHistoryActionLabel} from "@/modules/bug-tracker/audit-finding-source-event-model";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 export async function generateMetadata({params}:{params:Promise<{publicId:string}>}){
  const {publicId}=await params;
  return {title:publicId+" · 42 Tracker"};
@@ -40,14 +41,13 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   </section>)}
   <IndependentFindingActions externalId={finding.externalId} version={finding.version} status={finding.status} severity={finding.severity} currentAssignee={finding.assignee}
    candidates={candidates.map(item=>({id:item.id,externalId:item.externalId,title:item.title}))}/>
-  <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More finding details</summary>
+  <Disclosure title="More finding details" className="min-w-0">
     <div className="min-w-0 space-y-4 pt-3">
   {details.slice(1).map(([label,value])=><section key={label} className="min-w-0 border-b border-border pb-4">
    <Heading level={2} className="text-[var(--lms-heading)]">{label}</Heading><p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{value??"Not given"}</p>
   </section>)}
     </div>
-  </details>
+  </Disclosure>
   <section aria-labelledby="section-source-and-affected-code" className="border-b border-border pb-4">
    <Heading level={2} id="section-source-and-affected-code" className="text-[var(--lms-heading)]">Source and affected code</Heading>
    <p className="max-w-3xl break-all text-sm text-body leading-[22px]">Repository: {finding.sourceRepo} · Source: {finding.sourcePath??"Not given"}</p>
@@ -64,8 +64,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
     <div><dt className="font-semibold">Duplicate</dt><dd>{finding.duplicateOf?"Linked to another finding":"Not marked duplicate"}</dd></div>
    </dl>
   </section>
-  <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Related tools</summary>
+  <Disclosure title="Related tools" className="min-w-0">
     <div className="flex min-w-0 flex-wrap items-center gap-4 pt-3">
   <Link href={"/tracker/audit-findings?area="+encodeURIComponent(finding.area)+"&q="+encodeURIComponent(finding.title.slice(0,100))}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9">Looks similar</Link>
@@ -76,7 +75,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   }}/>
 
     </div>
-  </details>
+  </Disclosure>
   <details aria-labelledby="section-audit-event-history" className="border-b border-[var(--lms-canvas-border)] pb-4">
    <summary id="section-audit-event-history" className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground md:min-h-9">Audit event history</summary>
    {events.length?<ol aria-label="audit findings entries" className="mt-3 divide-y divide-border border-y border-border text-sm">{events.map(event=>{

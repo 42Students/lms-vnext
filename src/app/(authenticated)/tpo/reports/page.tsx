@@ -303,8 +303,7 @@ export default async function TpoReportsPage({
         </section>)}
        </div>
       </section>
-      <details id="advanced-report-workspace" className="rounded-xl border border-border bg-surface">
-       <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-heading">Advanced reporting, filters and full report catalogue</summary>
+      <Disclosure title="Advanced reporting, filters and full report catalogue" id="advanced-report-workspace">
        <div className="space-y-6 border-t border-border p-4">
       <nav aria-label="Placement journey" className="space-y-3 border-y border-border py-4">
        <Heading level={2} size="lg">Placement journey</Heading>
@@ -433,7 +432,7 @@ export default async function TpoReportsPage({
         <p className="mt-2 text-xs text-muted-foreground">A placed learner, an accepted learner, and an accepted offer are separate measures. No conversion rate is inferred from unlike populations.</p>
       </Disclosure>
        </div>
-      </details>
+      </Disclosure>
     </div>
   );
 }

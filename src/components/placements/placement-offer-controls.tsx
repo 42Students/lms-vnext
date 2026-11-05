@@ -18,6 +18,7 @@ import { PlacementBulkOfferWithdraw } from "./placement-bulk-offer-withdraw";
 import { TpoOfferLifecyclePanel } from "./tpo-offer-lifecycle-panel";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type OfferStatus =
   | "ISSUED"
@@ -337,11 +338,10 @@ export function PlacementOfferControls({
       </div>
 
       {isTpo ? (
-        <details className="group min-w-0 border-b border-border pb-4">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-primary-text focus-ring [&::-webkit-details-marker]:hidden">
+        <Disclosure title={<>
             TPO administrative offer actions
             <span aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180">⌄</span>
-          </summary>
+          </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-3">
           <div className="min-w-0 space-y-5 pt-4">
             <TpoOfferLifecyclePanel
           jobId={jobId}
@@ -362,7 +362,7 @@ export function PlacementOfferControls({
           }] : [])}
         />
           </div>
-        </details>
+        </Disclosure>
       ) : null}
 
       {candidates.length === 0 ? (

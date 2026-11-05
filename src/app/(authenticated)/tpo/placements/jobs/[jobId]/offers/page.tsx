@@ -22,6 +22,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -78,10 +79,9 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    </Label><Button type="submit" className="min-h-11 w-full px-6 sm:w-auto md:min-h-9">Search</Button>
    {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline sm:w-auto focus-ring md:min-h-9">Clear filters</Link>:null}
    </div>
-   <details className="group min-w-0 border-t border-border pt-3">
-    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
+   <Disclosure title={<>
       Filters <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-    </summary>
+    </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
     <div className="grid min-w-0 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
    <Label stack className="min-w-0">Joining outcome
     <Select name="joining" defaultValue={parsed.data.joining} >
@@ -116,7 +116,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
       className="w-full md:w-36"/>
    </Label>
     </div>
-   </details>
+   </Disclosure>
   </form>
   <p role="status" className="text-sm text-body leading-[1.6]">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<EmptyState title="No offers match this filter."/>:
@@ -128,10 +128,9 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
       <div className="min-w-0"><p className="text-xs text-muted-foreground">Joining</p><p className="mt-1 break-words text-body">{row.joining??"Not applicable"}</p></div>
     </div>
     <div className="mt-3 flex min-w-0 flex-wrap gap-2"><Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 sm:w-auto text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link></div>
-    <details className="group mt-3 min-w-0 border-t border-border pt-2">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
+    <Disclosure title={<>
         More offer details <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-      </summary>
+      </>} className="mt-3 min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
       <div className="min-w-0 space-y-3 pb-2">
     <p className="mt-2 text-xs text-body">Fixed: {row.fixedLpa===null?"Not recorded":row.fixedLpa+" LPA"} · Variable: {row.variableLpa===null?"Not recorded":row.variableLpa+" LPA"} · Joining bonus: {row.joiningBonusLpa===null?"Not recorded":row.joiningBonusLpa+" LPA"} · Bond: {row.bondMonths===null?"Not recorded":row.bondMonths+" months"}</p>
     {row.acceptanceChannel?<p className="mt-1 text-xs text-body">
@@ -146,7 +145,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
     {row.status==="ACCEPTED"?<Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
       </div>
-    </details>
+    </Disclosure>
 
    </article>)}</section>}
   <Pagination label="Offer register pages" page={data.page} pageCount={data.totalPages}

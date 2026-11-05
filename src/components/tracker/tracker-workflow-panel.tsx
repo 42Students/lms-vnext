@@ -20,6 +20,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export type TrackerWorkflowIssue = {
   publicId: string;
@@ -138,8 +139,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           {pending ? <span role="status" className="text-xs text-muted-foreground">Updating status…</span> : null}
         </Label>
       </div>
-      <details className="min-w-0 border-t border-border pt-3">
-        <summary className="min-h-11 cursor-pointer text-base font-semibold text-primary-text focus-ring">Engineering details</summary>
+      <Disclosure title="Engineering details" className="min-w-0">
         <p className="mb-4 text-sm text-body">Root cause, fix commits, regression coverage and production verification</p>
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
         <Label stack className="min-w-0">
@@ -162,8 +162,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
             {BUG_REGRESSION_TEST_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </Label>
-        <details className="min-w-0 sm:col-span-2">
-          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring">Commit evidence</summary>
+        <Disclosure title="Commit evidence" className="min-w-0 sm:col-span-2">
           <div className="grid min-w-0 gap-4 pt-2 sm:grid-cols-2">
         <Label className="min-w-0 sm:col-span-2">
           Root cause
@@ -190,7 +189,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
             rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">View on GitHub ↗</TextLink>:null}
         </div>
           </div>
-        </details>
+        </Disclosure>
         <Label className="flex min-h-11 min-w-0 items-center gap-3 md:min-h-9">
           <Checkbox checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />
           Production verified
@@ -199,7 +198,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
         <Button disabled={pending} loading={pending} onClick={save} className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
           {pending ? "Saving…" : "Save details"}
         </Button>
-      </details>
+      </Disclosure>
 
       {issue.status === "READY_FOR_RETEST" ? (
         <div className="space-y-3 border-t border-border pt-4">

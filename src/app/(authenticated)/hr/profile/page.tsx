@@ -14,6 +14,7 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterSelfProfile } from "@/modules/placements/recruiter-profile-service";
 import { getRecruiterSelfGrantOverview } from "@/modules/placements/recruiter-self-grants-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function HrProfilePage({ searchParams }: {
   searchParams?: Promise<{ collegeId?: string | string[] }>;
@@ -76,11 +77,10 @@ export default async function HrProfilePage({ searchParams }: {
        <div className="min-w-0">      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Your details</Heading>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
-        <details className="mt-2 min-w-0">
-          <summary className="flex min-h-11 cursor-pointer items-center text-xs font-semibold text-primary-text md:min-h-9">About these details</summary>
+        <Disclosure title="About these details" className="mt-2 min-w-0">
           <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</p>
           <p className="mt-2 max-w-2xl text-xs leading-5 text-muted-foreground">Edit your name, designation and optional mobile together, then choose Save changes. Your work email is how you sign in, so it can&apos;t be changed here.</p>
-        </details>
+        </Disclosure>
         <div className="mt-3 max-w-3xl">
           <RecruiterProfileDetailsEditor key={context.user.id} initialName={profile.displayName}
             initialFirstName={profile.canonicalFirstName} initialLastName={profile.canonicalLastName}
@@ -127,8 +127,7 @@ export default async function HrProfilePage({ searchParams }: {
         }))}
         hideHeading
       />
-        <details className="min-w-0 border-t border-border pt-3">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Current college access</summary>
+        <Disclosure title="Current college access" className="min-w-0">
           <div className="min-w-0 overflow-x-auto pb-4 pt-3">
           <DataTable
             caption="Current college access"
@@ -152,7 +151,7 @@ export default async function HrProfilePage({ searchParams }: {
             ]}
           />
           </div>
-        </details>
+        </Disclosure>
 
         <p className="pt-3 text-xs leading-5 text-muted-foreground">
           This table does not change or revoke access.

@@ -502,12 +502,11 @@ export async function PlacementDriveWorkspace({
            </div>
          </div>
          {job.description?<div className="mt-4 border-t border-border pt-3">
-           <details className="group text-sm text-body">
-             <summary className="float-right ml-3 inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline focus-ring md:min-h-9">
+           <Disclosure title={<>
                <span className="group-open:hidden">Show more</span><span className="hidden group-open:inline">Show less</span>
-             </summary>
+             </>} preserveSummary summaryClassName="inline-flex min-h-11 items-center md:min-h-9">
              <p className="line-clamp-3 whitespace-pre-wrap break-words leading-[22px] group-open:line-clamp-none">{job.description}</p>
-           </details>
+           </Disclosure>
          </div>:null}
        </section>
       {overview}
@@ -622,8 +621,7 @@ export async function PlacementDriveWorkspace({
         </section>
       ) : null}
       {isTpo && driveDay.rounds.length>0 ? (
-        <details className="group min-w-0 border-b border-border pb-4">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Enter round results <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+        <Disclosure title={<>Enter round results <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
           <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
             {driveDay.rounds.filter(round=>round.kind!=="TALK").map(round=>
               <Link key={round.id}
@@ -632,7 +630,7 @@ export async function PlacementDriveWorkspace({
                 {round.name}
               </Link>)}
           </div>
-        </details>
+        </Disclosure>
       ) : null}
       {isTpo ? (
         <section
@@ -868,13 +866,12 @@ export async function PlacementDriveWorkspace({
             | "DRAFT" | "PUBLISHED" | "CLOSED" | "ARCHIVED"}
         />
       )}
-      <details className="group min-w-0 border-b border-border pb-4">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
+      <Disclosure title={<>
           Drive day operations <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-        </summary>
+        </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
         <p className="py-2 text-sm text-muted-foreground">Open a round to take attendance and record results on your phone on the day.</p>
          <div className="pt-3"><PlacementDriveDayOverview driveDay={driveDay} embedded /></div>
-      </details>
+      </Disclosure>
       {roundOrder?<TpoRoundReorder jobId={jobId} readiness={roundOrder}/>:null}
       <section id="drive-round-actions" className="min-w-0">
       {controlData?<PlacementDriveControls

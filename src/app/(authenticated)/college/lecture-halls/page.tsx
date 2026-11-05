@@ -199,8 +199,7 @@ export default async function CollegeLectureHallsPage({
               {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
             </Select>
           </Label>
-          <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4" open={Boolean(query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL")||undefined}>
-            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Filters</summary>
+          <Disclosure title="Filters" defaultOpen={Boolean(query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL")||undefined} className="min-w-0 md:col-span-2 lg:col-span-4">
             <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-3">
           <Label stack>
             Minimum seats
@@ -224,7 +223,7 @@ export default async function CollegeLectureHallsPage({
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </Label>
             </div>
-          </details>
+          </Disclosure>
           <div className="flex min-w-0 flex-wrap items-end gap-2 max-md:flex-col max-md:items-stretch md:col-span-2 lg:col-span-4">
             <Button variant="primary" type="submit"
               className="min-h-11 w-full px-4 md:min-h-9 md:w-auto">

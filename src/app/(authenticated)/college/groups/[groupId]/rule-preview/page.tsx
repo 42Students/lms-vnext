@@ -11,6 +11,7 @@ import {
   COLLEGE_RULE_NOT_CONFIGURED_STATE,
   previewCollegeGroupRule,
 } from "@/modules/groups/college-rule-preview-service";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function CollegeGroupRulePreviewPage({
   params,
@@ -58,8 +59,7 @@ export default async function CollegeGroupRulePreviewPage({
       {label:"Matches not currently active",value:projection.potentiallyNew},
     ]}/>
     <section aria-label="Configured criteria" className="min-w-0 border-t border-border pt-3">
-      <details className="min-w-0">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-ring md:min-h-9">Persisted rule criteria</summary>
+      <Disclosure title="Persisted rule criteria" className="min-w-0">
         <div className="min-w-0 space-y-3 pt-3">
       <dl className="grid min-w-0 gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Programs allowed</dt>
@@ -81,7 +81,7 @@ export default async function CollegeGroupRulePreviewPage({
           : "No completed rule refresh is recorded."}
       </p>
         </div>
-      </details>
+      </Disclosure>
     </section>
     <p className="max-w-3xl text-sm text-muted-foreground">
       Matching learners are not automatically members. Capacity, waitlist order, manual overrides,

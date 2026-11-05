@@ -16,6 +16,7 @@ import { Alert } from "@/components/ui/alert";
 import { listFacultyCourseCardSummaries } from "@/modules/courses/faculty-course-card-summary-service";
 import { listFacultyCourseAssignmentDiagnostics } from "@/modules/courses/faculty-course-service";
 import { FacultyCoursesRetry } from "./faculty-courses-retry";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function TeacherCoursesPage({searchParams}: {
   searchParams: Promise<Record<string,string|string[]|undefined>>;
@@ -86,15 +87,12 @@ export default async function TeacherCoursesPage({searchParams}: {
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <FacultyPrototypeCourseDirectory rows={rows} totalAssignments={list.scopeCount} pendingByDelivery={pendingByDelivery} attendanceByDelivery={attendanceByDelivery}/>
-      <details className="min-w-0 border-t border-[color:var(--lms-border)] pt-4">
-        <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">
-          Advanced teaching filters, class assignments and detailed course cards
-        </summary>
+      <Disclosure title="Advanced teaching filters, class assignments and detailed course cards" className="min-w-0">
         <div className="mt-4">
           <FacultyCourseList rows={rows} diagnostics={diagnosticResult.ok?diagnosticResult.value:[]}
             diagnosticsUnavailable={!diagnosticResult.ok} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
         </div>
-      </details>
+      </Disclosure>
     </div>
   );
 }

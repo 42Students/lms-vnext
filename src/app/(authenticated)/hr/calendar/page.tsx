@@ -48,6 +48,7 @@ import {hrNextCalendarEvent} from "@/modules/placements/hr-calendar-next-event-m
 import {HR_CALENDAR_CATEGORIES,hrCalendarCategorySchema,filterHrCalendarDays,type HrCalendarCategory} from "@/modules/placements/hr-calendar-category-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export const dynamic = "force-dynamic";
 
@@ -412,10 +413,7 @@ export default async function HrCalendarPage({
             <div className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-4 lg:flex-row lg:items-start lg:justify-between">
 
               <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start">
-                <details className="min-w-0">
-                  <summary className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-ring md:min-h-9">
-                    Jump to date
-                  </summary>
+                <Disclosure title="Jump to date" className="min-w-0">
                   <form action="/recruiter/calendar" method="get"
                     className="mt-3 grid min-w-0 gap-[8px] md:grid-cols-[minmax(0,1fr)_auto] md:items-end" aria-label="Filter recruiter calendar">
                     <Input type="hidden" name="view" value={view} />
@@ -429,7 +427,7 @@ export default async function HrCalendarPage({
                     </Label>
                     <Button type="submit" className="min-h-11 md:min-h-9">Go to date</Button>
                   </form>
-                </details>
+                </Disclosure>
                 {!noCollegeAccess && grants.length<=1 ? <Link
                   href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9 md:w-auto">
@@ -462,8 +460,7 @@ export default async function HrCalendarPage({
           ) : null}
 
           {view === "month" && eventCount > 0 ? (
-            <details className="min-w-0 border-b border-border pb-3">
-              <summary className="min-h-11 cursor-pointer text-sm font-semibold text-primary-text">View month grid</summary>
+            <Disclosure title="View month grid" className="min-w-0">
               <section
               aria-label={`${view} recruiter calendar`}
               className={styles["boardFrame"]}
@@ -593,7 +590,7 @@ export default async function HrCalendarPage({
                 })}
               </CalendarGrid>
               </section>
-            </details>
+            </Disclosure>
           ) : null}
 
           {eventCount > 0 ? (
@@ -651,10 +648,7 @@ export default async function HrCalendarPage({
               ))}
             </section>
           ) : null}
-          <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body md:min-h-9">
-              Recruiter calendar summary
-            </summary>
+          <Disclosure title="Recruiter calendar summary" className="min-w-0">
             <div className="mt-3">
               <SummaryStrip label="Recruiter calendar summary" steps={[
                 {label:"Hiring rounds",value:calendar.summary.rounds},
@@ -664,7 +658,7 @@ export default async function HrCalendarPage({
                 {label:"Results due",value:calendar.resultsDue.length},
               ]} />
             </div>
-          </details>
+          </Disclosure>
         </>
       )}
     </div>

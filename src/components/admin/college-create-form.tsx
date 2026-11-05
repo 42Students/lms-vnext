@@ -205,12 +205,11 @@ export function CollegeCreateForm({
           className="mb-1.5 block"
         >
           Unique ID / Code
-          <details className="group relative ml-2 inline-block align-middle text-xs font-normal">
-           <summary className="inline-flex min-h-11 min-w-11 cursor-help list-none items-center justify-center rounded-full text-muted-foreground focus-ring md:min-h-9 md:min-w-9" aria-label="Unique ID / Code help"><span aria-hidden="true" className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-border">?</span></summary>
+          <Disclosure title={<><span aria-hidden="true" className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-border">?</span></>} summaryAriaLabel="Unique ID / Code help" className="relative ml-2" preserveSummary summaryClassName="inline-flex min-h-11 items-center justify-center md:min-h-9">
            <p className="absolute left-0 top-full z-(--lms-z-sticky-inline) mt-1 w-[min(320px,80vw)] rounded-lg border border-border bg-surface p-3 text-xs font-normal leading-5 text-body shadow-lg">
             A short, permanent code for this college — shown in switchers and menus (e.g. “ROLE • NSRIT”). It’s separate from the web address you’ll add next, though people often reuse the same word for both. Once set, avoid changing it — other parts of the system reference it by this code, not by the college’s display name.
            </p>
-          </details>
+          </Disclosure>
         </Label>
         <Input
           className="min-h-11 md:min-h-9" id="college-code"

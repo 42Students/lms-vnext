@@ -8,6 +8,7 @@ import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/toast";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 /** Restores the old device-local tenant lock. This is only a UI safety latch:
  * the server still authorizes the exact persisted college on every request. */
@@ -120,13 +121,12 @@ export function AdminScopeSwitcher({choices,scope}:{
      {item.name}</option>)}
    </Select>
   </Label>
-  <details className="group min-w-0">
-   <summary className="flex min-h-9 cursor-pointer items-center text-sm font-semibold text-body focus-ring max-md:min-h-11">Search colleges</summary>
+  <Disclosure title="Search colleges" className="min-w-0">
    <Label htmlFor={searchId} className="sr-only">Search colleges</Label>
    <Input id={searchId} type="search" value={search}
     onChange={event=>setSearch(event.target.value)} placeholder="Search colleges"
     className="mt-2 w-full"/>
-  </details>
+  </Disclosure>
   <Label stack className="min-w-0">
    College
    <Select value={currentCollege} disabled={pending||!lockLoaded||locked}

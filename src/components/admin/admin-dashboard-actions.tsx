@@ -8,6 +8,7 @@ import {
   SUPER_ADMIN_COLLEGE_QUICK_ACTIONS,
 } from "@/modules/admin-ui/admin-dashboard-navigation";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 /** Legacy admin dashboard quick actions use this LMS icon/color palette. The
  * small SVGs are local so neither a new dependency nor an icon font is needed. */
@@ -129,10 +130,9 @@ export function CollegeAdminQuickActions() {
 export function CollegeAdminDashboardActions() {
   return <div className="space-y-6">
     <CollegeAdminQuickActions/>
-    <details className="min-w-0 space-y-4 border-t border-border pt-4">
-      <summary className="flex min-h-11 cursor-pointer items-center text-lg font-semibold text-foreground focus-ring">
+    <Disclosure title={<>
         {COLLEGE_SETUP_GUIDE_COPY.collapseLabel}
-      </summary>
+      </>} className="min-w-0 space-y-4">
       <section aria-label="Setup Guide" className="space-y-4 pt-4">
         <Heading level={2} size="lg" className="text-foreground">{COLLEGE_SETUP_GUIDE_COPY.heading}</Heading>
         <p className="text-sm text-body">{COLLEGE_SETUP_GUIDE_COPY.intro}</p>
@@ -154,7 +154,7 @@ export function CollegeAdminDashboardActions() {
           </section>
         ))}
       </section>
-    </details>
+    </Disclosure>
   </div>;
 }
 
@@ -190,15 +190,12 @@ export function SuperAdminCollegeDashboardActions() {
         <ActionLink key={"quick:"+item.label} label={item.label} href={item.href}/>
       ))}
     </div>
-    <details className="min-w-0 border-t border-border pt-3">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">
-        Other college workspaces
-      </summary>
+    <Disclosure title="Other college workspaces" className="min-w-0">
       <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2 md:grid-cols-3">
         {SUPER_ADMIN_COLLEGE_LINKS.map(item=>(
           <ActionLink key={item.label} label={item.label} href={item.href}/>
         ))}
       </div>
-    </details>
+    </Disclosure>
   </section>;
 }

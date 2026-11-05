@@ -26,6 +26,7 @@ import { hrDriveSessionStorageKey,hrDriveDraftFormStateKey } from "@/modules/pla
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {listRecruiterCollegeBranches} from "@/modules/placements/recruiter-college-branch-service";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function DriveSourceUnavailable({ collegeId }: { collegeId?: string | null }) {
   const backHref=collegeId
@@ -169,8 +170,7 @@ export default async function RecruiterRequestDrivePage({
       <span>Request is scoped to {grant.collegeName}. Dates and publication stay with the placement cell.</span>
     </div>
     <nav className="min-w-0 space-y-2" aria-label="Recruiter drive links">
-    <details className="min-w-0 border-t border-border pt-2">
-      <summary className="inline-flex min-h-11 w-full cursor-pointer items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9 md:w-auto">More drive destinations</summary>
+    <Disclosure title="More drive destinations" className="min-w-0">
       <div className="flex min-w-0 flex-col items-start gap-2 pb-2 md:flex-row md:flex-wrap">
     <Link href={hrSentProposalsHref(collegeId)}
       className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 md:w-auto active:text-[var(--lms-primary-hover)] focus-ring">
@@ -182,7 +182,7 @@ export default async function RecruiterRequestDrivePage({
     </Link>
 
       </div>
-    </details>
+    </Disclosure>
     </nav>
     {approximateStudents!==null?<div role="status" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-3 text-sm text-body">
       <strong>College overview</strong>

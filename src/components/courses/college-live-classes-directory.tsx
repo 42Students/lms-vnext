@@ -14,6 +14,7 @@ import type {listCollegeContentAggregate} from "@/modules/courses/college-conten
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Data=Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 /** Authorized source must provide this URL; never reconstruct it from IDs.
  * Treat invalid or credentialed URLs as unavailable.
@@ -41,8 +42,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
         className="min-h-11 min-w-0 md:min-h-9"/>
     </Label>
-    <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4" open={Boolean(data.query.courseCode||data.query.deliveryId||data.query.scope!=="ALL"||data.view!=="ALL"||data.from||data.to)||undefined}>
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Filters</summary>
+    <Disclosure title="Filters" defaultOpen={Boolean(data.query.courseCode||data.query.deliveryId||data.query.scope!=="ALL"||data.view!=="ALL"||data.from||data.to)||undefined} className="min-w-0 md:col-span-2 lg:col-span-4">
       <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-4">
     <Label stack className="min-w-0">
       Course code (exact)
@@ -90,7 +90,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
         className="min-h-11 md:min-h-9"/>
     </Label>
       </div>
-    </details>
+    </Disclosure>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
     <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">Clear</Link>
   </form>

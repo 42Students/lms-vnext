@@ -17,6 +17,7 @@ import {nextMentorAllocatableSprint} from
   "@/modules/projects/mentor-next-allocatable-sprint-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
  updatedAt:Date;status:string;priority:string;estimatePoints:number|null;
  sequence?:number;deletedAt?:Date|null};
@@ -182,8 +183,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         finally{setBusy(false);}
       }}>Auto-assign next sprint ({nextSprintPlan.assignments.length})</Button>:null}
    </section>:null}
-  {!readOnly?<details className="rounded border border-border p-3" aria-label="Advanced project-wide assignment">
-    <summary className="cursor-pointer font-semibold">Advanced · assign across the entire project</summary>
+  {!readOnly?<Disclosure title="Advanced · assign across the entire project" ariaLabel="Advanced project-wide assignment">
     <p className="my-3 text-sm">This action includes the backlog and other eligible sprints, not just the upcoming sprint. It requires explicit confirmation.</p>
   {!readOnly?<Button type="button" disabled={busy||projectUnassigned===0||!learners.length}
      
@@ -197,7 +197,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
        finally{setBusy(false);}
      }}>Auto-assign {projectUnassigned} eligible project task(s)</Button>:null}
-  </details>:null}
+  </Disclosure>:null}
   <Button variant="secondary" type="button" aria-expanded={filtersOpen}
     aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}

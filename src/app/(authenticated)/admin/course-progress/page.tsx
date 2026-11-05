@@ -21,6 +21,7 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function SuperAdminCourseProgressPage({
   searchParams,
@@ -97,8 +98,7 @@ export default async function SuperAdminCourseProgressPage({
         {selected&&data.items.length>0?<ButtonLink variant="secondary" href={exportHref}>Export CSV</ButtonLink>:
          <span aria-disabled="true" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted px-4 text-sm text-muted-foreground md:min-h-9">Export CSV</span>}
       </div>
-      <details className="border-t border-border pt-3">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text">More filters</summary>
+      <Disclosure title="More filters">
         <div className="grid gap-3 pt-2 sm:grid-cols-2">
           <Label variant="choice" className="grid gap-2">Search offering
             <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}/>
@@ -109,7 +109,7 @@ export default async function SuperAdminCourseProgressPage({
             </Select>
           </Label>
         </div>
-      </details>
+      </Disclosure>
     </form>
     {filtersResult.status==="rejected"?<Alert tone="warning">
       Some course-progress filters could not be loaded. Your saved filters still apply to the visible offerings.{" "}

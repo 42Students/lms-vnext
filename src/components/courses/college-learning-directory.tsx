@@ -20,6 +20,7 @@ import type {
 } from "@/modules/courses/college-learning-directory-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeLessons>>
@@ -67,8 +68,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
           <p className="text-xs text-muted-foreground md:col-span-3">
             Search {lessons?"lesson names or course details":"courses or cohorts"} within the selected college.
           </p>
-          <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)] md:col-span-3" open={activeAdvanced || undefined}>
-            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Advanced filters</summary>
+          <Disclosure title="Advanced filters" defaultOpen={activeAdvanced || undefined} className="min-w-0 md:col-span-3">
             <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-4">
           {lessons?<Label stack className="min-w-32">
             Rows per page
@@ -563,7 +563,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
             </Label>
           ) : null}
             </div>
-          </details>
+          </Disclosure>
           <Button type="submit" className="min-h-11 w-full px-6 md:min-h-9 md:w-auto">Filter</Button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
             Clear

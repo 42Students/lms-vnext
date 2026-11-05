@@ -20,6 +20,7 @@ import {
 } from "@/modules/academics/super-admin-lecture-hall-directory-model";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 /** SA-academics-people-26/27: all operations scoped to the selected active college. */
 export default async function SuperAdminLectureHallsPage({
@@ -155,10 +156,7 @@ export default async function SuperAdminLectureHallsPage({
        {value:"/admin/electives",label:"Electives",href:"/admin/electives"},
        {value:"/admin/lecture-halls",label:"Lecture Halls",href:"/admin/lecture-halls"},
       ]}/>
-    <details open className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-3 sm:p-4">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">
-        Search, filters and export
-      </summary>
+    <Disclosure title="Search, filters and export" defaultOpen className="min-w-0 space-y-3">
       <p className="text-xs text-muted-foreground">Search by room name, type or description across the selected college. Export includes up to 1,000 matching rows; large results are marked as truncated.</p>
     <section aria-label="Lecture hall filters" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="min-w-0 space-y-[var(--lms-space-3)]">
@@ -175,8 +173,7 @@ export default async function SuperAdminLectureHallsPage({
           </Label>
           <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Search</Button>
         </div>
-        <details className="group min-w-0" open={Boolean(query.departmentId || query.roomType !== "ALL" || query.pageSize !== 10 || query.minimumCapacity || query.maximumCapacity || query.upcoming !== "ALL") || undefined}>
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
+        <Disclosure title="Filters" defaultOpen={Boolean(query.departmentId || query.roomType !== "ALL" || query.pageSize !== 10 || query.minimumCapacity || query.maximumCapacity || query.upcoming !== "ALL") || undefined} className="min-w-0">
           <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
             <Label stack className="min-w-0">Department
               <Select name="departmentId" defaultValue={query.departmentId ?? ""} className="min-h-11 w-full md:min-h-9">
@@ -206,7 +203,7 @@ export default async function SuperAdminLectureHallsPage({
               </Select>
             </Label>
           </div>
-        </details>
+        </Disclosure>
       </form>
       <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-2)]">
         <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Clear</Link>
@@ -220,7 +217,7 @@ export default async function SuperAdminLectureHallsPage({
         </div>
       </div>
     </section>
-    </details>
+    </Disclosure>
     <section aria-label="Create and review lecture halls" className="min-w-0">
       <LectureHallManager key={collegeId} collegeId={collegeId}
         availabilityBase="/admin/lecture-halls"

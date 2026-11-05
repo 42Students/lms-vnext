@@ -16,6 +16,7 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
 const order=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED",
@@ -82,9 +83,8 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
       <Link href={clearRangeHref} aria-label="Clear applied date range"
         className="inline-flex min-h-11 items-center gap-1 font-semibold text-link underline md:min-h-9">Clear date range <span aria-hidden="true">×</span></Link>
     </div>:null}
-   <details className="min-w-0 border-t border-border pt-2 print:hidden" open={Boolean(q.departmentId||q.programId||q.cohortId||q.from||q.to||
-      data.filters.errors.departments||data.filters.errors.programs||data.filters.errors.cohorts)||undefined}>
-     <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Filters</summary>
+   <Disclosure title="Filters" defaultOpen={Boolean(q.departmentId||q.programId||q.cohortId||q.from||q.to||
+      data.filters.errors.departments||data.filters.errors.programs||data.filters.errors.cohorts)||undefined} className="min-w-0 print:hidden">
      {(["departments","programs","cohorts"] as const).map(key=>data.filters.errors[key]?
       <p key={key} role="alert" className="mt-2 text-sm text-warning-text">
        {data.filters.errors[key]}{" "}
@@ -130,7 +130,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm hover:bg-primary-subtle focus-ring md:min-h-9">Clear all</Link>
     </div>
      </form>
-   </details>
+   </Disclosure>
   </section>
   <section className="min-w-0 space-y-3 border-b border-border pb-3" aria-label="Placement status metrics">
     <Heading level={2} className="py-2 text-foreground">Placement status metrics</Heading>
@@ -238,13 +238,12 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
       <p className="px-3 py-1 text-xs text-muted-foreground">Summary groups company aliases case-insensitively and uses the same filters as the report above.</p>
     </div> : null}
    {data.companyRows.length>0?
-    <details aria-label="Company-wise report totals" className="min-w-0 border-t border-border pt-2">
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-foreground focus-ring md:min-h-9">All drives · Totals</summary>
+    <Disclosure title="All drives · Totals" ariaLabel="Company-wise report totals" className="min-w-0">
      <SummaryStrip label="Company-wise report totals"
       steps={[["Total",data.totalApplications] as const,
         ...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
         .map(([name,value])=>({label:name,value}))} />
-    </details>:null}
+    </Disclosure>:null}
   </section>
  </div>;
 }

@@ -455,7 +455,7 @@ export function FacultyCourseWorkspace({
       {view !== "BLUEPRINT" ? (
         <>
       <FacultyPrototypeCoursePriorities signals={homeSignals} workspace={workspace} display={display} />
-      <details id="course-details" open={advanced} className="min-w-0 border-t border-[color:var(--lms-border)] pt-3"><summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">More course insights and teaching tools</summary><div className="mt-5 space-y-6">
+      <Disclosure title="More course insights and teaching tools" defaultOpen={advanced} id="course-details" className="min-w-0"><div className="mt-5 space-y-6">
 
       <CourseDisplayReadOnly
         introductionText={
@@ -541,7 +541,7 @@ export function FacultyCourseWorkspace({
         />
       </div>
 
-      </div></details>
+      </div></Disclosure>
         </>
       ) : null}
 
@@ -549,8 +549,7 @@ export function FacultyCourseWorkspace({
         <>
         <FacultyPrototypeBlueprint workspace={workspace} selectedLessonId={selectedLessonId}
          engagement={homeSignals?.lessonEngagement??null}/>
-        <details className="border-t border-[color:var(--lms-border)] pt-4" open={advanced||Boolean(initialCreateMode)}>
-         <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">Full blueprint editor, publishing and content ordering</summary>
+        <Disclosure title="Full blueprint editor, publishing and content ordering" defaultOpen={advanced||Boolean(initialCreateMode)}>
          <div className="mt-5 space-y-5">
       {!learningPath ? (
         <EmptyState
@@ -696,12 +695,7 @@ export function FacultyCourseWorkspace({
                           {lesson.quizzes.length} quizzes
                         </Badge>
                       </div>}
-                      <details id={"faculty-lesson-add-"+lesson.id}
-                        open={Boolean(initialCreateMode&&selectedLessonId===lesson.id)}
-                        className="mb-3 rounded-[var(--lms-control-radius)] border border-border bg-surface">
-                        <summary className="min-h-11 cursor-pointer select-none px-3 py-2 text-sm font-semibold text-primary-text focus-ring">
-                          + Add content
-                        </summary>
+                      <Disclosure title="+ Add content" defaultOpen={Boolean(initialCreateMode&&selectedLessonId===lesson.id)} id={"faculty-lesson-add-"+lesson.id} className="mb-3">
                         <div className="border-t border-border p-3">
                           <p className="mb-3 text-xs text-muted-foreground" aria-label="Add content types">
                             Video · Resources · Quiz · Assignment · Live Session
@@ -733,7 +727,7 @@ export function FacultyCourseWorkspace({
 
 
                         </div>
-                      </details>
+                      </Disclosure>
 
                       <FacultyContentOrderEditor
                         lessonId={lesson.id}
@@ -794,7 +788,7 @@ export function FacultyCourseWorkspace({
         </>
       )}
         </div>
-        </details>
+        </Disclosure>
         </>
       ) : null}
     </div>

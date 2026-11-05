@@ -13,6 +13,7 @@ import {getRecruiterDriveConversations} from "@/modules/placements/hr-drive-conv
 import {TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 export default async function DriveConversationsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
@@ -39,8 +40,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-ring">Continue discussion</Link>
      </li>)}
     </ol>
-    <details className="min-w-0">
-     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9">Open drive discussion</summary>
+    <Disclosure title="Open drive discussion" className="min-w-0">
      <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <Input type="hidden" name="collegeId" value={result.workspace.college.id}/>
       <Input type="hidden" name="jobId" value={result.workspace.job.id}/>
@@ -51,7 +51,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
       </Label>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Send message</Button>
      </form>
-    </details>
+    </Disclosure>
    </> : <EmptyState title="No drive conversation" description="No conversation has been started for this drive."
     action={<form method="post" action="/api/placements/recruiter/conversations/open" className="w-full md:w-auto">
      <Input type="hidden" name="collegeId" value={result.workspace.college.id}/>

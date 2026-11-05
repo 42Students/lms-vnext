@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/toast";
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const KEY="42tracker_saved_issue_views_v1";
 const LEGACY_KEY="tracker_saved_filters";
@@ -109,10 +110,9 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
     showToast({tone:"success",title:`Saved view "${trimmed}".`});
   }
   return <div className="min-w-0 flex flex-wrap items-center gap-2 border-b border-border pb-3">
-    <details aria-label="Saved issue views" className="relative min-w-0">
-      <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text focus-ring md:min-h-9">
+    <Disclosure title={<>
         <span aria-hidden="true">★</span> Saved views {views.length>0?`(${views.length})`:""}
-      </summary>
+      </>} ariaLabel="Saved issue views" className="relative min-w-0" preserveSummary summaryClassName="inline-flex min-h-11 items-center gap-2 md:min-h-9">
       <div className="absolute left-0 top-full z-(--lms-z-sticky-header) mt-2 min-w-[240px] max-w-[min(90vw,360px)] rounded-[10px] border border-border bg-surface p-3 shadow-lg">
         {views.length?<ul className="space-y-1" aria-label="Choose a saved view">
           {views.map(view=><li key={view.name} className="flex min-w-0 items-center gap-1">
@@ -126,7 +126,7 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
           </li>)}
         </ul>:<p className="text-sm text-body">No saved views yet.</p>}
       </div>
-    </details>
+    </Disclosure>
     <Button type="button" variant="secondary" disabled={!eligible}
       className="min-h-11 md:min-h-9" onClick={()=>{setSaving(true);setName("");setNotice("");}}>
       Save this view

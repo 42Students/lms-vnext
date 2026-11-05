@@ -7,6 +7,7 @@ import type {readRecruiterThreadMessages} from "@/modules/placements/tpo-messagi
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type InboxRow={id:string;jobId:string|null;jobTitle:string;unread:number;
  preview:{text:string}|null;lastMessageAt:Date|null;createdAt:Date};
@@ -53,14 +54,13 @@ export function RecruiterConversationWorkspace({
   {decisionNoticesUnavailable?<p role="status" className="rounded-lg border border-border p-3 text-sm text-body">
    Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
   </p>:null}
-  {decisionNotices.length?<details className="rounded-lg border border-border p-3">
-   <summary className="min-h-11 cursor-pointer font-semibold text-foreground">Drive request decisions</summary>
+  {decisionNotices.length?<Disclosure title="Drive request decisions">
    <ul className="divide-y divide-border">{decisionNotices.map(item=><li key={item.id} className="py-3">
     <strong className="block text-sm text-foreground">{item.title}{item.unread?" · New":""}</strong>
     <p className="whitespace-pre-wrap break-words text-sm text-body">{item.body}</p>
     <Link href={item.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View your drive request</Link>
    </li>)}</ul>
-  </details>:null}
+  </Disclosure>:null}
   <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(240px,290px)_minmax(0,1fr)]">
    <aside aria-label="Conversation inbox" className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface">
     <form method="get" action="/hr/conversations" role="search" className="space-y-2 border-b border-border p-3">

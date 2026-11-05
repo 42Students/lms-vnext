@@ -30,6 +30,7 @@ import {listPlacementCalendarEvents} from "@/modules/placements/placement-calend
 import {placementCalendarDayKey} from "@/modules/placements/placement-calendar-model";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 function TpoHomeRowIcon({kind}:{kind:TpoHomeLegacyRow["key"]}) {
  const common={stroke:"currentColor",fill:"none",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const};
  return <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" className="shrink-0 text-[var(--lms-muted-text)]" {...common}>
@@ -265,10 +266,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
    </li>)}</ul>
  </section>
  </div>
- <details className="mt-5 min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-  <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-[var(--lms-heading)] md:px-6">
-   Placement overview metrics
-  </summary>
+ <Disclosure title="Placement overview metrics" className="mt-5 min-w-0">
   <div className="border-t border-border">
    <div role="group" aria-label="Placement overview"
   className="grid min-w-0 grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface lg:grid-cols-4">
@@ -289,7 +287,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
   </Link>)}
  </div>
   </div>
- </details>
+ </Disclosure>
   </div>
  </details>
  </div>;

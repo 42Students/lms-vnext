@@ -19,6 +19,7 @@ import { listColleges } from "@/modules/colleges/service";
 import { formatCollegeHeaderDate } from "@/modules/admin-ui/college-dashboard-cards-model";
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function CollegeOverviewPage() {
   const context = await getCurrentRequestContext();
@@ -94,8 +95,7 @@ export default async function CollegeOverviewPage() {
       </div>}
       <CollegeAdminQuickActions />
       {dashboard?<CollegeSetupChecklist phases={dashboard.setup.phases}/>:<CollegeDashboardSectionFailure title="College setup checklist"/>}
-      <details className="min-w-0 border-t border-border pt-3">
-        <summary className="min-h-11 cursor-pointer text-sm font-semibold text-primary-text">Other college actions</summary>
+      <Disclosure title="Other college actions" className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-3 py-3 text-sm">
           <CollegeEditDialog college={college} triggerLabel="Edit college"/>
           <Link href="/college/contacts" className="text-primary-text underline">Contacts</Link>
@@ -104,7 +104,7 @@ export default async function CollegeOverviewPage() {
           <Link href="/college/branding" className="text-primary-text underline">Branding</Link>
           <span className="text-xs text-muted-foreground">{college.code} · {college.city||"—"} · {college.state||"—"} · {college.country||"—"}</span>
         </div>
-      </details>
+      </Disclosure>
     </div>
   );
 }

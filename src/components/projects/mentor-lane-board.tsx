@@ -370,8 +370,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       </p>
       {task.blockerReason?<p className="prototype-mentor-board-blocked" title={task.blockerReason}>
         Blocked · {task.blockerReason}</p>:null}
-      <details className="prototype-mentor-board-advanced">
-        <summary>Task actions</summary>
+      <Disclosure title="Task actions">
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
       <p className="text-xs text-body">Assignee: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"} ·
         {" "}Estimate: {task.estimatePoints??"Unsized"} · {task.taskType??"Task"}</p>
@@ -419,7 +418,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={new Date(task.updatedAt).toISOString()} canPost={!readOnly}/>
       </Disclosure>
-      </details>
+      </Disclosure>
      </li>;
     })}
     {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}

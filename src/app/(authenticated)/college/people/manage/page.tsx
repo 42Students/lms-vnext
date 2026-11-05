@@ -25,6 +25,7 @@ import { collegePeopleExportHref } from "@/modules/people/college-people-export-
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Search = Record<string, string | string[] | undefined>;
 function collegePeopleManageHref(filter: CollegePeopleDirectoryFilter) {
@@ -128,13 +129,12 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory}
       description="Manage college memberships, roles and lifecycle. For the read-only legacy contact tabs, open Contacts."
       actions={<PersonOnboardDialog collegeId={membership.collegeId} />} />
-    <details className="min-w-0 border-b border-border pb-3">
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Other people actions</summary>
+    <Disclosure title="Other people actions" className="min-w-0">
       <nav aria-label="People directory tools" className="flex min-w-0 flex-wrap items-center gap-3 pt-2">
         {process.env["COLLEGE_STUDY_GROUPS_RELEASED"] === "true" ? <Link href="/college/groups"
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Student groups</Link> : null}<Link href="/college/contacts" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Export filtered CSV</Link>
       </nav>
-    </details>
+    </Disclosure>
     <section className="min-w-0" aria-label="People filters">
       <form action="/college/people/manage" method="get" role="search" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto_auto]" aria-label="Search people">
         <Label stack className="min-w-0 w-full flex-1 md:w-auto md:min-w-44">Name, email or phone

@@ -50,6 +50,7 @@ import { TPO_CALENDAR_CHIP_CHOICES, filterTpoCalendarChipEvents, parseTpoCalenda
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
@@ -1020,8 +1021,7 @@ export async function PlacementCalendarWorkspace({
             />
           </Label>
 
-          {isTpo&&countSourceEvents.length>0?<details aria-label="Quick company filters" open={Boolean(state.company)} className="min-w-0 sm:col-span-2 lg:col-span-3">
-    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-link-text)] focus-ring">Companies in this period</summary>
+          {isTpo&&countSourceEvents.length>0?<Disclosure title="Companies in this period" defaultOpen={Boolean(state.company)} ariaLabel="Quick company filters" className="min-w-0 sm:col-span-2 lg:col-span-3">
     <div className="flex max-w-full flex-wrap items-center gap-2 pt-2">
     {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
       .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
@@ -1030,7 +1030,7 @@ export async function PlacementCalendarWorkspace({
         title={name}>{name}</FilterChipLink>)}
     {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
        className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
-   </div></details>:null}
+   </div></Disclosure>:null}
    {isTpo&&countSourceEvents.length>200?<p className="text-xs text-muted-foreground sm:col-span-2">
      Company choices reflect this visible period; the source may have additional matches outside it.
     </p>:null}
@@ -1044,8 +1044,7 @@ export async function PlacementCalendarWorkspace({
               />
             </Label>
           ) : (
-            <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(state.job || state.jobId || (state.roundKind && state.roundKind!=="INTERVIEW"))}>
-              <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Filters</summary>
+            <Disclosure title="Filters" defaultOpen={Boolean(state.job || state.jobId || (state.roundKind && state.roundKind!=="INTERVIEW"))} className="min-w-0 sm:col-span-2 lg:col-span-3">
               <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
               <Label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                 Round type
@@ -1078,7 +1077,7 @@ export async function PlacementCalendarWorkspace({
                 />
               </Label>
               </div>
-            </details>
+            </Disclosure>
           )}
 
           <div className="flex min-w-0 items-end">
@@ -1134,10 +1133,9 @@ export async function PlacementCalendarWorkspace({
 
 
 
-      <details aria-label="Next scheduled calendar event" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface">
-        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 px-4 text-sm font-semibold text-link focus-ring">
+      <Disclosure title={<>
           Next scheduled <span className="text-muted-foreground">Show details ▾</span>
-        </summary>
+        </>} ariaLabel="Next scheduled calendar event" className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
         <div className="border-t border-border px-4 pb-4 pt-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -1173,7 +1171,7 @@ export async function PlacementCalendarWorkspace({
           ) : null}
         </div>
         </div>
-      </details>
+      </Disclosure>
 
       {isTpo&&state.view==="week"&&blockedEvents.length>0?<section
         aria-label="All-day blocked dates" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
@@ -1261,13 +1259,10 @@ export async function PlacementCalendarWorkspace({
                       const href=eventHref(event,audience);
                       const eventLabel=[eventTime(event.startsAt),event.companyName,
                         event.title].filter(Boolean).join(" · ");
-                      return <details key={event.id} className="group min-w-0 rounded-[var(--lms-control-radius)] bg-primary-subtle text-xs text-primary-text">
-                       <summary title={eventLabel+" (open event details)"}
-                        aria-label={eventLabel+"; press Enter to view details"}
-                        className="min-h-11 cursor-pointer list-none rounded-[var(--lms-control-radius)] px-2 py-1 font-semibold hover:underline focus-ring">
+                      return <Disclosure title={<>
                         <span className="block truncate">{eventTime(event.startsAt)}{event.status==="DONE"?" · Done":""}</span>
                         <span className="block truncate">{event.title}</span>
-                       </summary>
+                       </>} summaryAriaLabel={eventLabel+"; press Enter to view details"} summaryTitle={eventLabel+" (open event details)"} className="min-w-0" preserveSummary summaryClassName="min-h-11">
                        <div className="relative z-(--lms-z-raised) min-w-0 space-y-1 rounded-b-[var(--lms-control-radius)] border border-primary/20 bg-surface px-2 py-2 text-xs text-body">
                         <strong className="block break-words">{event.title}</strong>
                         <p className="break-words">{event.companyName} · {eventDateTime(event.startsAt)} IST</p>
@@ -1277,7 +1272,7 @@ export async function PlacementCalendarWorkspace({
                           Open event →
                         </Link>:null}
                        </div>
-                      </details>;
+                      </Disclosure>;
                     })}
 
                     {dayEvents.length > shown.length ? (

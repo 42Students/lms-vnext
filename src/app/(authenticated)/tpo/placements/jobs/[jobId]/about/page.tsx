@@ -8,6 +8,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveAbout} from "@/modules/placements/tpo-drive-about-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 export const dynamic="force-dynamic";
 const format=(value:number|null)=>value===null?"Not recorded":"₹"+(value/100000).toLocaleString("en-IN")+" LPA";
 const when=(value:string|null)=>value?new Intl.DateTimeFormat("en-IN",{
@@ -52,8 +53,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
      ]}/>
    </div>
   </section>
-  <details className="group border-b border-border pb-6">
-   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-ring [&::-webkit-details-marker]:hidden">Why learners were excluded <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
+  <Disclosure title={<>Why learners were excluded <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></>} preserveSummary summaryClassName="min-h-11">
    <p className="mt-2 text-sm text-body">Up to 100 excluded registered learners shown; eligibility details may change as academic records are verified.</p>
    <ul className="mt-3 divide-y divide-border text-sm">{data.excluded.map((row,i)=>
     <li key={row.name+":"+i} className="py-3">
@@ -61,15 +61,14 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    {data.totalExcludedDetail>data.excluded.length?<p className="mt-2 text-sm text-body">
     {data.totalExcludedDetail-data.excluded.length} additional excluded learners not shown.</p>:null}
    {!data.excluded.length?<EmptyState title="No excluded registered learner details were found."/>:null}
-  </details>
-  <details className="group border-b border-border pb-6">
-   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-ring [&::-webkit-details-marker]:hidden">Eligibility rules <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
+  </Disclosure>
+  <Disclosure title={<>Eligibility rules <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></>} preserveSummary summaryClassName="min-h-11">
    <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
     {rules.map(([label,value])=><div key={label} className="min-w-0 border-b border-border pb-3 text-sm">
      <dt className="text-body">{label}</dt><dd className="break-words font-semibold">{value===null?"Not restricted":value}</dd></div>)}
    </dl>
    <p className="mt-3 text-sm text-body">{data.policy.allowedProgramIds.length} program(s), {data.policy.allowedCohortIds.length} cohort(s), {data.policy.allowedSectionIds.length} section(s) explicitly targeted.</p>
-  </details>
+  </Disclosure>
   <section className="border-b border-border pb-6">
    <Heading level={2}>Drive details and employer</Heading>
    <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3 text-sm">

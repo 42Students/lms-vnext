@@ -21,6 +21,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 export default async function DriveSettingsPage({params}:{params:Promise<{jobId:string}>}){
  const {jobId}=await params;
  const context=await getCurrentRequestContext();
@@ -221,9 +222,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     This drive is {job.status.toLowerCase()}. Changes to historic records require an explicit reason and preserve existing applications, eligibility and offers. Review the effects before confirming.
    </Banner>:null}
   </section>:null}
-  {job.legacyPostingDetails?<details className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]"
-    aria-label="Additional job details">
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Additional job details</summary>
+  {job.legacyPostingDetails?<Disclosure title="Additional job details" ariaLabel="Additional job details" className="min-w-0 space-y-[var(--lms-space-3)]">
     <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
     <p className="text-xs text-muted-foreground">Informational posting terms; enforceable learner eligibility remains in the drive policy.</p>
     {job.legacyPostingDetails.responsibilities?<div>
@@ -247,7 +246,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
         <li key={i}>{rule.label}: {rule.value}</li>)}</ul>
     </div>:null}
     </div>
-  </details>:null}
+  </Disclosure>:null}
   {job.status==="PUBLISHED"?<SuperAdminDriveDeadline jobId={jobId} deadline={job.applicationDeadline?.toISOString()??null}/>:null}
   <SuperAdminDriveStatusControl jobId={job.id} status={job.status}/>
   <section aria-label="Duplicate drive" className="min-w-0 space-y-3 border-b border-border pb-4">

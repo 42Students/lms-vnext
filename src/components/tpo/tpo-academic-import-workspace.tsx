@@ -18,6 +18,7 @@ import { parseTpoAcademicImportCsv,parseTpoLegacyAcademicImportCsv,
   type TpoLegacyAcademicStagingRow } from "@/modules/placements/tpo-academic-preview-import-model";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type AcademicRow = ReturnType<typeof parseTpoAcademicImportCsv>[number];
 type AcademicWriteRow={
@@ -176,15 +177,14 @@ export function TpoAcademicImportWorkspace() {
       description="Preview matched academic details before saving any changes."
       className="!max-w-[820px]" bodyClassName="max-h-[75dvh] space-y-3 overflow-y-auto">
       <p className="text-sm text-body">Match learners using their college roll numbers before importing CGPA, marks, backlogs, gaps or passing-year values. Verified corrections may include CGPA, marks, backlogs, gap years and passing year. Only selected matched learners are updated.</p>
-      <details className="border-b border-border pb-3 text-sm text-muted-foreground">
-        <summary className="cursor-pointer py-2 text-[13px] font-semibold max-md:flex max-md:min-h-11 max-md:items-center">Academic CSV requirements</summary><p>
+      <Disclosure title="Academic CSV requirements"><p>
         Upload up to 5,000 rows of .xlsx or CSV for a scoped preview.
         Roll numbers are matched to active learners in this college, and
         ambiguous or duplicate rolls stay in Can't match. Verified imports
         are committed sequentially in batches of at most 200 rows. All supported numeric academic columns are preserved through
         preview and confirmation, with legacy batch and roll provenance.
         Nothing is silently discarded.
-      </p></details>
+      </p></Disclosure>
       <p aria-label="Import with preview steps" className="text-xs text-muted-foreground print:hidden leading-[20px]">
         Choose file or paste rows → Preview matched and unmatched records → Confirm selected import.
       </p>
@@ -195,12 +195,12 @@ export function TpoAcademicImportWorkspace() {
       </ButtonLink>
       <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Drop a CSV or XLSX file here, or click to choose" accept=".csv,.xlsx,text/csv" maxBytes={10_000_000}
          disabled={busy} onFiles={files => void upload(files?.[0] ?? null)}/>
-      <details className="border-t border-border pt-3 print:hidden"><summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">Or paste CSV rows</summary><Label className="block min-w-0">Or paste CSV rows
+      <Disclosure title="Or paste CSV rows" className="print:hidden"><Label className="block min-w-0">Or paste CSV rows
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");
         }} rows={5} maxLength={5_000_000}
           className="mt-1.5 min-h-32 w-full min-w-0 font-mono text-sm" />
-      </Label></details>
+      </Label></Disclosure>
       <Button variant="secondary" loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy} type="button" onClick={() => void validate()}
         >
         {busy ? "Checking…" : "Preview import"}

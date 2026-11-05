@@ -10,6 +10,7 @@ import {Select} from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export type QuickDrive = {
   id: string; title: string; companyName: string; status: string;
@@ -97,16 +98,15 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
           <div className="relative z-(--lms-z-raised) flex min-w-0 flex-wrap items-center gap-3 border-t border-border pt-3 text-sm font-semibold">
             <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/applications"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Applications</Link>
             <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/settings"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Edit</Link>
-            <details className="ml-auto max-w-full">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 font-semibold text-link focus-ring md:min-h-9" aria-label={"More actions for "+job.title}>
+            <Disclosure title={<>
                <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
                <span className="sr-only">More actions</span>
-              </summary>
+              </>} summaryAriaLabel={"More actions for "+job.title} className="ml-auto max-w-full" preserveSummary summaryClassName="flex min-h-11 items-center gap-2 md:min-h-9">
               <div className="absolute right-0 z-(--lms-z-sticky-inline) mt-1 min-w-[240px] max-w-full space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 shadow-lg">
                 <SuperAdminDriveDuplicate jobId={job.id} title={job.title}/>
                 <SuperAdminDriveDeadline jobId={job.id} deadline={job.deadline??null}/>
               </div>
-            </details>
+            </Disclosure>
           </div>
         </article>;
       })}

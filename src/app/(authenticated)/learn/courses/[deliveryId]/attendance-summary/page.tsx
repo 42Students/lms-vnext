@@ -13,6 +13,7 @@ import { getOwnLearnerCourseAttendanceHistory } from "@/modules/courses/learner-
 import { learnerAttendanceMonthSchema } from "@/modules/courses/learner-course-drilldown-model";
 import { courseSectionDeliveryIdSchema } from "@/modules/courses/validation";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const formatWhen = (value: Date) => new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium",
@@ -64,8 +65,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
         The month filter is invalid; all your available attendance months are shown.{" "}
         <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/attendance-summary"} className="font-semibold underline">Clear month filter</Link>
       </Banner> : null}
-      <details className="border-b border-border pb-3">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">All-time course attendance</summary>
+      <Disclosure title="All-time course attendance">
         <section aria-label="All-time course attendance" className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Marked attendance", value: attendance.overall?.markedSessions ?? 0 },
@@ -76,7 +76,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
           <StatTile key={metric.label} label={metric.label} value={metric.value} />
         ))}
         </section>
-      </details>
+      </Disclosure>
       <section className="border-b border-border py-4" aria-label="Threshold context">
         <div className="flex flex-wrap items-center gap-3">
           <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Attendance threshold</Heading>

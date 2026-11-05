@@ -14,6 +14,7 @@ import {
   getCollegeGroupDetail,
 } from "@/modules/groups/admin-read-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Detail = Awaited<ReturnType<typeof getCollegeGroupDetail>>;
 
@@ -131,8 +132,7 @@ export default async function CollegeGroupDetailPage({
       </p>
 
       {group.selfJoinOpenFrom || rule ? (
-        <details className="min-w-0 border-b border-border pb-3">
-          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Membership rule</summary>
+        <Disclosure title="Membership rule" className="min-w-0">
           <section className="grid min-w-0 gap-[16px] pt-3 md:grid-cols-3">
           <Stat
             title="Self-join window"
@@ -155,7 +155,7 @@ export default async function CollegeGroupDetailPage({
             }
           />
           </section>
-        </details>
+        </Disclosure>
       ) : null}
 
       {rule ? (
@@ -202,8 +202,7 @@ export default async function CollegeGroupDetailPage({
       </section>
 
       {group.kind === "STUDY_GROUP" ? <section className="min-w-0 space-y-3">
-        <details className="min-w-0 border-b border-border pb-4">
-          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-ring md:min-h-9">Manage members</summary>
+        <Disclosure title="Manage members" className="min-w-0">
           <div className="min-w-0 space-y-3 pt-3">
         <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
@@ -212,7 +211,7 @@ export default async function CollegeGroupDetailPage({
         <CollegeStudyMemberActions groupId={group.id} name={group.name}
           members={members} available={available} />
           </div>
-        </details>
+        </Disclosure>
       </section> : null}
 
       {group.kind === "STUDY_GROUP" ? <CollegeGroupDetailWrites
@@ -230,8 +229,7 @@ export default async function CollegeGroupDetailPage({
       /> : null}
 
       <section className="min-w-0 space-y-3">
-        <details className="min-w-0 border-b border-border pb-3">
-          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-ring md:min-h-9">Recent activity</summary>
+        <Disclosure title="Recent activity" className="min-w-0">
         {events.length === 0 ? (
           <EmptyState title="No activity yet" description="Membership changes appear here." />
         ) : (
@@ -263,7 +261,7 @@ export default async function CollegeGroupDetailPage({
             getRowKey={(row) => row.id}
           />
         )}
-        </details>
+        </Disclosure>
       </section>
     </div>
   );

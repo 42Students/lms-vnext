@@ -27,6 +27,7 @@ import {auditActivityText} from "@/modules/bug-tracker/audit-activity-display-mo
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
@@ -201,14 +202,13 @@ export default async function TrackerIssueDetailPage({
       <TrackerIssueLogsPanel publicId={issue.publicId}/>
       <section id="tracker-workflow" aria-label="Engineering details" className="scroll-mt-12">
         <TrackerWorkflowPanel issue={workflow}/>
-        <details className="border-b border-border pb-3">
-          <summary className="min-h-11 md:min-h-9 cursor-pointer font-semibold text-link">Report technical context</summary>
+        <Disclosure title="Report technical context">
           <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
             <div><dt>Source path</dt><dd className="break-all">{issue.sourcePath??"—"}</dd></div>
             <div><dt>Browser</dt><dd className="break-all">{issue.browser??"—"}</dd></div>
             <div><dt>Viewport</dt><dd>{issue.viewport??"—"}</dd></div>
           </dl>
-        </details>
+        </Disclosure>
       </section>
 
       {detail.activityUnavailable ? <Alert tone="warning" title="Activity could not be loaded">

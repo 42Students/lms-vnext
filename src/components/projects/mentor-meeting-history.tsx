@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {formatProjectIstDateTime} from "@/modules/projects/project-date-time-format-model";
 import {useEffect,useState} from "react";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export type MentorMeetingHistoryItem={
  id:string;title:string;status:string;startsAt:string;
@@ -89,13 +90,12 @@ export function MentorMeetingRevisionHistory({
     <p className="text-xs text-muted-foreground">{item.actionType} · {item.actorName} · {when(item.createdAt)}</p>
     {item.changedFields.length?<p className="break-words text-xs">Changed: {item.changedFields.join(", ")}</p>:null}
     {item.notes?<p className="whitespace-pre-wrap break-words text-xs">{item.notes}</p>:null}
-    {(item.before||item.after)?<details className="text-xs">
-     <summary className="cursor-pointer font-semibold text-link">Review before / after changes</summary>
+    {(item.before||item.after)?<Disclosure title="Review before / after changes">
      <div className="mt-2 grid min-w-0 gap-2 sm:grid-cols-2">
       <div className="min-w-0"><strong>Before</strong><pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(item.before??{},null,2)}</pre></div>
       <div className="min-w-0"><strong>After</strong><pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-all">{JSON.stringify(item.after??{},null,2)}</pre></div>
      </div>
-    </details>:null}
+    </Disclosure>:null}
    </li>)}
   </ul>:null}
   {state&&!loading&&!error?<div className="flex flex-wrap items-center gap-2 text-xs">

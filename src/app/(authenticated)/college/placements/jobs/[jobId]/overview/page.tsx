@@ -14,6 +14,7 @@ import {CollegeDrivePipelineOverview,CollegeDriveAttentionBanner} from "@/compon
 import {CollegeDriveDuplicateAction} from "@/components/placements/college-drive-duplicate-action";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function CollegeDriveOverviewPage({ params }: {
   params: Promise<{ jobId: string }>;
@@ -114,13 +115,12 @@ export default async function CollegeDriveOverviewPage({ params }: {
           </Link>
         </div>
       </div>
-      {drive.description?.trim()?<details className="group mt-3 max-w-[90ch] text-sm leading-[22px] text-body">
-       <summary className="list-none cursor-pointer focus-ring">
+      {drive.description?.trim()?<Disclosure title={<>
         <span className="block whitespace-pre-wrap break-words [overflow-wrap:anywhere] line-clamp-3 group-open:hidden">{drive.description}</span>
         <span className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline"><span className="group-open:hidden">Show more</span><span className="hidden group-open:inline">Show less</span></span>
-       </summary>
+       </>} className="mt-3 max-w-[90ch]" preserveSummary>
        <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{drive.description}</p>
-      </details>:null}
+      </Disclosure>:null}
       <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-border pt-3 text-xs">
         <CollegeDriveDuplicateAction jobId={jobId}/>
         <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/settings`} className="inline-flex min-h-9 items-center font-semibold text-link underline">More drive actions</Link>

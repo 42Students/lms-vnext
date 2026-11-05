@@ -30,6 +30,7 @@ import { learnerProfileDocumentSchema, type LearnerProfileDocument } from "@/mod
 import {formatProfileDateDayFirst,LEARNER_PROFILE_FIELD_LIMITS} from "@/modules/people/legacy-profile-display";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type CollectionKey =
   | "experiences"
@@ -623,8 +624,7 @@ export function LearnerProfileWorkspace(props: {
           </div>
           <Button className="w-full md:w-auto" variant="primary" onClick={openDetails}>Edit profile</Button>
         </div>
-        <details className="mt-4 border-t border-border pt-2">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Profile image and resume availability</summary>
+        <Disclosure title="Profile image and resume availability" className="mt-4">
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <div className="min-w-0 border-t border-border pt-3">
             <p className="m-0 text-sm font-semibold text-foreground">Profile image</p>
@@ -635,7 +635,7 @@ export function LearnerProfileWorkspace(props: {
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Use the Default resume section below to upload a private scanned PDF and select or replace the resume for placement applications. Removing a saved receipt is managed separately.</p>
           </div>
         </div>
-        </details>
+        </Disclosure>
       </section>
 
       <section className="min-w-0 border-b border-border pb-4" aria-labelledby="learner-profile-checklist-title">

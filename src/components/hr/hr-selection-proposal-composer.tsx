@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { recruiterSelectionRangeWarning } from "@/modules/placements/recruiter-selection-list-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Candidate = { applicationId: string; name: string };
 
@@ -68,10 +69,7 @@ export function HrSelectionProposalComposer({
     }
   }
   return (
-    <details className="min-w-0 border-b border-border pb-4">
-      <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring">
-        Prepare selection list
-      </summary>
+    <Disclosure title="Prepare selection list" className="min-w-0">
       <div className="mt-3 space-y-4">
         <p className="text-sm text-body">
           Only applicants with applied passing results in all completed evaluative rounds
@@ -124,6 +122,6 @@ export function HrSelectionProposalComposer({
           <Textarea rows={9} readOnly value={proposal} />
         </Label> : null}
       </div>
-    </details>
+    </Disclosure>
   );
 }

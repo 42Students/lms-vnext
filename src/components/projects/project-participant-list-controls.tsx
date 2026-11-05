@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {useEffect,useRef,type FormEvent} from "react";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export type ProjectParticipantListQuery = {
   search?: string;
@@ -145,8 +146,7 @@ export function ProjectParticipantListControls({
         </Label>
       ) : null}
 
-      <details className="w-full min-w-0" open={Boolean(query.assignment||query.work||(query.sort&&query.sort!=="RECENT")||(query.pageSize&&query.pageSize!==25))}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link md:min-h-9">More filters</summary>
+      <Disclosure title="More filters" defaultOpen={Boolean(query.assignment||query.work||(query.sort&&query.sort!=="RECENT")||(query.pageSize&&query.pageSize!==25))} className="w-full min-w-0">
         <div className="mt-2 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {mentor ? (<Label stack className="text-[length:var(--lms-font-sm)]">Sort
         <Select name="sort" defaultValue={query.sort ?? "RECENT"} className="w-full">
@@ -215,7 +215,7 @@ export function ProjectParticipantListControls({
       </Label>
 
         </div>
-      </details>
+      </Disclosure>
       {!mentor?<Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
         Apply
       </Button>:null}

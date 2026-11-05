@@ -16,6 +16,7 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const FILTERS = [
  ["following","Following"],["all","All"],["me","@ Me"],["asks","Asks"],
@@ -153,11 +154,10 @@ export async function TpoTeamMessagesDirectory({
      <span>Page {safePage}</span>
      {data.hasMore?<Link href={href(undefined,view,safePage+1)} className="text-link underline">Next</Link>:<span/>}
     </nav>:null}
-    <details id="new-team-conversation" className="border-t border-border p-3">
-     <summary className="cursor-pointer text-sm font-semibold text-link">+ New conversation</summary>
+    <Disclosure title="+ New conversation" id="new-team-conversation">
      {colleagues.length>0?<TpoTeamThreadCreate members={colleagues} actorUserId={context.user.id}/>:
       <p className="mt-3 text-sm text-muted-foreground">No other active placement-team colleague is available.</p>}
-    </details>
+    </Disclosure>
    </aside>
    <section aria-label="Selected team conversation"
     className={(explicit?"block ":"hidden lg:block ")+"min-w-0 px-4 py-4 md:px-5"}>

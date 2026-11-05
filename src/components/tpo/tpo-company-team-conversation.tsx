@@ -17,6 +17,7 @@ import {parseTpoCompanyTeamDraft,tpoCompanyTeamDraftSendKey,type TpoCompanyTeamD
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type TeamMessage={
  id:string;body:string;decision:boolean;authorMembershipId:string;authorName:string|null;
@@ -218,7 +219,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        }}}
        />
     </Label>
-    <details className="group min-w-0 border-b border-border pb-3 text-sm"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 py-2 font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Message options <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+    <Disclosure title={<>Message options <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
     <div className="min-w-0 space-y-3 pt-2">
     <Label stack className="min-w-0">Mention a teammate
       <Select disabled={busy} defaultValue="" 
@@ -251,7 +252,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
       Mark as decision
     </Label>
     </div>
-    </details>
+    </Disclosure>
     <div className="flex min-w-0 flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
      <span className="text-xs text-muted-foreground">{body.length}/4000</span>
      <Button variant="primary" type="submit" loading={busy} disabled={busy||!body.trim()} className="min-h-11 w-full sm:w-auto md:min-h-9"

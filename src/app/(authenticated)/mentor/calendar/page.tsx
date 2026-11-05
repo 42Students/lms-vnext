@@ -86,16 +86,13 @@ export default async function MentorCalendarPage({searchParams}:{
       // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
       initialNow={now.toISOString()}/>
     </section>
-      <details className="min-w-0 text-sm">
-        <summary className="cursor-pointer text-[var(--lms-link-text)]">
-          Scheduling and Google Calendar
-        </summary>
+      <Disclosure title="Scheduling and Google Calendar" className="min-w-0">
         <div className="mt-3 flex min-w-0 flex-wrap gap-3">
           <MentorCalendarQuickSchedule projects={choices}
             googleConnected={googleConnection.connected}/>
           <MentorGoogleCalendarAccount {...googleConnection}/>
         </div>
-      </details>
+      </Disclosure>
     <Disclosure title={"Search & filters"+(activeCount?" ("+activeCount+" active)":"")}
       defaultOpen={activeCount>0} className="min-w-0 border-t border-border pt-3"
       contentClassName="pt-3">

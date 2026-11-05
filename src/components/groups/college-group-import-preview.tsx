@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type ImportResult = {
   requested: number; added: number; waitlisted: number; errors: number;
@@ -137,14 +138,13 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <Button type="submit" loading={pending || reading} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={reading || pending || !csv.trim()}>
         {pending ? "Validating…" : "Preview members"}
       </Button>
-      <details className="min-w-0 border-t border-border pt-3">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">CSV contents</summary>
+      <Disclosure title="CSV contents" className="min-w-0">
         <Label stack className="mt-3 min-w-0">CSV contents
           <Textarea rows={8} maxLength={524288} value={csv}
             onChange={(event) => { csvRevision.current++; setCsv(event.target.value); setResult(null); setImported(null); setError(""); }}
             className="font-mono text-sm" />
         </Label>
-      </details>
+      </Disclosure>
       {error ? <Alert tone="error">{error}</Alert> : null}
     </form>
     {result ? <section aria-label="Student group CSV validation report" className="min-w-0 space-y-3">

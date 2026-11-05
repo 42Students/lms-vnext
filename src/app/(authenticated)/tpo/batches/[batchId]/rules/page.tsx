@@ -8,6 +8,7 @@ import { TpoBatchDecisionControl } from "@/components/tpo/tpo-batch-decision-con
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getLegacyCompatibleBatchDetails } from "@/modules/placements/tpo-batch-legacy-detail-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 export const dynamic="force-dynamic";
 export default async function BatchRules({params}:{params:Promise<{batchId:string}>}){
  const {batchId}=await params;
@@ -34,8 +35,7 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
   <div><dt className="font-semibold">Job types</dt><dd>{jobTypes.length}</dd></div>
   <div><dt className="font-semibold">Rule source</dt><dd>{Object.keys(detail.batchRules).length>0?"Batch override + college defaults":"College defaults"}</dd></div>
  </dl>
- <details className="mt-4 border-t border-border pt-3">
-  <summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Review effective batch policy and job types</summary>
+ <Disclosure title="Review effective batch policy and job types" className="mt-4">
   <p className="mt-2 text-sm text-muted-foreground">The batch inherits unspecified fields from college rules. Job-type placed flags are college-scoped.</p>
   <dl className="mt-2 grid min-w-0 gap-3 text-sm sm:grid-cols-2">
    <div><dt className="font-semibold">Counts as placed at</dt><dd>{effective.countsAsPlacedAt.replaceAll("_"," ")}</dd></div>
@@ -50,7 +50,7 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
     <span className="text-muted-foreground">{row.countsAsPlaced?"Counts as placed":"Does not count as placed"} · {row.drives} {row.drives===1?"drive":"drives"}</span>
    </li>)}
   </ul>
- </details></section>}
+ </Disclosure></section>}
  {stored.success?<TpoBatchRuleEditor batchId={batchId} batchName={batch.name}
   college={{countsAsPlacedAt:college.countsAsPlacedAt as "OFFER_RELEASED"|"OFFER_ACCEPTED",maxHeldOffers:college.maxHeldOffers,
     upliftPct:college.upliftPct,minResponseHours:college.minResponseHours}}

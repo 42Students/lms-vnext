@@ -26,6 +26,7 @@ import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindin
 import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 export const dynamic="force-dynamic";
 export const metadata={title:"Audit findings · 42 Tracker"};
 export default async function IndependentFindingsPage({searchParams}:{
@@ -142,9 +143,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
     <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9 focus-ring">Clear</Link>
    </div>
-   <details open={Boolean(parsed.area || parsed.statuses.length || parsed.severities.length || parsed.kinds.length)}
-    className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2 md:col-span-2 lg:col-span-3">
-    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More filters</summary>
+   <Disclosure title="More filters" defaultOpen={Boolean(parsed.area || parsed.statuses.length || parsed.severities.length || parsed.kinds.length)} className="min-w-0 md:col-span-2 lg:col-span-3">
     <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
    <Label>Area (multiple)
     <Select name="area" multiple size={4} defaultValue={parsed.area.split(",").filter(Boolean)} aria-label="Filter findings by areas">
@@ -168,15 +167,14 @@ export default async function IndependentFindingsPage({searchParams}:{
      {FINDING_KINDS.map(v=><option key={v} value={v}>{v}</option>)}
     </Select></Label>
     </div>
-   </details>
+   </Disclosure>
   </form>
   <p role="status" className="text-sm text-body leading-[1.6]">
    {data.total.toLocaleString("en-IN")} finding{data.total===1?"":"s"} · page {data.page} of {data.pages}
   </p>
   <IndependentAuditFindingsBoard rows={data.items} view={parsed.view}/>
   <Pagination label="Audit findings pages" page={data.page} pageCount={data.pages} hrefForPage={page=>independentFindingHref(parsed,page)}/>
-  <details aria-label="Findings import status" className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
-   <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] md:min-h-9">Findings import status</summary>
+  <Disclosure title="Findings import status" ariaLabel="Findings import status" className="min-w-0">
    <p role="status" className="mt-1 text-body">
     {sync?.lastResult==="SUCCESS"?"Last sync succeeded.":
       sync?.lastResult==="FAILED"?"The last sync failed. Existing imported findings remain available.":
@@ -195,6 +193,6 @@ export default async function IndependentFindingsPage({searchParams}:{
      Showing the first {sync.refusedFiles.length} of {sync.refusedCount} refused files. Review importer logs for the remaining details.
     </p>:null}
    </section>:null}
-  </details>
+  </Disclosure>
  </div>;
 }

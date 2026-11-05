@@ -502,8 +502,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
             className="inline-flex min-h-9 items-center"
             aria-label="Search LMS source for this log component">Search repository source ↗</TextLink>
         </section>
-        <details className="min-w-0 border-t border-border pt-3">
-          <summary className="cursor-pointer font-semibold">Sanitized raw log payload</summary>
+        <Disclosure title="Sanitized raw log payload" className="min-w-0">
           <p className="mt-2 text-xs text-muted-foreground">Only the server-redacted fields visible above are included. Untrusted provider metadata and credentials are excluded.</p>
           <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all rounded border border-border bg-[var(--lms-neutral-50)] p-3 text-xs">{JSON.stringify({
             id:detailEntry.id,time:detailEntry.time,event:detailEntry.event,
@@ -516,7 +515,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
               message:detailEntry.message,path:detailEntry.path,
               requestId:detailEntry.requestId,component:detailEntry.component,
             },null,2))}>Copy as JSON</Button>
-        </details>
+        </Disclosure>
       </div>:null}
     </Dialog>
     <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}

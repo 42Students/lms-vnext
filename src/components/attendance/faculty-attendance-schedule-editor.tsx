@@ -13,6 +13,7 @@ import {localDateTimeInput,validateFacultyScheduleWindow,facultyScheduleInstants
   "@/modules/attendance/faculty-schedule-editor-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Session={
   id:string;title:string;startsAt:string;endsAt:string;
@@ -129,11 +130,7 @@ export function FacultyAttendanceScheduleEditor({
           onChange={e=>setEndsAt(e.target.value)} className="min-w-0 w-full text-base md:text-sm" />
       </Label>
     </div>
-    <details key={action + (selected?.id ?? "")}
-      className="min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
-      <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-ring">
-        Additional session details
-      </summary>
+    <Disclosure title="Additional session details" className="min-w-0">
       <div className="grid min-w-0 gap-4 pb-3 pt-2">
         <Label stack className="min-w-0">Location
           <Input value={location} onChange={e=>setLocation(e.target.value)}
@@ -144,7 +141,7 @@ export function FacultyAttendanceScheduleEditor({
             disabled={busy} maxLength={1000} className="min-w-0 text-base md:text-sm" />
         </Label>
       </div>
-    </details>
+    </Disclosure>
     {unchanged?<p role="status" className="m-0 text-[13px] text-muted-foreground">No schedule details have changed.</p>:null}
     {error?<Alert tone="error">{error}</Alert>:null}
     {success?<Alert tone="success">{success}</Alert>:null}

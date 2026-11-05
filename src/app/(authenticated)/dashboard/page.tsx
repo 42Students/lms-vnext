@@ -42,6 +42,7 @@ import {
   listMyProjectInstances,
 } from "@/modules/projects/member-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 /** Four platform-level destinations from the old LMS; never show tenant counts without a selected college. */
 const PLATFORM_GLOBAL_LINKS = [
@@ -194,14 +195,13 @@ async function SuperAdminDashboard({
       </div>
       {collegeId?<CollegeAtGlancePanel collegeId={collegeId} initial={glance}/>:null}
       {collegeId?<SuperAdminTodayBoard data={today}/>:null}
-      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Safety scope</summary>
+      <Disclosure title="Safety scope" className="min-w-0">
         <p className="mt-2 text-sm text-body leading-[1.6]">
           {scopeLabel}. Use the selector in the top bar before
           college-specific administration. Global system-role
           management remains available only when the scope is cleared.
         </p>
-      </details>
+      </Disclosure>
       <SuperAdminCollegeDashboardActions />
     </div>
   );

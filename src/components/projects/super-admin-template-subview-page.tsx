@@ -33,6 +33,7 @@ import { templateVersionComparisonHref } from "@/modules/projects/template-versi
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function formatDate(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -707,17 +708,16 @@ export async function SuperAdminTemplateSubviewPage({
             {legacyEvents.length>0?<section aria-label="Legacy template history" className="mt-5 space-y-3">
               <Heading level={3} size="base">Legacy version events</Heading>
               <p className="text-sm text-muted-foreground">Historic actions retain their original version number, action type and source snapshot. They are not editable vNext blueprint versions.</p>
-              {legacyEvents.map(event=><details key={event.id} className="border-b border-border py-3">
-                <summary className="cursor-pointer font-semibold">
+              {legacyEvents.map(event=><Disclosure title={<>
                   Version {event.legacyTemplateVersion??"—"} · {event.actionType??"Updated"} · {event.changedAt?formatDate(event.changedAt):"Date unavailable"}
-                </summary>
+                </>}>
                 <dl className="mt-3 grid gap-2 sm:grid-cols-2">
                   <DetailField label="Legacy event ID" value={event.legacyEventId??"—"}/>
                   <DetailField label="Action" value={event.actionType??"Unknown"}/>
                   <DetailField label="Notes" value={event.notes??"—"}/>
                 </dl>
                 {event.snapshot?<pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap break-all rounded border border-border p-3 text-xs">{JSON.stringify(event.snapshot,null,2)}</pre>:null}
-              </details>)}
+              </Disclosure>)}
             </section>:null}
             {historyPaging ? <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
               <span className="text-xs text-muted-foreground">25 versions per page</span>

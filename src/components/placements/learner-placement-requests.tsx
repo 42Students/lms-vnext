@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/toast";
 import { apiFetch,FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 /** Legacy seven-option vocabulary. Keep specialized vNext request payload
  * shapes separate: Withdrawal needs an application, Extension an offer; the
@@ -399,10 +400,9 @@ export function LearnerPlacementRequests({
       </div>
 
       <div role="group" aria-label="What do you need?" className="min-w-0 divide-y divide-border py-2">
-        <details id="round-reschedule" open={Boolean(initialRoundId) || undefined} className="group min-w-0 scroll-mt-24 py-2">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-foreground hover:bg-primary-subtle focus-ring [&::-webkit-details-marker]:hidden">
+        <Disclosure title={<>
             Round reschedule <span aria-hidden="true" className="text-link">⌄</span>
-          </summary>
+          </>} defaultOpen={Boolean(initialRoundId) || undefined} id="round-reschedule" className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
           <div className="min-w-0 max-w-3xl px-2 pb-4">
           <p className="mt-1 text-xs text-muted-foreground leading-5">
             Creates a candidate-specific schedule exception; it never moves the shared round for everyone.
@@ -543,12 +543,11 @@ export function LearnerPlacementRequests({
             </div>
           )}
           </div>
-        </details>
+        </Disclosure>
 
-        <details className="group min-w-0 py-2">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-foreground hover:bg-primary-subtle focus-ring [&::-webkit-details-marker]:hidden">
+        <Disclosure title={<>
             Offer deadline extension <span aria-hidden="true" className="text-link">⌄</span>
-          </summary>
+          </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
           <div className="min-w-0 max-w-3xl px-2 pb-4">
           <p className="mt-1 text-xs text-muted-foreground leading-5">
             Only issued offers with an existing response deadline can be extended.
@@ -638,7 +637,7 @@ export function LearnerPlacementRequests({
             </div>
           )}
           </div>
-        </details>
+        </Disclosure>
       </div>
 
       {requests.length > 0 ? (

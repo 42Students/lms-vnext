@@ -10,6 +10,7 @@ import { ActivityServiceError } from "@/modules/activity/errors";
 import { getActivityEventDetail } from "@/modules/activity/service";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
@@ -82,8 +83,7 @@ export default async function ActivityDetailPage({
             <dd className="m-0 break-all text-foreground">{event.subjectLabel ?? "—"}</dd>
           </div>
         </dl>
-        <details className="min-w-0 border-t border-border pt-3">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">More event details</summary>
+        <Disclosure title="More event details" className="min-w-0">
           <dl className="grid min-w-0 gap-4 pb-3 pt-3 text-sm md:grid-cols-2">
           <div>
             <dt className="font-semibold text-muted-foreground">Subject ID</dt>
@@ -106,7 +106,7 @@ export default async function ActivityDetailPage({
             <dd className="m-0 break-all text-foreground">{event.groupKey ?? "—"}</dd>
           </div>
           </dl>
-        </details>
+        </Disclosure>
       </section>
 
       <div className="flex flex-wrap gap-3 border-b border-border pb-4">
@@ -132,15 +132,14 @@ export default async function ActivityDetailPage({
 
       <SubjectEventHistory context={context} subjectType={event.subjectType} subjectId={event.subjectId}/>
 
-      <details className="min-w-0 border-t border-border pt-4">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Legacy audit gap notice</summary>
+      <Disclosure title="Legacy audit gap notice" className="min-w-0">
         <p className="mt-2 text-sm leading-6 text-body">
           The legacy admin audit table also persisted an actor role snapshot,
           request IP, and user agent. Those are not currently persisted by
           vNext activity events and are tracked as DB10 parity gaps rather than
           being synthesized on this page.
         </p>
-      </details>
+      </Disclosure>
     </div>
   );
 }

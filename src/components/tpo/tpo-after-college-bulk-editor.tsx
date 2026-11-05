@@ -12,6 +12,7 @@ import {
 } from "@/modules/placements/tpo-after-college-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Entry = { outcome: AfterCollegeOutcome; expectedVersion: string };
 type Row = { membershipId: string; displayName: string };
@@ -91,10 +92,10 @@ export function TpoAfterCollegeBulkEditor({
   return <section aria-label="After college bulk actions"
     className="space-y-3 border-t border-border pt-5">
     <Heading level={2} size="lg" className="leading-6">After college · Bulk update</Heading>
-    <details className="border-b border-border pb-3 text-sm text-muted-foreground"><summary className="cursor-pointer py-2 text-[13px] font-semibold">How bulk updates work</summary><p>
+    <Disclosure title="How bulk updates work"><p>
       Select students on this page, choose their outcome, preview the count and confirm.
       Changes are recorded for reporting and can be undone while no other editor has updated them.
-    </p></details>
+    </p></Disclosure>
     {!available && <p role="status" className="text-sm text-warning">
       After college records are unavailable until the database table is registered.</p>}
     <Label variant="choice" className="inline-flex min-h-11 items-center gap-2 print:hidden">

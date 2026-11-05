@@ -12,6 +12,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrInterviewSlots} from "@/modules/placements/hr-interview-slot-service";
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 export default async function RecruiterInterviewSlots({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
@@ -45,8 +46,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
 
   <>
    <section id="propose-time-block" className="min-w-0 border-b border-border pb-4">
-    <details open={slots.items.length===0} className="min-w-0">
-     <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)] focus-ring md:min-h-9">Propose an interviewer time block</summary>
+    <Disclosure title="Propose an interviewer time block" defaultOpen={slots.items.length===0} className="min-w-0">
      <div className="mt-3 min-w-0 space-y-3">
     {rounds.length===0?<Alert tone="warning">
      No pending or scheduled interview round is available for this drive.{" "}
@@ -58,7 +58,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
       id:row.id,name:row.name,sequence:row.sequence,
     }))}/>
      </div>
-    </details>
+    </Disclosure>
    </section>
    <section className="min-w-0 space-y-3">
     <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Time blocks ({slots.items.length})</Heading>

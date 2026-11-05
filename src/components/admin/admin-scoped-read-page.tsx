@@ -21,6 +21,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page",backHref,headerActions,intro,compactReadLayout=false}:{
  title:string;path:string;description:string;headingMode?:"page"|"section";backHref?:string;headerActions?:ReactNode;intro?:ReactNode;compactReadLayout?:boolean;
  statuses:readonly string[];
@@ -213,8 +214,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     </Select>
    </Label>
    <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
-   {applicationFilters?<details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.source!=="ALL"||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL")}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-ring lg:min-h-9">Filters</summary>
+   {applicationFilters?<Disclosure title="Filters" defaultOpen={Boolean(data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.source!=="ALL"||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL")} className="min-w-0 sm:col-span-2 lg:col-span-3">
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
     {(["jobId","departmentId","programId","cohortId"] as const).map(key=>{
       const rows=key==="jobId"?applicationFilters.jobs:key==="departmentId"?applicationFilters.departments:key==="programId"?applicationFilters.programs:applicationFilters.batches;
@@ -241,9 +241,8 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      </Select>
     </Label>
     </div>
-   </details>:null}
-   {peopleFilters ? <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(directoryKind||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-ring lg:min-h-9">Filters</summary>
+   </Disclosure>:null}
+   {peopleFilters ? <Disclosure title="Filters" defaultOpen={Boolean(directoryKind||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)} className="min-w-0 sm:col-span-2 lg:col-span-3">
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
     {peopleFilters.kind==="FACULTY"?<>
      <Label stack className="min-w-0">Department
@@ -268,7 +267,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       ...(data.query.cohortId!==undefined?{cohortId:data.query.cohortId}:{}),
       ...(data.query.sectionId!==undefined?{sectionId:data.query.sectionId}:{})}}/>}
     </div>
-   </details>:null}
+   </Disclosure>:null}
    {classOptions?<Label stack className="min-w-0">Filter by class
      <Select name="sectionId" defaultValue={data.query.sectionId??""}
       className="min-h-11 w-full md:min-h-9">
@@ -280,13 +279,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     className="min-h-11 w-full md:min-h-9"/>
    </Label>}
 
-   {compactReadLayout?<details className="order-4 min-w-0 sm:col-span-2 lg:col-span-3">
-     <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-ring md:min-h-9">Rows per page</summary>
+   {compactReadLayout?<Disclosure title="Rows per page" className="order-4 min-w-0 sm:col-span-2 lg:col-span-3">
      <div className="max-w-[200px] pb-1">
        <AdminScopedRowsPerPage initial={data.query.pageSize} path={path} scopeKey={context.adminScope.collegeId}
     className="min-h-11 w-full md:min-h-9"/>
      </div>
-   </details>:null}
+   </Disclosure>:null}
   </form>
   {directoryKind&&filtersActive?<div className="flex flex-wrap items-center gap-3 print:hidden">
     <span className="text-xs text-muted-foreground">Filters applied within your selected college</span>

@@ -23,6 +23,7 @@ import {
 } from "./assignment-staged-file-transfer";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export function AssignmentFileSubmissionControl({
   assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,pdfOnly=false,uploadsAllowed=true,allowedMethods=ALL_ASSIGNMENT_METHODS,
@@ -193,10 +194,9 @@ export function AssignmentFileSubmissionControl({
         className="mt-2 min-h-11 max-w-full md:min-h-9"
         onChange={event => { select(event.currentTarget.files); event.currentTarget.value = ""; }} />
     </Label>:null}
-    {uploadsAllowed?<details className="min-w-0 text-xs text-muted-foreground">
-      <summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9 md:py-2">Google Drive import is not configured.</summary>
+    {uploadsAllowed?<Disclosure title="Google Drive import is not configured." className="min-w-0">
       <p className="max-w-prose pb-2">To add a file from Google Drive, download it to your device first, then use Choose a file to upload. The uploaded file must pass private-storage security checks.</p>
-    </details>:null}
+    </Disclosure>:null}
     {uploadsAllowed && selected.length>0 ? <Button type="button" disabled={busy || loading || selected.length === 0} onClick={upload} className="min-h-11 w-full sm:w-auto md:min-h-9">
       {busy && activeName ? "Uploading…" : staged.length > 0 ? "Add another file" : "Choose a file to upload"}
     </Button>:null}

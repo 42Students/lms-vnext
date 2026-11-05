@@ -19,6 +19,7 @@ import {
 } from "@/modules/placements/tpo-companies-view-service";
 import {tpoCompanyFiltersShapeValid} from "@/modules/placements/tpo-company-url-validation";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type PageProps = {
   searchParams: Promise<{
@@ -176,10 +177,7 @@ export default async function TpoCompanyMemoryPage({
             <TpoCompanyCreateForm />
             <Link href="/tpo/companies?discover=1" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Find or link company</Link>
             <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Create drive</Link>
-            <details className="group min-w-0 sm:relative">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link marker:hidden focus-ring [&::-webkit-details-marker]:hidden">
-                Company links
-              </summary>
+            <Disclosure title="Company links" className="min-w-0 sm:relative">
               <nav aria-label="Other company destinations" className="mt-2 flex min-w-0 flex-col gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:absolute sm:right-0 sm:z-(--lms-z-sticky-inline) sm:w-52 sm:shadow-sm">
                 <Link href="/tpo/companies/archived" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-ring">
                   Archived relationships
@@ -188,7 +186,7 @@ export default async function TpoCompanyMemoryPage({
                   Recruiter leads
                 </Link>
               </nav>
-            </details>
+            </Disclosure>
           </div>
         }
       />
@@ -356,8 +354,7 @@ export default async function TpoCompanyMemoryPage({
           </div>
         </nav> : null}
 
-        <details className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
-          <summary className="min-h-11 cursor-pointer font-semibold text-link focus-ring">About company counts</summary>
+        <Disclosure title="About company counts">
           <p className="max-w-3xl pb-2 leading-5">
           Offer counts represent persisted offer records, including
           historical declined and withdrawn statuses. Confirmed joins
@@ -365,7 +362,7 @@ export default async function TpoCompanyMemoryPage({
           JOINED outcomes. Free-text recruiter company names are
           deliberately not merged into canonical employer IDs.
           </p>
-        </details>
+        </Disclosure>
       </section>
     </div>
   );

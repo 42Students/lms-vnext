@@ -21,6 +21,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type ResultOutcome =
   | "PASS"
@@ -417,7 +418,7 @@ export function RecruiterResultControls({
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </Button></div>
 
-                  <details open={Boolean(focusApplicantId)} className="min-w-0 border-t border-border py-2"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-body md:min-h-9">Outcome shortcuts</summary><p className="pb-2 text-muted-foreground">{focusApplicantId?"S Keep · H Hold · R Not selected · A Absent · Z Undo (draft only)":"S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)"}</p><div className="flex min-w-0 flex-wrap gap-2">
+                  <Disclosure title="Outcome shortcuts" defaultOpen={Boolean(focusApplicantId)} className="min-w-0"><p className="pb-2 text-muted-foreground">{focusApplicantId?"S Keep · H Hold · R Not selected · A Absent · Z Undo (draft only)":"S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)"}</p><div className="flex min-w-0 flex-wrap gap-2">
                   {([
                     ["PASS",focusApplicantId?"Keep":"Pass"],["HOLD",focusApplicantId?"Hold":"Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
                   ] as const).map(([outcome,label])=><Button key={outcome} type="button" className="min-h-11 md:min-h-9"
@@ -438,7 +439,7 @@ export function RecruiterResultControls({
                         []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}));}}>
                     {(selected[round.id]??[]).length?"Clear selection":"Select all eligible"}
                   </Button>
-                  </div></details>
+                  </div></Disclosure>
                 </div>:null}
                 <p className="mt-1 text-sm text-body">
                   {humanize(round.kind)} ·{" "}
@@ -462,7 +463,7 @@ export function RecruiterResultControls({
                 ) : null}
               </div>
 
-              {evaluative&&round.participants.length>0?<details className="hidden min-w-0 border-b border-border py-3 md:block"><summary className="min-h-9 cursor-pointer py-2 text-sm font-semibold max-md:min-h-11">Round results overview</summary>
+              {evaluative&&round.participants.length>0?<Disclosure title="Round results overview" className="hidden min-w-0 md:block">
                 <RecruiterResultReviewGrid scopeKey={round.id}
                   rows={round.participants.map(person=>{
                     const draft=drafts[round.id+":"+person.applicationId];
@@ -479,7 +480,7 @@ export function RecruiterResultControls({
                       editHref:"#result-editor-"+round.id+"-"+person.applicationId,
                     };
                   })}/>
-              </details>:null}
+              </Disclosure>:null}
               {!evaluative ? (
                 <p className="m-0 py-4 text-sm text-muted-foreground">
                   Informational rounds do not collect candidate outcomes.

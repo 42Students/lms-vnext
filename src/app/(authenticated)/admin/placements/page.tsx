@@ -169,11 +169,10 @@ export default async function AdminPlacementsPage({ searchParams }: {
         ) : (
           <div className="divide-y divide-border">
             {actionRows.slice(0, 20).map(({ job }) => (
-              <details key={job.id} className="group min-w-0 py-[var(--lms-space-3)]">
-                <summary className="flex min-h-11 cursor-pointer flex-wrap items-center justify-between gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] text-sm font-semibold text-foreground focus-ring md:min-h-9">
+              <Disclosure title={<>
                   <span className="min-w-0 break-words">{job.title} · {job.company.name}</span>
                   <StatusBadge tone={job.status === "PUBLISHED" ? "success" : job.status === "DRAFT" ? "warning" : "neutral"}>{job.status}</StatusBadge>
-                </summary>
+                </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 flex-wrap items-center justify-between gap-[var(--lms-space-2)] md:min-h-9">
                 <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)]">
                   <Link href={"/admin/placements/jobs/" + encodeURIComponent(job.id)} className={secondaryActionClass}>
                     Open drive →
@@ -183,7 +182,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
                     <SuperAdminDriveDeadline jobId={job.id} deadline={job.applicationDeadline?.toISOString() ?? null} />
                   ) : null}
                 </div>
-              </details>
+              </Disclosure>
             ))}
             {actionRows.length > 20 ? (
               <Link href="/admin/placements/drives" className={secondaryActionClass}>View all {actionRows.length} drives →</Link>

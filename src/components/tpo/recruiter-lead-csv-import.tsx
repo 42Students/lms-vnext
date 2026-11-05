@@ -21,6 +21,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const template = "name,email,phone,companyName,designation,source\r\n" +
   "Example Recruiter,recruiter@example.org,,Example Company,HR,REFERRAL\r\n";
@@ -174,7 +175,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
                 </p>
             </div>
-            <details className="border-b border-border pb-3 text-sm text-body"><summary className="cursor-pointer py-2 font-semibold max-md:flex max-md:min-h-11 max-md:items-center">Import steps</summary><p aria-label="Recruiter import steps" className="text-xs text-muted-foreground leading-[20px]">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p></details>
+            <Disclosure title="Import steps"><p aria-label="Recruiter import steps" className="text-xs text-muted-foreground leading-[20px]">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p></Disclosure>
             <ButtonLink variant="secondary"
               download="recruiter-leads-template.csv"
               href={"data:text/csv;charset=utf-8," + encodeURIComponent(template)}
@@ -288,11 +289,11 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                 </ScrollCue>
               </div>
             ) : null}
-            <details className="border-t border-border pt-3 text-xs text-muted-foreground"><summary className="cursor-pointer min-h-11 py-3 font-semibold md:min-h-9">Import safety and audit details</summary><p>
+            <Disclosure title="Import safety and audit details"><p>
               Imports cannot change an existing contact. Invalid and duplicate rows are skipped.
               Imported leads receive a staff-attributed audit entry; a failed transaction
               does not leave half-written lead/audit pairs.
-            </p></details>
+            </p></Disclosure>
           </section>
       </Dialog>
     </>

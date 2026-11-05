@@ -9,6 +9,7 @@ import { PlacementDriveWorkspace } from "@/components/placements/placement-drive
 import { can } from "@/modules/permissions/policy";
 import {tpoDriveTabHref} from "@/modules/placements/tpo-drive-tab-model";
 import {ErrorState} from "@/components/ui/error-state";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function TpoPlacementDrivePage({
   params,
@@ -66,10 +67,9 @@ export default async function TpoPlacementDrivePage({
         </Link>
       </div>
       <PlacementDriveWorkspace context={context} jobId={jobId} eyebrow="TPO" openPublish={openPublish}/>
-      <details className="group min-w-0 border-t border-border pt-3">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
+      <Disclosure title={<>
           Drive shortcuts <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-        </summary>
+        </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-3">
       <nav aria-label="Drive shortcuts" className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
       <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
         className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">Discuss →</Link>
@@ -78,7 +78,7 @@ export default async function TpoPlacementDrivePage({
         Employer interview slot proposals →
       </Link>
       </nav>
-      </details>
+      </Disclosure>
     </div>
   );
 }

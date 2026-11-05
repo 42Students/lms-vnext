@@ -8,6 +8,7 @@ import { ownLearnerProfileReadiness } from "@/modules/people/learner-profile-rea
 import {learnerProfileChecklist} from "@/modules/people/learner-profile-checklist";
 import {learnerProfileCareerCoverage,learnerCareerCompletionMessage} from "@/modules/people/learner-profile-career-coverage-model";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function ProfileCompleteness({searchParams}:{
   searchParams:Promise<{show?:string|string[]}>;
@@ -41,12 +42,11 @@ export default async function ProfileCompleteness({searchParams}:{
       <p className="mt-2 max-w-3xl break-words text-xs leading-5 text-muted-foreground">
         Academic identity: {academic.title}. Sections are based on your own current college profile.
       </p>
-      <details className="mt-3 border-t border-border pt-2">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Identity data and checklist limits</summary>
+      <Disclosure title="Identity data and checklist limits" className="mt-3">
       <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
         National identity details are optional and are not required for this checklist. Sensitive identity storage and verification are not available through this view.
       </p>
-      </details>
+      </Disclosure>
     </section>
     <nav aria-label="Checklist filters" className="flex min-w-0 max-w-full flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0">
       {options.map(option=><Link key={option.value}

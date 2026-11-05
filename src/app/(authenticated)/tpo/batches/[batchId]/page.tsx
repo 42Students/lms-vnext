@@ -23,6 +23,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import {projectTpoBatchNextStep} from "@/modules/placements/tpo-batch-next-step-state-model";
 import {getTpoBatchOwnDecisionSummary} from "@/modules/placements/tpo-batch-own-decision-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {batchId}=await params;
@@ -142,28 +143,25 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
      eligible:summary.complete?summary.eligible:null}):"Status unavailable"}
    </Badge>
    <div className="flex min-w-0 flex-wrap items-start gap-3 print:hidden">
-    {undoable?<details className="min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
-     <summary title={"Undo the last "+String(undoable.after??"eligibility")+" decision. New decisions can prevent undo."}
-      className="flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-link md:min-h-9">
+    {undoable?<Disclosure title={<>
       <svg aria-hidden="true" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 16 16"><path d="M2.5 4.5H8a5 5 0 1 1-4.5 7.2M2.5 4.5V1m0 3.5H6" strokeLinecap="round" strokeLinejoin="round"/></svg>
       Undo last decision
-     </summary>
+     </>} summaryTitle={"Undo the last "+String(undoable.after??"eligibility")+" decision. New decisions can prevent undo."} className="min-w-0 max-w-full" preserveSummary summaryClassName="flex min-h-11 items-center gap-2 md:min-h-9">
      <div className="w-[min(460px,85vw)] max-w-full pb-3">
       <p className="text-xs text-muted-foreground">The server checks for any intervening decision.</p>
       <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
      </div>
-    </details>:null}
-    {ready?<details className="min-w-0 max-w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
-     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-link md:min-h-9">
+    </Disclosure>:null}
+    {ready?<Disclosure title={<>
       {lifecycle?.finishedAt?"Reopen batch":"Mark finished"}
-     </summary>
+     </>} className="min-w-0 max-w-full">
      <div className="w-[min(460px,85vw)] max-w-full pb-3">
       <TpoBatchLifecycleControl batchId={batchId} state={lifecycle?{
        invitedAt:lifecycle.invitedAt?.toISOString()??null,finishedAt:lifecycle.finishedAt?.toISOString()??null,
        expectedVersion:lifecycle.updatedAt.toISOString(),
       }:null}/>
      </div>
-    </details>:null}
+    </Disclosure>:null}
    </div>
   </div>
   <div className="grid min-w-0 gap-4 lg:grid-cols-2 lg:items-start">

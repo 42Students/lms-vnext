@@ -42,11 +42,10 @@ export default async function SuperAdminFacultyPage({searchParams}:{
     headingMode="section"
     intro={context.adminScope?.collegeId?<section aria-label="Faculty registration tools"
       className="min-w-0 space-y-3 pb-4">
-      <details className="min-w-0 rounded-[8px] border border-border bg-surface px-4 py-3">
-       <summary className="flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-primary-text focus-ring">
+      <Disclosure title={<>
         <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
         Register faculty (one at a time or bulk CSV)
-       </summary>
+       </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center gap-2">
        <div className="grid min-w-0 gap-6 pt-4 lg:grid-cols-2">
         <div className="min-w-0 space-y-3">
          <Heading level={3} className="text-[var(--lms-heading)]">Register New Faculty</Heading>
@@ -58,7 +57,7 @@ export default async function SuperAdminFacultyPage({searchParams}:{
            departments={peopleFilters?.departments??[]}/>
         </div>
        </div>
-      </details>
+      </Disclosure>
       <div className="flex min-w-0 flex-wrap gap-x-4 gap-y-2">
        <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9" href="/admin/people">
         Manage memberships, profiles and account status →

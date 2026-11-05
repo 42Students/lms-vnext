@@ -28,6 +28,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
@@ -1138,8 +1139,7 @@ export function PlacementJobCreateForm({
       </div>:null}
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
       <fieldset disabled={pending||loadingCopy} aria-label="Drive configuration" className="min-w-0 space-y-4">
-      <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)] lg:hidden">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-base font-semibold text-foreground focus-ring md:min-h-9 [&::-webkit-details-marker]:hidden">Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></summary>
+      <Disclosure title={<>Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></>} className="min-w-0 lg:hidden" preserveSummary summaryClassName="flex min-h-11 items-center justify-between md:min-h-9">
         <nav aria-label="Drive setup review" className="min-w-0 pt-3">
         <ol className="grid gap-3 border-y border-border sm:grid-cols-2 lg:grid-cols-4">
           {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
@@ -1158,9 +1158,8 @@ export function PlacementJobCreateForm({
           <p>Draft review does not publish or notify learners. Confirm the server's eligibility reach and missing items on the next screen.</p>
         </div>
         </nav>
-      </details>
-      <details open={!activeSeason||clonableDrives.length>0} className="min-w-0 border-b border-border pb-3">
-       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Start from</summary>
+      </Disclosure>
+      <Disclosure title="Start from" defaultOpen={!activeSeason||clonableDrives.length>0} className="min-w-0">
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <p className="pb-[var(--lms-space-3)] text-sm text-body">
           Every drive belongs to the current operating season. Historical seasons remain read-only.
@@ -1200,7 +1199,7 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      </details>
+      </Disclosure>
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
           <Heading level={2} size="base" className="m-0 text-foreground">
@@ -1295,7 +1294,7 @@ export function PlacementJobCreateForm({
             {companySearch.trim()&&!companies.some(company=>
               (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
               <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
-              {selectedEmployer?.memory?<details className="min-w-0 border-t border-border py-3 text-sm"><summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9">Company Memory</summary><aside aria-label="Company Memory" className="pt-3 text-sm">
+              {selectedEmployer?.memory?<Disclosure title="Company Memory" className="min-w-0"><aside aria-label="Company Memory" className="pt-3 text-sm">
                 <Heading level={3} className="text-foreground">Company Memory</Heading>
                 <p>{selectedEmployer.memory.pastDrives} past drives · {selectedEmployer.memory.joinedLearners} confirmed hires</p>
                 <p>Last drive: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
@@ -1305,7 +1304,7 @@ export function PlacementJobCreateForm({
                     A drive for {selectedEmployer.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).{" "}
                     <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline max-md:inline-flex max-md:min-h-11 max-md:items-center">Open it</Link> before creating another.
                   </p>:null}
-              </aside></details>:null}
+              </aside></Disclosure>:null}
             </div>
           ) : (
             <div className="grid min-w-0 gap-4 sm:grid-cols-2">
@@ -1694,8 +1693,7 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <details open className="min-w-0 border-b border-border pb-6">
-        <summary className="min-h-11 cursor-pointer text-base font-semibold text-foreground md:min-h-9">Additional job details</summary>
+      <Disclosure title="Additional job details" defaultOpen className="min-w-0">
         <div className="pt-3">
           <Heading level={2} className="sr-only">Additional job details</Heading>
           <p className="mt-1 text-sm text-body">Responsibilities, dates and preferences are informational. Only the eligibility policy below governs learner eligibility.</p>
@@ -1827,7 +1825,7 @@ export function PlacementJobCreateForm({
           </fieldset>
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
-      </details>
+      </Disclosure>
       <section className="min-w-0 border-b border-border border-l-2 border-l-primary pl-3 pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
           <Heading level={2} size="base" className="m-0 text-foreground">
@@ -2151,16 +2149,14 @@ export function PlacementJobCreateForm({
           name, kind and mode in the saved drive before sending any candidate invitations.
         </p>
       </section>
-      <details className="min-w-0 border-b border-border pb-3">
-       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Who this reaches</summary>
+      <Disclosure title="Who this reaches" className="min-w-0">
       <section aria-label="Who this reaches" className="min-w-0 pb-[var(--lms-space-4)]">
         {draftReachBusy?<p role="status" className="mt-2 text-sm text-body">
           Calculating active learner targeting…</p>:null}
         {draftReach?.kind==="READY"?<div role="status" className="mt-2 space-y-3 text-sm">
           <p><strong className="tabular-nums text-lg text-foreground">
            {draftReach.activeLearners.toLocaleString("en-IN")}</strong> active learners match the saved academic target choices.</p>
-          <details className="border-t border-border pt-2">
-           <summary className="min-h-9 cursor-pointer text-sm font-semibold text-link">Branch breakdown</summary>
+          <Disclosure title="Branch breakdown">
            {draftReach.branches.length?<ul className="max-h-44 space-y-1 overflow-y-auto text-xs">
             {draftReach.branches.map(branch=><li key={branch.programId}
              className="flex justify-between gap-3 border-b border-border py-1">
@@ -2168,7 +2164,7 @@ export function PlacementJobCreateForm({
              <span className="shrink-0 tabular-nums">{branch.total}</span>
             </li>)}
            </ul>:<p className="text-xs text-muted-foreground">No active enrollments match these targets.</p>}
-          </details>
+          </Disclosure>
           <p className="text-xs leading-5 text-muted-foreground">{draftReach.scopeNote}</p>
          </div>:draftReach?.kind==="UNAVAILABLE"?<p role="alert" className="mt-2 text-sm text-warning">
           Audience estimate unavailable: {draftReach.reason}
@@ -2177,7 +2173,7 @@ export function PlacementJobCreateForm({
         <p className="mt-2 text-xs text-muted-foreground">Round templates are saved as pending during draft setup; scheduling, eligibility reach verification and recruiter invitations are managed in the saved drive workspace.</p>
       </section>
 
-      </details>
+      </Disclosure>
       </fieldset>
       <aside aria-label="Setup review" className="sticky top-24 hidden rounded-xl border border-border bg-background p-4 lg:block">
         <Heading level={2} size="base" className="m-0 text-foreground">Setup review</Heading>

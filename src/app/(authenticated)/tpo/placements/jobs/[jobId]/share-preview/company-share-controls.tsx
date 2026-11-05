@@ -15,6 +15,7 @@ import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
 const SHARE_COLUMNS=[
  ["APPLICATION_ID","Applicant ID"],["NAME","Name"],["ROLL_NUMBER","Roll number"],
@@ -129,8 +130,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
      <Input type="date" value={shortlistBy} disabled={pending} onChange={event=>setShortlistBy(event.target.value)}
       />
     </Label>
-    <details className="group min-w-0 border-t border-border pt-3 sm:col-span-2">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 py-2 text-sm font-semibold text-body focus-ring [&::-webkit-details-marker]:hidden">Columns to share ({selectedColumns.length} of 11 maximum) <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+    <Disclosure title={<>Columns to share ({selectedColumns.length} of 11 maximum) <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="min-w-0 sm:col-span-2" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
       <fieldset className="min-w-0"><legend className="sr-only">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
      <div className="grid min-w-0 gap-2 md:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
       <Label variant="choice" key={key} className="inline-flex min-h-11 items-center gap-2">
@@ -141,7 +141,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
        {label}
       </Label>)}</div>
       </fieldset>
-    </details>
+    </Disclosure>
     <Button type="button" disabled={pending||selectedColumns.length===0} onClick={createLink}
      className="min-h-11 w-full md:col-span-2 md:w-auto md:justify-self-end">
      Create expiring link

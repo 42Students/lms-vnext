@@ -23,6 +23,7 @@ import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const field = "mt-1 w-full";
 const label = "block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
@@ -425,8 +426,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         <p className="text-xs text-muted-foreground">For privacy, never publish private screenshots via an unrestricted URL.</p>
       </section>
       {canSearchSimilar ? <>
-      <details aria-label="Similar issues" className="min-w-0 border-y border-border py-4" open={Boolean(similarQuery.trim())}>
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-ring">Similar issues</summary>
+      <Disclosure title="Similar issues" defaultOpen={Boolean(similarQuery.trim())} ariaLabel="Similar issues" className="min-w-0">
         <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
         <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
           <Input aria-label="Find similar issues by keyword" type="search" value={similarQuery}
@@ -450,7 +450,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             </li>)}
           </ul>:<p>No existing reports match this phrase. You can submit a new issue.</p>}
         </div>:null}
-      </details>
+      </Disclosure>
       </> : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground leading-[20px]">Draft saves automatically · Paste screenshots anywhere once private uploads are available · Ctrl/⌘ + Enter to submit.</p>

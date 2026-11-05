@@ -59,6 +59,7 @@ import {Tabs} from "@/components/ui/tabs";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function currentTimeMs(){return Date.now();}
 
@@ -493,8 +494,7 @@ export default async function HrPlacementJobPage({
 </section>
             </section>
           <section aria-label="What students see" className="min-w-0 rounded-xl border border-border bg-surface-secondary p-4">
-            <details open className="min-w-0">
-             <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground focus-ring md:min-h-9">What students see</summary>
+            <Disclosure title="What students see" defaultOpen className="min-w-0">
              <div className="mt-2 min-w-0">
              <div className="mb-3 rounded-lg border border-border bg-surface p-3">
                <strong className="block break-words text-base text-foreground">{workspace.job.title}</strong>
@@ -525,7 +525,7 @@ export default async function HrPlacementJobPage({
               </dd></div>
             </dl>
              </div>
-            </details>
+            </Disclosure>
           </section>
           </div>
           <dl className="grid min-w-0 gap-x-6 gap-y-3 border-y border-border py-3 md:grid-cols-2 lg:grid-cols-3">
@@ -548,8 +548,7 @@ export default async function HrPlacementJobPage({
           </div>
         </section>
       ) : null}
-      <details className="min-w-0">
-        <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text focus-ring md:min-h-9">Hire again</summary>
+      <Disclosure title="Hire again" className="min-w-0">
         <div className="mt-2 flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
           className="inline-flex min-h-9 max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
@@ -560,7 +559,7 @@ export default async function HrPlacementJobPage({
           Request another drive
         </Link>
         </div>
-      </details>
+      </Disclosure>
       {discussionTab?<section aria-label="Drive discussion" className="space-y-4 border-b border-border pb-4 md:pb-6">
         <RecruiterConversationLiveRefresh/>
         <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Discussion</Heading>
@@ -612,8 +611,7 @@ export default async function HrPlacementJobPage({
       {requestsTab&&requestData?.party==="COMPANY" ? <section id="drive-requests" aria-label="Drive change requests" className="space-y-4 border-b border-border pb-4 md:pb-6">
         <Heading level={2} size="lg" className="text-foreground">Requests</Heading>
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
-        {requestData.requests.length>0?<details className="min-w-0 border-b border-border pb-3">
-          <summary className="min-h-11 cursor-pointer text-sm font-semibold text-primary-text">Quote a request in Discussion</summary>
+        {requestData.requests.length>0?<Disclosure title="Quote a request in Discussion" className="min-w-0">
           <div className="mt-2 flex flex-wrap gap-3">
             {requestData.requests.map(request=><Link key={request.id}
               href={"/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"?tab=discussion&requestId="+encodeURIComponent(request.id)+returnQuery}
@@ -621,7 +619,7 @@ export default async function HrPlacementJobPage({
               Discuss {request.field.toLowerCase()} request
             </Link>)}
           </div>
-        </details>:null}
+        </Disclosure>:null}
         {requestData.storageReady?<TpoDriveChangeRequests
            key={changeShortcut?.key??"default"} initialField={changeShortcut?.field}
            openInitially={Boolean(changeShortcut)}
@@ -1011,16 +1009,13 @@ export default async function HrPlacementJobPage({
             className="mt-2 inline-flex min-h-9 max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
             Add, change or remove rounds
           </Link>
-          <details className="mt-2 min-w-0">
-            <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline md:min-h-9">
-              Propose interview times
-            </summary>
+          <Disclosure title="Propose interview times" className="mt-2 min-w-0">
             <p className="mt-2 text-sm text-body">Choose the round, start/end times, capacity (at least one) and an optional interview panel.</p>
             <Link href={"/recruiter/drives/"+workspace.job.id+"/interview-slots"}
               className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">
               Open slot proposals
             </Link>
-          </details>
+          </Disclosure>
 </div>}
           <p className="mt-1 text-sm text-body">
             {driveOverview.readOnly
@@ -1130,12 +1125,9 @@ export default async function HrPlacementJobPage({
             </article>)}
           </div>:<p className="text-sm text-muted-foreground">No scheduled rounds recorded.</p>}
         </section>:null}
-        {!driveOverview.readOnly ? <details className="min-w-0 border-t border-border py-3">
-          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-link underline">
-            Send a round&apos;s results (who passed, who did not)
-          </summary>
+        {!driveOverview.readOnly ? <Disclosure title="Send a round&apos;s results (who passed, who did not)" className="min-w-0">
           <RecruiterResultControls rounds={resultControlRounds}/>
-        </details> : null}
+        </Disclosure> : null}
 
         {filters.tab === "rounds" ? <section className="mt-6 space-y-4 border-b border-border pb-4 md:pb-6">
           <div>

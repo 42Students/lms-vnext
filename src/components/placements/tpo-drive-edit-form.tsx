@@ -22,6 +22,7 @@ import {DrivePayCategoryField,readDrivePayCategoryFields} from "./drive-pay-cate
 import {isDrivePayCategory} from "@/modules/placements/drive-pay-category-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Draft=Awaited<ReturnType<typeof getTpoDriveEditState>>;
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
@@ -399,10 +400,9 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     </Label>
    </div>
   </section>
-  <details className="group min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-heading)] focus-ring [&::-webkit-details-marker]:hidden">
+  <Disclosure title={<>
     Compensation and openings <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-   </summary>
+   </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-3">
    <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2 xl:grid-cols-3">
    <Label className="block text-[length:var(--lms-font-sm)]">Openings<Input type="number" min={1} max={100000} name="openings" defaultValue={job.openings??""} className={cls}/></Label>
    <Label className="block text-[length:var(--lms-font-sm)]">Minimum annual CTC (INR)<Input type="number" min={0} max={100000000} name="minimumAnnualCtcInr" defaultValue={job.minimumAnnualCtcInr??""} className={cls}/></Label>
@@ -415,7 +415,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     <Input name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}
       defaultValue={job.stipendPerMonthInr??""} className={cls}/></Label>
   </div>
-  </details>
+  </Disclosure>
   <DrivePayCategoryField inputClassName={cls}
    maxCtcLpa={maxCtcInr.trim()!==""&&Number.isFinite(Number(maxCtcInr))?Number(maxCtcInr)/100000:null}
    initialCategory={isDrivePayCategory(job.legacyJobCategory)&&job.legacyCategoryOverrideReason?job.legacyJobCategory:null}
@@ -611,15 +611,14 @@ export function TpoDriveEditForm({job}:{job:Draft}){
        <dd className="mt-1 text-lg font-semibold tabular-nums text-foreground">{value.toLocaleString("en-IN")}</dd>
       </div>)}
      </dl>
-     <details>
-      <summary className="cursor-pointer text-sm font-semibold text-link">Branch breakdown</summary>
+     <Disclosure title="Branch breakdown">
       {reach.branches.length?<ul className="mt-2 max-h-44 space-y-1 overflow-y-auto text-xs">
        {reach.branches.map(branch=><li key={branch.name} className="flex justify-between gap-3 border-b border-border py-1">
         <span className="min-w-0 break-words">{branch.name}</span>
         <span className="shrink-0 tabular-nums">{branch.eligible} fully eligible / {branch.total}</span>
        </li>)}
       </ul>:<p className="text-xs text-muted-foreground">No active enrolled learners.</p>}
-     </details>
+     </Disclosure>
      <p className="text-xs leading-5 text-muted-foreground">{reach.scopeNote}</p>
      <p className="text-xs text-muted-foreground">
       Calculated {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(reach.asOf))} IST

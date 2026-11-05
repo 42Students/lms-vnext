@@ -33,6 +33,7 @@ import {
 } from "@/modules/placements/learner-offers-browse-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const expiryTabs = [{id:"all",label:"All expiry states"},{id:"expired",label:"Issued, deadline passed"},{id:"undated",label:"Issued, no deadline recorded"}] as const;
 const joiningTabs = [
@@ -231,8 +232,7 @@ export default async function LearnerOffersPage({
           Clear offer filters (keep selected status)
         </Link>
       ) : null}
-      <details className="border-t border-border pt-2" open={order!=="priority" || kind!=="all" || joiningFilter!=="all" || dueOnly || expiry!=="all" || undefined}>
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">More offer filters {hasActiveFacets ? "(active)" : ""}</summary>
+      <Disclosure title={<>More offer filters {hasActiveFacets ? "(active)" : ""}</>} defaultOpen={order!=="priority" || kind!=="all" || joiningFilter!=="all" || dueOnly || expiry!=="all" || undefined}>
         <div className="space-y-3 pt-3">
       <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer sorting" className="flex flex-wrap items-end gap-[8px]">
         {view!=="all"?<Input type="hidden" name="status" value={view}/>:null}
@@ -287,7 +287,7 @@ export default async function LearnerOffersPage({
         ))}
       </nav>
         </div>
-      </details>
+      </Disclosure>
       {pageClamped ? (
         <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           The requested offer page no longer exists in your filtered results. Showing page {paginated.page} of {paginated.pages}.
@@ -349,13 +349,12 @@ export default async function LearnerOffersPage({
         {rulesRead.value?.policyView?<>
           <Heading level={3} size="sm" className="mt-4 text-[var(--lms-heading)]">Where you stand:</Heading>
           <p className="mt-2 text-sm text-body">{rulesRead.value.policyView.personal}</p>
-          <details className="mt-3">
-            <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link md:min-h-9">See all the rules</summary>
+          <Disclosure title="See all the rules" className="mt-3">
             <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-body">
               {rulesRead.value.policyView.points.map(point=><li key={point}>{point}</li>)}
             </ul>
             <p className="mt-2 text-xs text-muted-foreground">Drive-specific checks remain authoritative. The placement cell reviews any changes.</p>
-          </details>
+          </Disclosure>
         </>:rulesRead.available?<p className="mt-3 text-sm text-body">Your college has not published a placement policy record here yet.</p>:
           <p role="alert" className="mt-3 text-sm text-body">We couldn't load the rules.
             <Link href="/learn/my-placements/offers" className="ml-2 font-semibold text-link underline">Retry</Link>

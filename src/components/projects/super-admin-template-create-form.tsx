@@ -16,6 +16,7 @@ import {initialSuperAdminTemplateDraft,type TemplateCreateRelease,
 import {projectMutation} from "@/components/projects/project-api";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function move<T>(list:readonly T[],index:number,step:-1|1):T[]{
  const dest=index+step;if(dest<0||dest>=list.length)return [...list];
@@ -150,8 +151,7 @@ export function SuperAdminTemplateCreateForm(){
    <Textarea rows={3} maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
     className="w-full"/>
   </Label>
-  <details className="min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-ring">Overview and submission</summary>
+  <Disclosure title="Overview and submission" className="min-w-0">
    <fieldset className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
     <legend className="sr-only">Overview and submission</legend>
     {([{key:"courseLabel",label:"Course label"},{key:"phase",label:"Phase"}] as const)
@@ -178,14 +178,13 @@ export function SuperAdminTemplateCreateForm(){
       </Select>
     </Label>
    </fieldset>
-  </details>
+  </Disclosure>
   <Label stack>First task priority
    <Select disabled={saving} value={values.priority} onChange={event=>edit("priority",event.target.value)} className="w-full">
     <option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option>
    </Select>
   </Label>
-  <details className="min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-ring">Additional descriptions</summary>
+  <Disclosure title="Additional descriptions" className="min-w-0">
    <div className="mt-3 grid min-w-0 gap-4">
   <Label stack>First task acceptance criteria (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="w-full"/>
@@ -203,9 +202,8 @@ export function SuperAdminTemplateCreateForm(){
    <Textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="w-full"/>
   </Label>
    </div>
-  </details>
-  <details className="min-w-0 border-y border-border py-3">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-ring">Starting resource link (optional)</summary>
+  </Disclosure>
+  <Disclosure title="Starting resource link (optional)" className="min-w-0">
    <fieldset className="mt-3 min-w-0 space-y-3">
    <legend className="sr-only">Starting resource link (optional)</legend>
    <p className="text-xs text-muted-foreground">Add a public HTTP(S) resource. Both title and URL are required when adding one.</p>
@@ -216,7 +214,7 @@ export function SuperAdminTemplateCreateForm(){
     <Input type="url" maxLength={2048} disabled={saving} value={values.resourceUrl} onChange={event=>edit("resourceUrl",event.target.value)} className="w-full"/>
    </Label>
    </fieldset>
-  </details>
+  </Disclosure>
   <section className="space-y-3 border-t border-border pt-4" aria-label="Additional releases">
    <Heading level={2} size="base">Releases</Heading>
    {!releases.length?<p className="text-sm text-body">No additional releases yet.</p>:null}

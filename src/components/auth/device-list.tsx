@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export type DeviceRow = {
   id: string;
@@ -109,8 +110,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
       </ul>
 
       {others > 0 ? (
-        <details className="border-t border-[var(--lms-canvas-border)] py-4">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Sign out everywhere else</summary>
+        <Disclosure title="Sign out everywhere else">
           <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 md:items-start">
           <Button
             variant="danger"
@@ -135,7 +135,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
             Sign out all devices
           </Button>
           </div>
-        </details>
+        </Disclosure>
       ) : null}
       <ConfirmDialog
         open={confirmation!==null}

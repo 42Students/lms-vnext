@@ -32,6 +32,7 @@ import { learnerCourseMatchesTermState, type LearnerCourseTermState } from "@/mo
 import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/courses/learner-course-sort-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 
 const PAGE_SIZE = 48;
@@ -59,14 +60,13 @@ function LearnerCourseCardSurface({
 
 /** Compact keyboard-openable, anchored legacy metric pills. */
 function LearnerMetricPopover({title,children}:{title:string;children:ReactNode}){
- return <details className="group relative">
-  <summary className="inline-flex min-h-9 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-primary-text marker:hidden hover:bg-primary-subtle focus-ring">
+ return <Disclosure title={<>
    {title} <span className="ml-2 text-muted-foreground" aria-hidden="true">⌄</span>
-  </summary>
+  </>} className="relative" preserveSummary summaryClassName="inline-flex min-h-9 items-center">
   <div className="absolute left-0 top-full z-(--lms-z-sticky-header) mt-1 w-[min(20rem,calc(100vw-3rem))] max-w-[calc(100vw-3rem)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm shadow-lg">
    {children}
   </div>
- </details>;
+ </Disclosure>;
 }
 
 export type LearnerCourseListRow = {
@@ -337,8 +337,7 @@ export function LearnerCourseList({
                         {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
                       </Select>
                     </Label>
-                    <details className="mt-4 border-t border-border pt-3">
-                      <summary className="cursor-pointer text-sm font-semibold">More filters</summary>
+                    <Disclosure title="More filters" className="mt-4">
                       <div className="mt-3 grid gap-3">
                         <Label variant="choice" className="grid gap-1">Term access
                           <Select value={termState} onChange={event => {setTermState(event.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}>
@@ -369,7 +368,7 @@ export function LearnerCourseList({
                           Continue learning only
                         </FilterChip>
                       </div>
-                    </details>
+                    </Disclosure>
                     <Button type="button" variant="secondary" onClick={() => setFiltersOpen(false)}
                       className="mt-4 min-h-11 md:min-h-9">Done</Button>
                   </div>

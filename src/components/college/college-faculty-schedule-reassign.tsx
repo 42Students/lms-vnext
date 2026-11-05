@@ -8,6 +8,7 @@ import {useCollegeConfirmation} from "@/components/college/use-college-confirmat
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Faculty={id:string;name:string|null};
 type Receipt={total:number;reassigned:number;skipped:number;
  results:{id:string;title:string;status:"REASSIGNED"|"SKIPPED";reason:string}[]};
@@ -72,13 +73,12 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
       {receipt?<Alert tone="success" className="space-y-[var(--lms-space-2)]">
         <p className="font-semibold">Reassigned {receipt.reassigned} of {receipt.total} upcoming session(s).</p>
         <p className="text-xs">Review the per-session results below. Retry checks only sessions still assigned to the original faculty.</p>
-        {receipt.skipped?<details className="min-w-0">
-          <summary className="min-h-11 cursor-pointer py-3 font-semibold focus-ring md:min-h-9 md:py-2">{receipt.skipped} skipped.</summary>
+        {receipt.skipped?<Disclosure title={<>{receipt.skipped} skipped.</>} className="min-w-0">
           <ul className="space-y-[var(--lms-space-2)] pl-[var(--lms-space-4)] text-sm">
             {receipt.results.filter(row=>row.status==="SKIPPED").map(row=><li key={row.id}>
               {row.title}: {row.reason}</li>)}
           </ul>
-        </details>:<p>{receipt.skipped} skipped.</p>}
+        </Disclosure>:<p>{receipt.skipped} skipped.</p>}
       </Alert>:null}
       {loaded?<div className="min-w-0 space-y-[var(--lms-space-4)]">
         <p className="max-w-prose text-sm text-body">{upcoming} upcoming scheduled session(s) for {name}.</p>

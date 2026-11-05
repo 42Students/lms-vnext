@@ -17,6 +17,7 @@ import { learnerCourseOverviewJumps } from "@/modules/courses/learner-course-ove
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
 
@@ -438,8 +439,7 @@ export function LearnerCourseOverview({
         </Alert>
       ) : null}
 
-      <details className="scroll-mt-24 border-t border-border pt-3" id="course-overview-progress">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Course progress breakdown</summary>
+      <Disclosure title="Course progress breakdown" id="course-overview-progress">
       <div role="group" aria-label="Course progress summary" className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Overall"
@@ -462,7 +462,7 @@ export function LearnerCourseOverview({
           detail="Completed quizzes."
         />
       </div>
-      </details>
+      </Disclosure>
 
       {unifiedUpdates.length > 0 ? (
         <section id="course-overview-updates" className="scroll-mt-24 border-b border-border pb-5">

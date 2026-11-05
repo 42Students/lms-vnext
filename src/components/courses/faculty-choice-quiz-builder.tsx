@@ -20,6 +20,7 @@ import {facultyAuthoringQuestionsFromResponse,facultyQuizShuffleSettingsFromResp
  from "@/modules/courses/faculty-quiz-builder-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Option={id?:string;clientKey?:string;text:string;correct:boolean;sequence:number};
 let nextDraftOptionKey=0;
 const draftOptionKey=()=>`draft-option-${++nextDraftOptionKey}`;
@@ -425,11 +426,10 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
       Close quiz
      </Button>}
     {["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status)&&
-     <details className="min-w-0 border-t border-border pt-2 sm:ml-auto sm:border-t-0 sm:pt-0">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-ring md:min-h-9">Archive quiz</summary>
+     <Disclosure title="Archive quiz" className="min-w-0 sm:ml-auto">
       <Button variant="danger" type="button" disabled={pending} onClick={()=>void submit("ARCHIVE")}
        className="mt-2 min-h-11 md:min-h-9">Archive quiz</Button>
-     </details>}
+     </Disclosure>}
     </>}
   </div>
   <p className="text-xs text-muted-foreground">

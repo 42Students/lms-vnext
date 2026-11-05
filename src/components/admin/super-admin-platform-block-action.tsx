@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Alert } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;status:"ACTIVE"|"DISABLED"}){
  const router=useRouter();
  const lock=useRef(false);
@@ -33,8 +34,7 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
   }catch(cause){setError(cause instanceof Error?cause.message:friendlyApiError({}));}
   finally{lock.current=false;setPending(false);}
  }
- return <details aria-label="Platform account control" className="min-w-0 border-b border-border pb-[var(--lms-space-3)]">
-  <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Platform-wide account access</summary>
+ return <Disclosure title="Platform-wide account access" ariaLabel="Platform account control" className="min-w-0">
   <div className="min-w-0 pt-[var(--lms-space-2)]">
   <p className="max-w-3xl text-sm leading-6 text-body">Unlike college suspension, a platform block prevents login across every college. This action requires an audit reason.</p>
   <Label stack className="mt-[var(--lms-space-3)] min-w-0">Reason
@@ -58,5 +58,5 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
   {error?<Alert tone="error" className="mt-2">{error}</Alert>:null}
   {notice?<Alert tone="success" className="mt-2">{notice}</Alert>:null}
   </div>
- </details>;
+ </Disclosure>;
 }

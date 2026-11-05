@@ -9,6 +9,7 @@ import {CollegeDriveDeadlineAction} from "./college-drive-deadline-action";
 import {CollegeDriveDuplicateAction} from "./college-drive-duplicate-action";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const labels={
@@ -156,10 +157,9 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
             <DateGlyph/>{deadlineShort(job.deadline)}
           </span>
         </div>
-        <details className="relative z-(--lms-z-raised) mt-4 min-w-0">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link md:min-h-9">
+        <Disclosure title={<>
             More <span aria-hidden="true">⋯</span>
-          </summary>
+          </>} className="relative z-(--lms-z-raised) mt-4 min-w-0" preserveSummary summaryClassName="inline-flex min-h-11 items-center gap-1 md:min-h-9">
           <div className="mt-2 flex min-w-0 flex-col gap-2 border-t border-border bg-surface pt-3">
             <Link href={"/college/placements/jobs/"+encodeURIComponent(job.id)+"/applications"}
               className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9">
@@ -169,7 +169,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
             <CollegeDriveDeadlineAction jobId={job.id} title={job.title}
               currentDeadline={job.deadline?.toISOString()??null}/>
           </div>
-        </details>
+        </Disclosure>
       </article>;
     })}
    </div>:searchTerm?<div role="status" className="space-y-2 text-sm text-body">

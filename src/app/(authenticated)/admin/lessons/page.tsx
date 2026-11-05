@@ -25,6 +25,7 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function SuperAdminLessonsPage({
   searchParams,
@@ -164,8 +165,7 @@ export default async function SuperAdminLessonsPage({
           Loading all courses may take longer. Use a single course when possible.
         </Alert>:null}
       </div>
-      <details className="min-w-0" open={Boolean(data.query.cohortCode)}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
+      <Disclosure title="Filters" defaultOpen={Boolean(data.query.cohortCode)} className="min-w-0">
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
           <Label stack>
             Choose batch
@@ -178,7 +178,7 @@ export default async function SuperAdminLessonsPage({
             </Select>
           </Label>
         </div>
-      </details>
+      </Disclosure>
       <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-ring md:min-h-9" href="/admin/lessons">Clear filters</Link>
     </form>
     <p className="mt-3 text-sm text-muted-foreground">{hasCourseSelection?data.total.toLocaleString("en-IN"):"0"} matching lessons · on this page: {summary.authored} content records, {summary.published} published{" "}
@@ -213,12 +213,11 @@ export default async function SuperAdminLessonsPage({
             return <tr key={lesson.id} className="align-top hover:bg-[var(--lms-primary-subtle)]">
               <td className="max-w-[260px] p-3">
                 <p className="break-words font-semibold text-foreground">{lessonName}</p>
-                <details className="mt-1 text-xs text-muted-foreground">
-                  <summary className="cursor-pointer text-primary-text underline">Details</summary>
+                <Disclosure title="Details" className="mt-1">
                   <p className="mt-2">{lesson.cohortName} · {lesson.periodName}</p>
                   <p>{lesson.publishedContentCount} published / {lesson.contentCount} authored records</p>
                   <p>Learning path: {lesson.pathStatus} · Offering: {lesson.offeringStatus}</p>
-                </details>
+                </Disclosure>
               </td>
               <td className="max-w-[220px] break-words p-3">
                 {lesson.courseName?.trim()||"Course name unavailable"}{" "}
@@ -238,10 +237,7 @@ export default async function SuperAdminLessonsPage({
                       learningPathId:path.id,
                       label:path.courseName+" · "+path.cohortName+" · "+path.periodName,
                     }))}/>
-                  <details className="w-full">
-                    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline md:min-h-9">
-                      More actions
-                    </summary>
+                  <Disclosure title="More actions" className="w-full">
                     <div className="mt-2 flex flex-col items-start gap-2">
                       <CollegeLessonVisibilityControl lesson={{id:lesson.id,name:lessonName,
                         visibleToStudents:lesson.visibleToStudents,updatedAt:lesson.updatedAt.toISOString()}}/>
@@ -256,7 +252,7 @@ export default async function SuperAdminLessonsPage({
                         Open offering to add lessons
                       </Link>
                     </div>
-                  </details>
+                  </Disclosure>
                 </div>:<p className="text-xs text-muted-foreground">
                   Archived lesson retained. Restoration requires an authorized workflow.
                 </p>}

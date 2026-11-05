@@ -15,6 +15,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 export function SuperAdminInterviewOperations({events,today,truncated=false}:{events:SuperAdminCalendarRound[];today:string;truncated?:boolean}){
  const [kind,setKind]=useState("ALL"),[status,setStatus]=useState("ALL");
  const [mode,setMode]=useState("ALL"),[department,setDepartment]=useState("ALL"),[conflictsOnly,setConflictsOnly]=useState(false);
@@ -87,8 +88,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
     <Input type="search" value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}
      maxLength={120} placeholder="Search interviews" className="min-h-11 md:min-h-9"/>
    </Label>
-   <details className="min-w-0" open={mode!=="ALL"||department!=="ALL"||sort!=="DATE_ASC"||conflictsOnly}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
+   <Disclosure title="Filters" defaultOpen={mode!=="ALL"||department!=="ALL"||sort!=="DATE_ASC"||conflictsOnly} className="min-w-0">
     <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
      <Label stack className="min-w-0">Mode
        <Select value={mode} onChange={e=>{setMode(e.target.value);setPage(1);}} className="min-h-11 md:min-h-9">
@@ -111,7 +111,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
       Possible conflicts only
      </Label>
     </div>
-   </details>
+   </Disclosure>
    <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
     setKind("ALL");setStatus("ALL");setMode("ALL");setDepartment("ALL");setConflictsOnly(false);setSort("DATE_ASC");setSearch("");setPage(1);
    }}>Clear filters</Button>

@@ -33,6 +33,7 @@ import {RecruiterRequestFeedback} from "@/components/hr/recruiter-request-feedba
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
@@ -163,8 +164,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {partialLoadFailure ? <Alert tone="warning">
       Some drive details could not be refreshed. Your current drive list is still available. <Link href={returnTo} className="font-semibold text-primary-text underline">Retry</Link>
     </Alert> : null}
-    <details className="min-w-0 border-t border-border pt-2">
-      <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-sm text-primary-text focus-ring md:min-h-9">Sent discussion proposals</summary>
+    <Disclosure title="Sent discussion proposals" className="min-w-0">
       <nav aria-label="Recruiter proposal history" className="flex min-w-0 flex-col items-start gap-2 py-2 md:flex-row md:items-center md:gap-3">
       <Link href={hrSentProposalsHref(selectedCollege)}
        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 focus-ring">
@@ -174,10 +174,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
        Proposals are private messages, not approved or published drives.
       </span>
       </nav>
-    </details>
+    </Disclosure>
     <p className="text-xs font-semibold text-muted-foreground">Hiring with {grants.find(grant=>grant.collegeId===selectedCollege)?.collegeName??"your selected college"}</p>
-    <details className="min-w-0 border-b border-border pb-3">
-      <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">About this college</summary>
+    <Disclosure title="About this college" className="min-w-0">
       {collegeOverview?<section aria-label="College hiring context" className="mt-2 space-y-3 text-sm text-body">
         <p>Students (rounded): {collegeOverview.studentsTotal??"Withheld for privacy"}</p>
         <p className="text-xs text-muted-foreground">Approximate active student counts; no individual records are shared. Updated {new Date(collegeOverview.asOf).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST.</p>
@@ -195,7 +194,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           </ul>
         </div>:<p>CGPA bands are unavailable when fewer than 10 valid results are recorded.</p>}
       </section>:<p role="status" className="mt-2 text-xs text-muted-foreground">The college overview could not be refreshed. Drive requests remain available.</p>}
-    </details>
+    </Disclosure>
     <RecruiterRequestFeedback storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)+":feedback"}/>
     <HrUnsentDriveAlert collegeId={selectedCollege}
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)}/>
@@ -209,8 +208,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       }))}/> : null}
     {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
       className="border-b border-border pb-4 md:pb-6">
-      <details className="min-w-0">
-       <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] focus-ring md:min-h-9">Deadline attention</summary>
+      <Disclosure title="Deadline attention" className="min-w-0">
       <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         {attention.soon.map(item=><Link key={"soon:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
@@ -224,7 +222,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           <span className="mt-1 block text-xs text-body">Recorded deadline passed · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
         </Link>)}
       </div>
-      </details>
+      </Disclosure>
     </section>:null}
     <section aria-label="Recruiter drives workspace"
       className="min-w-0 space-y-4 rounded-[12px] border border-border bg-surface p-4 md:p-6">
@@ -246,8 +244,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <Input type="hidden" name="page" value="1" />
       {totals.all>6 || Boolean(query.data.q)?<RecruiterDriveLiveSearch
         currentHref={returnTo} initialQuery={query.data.q}/>:null}
-      <details open={query.data.employment!=="ALL"||query.data.mode!=="ALL"||query.data.deadline!=="ALL"||query.data.sort!=="RECENT"} className="order-last min-w-0 w-full basis-full border-t border-border pt-2">
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9">More filters</summary>
+      <Disclosure title="More filters" defaultOpen={query.data.employment!=="ALL"||query.data.mode!=="ALL"||query.data.deadline!=="ALL"||query.data.sort!=="RECENT"} className="order-last min-w-0 w-full basis-full">
         <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
       <Label stack className="min-w-0 w-full">Employment
         <Select name="employment" defaultValue={query.data.employment} className="min-h-11 w-full md:min-h-9">
@@ -270,7 +267,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       </Label>
 
         </div>
-      </details>
+      </Disclosure>
       <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
       <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="inline-flex min-h-11 items-center py-2 text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-ring">Reset</Link>
     </form>

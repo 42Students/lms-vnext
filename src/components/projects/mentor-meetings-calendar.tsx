@@ -25,6 +25,7 @@ import { Select } from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const PAST_PREVIEW = 20;
 const validTime=(raw:string)=>raw.trim().length>0&&Number.isFinite(Date.parse(raw));
@@ -329,8 +330,7 @@ export function MentorMeetingsCalendar({
         </Button>:null}
       </section>
     </div>
-    <details className={styles.advancedCalendarTools}>
-      <summary>Meeting filters and calendar tools</summary>
+    <Disclosure title="Meeting filters and calendar tools">
     <div className="prototype-mentor-calendar-export">
       <span>All your active scheduled meetings · IST</span>
       <Button type="button" size="sm" variant="secondary"
@@ -411,6 +411,6 @@ export function MentorMeetingsCalendar({
         </> : <p className={styles.empty}>Select a meeting to see its details.</p>}
       </section>
     </div>
-    </details>
+    </Disclosure>
   </div>;
 }

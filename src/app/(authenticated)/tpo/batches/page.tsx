@@ -127,11 +127,10 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
 
   <div className="flex min-w-0 flex-wrap items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-3">
    <div className="min-w-[min(100%,220px)] flex-[1_1_220px] sm:max-w-[320px]"><TpoBatchInstantSearch key={parsed.data.q??""} value={parsed.data.q??""}/></div>
-   <details className="group relative min-w-0">
-    <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body marker:hidden focus-ring md:min-h-9">
+   <Disclosure title={<>
      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="16" height="16"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
      Filters{filterCount>0?<Badge tone="info">{filterCount}</Badge>:null}
-    </summary>
+    </>} className="relative min-w-0" preserveSummary summaryClassName="inline-flex min-h-11 items-center gap-2 md:min-h-9">
     <div className="absolute right-0 z-(--lms-z-sticky-inline) mt-2 max-h-[min(75vh,700px)] w-[min(90vw,480px)] min-w-[min(90vw,300px)] overflow-y-auto rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-lg">
      <Heading level={2} size="lg" className="mb-3">Filter batches</Heading>
   <form role="search" aria-label="tpo batches filters" className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3" action="/tpo/batches" method="get">
@@ -155,7 +154,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    }}/>
 
     </div>
-   </details>
+   </Disclosure>
   </div>
   {latestDecision?<Alert tone="info" className="mt-3">
     <span>Last change {new Date(latestDecision[1].occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST by {latestDecision[1].actor}</span>
@@ -241,8 +240,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     </div>}
    </aside>
   </div>:null}
-  <details className="min-w-0 border-t border-border pt-3">
-   <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link">Advanced batch cards and lifecycle details</summary>
+  <Disclosure title="Advanced batch cards and lifecycle details" className="min-w-0">
    <div className="pt-3">
   {batches.length===0?<EmptyState
     title={tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?"No batches yet":"No batches match this view"}
@@ -295,7 +293,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     </li>;
    })}</ul>}
    </div>
-  </details>
+  </Disclosure>
   {(batchPage.hasPrev||batchPage.hasNext)?<nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
    {batchPage.hasPrev?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-ring md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
    {batchPage.hasNext?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-ring md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}

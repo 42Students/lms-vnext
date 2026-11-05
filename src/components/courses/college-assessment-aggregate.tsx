@@ -27,6 +27,7 @@ import {
   type CollegeAssessmentListQuery,
 } from "@/modules/courses/college-assessment-aggregate-model";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Data = {
   kind: CollegeAssessmentKind;
@@ -117,8 +118,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
           <CollegeAssessmentCourseSectionFilters courses={data.directoryCourses}
             sections={data.directorySections} initialCourseCode={data.query.courseCode??""}
             initialDeliveryId={data.query.deliveryId??""}/>
-          <details open={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
-            <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-ring">Assessment directory filters</summary>
+          <Disclosure title="Assessment directory filters" defaultOpen={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
             <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
           <Label stack className="min-w-40">
             Batch / cohort code (exact)
@@ -169,7 +169,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
           </Label>
 
             </div>
-          </details>
+          </Disclosure>
           <Button type="submit"
             className="min-h-11 md:min-h-9">
             Filter

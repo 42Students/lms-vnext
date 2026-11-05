@@ -41,6 +41,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[];notice?:string|string[];compose?:string|string[]}>};
 
 // Only confirmed persisted delivery starts the 30-second undo window.
@@ -131,8 +132,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       aria-describedby="tpo-notice-create-count" />
     </Label>
     <TpoNoticeMessageCount formId="tpo-notice-create" outputId="tpo-notice-create-count"/>
-    <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
-     <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-ring">Button (optional)</summary>
+    <Disclosure title="Button (optional)" defaultOpen className="min-w-0">
      <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
      <Label stack>Button label
       <Input name="buttonLabel" maxLength={60} placeholder="Register"
@@ -144,7 +144,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
        className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
      </Label>
      </div>
-    </details>
+    </Disclosure>
     <Label stack>Show until (IST, optional)
       <DateInput mode="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
     </Label>
@@ -240,8 +240,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
          aria-describedby={"tpo-notice-edit-"+row.id+"-count"}/>
        </Label>
        <TpoNoticeMessageCount formId={"tpo-notice-edit-"+row.id} outputId={"tpo-notice-edit-"+row.id+"-count"}/>
-       <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
-        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-ring">Button (optional)</summary>
+       <Disclosure title="Button (optional)" defaultOpen className="min-w-0">
         <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
         <Label stack>Button label
          <Input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
@@ -253,7 +252,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
           className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
         </Label>
         </div>
-       </details>
+       </Disclosure>
        <Label stack>Send at (IST)
         <DateInput mode="datetime-local" name="sendAt" disabled={!deliveryReady}
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}

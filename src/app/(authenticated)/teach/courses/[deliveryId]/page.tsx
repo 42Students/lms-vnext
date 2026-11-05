@@ -13,6 +13,7 @@ import {
 import {
   loadCourseDisplayContentIfReady,
 } from "@/modules/courses/course-display-service";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function FacultyCoursePage({
   params,
@@ -52,8 +53,7 @@ export default async function FacultyCoursePage({
         >
           ← My Teaching Courses
         </Link>
-        <details className="min-w-0">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Course shortcuts</summary>
+        <Disclosure title="Course shortcuts" className="min-w-0">
           <div className="flex min-w-0 flex-col gap-1 pb-2 md:flex-row md:flex-wrap md:gap-3">
           <Link
             href={`/teacher/courses/${deliveryId}/students`}
@@ -74,7 +74,7 @@ export default async function FacultyCoursePage({
             Discussions
           </Link>
           </div>
-        </details>
+        </Disclosure>
       </nav>
       <FacultyCourseWorkspace
         workspace={workspace}

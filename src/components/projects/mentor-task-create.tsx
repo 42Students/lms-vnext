@@ -13,6 +13,7 @@ import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
 import {mentorEstimateLabel,mentorEstimateOptions} from "@/modules/projects/mentor-estimation-unit-model";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export function MentorTaskCreate({
   projectId,sprintId,updatedAt,estimationUnit,sprints=[],learners=[],primary=false,
@@ -102,8 +103,7 @@ export function MentorTaskCreate({
         <Label stack className="min-w-0">Description
           <Textarea value={description} maxLength={4000} onChange={e=>setDescription(e.target.value)} />
         </Label>
-        <details className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" open={Boolean(approach||criteria)||undefined}>
-          <summary className="min-h-11 w-fit cursor-pointer text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] focus-ring">Approach and done criteria</summary>
+        <Disclosure title="Approach and done criteria" defaultOpen={Boolean(approach||criteria)||undefined} className="min-w-0">
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             <Label stack className="min-w-0">Approach (optional)
               <Textarea value={approach} maxLength={4000} onChange={event=>setApproach(event.target.value)} />
@@ -112,7 +112,7 @@ export function MentorTaskCreate({
               <Textarea value={criteria} maxLength={4000} onChange={e=>setCriteria(e.target.value)} />
             </Label>
           </div>
-        </details>
+        </Disclosure>
         <Label stack className="min-w-0">Priority
           <Select value={priority} onChange={e=>setPriority(e.target.value as typeof priority)}
             className="min-h-11 w-full md:min-h-9">

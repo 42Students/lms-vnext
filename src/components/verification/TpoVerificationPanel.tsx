@@ -12,6 +12,7 @@ import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verificatio
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {filterTpoVerificationRows,defaultTpoVerificationFilters,type TpoVerificationLocalFilters} from "@/modules/verification/tpo-queue-local-filters";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 /** Same locked review, private receipt and stale-version path as College Admin. */
 export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:VerificationQueueCard[];counts?:Record<VerificationTab,number>;serverTab:VerificationTab;serverKind:"ALL"|"EDUCATION"|"IDENTITY"}){
@@ -108,18 +109,12 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
     <p className="text-sm text-muted-foreground">Act on all {waiting.length} waiting checks in this view, or select individual Education and Identity checks below.</p>
     <TpoRosterVerificationBulk key={"queue:"+JSON.stringify(filters)+serverTab+serverKind} rows={visible} scope="verification"/>
    </section>:null}
-  {nudgeRows.length?<details className="border-b border-border pb-3">
-   <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-primary-text md:min-h-9 md:py-2">
-    Send a message to students in this view
-   </summary>
+  {nudgeRows.length?<Disclosure title="Send a message to students in this view">
    <TpoStudentNudgePanel rows={nudgeRows}/>
-  </details>:null}
+  </Disclosure>:null}
   <TpoVerificationPrototypeQueue rows={visible} active={active}
    onReview={row=>{setSequenceIndex(null);setSelected(row);}}/>
-  <details className="min-w-0 border-y border-border py-3">
-   <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-link">
-    Advanced verification table, sorting and filters
-   </summary>
+  <Disclosure title="Advanced verification table, sorting and filters" className="min-w-0">
    <div className="min-w-0 pt-3">
   <VerificationWorkspace key={JSON.stringify(filters)+serverTab+serverKind} rows={visible}
    legacyTpoCopy initialTab={serverTab} initialKind={serverKind} {...(counts !== undefined ? {counts} : {})}
@@ -128,7 +123,7 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
    onKindChange={kind=>navigate({kind,page:"1"})}
    onReview={row=>{setSequenceIndex(null);setSelected(row);}} />
    </div>
-  </details>
+  </Disclosure>
   {active&&<VerificationReviewDrawer
    key={active.learnerMembershipId+active.section} row={active}
    apiBase="/api/tpo/verification"

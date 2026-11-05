@@ -22,6 +22,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Lead = {
   id: string;
@@ -650,12 +651,12 @@ export function RecruiterLeadDetailWorkspace({
                   {ACTIVITY_TYPES.map(type=><FilterChip type="button" key={type} aria-pressed={logType===type}
                     onClick={()=>{setLogType(type);setLogOutcome("");}}>{type==="CALL"?"Call":type==="EMAIL"?"Email":type==="MEETING"?"Meeting":"Note"}</FilterChip>)}
                 </div>
-                <details className="border-b border-border pb-3"><summary className="cursor-pointer py-2 text-[13px] font-semibold max-md:flex max-md:min-h-11 max-md:items-center">Choose interaction type</summary><Label className="block">Type
+                <Disclosure title="Choose interaction type"><Label className="block">Type
                   <Select className="mt-[6px] min-w-0 min-h-11 md:min-h-9" value={logType}
                     onChange={e => {setLogType(e.target.value as typeof logType);setLogOutcome("");}}>
                     {ACTIVITY_TYPES.map(type => <option value={type} key={type}>{type}</option>)}
                   </Select>
-                </Label></details>
+                </Label></Disclosure>
                 {logType==="CALL"?<div className="flex flex-wrap gap-2" role="group" aria-label="Call outcome">
                   {LEGACY_CALL_OUTCOMES.map(outcome=>
                    <FilterChip key={outcome} type="button" aria-pressed={logOutcome===outcome}

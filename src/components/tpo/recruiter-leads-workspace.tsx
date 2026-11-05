@@ -48,6 +48,7 @@ import boardStyles from "./recruiter-board-theme.module.css";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Lead = {
   id: string;
@@ -1364,8 +1365,7 @@ export function RecruiterLeadsWorkspace({
                 {sourceOptions.map(([code,label]) => <option value={code} key={code}>{label}</option>)}
               </Select>
             </Label>
-            <details className="border-t border-border pt-3" open={Boolean(form.followupDate)}>
-              <summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">First follow-up (optional, IST)</summary>
+            <Disclosure title="First follow-up (optional, IST)" defaultOpen={Boolean(form.followupDate)}>
             <Label className="block min-w-0">First follow-up (optional, IST)
               <Input type="datetime-local" step={60} className={inputStyle+" mt-1.5 min-w-0"} value={form.followupDate}
                 onChange={e=>field("followupDate",e.target.value)}/>
@@ -1376,7 +1376,7 @@ export function RecruiterLeadsWorkspace({
                 disabled={!form.followupDate}
                 placeholder="What should the placement cell do next?"/>
             </Label>
-            </details>
+            </Disclosure>
             {reviewingCreate?<div role="status" className="border-l-2 border-primary bg-primary-subtle p-3 text-sm">
               <p>Confirm: Create recruiter lead for <strong>{form.name.trim()}</strong> at <strong>{form.companyName.trim()}</strong>?
                 This saves a new college contact and records an auditable creation event.

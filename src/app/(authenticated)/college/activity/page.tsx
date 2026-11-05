@@ -19,6 +19,7 @@ import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -164,8 +165,7 @@ export default async function CollegeActivityPage({
             placeholder="Summary, entity or action text"
             className="min-h-11 md:min-h-9" />
         </Label>
-        <details className="min-w-0 md:col-span-2 lg:col-span-4" open={Boolean(data.query.actorUserId || data.query.actorName || data.query.subjectType || data.query.subjectId || data.query.from || data.query.to || (data.query.pageSize && data.query.pageSize !== "50"))}>
-          <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-ring">Activity log filters</summary>
+        <Disclosure title="Activity log filters" defaultOpen={Boolean(data.query.actorUserId || data.query.actorName || data.query.subjectType || data.query.subjectId || data.query.from || data.query.to || (data.query.pageSize && data.query.pageSize !== "50"))} className="min-w-0 md:col-span-2 lg:col-span-4">
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-4">
         <Label stack>
           Actor user UUID
@@ -211,7 +211,7 @@ export default async function CollegeActivityPage({
           </Select>
         </Label>
           </div>
-        </details>
+        </Disclosure>
         <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end md:col-span-2 lg:col-span-4">
           <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
             Apply filters
@@ -247,11 +247,10 @@ export default async function CollegeActivityPage({
                   </div>
                   {group.count>1?<span className="rounded-md border border-[var(--lms-canvas-border)] px-2 py-1 text-xs font-semibold">{group.count} related events · several at once</span>:null}
                 </div>
-                <details className="group min-w-0 text-sm">
-                  <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">
+                <Disclosure title={<>
                     <span className="group-open:hidden">Details</span>
                     <span className="hidden group-open:inline">Hide details</span>
-                  </summary>
+                  </>} className="min-w-0" preserveSummary summaryClassName="inline-flex min-h-11 items-center md:min-h-9">
                   <dl className="grid min-w-0 gap-2 border-l border-[var(--lms-canvas-border)] pl-3 sm:grid-cols-2">
                     <div><dt className="font-semibold">Actor</dt><dd className="break-words">{collegeActivityActor(item.actor)}</dd></div>
                     <div><dt className="font-semibold">When (IST)</dt><dd>{when(item.event.occurredAt)}</dd></div>
@@ -262,7 +261,7 @@ export default async function CollegeActivityPage({
                   <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] py-2 text-xs">{JSON.stringify(sanitizeActivityMetadata(item.event.metadata),null,2)}</pre>
                   <Link href={"/college/activity/"+encodeURIComponent(item.event.id)}
                     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">View full event</Link>
-                </details>
+                </Disclosure>
                 </div>
               </li>;
             })}

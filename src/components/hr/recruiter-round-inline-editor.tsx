@@ -10,6 +10,7 @@ import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {Dialog} from "@/components/ui/dialog";
 import {isVerifiedHrRoundMutation,hrRoundEditorHasUnsavedChanges} from "@/modules/placements/hr-round-editor-model";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
 type Row={id:string;name:string;kind:string;mode:string|null;status:string;
@@ -129,8 +130,8 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
       </span>
      </Label>
      {error?<div className="md:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
-     {active?<details className="min-w-0 border-t border-border pt-3 md:col-span-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-ring md:min-h-9">Remove</summary><Button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
-       variant="secondary" className="mt-2 min-h-11 w-full border-error text-error md:w-auto md:min-h-9">Remove</Button></details>:null}
+     {active?<Disclosure title="Remove" className="min-w-0 md:col-span-2"><Button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
+       variant="secondary" className="mt-2 min-h-11 w-full border-error text-error md:w-auto md:min-h-9">Remove</Button></Disclosure>:null}
      <div className="flex min-w-0 flex-wrap justify-end gap-2 md:col-span-2 [&_button]:flex-1 sm:[&_button]:flex-none">
       <Button type="button" disabled={pending} onClick={requestClose}
        variant="secondary">Cancel</Button>

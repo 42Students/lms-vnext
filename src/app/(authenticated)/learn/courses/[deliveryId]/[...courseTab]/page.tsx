@@ -31,6 +31,7 @@ import {
   listLearnerCourseInstructors,
 } from "@/modules/courses/learner-course-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -314,10 +315,7 @@ export default async function LearnerCourseTabPage({
         tabName={learnerCourseTabs.find(tab=>tab.path===activeTab)?.label??"Overview"}/>
       <LearnerCourseTabs deliveryId={deliveryId} activeTab={activeTab}
         persistentQuery={learnerCourseTabPersistentQuery(query)}/>
-      <details className="rounded-lg border border-border px-3 py-2">
-        <summary className="min-h-9 cursor-pointer text-sm font-semibold text-primary-text">
-          Course options
-        </summary>
+      <Disclosure title="Course options">
         <nav aria-label="Additional course views" className="mt-2 flex flex-wrap gap-3 text-sm">
           <Link href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
             className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
@@ -328,7 +326,7 @@ export default async function LearnerCourseTabPage({
             Attendance history
           </Link>
         </nav>
-      </details>
+      </Disclosure>
       <div key={deliveryId + ":" + activeTab} className="learn-course-tab-page min-w-0">
         {content}
       </div>

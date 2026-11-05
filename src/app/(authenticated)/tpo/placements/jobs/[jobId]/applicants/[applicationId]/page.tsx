@@ -12,6 +12,7 @@ import {getTpoApplicantDetail} from "@/modules/placements/tpo-applicant-detail-s
 import {listTpoApplicantNotes} from "@/modules/placements/applicant-notes-service";
 import {ApplicantNotesPanel} from "@/components/placements/applicant-notes-panel";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
 export default async function TpoApplicantDetailPage({params}:Params){
  const context=await getCurrentRequestContext();
@@ -53,8 +54,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
      expectedUpdatedAt={data.application.screeningUpdatedAt}/> : null}
   <ApplicantNotesPanel endpoint={"/api/placements/tpo/jobs/"+jobId+"/applicants/"+applicationId+"/notes"}
    snapshot={notes} audience="the college placement cell (TPO)"/>
-  <details className="border-b border-border pb-6">
-   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-ring [&::-webkit-details-marker]:hidden">Applied round outcomes <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
+  <Disclosure title={<>Applied round outcomes <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></>} preserveSummary summaryClassName="min-h-11">
    {data.resultsTruncated?<Alert tone="warning">Only 100 applied result versions examined.</Alert>:null}
    {data.appliedRoundResults.length===0?<EmptyState title="No applied round outcomes recorded for this application."/>:
     <div className="mt-3 grid gap-3">{data.appliedRoundResults.map(r=>
@@ -63,9 +63,8 @@ export default async function TpoApplicantDetailPage({params}:Params){
       <p className="mt-1 text-sm text-body">{r.kind} · {r.outcome} · Applied: {r.appliedAt?
        new Date(r.appliedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}):"Time not recorded"}</p>
      </article>)}</div>}
-  </details>
-  <details className="border-b border-border pb-6">
-   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-ring [&::-webkit-details-marker]:hidden">Offer and joining evidence <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
+  </Disclosure>
+  <Disclosure title={<>Offer and joining evidence <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></>} preserveSummary summaryClassName="min-h-11">
    {data.offersTruncated?<Alert tone="warning">Only the latest 100 offer versions examined.</Alert>:null}
    {data.offers.length===0?<EmptyState title="No persisted offer versions for this application."/>:
     <div className="mt-3 grid gap-3">{data.offers.map(offer=>
@@ -75,7 +74,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
        {" · "}Annual CTC: {offer.annualCtcInr===null?"Not recorded":"₹"+offer.annualCtcInr.toLocaleString("en-IN")}</p>
       <p className="mt-1 text-xs text-body">Issued: {new Date(offer.issuedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})} IST</p>
      </article>)}</div>}
-  </details>
+  </Disclosure>
   <p className="text-xs text-body">This view uses only recorded application, screening, APPLIED results and offer/joining states. Internal screening comments and staged round outcomes are not disclosed. Employer-final selection is not independently recorded.</p>
  </div>;
 }

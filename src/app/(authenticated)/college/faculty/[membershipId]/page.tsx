@@ -18,6 +18,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
@@ -88,8 +89,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         {" "}{data.counts.distinctPrograms} programs
       </p>
       <p className="mt-2 max-w-2xl text-xs text-muted-foreground">College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure.</p>
-      <details className="mt-4 min-w-0 border-y border-border py-2" open={data.filter.status!=="ALL"||data.filter.role!=="ALL"}>
-        <summary className="min-h-11 cursor-pointer py-3 font-semibold text-primary-text hover:text-[var(--lms-primary)] focus-ring md:min-h-9 md:py-2">Filter</summary>
+      <Disclosure title="Filter" defaultOpen={data.filter.status!=="ALL"||data.filter.role!=="ALL"} className="mt-4 min-w-0">
         <form method="get" className="mt-3 grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
           action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
         <Label stack className="min-w-0 max-md:w-full">
@@ -119,7 +119,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
           </Label>
           <Button type="submit" className="min-h-11 w-full md:min-h-9 lg:w-auto">Filter</Button>
         </form>
-      </details>
+      </Disclosure>
       <div className="mt-4 min-w-0">
         {data.assignments.length === 0
         ? <EmptyState title="No teaching assignments" description="No college-scoped teaching assignments recorded."

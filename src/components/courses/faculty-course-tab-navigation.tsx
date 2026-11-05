@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { facultyCourseTabs, facultyCourseTabFromPath, facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type FacultyTeachingSection = {
   deliveryId: string;
@@ -90,8 +91,7 @@ export function FacultyCourseTabNavigation({
           </Label>
         ) : null}
       </div>
-      <details className="min-w-0 border-t border-border pt-2">
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-primary-text underline md:min-h-9">Course tools</summary>
+      <Disclosure title="Course tools" className="min-w-0">
       <nav aria-label="Course tools" className="mt-2 grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
         <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
           className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] py-2 text-center text-[13px] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring sm:w-auto md:min-h-9">
@@ -106,7 +106,7 @@ export function FacultyCourseTabNavigation({
           Live Classes
         </Link>
       </nav>
-      </details>
+      </Disclosure>
       <Tabs className="faculty-prototype-course-tabs" ariaLabel="Faculty course tabs" value={activeTab} renderPanel={false}
         items={facultyCourseTabs.map(tab => ({
           value: tab.path,

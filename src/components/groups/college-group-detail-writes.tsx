@@ -12,6 +12,7 @@ import {collegeGroupDetailActionLabel} from "@/modules/groups/college-group-deta
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Waitlisted={membershipId:string;displayName:string|null;version:number;isLocked:boolean;waitlistPosition:number|null};
 export function CollegeGroupDetailWrites({
@@ -90,8 +91,7 @@ export function CollegeGroupDetailWrites({
         </li>)}</ul>}
       {!hasSpace?<Alert tone="warning">Group capacity is full. No manual promotion is available.</Alert>:null}
     </div>
-    <details className="min-w-0 border-t border-border pt-3">
-      <summary className="min-h-11 cursor-pointer py-2 text-lg font-semibold text-foreground focus-ring md:min-h-9">Eligibility rule</summary>
+    <Disclosure title="Eligibility rule" className="min-w-0">
       <div className="min-w-0 space-y-3 pt-3">
       <p className="text-sm text-body leading-[22px]">Edit the supported V1 criteria as JSON. At least one criterion is required. Saving does not run a refresh or change membership.</p>
       <Label stack className="min-w-0">Rule criteria
@@ -118,7 +118,7 @@ export function CollegeGroupDetailWrites({
         {busy?"Saving…":"Confirm rule update"}
       </Button>
       </div>
-    </details>
+    </Disclosure>
     {error?<Alert tone="error">{error}</Alert>:null}
     {notice?<Alert tone="success">{notice}</Alert>:null}
     <ConfirmDialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy)setConfirmation(null);}}

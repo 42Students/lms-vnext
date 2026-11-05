@@ -89,21 +89,19 @@ export default async function FacultyCalendarPage({
         .map(e=>({id:e.id,title:e.title,sectionName:e.sectionName,courseCode:e.courseCode,
           startsAt:e.startsAt.toISOString(),location:e.location,deliveryId:e.deliveryId}))}
       />:<Alert tone="warning">Unable to load the weekly schedule. The detailed calendar is still available below.</Alert>}
-    <details className="border-t border-[color:var(--lms-border)] pt-4">
-      <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">Advanced schedule and full calendar</summary>
+    <Disclosure title="Advanced schedule and full calendar">
       <div className="mt-4 space-y-4">
     <section aria-label="Upcoming classes" className="min-w-0 space-y-3 border-b border-border pb-4">
      <div className="flex flex-wrap items-center justify-between gap-3">
       <Heading level={2} size="base" className="text-foreground">Next classes</Heading>
       <p className="text-xs text-muted-foreground">{nextClasses.length} coming up · {schedule.courses.length} teaching sections</p>
      </div>
-     {!upcomingRead.available?<details open className="min-w-0">
-       <summary className="cursor-pointer text-sm font-semibold text-[var(--lms-warning-text)]">Failed to load course data</summary>
+     {!upcomingRead.available?<Disclosure title="Failed to load course data" defaultOpen className="min-w-0">
        <Alert tone="warning" className="mt-2">
          Calendar events may be incomplete. Your loaded class schedule remains available below.
          <Link href={facultyMonthHref(grid.query)} className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Retry class schedule</Link>
        </Alert>
-     </details>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
+     </Disclosure>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
        <ol className="divide-y divide-border border-y border-border">{nextClasses.map(item=><li key={item.id}
          className="flex min-w-0 flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
@@ -193,6 +191,6 @@ export default async function FacultyCalendarPage({
       </p>
     </section>
     </Disclosure>
-    </div></details>
+    </div></Disclosure>
   </div>;
 }

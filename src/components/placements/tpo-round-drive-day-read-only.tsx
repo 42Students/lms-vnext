@@ -753,8 +753,7 @@ export function TpoRoundDriveDayReadOnly({
           rows={data.rows}
         />
       </Disclosure>
-      <details className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
-        <summary className="min-h-11 cursor-pointer font-semibold text-link focus-ring md:min-h-9">About round results</summary>
+      <Disclosure title="About round results">
         <p className="max-w-3xl pb-2">
           TPO operators can stage a PASS (shortlisted), FAIL (not selected),
           HOLD (waitlisted) or ABSENT outcome here. Staging is not publication:
@@ -764,7 +763,7 @@ export function TpoRoundDriveDayReadOnly({
           partly succeed; neither stage nor bulk stage implies an offer or
           final hiring selection.
         </p>
-      </details>
+      </Disclosure>
     </div>
   );
 }

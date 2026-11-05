@@ -29,6 +29,7 @@ import {FACULTY_IST_NOTE,facultyIstQuarterHourIssue} from "@/modules/courses/fac
 import { facultyYouTubeLinkIssue,facultyLiveClassIssue } from "@/modules/courses/faculty-content-input-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 
 type Mode =
@@ -1020,11 +1021,9 @@ export function FacultyLessonAuthoring({
                    disabled={submitting} onPendingChange={setResourceUploading}/>
                </div>
                :null}
-            <details key={mode} open={mode === "RESOURCE" || Boolean(notes)}
-              className="mt-4 min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
-              <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-ring">
+            <Disclosure title={<>
                 {mode === "ASSIGNMENT" || mode === "QUIZ" ? "Description (optional)" : "Notes (optional)"}
-              </summary>
+              </>} defaultOpen={mode === "RESOURCE" || Boolean(notes)} className="mt-4 min-w-0">
             <Label className="block min-w-0 pt-2">
               <FieldLabel>
                 {mode === "ASSIGNMENT" ||
@@ -1047,7 +1046,7 @@ export function FacultyLessonAuthoring({
                 }
               />
             </Label>
-            </details>
+            </Disclosure>
 
             {mode === "QUIZ" ? (
               <div className="mt-5 min-w-0 space-y-4">

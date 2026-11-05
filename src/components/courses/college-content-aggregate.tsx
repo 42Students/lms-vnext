@@ -17,6 +17,7 @@ import {
 } from "@/modules/courses/college-content-aggregate-model";
 import type { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Data = Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 type Item=Data["items"][number];
@@ -37,12 +38,11 @@ function materialCountLabel(item:Item){
  return pending?verified+" verified · "+pending+" pending import":String(verified);
 }
 function contentDetails(item:Item){
- return <details className="mt-2 text-xs text-muted-foreground">
-  <summary className="cursor-pointer font-semibold text-primary-text">Course and lesson details</summary>
+ return <Disclosure title="Course and lesson details" className="mt-2">
   <p>{item.courseName} ({item.courseCode}) · {item.cohortName} · {item.periodName}</p>
   <p>{item.lessonName} · {item.learningPathTitle} ({item.learningPathStatus})</p>
   <p>{collegeContentScopeLabel(item.deliveryId)} · {item.status}</p>
- </details>;
+ </Disclosure>;
 }
 
 export function CollegeContentAggregate({ data, showHeader = true }: { data: Data; showHeader?: boolean }) {
@@ -107,8 +107,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
               placeholder="Search authored content"
               className="min-h-11 md:min-h-9" />
           </Label>
-          <details className="group min-w-0 basis-full" open={Boolean(data.query.programCode || data.query.cohortCode || data.query.periodCode || data.query.departmentName || data.query.deliveryId || data.query.pathStatus !== "ALL" || data.query.offeringType !== "ALL" || data.query.lessonStatus !== "ALL" || data.query.status !== "ALL" || data.query.visibility !== "ALL" || data.query.scope !== "ALL" || data.query.offeringStatus !== "ALL" || (videos && data.query.format !== "ALL"))}>
-            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body md:min-h-9">Filters</summary>
+          <Disclosure title="Filters" defaultOpen={Boolean(data.query.programCode || data.query.cohortCode || data.query.periodCode || data.query.departmentName || data.query.deliveryId || data.query.pathStatus !== "ALL" || data.query.offeringType !== "ALL" || data.query.lessonStatus !== "ALL" || data.query.status !== "ALL" || data.query.visibility !== "ALL" || data.query.scope !== "ALL" || data.query.offeringStatus !== "ALL" || (videos && data.query.format !== "ALL"))} className="min-w-0 basis-full">
             <div className="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-4">
           <Label stack className="min-w-36">
             Program code (exact)
@@ -199,7 +198,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
               <option value="SECTION">Section-specific</option>
             </Select>
           </Label>
-          </div></details>
+          </div></Disclosure>
           <Button type="submit"
             className="min-h-11 w-full md:min-h-9 md:w-auto">
             Filter

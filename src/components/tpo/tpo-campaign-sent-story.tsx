@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type CampaignReceipt={leadId:string;name:string;status:string};
 type CampaignStory={
@@ -60,10 +61,9 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
     <section aria-label="What you sent">
      <Heading level={3} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">What you sent</Heading>
      <p className="mt-2 text-sm text-body">Subject: <strong>{campaign.subject}</strong></p>
-     <details className="mt-2 rounded-lg border border-border px-3 py-2">
-      <summary className="min-h-8 cursor-pointer text-sm font-semibold text-link">See the email</summary>
+     <Disclosure title="See the email" className="mt-2">
       <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{campaign.body}</p>
-     </details>
+     </Disclosure>
     </section>
     <section aria-label="What happened">
      <Heading level={3} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">What happened</Heading>

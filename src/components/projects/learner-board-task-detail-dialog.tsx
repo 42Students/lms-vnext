@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { learnerBoardTaskHref, type LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export function LearnerBoardTaskDetailDialog({
   projectId, filters, task, sprintTitle, currentMembershipId, projectStatus, assigneeName, commentCount=0, submissionUrl=null,
@@ -96,8 +97,7 @@ export function LearnerBoardTaskDetailDialog({
         canPost={projectStatus==="ACTIVE"&&Boolean(currentMembershipId)}/>
       <LearnerTaskStatusActions projectId={projectId} task={task} currentMembershipId={currentMembershipId} />
       <section className="mt-[var(--lms-space-5)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]" aria-label="Task Activity">
-        <details className="min-w-0">
-         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold focus-ring">Activity</summary>
+        <Disclosure title="Activity" className="min-w-0">
         {activityEvents.length?<ol className="mt-2 space-y-2 text-xs text-body">
           {activityEvents.map((event,index)=><li key={index}>
             {event.summary} · {event.actorDisplayName??"Project member"} ·
@@ -106,7 +106,7 @@ export function LearnerBoardTaskDetailDialog({
             }).format(event.occurredAt)}
           </li>)}
         </ol>:<p className="mt-2 text-xs text-muted-foreground">No task activity yet.</p>}
-        </details>
+        </Disclosure>
       </section>
       <p className="mt-3 text-xs leading-5 text-muted-foreground">Submission review and additional task details are available in the full Board.</p>
     </Dialog>

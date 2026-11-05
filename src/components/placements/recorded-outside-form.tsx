@@ -3,6 +3,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 export function RecordedOutsideForm({collegeId,choices}:{
  collegeId:string;choices:readonly {id:string;name:string}[];
 }){
@@ -20,8 +21,7 @@ export function RecordedOutsideForm({collegeId,choices}:{
   <Label stack className="min-w-0">When it happened (IST)
    <Input name="occurredAt" required type="datetime-local" className="w-full"/>
   </Label>
-  <details className="min-w-0 border-t border-border pt-2 md:col-span-2">
-   <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9">Optional reference and notes</summary>
+  <Disclosure title="Optional reference and notes" className="min-w-0 md:col-span-2">
    <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2">
   <Label stack className="min-w-0">External reference (optional HTTPS)
    <Input name="externalReferenceUrl" type="url" maxLength={2000} placeholder="https://..." className="w-full"/>
@@ -31,7 +31,7 @@ export function RecordedOutsideForm({collegeId,choices}:{
   </Label>
 
    </div>
-  </details>
+  </Disclosure>
   <Button variant="primary" type="submit" disabled={!choices.length} className="min-h-11 w-full justify-self-stretch md:col-span-2 md:min-h-9 md:w-auto md:justify-self-start">
    Record outside-platform drive
   </Button>

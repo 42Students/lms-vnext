@@ -8,6 +8,7 @@ import {SuperAdminPlacementDetailView} from "@/components/admin/super-admin-plac
 import {getSuperAdminApplicationDetail} from "@/modules/admin-ui/super-admin-application-detail-service";
 import {listSuperAdminApplicationStageHistory} from "@/modules/admin-ui/super-admin-application-stage-history-service";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 export default async function SuperAdminApplicationDetail({params}:{params:Promise<{applicationId:string}>}){
  const {applicationId}=await params;
  const context=await getCurrentRequestContext();
@@ -15,15 +16,14 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
  if(!detail)notFound();
  const history=await listSuperAdminApplicationStageHistory(context,applicationId);
  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
-  <SuperAdminPlacementDetailView data={detail} extraActions={detail.related?<details className="min-w-0">
-   <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Related actions</summary>
+  <SuperAdminPlacementDetailView data={detail} extraActions={detail.related?<Disclosure title="Related actions" className="min-w-0">
    <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:items-start">
    <Link href={detail.related.href+"/applications"}
     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Manage this drive&apos;s applications and stage decisions →</Link>
    <Link href={detail.related.href+"/schedule?applicationId="+encodeURIComponent(applicationId)}
     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Schedule candidate interview →</Link>
    </div>
-  </details>:undefined}/>
+  </Disclosure>:undefined}/>
   <section aria-label="Application stage history" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Status history</Heading>
    <DataTable caption="Application status history" mobileMode="scroll"

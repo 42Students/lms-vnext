@@ -19,6 +19,7 @@ import {tpoApplicationFilterError} from "@/modules/placements/tpo-applications-u
 type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];query?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 import {parseTpoApplicantPipelineLink,tpoApplicantPipelineResetHref} from "@/modules/placements/tpo-applicant-pipeline-model";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
@@ -84,8 +85,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     <Input name="search" defaultValue={data.search} maxLength={100}
      className="block min-h-11 w-full"/></Label>
    <Button type="submit" className="min-h-11 w-full lg:w-auto">Apply</Button>
-   <details className="group col-span-full" open={data.channel !== "ALL" || data.eligibility !== "ALL" || data.flag !== "ALL" || data.sort !== "NEWEST" || data.submittedWithin !== "ALL"}>
-    <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-ring [&::-webkit-details-marker]:hidden">Filter applicants <span aria-hidden="true" className="ml-2">⌄</span></summary>
+   <Disclosure title={<>Filter applicants <span aria-hidden="true" className="ml-2">⌄</span></>} defaultOpen={data.channel !== "ALL" || data.eligibility !== "ALL" || data.flag !== "ALL" || data.sort !== "NEWEST" || data.submittedWithin !== "ALL"} className="col-span-full" preserveSummary summaryClassName="inline-flex min-h-11 items-center">
     <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
    <Label stack className="min-w-0">Application channel
     <Select name="channel" defaultValue={data.channel} className="block min-h-11 w-full">
@@ -115,7 +115,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
      <option value="LAST_30_DAYS">Last 30 × 24 hours</option>
     </Select></Label>
     </div>
-   </details>
+   </Disclosure>
   </form>
   <p className="text-xs leading-5 text-muted-foreground">
    Applications and stage counts are read live from the current college-scoped drive; there is no cached snapshot to refresh.

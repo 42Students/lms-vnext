@@ -14,6 +14,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {buildTpoTeamFormData} from "@/modules/placements/tpo-team-form-payload";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Member={membershipId:string;displayName:string};
 async function postForm(url:string,values:Record<string,string|readonly string[]>){
@@ -259,8 +260,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId,kind,mentionMembers=[
     }}
     className="w-full" placeholder="Share a private team update"/>
   </Label>
-  {kind!=="DIRECT"&&mentionMembers.length>0?<details className="border-b border-border pb-3">
-   <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold">Mention teammates ({mentioned.length})</summary>
+  {kind!=="DIRECT"&&mentionMembers.length>0?<Disclosure title={<>Mention teammates ({mentioned.length})</>}>
    <p className="mb-2 text-xs text-body">Adding a person outside this private conversation requires confirmation. They can then read its history.</p>
    <Label variant="choice" className="grid gap-1">Find teammate
     <Input type="search" value={memberSearch} disabled={busy} maxLength={100}
@@ -275,7 +275,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId,kind,mentionMembers=[
      {member.displayName}
     </Label>)}
    </div>
-  </details>:null}
+  </Disclosure>:null}
   <Label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
    <Checkbox checked={markDecision} disabled={busy}
     onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>

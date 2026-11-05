@@ -25,6 +25,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {CollegeDrivesCapture,CollegeDrivesStaleFallback} from "@/components/placements/college-drives-last-good";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -108,14 +109,11 @@ export default async function CollegeDrivesPage({ searchParams }: {
         :<Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
           aria-label={"Edit "+item.title} className="inline-flex min-h-11 items-center font-semibold text-link underline">Edit</Link>}
       <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
-      {item.status!=="ARCHIVED"?<details className="min-w-0 w-full">
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-error)] md:min-h-9">
-          Delete / archive drive
-        </summary>
+      {item.status!=="ARCHIVED"?<Disclosure title="Delete / archive drive" className="min-w-0 w-full">
         <div className="mt-2 max-w-md">
           <CollegeDriveArchiveAction jobId={item.id}/>
         </div>
-      </details>:null}
+      </Disclosure>:null}
       {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id}
         title={item.title} currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
     </div>},
@@ -158,9 +156,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
         </Select>
       </Label>
-      <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4 xl:col-span-6"
-        open={Boolean(query.deadlineAfter||query.deadlineBefore||query.minimumApplicants||query.sort!=="TITLE")||undefined}>
-        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring md:min-h-9">Advanced filters</summary>
+      <Disclosure title="Advanced filters" defaultOpen={Boolean(query.deadlineAfter||query.deadlineBefore||query.minimumApplicants||query.sort!=="TITLE")||undefined} className="min-w-0 md:col-span-2 lg:col-span-4 xl:col-span-6">
         <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-3 md:grid-cols-2 lg:grid-cols-4">
       <Label stack>Deadline from
         <DateInput mode="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
@@ -189,7 +185,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
         </Select>
       </Label>
         </div>
-      </details>
+      </Disclosure>
       <Button type="submit" className="w-full self-end md:w-auto">Filter</Button>
       <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-link underline md:min-h-9">Clear filters</Link>
     </form>
@@ -230,10 +226,9 @@ export default async function CollegeDrivesPage({ searchParams }: {
           :<Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
             aria-label={"Edit "+item.title} className="min-h-11 text-sm font-semibold text-link underline">Edit</Link>}
          <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
-         {item.status!=="ARCHIVED"?<details className="min-w-0 w-full">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-error)]">Delete / archive drive</summary>
+         {item.status!=="ARCHIVED"?<Disclosure title="Delete / archive drive" className="min-w-0 w-full">
           <CollegeDriveArchiveAction jobId={item.id}/>
-         </details>:null}
+         </Disclosure>:null}
          {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id} title={item.title}
           currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
         </div>

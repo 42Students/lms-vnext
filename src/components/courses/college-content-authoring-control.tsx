@@ -16,6 +16,7 @@ import { Radio } from "@/components/ui/radio";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;contentType:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number;visibleToStudents:boolean};
@@ -612,7 +613,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    {resourceUploadStatus&&error?<p role="alert" className="text-xs text-error">{error}</p>:null}
    <LessonResourceMaterialsControl contentId={newResourceId} deliveryId={deliveryId||null} editable/>
   </section>:null}
-  {(listRows.length>0||listPage>1||listMore||Boolean(existingFilters?.search))&&<details className="group min-w-0 border-b border-border pb-4"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Existing Content</summary><div className="min-w-0 space-y-3 pt-3">
+  {(listRows.length>0||listPage>1||listMore||Boolean(existingFilters?.search))&&<Disclosure title="Existing Content" className="min-w-0"><div className="min-w-0 space-y-3 pt-3">
    {kind==="RESOURCE"&&!materialsEnabled?<p className="text-xs text-muted-foreground leading-5">
     Additional link and file materials are unavailable until the Resource Materials database runtime is verified.
     You can still edit Resource notes and its saved HTTPS link.
@@ -712,7 +713,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      ]}/>
    {kind==="RESOURCE"&&materialsEnabled&&openMaterialsId? <LessonResourceMaterialsControl
       contentId={openMaterialsId} deliveryId={listRows.find(item=>item.id===openMaterialsId)?.deliveryId??null} editable/>:null}
-  </div></details>}
+  </div></Disclosure>}
   {error&&<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>}
   {message&&<p role="status" className="text-sm leading-[22px]">{message}</p>}
  </section>;

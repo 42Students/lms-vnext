@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type LeadContext={id:string;stage:string;designation:string|null;emailNorm:string|null;ownerName:string|null};
 type CompanyAttention={items:Array<{
@@ -323,7 +324,7 @@ export function TpoCompaniesToday({
      <p className={styles.helper}>Later &amp; next moves to the next item without changing the current reminder.</p>
      <div className={styles.facts}><div><span className={styles.eyebrow}>RECRUITER STATUS</span><p>{leadInfo?.stage?leadInfo.stage.replaceAll("_"," "):"See recruiter history"}</p></div>
       <div><span className={`${styles.eyebrow} uppercase`}>Company</span><p>{current.companyName??"Not linked"} · Review company trust on its record</p></div></div>
-     <details className={styles.advanced}><summary>Record outcome and plan next follow-up</summary>
+     <Disclosure title="Record outcome and plan next follow-up">
       <p className={styles.sub}>Confirmed outcomes are saved with your account and close this follow-up atomically.</p>
      <fieldset className={styles.outcomes}><legend className={styles.eyebrow}>HOW DID IT GO?</legend>
       {outcomes.map(item=><Button variant="bare" key={item.value} type="button"
@@ -358,7 +359,7 @@ export function TpoCompaniesToday({
        onClick={()=>setConfirm("TOMORROW")}>Tomorrow, 10 AM</Button>
       {contact?<TextLink variant="bare" href={contact} className={styles.secondary}>Call recruiter ↗</TextLink>:null}
      </div>
-     </details>
+     </Disclosure>
      <Link className={styles.link} href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)}>
        Open full recruiter history ›
      </Link>
@@ -367,7 +368,7 @@ export function TpoCompaniesToday({
      </div>:null}
    </section>
   </div>
-  <details className={styles.inboxExtras}><summary>Recruiter replies and messages</summary>
+  <Disclosure title="Recruiter replies and messages">
   {replyTotal!==null&&replyTotal>0?<section className={styles.answer} aria-label="Recruiter replies waiting" data-testid="tpo.today.replies">
     <div className={styles.replyHead}>
      <strong>Answer · {replyTotal} recruiter {replyTotal===1?"reply":"replies"} waiting</strong>
@@ -390,7 +391,7 @@ export function TpoCompaniesToday({
    <strong>Answer · {unreadMessages} unread recruiter {unreadMessages===1?"message":"messages"}</strong>
    <Link href="/tpo/messages?tab=recruiters">Open Messages ›</Link>
   </div>:null}
-  </details>
+  </Disclosure>
   <ConfirmDialog open={confirm!==null} onOpenChange={value=>{if(!value&&!pending)setConfirm(null);}}
    title={confirm==="DONE"?"Record this outcome and finish the follow-up?":
     "Move this follow-up to tomorrow at 10 AM IST?"}

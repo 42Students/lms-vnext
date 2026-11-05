@@ -211,10 +211,7 @@ export async function CollegeRoleDirectoryWorkspace({
 
       {kind === "LEARNER" ? <div className="min-w-0 space-y-2">
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Registered Students</Heading>
-        <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
-          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-primary-text)] md:min-h-9">
-            Register students
-          </summary>
+        <Disclosure title="Register students" className="min-w-0">
           <div className="flex flex-wrap items-center gap-4 py-2 text-sm">
             <Link href="/college/students/register" className="font-semibold text-link underline">
               Single student registration form
@@ -224,7 +221,7 @@ export async function CollegeRoleDirectoryWorkspace({
             </Link>
             <span className="text-muted-foreground">Registration is scoped to your current college and its active batch.</span>
           </div>
-        </details>
+        </Disclosure>
       </div> : null}
       {kind === "LEARNER" ? <CollegeStudentBulkModuleAccess
         students={result.items.map(item=>({
@@ -236,8 +233,7 @@ export async function CollegeRoleDirectoryWorkspace({
         <Link href="/college/students/import"
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Bulk Register Students</Link>
         <CollegeStudentImportHistory />
-        <details className="min-w-0">
-          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">CSV exports</summary>
+        <Disclosure title="CSV exports" className="min-w-0">
           <div className="flex min-w-0 flex-col gap-2 border-t border-border py-2">
             <Link href={"/api/college/roles/export-visible?kind="+kind+"&"+
               new URL(collegeRoleDirectoryExportHref(kind,result.filter),"https://lms.invalid").searchParams.toString()}
@@ -245,7 +241,7 @@ export async function CollegeRoleDirectoryWorkspace({
             <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
               className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Export Learner CSV (max 1,000)</Link>
           </div>
-        </details>
+        </Disclosure>
         <Link href="/college/people"
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">People Directory</Link>
       </nav> : null}
@@ -266,8 +262,7 @@ export async function CollegeRoleDirectoryWorkspace({
         <Link href="/college/faculty/import" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Import faculty CSV</Link>
         <Link href={collegeRoleDirectoryHref(kind,result.filter)}
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
-        <details className="min-w-0">
-          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Export Faculty CSV (max 1,000)</summary>
+        <Disclosure title="Export Faculty CSV (max 1,000)" className="min-w-0">
           <div className="flex min-w-0 flex-col gap-2 border-t border-border py-2">
             <Link href={"/api/college/roles/export-visible?kind="+kind+"&"+
               new URL(collegeRoleDirectoryExportHref(kind,result.filter),"https://lms.invalid").searchParams.toString()}
@@ -275,7 +270,7 @@ export async function CollegeRoleDirectoryWorkspace({
             <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
               className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Export Faculty CSV (max 1,000)</Link>
           </div>
-        </details>
+        </Disclosure>
         <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">People Directory</Link>
       </nav> : null}
       <section aria-label={title+" directory summary"} className="grid min-w-0 grid-cols-2 gap-3 border-y border-border py-3 md:grid-cols-4">
@@ -553,7 +548,7 @@ export async function CollegeRoleDirectoryWorkspace({
                 </div>
                 {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
-                <details className="min-w-0"><summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">More actions for {item.name}</summary><div className="flex min-w-0 flex-col items-start gap-2 pb-2">
+                <Disclosure title={<>More actions for {item.name}</>} className="min-w-0"><div className="flex min-w-0 flex-col items-start gap-2 pb-2">
                 <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                 <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                 <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
@@ -562,7 +557,7 @@ export async function CollegeRoleDirectoryWorkspace({
                   name={item.name} status={item.membershipStatus}/>:null}
                 {kind==="LEARNER"?<CollegeStudentLifecycleAction membershipId={item.membershipId}
                   name={item.name} status={item.membershipStatus}/>:null}
-                </div></details>
+                </div></Disclosure>
               </li>
             ))}
           </ul>

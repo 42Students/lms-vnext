@@ -1,5 +1,6 @@
 import type {AdminLearnerProfileSection} from "@/modules/people/admin-learner-profile-sections-model";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 /** Legacy ProfileSectionsPanel sections in a read-only scoped Super Admin view.
  * A profile document's private identifiers never leave the server projection. */
@@ -15,14 +16,12 @@ export function AdminLearnerProfileSections({name,sections}:{
    details are available only through their separately authorized workflows.
   </p>
   <div className="min-w-0 divide-y divide-border border-y border-border">
-   {sections.map((section,index)=><details key={section.key} open={index===0||index===1||index===2}
-    className="min-w-0 group">
-    <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 px-2 py-3 text-sm font-semibold text-[var(--lms-heading)] focus-ring">
+   {sections.map((section,index)=><Disclosure title={<>
      <span>{section.label}</span>
      <span className="shrink-0 text-xs font-normal text-muted-foreground">
       {section.present?"On file":"Not recorded"}
      </span>
-    </summary>
+    </>} defaultOpen={index===0||index===1||index===2} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-3">
     <div className="min-w-0 px-2 pb-4">
      {section.entries.length?<dl className="grid min-w-0 gap-x-6 gap-y-2 text-sm md:grid-cols-2">
       {section.entries.map((entry,i)=><div key={i} className="min-w-0 border-b border-border py-2">
@@ -33,7 +32,7 @@ export function AdminLearnerProfileSections({name,sections}:{
       {section.present?"Details are stored but have no shareable public fields.":"No details recorded."}
      </p>}
     </div>
-   </details>)}
+   </Disclosure>)}
   </div>
  </section>;
 }

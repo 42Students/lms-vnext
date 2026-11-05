@@ -11,6 +11,7 @@ import { suggestCollegePlacementLearners, getCollegeStudentPlacementDetails } fr
 import { parseSuperAdminPlacementStudentSearch } from "@/modules/admin-ui/super-admin-placement-student-search-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function humanStage(raw: string | null, offer: string | null, joining: string | null) {
   const status = joining === "JOINED" ? "HIRED" :
@@ -132,8 +133,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
       </p>
       {selectedDetail&&!selectedDetail.ok?<p role="alert" className="text-sm text-error">The private learner profile and upcoming interviews could not be loaded. Search results below may be incomplete. Refresh to retry.</p>:null}
       <div className="space-y-1" aria-label="Learner profile sections">
-        <details className="border-b border-border py-2">
-          <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Resume</summary>
+        <Disclosure title="Resume">
           <p className="pt-2 text-xs text-muted-foreground">{selectedProfile?.resumeAvailable
             ? "The learner’s selected verified resume is stored privately. This link checks college access and file ownership again before granting a short-lived read."
             : "No selected, verified resume is available. Upload, selection and verification remain with the learner; an administrator cannot replace a resume with an unverified URL."}</p>
@@ -146,7 +146,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
           <p className="mt-1 text-xs text-muted-foreground">
             Resume replacement is learner-owned. Save or Cancel in the authorized profile editor below changes skills and job preferences only.
           </p>
-        </details>
+        </Disclosure>
         <AdminPlacementStudentProfileEditor
           key={selectedStudent.membershipId}
           membershipId={selectedStudent.membershipId}

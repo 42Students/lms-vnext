@@ -11,6 +11,7 @@ import { getOwnLearnerAssessmentBrowse,legacyLearnerAssessmentsRedirect } from "
 import { learnerRoundSearchQuerySchema } from "@/modules/placements/learner-round-search-query-model";
 import {learnerAssessmentDueBucketSchema} from "@/modules/placements/learner-assessment-due-buckets";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 export default async function LearnerPlacementAssessmentsPage({searchParams}: {
   searchParams:Promise<{applicationId?:string|string[];roundId?:string|string[];q?:string|string[];due?:string|string[]}>;
@@ -73,8 +74,7 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
           </Link>
         }
       />
-      <details className="border-b border-border pb-3">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Assessment submission guidance</summary>
+      <Disclosure title="Assessment submission guidance">
         <Banner tone="info" className="mt-3">
         <Heading level={2} size="lg" className="m-0 leading-[1.4] text-[var(--lms-heading)]">
           Submit assessments on the employer’s platform
@@ -85,7 +85,7 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
           instructions. The recruiter controls official submission and results.
         </p>
         </Banner>
-      </details>
+      </Disclosure>
 
       <LearnerCareerRoundsWorkspace
         key={link.key ?? "all-assessments"}

@@ -9,6 +9,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Action="CLOSE"|"CANCEL";
 type Preview={id:string;title:string;allowed:boolean;reason:string;
  expectedUpdatedAt:string|null;expectedCounts?:{applications:number;rounds:number;offers:number};
@@ -107,10 +108,9 @@ export function TpoDriveActOnPanel(){
    aria-controls="tpo-drive-bulk-actions">Act on selected drives</Button>
   {open?<div id="tpo-drive-bulk-actions" role="region" aria-label="Selected drive actions" className="min-w-0 space-y-4 border-t border-border pt-4">
    <p className="text-sm text-body leading-[22px]">Actions only apply to checked rows on this page. Every drive is rechecked by the placement server before applying a change.</p>
-   <details className="min-w-0 border-b border-border pb-3">
-    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Other selected-drive actions</summary>
+   <Disclosure title="Other selected-drive actions" className="min-w-0">
     <div className="pt-2"><TpoBulkDriveReminder/></div>
-   </details>
+   </Disclosure>
    <div className="grid min-w-0 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
    <Label stack className="min-w-0">Action
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={action} onChange={e=>{setAction(e.target.value as Action);setRows([]);setResults([]);setNotice("");setAcknowledged(false);}}

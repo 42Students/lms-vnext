@@ -209,8 +209,7 @@ export function TpoBulkRoundResultRecorder({
               <option value="ABSENT">Marked absent (ABSENT)</option>
             </Select>
           </Label>
-          <details className="group min-w-0 border-y border-border py-2 print:hidden">
-           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Everyone I did not mark <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+          <Disclosure title={<>Everyone I did not mark <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="min-w-0 print:hidden" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
           <fieldset className="space-y-2 px-2 py-3">
             <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
             <Label variant="choice" className="flex items-start gap-2">
@@ -222,7 +221,7 @@ export function TpoBulkRoundResultRecorder({
             </Label>
             <p className="text-xs text-body leading-[20px]">Opt in explicitly. All affected learners receive an audited staged result, but nothing is published until Apply results. This bulk action is limited to 25 total applicants; for larger rosters use the reviewed import.</p>
           </fieldset>
-          </details>
+          </Disclosure>
           {(outcome !== "PASS" || failUnselected) ? (
             <Label className="block text-[length:var(--lms-font-sm)] print:hidden">
               Learner-facing message (required)

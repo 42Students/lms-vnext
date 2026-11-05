@@ -28,6 +28,7 @@ import {
 } from "@/modules/people/runtime";
 import type { PersonMembershipView } from "@/modules/people/service";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 const columns: DataTableColumn<PersonMembershipView>[] = [
   {
@@ -191,8 +192,7 @@ export default async function SuperAdminPeoplePage({
         </Label>
         <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Search</Button>
        </div>
-       <details className="min-w-0" open={status!=="ALL" || pageSize!==10}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
+       <Disclosure title="Filters" defaultOpen={status!=="ALL" || pageSize!==10} className="min-w-0">
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
          <Label stack className="min-w-0">Status
           <Select name="status" defaultValue={status} className="min-h-11 w-full md:min-h-9">
@@ -201,7 +201,7 @@ export default async function SuperAdminPeoplePage({
          </Label>
          <PageSizeSelect name="pageSize" defaultValue={pageSize} options={[10,20,50]} />
         </div>
-       </details>
+       </Disclosure>
        <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>

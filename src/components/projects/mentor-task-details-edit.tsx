@@ -15,6 +15,7 @@ import { friendlyApiError } from "@/lib/friendly-error";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Props={
   projectId:string;taskId:string;title:string;description:string|null;
@@ -107,8 +108,7 @@ export function MentorTaskDetailsEdit(props:Props) {
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </Label>
-        <details className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] focus-ring">Approach and done criteria</summary>
+        <Disclosure title="Approach and done criteria" className="min-w-0">
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             <Label stack className="min-w-0">Approach (optional)
               <Textarea maxLength={4000} value={approach} onChange={event=>setApproach(event.target.value)}/>
@@ -117,7 +117,7 @@ export function MentorTaskDetailsEdit(props:Props) {
               <Textarea maxLength={4000} value={criteria} onChange={event=>setCriteria(event.target.value)}/>
             </Label>
           </div>
-        </details>
+        </Disclosure>
         <Label stack className="min-w-0">Priority
           <Select value={priority} onChange={event=>setPriority(event.target.value)}
             className="min-h-11 w-full md:min-h-9">

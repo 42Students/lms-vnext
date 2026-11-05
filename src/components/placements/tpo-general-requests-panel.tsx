@@ -15,6 +15,7 @@ import {Input} from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type Request={id:string;kind:string;status:string;reason:string;payload:Record<string,unknown>;
  studentName:string|null;version:string;requestedAt:string;decidedAt:string|null;decisionNote:string|null};
 function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
@@ -155,9 +156,9 @@ export function TpoGeneralRequestsPanel(){
        {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.decidedAt))} IST
       </time>
      </p>:null}
-    <details className="min-w-0 py-1"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-primary-text md:min-h-9 md:py-2">Request details</summary>
+    <Disclosure title="Request details" className="min-w-0">
      <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
-    </details>
+    </Disclosure>
     {row.decisionNote?<p className="whitespace-pre-wrap break-words">Decision: {row.decisionNote}</p>:null}
     {row.status==="PENDING"?<Button variant="secondary" type="button" disabled={pending||loading||stale} className="mt-2 min-h-11 w-full px-3 sm:w-auto md:min-h-9"
       onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</Button>:null}

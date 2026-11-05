@@ -23,6 +23,7 @@ import { listCollegeDriveApplicationFilters } from "@/modules/placements/college
 import { SuperAdminDriveApplicationsCsvControl } from "@/components/admin/super-admin-drive-applications-csv-control";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function adminHref(...args: Parameters<typeof driveApplicationsHref>) {
  return driveApplicationsHref(...args).replace("/college/placements/","/admin/placements/");
@@ -199,8 +200,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       </Label>
       <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
       </div>
-      <details className="min-w-0" open={true}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
+      <Disclosure title="Filters" defaultOpen={true} className="min-w-0">
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
       <Label stack className="min-w-0">Screening
         <Select name="screening" defaultValue={query.screening} className="min-h-11 w-full md:min-h-9">
@@ -256,7 +256,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
        Applicants without a recorded round score are excluded when a score range is set.
       </p>
         </div>
-      </details>
+      </Disclosure>
       <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
     </form>
     <nav className="flex min-w-0 flex-wrap items-center gap-3 text-sm" aria-label="Application views">

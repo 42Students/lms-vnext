@@ -8,6 +8,7 @@ import type {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-s
 import type {FacultyBlueprintLessonEngagement} from "@/modules/courses/faculty-blueprint-lesson-engagement-model";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
 const istDate=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
@@ -125,8 +126,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
     {current?<div className="flex flex-wrap items-center gap-2">
      <Button variant="bare" type="button" disabled title="The college admin manages the shared lesson name"
       className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs disabled:cursor-not-allowed disabled:opacity-60">Rename</Button>
-     <details className="relative">
-      <summary className="faculty-proto-action !min-h-9 !cursor-pointer !px-3 !py-1.5 !text-xs">+ Add content ▾</summary>
+     <Disclosure title="+ Add content ▾" className="relative">
       <div className="absolute right-0 z-(--lms-z-sticky-inline) mt-2 min-w-52 overflow-hidden rounded-lg border border-[color:var(--lms-border)] bg-surface py-1 shadow-lg">
        {FACULTY_BLUEPRINT_ADD_KINDS.map(label=><Link
         key={label}
@@ -136,7 +136,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
        </Link>)}
        <p className="border-t border-[color:var(--lms-border)] px-4 py-2 text-xs text-[color:var(--lms-text-muted)]">Uses Section-scoped video upload, content authoring or full assessment builder.</p>
       </div>
-     </details>
+     </Disclosure>
     </div>:null}
    </div>
    {current?<FacultyPrototypeLessonItems items={items}

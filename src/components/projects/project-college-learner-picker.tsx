@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type LearnerChoice={membershipId:string;displayName:string;rollNumber:string};
 
@@ -92,16 +93,15 @@ export function ProjectCollegeLearnerPicker({collegeId,selectedIds,onChange}:{
       <Button type="button" size="sm" variant="secondary" disabled={loading||!hasMore}
         onClick={()=>setPage(v=>v+1)}>Next</Button>
     </div>
-    {selectedIds.length?<details className="text-xs text-body">
-      <summary className="cursor-pointer font-semibold">
+    {selectedIds.length?<Disclosure title={<>
         Review selected learners ({selectedIds.length})
-      </summary>
+      </>}>
       <ul className="mt-2 max-h-36 overflow-y-auto">
         {selectedNames.filter(row=>selectedIds.includes(row.membershipId)).map(row=>
           <li key={row.membershipId}>{row.displayName} · {row.rollNumber}</li>)}
         {selectedIds.length>selectedNames.filter(row=>selectedIds.includes(row.membershipId)).length?
           <li>{selectedIds.length-selectedNames.filter(row=>selectedIds.includes(row.membershipId)).length} additional selections</li>:null}
       </ul>
-    </details>:null}
+    </Disclosure>:null}
   </section>;
 }

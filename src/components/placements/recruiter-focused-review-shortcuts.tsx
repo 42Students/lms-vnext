@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Disclosure } from "@/components/ui/disclosure";
 
 /**
  * Optional N/P navigation within the native recruiter review Drawer.
@@ -49,11 +50,10 @@ export function RecruiterFocusedReviewShortcuts({
   }, [router, nextHref, previousHref]);
 
   return previousHref || nextHref
-    ? <details className="group mt-3 min-w-0 border-t border-border pt-2">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">
+    ? <Disclosure title={<>
           Keyboard shortcuts <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
-        </summary>
+        </>} className="mt-3 min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
         <p className="pb-2 text-[13px] leading-5 text-muted-foreground">Keyboard: N next, P previous, Esc close. S pass · W/H waitlist · R not selected · A absent · Z undo draft while results editor is focused. The placement cell applies official results.</p>
-      </details>
+      </Disclosure>
     : <p className="mt-2 break-words text-[13px] leading-5 text-muted-foreground">Press Esc to close this applicant review.</p>;
 }

@@ -29,6 +29,7 @@ import {RecruiterConversationWorkspace} from "@/components/hr/recruiter-conversa
 import {selectRecruiterWorkspaceThread} from "@/modules/placements/hr-conversation-inbox-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[];thread?:string|string[];view?:string|string[]};
 
@@ -203,8 +204,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <Banner tone="warning">
        Drive request decisions are temporarily unavailable. Conversations are still accessible; refresh to try again.
      </Banner>:null}
-   {decisionNotices.length>0?<details className="min-w-0 border-b border-border pb-4">
-    <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] md:text-[18px] md:leading-7">Drive request decisions</summary>
+   {decisionNotices.length>0?<Disclosure title="Drive request decisions" className="min-w-0">
     <p className="mt-1 text-xs text-muted-foreground">Approval, changes requested and declined decisions for your own requests.</p>
     <ul className="mt-3 space-y-3">{decisionNotices.map(item=><li key={item.id}
       className="border-b border-border py-3 last:border-b-0">
@@ -216,7 +216,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </Link>
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
     </li>)}</ul>
-   </details>:null}
+   </Disclosure>:null}
    {result.choices.length>1?<NeedsDoingChips label="College conversations:"
       selectedKey={result.collegeId}
       items={result.choices.map(grant=>({
@@ -237,8 +237,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <Input name="q" type="search" maxLength={120} placeholder="⌕ Search by drive or message" defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></Label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form> :
-    <details className="min-w-0 border-b border-border pb-3">
-      <summary className="min-h-11 cursor-pointer text-sm font-semibold leading-10 text-primary-text">Search and sort conversations</summary>
+    <Disclosure title="Search and sort conversations" className="min-w-0">
       <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-[8px] max-md:flex-col max-md:items-stretch">
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
@@ -252,7 +251,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <Input name="q" type="search" maxLength={120} placeholder="⌕ Search by drive or message" defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></Label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form>
-    </details>}
+    </Disclosure>}
    <Tabs renderPanel={false} ariaLabel="Conversation kind" value={parsed.data.scope}
     items={HR_CONVERSATION_KINDS.map(item => ({value:item.value,label:item.label,
       href:hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,

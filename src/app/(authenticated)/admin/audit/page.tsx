@@ -15,6 +15,7 @@ import {SubjectEventHistory} from "@/components/activity/subject-event-history";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 function smsDate(value:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
@@ -127,14 +128,14 @@ export default async function SuperAdminAuditPage({searchParams}:{
         <td className="p-3">{typeof item.purpose==="string"?item.purpose:"—"}</td>
         <td className="p-3">{typeof item.recipientSuffix==="string"&&item.recipientSuffix?"••••"+item.recipientSuffix:"Masked"}</td>
         <td className="p-3"><StatusBadge tone={item.outcome==="PROVIDER_ACCEPTED"?"success":"warning"}>{item.outcome==="PROVIDER_ACCEPTED"?"Accepted by provider":String(item.outcome??"Unknown")}</StatusBadge></td>
-        <td className="p-3"><details><summary className="min-h-11 md:min-h-9 cursor-pointer font-semibold text-primary-text">View details</summary>
+        <td className="p-3"><Disclosure title="View details">
          <dl className="min-w-0 space-y-2 py-2 text-xs">
           <div><dt className="font-semibold">Attempt ID</dt><dd className="break-all">{String(item.id)}</dd></div>
           <div><dt className="font-semibold">Provider ID</dt><dd className="break-all">{typeof item.providerMessageId==="string"?item.providerMessageId:"Not available"}</dd></div>
           <div><dt className="font-semibold">Provider</dt><dd>{typeof item.provider==="string"?item.provider:"—"}</dd></div>
           <div><dt className="font-semibold">Failure detail</dt><dd>{typeof item.failureSummary==="string"?item.failureSummary:"—"}</dd></div>
          </dl>
-        </details></td>
+        </Disclosure></td>
        </tr>)}</tbody>
       </Table>
      </div>}

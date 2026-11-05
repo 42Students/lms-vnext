@@ -372,10 +372,9 @@ export function ActivityCenter({
                   </Link>
                 </div>
               </div>
-              <details className="group mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-                <summary className="inline-flex min-h-9 cursor-pointer list-none items-center font-semibold text-link underline focus-ring [&::-webkit-details-marker]:hidden">
+              <Disclosure title={<>
                  <span className="group-open:hidden">Details</span><span className="hidden group-open:inline">Hide details</span>
-                </summary>
+                </>} className="mt-3" preserveSummary summaryClassName="inline-flex min-h-9 items-center">
                 <dl className="mt-2 grid gap-1 md:grid-cols-2">
                   <div><dt>Action</dt><dd>{humanize(item.event.eventType)}</dd></div>
                   <div><dt>Actor</dt><dd className="break-all">{activityActorName(item)}{item.actor?.id?" · "+item.actor.id:""}</dd></div>
@@ -386,17 +385,14 @@ export function ActivityCenter({
                     <dt>{humanize(name)}</dt><dd className="break-all whitespace-pre-wrap">{detailValue(value)}</dd>
                   </div>)}
                 </dl>
-              </details>
+              </Disclosure>
             </article>
             </Fragment>
           );
         })}
       </div>
 
-      <details className="min-w-0 border-t border-border pt-3">
-       <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link">
-        Raw forensic table · current page
-       </summary>
+      <Disclosure title="Raw forensic table · current page" className="min-w-0">
        <p className="text-xs text-muted-foreground">One representative event appears per activity group. IP and user-agent source values were not retained. Use individual details for full audit records.</p>
        <div className="mt-3 w-full overflow-x-auto"><Table className="min-w-[960px]">
         <thead><tr>{RAW_AUDIT_FORENSIC_HEADERS.map(label=>
@@ -415,7 +411,7 @@ export function ActivityCenter({
          </tr>;
         })}</tbody>
        </Table></div>
-      </details>
+      </Disclosure>
 
       {nextHref ? (
         <div className="flex justify-center">

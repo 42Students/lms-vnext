@@ -15,6 +15,7 @@ import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-ten
 import { tenantSetupLinksAvailable } from "@/modules/colleges/admin-tenant-lifecycle-model";
 import { superAdminVerificationHref } from "@/modules/verification/admin-links";
 import { Heading } from "@/components/ui/heading";
+import { Disclosure } from "@/components/ui/disclosure";
 type ManageTab="web-address"|"sign-in"|"branding"|"admins"|"activity";
 const manageTabs:readonly {id:ManageTab;label:string;path:string;description:string}[]=[
  {id:"web-address",label:"Web address",path:"subdomain",description:"Register and verify this college's domain before enabling sign-in."},
@@ -96,8 +97,7 @@ export default async function TenantDetail({params,searchParams}:{
    {active.id==="web-address"?<p className="text-xs text-muted-foreground">Register the hostname and verify ownership in deployment infrastructure. DNS verification is a separate manual approval before production activation.</p>:null}
    {active.id==="branding"?<p className="text-xs text-muted-foreground">Saving branding produces success and error feedback in the scoped editor; no other college is changed.</p>:null}
   </section>
-  <details className="min-w-0 border-t border-border pt-3">
-   <summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Additional college setup links</summary>
+  <Disclosure title="Additional college setup links" className="min-w-0">
   <div className="mt-3 grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2">
    {tenantSetupLinksAvailable(item.status,item.organizationStatus) ? <>
    {context.adminScope?.collegeId===item.id ? <Link href="/admin/tenants/setup" className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Set up this college</Link> : null}
@@ -109,7 +109,7 @@ export default async function TenantDetail({params,searchParams}:{
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Web address</Link>
    </> : <p className="text-sm text-muted-foreground">Setup links are unavailable while this college or its organization is archived.</p>}
   </div>
-  </details>
+  </Disclosure>
   <dl className="grid gap-4 border-t border-border pt-4 md:grid-cols-2">
    {fields.map(([label,value])=><div key={label}><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{value}</dd></div>)}

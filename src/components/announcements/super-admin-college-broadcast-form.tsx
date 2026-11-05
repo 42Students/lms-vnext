@@ -11,6 +11,7 @@ import {broadcastConsentSummary} from "@/modules/announcements/super-admin-colle
 import {broadcastLocalTiming} from "@/modules/announcements/super-admin-broadcast-timing-model";
 import { Radio } from "@/components/ui/radio";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 type CollegeTarget={id:string;label:string};
 export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly CollegeTarget[]}){
  const router=useRouter();
@@ -118,8 +119,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   <Label stack className="min-w-0">Announcement<Textarea rows={6} disabled={pending} value={message} maxLength={8000} aria-invalid={messageTouched&&!message.trim()} onBlur={()=>setMessageTouched(true)} onChange={e=>setMessage(e.target.value)} placeholder="Links starting with https:// become clickable."/></Label>
   {messageTouched&&!message.trim()?<p role="alert" className="text-sm text-danger-text">Write the announcement</p>:null}
   <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Announcement {message.length}/8000</p>
-  <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)]">
-   <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-ring">Button (optional)</summary>
+  <Disclosure title="Button (optional)" className="min-w-0">
    <fieldset className="min-w-0 space-y-[var(--lms-space-3)]"><legend className="sr-only">Button (optional)</legend>
    <Label stack className="min-w-0">Button label
     <Input disabled={pending} value={buttonLabel} maxLength={60} onChange={e=>setButtonLabel(e.target.value)} placeholder="Read more"/>
@@ -131,7 +131,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    <p role="status" className="text-xs text-muted-foreground">Button label {buttonLabel.length}/60 · HTTPS link {buttonUrl.length}/500</p>
    {buttonError?<p role="alert" className="text-sm text-danger-text">{buttonError}</p>:null}
    </fieldset>
-  </details>
+  </Disclosure>
   <Label stack className="min-w-0">Show until (local)<Input disabled={pending} type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></Label>
   <Label className="flex min-h-11 items-center gap-2 md:min-h-9">
    <Checkbox disabled={pending} checked={pinned} onChange={e=>setPinned(e.target.checked)}/> Pin it to the top

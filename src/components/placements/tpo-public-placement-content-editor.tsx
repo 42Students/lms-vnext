@@ -10,6 +10,7 @@ import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,
  type PublicPlacementMetricKey} from "@/modules/placements/public-page/content-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 const ALL=Object.keys(PUBLIC_METRIC_LABELS) as PublicPlacementMetricKey[];
 export function TpoPublicPlacementContentEditor({initial}:{initial:{
  ready:boolean;about:string;metricKeys:PublicPlacementMetricKey[];updatedAt:string|null;
@@ -83,8 +84,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
    </Label>)}
    </div>
   </fieldset>
-  <details className="min-w-0 border-t border-border pt-3">
-   <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold focus-ring">Public number order</summary>
+  <Disclosure title="Public number order" className="min-w-0">
   <ol aria-label="Public number order" className="space-y-2">
    {metricKeys.map((key,index)=><li key={key} className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
     <span>{index+1}. {PUBLIC_METRIC_LABELS[key]}</span>
@@ -94,7 +94,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
       onClick={()=>move(index,1)} className="min-h-11 md:min-h-9 text-xs">Move down</Button></span>
    </li>)}
   </ol>
-  </details>
+  </Disclosure>
   {dirty?<InlineNotice tone="info" message="Unsaved changes. Use Save to publish. The old LMS saved number selections immediately."/>:null}
   {!initial.ready?<Alert tone="warning"><div className="space-y-2">
    <p>Couldn't load the placements page</p>

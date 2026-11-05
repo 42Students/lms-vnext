@@ -10,6 +10,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 type Rules = {
   countsAsPlacedAt: string;
@@ -165,10 +166,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         the offer uplift above is the persisted college-wide threshold.
        </p>
       </div>
-      <details className="rounded-lg border border-border px-3 py-2">
-       <summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">
-        Custom thresholds and response times
-       </summary>
+      <Disclosure title="Custom thresholds and response times">
        <div className="grid gap-3 border-t border-border py-3 sm:grid-cols-2">
         <Label stack>Custom offer uplift (%)
          <Input type="number" min={TPO_RULE_LIMITS.upliftPct.min}
@@ -183,7 +181,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
           className="min-h-11 md:min-h-9"/>
         </Label>
        </div>
-      </details>
+      </Disclosure>
       <p className="text-sm text-body">The placed numbers (Home, Students, Reports) follow your chosen placed trigger after you save. For example, an internship never counts as placed, and a qualifying Dream drive may follow separate eligibility rules.</p>
       <div className="rounded-lg bg-surface-muted px-4 py-3 text-sm leading-6 text-body">
        <strong className="font-semibold text-foreground">What this means today:</strong>

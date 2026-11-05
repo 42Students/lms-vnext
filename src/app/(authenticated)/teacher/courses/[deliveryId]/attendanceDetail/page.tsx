@@ -136,15 +136,14 @@ async function FacultyCourseAttendanceContent({
       </Link>
       </nav>
       <FacultyPrototypeAttendance workspace={workspace} deliveryId={deliveryId} selectedSessionId={initialSessionId}/>
-      <details className="border-t border-[color:var(--lms-border)] pt-4" open={initialSessionId!==null||query.advanced==="1"} id="faculty-attendance-editor">
-       <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">Mark attendance and advanced session reports</summary>
+      <Disclosure title="Mark attendance and advanced session reports" defaultOpen={initialSessionId!==null||query.advanced==="1"} id="faculty-attendance-editor">
        <div className="mt-5 space-y-4">
       <FacultyAttendanceWorkspace
         key={`${deliveryId}:${initialSessionId ?? "report"}`}
         workspace={workspace}
         initialSessionId={initialSessionId}
       />
-       </div></details>
+       </div></Disclosure>
       <Disclosure id="faculty-attendance-scheduling" title="Advanced attendance session scheduling"
         defaultOpen={query.schedule==="1"} className="border-t border-border" contentClassName="min-w-0 pb-4">
       <FacultyAttendanceScheduleEditor

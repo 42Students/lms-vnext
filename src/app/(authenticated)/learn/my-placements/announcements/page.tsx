@@ -35,6 +35,7 @@ import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learner
 import {TpoNoticeAcknowledge} from "@/components/tpo/tpo-notice-acknowledge";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { Disclosure } from "@/components/ui/disclosure";
 
 // Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
 const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-[var(--lms-motion-fast)] hover:border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] hover:text-[var(--lms-primary)] focus-ring aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
@@ -148,8 +149,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
           className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Clear search</Link> : null}
       </form>
-      <details className="border-t border-border pt-2" open={pinnedOnly || recentOnly || source !== "all" || sortKey !== "pinned" || undefined}>
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">More notice filters</summary>
+      <Disclosure title="More notice filters" defaultOpen={pinnedOnly || recentOnly || source !== "all" || sortKey !== "pinned" || undefined}>
         <div className="space-y-3 pt-3">
       <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="College notice sorting" className="flex min-w-0 flex-wrap items-end gap-3">
         {alertQ?<Input type="hidden" name="alertQ" value={alertQ}/>:null}
@@ -190,7 +190,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           className={placementFilterPillClass}>Last 30 days</Link>
       </nav>
         </div>
-      </details>
+      </Disclosure>
       <p className="text-xs text-muted-foreground">These college-targeted announcements may include notices published by your placement cell. Only notices addressed to your membership are displayed.</p>
       {pageClamped && collegeNoticesRead.available ? (
         <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
