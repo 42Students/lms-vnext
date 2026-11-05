@@ -1,7 +1,6 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoReportRecordLinks } from "@/components/placements/tpo-report-record-links";
@@ -18,6 +17,7 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportDetails } from "@/modules/placements/report-service";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -56,7 +56,7 @@ export default async function TpoJoiningStatusReportPage({
         title="Joining outcomes"
         description="Recorded joining results for currently accepted offers. Company figures count each learner once; drive figures count accepted offers."
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-          <Link href="/tpo/reports/joining-followups" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">Review joining follow-ups →</Link>
+          <TextLink href="/tpo/reports/joining-followups" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">Review joining follow-ups →</TextLink>
           <ReportCsvLink workspace={workspace} kind="joining-status" />
         </div>}
       />

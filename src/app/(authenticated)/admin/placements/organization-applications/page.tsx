@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {ZodError} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -11,6 +10,7 @@ import {Button} from "@/components/ui/button";
 import {searchOrganizationPlacementApplications} from "@/modules/placements/organization-application-search-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
@@ -44,7 +44,7 @@ export default async function OrganizationApplicationsPage({searchParams}:{
   return <div className="min-w-0 space-y-4">
    <PageHeader title="Organization applications"/>
    <ErrorState title="Invalid application search" description="Check the search, stage, sort order and page."
-    action={<Link href="/admin/placements/organization-applications" className="font-semibold text-link underline">Clear filters</Link>}/>
+    action={<TextLink href="/admin/placements/organization-applications">Clear filters</TextLink>}/>
   </div>;
  }
  const paged={search:result.search,status:result.status,sort:result.sort,pageSize:result.pageSize};
@@ -83,8 +83,8 @@ export default async function OrganizationApplicationsPage({searchParams}:{
   </form>
   <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <p className="text-body">Live database results · no cache refresh needed. Scores reflect the best applied round result, not retired legacy screening scores.</p>
-   <Link href="/admin/placements/organization-applications"
-    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+   <TextLink href="/admin/placements/organization-applications"
+    className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
   </div>
   <section aria-label="Organization placement applications" className="space-y-3">
    {result.records.length?(
@@ -101,11 +101,11 @@ export default async function OrganizationApplicationsPage({searchParams}:{
        <div><dt className="text-muted-foreground">Score</dt><dd className="tabular-nums">{record.score??"—"}</dd></div>
        <div><dt className="text-muted-foreground">Applied (IST)</dt><dd>{fmt.format(new Date(record.appliedAt))}</dd></div>
       </dl>
-      <Link href={"/admin/placements/jobs/"+encodeURIComponent(record.jobId)+
+      <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(record.jobId)+
        "/applications?applicationId="+encodeURIComponent(record.id)}
-       className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+       className="mt-3 inline-flex min-h-11 items-center md:min-h-9">
        Application details
-      </Link>
+      </TextLink>
      </li>)}
     </ul>
    ):<EmptyState title="No matching placement applications" description="Try a different search, stage or sort order."/>}
@@ -113,8 +113,8 @@ export default async function OrganizationApplicationsPage({searchParams}:{
   <nav aria-label="Application search pages" className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-sm text-body">Page {result.page} of {result.totalPages}</p>
    <div className="flex gap-3">
-    {result.page>1?<Link href={listingUrl(paged,result.page-1)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous</Link>:null}
-    {result.page<result.totalPages?<Link href={listingUrl(paged,result.page+1)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next</Link>:null}
+    {result.page>1?<TextLink href={listingUrl(paged,result.page-1)} className="inline-flex min-h-11 items-center md:min-h-9">Previous</TextLink>:null}
+    {result.page<result.totalPages?<TextLink href={listingUrl(paged,result.page+1)} className="inline-flex min-h-11 items-center md:min-h-9">Next</TextLink>:null}
    </div>
   </nav>
  </div>;

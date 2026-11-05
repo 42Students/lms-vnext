@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
-import Link from "next/link";
+import { TextLink } from "@/components/ui/text-link";
 
 export const metadata={title:"Placement Audit"}
 
@@ -12,12 +12,12 @@ export default function Page() {
         title="Placement Audit is not yet available"
         description="Audit logs and change history for placement activities will appear here once this feature is enabled."
         action={
-          <Link
+          <TextLink
             href="/college/placements"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9"
+            className="inline-flex min-h-11 items-center md:min-h-9"
           >
             Back to Placements
-          </Link>
+          </TextLink>
         }
       />
     </div>

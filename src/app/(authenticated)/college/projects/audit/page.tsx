@@ -1,9 +1,9 @@
 import {PageHeader} from "@/components/ui/page-header";
 import {Alert} from "@/components/ui/alert";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 import { ProjectAdminAuditPage } from "@/components/projects/project-admin-audit-page";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeProjectAuditPage({
   searchParams,
@@ -21,9 +21,9 @@ export default async function CollegeProjectAuditPage({
     <Alert tone="warning" role="status" title="Select a college to continue">
       Choose a college in the header above to see its project audit.
     </Alert>
-    <Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+    <TextLink href="/college/projects" className="inline-flex min-h-11 items-center md:min-h-9">
       Back to project workspaces
-    </Link>
+    </TextLink>
    </div>;
   return (
     <ProjectAdminAuditPage

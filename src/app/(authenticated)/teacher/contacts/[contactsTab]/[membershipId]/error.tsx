@@ -1,7 +1,7 @@
 "use client";
 import {PageHeader} from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function Error({ reset }: {
   error: Error & { digest?: string };
@@ -14,9 +14,9 @@ export default function Error({ reset }: {
     </p>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
       <Button type="button" onClick={reset}>Retry</Button>
-      <Link href="/teacher/contacts" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9">
+      <ButtonLink variant="secondary" href="/teacher/contacts">
         Back to Contacts
-      </Link>
+      </ButtonLink>
     </div>
   </section>;
 }

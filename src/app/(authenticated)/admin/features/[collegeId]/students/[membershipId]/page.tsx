@@ -1,5 +1,4 @@
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -9,6 +8,8 @@ import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-tra
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
 import {StudentRuleEditor} from "@/components/admin/student-rule-editor";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 export default async function SuperAdminStudentRules({params}:{params:Promise<{collegeId:string;membershipId:string}>}){
  const {collegeId,membershipId}=await params;
@@ -18,11 +19,11 @@ export default async function SuperAdminStudentRules({params}:{params:Promise<{c
  const student=result.selected;
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Super Admin · Module Access" title="Student overrides and locks"
-   description={"Stored membership rules for "+(student.displayName||"Unnamed learner")+" in "+result.college.name+". No email or mobile details are exposed."} actions={<Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← Learner access trace</Link>}/>
-  <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history"}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9 hover:text-[var(--lms-primary-text)]">
+   description={"Stored membership rules for "+(student.displayName||"Unnamed learner")+" in "+result.college.name+". No email or mobile details are exposed."} actions={<TextLink href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(membershipId)} className="inline-flex min-h-11 items-center md:min-h-9">← Learner access trace</TextLink>}/>
+  <ButtonLink variant="secondary" href={"/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history"}
+    className="w-full sm:w-auto">
     View module override and lock history →
-  </Link>
+  </ButtonLink>
   <Alert tone="info">
    These values are persisted at the learner membership scope. Inherit is not Off, and broader locked rules can override stored values. Placements ignores membership-level rules.
    </Alert>

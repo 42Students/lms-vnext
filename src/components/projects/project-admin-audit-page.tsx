@@ -7,7 +7,6 @@ import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-e
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { ErrorState } from "@/components/ui/error-state";
-import Link from "next/link";
 import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -29,6 +28,8 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** Mirrors the legacy destructive/access-changing action keys. Count each
  * raw activity item, not distinct projects or condensed groups. */
@@ -197,7 +198,7 @@ export async function ProjectAdminAuditPage({
     {scopeNotice}
     <ErrorState title="Audit log could not be loaded"
       description="Failed to load audit log. Your filters have not changed."
-      action={<Link href={basePath+"/audit"} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry audit</Link>} />
+      action={<TextLink href={basePath+"/audit"} className="inline-flex min-h-11 items-center md:min-h-9">Retry audit</TextLink>} />
   </div>;
   const result = activityRead.value;
   // Resource history has a separate project-scoped audit stream. Never
@@ -299,8 +300,7 @@ export async function ProjectAdminAuditPage({
           description="Who changed what, and when — check daily for anything unexpected."
           actions={<div className="flex flex-wrap gap-2">
             <ProjectAuditRefreshButton/>
-            <Link href={basePath==="/admin/projects"?"/admin/audit":"/college/activity"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">View activity log</Link>
+            <ButtonLink variant="secondary" href={basePath==="/admin/projects"?"/admin/audit":"/college/activity"}>View activity log</ButtonLink>
           </div>}/>
       </div>
       <ProjectAdminNav basePath={basePath} active="audit" />
@@ -322,16 +322,15 @@ export async function ProjectAdminAuditPage({
       ) : null}
 
       <nav aria-label="Audit time range" className="flex flex-wrap items-center gap-2">
-        {auditRangeTabs.map(item=><Link key={item.value} href={item.href} aria-current={item.value===selectedAuditRange?"page":undefined}
+        {auditRangeTabs.map(item=><TextLink variant="bare" key={item.value} href={item.href} aria-current={item.value===selectedAuditRange?"page":undefined}
           className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold md:min-h-9 "+
-           (item.value===selectedAuditRange?"border-[var(--lms-primary)] bg-[var(--lms-primary)] text-[var(--lms-on-primary)]":"border-border bg-surface text-link hover:bg-primary-subtle")}>{item.label}</Link>)}
-        {subjectId?<Link href={basePath+"/audit"+(()=>{
+           (item.value===selectedAuditRange?"border-[var(--lms-primary)] bg-[var(--lms-primary)] text-[var(--lms-on-primary)]":"border-border bg-surface text-link hover:bg-primary-subtle")}>{item.label}</TextLink>)}
+        {subjectId?<ButtonLink variant="secondary" href={basePath+"/audit"+(()=>{
           const params=new URLSearchParams(preservedRefreshQuery);
           params.delete("subjectId");
           return params.size?"?"+params.toString():"";
         })()}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link hover:bg-primary-subtle md:min-h-9"
-          aria-label={"Clear entity filter for "+subjectId}>Filtered to: {subjectId} <span aria-hidden="true">×</span></Link>:null}
+          aria-label={"Clear entity filter for "+subjectId}>Filtered to: {subjectId} <span aria-hidden="true">×</span></ButtonLink>:null}
       </nav>
       <Disclosure title={<>
           <span>Filters</span><span aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-180">⌄</span>
@@ -427,12 +426,11 @@ export async function ProjectAdminAuditPage({
           >
             Apply filters
           </Button>
-          <Link
+          <ButtonLink variant="secondary"
             href={basePath + "/audit"}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9"
           >
             Reset
-          </Link>
+          </ButtonLink>
         </div>
       </form>
       </Disclosure>
@@ -456,8 +454,8 @@ export async function ProjectAdminAuditPage({
       </p>
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <Link href={refreshHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Refresh</Link>
-          {basePath === "/admin/projects" ? <Link href="/admin/audit" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">View activity log</Link> : null}
+          <TextLink href={refreshHref} className="inline-flex min-h-11 items-center text-sm md:min-h-9">Refresh</TextLink>
+          {basePath === "/admin/projects" ? <TextLink href="/admin/audit" className="inline-flex min-h-11 items-center text-sm md:min-h-9">View activity log</TextLink> : null}
         </div>
         <ProjectAuditPageExport rows={result.items.map(item=>({
         id:item.event.id,action:item.event.eventType,
@@ -515,16 +513,14 @@ export async function ProjectAdminAuditPage({
             {" · "}{resourceRead.value.total} resource changes
           </span>
           <div className="flex flex-wrap gap-2">
-            {resourceRead.value.page>1?<Link
-              href={resourcePageHref(resourceRead.value.page-1)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text underline md:min-h-9">
+            {resourceRead.value.page>1?<ButtonLink variant="secondary"
+              href={resourcePageHref(resourceRead.value.page-1)}>
               Previous resource changes
-            </Link>:null}
-            {resourceRead.value.hasMore?<Link
-              href={resourcePageHref(resourceRead.value.page+1)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text underline md:min-h-9">
+            </ButtonLink>:null}
+            {resourceRead.value.hasMore?<ButtonLink variant="secondary"
+              href={resourcePageHref(resourceRead.value.page+1)}>
               Next resource changes
-            </Link>:null}
+            </ButtonLink>:null}
           </div>
         </nav>:null}
       </section>:null}
@@ -569,14 +565,14 @@ export async function ProjectAdminAuditPage({
                 <td className="min-w-[196px] p-3">
                   <p className="font-semibold">{event.subjectLabel||auditEntityType(event.subjectType)}</p>
                   <p className="mt-1 break-all text-xs text-muted-foreground">{event.subjectType} · {event.subjectId}</p>
-                  <Link href={basePath+"/audit?"+(()=>{
+                  <TextLink href={basePath+"/audit?"+(()=>{
                     const params=new URLSearchParams(preservedRefreshQuery);
                     params.set("subjectId",event.subjectId);return params.toString();
-                  })()} className="mt-1 inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
+                  })()} className="mt-1 inline-flex min-h-9 items-center text-xs">
                     Filter to this entity
-                  </Link>
-                  {workspaceId?<Link href={basePath+"/"+encodeURIComponent(workspaceId)+"/summary?from=audit"}
-                    className="block min-h-9 text-xs font-semibold text-link underline">Open workspace</Link>:null}
+                  </TextLink>
+                  {workspaceId?<TextLink href={basePath+"/"+encodeURIComponent(workspaceId)+"/summary?from=audit"}
+                    className="block min-h-9 text-xs">Open workspace</TextLink>:null}
                 </td>
                 <td className="min-w-[144px] p-3">
                   <p>{item.actor?.displayName||"System"}</p>
@@ -591,10 +587,9 @@ export async function ProjectAdminAuditPage({
         </div>}
       </section>
 
-      {result.nextCursor?<Link href={basePath+"/audit?"+nextParams.toString()}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+      {result.nextCursor?<ButtonLink variant="secondary" href={basePath+"/audit?"+nextParams.toString()}>
         Load older events{result.remainingCount?" ("+result.remainingCount+" remaining)":""}
-      </Link>:null}
+      </ButtonLink>:null}
 
       <p className="text-xs text-muted-foreground leading-[20px]">
         This view shows persisted Project activity events. Filter to a project workspace to inspect its independent resource change trail. Resource snapshots are redacted, and past actions can only be displayed if they were durably recorded.

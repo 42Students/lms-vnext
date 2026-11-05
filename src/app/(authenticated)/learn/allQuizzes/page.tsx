@@ -7,12 +7,12 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {hasMembershipRole} from "@/modules/identity/context";
-import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import {redirect} from "next/navigation";
 import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseQuizzes} from "@/db/schema";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function LearnerQuizzesPage({searchParams}:{searchParams:Promise<{course?:string|string[];content?:string|string[]}>}) {
   const [context,query] = await Promise.all([getCurrentRequestContext(),searchParams]);
@@ -37,7 +37,7 @@ export default async function LearnerQuizzesPage({searchParams}:{searchParams:Pr
       <Alert tone="error" role="alert" title="Failed to load quizzes. Please try again.">
         Your quiz records could not be loaded. No empty result has been assumed.
       </Alert>
-      <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>
+      <TextLink href={retryHref} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
     </div>;
   }
 

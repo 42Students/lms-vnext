@@ -9,7 +9,6 @@ import { SummaryStrip } from "@/components/ui/summary-strip";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
@@ -49,6 +48,8 @@ import {HR_CALENDAR_CATEGORIES,hrCalendarCategorySchema,filterHrCalendarDays,typ
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 
@@ -191,9 +192,9 @@ function RecruiterCalendarEventCard({event}:{event:PlacementCalendarEvent}){
    </div>
  </div>;
  const className="block min-w-0 rounded-[var(--lms-control-radius)] border-b border-[var(--lms-canvas-border)] px-3 py-3 transition-colors hover:bg-[var(--lms-primary-subtle)] focus-ring";
- return href?<Link href={href} className={className} aria-label={event.title+" · "+(event.jobTitle??"")+" · Open hiring drive"}>
+ return href?<TextLink variant="bare" href={href} className={className} aria-label={event.title+" · "+(event.jobTitle??"")+" · Open hiring drive"}>
   {details}
- </Link>:<article className={className}>{details}</article>;
+ </TextLink>:<article className={className}>{details}</article>;
 }
 
 /** Match the legacy foldWeek: combine slots only with a round on the same
@@ -245,7 +246,7 @@ export default async function HrCalendarPage({
     return <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="Calendar" />
       <ErrorState title="Invalid calendar filters" description="Review the selected date, view and event filters."
-        action={<Link href="/recruiter/calendar" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Clear filters</Link>}/>
+        action={<TextLink href="/recruiter/calendar" className="inline-flex min-h-11 md:min-h-9 items-center">Clear filters</TextLink>}/>
     </div>;
   }
 
@@ -342,30 +343,29 @@ export default async function HrCalendarPage({
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
         actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
               <nav aria-label="Calendar period navigation" className={styles["nav"]}>
-                <Link href={calendarHref(previous,view,category,selectedCollegeId)}
+                <ButtonLink variant="secondary" href={calendarHref(previous,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Previous week":"Previous month"}
-                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-ring md:min-h-9">
+                  className="min-w-0">
                   <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 8H4m4-4L4 8l4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </Link>
-                <Link href={calendarHref(today,view,category,selectedCollegeId)}
-                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-ring md:min-h-9">
+                </ButtonLink>
+                <ButtonLink variant="secondary" href={calendarHref(today,view,category,selectedCollegeId)}
+                  className="min-w-0">
                   This week
-                </Link>
-                <Link href={calendarHref(next,view,category,selectedCollegeId)}
+                </ButtonLink>
+                <ButtonLink variant="secondary" href={calendarHref(next,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Next week":"Next month"}
-                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-ring md:min-h-9">
+                  className="min-w-0">
                   <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M4 8h8m-4-4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </Link>
+                </ButtonLink>
               </nav>
-          {selectedCollegeId ? <Link
-            href={"/api/placements/recruiter/calendar/ics?from="+window.from+"&to="+window.to+"&collegeId="+encodeURIComponent(selectedCollegeId)}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle md:min-h-9">
+          {selectedCollegeId ? <ButtonLink variant="secondary"
+            href={"/api/placements/recruiter/calendar/ics?from="+window.from+"&to="+window.to+"&collegeId="+encodeURIComponent(selectedCollegeId)}>
             Add to my calendar (.ics)
-          </Link> : null}
-          <Link href="/hr/placements"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text focus-ring md:min-h-9 md:w-auto">
+          </ButtonLink> : null}
+          <ButtonLink variant="secondary" href="/hr/placements"
+          className="w-full md:w-auto">
           Drives →
-        </Link></div>}
+        </ButtonLink></div>}
       />
       {noCollegeAccess ? (
         <section className="border-b border-[var(--lms-canvas-border)] pb-6">
@@ -380,12 +380,12 @@ export default async function HrCalendarPage({
             Open this on your college&apos;s placement address to see your recruiter calendar.
           </p>
 
-          <Link
+          <TextLink
             href="/hr/home"
-            className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold md:min-h-9 text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring"
+            className="mt-4 inline-flex min-h-11 items-center text-sm md:min-h-9"
           >
             Return to Today →
-          </Link>
+          </TextLink>
         </section>
       ) : (
         <>
@@ -428,11 +428,11 @@ export default async function HrCalendarPage({
                     <Button type="submit" className="min-h-11 md:min-h-9">Go to date</Button>
                   </form>
                 </Disclosure>
-                {!noCollegeAccess && grants.length<=1 ? <Link
+                {!noCollegeAccess && grants.length<=1 ? <ButtonLink variant="secondary"
                   href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
-                  className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9 md:w-auto">
+                  className="w-full md:w-auto">
                   Export calendar CSV
-                </Link> : null}
+                </ButtonLink> : null}
               </div>
             </div>
           </section>
@@ -474,11 +474,11 @@ export default async function HrCalendarPage({
                         <RecruiterCalendarEventCard key={event.id} event={event} />
                       ))}
                       {day.resultsDue.map((item) => (
-                        <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                          className="inline-flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface p-4 text-sm text-primary-text md:min-h-9 focus-ring">
+                        <TextLink key={"due:"+item.id} href={hrResultsDueHref(item.jobId,item.id)}
+                          className="inline-flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface p-4 text-sm md:min-h-9">
                           <strong className="block">Results due · {item.roundName}</strong>
                           <span className="block max-w-full break-words text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</span>
-                        </Link>
+                        </TextLink>
                       ))}
                     </div>
                   </article>
@@ -551,7 +551,7 @@ export default async function HrCalendarPage({
                           if (!href) return null;
 
                           return (
-                            <Link
+                            <TextLink variant="bare"
                               key={event.id}
                               href={href}
                               title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
@@ -566,17 +566,17 @@ export default async function HrCalendarPage({
                               <span className="mt-1 block break-words">
                                 {event.title}
                               </span>
-                            </Link>
+                            </TextLink>
                           );
                         })}
 
                         {resultsDue.map((item) => (
-                          <Link key={"due:" + item.id} href={hrResultsDueHref(item.jobId,item.id)}
+                          <TextLink variant="bare" key={"due:" + item.id} href={hrResultsDueHref(item.jobId,item.id)}
                             title={"Results due at " + eventTime(item.dueAt) + " IST"}
                             className={styles["event"]+" "+styles["due"]}>
                             <span className="block font-semibold">Results due · {eventTime(item.dueAt)}</span>
                             <span className="mt-1 block break-words">{item.roundName}</span>
-                          </Link>
+                          </TextLink>
                         ))}
                         {events.length === 0 && resultsDue.length === 0 ? (
                           <span className="text-xs text-muted-foreground">
@@ -635,13 +635,13 @@ export default async function HrCalendarPage({
                     ].sort((left,right)=>left.when-right.when).map(entry=>
                       entry.kind==="EVENT"?
                         <RecruiterCalendarEventCard key={"event:"+entry.event.id} event={entry.event}/>:
-                        <Link key={"due:"+entry.item.id}
+                        <ButtonLink variant="secondary" key={"due:"+entry.item.id}
                           href={hrResultsDueHref(entry.item.jobId,entry.item.id)}
-                          className="block min-w-0 rounded-[var(--lms-control-radius)] border-b border-[var(--lms-canvas-border)] px-3 py-3 transition-colors hover:bg-[var(--lms-primary-subtle)] focus-ring">
+                          className="block min-w-0">
                           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due · {eventTime(entry.item.dueAt)} IST</p>
                           <Heading level={4} className="mt-1 text-foreground">{entry.item.roundName}</Heading>
                           <p className="mt-1 text-sm text-body">{entry.item.jobTitle}</p>
-                        </Link>
+                        </ButtonLink>
                     )}
                   </div>
                 </div>

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { Dialog } from "@/components/ui/dialog";
-import Link from "next/link";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
 import { ProjectTaskComments } from "./project-task-comments";
 import { projectTaskVisibleFacts } from "@/modules/projects/project-task-visible-facts-model";
@@ -16,6 +15,7 @@ import { learnerBoardTaskHref, type LearnerTaskBoardUrlFilters } from "@/modules
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export function LearnerBoardTaskDetailDialog({
   projectId, filters, task, sprintTitle, currentMembershipId, projectStatus, assigneeName, commentCount=0, submissionUrl=null,
@@ -62,9 +62,9 @@ export function LearnerBoardTaskDetailDialog({
         </div> : null}
       </dl>
       <div className="mt-[var(--lms-space-4)] flex min-w-0 justify-stretch sm:justify-end">
-        <Link href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
+        <ButtonLink variant="primary" href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
           onClick={() => { navigatingRef.current.startNavigation(); }}
-          className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-center text-[14px] font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto">Open task actions in Board</Link>
+          className="w-full min-w-0 sm:w-auto">Open task actions in Board</ButtonLink>
       </div>
       <Heading level={3} size="sm" className="mt-[var(--lms-space-5)]">Submission</Heading>
       <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-body">

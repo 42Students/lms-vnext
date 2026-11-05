@@ -13,6 +13,8 @@ import { collegeLessonQuerySchema } from "@/modules/courses/college-learning-dir
 import { listCollegeLessons } from "@/modules/courses/college-learning-directory-service";
 import { lessonsCsvHref } from "@/modules/courses/college-lessons-export-model";
 import {CollegeLessonsCapture} from "@/components/courses/college-lessons-last-good";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -87,7 +89,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       <PageHeader title="Lessons" />
       <ErrorState title="Invalid lesson filters"
         description="The search, lesson status or page is invalid. No lesson data was loaded."
-        action={<Link href="/college/lessons" className="lms-inline-link inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>} />
+        action={<TextLink href="/college/lessons" className="inline-flex min-h-11 items-center text-[13px] md:min-h-9">Clear filters</TextLink>} />
     </div>
   );
   const authoringOptions=await getCollegeLessonAuthoringOptions(context);
@@ -95,8 +97,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   return <div className="max-w-full min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
     <LessonPageSizePreference storageKey="college-lessons-page-size" />
     <PageHeader title="Lessons" description="Find lessons by course or lesson name."
-      actions={<Link href="/college/courses"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9">Course offerings</Link>} />
+      actions={<ButtonLink variant="secondary" href="/college/courses">Course offerings</ButtonLink>} />
     <Tabs ariaLabel="Courses & Content" value="lessons" renderPanel={false} items={[
       {value:"courses",label:"Courses",href:"/college/courses"},
       {value:"lessons",label:"Lessons",href:"/college/lessons"},
@@ -115,14 +116,14 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
     prepend={<div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-start">
 
     <CollegeLessonCreateControl options={authoringOptions} />
-    <Link prefetch={false} download href={lessonsCsvHref(parsed.data)}
-      className="inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+    <ButtonLink variant="secondary" prefetch={false} download href={lessonsCsvHref(parsed.data)}
+      className="w-full md:w-auto">
       Export filtered lessons CSV
-    </Link>
-    <Link href="/college/live-classes"
-      className="inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+    </ButtonLink>
+    <ButtonLink variant="secondary" href="/college/live-classes"
+      className="w-full md:w-auto">
       View college live classes
-    </Link>
+    </ButtonLink>
     </div>}
   />
     </CollegeLessonsCapture>

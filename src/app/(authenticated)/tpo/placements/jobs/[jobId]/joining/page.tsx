@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -10,6 +9,8 @@ import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getTpoJoiningTracker } from "@/modules/placements/tpo-joining-tracker-service";
 import { tpoJoiningTrackerQuerySchema } from "@/modules/placements/tpo-joining-tracker-model";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function TpoDriveJoiningPage({
   params,
@@ -47,10 +48,10 @@ export default async function TpoDriveJoiningPage({
         eyebrow="TPO · Drive offers"
         title={tracker.job.title + " · Joining outcomes"}
         description="Record joining outcomes only for persisted accepted offers. All edits reuse the audited joining-history API."
-        actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(tracker.job.id)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-ring md:w-auto md:min-h-9">
+        actions={<ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(tracker.job.id)}
+          className="w-full md:w-auto">
           ← Back to drive workspace
-        </Link>}
+        </ButtonLink>}
       />
       <section aria-label="Joining summary" className="grid min-w-0 max-w-full overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface grid-cols-2 xl:grid-cols-5">
         {labels.map(([name, value]) => (
@@ -71,11 +72,11 @@ export default async function TpoDriveJoiningPage({
                 <div className="min-w-0 flex-1">
                   <Heading level={2} size="base" className="break-words leading-6 text-[var(--lms-heading)]">{item.displayName}</Heading>
                   <p className="mt-1 text-sm text-body leading-[22px]">{item.roleTitle}</p>
-                  <Link
+                  <TextLink
                     href={"/tpo/students/" + encodeURIComponent(item.membershipId) + "/history"}
-                    className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
+                    className="mt-1 inline-flex min-h-11 items-center text-sm md:min-h-9">
                     Learner placement history →
-                  </Link>
+                  </TextLink>
                 </div>
                 <StatusBadge tone={item.joiningStatus==="JOINED"?"success":item.joiningStatus==="DID_NOT_JOIN"?"error":item.joiningStatus==="DEFERRED"?"warning":"info"}>
                   {item.joiningStatus.replaceAll("_", " ")}

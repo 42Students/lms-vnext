@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta,
   marketingPageMetadata,
 } from "@/components/marketing/marketing-layout";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 const site = "https://42lms.com";
 // The legacy AI-title has been intentionally retired with the AI features.
@@ -136,10 +136,10 @@ export default function HomeMarketingPage() {
               {audience.outcomes.map(outcome => <li key={outcome} className={"rounded-full px-3 py-1.5 text-xs font-semibold " +
                 (index === 1 ? "bg-[color:color-mix(in_srgb,var(--lms-white)_15%,transparent)] text-[color:var(--lms-on-primary)]" : "bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary-hover)]")}>{outcome}</li>)}
             </ul>
-            <Link href={audience.href} className={"mt-7 inline-flex min-h-11 self-start items-center justify-center rounded-full px-5 font-semibold focus-ring " +
+            <TextLink variant="bare" href={audience.href} className={"mt-7 inline-flex min-h-11 self-start items-center justify-center rounded-full px-5 font-semibold focus-ring " +
               (index === 1 ? "bg-surface text-[color:var(--lms-brand-dark)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-[color:var(--lms-white)]" : "border border-[color:var(--lms-button-primary)] text-[color:var(--lms-button-primary)] hover:bg-[color:var(--lms-primary-subtle)]")}>
               For {audience.title}<span aria-hidden="true" className="ml-2">↗</span>
-            </Link>
+            </TextLink>
           </article>)}
         </div>
       </div>

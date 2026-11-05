@@ -1,7 +1,6 @@
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,6 +10,7 @@ import { getOwnLearnerApplicationCompany } from "@/modules/placements/learner-ap
 import { placementApplicationIdSchema } from "@/modules/placements/validation";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function LearnerApplicationCompanyPage({
   params,
@@ -31,8 +31,8 @@ export default async function LearnerApplicationCompanyPage({
       <PageHeader title="Company profile" />
       <ErrorState title="Could not load company profile"
         description="The company information for your application is temporarily unavailable."
-        action={<Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)+"/company"}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry company profile</Link>} />
+        action={<TextLink href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)+"/company"}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry company profile</TextLink>} />
     </div>;
   }
   if (!company) notFound();
@@ -42,8 +42,8 @@ export default async function LearnerApplicationCompanyPage({
 
       <PageHeader title={company.companyName} description="Read-only company profile from your own placement application." />
       <nav aria-label="Application navigation" className="flex min-w-0 flex-wrap items-center gap-2">
-        <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(company.applicationId)}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-ring">← Back to application</Link>
+        <TextLink href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(company.applicationId)}
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">← Back to application</TextLink>
       </nav>
 
       <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={company.companyStatus === "ACTIVE" ? "success" : "neutral"}>

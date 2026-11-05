@@ -8,7 +8,6 @@ import styles from "./learner-quiz-attempt.module.css";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Radio } from "@/components/ui/radio";
 
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { learnerQuizReviewQuestionNotice } from "@/modules/courses/learner-quiz-review-question-availability-model";
@@ -39,6 +38,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { friendlyApiError } from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type QuizPayload = {
   quiz: {
@@ -420,7 +420,7 @@ export function LearnerQuizAttempt() {
           <Button onClick={() => void load()} className="min-h-11 md:min-h-9">Try Again</Button>
           <Button type="button" variant="secondary" onClick={()=>window.location.reload()}
             className="min-h-11 md:min-h-9">Refresh page</Button>
-          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-[var(--lms-control-height)]">Back to quizzes</Link>
+          <TextLink href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm md:min-h-[var(--lms-control-height)]">Back to quizzes</TextLink>
         </div>
       </div>
     );
@@ -461,9 +461,9 @@ export function LearnerQuizAttempt() {
         {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt)) ? (
           <Alert tone="info" className="mt-6">
             <p className="text-sm text-body leading-[22px]">{learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))}</p>
-            <Link href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+            <TextLink href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">
               Return to All Quizzes
-            </Link>
+            </TextLink>
           </Alert>
         ) : null}
         {latestAttempt?<div role="group" aria-label="Quiz attempt results"
@@ -576,9 +576,9 @@ export function LearnerQuizAttempt() {
       </Drawer>
       <div className="grid min-w-0 md:grid-cols-[220px_minmax(0,1fr)]">
         <aside className="hidden min-w-0 border-r border-border p-4 md:block">
-          <Link href={returnTo} className="inline-flex min-h-11 w-[132px] items-center justify-center border border-border text-sm font-semibold text-primary-text">
+          <TextLink href={returnTo} className="inline-flex min-h-11 w-[132px] items-center justify-center border border-border text-sm">
             42 LMS
-          </Link>
+          </TextLink>
           <p className="mt-4 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground leading-[20px]">Question Status</p>
           <div className="mt-3 grid gap-2">
             {questions.map((question, index) => (

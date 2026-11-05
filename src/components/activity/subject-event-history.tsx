@@ -1,8 +1,8 @@
-import Link from "next/link";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { listActivityEvents } from "@/modules/activity/service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Reusable, tenant-authorized event trail for any record drawer or page.
  * The service enforces membership scope before returning the event rows.
@@ -30,9 +30,9 @@ export async function SubjectEventHistory({
   return <section aria-label="Record history" className="min-w-0 space-y-3 border-t border-border pt-5">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Record history</Heading>
-      <Link href={historyHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+      <TextLink href={historyHref} className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         View full history
-      </Link>
+      </TextLink>
     </div>
     {!result.ok ? <p role="alert" className="text-sm text-body">
       Activity history could not be loaded. Retry from the full history link.
@@ -41,10 +41,10 @@ export async function SubjectEventHistory({
     </p> : <ol className="divide-y divide-border border-y border-border">
       {result.value.items.map(item => <li key={item.event.id}
         className="min-w-0 space-y-1 px-2 py-3 text-sm">
-        <Link href={"/activity/"+encodeURIComponent(item.event.id)}
-          className="block break-words font-semibold text-primary-text hover:underline">
+        <TextLink href={"/activity/"+encodeURIComponent(item.event.id)}
+          className="block break-words">
           {item.event.summary}
-        </Link>
+        </TextLink>
         <p className="text-xs text-muted-foreground">
           {item.actor?.displayName ?? "System"} · <time dateTime={item.event.occurredAt.toISOString()}>
             {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.event.occurredAt)} IST

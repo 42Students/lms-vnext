@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { resolveTemplateCollegeLegacyId, TemplateCollegeReadError } from "@/modules/projects/template-college-availability-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -22,6 +21,8 @@ import { projectTemplateIdSchema } from "@/modules/projects/validation";
 import { templateCollegeAvailabilityQuerySchema, templateCollegeAvailabilityHref } from "@/modules/projects/template-college-availability-model";
 import { listSuperAdminTemplateCollegeAvailability } from "@/modules/projects/template-college-availability-service";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function TemplateCollegeAvailabilityPage({ params, searchParams }: {
   params: Promise<{ templateId: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -52,8 +53,8 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="College availability" />
     <ErrorState title="Invalid college filters" description="Review the search, status and page."
-      action={<Link href={templateCollegeAvailabilityHref(id,{})}
-        className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4 w-full md:w-auto min-h-11 md:min-h-9">Clear filters</Link>} />
+      action={<TextLink href={templateCollegeAvailabilityHref(id,{})}
+        className="w-full md:w-auto min-h-11 md:min-h-9">Clear filters</TextLink>} />
   </div>;
   let data;
   try { data = await listSuperAdminTemplateCollegeAvailability(context, id, parsed.data); }
@@ -69,24 +70,23 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       <PageHeader title="College availability" />
       <ErrorState title={error instanceof TemplateCollegeReadError && error.source==="TEMPLATE" ? "Template could not be loaded" : "College assignments could not be loaded"}
         description="A required source could not be read. No availability is inferred until it succeeds."
-        action={<Link href={templateCollegeAvailabilityHref(id,parsed.data)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry loading colleges</Link>} />
+        action={<TextLink href={templateCollegeAvailabilityHref(id,parsed.data)} className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto">Retry loading colleges</TextLink>} />
     </div>;
   }
   const statuses = ["ALL", "ASSIGNED", "UNASSIGNED"] as const;
   return <div className="min-w-0 space-y-4">
     <div className="min-w-0">
-      <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline-offset-4 hover:underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">← Back to templates</Link>
+      <TextLink href="/admin/projects/templates" className="inline-flex min-h-11 items-center text-sm md:min-h-9">← Back to templates</TextLink>
       <PageHeader title={data.template.title}
         description="Select the colleges that can use this template."
-        actions={<Link href={templateCollegeAvailabilityHref(id,data.query)}
-          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9">
+        actions={<ButtonLink variant="secondary" href={templateCollegeAvailabilityHref(id,data.query)}>
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
             stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
             <path d="M20 7v5h-5"/><path d="M4 17v-5h5"/>
             <path d="M5 10a8 8 0 0 1 14-3M19 14a8 8 0 0 1-14 3"/>
           </svg>
           Refresh
-        </Link>} />
+        </ButtonLink>} />
     </div>
     <SuperAdminTemplateTabs templateId={id} active="colleges" />
     <p className="text-xs text-muted-foreground">
@@ -129,7 +129,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
               assignedToSelectedCollege={Boolean(row.assignment)} allowGlobalActions={false}/>:null},
       ]}
       empty={<EmptyState title="No matching colleges" description="No active colleges match the filters in the current safety scope."
-        action={<Link href={templateCollegeAvailabilityHref(id,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>}
+        action={<TextLink href={templateCollegeAvailabilityHref(id,{})} className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Clear filters</TextLink>}/>}
     />
     <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateCollegeAvailabilityHref(id,{...data.query,page})} label="College availability pages" />
   </div>;

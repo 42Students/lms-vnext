@@ -1,5 +1,4 @@
 import { StatusBadge } from "@/components/ui/status-badge";
-import Link from "next/link";
 import {listTpoTeamAsks} from "@/modules/placements/tpo-team-asks-service";
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
@@ -27,6 +26,8 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 /** User-facing acknowledgements belong to the interactive action controls,
  * not to this server-rendered conversation snapshot. Their verified response
  * outcomes map ADDED/OK/LEFT for participant/follow/mute/leave/topic actions
@@ -52,13 +53,13 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  if(!result)return <div className="min-w-0 space-y-4">
    <PageHeader title="Team conversation"/>
    <ErrorState title="Could not load conversation" description="Previous messages were not changed."
-     action={<Link href={"/tpo/team/"+encodeURIComponent(threadId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>}/>
+     action={<TextLink href={"/tpo/team/"+encodeURIComponent(threadId)} className="inline-flex min-h-11 items-center">Retry</TextLink>}/>
   </div>;
  if(result.status==="NOT_FOUND")notFound();
  if(result.status==="NOT_REGISTERED")return <div className="min-w-0 space-y-4">
    <PageHeader title="Conversations unavailable"/>
    <p role="status">Private messaging tables are not registered.</p>
-   <Link href="/tpo/team" className="inline-flex min-h-11 md:min-h-9 items-center text-link lms-inline-link">Back to team</Link>
+   <TextLink href="/tpo/team" className="inline-flex min-h-11 md:min-h-9 items-center">Back to team</TextLink>
  </div>;
  const preferences=await getTpoTeamThreadPreferences(context,parsed.data);
  const asks=await listTpoTeamAsks(context,parsed.data).catch(()=>({status:"FAILED" as const,items:[]}));
@@ -83,12 +84,12 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  return <div className="min-w-0 space-y-4">
   <PageHeader title={result.thread.topic}
    description={"With "+result.thread.counterpartName+" · Private topic"}
-   actions={<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 w-full items-center justify-center text-link lms-inline-link sm:w-auto md:min-h-9">All conversations</Link>}/>
+   actions={<TextLink href="/tpo/team?tab=conversations" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9">All conversations</TextLink>}/>
   <div className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3">
    <StatusBadge tone="neutral">Private topic</StatusBadge>
    <StatusBadge tone="info">2 participants</StatusBadge>
    <StatusBadge tone="neutral">{result.thread.kind.replaceAll("_"," ")}</StatusBadge>
-   <Link href={"/tpo/messages?tab=team&c="+encodeURIComponent(threadId)} className="ml-auto hidden min-h-9 items-center text-sm font-semibold text-link underline lg:inline-flex">Show beside conversations</Link>
+   <TextLink href={"/tpo/messages?tab=team&c="+encodeURIComponent(threadId)} className="ml-auto hidden min-h-9 items-center text-sm lg:inline-flex">Show beside conversations</TextLink>
   </div>
   <TpoLiveRefresh intervalMs={30000}/>
   <TpoTeamOpenRead threadId={result.thread.id}/>
@@ -120,8 +121,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <aside aria-label="Decisions here" className="space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
     <Heading level={2} size="sm">Decided:</Heading>
     {result.messages.filter(message=>message.decision&&!message.removed).slice(-5).map(message=>
-     <Link key={message.id} href={"#team-message-"+message.id}
-      className="block truncate text-sm text-link underline">{message.body}</Link>)}
+     <TextLink key={message.id} href={"#team-message-"+message.id}
+      className="block truncate text-sm">{message.body}</TextLink>)}
    </aside>:null}
   {result.messages.length===0?<EmptyState title="No messages in this thread yet." description="Reply privately to start the conversation."/>:null}
   <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="min-w-0 space-y-3 border-t border-border pt-4">
@@ -158,16 +159,14 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <TpoTeamMessageScroll {...(highlightId !== undefined ? {highlightId} : {})}/>
   <nav aria-label="Team message history pages" className="flex flex-wrap items-center gap-3 text-sm">
    <span className="text-body">Page {result.page} of {result.pages}</span>
-   {result.page < result.pages ? <Link
-    href={"/tpo/team/"+result.thread.id+"?page="+(result.page+1)}
-    className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
+   {result.page < result.pages ? <ButtonLink variant="secondary"
+    href={"/tpo/team/"+result.thread.id+"?page="+(result.page+1)}>
     Older messages
-   </Link> : null}
-   {result.page > 1 ? <Link
-    href={"/tpo/team/"+result.thread.id+"?page="+(result.page-1)}
-    className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-link">
+   </ButtonLink> : null}
+   {result.page > 1 ? <ButtonLink variant="secondary"
+    href={"/tpo/team/"+result.thread.id+"?page="+(result.page-1)}>
     Newer messages
-   </Link> : null}
+   </ButtonLink> : null}
   </nav>
   <TpoTeamReplyComposer threadId={result.thread.id} actorUserId={context.user.id}
    kind={result.thread.kind} mentionMembers={eligibleAssignees.map(member=>({

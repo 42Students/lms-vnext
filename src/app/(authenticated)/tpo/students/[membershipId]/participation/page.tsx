@@ -1,5 +1,4 @@
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -13,6 +12,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoLearnerParticipation } from "@/modules/placements/tpo-participation-service";
 import {tpoStudentJourneyLinks} from "@/modules/placements/tpo-student-journey-links-model";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function TpoLearnerParticipationPage({
   params,
@@ -37,12 +37,11 @@ export default async function TpoLearnerParticipationPage({
           " · Member-level eligibility override for the current college."
         }
         actions={
-          <Link
+          <ButtonLink variant="secondary"
             href="/tpo/students"
-            className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-ring md:min-h-9"
           >
             Back to Students
-          </Link>
+          </ButtonLink>
         }
       />
 
@@ -81,8 +80,8 @@ export default async function TpoLearnerParticipationPage({
       </section>
 
       <nav aria-label="Student placement journey" className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-        <Link href={journey.history} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">View placement history and round outcomes →</Link>
-        <Link href={journey.roster} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">Student roster</Link>
+        <ButtonLink variant="secondary" href={journey.history} className="w-full sm:w-auto">View placement history and round outcomes →</ButtonLink>
+        <ButtonLink variant="secondary" href={journey.roster} className="w-full sm:w-auto">Student roster</ButtonLink>
       </nav>
 
       <section className="border-b border-border py-4">

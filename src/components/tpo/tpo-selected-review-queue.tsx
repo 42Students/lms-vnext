@@ -1,9 +1,9 @@
 "use client";
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
-import Link from "next/link";
 import {tpoReviewOneByOneHref} from "@/modules/placements/tpo-bulk-follow-up-model";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 export function TpoSelectedReviewQueue({jobId,rows}:{jobId:string;rows:readonly {id:string;label:string}[]}){
  const [open,setOpen]=useState(false),[index,setIndex]=useState(0);
  const current=rows[Math.min(index,Math.max(rows.length-1,0))];
@@ -18,10 +18,9 @@ export function TpoSelectedReviewQueue({jobId,rows}:{jobId:string;rows:readonly 
    </div>
    <p className="break-words text-sm">{current.label}</p>
    <p className="text-xs text-muted-foreground">Open the applicant&apos;s authorized detail to make a decision. Return to this tab to continue through the selected queue.</p>
-   <Link href={tpoReviewOneByOneHref(jobId,current.id)} rel="noopener noreferrer"
-    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary focus-ring md:min-h-9">
+   <ButtonLink variant="primary" href={tpoReviewOneByOneHref(jobId,current.id)} rel="noopener noreferrer">
     Open selected applicant
-   </Link>
+   </ButtonLink>
    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap">
     <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={index===0} onClick={()=>setIndex(index-1)}
      >Previous</Button>

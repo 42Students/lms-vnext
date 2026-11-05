@@ -5,7 +5,6 @@ import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -18,6 +17,7 @@ import {
 import { getMentorReviewHistory } from "@/modules/projects/mentor-review-history-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Search = { projectState?:string|string[];window?:string|string[];order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
@@ -38,7 +38,7 @@ export default async function MentorReviewHistoryPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title="Delivery review history" description="Invalid review history filters" />
-    <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <TextLink href="/mentor/review-history" className="inline-flex min-h-11 items-center">Clear filters</TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
@@ -46,10 +46,10 @@ export default async function MentorReviewHistoryPage({
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Delivery review history"
       description="Recorded final-delivery review decisions for projects currently assigned to you."
-      actions={<Link data-unskin="" href="/mentor/reviews"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+      actions={<TextLink data-unskin="" href="/mentor/reviews"
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Pending reviews
-      </Link>} />
+      </TextLink>} />
     {!data.enabled ?
       <section role="status" className="border-b border-border pb-4 text-sm text-body">
         Projects access is disabled for this membership. No review history was loaded.
@@ -97,7 +97,7 @@ export default async function MentorReviewHistoryPage({
             </Label>
             </div>
           </Disclosure>
-          {(data.query.decision!=="ALL"||Boolean(data.query.search)||Boolean(data.query.projectId)||data.query.projectState!=="ALL"||data.query.version!==undefined||data.query.order!=="NEWEST"||data.query.window!=="ALL")?<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9 focus-ring">Clear</Link>:null}
+          {(data.query.decision!=="ALL"||Boolean(data.query.search)||Boolean(data.query.projectId)||data.query.projectState!=="ALL"||data.query.version!==undefined||data.query.order!=="NEWEST"||data.query.window!=="ALL")?<TextLink href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear</TextLink>:null}
         </form>
       </FilterBar>
 
@@ -106,7 +106,7 @@ export default async function MentorReviewHistoryPage({
       </p>
       {data.items.length===0
         ? <EmptyState title="No recorded delivery reviews"
-            description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." action={<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Clear</Link>} />
+            description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." action={<TextLink href="/mentor/review-history" className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>} />
         : <ol aria-label="mentor review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
           <li key={item.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -121,10 +121,10 @@ export default async function MentorReviewHistoryPage({
                 dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
               }).format(item.reviewedAt)} IST
             </p>
-            <Link href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=delivery"}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring">
+            <TextLink href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=delivery"}
+              className="mt-3 inline-flex min-h-11 items-center text-sm">
               Open authorized delivery history →
-            </Link>
+            </TextLink>
           </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Delivery history pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewHistoryHref({...data.query,page})}/>:null}
     </>}

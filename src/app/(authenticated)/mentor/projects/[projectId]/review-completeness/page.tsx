@@ -1,5 +1,4 @@
 import { Pagination } from "@/components/ui/pagination";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
@@ -9,6 +8,7 @@ import {getMentorProjectReviewCompleteness}
 import {mentorReviewCompletenessHref,mentorReviewCompletenessQuerySchema}
   from "@/modules/projects/mentor-review-completeness-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Params={page?:string|string[]};
 export default async function MentorProjectReviewCompletenessPage({
@@ -20,19 +20,19 @@ export default async function MentorProjectReviewCompletenessPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title="Invalid review history selector" />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">
+    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-9">
       Return to assigned projects
-    </Link>
+    </TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorProjectReviewCompleteness(context,parsed.data);
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project Overview" title="Delivery review completeness"
       description={data.projectTitle??"Current assigned project"}
-      actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+      actions={<TextLink data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Delivery workspace
-      </Link>} />
+      </TextLink>} />
     {!data.enabled?<section role="status"
       className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Delivery history was not loaded.
@@ -42,7 +42,7 @@ export default async function MentorProjectReviewCompletenessPage({
         {" · "}Project state: {data.projectStatus}
       </p>
       {data.items.length===0?<EmptyState title="No registered delivery versions"
-        description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history." action={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Delivery workspace</Link>}/>
+        description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history." action={<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center md:min-h-9">Delivery workspace</TextLink>}/>
       :<ol aria-label="Recorded delivery review versions" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
           <div className="flex flex-wrap items-center justify-between gap-3">

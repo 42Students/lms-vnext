@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {listSuperAdminGlobalCourses} from "@/modules/courses/super-admin-global-course-directory";
 import { AdminCourseOverview } from "@/components/courses/admin-course-overview";
@@ -20,6 +19,8 @@ import {AdminCoursesLastGood} from "@/components/courses/admin-courses-last-good
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[];pageSize?:string|string[];create?:string|string[]}>}) {
   const context =
@@ -84,9 +85,9 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         ) : (
           <Banner tone="warning" role="status">
             Progress policy could not be loaded. The stored value has not changed.
-            <Link href="/admin/courses" className="ml-2 font-semibold text-primary-text underline">
+            <TextLink href="/admin/courses" className="ml-2">
               Retry loading progress policy
-            </Link>
+            </TextLink>
           </Banner>
         )}
         <section aria-label="Read-only authorized course catalogue"
@@ -106,10 +107,10 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
           </form>
           {!valid?<ErrorState title="Invalid course filters"
             description="Use up to 100 search characters and a positive page number."
-            action={<Link href="/admin/courses" className="font-semibold text-primary-text underline">Clear filters</Link>}/>:
+            action={<TextLink href="/admin/courses">Clear filters</TextLink>}/>:
             !catalogue.ok||!catalogue.value?<ErrorState title="Course catalogue unavailable"
               description="Could not verify the current authorized course catalogue."
-              action={<Link href={catalogueHref(Number(rawPage))} className="font-semibold text-primary-text underline">Retry</Link>}/>:
+              action={<TextLink href={catalogueHref(Number(rawPage))}>Retry</TextLink>}/>:
             catalogue.value.items.length===0?<EmptyState title="No courses found" description="Try another search or select a college."/>:
             <>
               <div className="min-w-0 overflow-x-auto">
@@ -131,10 +132,8 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
               <nav aria-label="Course catalogue pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
                 <span role="status">Page {catalogue.value.page} · {catalogue.value.total} matching courses</span>
                 <div className="flex gap-3">
-                  {catalogue.value.page>1?<Link href={catalogueHref(catalogue.value.page-1)}
-                    className="font-semibold text-primary-text underline">Previous</Link>:null}
-                  {catalogue.value.hasMore?<Link href={catalogueHref(catalogue.value.page+1)}
-                    className="font-semibold text-primary-text underline">Next</Link>:null}
+                  {catalogue.value.page>1?<TextLink href={catalogueHref(catalogue.value.page-1)}>Previous</TextLink>:null}
+                  {catalogue.value.hasMore?<TextLink href={catalogueHref(catalogue.value.page+1)}>Next</TextLink>:null}
                 </div>
               </nav>
             </>}
@@ -160,7 +159,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       ]}
     />
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
-      action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+      action={<TextLink href="/admin/courses" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>}/>
   </div>;
   const {catalogueQuery,duplicateCourseId,openCreateCourse}=parsed;
   const workspaceResult=await getAdminCourseWorkspace(context,collegeId)
@@ -176,8 +175,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       <PageHeader
         title="Courses"
         description="Create New Course and manage Existing Courses."
-        actions={workspace?<Link href="/admin/courses?create=1#create-course"
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">Create New Course</Link>:undefined}
+        actions={workspace?<ButtonLink variant="primary" href="/admin/courses?create=1#create-course">Create New Course</ButtonLink>:undefined}
       />
       <Tabs ariaLabel="Course and content directories" value="courses" renderPanel={false}
           items={[
@@ -193,7 +191,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         />
       {!dependenciesResult.ok?<Banner tone="warning" role="status">
         Course lesson dependencies could not be verified. Archive decisions must be checked again before proceeding.
-        <Link href="/admin/courses" className="ml-2 font-semibold underline">Retry</Link>
+        <TextLink href="/admin/courses" className="ml-2">Retry</TextLink>
       </Banner>:null}
       <AdminCoursesLastGood key={context.user.id+":"+collegeId}
         available={Boolean(workspace)} retryHref="/admin/courses">

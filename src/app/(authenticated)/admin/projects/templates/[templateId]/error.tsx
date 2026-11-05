@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function SuperAdminTemplateDetailError({
   reset,
@@ -36,12 +36,11 @@ export default function SuperAdminTemplateDetailError({
               Retry
             </Button>
 
-            <Link
+            <ButtonLink variant="secondary"
               href="/admin/projects/templates"
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:bg-muted md:min-h-9 hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-ring"
             >
               Template catalogue
-            </Link>
+            </ButtonLink>
           </div>
         }
       />

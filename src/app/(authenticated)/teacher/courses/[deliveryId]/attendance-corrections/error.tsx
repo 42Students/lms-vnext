@@ -1,14 +1,14 @@
 "use client";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { ButtonLink } from "@/components/ui/button-link";
 export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void;}){
  return <section className="min-w-0 space-y-4">
   <PageHeader title="Correction availability could not load" />
   <p role="alert" className="max-w-xl text-sm leading-6 text-body">No request count can be inferred. Retry to check correction availability for this Section.</p>
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
    <Button onClick={reset}>Retry</Button>
-   <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9">Back to courses</Link>
+   <ButtonLink variant="secondary" href="/teacher/courses">Back to courses</ButtonLink>
   </div>
  </section>;
 }

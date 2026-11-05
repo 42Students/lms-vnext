@@ -1,7 +1,7 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function FacultyCourseError({ error, reset }: {
   error: Error & { digest?: string }; reset: () => void;
@@ -21,7 +21,7 @@ export default function FacultyCourseError({ error, reset }: {
       </p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
         {!accessDenied ? <Button onClick={reset}>Try again</Button> : null}
-        <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9">Back to Courses</Link>
+        <ButtonLink variant="secondary" href="/teacher/courses">Back to Courses</ButtonLink>
       </div>
     </section>
   );

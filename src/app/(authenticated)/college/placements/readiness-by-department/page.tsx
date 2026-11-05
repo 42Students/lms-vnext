@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeDepartmentInsights } from "@/components/college/college-department-insights";
@@ -9,6 +8,7 @@ import {
   departmentInsightsQueryFromSearchParams,
 } from "@/modules/admin-ui/college-department-insights-model";
 import { listCollegeDepartmentInsights } from "@/modules/admin-ui/college-department-insights-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegePlacementDepartmentReadinessPage({
   searchParams,
@@ -24,7 +24,7 @@ export default async function CollegePlacementDepartmentReadinessPage({
     <PageHeader title="Placement Evidence by Department" />
     <ErrorState title="Invalid department filters"
       description="The search or page value is invalid. No placement evidence was loaded."
-      action={<Link href="/college/placements/readiness-by-department" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 sm:w-auto md:min-h-9">Clear filters</Link>} />
+      action={<TextLink href="/college/placements/readiness-by-department" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9">Clear filters</TextLink>} />
   </div>;
   return <CollegeDepartmentInsights data={
     await listCollegeDepartmentInsights(context, "PLACEMENT_READINESS", parsed.data)

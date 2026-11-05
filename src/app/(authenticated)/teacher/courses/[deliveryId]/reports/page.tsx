@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
@@ -8,6 +7,7 @@ import { parseFacultyReportsHubLocation, facultyReportHubHref } from "@/modules/
 import { getFacultyReportsHub } from "@/modules/courses/faculty-reports-hub-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Search = { kind?: string | string[]; page?: string | string[] };
 const reportLink = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:text-[var(--lms-primary-text)] focus-ring sm:w-auto md:min-h-9";
@@ -25,7 +25,7 @@ export default async function FacultyReportsHubPage({
     return <section className="min-w-0 space-y-4">
       <PageHeader title="Invalid report filters" />
       <p role="alert" className="text-sm leading-[1.6] text-body">Use the Section reports page to choose valid filters.</p>
-      <Link href="/teacher/courses" className={reportLink}>Courses</Link>
+      <TextLink variant="bare" href="/teacher/courses" className={reportLink}>Courses</TextLink>
     </section>;
   }
   const data = await getFacultyReportsHub(await getCurrentRequestContext(), parsed.data);
@@ -40,7 +40,7 @@ export default async function FacultyReportsHubPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Section reports"
       description={data.rosterSize + " current eligible learners."}
-      actions={<Link href={root + "/home"} className={reportLink}>Section workspace</Link>} />
+      actions={<TextLink variant="bare" href={root + "/home"} className={reportLink}>Section workspace</TextLink>} />
 
     <section aria-label="Assessment summary" className="min-w-0 space-y-3">
       <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Assessment overview</Heading>
@@ -59,14 +59,14 @@ export default async function FacultyReportsHubPage({
           <p className="max-w-prose text-sm leading-[22px] text-body">
             {data.attendance.scheduled} scheduled sessions; {data.attendance.marked} marked. Unmarked attendance is unknown, not zero.
           </p>
-          <Link href={root + "/attendanceDetail"} className={textLink}>Open attendance report →</Link>
+          <TextLink variant="bare" href={root + "/attendanceDetail"} className={textLink}>Open attendance report →</TextLink>
         </div>
         <div className="min-w-0 space-y-2 border-b border-[var(--lms-canvas-border)] py-4">
           <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Published gradebook</Heading>
           <p className="max-w-prose text-sm leading-[22px] text-body">
             Published assessment counts are not a final grade. Individual published scores are shown only in the gradebook.
           </p>
-          <Link href={root + "/gradebook"} className={textLink}>Open gradebook →</Link>
+          <TextLink variant="bare" href={root + "/gradebook"} className={textLink}>Open gradebook →</TextLink>
         </div>
       </div>
     </section>
@@ -83,10 +83,10 @@ export default async function FacultyReportsHubPage({
           </Select>
         </Label>
         <Button type="submit" variant="primary" className="w-full sm:w-auto">Filter</Button>
-        {data.query.kind !== "ALL" ? <Link
+        {data.query.kind !== "ALL" ? <TextLink
           href={facultyReportHubHref({ ...data.query, kind: "ALL", page: 1 })}
-          className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
-        >Clear</Link> : null}
+          className="inline-flex min-h-11 items-center justify-center px-3 text-sm md:min-h-9"
+        >Clear</TextLink> : null}
       </form>
 
       {data.health.items.length === 0 ? <EmptyState title="No published assessment reports"
@@ -100,15 +100,15 @@ export default async function FacultyReportsHubPage({
               <p className="text-sm leading-[22px] text-body">{item.kind} · {item.responded}/{item.eligible} recorded responses · {item.outstanding} not responded</p>
               <p className="text-xs leading-5 text-muted-foreground">Graded average: {item.averagePercent === null ? "Unknown" : item.averagePercent + "%"}</p>
             </div>
-            <Link href={item.href} className={reportLink}>Open Section report →</Link>
+            <TextLink variant="bare" href={item.href} className={reportLink}>Open Section report →</TextLink>
           </article>)}
         </div>}
 
       {data.health.totalPages > 1 ? <nav aria-label="Report pages" className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-sm text-muted-foreground">Page {data.health.page} of {data.health.totalPages}</span>
         <div className="grid grid-cols-2 gap-2 sm:flex">
-          {data.health.page > 1 ? <Link href={facultyReportHubHref({ ...data.query, page: data.health.page - 1 })} className={reportLink}>Previous</Link> : <span aria-hidden="true" />}
-          {data.health.page < data.health.totalPages ? <Link href={facultyReportHubHref({ ...data.query, page: data.health.page + 1 })} className={reportLink}>Next</Link> : null}
+          {data.health.page > 1 ? <TextLink variant="bare" href={facultyReportHubHref({ ...data.query, page: data.health.page - 1 })} className={reportLink}>Previous</TextLink> : <span aria-hidden="true" />}
+          {data.health.page < data.health.totalPages ? <TextLink variant="bare" href={facultyReportHubHref({ ...data.query, page: data.health.page + 1 })} className={reportLink}>Next</TextLink> : null}
         </div>
       </nav> : null}
     </section>

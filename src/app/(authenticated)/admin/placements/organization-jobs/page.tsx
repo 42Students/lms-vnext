@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {searchOrganizationPlacementJobs} from "@/modules/placements/organization-job-search-service";
 import {PageHeader} from "@/components/ui/page-header";
@@ -10,6 +9,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 const hrefBase="/admin/placements/organization-jobs";
 type Row=Awaited<ReturnType<typeof searchOrganizationPlacementJobs>>["rows"][number];
@@ -67,7 +67,7 @@ export default async function SuperAdminOrganizationJobsPage({searchParams}:{
  ];
  return <section className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader title="Job search" description="Search placement drives within one authorized organization." />
-  <Link href="/admin/placements" className={actionClass}>← Back to Placements</Link>
+  <TextLink variant="bare" href="/admin/placements" className={actionClass}>← Back to Placements</TextLink>
   <form method="get" action={hrefBase}
    className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] bg-surface pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
    <Label stack className="min-w-0">
@@ -99,7 +99,7 @@ export default async function SuperAdminOrganizationJobsPage({searchParams}:{
    description="Enter an authorized organization ID to search its placement jobs. Search never combines unrelated organizations."/>:null}
   {loadError?<ErrorState title="Couldn't load jobs"
    description="Check your selected organization and search filters. No jobs from another organization are shown."
-   action={<Link className={actionClass} href={hrefBase}>Clear filters</Link>}/>:null}
+   action={<TextLink variant="bare" className={actionClass} href={hrefBase}>Clear filters</TextLink>}/>:null}
   {result?<div className="space-y-3">
    <p role="status" className="text-sm text-muted-foreground">
     {result.totalMatching} matching jobs · Page {result.page} of {result.totalPages}
@@ -111,8 +111,8 @@ export default async function SuperAdminOrganizationJobsPage({searchParams}:{
     className="flex flex-wrap items-center justify-between gap-3 text-sm">
     <span>Page {result.page} of {result.totalPages}</span>
     <div className="flex gap-2">
-     {result.page>1?<Link className={actionClass} href={searchHref(result.page-1)}>Previous</Link>:null}
-     {result.page<result.totalPages?<Link className={actionClass} href={searchHref(result.page+1)}>Next</Link>:null}
+     {result.page>1?<TextLink variant="bare" className={actionClass} href={searchHref(result.page-1)}>Previous</TextLink>:null}
+     {result.page<result.totalPages?<TextLink variant="bare" className={actionClass} href={searchHref(result.page+1)}>Next</TextLink>:null}
     </div>
    </nav>:null}
   </div>:null}

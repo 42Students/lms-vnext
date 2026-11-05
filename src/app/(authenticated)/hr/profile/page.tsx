@@ -3,7 +3,6 @@ import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { z } from "zod";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterProfileAccess } from "@/components/hr/recruiter-profile-access";
@@ -15,6 +14,7 @@ import { getRecruiterSelfProfile } from "@/modules/placements/recruiter-profile-
 import { getRecruiterSelfGrantOverview } from "@/modules/placements/recruiter-self-grants-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function HrProfilePage({ searchParams }: {
   searchParams?: Promise<{ collegeId?: string | string[] }>;
@@ -24,7 +24,7 @@ export default async function HrProfilePage({ searchParams }: {
    return <div className="min-w-0 space-y-4"><PageHeader title="Your Profile"/>
     <ErrorState title="Recruiter profile access denied"
       description="Your signed-in account has no active recruiter identity. Choose an authorized workspace or sign in with your recruiter work email."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Choose workspace</Link>}/>
+      action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Choose workspace</TextLink>}/>
    </div>;
   const search = searchParams ? await searchParams : {};
   const grants = context.recruiter.grants;
@@ -57,7 +57,7 @@ export default async function HrProfilePage({ searchParams }: {
    return <div className="min-w-0 space-y-4"><PageHeader title="Your Profile"/>
     <ErrorState title="We couldn't load your profile"
       description="Your recruiter profile or college access could not be verified. No other account details have been substituted."
-      action={<Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+      action={<TextLink href={retryHref} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
    </div>;
   const profile=profileResult.value;
   const allOverview=overviewResult.value;

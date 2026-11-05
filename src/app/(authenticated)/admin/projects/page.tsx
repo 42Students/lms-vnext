@@ -1,5 +1,4 @@
 import { FilterBar } from "@/components/ui/filter-bar";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -24,6 +23,8 @@ import { listAssignedProjectTemplates } from "@/modules/projects/template-servic
 import { isSuperAdmin } from "@/modules/identity/context";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function SuperAdminProjectsPage({
   searchParams,
@@ -62,7 +63,7 @@ export default async function SuperAdminProjectsPage({
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/admin/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}
+        action={<TextLink href="/admin/projects" className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto">Clear filters</TextLink>}
       />
     </div>;
   }
@@ -116,8 +117,8 @@ export default async function SuperAdminProjectsPage({
       </section>
       <ErrorState title="Failed to load project workspaces"
         description="Couldn't refresh workspaces. The workspace list could not be loaded. Your search and filters were not changed; retry to load the current scoped results."
-        action={<Link href={"/admin/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry loading workspaces</Link>}
+        action={<TextLink href={"/admin/projects"+(suffix?"?"+suffix:"")}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto">Retry loading workspaces</TextLink>}
       />
     </div>;
   }
@@ -147,18 +148,15 @@ export default async function SuperAdminProjectsPage({
             templateId:template.templateId,title:template.title,
             version:template.version,summary:template.summary,
           }))} />
-        <Link href="/admin/projects/workspaces/new"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+        <ButtonLink variant="secondary" href="/admin/projects/workspaces/new">
           Create workspace
-        </Link>
-        <Link href="/admin/projects/reassign-mentor"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href="/admin/projects/reassign-mentor">
           Bulk reassign mentor
-        </Link>
-        <Link href="/admin/projects/deleted"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href="/admin/projects/deleted">
           Deleted workspaces
-        </Link>
+        </ButtonLink>
         </div>} />
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
 

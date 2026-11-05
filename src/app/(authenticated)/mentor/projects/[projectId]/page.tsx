@@ -24,6 +24,7 @@ import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 
 export default async function MentorProjectPage({
@@ -112,7 +113,7 @@ export default async function MentorProjectPage({
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <div className="prototype-mentor-project-heading">
-        <Link href="/mentor/projects" className="prototype-mentor-back inline-flex min-h-11 items-center">‹ Projects</Link>
+        <TextLink variant="bare" href="/mentor/projects" className="prototype-mentor-back inline-flex min-h-11 items-center">‹ Projects</TextLink>
         <div className="prototype-mentor-title-line">
           <span className="prototype-mentor-team-avatar" aria-hidden="true">
             {workspace.project.title.trim().slice(0,2).toUpperCase() || "42"}
@@ -145,7 +146,7 @@ export default async function MentorProjectPage({
             </div>
             <div className="prototype-mentor-sprint-track">
               {timeline.map(sprint => (
-                <Link key={sprint.id} href={mentorBase+"?tab=sprints"} title={"Sprint "+sprint.sequence+" · "+sprint.status}
+                <TextLink variant="bare" key={sprint.id} href={mentorBase+"?tab=sprints"} title={"Sprint "+sprint.sequence+" · "+sprint.status}
                   aria-label={"Sprint "+sprint.sequence+" · "+sprint.status}
                   className={"prototype-mentor-sprint-segment prototype-mentor-sprint-"+(
                     sprint.status === "COMPLETED" ? "done" :
@@ -166,14 +167,14 @@ export default async function MentorProjectPage({
         aria-label="Next for you in this project">
         <strong>Next for you</strong>
         <span className="min-w-0 flex-1 text-sm">{headerAction.title}</span>
-        <Link href={headerAction.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Open action →</Link>
+        <TextLink href={headerAction.href} className="inline-flex min-h-11 items-center text-sm">Open action →</TextLink>
       </aside>:null}
       <MentorProjectTabs projectId={projectId}/>
       {tab && !(selectedTab in subtitles)
         ? <p role="status" className="border-b border-border py-3 text-sm text-muted-foreground">
             No project content available for this section.
-            <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=overview"}
-              className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Overview</Link>
+            <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=overview"}
+              className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Overview</TextLink>
           </p>
         : <section aria-label="Current project section" className="sr-only">
             <Heading level={2}>{breadcrumbTab[selectedTab??"overview"]??"Overview"}</Heading>
@@ -235,58 +236,58 @@ export default async function MentorProjectPage({
       />}
       </MentorProjectSectionCache>
       {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><Disclosure title="Additional project tools" className="min-w-0 [&>summary]:text-link"><div className="mt-3 grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-2 xl:grid-cols-3">
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+        <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9">
           Task board status
-        </Link>
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/risk-readiness"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+        </TextLink>
+        <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/risk-readiness"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9">
           At-risk &amp; readiness
-        </Link>
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+        </TextLink>
+        <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9">
           Delivery review summary
-        </Link>
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+        </TextLink>
+        <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9">
           Resource link directory
-        </Link>
-        <Link
+        </TextLink>
+        <TextLink
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/timeline"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9"
         >
           Release &amp; Sprint timeline
-        </Link>
-        <Link
+        </TextLink>
+        <TextLink
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-meetings"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9"
         >
           Team &amp; meeting log
-        </Link>
-        <Link
+        </TextLink>
+        <TextLink
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-history"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9"
         >
           Team membership history
-        </Link>
-        <Link
+        </TextLink>
+        <TextLink
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/closeout"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9"
         >
           Project closeout checklist
-        </Link>
-        <Link
+        </TextLink>
+        <TextLink
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/review-completeness"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9"
         >
           Delivery review completeness
-        </Link>
-        <Link
+        </TextLink>
+        <TextLink
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/activity-history"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9"
         >
           Recorded project activity →
-        </Link>
+        </TextLink>
       </div></Disclosure></section> : null}
     </div>
   );

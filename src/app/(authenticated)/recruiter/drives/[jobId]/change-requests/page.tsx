@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -8,6 +7,7 @@ import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-r
 import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import {PlacementsServiceError} from "@/modules/placements/errors";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function RecruiterChangeRequestsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
@@ -24,9 +24,9 @@ export default async function RecruiterChangeRequestsPage({params}:{params:Promi
    description={"Recruiter Drives · "+workspace.college.name+". Suggest changes, discuss them with the placement cell and review recorded decisions."}
    actions={<PageBackLink href={"/recruiter/drives/"+encodeURIComponent(jobId)} label="Back to drive"/>}/>
   <nav aria-label="Drive communication" className="flex flex-wrap gap-4 border-b border-border pb-3 text-sm font-semibold">
-   <Link href="/recruiter/drives" className="text-primary-text underline underline-offset-4">Drives</Link>
-   <Link href={"/recruiter/drives/"+encodeURIComponent(jobId)} className="text-primary-text underline underline-offset-4">Drive details</Link>
-   <Link href="/recruiter/messages" className="text-primary-text underline underline-offset-4">Discussion and messages</Link>
+   <TextLink href="/recruiter/drives">Drives</TextLink>
+   <TextLink href={"/recruiter/drives/"+encodeURIComponent(jobId)}>Drive details</TextLink>
+   <TextLink href="/recruiter/messages">Discussion and messages</TextLink>
   </nav>
   {!data.storageReady?<Alert tone="warning">
    {data.pendingMessage} The college cannot receive changes here until registration is complete.</Alert>:

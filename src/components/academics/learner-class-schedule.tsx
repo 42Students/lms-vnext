@@ -5,7 +5,6 @@ import calendarStyles from "@/components/placements/legacy-calendar-theme.module
 import styles from "./learner-class-schedule.module.css";
 
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@/components/ui/dialog";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
@@ -48,6 +47,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type CourseChoice = {
   deliveryId: string;
@@ -271,21 +271,21 @@ function EventCard({
 
   return event.deliveryId ? (
     <div className="overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface">
-      <Link
+      <TextLink variant="bare"
         href={`${courseBasePath}/${event.deliveryId}${courseBasePath === "/learn/courses" || courseBasePath === "/teacher/courses" ? "/home" : ""}`}
         className="block rounded-[var(--lms-control-radius)] outline-none transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-ring"
       >
         {content}
-      </Link>
+      </TextLink>
       <EventNotes description={event.description} />
       {courseBasePath === "/teacher/courses" ? (
-        <Link
+        <ButtonLink variant="secondary"
           href={`${courseBasePath}/${encodeURIComponent(event.deliveryId)}/attendanceDetail?sessionId=${encodeURIComponent(event.id)}`}
           aria-label={`Open attendance for ${event.title}`}
-          className="flex min-h-11 items-center border-t border-border px-3 py-2 text-xs font-semibold text-primary-text hover:bg-primary-subtle focus-ring md:min-h-9 rounded-[var(--lms-control-radius)] text-sm"
+          className="flex"
         >
           Open class attendance
-        </Link>
+        </ButtonLink>
       ) : null}
     </div>
   ) : (

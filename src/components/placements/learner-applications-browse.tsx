@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -39,6 +38,8 @@ import { Pagination } from "@/components/ui/pagination";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const PAGE_SIZE = 20;
 const viewOptions=[
@@ -257,9 +258,9 @@ export function LearnerApplicationsBrowse({
                   <strong className="break-words text-foreground">{row.title}</strong>
                   <span className="ml-2 text-xs text-muted-foreground">{row.detail}</span>
                 </span>
-                <Link href={row.href} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
+                <TextLink href={row.href} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
                   View application →
-                </Link>
+                </TextLink>
               </li>
             ))}
           </ul>
@@ -367,10 +368,10 @@ export function LearnerApplicationsBrowse({
           <LearnerPlacementJourney items={[]} />
           <div className="border-t border-border py-4">
             <p className="text-sm text-body">You haven't applied to a drive yet. Browse drives open to you.</p>
-            <Link href="/learn/my-placements/jobs"
-              className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
+            <TextLink href="/learn/my-placements/jobs"
+              className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
               Browse available drives →
-            </Link>
+            </TextLink>
           </div>
         </div>
       ) : emptyKind==="FILTERED_OUT" ? (
@@ -411,21 +412,20 @@ export function LearnerApplicationsBrowse({
         <div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           {selected ? (
             <>
-              {ownApplicationJobHref(selected.jobId) ? <Link
-                href={ownApplicationJobHref(selected.jobId)!}
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+              {ownApplicationJobHref(selected.jobId) ? <ButtonLink variant="secondary"
+                href={ownApplicationJobHref(selected.jobId)!}>
                 View drive
-              </Link> : null}
-              <Link
+              </ButtonLink> : null}
+              <ButtonLink variant="secondary"
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}`}
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto"
-              >Application detail</Link>
-              <Link
+                className="w-full md:w-auto"
+              >Application detail</ButtonLink>
+              <ButtonLink variant="secondary"
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/history`}
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto"
+                className="w-full md:w-auto"
               >
                 Full history
-              </Link>
+              </ButtonLink>
               <Button variant="secondary" type="button"
                   onClick={()=>{setPreviewFrameFailed(false);setCompanyPreviewId(selected.applicationId);}}>
                   What the company sees
@@ -446,13 +446,13 @@ export function LearnerApplicationsBrowse({
               {selectedWithdrawMode==="REQUEST"?"Ask to withdraw":"Withdraw"}
             </Button>
           ) : null}
-          <Link href={selectedAssessment?.href??"/learn/my-placements/assessments"}
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto">
+          <ButtonLink variant="secondary" href={selectedAssessment?.href??"/learn/my-placements/assessments"}
+            className="w-full md:w-auto">
             {selectedAssessment?"Open this assessment":"Assessments"}
-          </Link>
-          <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto">
+          </ButtonLink>
+          <ButtonLink variant="secondary" href={selectedInterview?.href??"/learn/my-placements/interviews"} className="w-full md:w-auto">
             {selectedInterview?"Open this interview":"Interviews"}
-          </Link>
+          </ButtonLink>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => {setDefaultCollapsed(true);updateQuery({applicationId:null});}}>Got it</Button>
         </div>
         {selected ? (
@@ -462,7 +462,7 @@ export function LearnerApplicationsBrowse({
               <p>{(selected as WithdrawalGrantItem).cancelledReason
                  ?"The placement cell said: "+(selected as WithdrawalGrantItem).cancelledReason
                  :"Review placement cell notices for any published reason. Your saved application history remains available."}</p>
-              <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-primary-text underline focus-visible:underline">College notices</Link>
+              <TextLink href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center">College notices</TextLink>
             </div>:selected.driveStatus==="CLOSED"?<p role="status" className="border-b border-[var(--lms-canvas-border)] py-3 text-sm text-body">This drive has closed. Previously recorded results remain visible.</p>:null}
             {selected.mayStaffOptOut && selected.staffOptOutUntil &&
               selected.staffOptOutUntil.getTime()>Date.now() ?
@@ -488,7 +488,7 @@ export function LearnerApplicationsBrowse({
             <section aria-label="Selection process" className="min-w-0 border-t border-border pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Heading level={3} className="text-foreground">Selection process</Heading>
-                <Link href="/learn/my-placements/schedule" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">See in schedule</Link>
+                <TextLink href="/learn/my-placements/schedule" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">See in schedule</TextLink>
               </div>
               <ol className="mt-3 space-y-2 text-sm text-body">
                 {scheduledRounds.filter(round=>round.applicationId===selected.applicationId)
@@ -509,11 +509,11 @@ export function LearnerApplicationsBrowse({
             <section aria-label="Application milestones" className="min-w-0 border-t border-border pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Heading level={3} size="sm" className="text-foreground">Recent recorded milestones</Heading>
-                <Link href={"/learn/my-placements/applications/"+
+                <TextLink href={"/learn/my-placements/applications/"+
                   encodeURIComponent(selected.applicationId)+"/history"}
-                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
                   Full saved history →
-                </Link>
+                </TextLink>
               </div>
               <ol className="mt-3 space-y-3">
                 {learnerApplicationJourneyTimeline(selected).slice(0,5).map(item=>(
@@ -566,10 +566,10 @@ export function LearnerApplicationsBrowse({
         description="Your authorized preview of the information shared with the company."
         onOpenChange={open=>{if(!open)setCompanyPreviewId(null);}}
         footer={<div className="flex flex-wrap items-center justify-end gap-2">
-          {companyPreviewId?<Link href={"/learn/my-placements/applications/"+
+          {companyPreviewId?<TextLink href={"/learn/my-placements/applications/"+
             encodeURIComponent(companyPreviewId)+"/company"}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
-            rel="noopener noreferrer">Open full preview ↗</Link>:null}
+            className="inline-flex min-h-11 items-center"
+            rel="noopener noreferrer">Open full preview ↗</TextLink>:null}
           <Button variant="secondary" type="button" onClick={()=>setCompanyPreviewId(null)}>Close</Button>
         </div>}>
         {companyPreviewId?<div className="space-y-3">

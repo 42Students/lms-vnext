@@ -1,7 +1,6 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import type {ReactNode} from "react";
 import { PageHeader } from "@/components/ui/page-header";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import {Alert} from "@/components/ui/alert";
 import {TpoCgpaRuleControl} from "@/components/placements/tpo-cgpa-rule-control";
@@ -23,6 +22,8 @@ import {
 import { getCollegePlacementRules } from "@/modules/placements/tpo-policy-service";
 import { getTpoPlacementRulesSettings } from "@/modules/placements/tpo-settings-read-service";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = Record<string,string|string[]|undefined>;
 function SettingsLayout({children}:{children:ReactNode}){
@@ -108,10 +109,9 @@ export default async function TpoPlacementRulesSettingsPage({
           title="Invalid placement rules filters"
           description="The requested job page is invalid. No placement job records were loaded."
           action={
-            <Link href="/tpo/settings/rules"
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring">
+            <ButtonLink variant="secondary" href="/tpo/settings/rules">
               Clear filters
-            </Link>
+            </ButtonLink>
           }
         />
       </SettingsLayout>
@@ -125,7 +125,7 @@ export default async function TpoPlacementRulesSettingsPage({
     return <SettingsLayout>
       <ErrorState title="Could not verify your placement-settings access"
         description="Could not verify your placement-settings access. Please try again."
-        action={<Link href="/tpo/settings/rules" className="underline font-semibold text-link">Retry</Link>}/>
+        action={<TextLink href="/tpo/settings/rules">Retry</TextLink>}/>
     </SettingsLayout>;
   }
   const actor=team.members.find(item=>item.membershipId===context.membership?.id);
@@ -147,7 +147,7 @@ export default async function TpoPlacementRulesSettingsPage({
     return <SettingsLayout>
       <ErrorState title="Could not load placement rules"
         description="Your saved settings have not been changed. Retry to reload the current rules and job eligibility."
-        action={<Link href="/tpo/settings/rules" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+        action={<TextLink href="/tpo/settings/rules" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
     </SettingsLayout>;
   }
   const rules = result.collegeRules;
@@ -405,15 +405,15 @@ export default async function TpoPlacementRulesSettingsPage({
                       ? "Thresholds are from this job's stored eligibility policy."
                       : "No stored job eligibility policy; numeric thresholds and academic target lists are unset, with ALLOW_WITH_FLAG as the source default."}
                   </p>
-                  <Link
+                  <TextLink
                     href={
                       "/tpo/placements/jobs/" +
                       encodeURIComponent(job.id)
                     }
-                    className="text-sm font-semibold text-link hover:underline"
+                    className="text-sm"
                   >
                     View job →
-                  </Link>
+                  </TextLink>
                 </div>
               </article>
             ))}
@@ -430,24 +430,22 @@ export default async function TpoPlacementRulesSettingsPage({
 
           <div className="flex gap-2">
             {result.page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={
                   result.page === 2
                     ? "/tpo/settings/rules"
                     : `/tpo/settings/rules?page=${result.page - 1}`
                 }
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 ← Previous
-              </Link>
+              </ButtonLink>
             ) : null}
             {result.page < result.totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={`/tpo/settings/rules?page=${result.page + 1}`}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
               >
                 Next →
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         </nav>

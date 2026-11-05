@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {Dialog} from "@/components/ui/dialog";
 import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
@@ -203,12 +202,12 @@ export function NotificationList({
                 </div>
                 <div className="flex w-full shrink-0 flex-wrap gap-2 md:w-auto md:justify-end">
                   {safeInternalAction(item.actionHref) ? (
-                      <Link
+                      <ButtonLink variant="primary"
                         href={safeInternalAction(item.actionHref)!}
-                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9 md:flex-none"
+                        className="min-w-0 flex-1 md:flex-none"
                       >
                         {legacyActionLabel(item)}
-                      </Link>
+                      </ButtonLink>
                   ) : null}
                   {item.externalCta&&safeExternalAction(item.externalCta.href)?(
                     <ButtonLink variant="secondary" href={safeExternalAction(item.externalCta.href)!}>
@@ -239,9 +238,8 @@ export function NotificationList({
       {...(selected ? { description: notificationCategory(selected)+" · "+formatWhen(selected.createdAt) } : {})}
       className="!max-w-[min(520px,calc(100vw-32px))]"
       footer={<>
-        {selected&&safeInternalAction(selected.actionHref)?<Link href={safeInternalAction(selected.actionHref)!}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)]"
-          onClick={()=>setSelected(null)}>{legacyActionLabel(selected)}</Link>:null}
+        {selected&&safeInternalAction(selected.actionHref)?<ButtonLink variant="primary" href={safeInternalAction(selected.actionHref)!}
+          onClick={()=>setSelected(null)}>{legacyActionLabel(selected)}</ButtonLink>:null}
         {selected?.externalCta&&safeExternalAction(selected.externalCta.href)?<ButtonLink variant="primary"
           href={safeExternalAction(selected.externalCta.href)!}>
           {selected.externalCta.label}</ButtonLink>:null}

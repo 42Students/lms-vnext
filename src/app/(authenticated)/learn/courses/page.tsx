@@ -1,6 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {learnerLegacyRouteQuery,resolveLearnerLegacyCourseDelivery} from "@/modules/courses/learner-course-legacy-route-model";
 import {Alert} from "@/components/ui/alert";
@@ -20,6 +19,7 @@ import {
   listLearnerCourseDeliveries,
   listLearnerCourseInstructors,
 } from "@/modules/courses/learner-course-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 
@@ -50,7 +50,7 @@ export default async function LearnerCoursesPage({
         <PageHeader title="Courses"/>
         <Alert tone="error" title="Cannot open the old course link">
           {directoryError??"The old course link needs a valid numeric course ID and optional class/semester-course IDs."}
-          <Link href="/learn/courses" className="ml-2 inline-flex min-h-9 font-semibold text-link underline">View my courses</Link>
+          <TextLink href="/learn/courses" className="ml-2 inline-flex min-h-9">View my courses</TextLink>
         </Alert>
       </section>;
     }
@@ -62,7 +62,7 @@ export default async function LearnerCoursesPage({
         {resolved.kind==="AMBIGUOUS"
          ?"This course appears in more than one enrolled class or semester. Choose the class from the current Courses page."
          :"No course in your selected college enrollment matches this old link."}
-        <Link href="/learn/courses" className="ml-2 inline-flex min-h-9 font-semibold text-link underline">Choose a course</Link>
+        <TextLink href="/learn/courses" className="ml-2 inline-flex min-h-9">Choose a course</TextLink>
       </Alert>
     </section>;
   }
@@ -75,9 +75,9 @@ export default async function LearnerCoursesPage({
       <PageHeader title="Courses" />
       <Alert tone="error" role="alert">
         {directoryError}
-        <Link href="/learn/courses" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        <TextLink href="/learn/courses" className="ml-2 inline-flex min-h-11 items-center md:min-h-9">
           Try again
-        </Link>
+        </TextLink>
       </Alert>
     </section>;
   }
@@ -240,7 +240,7 @@ export default async function LearnerCoursesPage({
         Course images could not be refreshed. Course details remain available.
       </Alert>:null}
       {directoryError?<Alert tone="error" role="alert">
-       {directoryError} <Link href="/learn/courses" className="inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Try again</Link>
+       {directoryError} <TextLink href="/learn/courses" className="inline-flex min-h-11 items-center md:min-h-9">Try again</TextLink>
       </Alert>:<LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters}
        semestersLoadError={semesterResult.error} />}
       {/* A failed authorized directory request is not a confirmed empty list. */}

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeProfileRetained } from "@/components/college/college-profile-retained";
@@ -8,6 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getOwnAccountSummary } from "@/modules/people/own-account-service";
 import { loadCollegeOwnProfile } from "@/modules/people/college-admin-profile-edit-service";
 import { CollegeProfileRefresh } from "@/components/college/college-profile-refresh";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeAdminProfilePage({
   searchParams,
@@ -46,12 +46,12 @@ export default async function CollegeAdminProfilePage({
     </section>
     <nav aria-label="Related profile links"
       className="flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-4 md:flex-row md:flex-wrap md:items-center md:gap-4">
-      <Link href="/account/security"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Signed-in devices</Link>
-      <Link href="/college/domains"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Tenant domains</Link>
-      <Link href="/college/college-profile"
-        className="inline-flex min-h-11 items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Edit college display and support contacts</Link>
+      <TextLink href="/account/security"
+        className="inline-flex min-h-11 items-center md:min-h-9">Signed-in devices</TextLink>
+      <TextLink href="/college/domains"
+        className="inline-flex min-h-11 items-center md:min-h-9">Tenant domains</TextLink>
+      <TextLink href="/college/college-profile"
+        className="inline-flex min-h-11 items-center break-words md:min-h-9">Edit college display and support contacts</TextLink>
     </nav>
   </div>;
 }

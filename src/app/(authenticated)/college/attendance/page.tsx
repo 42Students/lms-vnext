@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { z } from "zod";
@@ -17,6 +16,8 @@ import {
   getAdminAttendanceOptions,
   AdminAttendanceOptionsLookupError,
 } from "@/modules/attendance/admin-service";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 function currentMonth() {
   return new Intl.DateTimeFormat("en-CA", {
@@ -57,7 +58,7 @@ export default async function CollegeAttendancePage({
     allCourses: z.enum(["1"]).optional(),
     month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional(),
   }).safeParse(await searchParams);
-  if (!parsed.success) return <div className="min-w-0 space-y-6"><PageHeader title="Attendance" /><ErrorState title="Unable to load attendance" description="These attendance filters are not valid. Clear them and choose a class, course and month again." action={<Link href="/college/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring w-full md:w-auto justify-center px-4">Reset attendance filters</Link>}/></div>;
+  if (!parsed.success) return <div className="min-w-0 space-y-6"><PageHeader title="Attendance" /><ErrorState title="Unable to load attendance" description="These attendance filters are not valid. Clear them and choose a class, course and month again." action={<ButtonLink variant="secondary" href="/college/attendance" className="w-full md:w-auto">Reset attendance filters</ButtonLink>}/></div>;
   const query=parsed.data;
   const month = query.month ?? currentMonth();
   const optionsResult = await Promise.allSettled([getAdminAttendanceOptions(context, collegeId)]);
@@ -81,8 +82,8 @@ export default async function CollegeAttendancePage({
       <Banner tone="warning" role="alert">
         <strong>{classLookupFailed?"Couldn't verify which courses are taught to this class":"Couldn't load classes/courses for this college"}</strong>
         <p className="mt-1">{classLookupFailed?"Class courses could not be verified. Your selected class and month are preserved.":"Attendance options are unavailable. Your chosen month and filters are preserved."}</p>
-        <Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">{classLookupFailed?"Retry class courses":"Retry"}</Link>
+        <TextLink href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
+          className="mt-2 inline-flex min-h-11 items-center md:min-h-9">{classLookupFailed?"Retry class courses":"Retry"}</TextLink>
       </Banner>
     </div>;
   }

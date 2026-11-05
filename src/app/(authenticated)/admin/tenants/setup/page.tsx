@@ -1,5 +1,4 @@
 import {PageBackLink} from "@/components/ui/page-back-link";
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -61,8 +60,8 @@ export default async function SuperAdminTenantSetup({
   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants/directory" label="Tenant directory"/>}/>
   <ErrorState title="Invalid tenant setup filters"
    description="Select a valid setup step, search of at most 100 characters and page number."
-   action={<Link href="/admin/tenants/setup"
-    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}/>
+   action={<TextLink href="/admin/tenants/setup"
+    className="inline-flex items-center min-h-11 md:min-h-9 w-full md:w-auto">Clear filters</TextLink>}/>
  </div>;
  const id=context.adminScope?.collegeId??null;
  const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
@@ -116,16 +115,15 @@ export default async function SuperAdminTenantSetup({
    <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants/directory" label="Tenant directory"/>}/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized tenant directory or selected college readiness could not be verified. No tenant changes have been made."
-    action={<Link href={tabLink(tab)}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry tenant setup</Link>}/>
+    action={<TextLink href={tabLink(tab)}
+     className="inline-flex min-h-11 items-center md:min-h-9">Retry tenant setup</TextLink>}/>
   </div>;
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=globallyScoped&&!organizationFailed&&can(context,"organization.manage");
  type SetupCollege=NonNullable<typeof list>["items"][number];
  const collegeColumns:DataTableColumn<SetupCollege>[]=[
   {key:"name",header:"College",mobilePriority:"primary",cell:item=>
-   <Link href={"/admin/colleges/"+encodeURIComponent(item.id)}
-    className="font-semibold text-primary-text underline">{item.name}</Link>},
+   <TextLink href={"/admin/colleges/"+encodeURIComponent(item.id)}>{item.name}</TextLink>},
   {key:"organization",header:"Organization",cell:item=>item.organizationName},
   {key:"code",header:"Unique ID",cell:item=>item.code},
   {key:"city",header:"City",cell:item=>item.city||"—"},
@@ -133,8 +131,8 @@ export default async function SuperAdminTenantSetup({
   {key:"status",header:"Status",cell:item=><Badge tone={item.status==="ACTIVE"?"success":"neutral"}>{item.status}</Badge>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
    <div className="flex flex-wrap items-center gap-2">
-    <Link href={"/admin/colleges/"+encodeURIComponent(item.id)}
-     className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Manage</Link>
+    <TextLink href={"/admin/colleges/"+encodeURIComponent(item.id)}
+     className="inline-flex min-h-11 items-center text-sm md:min-h-9">Manage</TextLink>
     {item.status==="ACTIVE"&&can(context,"college.manage",{
       organizationId:item.organizationId,collegeId:item.id})?<>
       <CollegeEditDialog college={item}/>
@@ -143,7 +141,7 @@ export default async function SuperAdminTenantSetup({
    </div>},
  ];
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
- const retry=<Link href={tabLink(tab)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>;
+ const retry=<TextLink href={tabLink(tab)} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>;
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageBackLink href="/admin/tenants/directory" label="Tenant directory" />
   <PageHeader eyebrow="Tenant lifecycle" title="Tenant Setup"
@@ -193,7 +191,7 @@ export default async function SuperAdminTenantSetup({
      {!organizationFailed?<div className="min-w-0 space-y-3 border-t border-border pt-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
        <Heading level={3} className="text-body">Existing Organizations</Heading>
-       <Link href="/admin/organizations" className="font-semibold text-primary-text underline">Manage all</Link>
+       <TextLink href="/admin/organizations">Manage all</TextLink>
       </div>
       <TenantSetupOrganizationList rows={organizations.map(o=>({
        id:o.id,name:o.name,canManage:can(context,"organization.manage",{organizationId:o.id}),
@@ -215,7 +213,7 @@ export default async function SuperAdminTenantSetup({
      {!collegesFailed&&list?<div className="min-w-0 space-y-3 border-t border-border pt-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
        <Heading level={3} className="text-body">Existing Colleges</Heading>
-       <Link href="/admin/colleges" className="font-semibold text-primary-text underline">Manage all</Link>
+       <TextLink href="/admin/colleges">Manage all</TextLink>
       </div>
       <form action="/admin/tenants/setup" method="get" role="search"
        className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
@@ -226,8 +224,8 @@ export default async function SuperAdminTenantSetup({
          placeholder="Search college, organization or Unique ID"/>
        </Label>
        <Button type="submit" variant="secondary">Search</Button>
-       <Link href="/admin/tenants/setup?tab=structure"
-        className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline md:min-h-9">Clear</Link>
+       <TextLink href="/admin/tenants/setup?tab=structure"
+        className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">Clear</TextLink>
       </form>
       <p role="status" className="text-xs text-muted-foreground">
        {list.total} colleges · Page {list.page} of {list.totalPages}
@@ -236,11 +234,9 @@ export default async function SuperAdminTenantSetup({
        columns={collegeColumns}
        empty={<EmptyState title="No colleges match this view" description="Clear search or create an authorized college."/>}/>
       {list.totalPages>1?<nav aria-label="College directory pages" className="flex flex-wrap items-center gap-3 text-sm">
-       {list.page>1?<Link href={"/admin/tenants/setup?tab=structure&page="+(list.page-1)+"&q="+encodeURIComponent(directoryFilters.q)}
-        className="font-semibold text-link underline">Previous</Link>:null}
+       {list.page>1?<TextLink href={"/admin/tenants/setup?tab=structure&page="+(list.page-1)+"&q="+encodeURIComponent(directoryFilters.q)}>Previous</TextLink>:null}
        <span>Page {list.page} of {list.totalPages}</span>
-       {list.page<list.totalPages?<Link href={"/admin/tenants/setup?tab=structure&page="+(list.page+1)+"&q="+encodeURIComponent(directoryFilters.q)}
-        className="font-semibold text-link underline">Next</Link>:null}
+       {list.page<list.totalPages?<TextLink href={"/admin/tenants/setup?tab=structure&page="+(list.page+1)+"&q="+encodeURIComponent(directoryFilters.q)}>Next</TextLink>:null}
       </nav>:null}
       <p className="text-xs text-muted-foreground">
        Bulk Import Colleges (CSV) accepts the legacy template after verified organization mapping, confirms the batch,
@@ -248,12 +244,12 @@ export default async function SuperAdminTenantSetup({
       </p>
      </div>:null}
     </section>
-    <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Continue to launch setup →</Link>
+    <TextLink href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center md:min-h-9">Continue to launch setup →</TextLink>
   </>:college?<>
    <div className="space-y-2">
      <Heading level={2} size="lg" className="m-0 break-words leading-7 text-[var(--lms-heading)]">Get this college ready to go live</Heading>
      <Badge tone="info">Working on: {college.name}</Badge>
-     <p className="max-w-3xl text-sm text-body">Set this college's web address, sign-in method and branding. Platform domains, OTP and SMS delivery are managed under <Link href="/admin/settings" className="font-semibold text-link underline">Tenant Settings</Link>.</p>
+     <p className="max-w-3xl text-sm text-body">Set this college's web address, sign-in method and branding. Platform domains, OTP and SMS delivery are managed under <TextLink href="/admin/settings">Tenant Settings</TextLink>.</p>
    </div>
    {readinessFailed?<Banner tone="error" action={retry}>
     College readiness could not be loaded. Launch is not verified; retry this readiness check before proceeding.
@@ -270,7 +266,7 @@ export default async function SuperAdminTenantSetup({
     <div className="grid min-w-0 items-start gap-6 2xl:grid-cols-2">
      <div className="min-w-0 space-y-3 border-b border-border pb-4">
       {managed?<ManagedCollegeSubdomain collegeId={college.id} initial={managed}/>:
-       <Banner tone={managedFailed?"error":"warning"} action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain"} className="font-semibold underline">Open web address settings</Link>}>
+       <Banner tone={managedFailed?"error":"warning"} action={<TextLink href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain"}>Open web address settings</TextLink>}>
         {managedFailed?"Couldn't load the web address. Retry the scoped editor.":"Web address controls require selected-college management permission."}
        </Banner>}
      </div>
@@ -279,7 +275,7 @@ export default async function SuperAdminTenantSetup({
        method={signin.policy.kind==="CONFIGURED"?signin.policy.method:"EMAIL_AND_PHONE"}
        version={signin.version??0}
        ready={signin.policy.kind!=="MIGRATION_PENDING"&&signin.policy.kind!=="INVALID_POLICY"}/>:
-       <Banner tone={signinFailed?"error":"warning"} action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/signin"} className="font-semibold underline">Open sign-in settings</Link>}>
+       <Banner tone={signinFailed?"error":"warning"} action={<TextLink href={"/admin/colleges/"+encodeURIComponent(college.id)+"/signin"}>Open sign-in settings</TextLink>}>
         {signinFailed?"Couldn't load sign-in methods. Retry the scoped editor.":"Sign-in settings require selected-college management permission."}
        </Banner>}
      </div>
@@ -299,7 +295,7 @@ export default async function SuperAdminTenantSetup({
         termsUrl:branding.termsUrl,privacyUrl:branding.privacyUrl,
        }}/>
      </>:<Banner tone={brandingFailed?"error":"warning"}
-      action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/branding"} className="font-semibold underline">Open branding settings</Link>}>
+      action={<TextLink href={"/admin/colleges/"+encodeURIComponent(college.id)+"/branding"}>Open branding settings</TextLink>}>
       {brandingFailed?"Couldn't load branding. Retry the scoped logo and appearance editor.":"Branding controls require selected-college management permission."}
      </Banner>}
     </section>
@@ -307,19 +303,19 @@ export default async function SuperAdminTenantSetup({
    <section id="college-readiness" aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <Heading level={2} size="lg" className="m-0 break-words leading-7 text-[var(--lms-heading)]">Launch checklist</Heading>
-     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring">Inspect persisted readiness →</Link>
+     <TextLink href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm md:min-h-9">Inspect persisted readiness →</TextLink>
     </div>
     <ol className="grid min-w-0 gap-x-6 gap-y-2 2xl:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <Heading level={3} className="mt-1 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{step.title}</Heading>
       <p className="mt-2 text-sm text-body">{step.description}</p>
-      <Link href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Open workspace →</Link>
+      <TextLink href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">Open workspace →</TextLink>
      </li>)}
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
-  </>:detailFailed?<ErrorState title="Tenant setup unavailable" description="The selected college could not be verified. No launch edits have been made." action={retry}/>:<Banner tone="info" action={<Link href={tabLink("STRUCTURE")} className="font-semibold text-link underline">Create or select a college →</Link>}>
+  </>:detailFailed?<ErrorState title="Tenant setup unavailable" description="The selected college could not be verified. No launch edits have been made." action={retry}/>:<Banner tone="info" action={<TextLink href={tabLink("STRUCTURE")}>Create or select a college →</TextLink>}>
    No college selected. Pick a college first in the Super Admin scope switcher to configure its web address, sign-in method and branding. No tenant is guessed.
   </Banner>}
   </div>

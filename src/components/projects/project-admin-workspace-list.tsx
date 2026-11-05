@@ -1,6 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "./project-workspace-readiness.module.css";
-import Link from "next/link";
 import { ProjectArchiveControl } from "@/components/projects/project-archive-control";
 import {ProjectSoftDeleteControl} from "@/components/projects/project-soft-delete-control";
 import {ProjectAdminWorkspaceQuickView} from "./project-admin-workspace-quick-view";
@@ -11,6 +10,7 @@ import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-
 import {legacyAdminProjectStatus} from "@/modules/projects/admin-projects-query-model";
 import {formatProjectAdminUpdatedDateIst} from "@/modules/projects/project-admin-date-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export type ProjectAdminWorkspaceListItem = {
   id: string;
@@ -53,11 +53,11 @@ function tone(status:string,riskReasons:readonly string[]=[]){
 
 function TemplateLink({item,basePath}:{item:ProjectAdminWorkspaceListItem;basePath:string}){
   if(item.templateId)return <span className="text-xs text-body">Template: {item.templateTitle?.trim()||"Assigned template"}</span>;
-  return <Link href={basePath+"/"+encodeURIComponent(item.id)+"/summary?from=workspaces&openTemplate=1"}
+  return <TextLink href={basePath+"/"+encodeURIComponent(item.id)+"/summary?from=workspaces&openTemplate=1"}
     aria-label={"No template for "+(item.title?.trim()||"workspace")+" — attach one"}
-    className="inline-flex min-h-11 items-center text-xs font-semibold text-warning-text underline md:min-h-9">
+    className="inline-flex min-h-11 items-center text-xs text-warning-text md:min-h-9">
     No template — attach one
-  </Link>;
+  </TextLink>;
 }
 function workspaceTitle(item:ProjectAdminWorkspaceListItem){
   return item.title?.trim()||"Workspace";
@@ -70,17 +70,17 @@ function WorkspaceActions({item,basePath}:{item:ProjectAdminWorkspaceListItem;ba
  return <div className="flex flex-wrap items-center gap-2">
   {basePath.startsWith("/admin/")?<ProjectAdminWorkspaceQuickView
     item={item} href={workspaceSummaryHref(item,basePath)}/>:null}
-  <Link href={workspaceSummaryHref(item,basePath)}
-    className="inline-flex min-h-11 items-center gap-1 text-link underline md:min-h-9"
+  <TextLink href={workspaceSummaryHref(item,basePath)}
+    className="inline-flex min-h-11 items-center gap-1 md:min-h-9"
     aria-label={"Open summary for "+workspaceTitle(item)}>
     <svg aria-hidden="true" viewBox="0 0 18 18" fill="none" className="size-4" stroke="currentColor" strokeWidth="1.5">
       <path d="M2 9c2.5-3.5 4.8-5 7-5s4.5 1.5 7 5c-2.5 3.5-4.8 5-7 5S4.5 12.5 2 9Z"/>
       <circle cx="9" cy="9" r="2.3"/>
     </svg>Open workspace
-  </Link>
-  <Link href={root+"/team"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Assign Mentor</Link>
-  <Link href={root+"/team?editLearners=1"} title="Review the existing roster before replacing learners"
-    className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Assign Learners</Link>
+  </TextLink>
+  <TextLink href={root+"/team"} className="inline-flex min-h-11 items-center md:min-h-9">Assign Mentor</TextLink>
+  <TextLink href={root+"/team?editLearners=1"} title="Review the existing roster before replacing learners"
+    className="inline-flex min-h-11 items-center md:min-h-9">Assign Learners</TextLink>
   <ProjectArchiveControl projectId={item.id} projectTitle={workspaceTitle(item)}
     status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
   <ProjectSoftDeleteControl projectId={item.id} projectTitle={workspaceTitle(item)}
@@ -108,14 +108,14 @@ export function ProjectAdminWorkspaceList({
         title={emptyTitle}
         description={emptyDescription}
         action={<div className="flex flex-wrap gap-3">
-          <Link href={basePath.startsWith("/admin/")?basePath+"/workspaces/new":basePath+"/create"}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          <TextLink href={basePath.startsWith("/admin/")?basePath+"/workspaces/new":basePath+"/create"}
+            className="inline-flex min-h-11 items-center md:min-h-9">
             Create project
-          </Link>
-          <Link href={basePath}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          </TextLink>
+          <TextLink href={basePath}
+            className="inline-flex min-h-11 items-center md:min-h-9">
             Clear filters
-          </Link>
+          </TextLink>
         </div>}
       />
     );
@@ -128,8 +128,8 @@ export function ProjectAdminWorkspaceList({
     getRowKey={item=>item.id}
     columns={[
       {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:item=><>
-        <Link href={workspaceSummaryHref(item,basePath)}
-          className="block break-words font-semibold text-link hover:underline">{workspaceTitle(item)}</Link>
+        <TextLink href={workspaceSummaryHref(item,basePath)}
+          className="block break-words">{workspaceTitle(item)}</TextLink>
         <span className="block break-all text-xs text-muted-foreground">{item.id}</span>
         <TemplateLink item={item} basePath={basePath}/>
       </>},
@@ -159,7 +159,7 @@ export function ProjectAdminWorkspaceList({
       <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-5">
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
-            <Link href={workspaceSummaryHref(item,basePath)} className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-ring md:min-h-9">{workspaceTitle(item)}</Link>
+            <TextLink href={workspaceSummaryHref(item,basePath)} className="inline-flex min-h-11 max-w-full items-center break-words text-base md:min-h-9">{workspaceTitle(item)}</TextLink>
             <StatusBadge tone={tone(item.status,item.riskReasons)}>{workspaceStatus(item,basePath)}</StatusBadge>
           </div>
           <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.summary ?? "Project workspace."}</p>
@@ -191,10 +191,10 @@ export function ProjectAdminWorkspaceList({
               </p>
               <div className="mt-2"><TemplateLink item={item} basePath={basePath}/></div>
               <Heading level={2} size="base" className="mt-2 line-clamp-2 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">
-                <Link href={workspaceSummaryHref(item,basePath)}
-                  className="inline-flex min-h-11 items-center break-words rounded-sm underline-offset-4 hover:text-primary-text hover:underline focus-ring md:min-h-9">
+                <TextLink href={workspaceSummaryHref(item,basePath)}
+                  className="inline-flex min-h-11 items-center break-words rounded-sm md:min-h-9">
                   {workspaceTitle(item)}
-                </Link>
+                </TextLink>
               </Heading>
             </div>
             <StatusBadge

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -22,6 +21,7 @@ import {ProjectsServiceError} from "@/modules/projects/errors";
 import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
 import {FilterBar} from "@/components/ui/filter-bar";
 import {DataTable} from "@/components/ui/data-table";
+import { TextLink } from "@/components/ui/text-link";
 
 function RiskActionIcon({type}:{type:"open"|"reassign"|"review"}){
  const paths={
@@ -72,8 +72,8 @@ export async function ProjectAdminAtRiskPage({
       <ProjectAdminNav basePath={basePath} active="at-risk" />
       <ErrorState title="Invalid project filters"
         description="Check the risk, status, sort, search and page filters, or clear them to continue."
-        action={<Link href={basePath + "/at-risk"}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>} />
+        action={<TextLink href={basePath + "/at-risk"}
+          className="inline-flex min-h-11 items-center">Clear filters</TextLink>} />
     </div>;
   }
   const { page, pageSize, riskBucket, riskSort, q, status } = parsed.data;
@@ -100,7 +100,7 @@ export async function ProjectAdminAtRiskPage({
          riskResult.error.code==="PROJECT_ACCESS_DENIED"?
            "You do not have permission to view this college's project risk report.":
            "Failed to load project workspaces. Your search and filters have not changed."}
-        action={<Link href={basePath+"/at-risk"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry risk queue</Link>} />
+        action={<TextLink href={basePath+"/at-risk"} className="inline-flex min-h-11 items-center md:min-h-9">Retry risk queue</TextLink>} />
     </div>;
   }
   const result = riskResult.value;
@@ -132,7 +132,7 @@ export async function ProjectAdminAtRiskPage({
           ["Active blocker", result.buckets.blocker, "BLOCKER"],
           ["Pending review", result.buckets.review, "REVIEW"],
         ] as const).map(([title, value, key]) =>
-          <Link key={key} href={riskHref(basePath,query,query.riskBucket===key?null:key)}
+          <TextLink variant="bare" key={key} href={riskHref(basePath,query,query.riskBucket===key?null:key)}
             aria-current={query.riskBucket===key?"true":undefined}
             className={"flex min-h-24 min-w-0 items-center gap-4 rounded-[var(--lms-canvas-radius)] border p-4 transition-colors hover:bg-primary-subtle focus-ring "+
               (query.riskBucket===key?"border-primary bg-primary-subtle":"border-[var(--lms-canvas-border)] bg-surface")}>
@@ -141,12 +141,12 @@ export async function ProjectAdminAtRiskPage({
               <span className="mt-1 block text-2xl font-semibold tabular-nums text-foreground">{value}</span>
             </span>
             <span className="sr-only">{query.riskBucket===key?"Clear this risk filter":"Filter by this risk"}</span>
-          </Link>)}
+          </TextLink>)}
       </nav>
       {query.riskBucket?<div className="flex items-center gap-2 text-sm text-body" role="status">
         Filtering by {query.riskBucket==="STALLED"?"Stalled":query.riskBucket==="BLOCKER"?"Active blocker":"Pending review"}
-        <Link href={riskHref(basePath,query,null)} className="font-semibold text-link underline"
-          aria-label="Clear selected risk bucket filter">Clear ×</Link>
+        <TextLink href={riskHref(basePath,query,null)}
+          aria-label="Clear selected risk bucket filter">Clear ×</TextLink>
       </div>:null}
       <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort
         searchPlaceholder="Search workspace title or ID" /></FilterBar>
@@ -178,9 +178,9 @@ export async function ProjectAdminAtRiskPage({
           {key:"workspace",header:"Workspace",mobilePriority:"primary",sortable:true,
            sortDirection:query.riskSort==="WORKSPACE"?"ascending":
              query.riskSort==="WORKSPACE_DESC"?"descending":"none",
-           cell:project=><Link href={workspaceHref(project)}
-             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-             {project.title}</Link>},
+           cell:project=><TextLink href={workspaceHref(project)}
+             className="inline-flex min-h-11 items-center md:min-h-9">
+             {project.title}</TextLink>},
           {key:"mentor",header:"Mentor",mobilePriority:"secondary",
            cell:project=>project.mentorName?.trim()||"—"},
           {key:"status",header:"Status",mobilePriority:"secondary",
@@ -208,26 +208,25 @@ export async function ProjectAdminAtRiskPage({
              {project.blockerReason||"—"}</span>},
           {key:"actions",header:"Actions",mobilePriority:"action",
            cell:project=><div className="flex flex-col items-start gap-1">
-             <Link href={workspaceHref(project)}
-              className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
-               <RiskActionIcon type="open"/>Open</Link>
-             <Link href={basePath+"/reassign-mentor?fromMentorId="+
+             <TextLink href={workspaceHref(project)}
+              className="inline-flex min-h-11 items-center md:min-h-9">
+               <RiskActionIcon type="open"/>Open</TextLink>
+             <TextLink href={basePath+"/reassign-mentor?fromMentorId="+
                encodeURIComponent(project.mentorMembershipId??"UNASSIGNED")}
-               className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+               className="inline-flex min-h-11 items-center md:min-h-9">
                <RiskActionIcon type="reassign"/>
-               {project.mentorMembershipId?"Reassign mentor":"Assign mentor"}</Link>
+               {project.mentorMembershipId?"Reassign mentor":"Assign mentor"}</TextLink>
              {project.riskReasons.includes("Pending review")?
-               <Link href={basePath+"/submissions?tab=submitted&projectId="+encodeURIComponent(project.id)}
-                 className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
-                 <RiskActionIcon type="review"/>Review submission</Link>:null}
+               <TextLink href={basePath+"/submissions?tab=submitted&projectId="+encodeURIComponent(project.id)}
+                 className="inline-flex min-h-11 items-center md:min-h-9">
+                 <RiskActionIcon type="review"/>Review submission</TextLink>:null}
            </div>},
         ]}
         empty={<EmptyState title={result.total>0?"No workspaces on this page":"No at-risk projects"}
           description={query.q||query.status||query.riskBucket?
             "No at-risk workspaces match this filter.":
             "No at-risk projects detected for this college."}
-          action={<Link href={riskHref(basePath,query,null)}
-            className="text-link underline">Clear risk filter</Link>}/>}
+          action={<TextLink href={riskHref(basePath,query,null)}>Clear risk filter</TextLink>}/>}
       />
 
       <p className="text-xs text-muted-foreground leading-[20px]">CSV includes only the workspaces on this page.</p>

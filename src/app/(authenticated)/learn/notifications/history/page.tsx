@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { NotificationList, type NotificationListItem } from "@/components/activity/notification-list";
@@ -9,6 +8,8 @@ import {
   learnerNotificationHistoryHref,
   learnerNotificationHistoryQuerySchema,
 } from "@/modules/activity/learner-notification-history-model";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function LearnerNotificationHistoryPage({
   searchParams,
@@ -43,25 +44,25 @@ export default async function LearnerNotificationHistoryPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <Link href="/learn/notifications"
-        className="inline-flex min-h-11 md:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline">
+      <TextLink href="/learn/notifications"
+        className="inline-flex min-h-11 md:min-h-9 items-center text-[13px]">
         ← Notifications
-      </Link>
+      </TextLink>
       <PageHeader
         title="Personal notification history"
         description="Browse your recorded personal notifications beyond the latest inbox items. College announcements use the main Notifications page."
       />
       <nav aria-label="Notification history filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0">
-        <Link href="/learn/notifications/history"
+        <TextLink variant="bare" href="/learn/notifications/history"
           aria-current={!page.unreadOnly ? "page" : undefined}
           className={!page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] md:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] md:min-h-9"}>
           All personal
-        </Link>
-        <Link href="/learn/notifications/history?unread=1"
+        </TextLink>
+        <TextLink variant="bare" href="/learn/notifications/history?unread=1"
           aria-current={page.unreadOnly ? "page" : undefined}
           className={page.unreadOnly ? "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 text-sm font-medium text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] md:min-h-9" : "inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-medium text-body hover:border-primary hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] md:min-h-9"}>
           Unread only
-        </Link>
+        </TextLink>
       </nav>
       <p className="max-w-2xl text-sm leading-[22px] text-body">
         Showing {items.length} notifications on this page, newest first.
@@ -76,22 +77,22 @@ export default async function LearnerNotificationHistoryPage({
       )}
       <nav aria-label="Notification history pages" className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
         {page.nextCursor ? (
-          <Link
+          <ButtonLink variant="secondary"
             href={learnerNotificationHistoryHref(page.nextCursor, page.unreadOnly)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:w-auto md:min-h-9"
+            className="w-full sm:w-auto"
           >
             Older notifications →
-          </Link>
+          </ButtonLink>
         ) : (
           <p className="text-sm text-muted-foreground leading-[22px]">No further older notifications in this view.</p>
         )}
         {page.isOlderPage ? (
-          <Link
+          <TextLink
             href={learnerNotificationHistoryHref(null, page.unreadOnly)}
-            className="inline-flex min-h-11 md:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline"
+            className="inline-flex min-h-11 md:min-h-9 items-center text-[13px]"
           >
             Return to newest
-          </Link>
+          </TextLink>
         ) : null}
       </nav>
       <p className="text-xs text-muted-foreground leading-5">

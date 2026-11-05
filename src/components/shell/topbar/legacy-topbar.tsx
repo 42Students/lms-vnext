@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import type { MembershipChoice } from "@/modules/identity/context-service";
@@ -18,6 +17,7 @@ import { TopbarOrganizationSwitcher } from "./organization-switcher";
 import { PlusIcon } from "./icons";
 import { TpoQuickCreate } from "./tpo-quick-create";
 import style from "./topbar.module.css";
+import { TextLink } from "@/components/ui/text-link";
 
 export function LegacyTopbar({
   navigation, roleLabel, organizationName, identityUid, accountVariant,
@@ -45,15 +45,15 @@ export function LegacyTopbar({
     </div>
     <div className={style["command"] + " min-w-0 " + (!config.newHref ? style["commandNoNew"] : "")}>
       {config.portal === "tpo" && tpoCollegeId
-        ? <Suspense fallback={<Link href="/tpo/placements/new" className={style["new"]} aria-label="New placement work">
+        ? <Suspense fallback={<TextLink variant="bare" href="/tpo/placements/new" className={style["new"]} aria-label="New placement work">
             <PlusIcon/><span className={style["newLabel"]}>New</span>
-          </Link>}>
+          </TextLink>}>
             <TpoQuickCreate collegeId={tpoCollegeId}/>
           </Suspense>
-        : config.newHref ? <Link href={config.newHref} title="Create new"
+        : config.newHref ? <TextLink variant="bare" href={config.newHref} title="Create new"
             className={style["new"]} aria-label="New">
             <PlusIcon/> <span className={style["newLabel"]}>New</span>
-          </Link> : null}
+          </TextLink> : null}
       <TopbarCommandSearch key={pathname} items={navigation}/>
       <ShellWidgetBoundary name="Header notifications" fallbackHref={config.notificationsHref}>
         <TopbarNotifications key={config.portal} config={config}/>

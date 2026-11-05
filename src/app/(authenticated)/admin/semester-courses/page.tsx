@@ -2,7 +2,6 @@ import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
-import Link from "next/link";
 import {CollegeTermMappingManager} from "@/components/academics/college-term-mapping-manager";
 import {listCollegeTermMappings} from "@/modules/academics/college-term-mapping-service";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
@@ -11,6 +10,7 @@ import {Alert} from "@/components/ui/alert";
 import {Banner} from "@/components/ui/banner";
 import {listAdminTermCourseMappings} from "@/modules/admin-ui/super-admin-term-mapping-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 const statuses=["ALL","ACTIVE","INACTIVE"] as const;
 const legacySubtitle="Define the curriculum for each semester and spot courses that still need faculty coverage.";
 export default async function SuperAdminSemesterCourseMappingPage({searchParams}:{
@@ -21,7 +21,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
   <PageHeader title="Semester–Course Mapping"/>
   <ErrorState title="Semester mapping access denied"
    description="Your account cannot access Super Admin semester mappings."
-   action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Back to dashboard</Link>}/>
+   action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Back to dashboard</TextLink>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
   <PageHeader title="Semester–Course Mapping" description={legacySubtitle}/>
@@ -47,18 +47,18 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
    {!curriculumResult.ok?<Banner tone="warning">
     <div className="flex flex-wrap items-center gap-3">
      <span>Semester mapping editor is temporarily unavailable. The directory remains accessible.</span>
-     <Link href="/admin/semester-courses" className="font-semibold text-primary-text underline">Retry semester mappings</Link>
+     <TextLink href="/admin/semester-courses">Retry semester mappings</TextLink>
     </div>
    </Banner>:null}
    {curriculum?.lookupFailures?.map(name=><Banner key={name} tone="warning">
     <div className="flex flex-wrap items-center gap-3">
      <span>Could not load {name}. Other semester mapping information remains available.</span>
-     <Link href="/admin/semester-courses" className="font-semibold text-primary-text underline">Retry {name}</Link>
+     <TextLink href="/admin/semester-courses">Retry {name}</TextLink>
     </div>
    </Banner>)}
    {curriculum&&!curriculum.staffingAvailable?<Banner tone="warning">
     Faculty staffing coverage could not be loaded. Course mappings remain available.
-    <Link href="/admin/semester-courses" className="ml-2 font-semibold text-primary-text underline">Retry staffing</Link>
+    <TextLink href="/admin/semester-courses" className="ml-2">Retry staffing</TextLink>
    </Banner>:null}
    {curriculum?<div aria-label="Manage semester course mappings" className="grid min-w-0 gap-4 border-b border-[var(--lms-canvas-border)] pb-5 lg:grid-cols-[minmax(0,10fr)_minmax(240px,4fr)]">
     <section className="min-w-0 space-y-3">
@@ -69,7 +69,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
       <Heading level={3} className="text-[var(--lms-heading)]">Mapping guide</Heading>
       <p>Choose a program and semester, then review its mapped courses, credits and order before saving.</p>
       <p>The directory below is a separate read-only view of the current selected-college mappings.</p>
-      <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">View semesters</Link>
+      <TextLink href="/admin/semesters" className="inline-flex min-h-11 items-center md:min-h-9">View semesters</TextLink>
     </aside>
    </div>:null}
   </section>}

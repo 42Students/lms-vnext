@@ -3,7 +3,6 @@ import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invali
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -19,6 +18,7 @@ import { getTpoPerformanceIntelligence } from "@/modules/placements/tpo-intellig
 import { tpoIntelligenceFiltersSchema } from "@/modules/placements/tpo-intelligence-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = { seasonId?: string | string[]; jobId?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -45,8 +45,8 @@ export default async function TpoPerformanceIntelligencePage({
         <PageHeader title="Company funnel and compensation"
           description="The selected reporting filters were invalid." />
         <Alert tone="error">
-          No reports were loaded. <Link href="/tpo/reports/intelligence"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9">Clear filters</Link>
+          No reports were loaded. <TextLink href="/tpo/reports/intelligence"
+            className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
         </Alert>
       </div>
     );

@@ -1,7 +1,6 @@
 "use client";
 
 import { useId, useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Drawer } from "@/components/ui/drawer";
@@ -23,6 +22,7 @@ import {
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 
 export function SuperAdminHrDetailDrawer({
@@ -377,9 +377,9 @@ export function SuperAdminHrDetailDrawer({
                     <p>No additional eligible college relationships are available for this company.
                        Only active, verified company relationships within the selected administration scope can receive grants.</p>
                     <p>Connect the company to a college first in the{" "}
-                      <Link href="/admin/companies" className="font-semibold text-link underline">
+                      <TextLink href="/admin/companies">
                         Companies directory
-                      </Link>, then reload the options.</p>
+                      </TextLink>, then reload the options.</p>
                     <Button type="button" size="sm" variant="secondary" disabled={pending}
                       onClick={onReloadOptions}>Reload company relationships</Button>
                   </div>

@@ -8,7 +8,6 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
-import Link from "next/link";
 import {collegeVerificationStudentHref} from "@/modules/verification/staff-links";
 import {collegeRoleContactHref} from "@/modules/people/college-role-directory-model";
 import {verificationTab,verificationTabCounts,type VerificationTab} from "@/modules/verification/queue-tabs";
@@ -21,6 +20,7 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { TextLink } from "@/components/ui/text-link";
 
 export type VerificationQueueCard = Pick<VerificationRecord,
  "learnerMembershipId"|"section"|"status"|"submittedAt"|"version"> & {
@@ -208,8 +208,8 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      <Heading level={2} size="base" className="break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{row.learnerName.trim()||"Student"}</Heading>
      {row.rollNumber?<p className="text-xs text-muted-foreground leading-[20px]">Roll no.: {row.rollNumber}</p>:null}
      <StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>{verificationQueueCardPresentation(row.status).state}</StatusBadge>
-     {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
-     {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
+     {allowCollegeStudentLinks&&<TextLink href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm">Open Student profile</TextLink>}
+     {allowCollegeContactLinks&&<TextLink href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">View masked contact</TextLink>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
       <Label variant="choice" className="mt-2 flex items-center gap-2">
        <Checkbox disabled={selectionDisabled} aria-label={"Select "+row.learnerName+" "+row.section}

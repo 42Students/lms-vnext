@@ -1,5 +1,4 @@
 import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {CollegeLiveClassesDirectory} from "@/components/courses/college-live-classes-directory";
 import {CollegeContentCsvExport} from "@/components/courses/college-content-csv-export";
@@ -12,6 +11,8 @@ import {collegeLiveClassQuerySchema,liveClassSearchParams} from "@/modules/cours
 import {listCollegeContentAggregate} from "@/modules/courses/college-content-aggregate-service";
 import {collegeContentCsvHref} from "@/modules/courses/college-content-export-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function CollegeLiveClassesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>
 }){
@@ -22,7 +23,7 @@ export default async function CollegeLiveClassesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="Live Classes"/>
   <ErrorState title="Invalid session filters" description="Invalid page, publication or search filter."
-    action={<Link href="/college/live-classes" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>}/>
+    action={<TextLink href="/college/live-classes" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>
  </div>;
  const [data,authoring]=await Promise.all([listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data),getCollegeContentAuthoringOptions(context,"LIVE_CLASS",collegeExistingContentFiltersFromSearch(supplied))]);
  return <div className="min-w-0 space-y-4">
@@ -36,10 +37,10 @@ export default async function CollegeLiveClassesPage({searchParams}:{
     <Heading level={2} size="base" className="text-[var(--lms-heading)]">Schedule a live class</Heading>
     <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} existingPage={authoring.existingPage}
       existingFilters={authoring.existingFilters}/>
-    <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,...(data.from !== undefined ? {from:data.from} : {}),...(data.to !== undefined ? {to:data.to} : {})})}
-      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-9 md:w-auto">
+    <ButtonLink variant="secondary" prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,...(data.from !== undefined ? {from:data.from} : {}),...(data.to !== undefined ? {to:data.to} : {})})}
+      className="w-full md:w-auto">
       Export live-class schedule CSV (UTC)
-    </Link>
+    </ButtonLink>
    </section>
    <section aria-label="Existing content" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-4">
     <Heading level={2} size="base" className="text-[var(--lms-heading)]">Existing Content</Heading>

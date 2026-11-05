@@ -17,7 +17,6 @@ import {useRouter} from "next/navigation";
 import { formatDateTimeIst } from "@/lib/format-date";
 import {buildTpoRecruiterInviteMessage} from "@/modules/placements/tpo-recruiter-invite-message-model";
 import {RECRUITER_STAGE_LEGACY_LABELS,type TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lead-policy";
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
@@ -461,7 +460,7 @@ export function RecruiterLeadDetailWorkspace({
 
   return (
     <section className="min-w-0 space-y-5">
-      {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-ring md:min-h-9 focus-visible:underline">← Recruiter leads</Link>:null}
+      {(phase==="loading"||phase==="error"||!lead)?<TextLink href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="inline-flex min-h-11 items-center text-sm md:min-h-9">← Recruiter leads</TextLink>:null}
       {phase === "loading" ? (
         <GracefulPageLoading label="Loading recruiter lead" shape="card"/>
       ) : phase === "error" || !lead ? (
@@ -469,9 +468,9 @@ export function RecruiterLeadDetailWorkspace({
           <PageHeader title={error.includes("not found")?"This recruiter isn\u0027t in Engage":"Could not load recruiter details"} />
           <p>{error || "The recruiter contact could not be found or loaded."}</p>
            <p className="text-xs text-muted-foreground">The recruiter may be missing, or the activity and follow-up services may be unavailable. Your college scope remains unchanged.</p>
-          <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline">
+          <TextLink href="/tpo/recruiters" className="inline-flex min-h-11 items-center">
             Go to Engage
-          </Link>
+          </TextLink>
           <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => void load()}>Retry</Button>
         </div>
       ) : (
@@ -484,17 +483,17 @@ export function RecruiterLeadDetailWorkspace({
             <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
               {!lead.recruiterUserId&&!lead.unsubscribedAt?<TextLink variant="bare" className={button}
                 href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</TextLink>:null}
-              <Link className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}
+              <TextLink variant="bare" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}
                 href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>
                 Create drive
-              </Link>
-              {lead.companyName ? <Link className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}
+              </TextLink>
+              {lead.companyName ? <TextLink variant="bare" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}
                 href={"/tpo/messages?tab=team&about="+encodeURIComponent("COMPANY:"+lead.companyName.trim().toLowerCase())}>
                 Team talk
-              </Link> : null}
+              </TextLink> : null}
               <Dropdown mobileSheet align="end" label="Other recruiter actions" trigger="More ···">
                 <div className="flex min-w-48 flex-col gap-1">
-                  <Link href="/tpo/recruiters" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}>← Recruiter leads</Link>
+                  <TextLink variant="bare" href="/tpo/recruiters" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}>← Recruiter leads</TextLink>
 
                   <Button type="button" variant="ghost" className="w-full justify-start" onClick={openEdit}>Edit details</Button>
                   {lead.manualStage==="NEW"?<Button type="button" variant="ghost" disabled={saving}
@@ -536,7 +535,7 @@ export function RecruiterLeadDetailWorkspace({
                <p className="text-xs text-muted-foreground leading-[20px]">Applied and offers below are stored drive counts, not verified placements.</p>
                <ul className="space-y-1">
                  {companySummary.drives.map(drive=><li key={drive.id}>
-                   <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
+                   <TextLink className="inline-flex min-h-11 items-center" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</TextLink>
                    {" · "}<StatusBadge tone={drive.status==="PUBLISHED"?"success":"neutral"}>
                     {drive.status.replaceAll("_"," ")}
                    </StatusBadge>
@@ -548,10 +547,10 @@ export function RecruiterLeadDetailWorkspace({
              <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                See company drives, applicant counts, offers and recruiter contacts in Company Memory.
              </p>
-             <Link href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)}
-               className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring focus-visible:underline">
+             <TextLink href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)}
+               className="mt-3 inline-flex min-h-11 items-center text-sm">
                Open company memory
-             </Link>
+             </TextLink>
              </div>
            </section>:null}
            <div className="grid min-w-0 gap-5 lg:grid-cols-2">
@@ -781,8 +780,8 @@ export function RecruiterLeadDetailWorkspace({
                 </Label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 {duplicateLead?<p role="status" className="text-sm leading-[22px]">
-                 Contact already exists: <Link href={"/tpo/recruiters/"+encodeURIComponent(duplicateLead.id)}
-                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring focus-visible:underline">Open {duplicateLead.name}</Link>
+                 Contact already exists: <TextLink href={"/tpo/recruiters/"+encodeURIComponent(duplicateLead.id)}
+                  className="inline-flex min-h-11 items-center">Open {duplicateLead.name}</TextLink>
                 </p>:null}
                 <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
                   <Button variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" type="button" disabled={saving} onClick={()=>closeEdit()}>Cancel</Button>

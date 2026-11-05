@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import {useRef,useState} from "react";
 import {Input} from "@/components/ui/input";
 import {driveChangeCommandSchema,DRIVE_CHANGE_EDITOR_OPTIONS,LEGACY_DRIVE_CHANGE_FIELD_LABELS} from "@/modules/placements/tpo-drive-change-request-model";
@@ -17,6 +16,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {useToast} from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;legacyField?:string|null;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdByName?:string|null;
@@ -233,12 +233,12 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
      {item.resolvedAt?<p className="text-xs text-body">
       Resolved {new Date(item.resolvedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST
      </p>:null}
-     <Link href={party==="TPO"
+     <TextLink href={party==="TPO"
        ?"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion?requestId="+encodeURIComponent(item.id)
        :"/recruiter/drives/"+encodeURIComponent(jobId)+"/messages?requestId="+encodeURIComponent(item.id)}
-       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-ring">
+       className="inline-flex min-h-11 items-center text-sm">
        Discuss in drive conversation
-     </Link>
+     </TextLink>
      <Disclosure title={"Discussion ("+item.messages.length+")"} defaultOpen={item.status==="OPEN"&&item.targetParty===party} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">
       {item.messages.length===0?<p className="text-sm text-body leading-[22px]">No discussion yet.</p>:null}
       {item.messages.map(message=><p key={message.id} className="break-words [overflow-wrap:anywhere] border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm leading-[22px]">

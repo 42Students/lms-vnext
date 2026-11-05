@@ -1,8 +1,8 @@
 "use client";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** Distinguish role/access failure from an ordinary course tab load failure.
  * Unknown server digests are not interpreted as a proved permission denial. */
@@ -27,9 +27,9 @@ export default function FacultyCourseTabError({error,reset}: {
     <p className="max-w-xl text-sm leading-6 text-body">{description}</p>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
       {!accessDenied?<Button onClick={reset}>Try again</Button>:null}
-      <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9">
+      <ButtonLink variant="secondary" href="/teacher/courses">
         Back to courses
-      </Link>
+      </ButtonLink>
     </div>
   </section>;
 }

@@ -1,6 +1,5 @@
 import {formatProjectIstDateTime} from "@/modules/projects/project-date-time-format-model";
 import { EmptyState } from "@/components/ui/empty-state";
-import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
 import { Disclosure } from "@/components/ui/disclosure";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
@@ -90,6 +89,7 @@ import type {
 } from "@/modules/projects/workspace-view-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Workspace = Awaited<
   ReturnType<typeof getProjectWorkspaceView>
@@ -221,13 +221,13 @@ function WorkspaceHealthSnapshot({ workspace, templateHref }: { workspace: Works
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge tone={tone(workspace.project.status)}>{label(workspace.project.status)}</StatusBadge>
           {workspace.project.templateVersionId && templateHref ? (
-            <Link href={templateHref} className="rounded-[var(--lms-control-radius)] focus-ring"
+            <TextLink variant="bare" href={templateHref} className="rounded-[var(--lms-control-radius)] focus-ring"
               aria-label={"View template " + (workspace.templateTitle ?? "attached to workspace")}>
               <StatusBadge tone="neutral">
                 Template · {workspace.templateTitle ?? "Attached"}
                 {workspace.templateVersion ? " v" + workspace.templateVersion : ""}
               </StatusBadge>
-            </Link>
+            </TextLink>
           ) : <StatusBadge tone="neutral">No template attached</StatusBadge>}
           {workspace.project.phase ? <StatusBadge tone="neutral">Phase: {label(workspace.project.phase)}</StatusBadge> : null}
         </div>
@@ -257,7 +257,7 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
   if (!readiness) return <section role="alert" className="border-y border-warning-border bg-warning-subtle p-4">
     <Heading level={2}>Readiness snapshot is unavailable</Heading>
     <p className="mt-1 text-sm">The workspace loaded, but its readiness calculation was not included. Retry before making a submission-readiness decision.</p>
-    <Link href={"?retry=1"} className="mt-2 inline-flex text-sm font-semibold text-link underline">Retry</Link>
+    <TextLink href={"?retry=1"} className="mt-2 inline-flex text-sm">Retry</TextLink>
   </section>;
   const hasFinalSubmission=Boolean(readiness.finalSubmission.latest &&
     readiness.finalSubmission.latest.status!=="DRAFT");
@@ -710,10 +710,10 @@ export function ProjectWorkspace({
       })() : null}
 
       {mode === "ADMIN" && show("readiness") ? (
-        <Link href={(backHref.startsWith("/college/") ? "/college/projects/readiness" : "/admin/projects/readiness") + "?projectId=" + encodeURIComponent(workspace.project.id)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">
+        <ButtonLink variant="secondary" href={(backHref.startsWith("/college/") ? "/college/projects/readiness" : "/admin/projects/readiness") + "?projectId=" + encodeURIComponent(workspace.project.id)}
+          className="w-full sm:w-auto">
           Manage override
-        </Link>
+        </ButtonLink>
       ) : null}
 
       {readOnly ? (
@@ -859,10 +859,10 @@ export function ProjectWorkspace({
           className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Heading level={2} size="lg" className="m-0 text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</Heading>
-            {mentorReviewHref ? <Link href={mentorReviewHref}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link hover:bg-primary-subtle sm:w-auto md:min-h-9">
+            {mentorReviewHref ? <ButtonLink variant="secondary" href={mentorReviewHref}
+              className="w-full sm:w-auto">
               Review submission
-            </Link> : null}
+            </ButtonLink> : null}
           </div>
           {(mode==="ADMIN"||mode==="MENTOR")&&!readOnly?<WorkspaceBriefEditor
             requireDeliverables={workspaceBriefRequiresDeliverables(workspace.project.status)}
@@ -901,8 +901,8 @@ export function ProjectWorkspace({
           {mode==="MENTOR"?<section aria-label="Final submission" className="mt-4 border-b border-border pb-4 text-sm text-body">
             <Heading level={3} className="text-foreground">Final submission</Heading>
             <p className="mt-1">Status: {readiness.finalSubmission.latest?label(readiness.finalSubmission.latest.status):"Not submitted"}</p>
-            <Link href={mentorReviewHref??("/mentor/projects/"+workspace.project.id+"?tab=delivery")}
-              className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Review submission</Link>
+            <TextLink href={mentorReviewHref??("/mentor/projects/"+workspace.project.id+"?tab=delivery")}
+              className="mt-2 inline-flex min-h-11 md:min-h-9 items-center">Review submission</TextLink>
           </section>:null}
           {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 border-b border-border pb-4">
             <Heading level={3}>Task progress</Heading>
@@ -991,10 +991,10 @@ export function ProjectWorkspace({
                 <div className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
                   <p className="font-semibold">Requires attention</p>
                   <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker}</p>
-                  <Link href={"/learn/projects/"+workspace.project.id+"?tab=board&taskStatus=BLOCKED"}
-                    className="inline-flex min-h-11 md:min-h-9 items-center text-link underline">
+                  <TextLink href={"/learn/projects/"+workspace.project.id+"?tab=board&taskStatus=BLOCKED"}
+                    className="inline-flex min-h-11 md:min-h-9 items-center">
                     Open blocked work
-                  </Link>
+                  </TextLink>
                 </div> : null}
             </div>
           ) : null}
@@ -1017,11 +1017,11 @@ export function ProjectWorkspace({
                   workspace.finalDelivery.reviews.at(-1)?.feedback
                 }</p>
               ) : null}
-              <Link href={"/learn/projects/" + workspace.project.id + "?tab=delivery"}
-                className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
+              <TextLink href={"/learn/projects/" + workspace.project.id + "?tab=delivery"}
+                className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm">
                 {!archived && readiness.finalSubmission.latest?.status === "CHANGES_REQUESTED"
                   ? "Update your submission" : "View final submission"}
-              </Link>
+              </TextLink>
             </section>
           ) : null}
           {mode === "LEARNER" ? (
@@ -1036,20 +1036,20 @@ export function ProjectWorkspace({
                 </div>
                 <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
                   <p className="font-semibold text-foreground">{archived?"Archived board":"Next step"}</p>
-                  <Link href={"/learn/projects/" + workspace.project.id + "?tab=board"}
-                    className="mt-1 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link hover:underline">
+                  <TextLink href={"/learn/projects/" + workspace.project.id + "?tab=board"}
+                    className="mt-1 inline-flex min-h-11 md:min-h-9 items-center">
                     {archived?"View the Board":"Open the Board"} →
-                  </Link>
+                  </TextLink>
                 </div>
               </div>
               {!archived && workspace.tasks.some(task => task.status === "BLOCKED") ? (
                 <div className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
                   <Heading level={3} size="sm">Requires attention</Heading>
                   <p className="mt-1 text-sm text-body">One or more tasks are blocked.</p>
-                  <Link href={"/learn/projects/" + workspace.project.id + "?tab=board&taskStatus=BLOCKED"}
-                    className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
+                  <TextLink href={"/learn/projects/" + workspace.project.id + "?tab=board&taskStatus=BLOCKED"}
+                    className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm">
                     Open blocked work
-                  </Link>
+                  </TextLink>
                 </div>
               ) : null}
             </div>
@@ -1060,18 +1060,18 @@ export function ProjectWorkspace({
             <p>Due date: <strong>{workspace.project.dueLabel??workspace.project.endDate??"No due date"}</strong></p>
             {workspace.project.phase?<p>Phase: {workspace.project.phase}</p>:null}
             <div className="flex flex-wrap gap-3">
-              <Link href={"/mentor/projects/"+workspace.project.id+"?tab=board"}
-                className="min-h-11 md:min-h-9 font-semibold text-link underline">
+              <TextLink href={"/mentor/projects/"+workspace.project.id+"?tab=board"}
+                className="min-h-11 md:min-h-9">
                 {archived?"View archived board":workspace.project.nextAction??"Next step · Open the Board"} →
-              </Link>
+              </TextLink>
             </div>
             {!archived && (workspace.project.blocker||workspace.tasks.some(t=>t.status==="BLOCKED"))?
               <div role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
                 <p className="font-semibold">Requires attention</p>
                 <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker||
                   workspace.tasks.filter(t=>t.status==="BLOCKED").length+" blocked tasks"}</p>
-                <Link href={"/mentor/projects/"+workspace.project.id+"?tab=board&lane=BLOCKED"}
-                  className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Open blocked work</Link>
+                <TextLink href={"/mentor/projects/"+workspace.project.id+"?tab=board&lane=BLOCKED"}
+                  className="inline-flex min-h-11 md:min-h-9 items-center">Open blocked work</TextLink>
               </div>:null}
           </section>:null}
           {workspace.project.summary ? (
@@ -1211,10 +1211,10 @@ export function ProjectWorkspace({
             {mode==="ADMIN"?(activeSection==="tasks"?"Task plan":activeSection==="sprints"?
               "Sprint plan":"Execution"):"Releases and Sprints"}
           </Heading>
-          {mentorReviewHref && !show("overview") ? <Link href={mentorReviewHref}
-            className="mt-2 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link">
+          {mentorReviewHref && !show("overview") ? <ButtonLink variant="secondary" href={mentorReviewHref}
+            className="mt-2">
             Review submission
-          </Link> : null}
+          </ButtonLink> : null}
           {mode==="ADMIN"?<p className="mt-1 text-sm text-body">
             {activeSection==="tasks"?
               "Keep each task small enough to own, link it to the right sprint, and make “done” explicit. Workflow state and learner submissions stay read-only here.":
@@ -1260,9 +1260,9 @@ export function ProjectWorkspace({
                 <p className="font-semibold text-foreground">Project releases could not be loaded</p>
                 <p className="mt-1 text-body">Tasks, Team and other loaded workspace sections remain available.</p>
               </div>
-              <Link href={"?retry=1"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+              <TextLink href={"?retry=1"} className="inline-flex min-h-11 items-center md:min-h-9">
                 Retry
-              </Link>
+              </TextLink>
             </div>
           ) : null}
           {mode!=="MENTOR"&&!workspace.releasesLoadError&&workspace.releases.length===0?
@@ -1277,9 +1277,9 @@ export function ProjectWorkspace({
           {mode==="ADMIN"&&show("tasks")&&!workspace.releasesLoadError&&workspace.sprints.length===0?
             <div role="status" className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-y border-info-border bg-info-subtle px-3 py-3 text-sm">
               <span>No sprints are available yet. You can still draft tasks, but add sprints before assigning tasks to a delivery cycle.</span>
-              <Link href={(sectionBaseHref??backHref)+"/sprints"} className="font-semibold text-link underline">
+              <TextLink href={(sectionBaseHref??backHref)+"/sprints"}>
                 Sprints
-              </Link>
+              </TextLink>
             </div>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
@@ -1645,10 +1645,10 @@ export function ProjectWorkspace({
                                   </p>
                                 ) : null}
                                 {mode==="MENTOR" && latestAttempt ? (
-                                  <Link href={mentorTaskFeedbackHref(workspace.project.id,task.id)}
-                                    className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-xs font-semibold text-link underline">
+                                  <TextLink href={mentorTaskFeedbackHref(workspace.project.id,task.id)}
+                                    className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-xs">
                                     Review recorded task feedback →
-                                  </Link>
+                                  </TextLink>
                                 ) : null}
                                 {latestAttempt ? (
                                   <p className="mt-2 text-xs text-muted-foreground">
@@ -2109,9 +2109,9 @@ export function ProjectWorkspace({
             <p className="font-semibold text-foreground">Workspace meetings could not be loaded</p>
             <p className="mt-1">Meeting records are temporarily unavailable.
               The other loaded project sections remain accessible.</p>
-            <Link href="?retry=1" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+            <TextLink href="?retry=1" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">
               Retry meetings
-            </Link>
+            </TextLink>
           </div>:null}
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
@@ -2350,12 +2350,12 @@ export function ProjectWorkspace({
                       </Disclosure>:null;
                     })():null}
                     {mode==="MENTOR"? (
-                      <Link
+                      <TextLink
                         href={"/mentor/projects/"+encodeURIComponent(workspace.project.id)+
                           "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
-                        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
+                        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">
                         {meeting.outcome?"View notes":"Add notes"}
-                      </Link>
+                      </TextLink>
                     ) : null}
                     {href && meeting.status!=="CANCELLED" && meeting.status!=="COMPLETED" && mentorMeetingDisplayStatus(meeting.status,meeting.endsAt,renderTime)!=="MISSED" ? (
                       <TextLink
@@ -2424,17 +2424,16 @@ export function ProjectWorkspace({
             </p>
           </div>
 
-          {mode === "ADMIN" ? <Link href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?entityId=" + encodeURIComponent(workspace.project.id) + "&range=all"}
-            className="inline-flex min-h-11 md:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-link hover:bg-primary-subtle">
+          {mode === "ADMIN" ? <ButtonLink variant="secondary" href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?entityId=" + encodeURIComponent(workspace.project.id) + "&range=all"}>
               <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>
-              View audit trail</Link> : null}
+              View audit trail</ButtonLink> : null}
           {mode==="ADMIN"&&workspace.activityLoadError?
             <div role="alert" className="border-l-2 border-warning-border bg-warning-subtle p-3 text-sm">
               <p className="font-semibold">Resource audit could not be loaded.</p>
               <p className="mt-1 text-body">The workspace remains available. Retry the audit without losing the project context.</p>
-              <Link href="?retry=1" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+              <TextLink href="?retry=1" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">
                 Retry workspace audit
-              </Link>
+              </TextLink>
             </div>:null}
           {mode==="ADMIN"&&!workspace.activityLoadError?
             <ProjectResourceAuditList events={workspace.activity.map(event => ({

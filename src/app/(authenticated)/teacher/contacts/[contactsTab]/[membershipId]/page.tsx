@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { getFacultyContactDetail } from "@/modules/courses/faculty-contacts-service";
 import { facultyContactRoleLabel,facultyContactDetailParamsSchema,facultyContactDetailHidden,facultyContactDirectoryQuery } from "@/modules/courses/faculty-contact-detail-model";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function FacultyContactDetailPage({
   params,searchParams,
@@ -30,10 +30,10 @@ export default async function FacultyContactDetailPage({
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Faculty · Contacts" title={name}
       description="Active college directory contact · Read-only"
-      actions={<Link href={back}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-[var(--lms-control-height)]">
+      actions={<ButtonLink variant="secondary" href={back}
+        className="w-full sm:w-auto">
         Back to Contacts
-      </Link>} />
+      </ButtonLink>} />
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
     <section className="min-w-0 border-b border-border pb-6">
       <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Public department</Heading>

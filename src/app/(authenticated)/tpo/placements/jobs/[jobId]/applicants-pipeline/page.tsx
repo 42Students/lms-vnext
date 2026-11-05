@@ -1,7 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import {Suspense} from "react";
 import {TpoApplicationsSpreadsheet} from "@/components/tpo/tpo-applications-spreadsheet";
 import {TpoDriveStudentsPrototypeReview} from "@/components/tpo/tpo-drive-students-prototype-review";
@@ -20,6 +19,8 @@ type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|s
 import {parseTpoApplicantPipelineLink,tpoApplicantPipelineResetHref} from "@/modules/placements/tpo-applicant-pipeline-model";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
@@ -35,7 +36,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <PageHeader title="Invalid applicant filters"
    description="No private application records were loaded."/>
   <Alert tone="error">{urlError}</Alert>
-  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline focus-ring">Clear applicant filters</Link>
+  <TextLink href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]">Clear applicant filters</TextLink>
  </div>;
  const columns=first(query.columns)?.slice(0,800);
  const filters=parseTpoApplicantPipelineLink({jobId,
@@ -47,9 +48,9 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <PageHeader title="Invalid applicant filters"
     description="This URL contains unsupported applicant filters or page values. No applications were loaded."/>
   <Alert tone="error">This URL contains unsupported applicant filters or page values. No applications were loaded.</Alert>
-  <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] underline focus-ring md:w-auto">
+  <TextLink href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] md:w-auto">
     Reset applicant filters
-  </Link>
+  </TextLink>
  </div>;
  const data=await getTpoApplicantPipeline(context,filters.data);
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
@@ -58,14 +59,14 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title={data.job.title}
    description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."
-   actions={<Link href={{pathname:"/tpo/placements/jobs/"+jobId+"/applications-export",query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin}}}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-ring md:w-auto">Review and export all matching applicants</Link>}/>
+   actions={<ButtonLink variant="secondary" href={{pathname:"/tpo/placements/jobs/"+jobId+"/applications-export",query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin}}}
+    className="w-full md:w-auto">Review and export all matching applicants</ButtonLink>}/>
   <nav aria-label="Applicants sub-sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm font-semibold">
    <span aria-current="page" className="inline-flex min-h-11 items-center border-b-2 border-primary px-3 text-[var(--lms-primary-text)]">Applicants</span>
-   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/not-applied"}
-    className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-link hover:border-border">Registered, not applied</Link>
-   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"}
-    className="inline-flex min-h-11 items-center px-3 text-link underline">Add to drive</Link>
+   <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/not-applied"}
+    className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3">Registered, not applied</TextLink>
+   <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"}
+    className="inline-flex min-h-11 items-center px-3">Add to drive</TextLink>
   </nav>
   <section className="grid min-w-0 grid-cols-2 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 lg:grid-cols-4" aria-label="Applicant pipeline counts">
    {Object.entries(data.counts).map(([label,count])=>
@@ -141,15 +142,15 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     /> : null}
   {!data.rows.length?<div className="flex min-w-0 flex-col gap-3">
     <EmptyState title="No matching applicants" description="No applicants match these filters. Clear the filters or check Registered, not applied to see who still needs to apply."/>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] underline focus-ring md:w-auto">Registered, not applied</Link>
-    <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] underline focus-ring md:w-auto">Clear applicant filters</Link>
+    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] md:w-auto">Registered, not applied</TextLink>
+    <TextLink href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 w-full items-center justify-center text-[var(--lms-teal-deep)] md:w-auto">Clear applicant filters</TextLink>
    </div>:
    <Suspense fallback={<Skeleton variant="row" count={4} label="Loading applicant grid…" />}>
     <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
    </Suspense>}
   <nav aria-label="Applicant pages" className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-   {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:w-auto hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Previous</Link>:<span/>}
-   {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:w-auto hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Next</Link>:null}
+   {data.page>1?<ButtonLink variant="secondary" href={pageHref(data.page-1)} className="w-full md:w-auto">Previous</ButtonLink>:<span/>}
+   {data.page<data.totalPages?<ButtonLink variant="secondary" href={pageHref(data.page+1)} className="w-full md:w-auto">Next</ButtonLink>:null}
   </nav>
   <p className="text-xs text-body leading-[20px]">This stage snapshot does not claim independent employer selection or share private screening comments.</p>
  </div>;

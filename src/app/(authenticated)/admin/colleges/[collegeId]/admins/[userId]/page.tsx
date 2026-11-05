@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listCollegeAdminSessions} from "@/modules/colleges/admin-session-service";
@@ -6,6 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {EmptyState} from "@/components/ui/empty-state";
 import {AdminRevokeSessions} from "@/components/admin/admin-revoke-sessions";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type DeviceRow={id:string;device_name:string|null;user_agent:string|null;ip_address:string|null;
  last_seen_at:Date;created_at:Date;expires_at:Date};
@@ -32,8 +32,7 @@ export default async function AdminDeviceSessionsPage({params}:{
       {key:"last",header:"Last used",mobilePriority:"secondary",cell:row=>format(row.last_seen_at)},
       {key:"expires",header:"Expires",mobilePriority:"secondary",cell:row=>format(row.expires_at)},
     ]}/>
-  <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Administrator activity history →</Link>
+  <ButtonLink variant="secondary" href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}>Administrator activity history →</ButtonLink>
   <AdminRevokeSessions collegeId={collegeId} userId={userId} count={data.devices.length}/>
  </div>;
 }

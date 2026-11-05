@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -57,10 +56,10 @@ export function CollegeDepartmentInsights({
           className="inline-flex min-h-11 items-center md:min-h-9">
           Export CSV
         </TextLink> : null}
-        <Link href={attendance ? "/college/attendance" : "/college/placements"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">
+        <TextLink href={attendance ? "/college/attendance" : "/college/placements"}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           {attendance ? "Attendance workspace" : "Placements workspace"}
-        </Link>
+        </TextLink>
       </>}
     />
     <section aria-label="Department filters" className="border-b border-border pb-4">
@@ -72,7 +71,7 @@ export function CollegeDepartmentInsights({
             />
         </Label>
         <Button variant="primary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
-        {data.query.q ? <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 md:w-auto">Clear</Link> : null}
+        {data.query.q ? <TextLink href={path} className="inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto">Clear</TextLink> : null}
       </form>
     </section>
     <section aria-label="Department evidence results" className="min-w-0">
@@ -83,18 +82,18 @@ export function CollegeDepartmentInsights({
         caption={title}
         empty={<EmptyState title={data.total===0?"No matching departments":"No departments on this page"}
           description={data.total===0?"No departments match these filters. No attendance or placement evidence is inferred.":"No departments exist on this page. Choose an earlier page."}
-          action={<Link href={data.total===0?path:departmentInsightsHref(data.kind,{...data.query,page:Math.max(1,data.query.page-1)})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">{data.total===0?"Clear":"Previous page"}</Link>} />}
+          action={<TextLink href={data.total===0?path:departmentInsightsHref(data.kind,{...data.query,page:Math.max(1,data.query.page-1)})} className="inline-flex min-h-11 items-center md:min-h-9">{data.total===0?"Clear":"Previous page"}</TextLink>} />}
       />
     </section>
     <nav aria-label="Department pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm md:flex-row md:items-center">
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex min-w-0 gap-[var(--lms-space-3)] max-md:[&_a]:flex-1 max-md:[&_a]:justify-center">
-        {data.query.page > 1 ? <Link
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9"
-          href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page - 1 })}>Previous</Link> : null}
-        {data.query.page < data.totalPages ? <Link
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9"
-          href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page + 1 })}>Next</Link> : null}
+        {data.query.page > 1 ? <TextLink
+          className="inline-flex min-h-11 items-center md:min-h-9"
+          href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page - 1 })}>Previous</TextLink> : null}
+        {data.query.page < data.totalPages ? <TextLink
+          className="inline-flex min-h-11 items-center md:min-h-9"
+          href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page + 1 })}>Next</TextLink> : null}
       </div>
     </nav>
     {attendance && correctionPolicy ? (
@@ -106,8 +105,8 @@ export function CollegeDepartmentInsights({
           College Admin correction permissions are separate from Faculty marking windows.
           These settings are policy context, not department attendance percentages.
         </p>
-        <Link href="/college/attendance/settings"
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Attendance policy settings</Link>
+        <TextLink href="/college/attendance/settings"
+          className="mt-2 inline-flex min-h-11 items-center md:min-h-9">Attendance policy settings</TextLink>
         </Alert>
       </Disclosure>
     ) : null}

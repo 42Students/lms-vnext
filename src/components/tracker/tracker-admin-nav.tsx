@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
 import { usePathname } from "next/navigation";
 import { TrackerThemeToggle } from "./tracker-theme-toggle";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 const pages = [
   {value: "issues", label: "Issues", href: "/tracker/issues"},
@@ -24,12 +24,12 @@ export function TrackerAdminNav() {
     </ButtonLink>
     <nav aria-label="Tracker sections" className="min-w-0 space-y-3 border-b border-border pb-3">
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <Link href="/tracker" aria-label="42 Tracker home"
+      <TextLink variant="bare" href="/tracker" aria-label="42 Tracker home"
         className="inline-flex min-h-11 items-center gap-2 text-lg font-bold text-[var(--lms-heading)] focus-ring">
         <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
           <path d="M4 4h16v16H4zM9 4v16M4 10h16"/>
         </svg>42 Tracker
-      </Link>
+      </TextLink>
       <TrackerThemeToggle />
     </div>
     <div className="min-w-0">

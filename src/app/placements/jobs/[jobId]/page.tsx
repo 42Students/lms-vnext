@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type {Metadata} from "next";
 import {PageHeader} from "@/components/ui/page-header";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const metadata:Metadata={
  title:"Shared placement job link · 42Students",
@@ -23,14 +23,12 @@ export default function RetiredPublicPlacementJobPage(){
     do not grant access to a job or an application.
    </p>
    <div className="flex flex-wrap gap-3">
-    <Link href="/login?next=%2Flearn%2Fmy-placements%2Fjobs"
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)]">
+    <ButtonLink variant="primary" href="/login?next=%2Flearn%2Fmy-placements%2Fjobs">
      Sign in to browse college drives
-    </Link>
-    <Link href="/placements"
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+    </ButtonLink>
+    <ButtonLink variant="secondary" href="/placements">
      Public placement information
-    </Link>
+    </ButtonLink>
    </div>
   </div>
  </main>;

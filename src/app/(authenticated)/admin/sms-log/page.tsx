@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { listSuperAdminSmsDeliveryAttempts } from "@/modules/messaging/receipt-detail-service";
 import { SmsSupportLogViewer } from "@/components/admin/sms-support-log-viewer";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 
@@ -17,14 +17,14 @@ export default async function AdminSmsLogPage(){
   <PageHeader title="SMS delivery attempts"/>
   <ErrorState title="SMS delivery log unavailable"
    description="Only an unscoped Super Admin support session may view provider attempt records."
-   action={<Link href="/admin/settings" className="underline font-semibold">Back to Tenant Settings</Link>}/>
+   action={<TextLink href="/admin/settings">Back to Tenant Settings</TextLink>}/>
  </div>;
  return <div className="min-w-0 space-y-4">
   <PageHeader title="SMS delivery attempts"
    description="Provider acceptance is not proof of handset delivery."/>
   <SmsSupportLogViewer/>
-  <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+  <TextLink href="/admin/settings" className="inline-flex min-h-11 items-center md:min-h-9">
    Back to Tenant Settings
-  </Link>
+  </TextLink>
  </div>;
 }

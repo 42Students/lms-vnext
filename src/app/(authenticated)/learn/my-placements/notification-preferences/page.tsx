@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { LearnerPlacementNotificationSettings } from "@/components/placements/learner-placement-notification-settings";
 import { getCandidatePreferences } from "@/modules/placements/candidate-preferences-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function LearnerPlacementNotificationPreferencesPage(){
   const context=await getCurrentRequestContext();
@@ -17,16 +17,16 @@ export default async function LearnerPlacementNotificationPreferencesPage(){
       <PageHeader title="Placement notifications" />
       <ErrorState title="Could not load notification preferences"
         description="Your saved notification choices could not be verified. No change has been made."
-        action={<Link href="/learn/my-placements/notification-preferences"
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry preferences</Link>} />
+        action={<TextLink href="/learn/my-placements/notification-preferences"
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry preferences</TextLink>} />
     </div>;
   }
   return <div className="min-w-0 space-y-5">
     <PageHeader title="Placement notifications"
       description="Manage the two registered placement notification preferences for your active Learner membership." />
-    <Link href="/learn/my-placements" className="inline-flex min-h-11 md:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline">
+    <TextLink href="/learn/my-placements" className="inline-flex min-h-11 md:min-h-9 items-center text-[13px]">
       ← Back to My Placements
-    </Link>
+    </TextLink>
 
     <LearnerPlacementNotificationSettings key={preferences.updatedAt?.toISOString()??"defaults"}
       initial={{

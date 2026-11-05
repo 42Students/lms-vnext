@@ -1,6 +1,6 @@
+import { TextLink } from "@/components/ui/text-link";
 "use client";
 
-import Link from "next/link";
 
 type MessagesTab = "recruiters" | "team";
 const TABS: readonly MessagesTab[] = ["recruiters", "team"];
@@ -27,7 +27,7 @@ export function TpoMessagesTabs({selected}:{selected:MessagesTab}){
         (index+(event.key==="ArrowRight"?1:-1)+tabs.length)%tabs.length;
       tabs[next]?.focus();
     }}>
-    {TABS.map(value=><Link key={value} role="tab"
+    {TABS.map(value=><TextLink variant="bare" key={value} role="tab"
       id={"tpo-messages-tab-"+value}
       aria-controls={"tpo-messages-panel-"+value}
       aria-selected={selected===value}
@@ -36,6 +36,6 @@ export function TpoMessagesTabs({selected}:{selected:MessagesTab}){
       className={"inline-flex min-h-11 items-center border-b-2 px-4 text-sm font-semibold focus-ring md:min-h-9 "+
         (selected===value?"border-primary text-link":"border-transparent text-body hover:text-link")}>
       {value==="recruiters"?"Recruiters":"Team"}
-    </Link>)}
+    </TextLink>)}
   </nav>;
 }

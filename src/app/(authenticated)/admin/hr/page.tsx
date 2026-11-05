@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { SuperAdminHrAccounts } from "@/components/admin/super-admin-hr-accounts";
 import type {
@@ -17,6 +16,8 @@ import {
 import {
   parseSuperAdminHrPageParams,
 } from "@/modules/placements/super-admin-hr-validation";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = Record<
   string,
@@ -67,12 +68,12 @@ export default async function SuperAdminHrPage({
           title="Invalid account filters"
           description="The supplied search, status or pagination values are invalid. Return to Recruiter Accounts and retry."
           action={
-            <Link
+            <ButtonLink variant="secondary"
               href="/admin/recruiters"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]"
+              className="w-full sm:w-auto"
             >
               Reset filters
-            </Link>
+            </ButtonLink>
           }
         />
       </div>
@@ -206,8 +207,8 @@ export default async function SuperAdminHrPage({
   return (
     <div className="min-w-0 space-y-3">
       <nav aria-label="Recruiter administration location" className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-        <Link href="/admin/placements" className="min-h-11 md:min-h-9 content-center font-semibold text-link underline">
-          Placements</Link>
+        <TextLink href="/admin/placements" className="min-h-11 md:min-h-9 content-center">
+          Placements</TextLink>
         <span aria-hidden="true">›</span><span>Recruiter accounts</span>
         <span className="text-body">· {scopeDescription}</span>
       </nav>
@@ -229,8 +230,8 @@ export default async function SuperAdminHrPage({
       <p role="note" className="max-w-3xl text-xs text-muted-foreground">
         Changing the selected college or organization reloads this directory and closes unsaved
         recruiter forms. Save or discard your edits before switching. Search and pagination use
-        the selected scope; <Link href="/admin/recruiters" className="font-semibold text-link underline">
-          reset filters</Link> after switching if the previous search no longer applies.
+        the selected scope; <TextLink href="/admin/recruiters">
+          reset filters</TextLink> after switching if the previous search no longer applies.
       </p>
       <p role="note" className="max-w-3xl text-xs leading-5 text-muted-foreground">
         Recruiter college access is now time-limited and verified. New grants expire

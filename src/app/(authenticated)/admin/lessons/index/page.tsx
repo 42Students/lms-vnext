@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
@@ -10,6 +9,8 @@ import {
 } from "@/modules/courses/super-admin-global-lesson-index-service";
 import { Table } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic="force-dynamic";
 
@@ -26,7 +27,7 @@ export default async function GlobalLessonIndexPage({searchParams}:{
  if(invalid)return <div className="min-w-0 space-y-4">
   <PageHeader title="Global lesson index" />
   <ErrorState title="Invalid index filters" description="Clear the search and page filters to continue."
-   action={<Link href="/admin/lessons/index" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+   action={<TextLink href="/admin/lessons/index">Clear filters</TextLink>}/>
  </div>;
  let data:Awaited<ReturnType<typeof listGlobalSuperAdminLessonIndex>>;
  try {
@@ -38,7 +39,7 @@ export default async function GlobalLessonIndexPage({searchParams}:{
    <PageHeader title="Global lesson index"/>
    <ErrorState title="Global lesson index unavailable"
     description="The authorized global index could not be refreshed. Existing college lessons were not changed."
-    action={<Link href="/admin/lessons/index" className="font-semibold text-primary-text underline">Retry</Link>}/>
+    action={<TextLink href="/admin/lessons/index">Retry</TextLink>}/>
   </div>;
  }
  const search=typeof q==="string"?q:"";
@@ -48,7 +49,7 @@ export default async function GlobalLessonIndexPage({searchParams}:{
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Global lesson index"
    description="Read-only lesson counts across active colleges. Switch college in the header to edit lessons."
-   actions={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Back to Lessons</Link>}/>
+   actions={<ButtonLink variant="secondary" href="/admin/lessons">Back to Lessons</ButtonLink>}/>
   <Alert tone="info">These figures cover lesson records, not individual class deliveries. Hidden and inactive lessons remain in the total. Global indexing does not grant cross-college editing.</Alert>
   <section aria-label="Global lesson directory" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
    <form method="get" className="mb-4 flex min-w-0 flex-wrap items-end gap-3">
@@ -57,7 +58,7 @@ export default async function GlobalLessonIndexPage({searchParams}:{
      <Input type="search" name="q" defaultValue={search} maxLength={80} placeholder="Search colleges"/>
     </Label>
     <Button type="submit">Search</Button>
-    <Link href={href(data.page)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Refresh</Link>
+    <ButtonLink variant="secondary" href={href(data.page)}>Refresh</ButtonLink>
    </form>
    {data.items.length?<div className="overflow-x-auto">
     <Table className="min-w-[632px]">
@@ -81,8 +82,8 @@ export default async function GlobalLessonIndexPage({searchParams}:{
    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4 text-sm">
     <p className="text-muted-foreground">Page {data.page} · up to {GLOBAL_LESSON_INDEX_PAGE_SIZE} colleges per page · Refreshed {new Date(data.refreshedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
     <div className="flex items-center gap-3">
-     {data.page>1?<Link href={href(data.page-1)} className="font-semibold text-primary-text underline">Previous</Link>:null}
-     {data.hasNext?<Link href={href(data.page+1)} className="font-semibold text-primary-text underline">Next</Link>:null}
+     {data.page>1?<TextLink href={href(data.page-1)}>Previous</TextLink>:null}
+     {data.hasNext?<TextLink href={href(data.page+1)}>Next</TextLink>:null}
     </div>
    </div>
   </section>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { courseSectionDeliveryIdSchema } from "@/modules/courses/validation";
 import { hidesFacultyCourseRouteError } from "@/modules/courses/faculty-course-route-errors";
@@ -14,6 +13,8 @@ import {
   loadCourseDisplayContentIfReady,
 } from "@/modules/courses/course-display-service";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function FacultyCoursePage({
   params,
@@ -47,32 +48,30 @@ export default async function FacultyCoursePage({
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <nav aria-label="Course navigation" className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 md:flex-row md:items-center md:justify-between">
-        <Link
+        <TextLink variant="bare"
           href="/teach/courses"
           className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:text-primary-hover focus-ring"
         >
           ← My Teaching Courses
-        </Link>
+        </TextLink>
         <Disclosure title="Course shortcuts" className="min-w-0">
           <div className="flex min-w-0 flex-col gap-1 pb-2 md:flex-row md:flex-wrap md:gap-3">
-          <Link
+          <TextLink
             href={`/teacher/courses/${deliveryId}/students`}
-            className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] md:min-h-9 focus-ring"
+            className="inline-flex min-h-11 items-center px-2 text-sm md:min-h-9"
           >
             Students
-          </Link>
-          <Link
+          </TextLink>
+          <ButtonLink variant="secondary"
             href={`/teacher/courses/${deliveryId}/attendanceDetail`}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle focus-ring"
           >
             Attendance
-          </Link>
-          <Link
+          </ButtonLink>
+          <ButtonLink variant="secondary"
             href={`/teacher/courses/${deliveryId}/discussions`}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:border-primary hover:bg-primary-subtle focus-ring"
           >
             Discussions
-          </Link>
+          </ButtonLink>
           </div>
         </Disclosure>
       </nav>

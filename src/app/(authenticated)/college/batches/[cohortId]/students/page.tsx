@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { notFound, redirect } from "next/navigation";
 import { and, eq, ilike, or } from "drizzle-orm";
@@ -19,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeBatchStudentsPage({
   params, searchParams,
@@ -100,7 +100,7 @@ export default async function CollegeBatchStudentsPage({
         rows={students}
         getRowKey={item => item.membershipId}
         empty={<EmptyState title="No matching students" description="No students in this batch match the current search filters."
-          action={(q || sectionId) ? <Link href={"/college/batches/" + cohortId + "/students"} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring">Clear filters</Link> : undefined} />}
+          action={(q || sectionId) ? <TextLink href={"/college/batches/" + cohortId + "/students"} className="inline-flex min-h-11 items-center">Clear filters</TextLink> : undefined} />}
         columns={[
           { key: "name", header: "Name", mobilePriority: "primary", cell: item => item.name ?? item.membershipId },
           { key: "roll", header: "Roll Number", mobilePriority: "secondary", cell: item => item.roll ?? "—" },

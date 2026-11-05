@@ -26,10 +26,10 @@ export function RecruiterCompanyPrototype({
  const safeWebsite=website&&/^https:\/\/[^\s]+$/i.test(website)?website:null;
  return <div className={styles.root} data-testid="recruiter.company.prototype">
   {choices.length>1?<nav aria-label="Choose your college relationship" className={styles.colleges}>
-    {choices.map(item=><Link key={item.collegeId}
+    {choices.map(item=><TextLink variant="bare" key={item.collegeId}
       aria-current={item.collegeId===collegeId?"page":undefined}
       href={"/hr/company?collegeId="+encodeURIComponent(item.collegeId)}
-      className={styles.college}>{item.collegeName}</Link>)}
+      className={styles.college}>{item.collegeName}</TextLink>)}
   </nav>:null}
   <header className={styles.head}>
     <p>In {collegeName}</p>
@@ -61,9 +61,9 @@ export function RecruiterCompanyPrototype({
      </section>
      <section className={styles.panel} aria-label="Your team">
       <div className={styles.sectionHead}><Heading level={2} className={styles.eyebrow}>YOUR TEAM AT {collegeName.toLocaleUpperCase("en-IN")} · {team.length}</Heading>
-       <Link href={"/hr/conversations?collegeId="+encodeURIComponent(collegeId)} className={styles.link}>
+       <TextLink variant="bare" href={"/hr/conversations?collegeId="+encodeURIComponent(collegeId)} className={styles.link}>
         Request an invite ›
-       </Link>
+       </TextLink>
       </div>
       {team.length?<ul className={styles.team}>
        {team.map(member=><li key={member.userId}>
@@ -86,7 +86,7 @@ export function RecruiterCompanyPrototype({
     </div>
     <section className={styles.panel} aria-label="Your hiring at this college">
       <div className={styles.sectionHead}><Heading level={2} className={styles.eyebrow}>YOUR HIRING AT {collegeName.toLocaleUpperCase("en-IN")}</Heading>
-       <Link href={reportHref} className={styles.link}>Full report ›</Link>
+       <TextLink variant="bare" href={reportHref} className={styles.link}>Full report ›</TextLink>
       </div>
       {!reportAvailable?<p role="alert" className={styles.muted}>Hiring metrics could not be verified. Open Full report to retry; unavailable counts are not zero.</p>:
        hiring.length?<div className={styles.tableWrap}><table className={styles.table}>
@@ -100,7 +100,7 @@ export function RecruiterCompanyPrototype({
        {hasMore?" Only the first 10 recent drives appear here; the report contains the rest.":""}
       </p>:null}
       <div className={styles.exports}>
-        <Link className={styles.export} href={reportHref}>See detailed hiring report</Link>
+        <TextLink variant="bare" className={styles.export} href={reportHref}>See detailed hiring report</TextLink>
         {reportAvailable?<TextLink variant="bare" className={styles.export} href={csvHref}>Download as CSV</TextLink>:null}
       </div>
     </section>

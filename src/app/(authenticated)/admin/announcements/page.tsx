@@ -3,7 +3,6 @@ import {MetricBar} from "@/components/ui/metric-bar";
 import chartStyles from "@/components/placements/report-bar-chart.module.css";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -33,6 +32,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function currentTimeMs() {
   return Date.now();
@@ -57,7 +57,7 @@ export default async function AnnouncementsPage({
   if (!params) {
     return <div className="min-w-0 space-y-6">
       <PageHeader title="Announcements" description="Review and publish college notices." />
-      <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring underline-offset-4">Reset filters</Link></p>
+      <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <TextLink href="/admin/announcements">Reset filters</TextLink></p>
     </div>;
   }
 
@@ -110,10 +110,10 @@ export default async function AnnouncementsPage({
     <PageHeader title="Announcements" description="Review and publish college notices."/>
     <ErrorState title="Couldn&apos;t load announcements"
       description="The authorized notice list is temporarily unavailable. No published notice was changed."
-      action={<Link href="/admin/announcements"
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+      action={<TextLink href="/admin/announcements"
+        className="inline-flex min-h-11 items-center md:min-h-9">
         Retry
-      </Link>}/>
+      </TextLink>}/>
   </div>;
   const page=pageResult.value;
   const targetGroups=targetsResult.value;
@@ -256,19 +256,18 @@ export default async function AnnouncementsPage({
         </p> : null}
       </section>
       <div className="flex flex-wrap items-center gap-3">
-        <Link href="/admin/announcements/delivery" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">
+        <ButtonLink variant="secondary" href="/admin/announcements/delivery">
           Notification delivery history
-        </Link>
+        </ButtonLink>
         <p className="text-xs text-muted-foreground">Review persisted delivery status for the selected college. Delivery controls are available only when the delivery workflow is enabled.</p>
       </div>
       <section aria-label="Announcement management" className="min-w-0 space-y-4 border-t border-border pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div><Heading level={2} size="lg" className="m-0 text-foreground">Announcement management</Heading>
             <p className="mt-1 text-sm text-muted-foreground">Search, filter, export and manage authorized announcements. Placement-cell broadcasts are grouped above.</p></div>
-          <Link href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground hover:bg-[var(--lms-primary-subtle)]">
+          <ButtonLink variant="secondary" href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}>
             {includeDeleted ? "Active only" : "Include deleted"}
-          </Link>
+          </ButtonLink>
         </div>
       <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
@@ -307,19 +306,19 @@ export default async function AnnouncementsPage({
           </Disclosure>
         </div>
         <Button type="submit" className="w-full md:w-auto">Search</Button>
-        <Link href="/admin/announcements" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Clear</Link>
+        <ButtonLink variant="secondary" href="/admin/announcements" className="w-full md:w-auto">Clear</ButtonLink>
       </form>
       {!targetsResult.ok?<Banner tone="warning" role="status"
-        action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry targets</Link>}>
+        action={<TextLink href="/admin/announcements">Retry targets</TextLink>}>
         Announcement audience options could not be loaded. Existing notices remain visible;
         select-audience publishing options are temporarily unavailable.
       </Banner>:null}
       {!broadcastResult.ok?<Banner tone="warning" role="status"
-        action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry colleges</Link>}>
+        action={<TextLink href="/admin/announcements">Retry colleges</TextLink>}>
         Broadcast colleges could not be loaded. No broadcast audience was assumed or published.
       </Banner>:null}
       {!receiptResult.ok?<Banner tone="warning" role="status"
-        action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry read receipts</Link>}>
+        action={<TextLink href="/admin/announcements">Retry read receipts</TextLink>}>
         Placement-cell read counts are temporarily unavailable. Do not infer unread or zero reach.
       </Banner>:null}
       {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-6">
@@ -334,7 +333,7 @@ export default async function AnnouncementsPage({
         </li>;
        })}</ul>
       </section>:null}
-      <p className="text-sm"><Link href="/admin/notification-delivery" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">View notification delivery history and status</Link></p>
+      <p className="text-sm"><TextLink href="/admin/notification-delivery" className="inline-flex min-h-11 items-center">View notification delivery history and status</TextLink></p>
       <Banner tone="info" role="status">
         Broadcast notices are stored as separate college records and grouped above when
         they share a persisted broadcast identity. A complete group receipt counts distinct
@@ -347,7 +346,7 @@ export default async function AnnouncementsPage({
         emptyMessage={announcementHistoryEmptyMessage({
           hasFilters:Boolean(params.q || params.receiverType || params.visibility || params.pinned || params.senderType || includeDeleted),
         })}/>
-      <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
+      <ButtonLink variant="secondary" href={"/api/admin/announcements/export?" + new URLSearchParams({
         ...(includeDeleted ? {deleted:"1"} : {}),
         ...(params.q ? {q:params.q} : {}),
         ...(params.receiverType ? {receiverType:params.receiverType} : {}),
@@ -356,12 +355,12 @@ export default async function AnnouncementsPage({
         ...(params.senderType ? {senderType:params.senderType} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
-      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Export this filtered page (CSV)</Link>
+      }).toString()}>Export this filtered page (CSV)</ButtonLink>
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
+          <ButtonLink variant="secondary" href={next}>
             Older announcements
-          </Link>
+          </ButtonLink>
         </div>
       ) : null}
       </section>

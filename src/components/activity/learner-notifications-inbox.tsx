@@ -1,7 +1,6 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
 import {learnerAnnouncementAudienceContext} from "@/modules/activity/learner-notification-context-model";
@@ -265,7 +264,7 @@ export function LearnerNotificationsInbox({
             className="min-h-11 w-full md:w-auto md:min-h-9" onClick={refreshInbox}>
             {refreshing?"Refreshing notifications…":"Refresh"}
           </Button>
-          <Link href="/learn/notifications/history" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-primary-text)] md:min-h-9">Browse personal history</Link>
+          <TextLink href="/learn/notifications/history" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Browse personal history</TextLink>
         </div>
       </div>
       <p className="max-w-3xl text-xs leading-5 text-muted-foreground">College announcements have no personal read status. {learnerNotificationPreviewNotice(personal.length,60)}</p>
@@ -334,13 +333,13 @@ export function LearnerNotificationsInbox({
         footer={
           <div className="flex w-full flex-col gap-[var(--lms-space-2)] md:flex-row md:flex-wrap md:justify-end">
             {learnerNotificationPlacementAction(selected?.actionHref) ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
                 onClick={() => setSelected(null)}
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-center text-sm font-semibold text-primary-text md:w-auto md:min-h-9"
+                className="w-full md:w-auto"
               >
                 {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
-              </Link>
+              </ButtonLink>
             ) : null}
             {selected?.source==="ANNOUNCEMENT"&&selected.externalCta?
               <ButtonLink variant="secondary" href={selected.externalCta.href}

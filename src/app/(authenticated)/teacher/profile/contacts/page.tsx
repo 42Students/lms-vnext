@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact-availability-service";
@@ -6,6 +5,7 @@ import {facultyProfileDocumentStorageReady} from "@/modules/people/faculty-profi
 import {loadOwnFacultyProfileDocumentStaged} from "@/modules/people/faculty-profile-self.staged";
 import {FacultyContactEditor} from "@/components/people/faculty-contact-editor";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function FacultyOwnContactPage(){
  const context=await getCurrentRequestContext();
@@ -18,7 +18,7 @@ export default async function FacultyOwnContactPage(){
  return <div className="min-w-0 max-w-full space-y-6">
  <PageHeader title="Contact details"
   description="Your registered contact numbers and email, with college-managed sign-in details."
-  actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring">Profile</Link>}/>
+  actions={<ButtonLink variant="secondary" href="/teacher/profile" className="w-full sm:w-auto">Profile</ButtonLink>}/>
  <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-6">
   <Heading level={2} size="lg" className="leading-7 text-[var(--lms-heading)]">Registered identity contact</Heading>
   <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">

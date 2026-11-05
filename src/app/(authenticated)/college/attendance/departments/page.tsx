@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
@@ -11,6 +10,7 @@ import {
   departmentInsightsQueryFromSearchParams,
 } from "@/modules/admin-ui/college-department-insights-model";
 import { listCollegeDepartmentInsights } from "@/modules/admin-ui/college-department-insights-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeDepartmentAttendancePage({
   searchParams,
@@ -28,7 +28,7 @@ export default async function CollegeDepartmentAttendancePage({
     <PageHeader title="Attendance by Department" />
     <ErrorState title="Invalid department filters"
       description="The search or page value is invalid. No attendance evidence was loaded."
-      action={<Link href="/college/attendance/departments" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>} />
+      action={<TextLink href="/college/attendance/departments" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Clear filters</TextLink>} />
   </div>;
   const [data, policy] = await Promise.all([
     listCollegeDepartmentInsights(context, "ATTENDANCE", parsed.data),

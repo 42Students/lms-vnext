@@ -4,12 +4,12 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { EmptyState } from "@/components/ui/empty-state";
-import Link from "next/link";
 import { learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 import { LEARNER_BOARD_STATUS_LABELS, learnerBoardStatusFilterHref, type LearnerBoardStatusCounts } from "@/modules/projects/learner-board-summary-model";
 import { LEARNER_BOARD_PRIORITY_LABELS, learnerBoardPriorityFilterHref, type LearnerBoardPriorityCounts } from "@/modules/projects/learner-board-priority-model";
 import type { LearnerBoardSort } from "@/modules/projects/learner-board-sort-model";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 export function LearnerProjectBoardSearch({
   projectId, search, priority, status, taskSort, mine, sprintId, sprints, releaseId, releases, shown, total, statusCounts, priorityCounts,
 }: {projectId:string;search:string;priority:string;status:string;taskSort:LearnerBoardSort;mine:boolean;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts;priorityCounts:LearnerBoardPriorityCounts}) {
@@ -78,7 +78,7 @@ export function LearnerProjectBoardSearch({
           </Select>
         </Label>
         <Button type="submit" className="min-h-11 md:min-h-9">Apply</Button>
-        <Link href={base} className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body max-md:min-h-11">Clear all</Link>
+        <ButtonLink variant="secondary" href={base}>Clear all</ButtonLink>
       </form>
   );
   return (

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import { TpoBellPanel } from "@/components/tpo/tpo-bell-panel";
@@ -8,6 +7,7 @@ import { tpoHeaderSnapshotSchema, type TpoHeaderSnapshot } from
   "@/modules/activity/tpo-header-snapshot-model";
 import { MessageIcon, BellIcon } from "./icons";
 import style from "./topbar.module.css";
+import { TextLink } from "@/components/ui/text-link";
 
 export function TpoNotificationCluster() {
   const [state, setState] = useState<{ value: TpoHeaderSnapshot; revision: number } | null>(null);
@@ -45,19 +45,19 @@ export function TpoNotificationCluster() {
 
   const count = state?.value.messages ?? null;
   return <div role="group" className={style["actions"]+" min-w-0 shrink-0"} aria-label="Messages and notifications">
-    <Link href="/tpo/messages" className={style["iconButton"]+" shrink-0"}
+    <TextLink variant="bare" href="/tpo/messages" className={style["iconButton"]+" shrink-0"}
       aria-label={"Messages" + (count !== null ? ", " + count + " unread" : "")}
       title="Messages">
       <MessageIcon/>
       {count !== null && count > 0 ? <span aria-hidden="true" className={style["badge"]}>
         {count > 99 ? "99+" : count}
       </span> : null}
-    </Link>
+    </TextLink>
     {state ? <TpoBellPanel compact initialUnread={state.value.unread}
       items={state.value.items} revision={state.revision}/> :
-      <Link href="/tpo/notifications" className={style["iconButton"]+" shrink-0"}
+      <TextLink variant="bare" href="/tpo/notifications" className={style["iconButton"]+" shrink-0"}
         aria-label="Notifications — open inbox" title="Open notifications inbox">
         <BellIcon/>
-      </Link>}
+      </TextLink>}
   </div>;
 }

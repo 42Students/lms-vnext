@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageBackLink} from "@/components/ui/page-back-link";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {CollegeBrandingForm} from "@/components/admin/college-branding-form";
@@ -13,6 +12,7 @@ import {can} from "@/modules/permissions/policy";
 import { getSuperAdminCollegeBrandingPreview } from "@/modules/colleges/admin-branding-preview-service";
 import { collegeIdSchema } from "@/modules/colleges/validation";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminCollegeBrandingPage({
   params,
@@ -29,9 +29,9 @@ export default async function SuperAdminCollegeBrandingPage({
       <p className="mt-1 text-sm text-body">
         Branding belongs to one college. Choose a college in the header so changes can&apos;t land on the wrong one.
       </p>
-      <Link href="/admin/colleges" className="mt-3 inline-flex min-h-11 items-center text-link underline md:min-h-9">
+      <TextLink href="/admin/colleges" className="mt-3 inline-flex min-h-11 items-center md:min-h-9">
         Choose a college
-      </Link>
+      </TextLink>
     </section>;
   }
 
@@ -58,10 +58,10 @@ export default async function SuperAdminCollegeBrandingPage({
       actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)} label="College overview"/>}/>
     <ErrorState title="Couldn't load branding for this college."
       description="Saved branding and tenant identity could not be verified. No unsaved changes were applied."
-      action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/branding"}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+      action={<TextLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/branding"}
+        className="inline-flex min-h-11 items-center md:min-h-9">
         Retry branding
-      </Link>}/>
+      </TextLink>}/>
   </div>;
 
   const persisted=persistedResult.value,tenant=tenantResult.value;
@@ -71,11 +71,11 @@ export default async function SuperAdminCollegeBrandingPage({
     <PageHeader title="Manage college" description={persisted.collegeName}
       actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
         <PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)} label="College overview"/>
-        {context.adminScope?.collegeId===collegeId ? <Link
+        {context.adminScope?.collegeId===collegeId ? <TextLink
           href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/subdomain"}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Web address
-        </Link> : null}
+        </TextLink> : null}
       </div>}/>
     <section aria-label="College login branding" className="min-w-0 space-y-3">
       <p className="sr-only">

@@ -1,5 +1,4 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import Link from "next/link";
 import {ErrorState} from "@/components/ui/error-state";
 import {
   AdminAttendanceWorkspace,
@@ -15,6 +14,8 @@ import {
   AdminAttendanceOptionsLookupError,
 } from "@/modules/attendance/admin-service";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 function currentMonth() {
   return new Intl.DateTimeFormat("en-CA", {
@@ -59,7 +60,7 @@ export default async function SuperAdminAttendancePage({
       <PageHeader title="Attendance" description="Attendance oversight for the selected college."/>
       <ErrorState title="Invalid attendance month"
         description="Choose a month in YYYY-MM format and retry."
-        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] w-full md:w-auto justify-center">Reset month filter</Link>}/>
+        action={<ButtonLink variant="secondary" href="/admin/attendance" className="w-full md:w-auto">Reset month filter</ButtonLink>}/>
     </div>;
   }
   const optionsResult=await getAdminAttendanceOptions(context,collegeId)
@@ -79,7 +80,7 @@ export default async function SuperAdminAttendancePage({
      description={optionsResult.classLookupFailed
        ?"Course assignments are unavailable; retry class courses rather than treating the list as empty."
        :"Class and course choices are temporarily unavailable. No attendance has been changed."}
-     action={<Link href={"/admin/attendance?"+retryParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">{optionsResult.classLookupFailed?"Retry class courses":"Retry"}</Link>}/>
+     action={<TextLink href={"/admin/attendance?"+retryParams.toString()} className="inline-flex min-h-11 items-center md:min-h-9">{optionsResult.classLookupFailed?"Retry class courses":"Retry"}</TextLink>}/>
    </div>;
   }
   const options=optionsResult.value;
@@ -168,7 +169,7 @@ export default async function SuperAdminAttendancePage({
       </section>
       {gridResult&&!gridResult.ok?<ErrorState title="Could not load attendance"
         description="The class and course choices remain available. Retry loading this month's records."
-        action={<Link href={"/admin/attendance?"+retryGridParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry attendance</Link>}/>:null}
+        action={<TextLink href={"/admin/attendance?"+retryGridParams.toString()} className="inline-flex min-h-11 items-center md:min-h-9">Retry attendance</TextLink>}/>:null}
       <AdminAttendanceWorkspace data={data} basePath="/admin/attendance"/>
     </div>
   );

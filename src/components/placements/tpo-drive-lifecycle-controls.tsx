@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-drive-lifecycle-service";
 import { tpoDriveReadinessMessage } from "@/modules/placements/tpo-drive-lifecycle-model";
@@ -18,6 +17,7 @@ import {useToast} from "@/components/ui/toast";
 import { Radio } from "@/components/ui/radio";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
@@ -150,10 +150,9 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
       <div className="mt-4">
         <p className="mb-2 text-xs text-muted-foreground">Close stops further applications. Cancel is a separate irreversible workflow, not the same action.</p>
         {readiness.close.allowed ? (
-          <Link href={"/tpo/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/close-preview"}
-            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+          <ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/close-preview"}>
             Review close consequences before confirming
-          </Link>
+          </ButtonLink>
         ) : (
           <p className="text-xs text-muted-foreground leading-[20px]">
             Cannot close: {readiness.close.blockers.map(tpoDriveReadinessMessage).join(" ")}

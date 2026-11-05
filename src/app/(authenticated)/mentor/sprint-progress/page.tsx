@@ -4,7 +4,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -17,6 +16,7 @@ import {
 import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Params = { order?:string|string[];taskAttention?:string|string[];projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -38,7 +38,7 @@ export default async function MentorSprintProgressPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title="Sprint progress" description="Invalid sprint progress filters" />
-    <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link md:min-h-9">Clear filters</Link>
+    <TextLink href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
   </section>;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
@@ -48,9 +48,9 @@ export default async function MentorSprintProgressPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Sprint progress"
       description="Registered sprint, release and task status across your current project assignments."
-      actions={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
+      actions={<TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Mentoring projects
-      </Link>} />
+      </TextLink>} />
     {!data.enabled ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Sprint progress was not loaded.
     </section> : <>
@@ -68,7 +68,7 @@ export default async function MentorSprintProgressPage({
         </Label>
         <div className="flex min-w-0 flex-wrap items-center gap-2 max-md:col-span-1 md:col-span-1">
           <Button type="submit" variant="primary" className="w-full min-h-11 md:w-auto md:min-h-9">Filter</Button>
-          {hasFilters?<Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring lms-inline-link md:min-h-9">Clear</Link>:null}
+          {hasFilters?<TextLink href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm md:min-h-9">Clear</TextLink>:null}
         </div>
         <Disclosure title="More sprint filters" defaultOpen={hasAdvancedFilters} className="min-w-0 md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-4">
         <Label stack className="min-w-0">Sprint status
@@ -101,15 +101,15 @@ export default async function MentorSprintProgressPage({
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
         <p className="font-medium text-body">{data.total.toLocaleString("en-IN")} matching sprint{data.total === 1 ? "" : "s"}</p>
         <div className="flex min-w-0 flex-wrap items-center gap-3">
-        <Link data-unskin="" href={"/api/mentor/sprint-progress/export?"+
+        <TextLink data-unskin="" href={"/api/mentor/sprint-progress/export?"+
           new URLSearchParams({
             state:data.query.state,release:data.query.release,search:data.query.search,
             projectId:data.query.projectId??"",taskAttention:data.query.taskAttention,
             order:data.query.order,
           }).toString()}
-          download className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
+          download className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Export filtered sprint CSV (max 100)
-        </Link>
+        </TextLink>
         {data.total>100?<span role="status">
           Export omits {data.total-100} sprints beyond the 100-row cap.
         </span>:null}
@@ -117,7 +117,7 @@ export default async function MentorSprintProgressPage({
       </div>
       {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
         description="No sprints matched the selected state and current mentor assignments. Unmaterialized or missing pre-migration work is not counted."
-        action={<Link href={hasFilters ? "/mentor/sprint-progress" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-ring">{hasFilters ? "Clear filters" : "Mentoring projects"}</Link>} />
+        action={<TextLink href={hasFilters ? "/mentor/sprint-progress" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm md:min-h-9">{hasFilters ? "Clear filters" : "Mentoring projects"}</TextLink>} />
       : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
         <article key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
@@ -143,10 +143,10 @@ export default async function MentorSprintProgressPage({
             Completion: {item.tasks.completionPercent === null
               ? "Unknown (no tasks)" : item.tasks.completionPercent + "%"} of persisted tasks marked Done
           </p>
-          <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=sprints"}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
+          <TextLink href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=sprints"}
+            className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">
             Open authorized sprint workspace →
-          </Link>
+          </TextLink>
         </article>)}</div>}
       {data.totalPages > 1 ? <Pagination label="Sprint progress pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorSprintProgressHref({...data.query,page})}/> : null}
     </>}

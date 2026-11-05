@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -9,6 +8,7 @@ import {tpoCampaignDraftStorageReady,listTpoCampaignDrafts} from "@/modules/mess
 import {TpoCampaignPrototypeSidebar} from "@/components/tpo/tpo-campaign-prototype-sidebar";
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {CAMPAIGN_DRAFT_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function NewTpoCampaignPage({searchParams}:{searchParams:Promise<{selected?:string|string[]}>}){
  const requested=(await searchParams).selected;
@@ -24,7 +24,7 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
  if(unsafeSelection)return <div className="min-w-0 space-y-4">
   <PageHeader title="Review recipients"/>
   <Alert tone="error">Some selected recruiters could not be identified. No campaign draft was created. Return to Engage and select up to 100 recruiters again.</Alert>
-  <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-link underline lms-inline-link md:min-h-9">Return to Engage</Link>
+  <TextLink href="/tpo/recruiters" className="inline-flex min-h-11 items-center md:min-h-9">Return to Engage</TextLink>
  </div>;
  const ready=await tpoCampaignDraftStorageReady();
  const [deliveryReady,campaigns]=await Promise.all([
@@ -34,7 +34,7 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
  return <div className="min-w-0 space-y-4">
   <PageHeader title="New email campaign"
    description="Reach recruiter leads in your college with a saved and auditable audience snapshot."
-   actions={<Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 w-full items-center justify-center text-sm text-link underline lms-inline-link sm:w-auto md:min-h-9">← Campaign history</Link>} />
+   actions={<TextLink href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">← Campaign history</TextLink>} />
   <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(250px,320px)_minmax(0,1fr)]">
    <TpoCampaignPrototypeSidebar ready={campaigns?.ready===true}
     rows={campaigns?.rows??[]} actorUserId={ctx.user.id}/>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
@@ -11,6 +10,7 @@ import {Alert} from "@/components/ui/alert";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const PER_PAGE=12;
 /** The dedicated legacy Colleges directory is scoped to this recruiter and
@@ -26,14 +26,14 @@ export default async function HrCollegesPage({searchParams}:{
  if(!Number.isSafeInteger(page)||page<1||page>10000)return <div className="space-y-4">
   <PageHeader title="Colleges"/>
   <ErrorState title="Invalid college page" description="Choose a valid page of your authorized colleges."
-   action={<Link href="/hr/colleges" className="text-primary-text underline">Start again</Link>}/>
+   action={<TextLink href="/hr/colleges">Start again</TextLink>}/>
  </div>;
  let overview:Awaited<ReturnType<typeof getRecruiterSelfGrantOverview>>;
  try{overview=await getRecruiterSelfGrantOverview(context);}
  catch{return <div className="space-y-4"><PageHeader title="Colleges"/>
   <ErrorState title="Could not load your colleges"
    description="We could not verify the current recruiter college access. No private college information is shown."
-   action={<Link href="/hr/colleges" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>}/>
+   action={<TextLink href="/hr/colleges" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
  </div>;}
  const verified=new Map(overview.grants.map(row=>[row.id,row]));
  const authorized=context.recruiter.grants.filter(grant=>verified.has(grant.id));
@@ -70,18 +70,17 @@ export default async function HrCollegesPage({searchParams}:{
        </div>
       </dl>:<Alert tone="warning">College details are temporarily unavailable. Refresh to retry; missing values are not zero.</Alert>}
      {detail?.errors.length?<p role="status" className="text-xs text-muted-foreground">Could not load: {detail.errors.join(", ")}. Refresh to retry.</p>:null}
-     <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">
+     <ButtonLink variant="primary" href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}>
       Open recruiter Today
-     </Link>
+     </ButtonLink>
     </article>;
    })}
   </section>}
   {authorized.length>PER_PAGE?<nav aria-label="College pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border py-3 text-sm">
    <span>Page {currentPage} of {pages} · {authorized.length} verified colleges</span>
    <div className="flex flex-wrap gap-3">
-    {currentPage>1?<Link className="min-h-11 py-2 text-primary-text underline md:min-h-9" href={"/hr/colleges?page="+(currentPage-1)}>Previous</Link>:null}
-    {currentPage<pages?<Link className="min-h-11 py-2 text-primary-text underline md:min-h-9" href={"/hr/colleges?page="+(currentPage+1)}>Next</Link>:null}
+    {currentPage>1?<TextLink className="min-h-11 py-2 md:min-h-9" href={"/hr/colleges?page="+(currentPage-1)}>Previous</TextLink>:null}
+    {currentPage<pages?<TextLink className="min-h-11 py-2 md:min-h-9" href={"/hr/colleges?page="+(currentPage+1)}>Next</TextLink>:null}
    </div>
   </nav>:null}
  </div>;

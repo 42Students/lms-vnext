@@ -6,7 +6,6 @@ import {Input} from "@/components/ui/input";
 import {PageHeader} from "@/components/ui/page-header";
 import {Disclosure} from "@/components/ui/disclosure";
 import {EmptyState} from "@/components/ui/empty-state";
-import Link from "next/link";
 import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import {tpoRegistrationRecordedAtLabel,tpoRegistrationDaysSince} from "@/modules/placements/tpo-batch-registration-date-label-model";
 import {tpoPlacementConsentDescription} from "@/modules/placements/tpo-batch-registration-consent-model";
@@ -16,6 +15,7 @@ import {TPO_REGISTRATION_CHOICES} from "@/modules/placements/tpo-batch-registrat
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function BatchRegistrations({params,searchParams}:{
  params:Promise<{batchId:string}>;
@@ -72,7 +72,7 @@ export default async function BatchRegistrations({params,searchParams}:{
    </div>
    <DataTable caption="Batch registration choices" rows={data.items}
     getRowKey={row=>row.membershipId}
-    empty={<EmptyState title="No matching students." action={<Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations"} className="inline-flex min-h-11 items-center font-semibold text-link underline">Filter</Link>}/>}
+    empty={<EmptyState title="No matching students." action={<TextLink href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations"} className="inline-flex min-h-11 items-center">Filter</TextLink>}/>}
     columns={[
      {key:"learner",header:"Learner",mobileLabel:"Learner",mobilePriority:"primary" as const,
       cell:row=><strong className="break-words text-foreground">{row.name}</strong>},
@@ -86,15 +86,15 @@ export default async function BatchRegistrations({params,searchParams}:{
       cell:row=><span className="text-xs text-muted-foreground">{tpoPlacementConsentDescription(row.placementConsentEvidence)}</span>},
      {key:"actions",header:"Actions",mobileLabel:"Actions",mobilePriority:"action" as const,
       cell:row=><div className="flex min-w-0 flex-wrap gap-x-4 gap-y-1">
-       <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations/"+encodeURIComponent(row.membershipId)+"/history"}
-        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-ring">Registration change history</Link>
-       <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center break-words text-link underline focus-ring">Review participation</Link>
+       <TextLink href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations/"+encodeURIComponent(row.membershipId)+"/history"}
+        className="inline-flex min-h-11 md:min-h-9 items-center break-words">Registration change history</TextLink>
+       <TextLink href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
+        className="inline-flex min-h-11 md:min-h-9 items-center break-words">Review participation</TextLink>
       </div>},
     ]}/>
    {(data.filters.page>1||data.hasMore)?<nav aria-label="Registration pages" className="flex flex-wrap gap-2">
-    {data.filters.page>1?<Link href={url(data.filters.page-1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Previous</Link>:null}
-    {data.hasMore?<Link href={url(data.filters.page+1)} className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-link focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Next</Link>:null}
+    {data.filters.page>1?<ButtonLink variant="secondary" href={url(data.filters.page-1)}>Previous</ButtonLink>:null}
+    {data.hasMore?<ButtonLink variant="secondary" href={url(data.filters.page+1)}>Next</ButtonLink>:null}
    </nav>:null}
   </>}
  </div>;

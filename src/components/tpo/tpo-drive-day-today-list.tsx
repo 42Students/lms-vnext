@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export type TpoDriveDayTodayRound = {
   id: string;
@@ -88,8 +88,7 @@ export function TpoDriveDayTodayList({
       {visible.length === 0 && !failed ? (
         <div className="rounded-[12px] border border-border bg-surface p-6 text-center">
           <EmptyState title="There is no drive day for you today."
-            action={<Link href="/tpo/calendar"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-link md:min-h-9">See upcoming rounds</Link>}/>
+            action={<ButtonLink variant="secondary" href="/tpo/calendar">See upcoming rounds</ButtonLink>}/>
         </div>
       ) : null}
       {visible.length > 0 ? (
@@ -106,10 +105,10 @@ export function TpoDriveDayTodayList({
                   {[round.name,when(round.scheduledAt),round.venue].filter(Boolean).join(" · ")}
                 </p>
               </div>
-              <Link href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
-                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-semibold text-on-primary hover:bg-primary-hover md:min-h-9">
+              <ButtonLink variant="primary" href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
+                className="shrink-0">
                 Open round
-              </Link>
+              </ButtonLink>
             </article>
           ))}
         </div>

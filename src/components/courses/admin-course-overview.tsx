@@ -5,7 +5,6 @@ import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
 import collegeStyles from "@/components/admin/legacy-college-stat.module.css";
 import { Pagination } from "@/components/ui/pagination";
-import Link from "next/link";
 import {collegeCourseCatalogueHref,paginateCollegeCourses,type CollegeCourseCatalogueQuery} from "@/modules/courses/college-course-catalogue-model";
 import {collegeCourseCatalogueExportHref} from "@/modules/courses/college-course-catalogue-export-model";
 import type {listCollegeCourseCatalogue} from "@/modules/courses/college-course-catalogue-service";
@@ -133,13 +132,13 @@ export function AdminCourseOverview({
       header: "Course Name",
       cell: (course) => (
         <div>
-          <Link href={(()=>{
+          <TextLink href={(()=>{
            const first=workspace.offerings.find(item=>item.courseId===course.id&&item.status==="ACTIVE");
            return first?offeringBasePath+"/"+encodeURIComponent(first.id):
             courseBasePath+"?q="+encodeURIComponent(course.name);
-          })()} className="font-semibold text-primary-text underline-offset-2 hover:underline">
+          })()}>
             {course.name?.trim()||"Untitled course"}
-          </Link>
+          </TextLink>
           <p className="mt-1 text-xs font-semibold text-primary-text">{course.code}</p>
           {(course.description || course.introductionHeading || (courseBasePath.startsWith("/admin/") && (course.shortTitle || course.takeaways))) ? (
             <Disclosure title="Course details" className="mt-2" contentClassName="space-y-2 px-2 pb-2 text-xs leading-5 text-muted-foreground">
@@ -304,16 +303,15 @@ export function AdminCourseOverview({
       className: "text-right",
       cell: (offering) => (
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:flex-row md:flex-wrap md:justify-end">
-          {offering.status === "ACTIVE" ? <Link
+          {offering.status === "ACTIVE" ? <ButtonLink variant="secondary"
             href={
               offeringBasePath +
               "/" +
               offering.id
             }
-            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-ring motion-reduce:transition-none"
           >
             Open learning
-          </Link> : null}
+          </ButtonLink> : null}
           {offering.status === "ACTIVE" ? <OfferingActions
             offering={{
               id: offering.id,
@@ -597,9 +595,9 @@ export function AdminCourseOverview({
                 className="md:w-auto">
                 Export courses.csv
               </ButtonLink>
-              <Link href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses", courseBasePath)}
-                className="inline-flex min-h-11 items-center justify-center px-[var(--lms-space-3)] text-sm text-body hover:text-primary-text md:min-h-9">Refresh</Link>
-              <Link href={courseBasePath} className="inline-flex min-h-11 items-center justify-center px-[var(--lms-space-3)] text-sm text-body hover:text-primary-text md:min-h-9">Clear</Link>
+              <TextLink href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses", courseBasePath)}
+                className="inline-flex min-h-11 items-center justify-center px-[var(--lms-space-3)] text-sm text-body md:min-h-9">Refresh</TextLink>
+              <TextLink href={courseBasePath} className="inline-flex min-h-11 items-center justify-center px-[var(--lms-space-3)] text-sm text-body md:min-h-9">Clear</TextLink>
             </div>
           </form>
         </FilterBar> : null}

@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect,useState,useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { accountActionCopy, type AccountMenuVariant } from "./college-account-copy";
+import { TextLink } from "@/components/ui/text-link";
 
 export function AccountActions({
   showNotifications = true,
@@ -57,14 +57,14 @@ export function AccountActions({
     <div className="flex w-full min-w-0 max-w-full flex-col items-stretch gap-[var(--lms-space-3)] md:w-auto">
       <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] md:flex md:flex-wrap md:items-center md:justify-end">
         {showNotifications ? (
-          <Link href="/notifications" className={actionLinkClasses}>
+          <TextLink variant="bare" href="/notifications" className={actionLinkClasses}>
             Notifications
-          </Link>
+          </TextLink>
         ) : null}
         {copy.accountHref ? (
-          <Link href={copy.accountHref} className={actionLinkClasses}>
+          <TextLink variant="bare" href={copy.accountHref} className={actionLinkClasses}>
             {copy.accountLabel}
-          </Link>
+          </TextLink>
         ) : null}
         <Button
           variant="ghost"

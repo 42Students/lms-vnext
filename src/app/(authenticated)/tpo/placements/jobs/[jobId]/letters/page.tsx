@@ -1,5 +1,4 @@
 import { PageHeader } from "@/components/ui/page-header";
-import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -13,6 +12,7 @@ import { listPlacementJobOffers } from "@/modules/placements/offer-service";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { placementJobIdSchema } from "@/modules/placements/validation";
 import { projectOfferLetterEvidence } from "@/modules/placements/tpo-offer-letter-evidence-model";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function TpoOfferLettersPage({
   params,
@@ -38,8 +38,8 @@ export default async function TpoOfferLettersPage({
   return <div className="min-w-0 space-y-4">
     <PageHeader title={job.title+" · Offer letter evidence"}
       description="Persisted offer records are listed below. An issued offer is not proof that an offer letter was generated, sent, received or acknowledged."
-      actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] md:w-auto md:min-h-9 hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 print:hidden">← Back to drive</Link>} />
+      actions={<ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
+        className="w-full md:w-auto print:hidden">← Back to drive</ButtonLink>} />
     <Alert tone="warning">
       Letter-issued and letter-acknowledged states are unavailable: the registered
       placement offer schema has no letter document, delivery or acknowledgement

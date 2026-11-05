@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -21,6 +20,8 @@ import { facultyNotificationActionHref } from "@/modules/courses/faculty-notific
 import { facultyNotificationsFallbackPath,requireFacultyNotificationsAccess } from "@/modules/activity/faculty-notifications-access";
 import { FacultyNotificationsRetry } from "./faculty-notifications-retry";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const FACULTY_INBOX = "/teacher/notifications";
 
@@ -180,8 +181,8 @@ export default async function FacultyNotificationsPage({
       </Alert>:null}
       {invalid?<Alert tone="error">
         The notification filters or page link are invalid.
-        <Link href={FACULTY_INBOX+"?view="+view}
-          className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">View all notifications</Link>
+        <TextLink href={FACULTY_INBOX+"?view="+view}
+          className="ml-2 inline-flex min-h-11 items-center">View all notifications</TextLink>
       </Alert>:null}
       <section aria-labelledby="faculty-feed-heading" className="min-w-0 space-y-4">
         <Heading level={2} size="lg" id="faculty-feed-heading" className="text-[var(--lms-heading)]">
@@ -195,19 +196,19 @@ export default async function FacultyNotificationsPage({
         <NotificationList readEndpoint="/api/notifications/faculty" items={feed}
           emptyText={onOlderPage?"No older notifications on this page":allEmpty?"No notifications yet":view==="unread"?"No unread notifications yet":
             "No "+(scopeTab==="all"?"new":scopeTab)+" notifications yet"}
-          emptyAction={feed.length===0&&!allEmpty?<Link href={FACULTY_INBOX+"?view=all"}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
+          emptyAction={feed.length===0&&!allEmpty?<TextLink href={FACULTY_INBOX+"?view=all"}
+            className="inline-flex min-h-11 items-center">
             View all
-          </Link>:null}/> : null}
+          </TextLink>:null}/> : null}
         {nextHref ? <div className="flex justify-start">
-          <Link href={nextHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-ring">
+          <ButtonLink variant="secondary" href={nextHref}>
             Older notifications
-          </Link>
+          </ButtonLink>
         </div>:null}
         {nextNoticeHref ? <div className="flex justify-start">
-          <Link href={nextNoticeHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-ring">
+          <ButtonLink variant="secondary" href={nextNoticeHref}>
             Older announcements
-          </Link>
+          </ButtonLink>
         </div> : null}
       </section>
     </div>

@@ -1,5 +1,4 @@
 import { EmptyState } from "@/components/ui/empty-state";
-import Link from "next/link";
 import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {mayRecordCollegeAdminDeliveryLock} from "@/modules/projects/admin-submission-lock-policy";
@@ -71,8 +70,8 @@ export async function ProjectAdminSubmissionsPage({
       <ProjectAdminNav basePath={basePath} active="submissions" />
       <ErrorState title="Invalid submission filters"
         description="Check the submission view, status, page and rows filters, or clear them to continue."
-        action={<Link href={basePath + "/submissions"}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear filters</Link>} />
+        action={<TextLink href={basePath + "/submissions"}
+          className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>} />
     </div>;
   }
   const { view, ...safeQuery } = parsed.data;
@@ -117,8 +116,8 @@ export async function ProjectAdminSubmissionsPage({
       <ProjectAdminNav basePath={basePath} active="submissions"/>
       <ErrorState title="Submissions could not be loaded"
         description="The submissions list could not be loaded. Your filters have not changed."
-        action={<Link href={queuePath+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Retry loading submissions</Link>}/>
+        action={<TextLink href={queuePath+(suffix?"?"+suffix:"")}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry loading submissions</TextLink>}/>
     </div>;
   }
 
@@ -139,11 +138,10 @@ export async function ProjectAdminSubmissionsPage({
       <ProjectAdminNav basePath={basePath} active="submissions" />
       {focus?<div role="status" className="flex flex-wrap items-center gap-3 border-b border-border py-2 text-sm">
         <span>Showing workspace {focus}</span>
-        <Link href={view==="NOT_SUBMITTED"?
+        <TextLink href={view==="NOT_SUBMITTED"?
           projectAdminUnsubmittedHref(queuePath,withoutFocus):
           projectAdminSubmissionHref(queuePath,withoutFocus,
-            query.submissionStatus&&query.submissionStatus!=="DRAFT"?query.submissionStatus:undefined)}
-          className="font-semibold text-link underline">Clear workspace focus</Link>
+            query.submissionStatus&&query.submissionStatus!=="DRAFT"?query.submissionStatus:undefined)}>Clear workspace focus</TextLink>
       </div>:null}
       <Tabs
         ariaLabel="Submission categories"
@@ -157,8 +155,8 @@ export async function ProjectAdminSubmissionsPage({
       {view==="NOT_SUBMITTED"&&!unsubmitted?<ErrorState
         title="Unsubmitted workspaces unavailable"
         description="The unsubmitted workspace list could not be loaded. Your filters have not changed."
-        action={<Link href={projectAdminUnsubmittedHref(queuePath,query,query.page)}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Retry loading workspaces</Link>}/>:null}
+        action={<TextLink href={projectAdminUnsubmittedHref(queuePath,query,query.page)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry loading workspaces</TextLink>}/>:null}
       {unsubmitted?<section className="min-w-0 space-y-3 border-b border-border pb-4">
         <FilterBar title="Filters"><ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/></FilterBar>
         <ListToolbar label="Unsubmitted workspaces" viewCount={unsubmitted.total}
@@ -181,8 +179,8 @@ export async function ProjectAdminSubmissionsPage({
             {key:"inactive",header:"Inactive",mobilePriority:"secondary",cell:row=>
               (projectAdminElapsedDays(row.updatedAt,renderedAt)===null?"—":projectAdminElapsedDays(row.updatedAt,renderedAt)+" days")},
             {key:"action",header:"Action",mobilePriority:"action",cell:row=>
-              <Link href={basePath+"/"+row.id+"/delivery"}
-                className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Open</Link>},
+              <TextLink href={basePath+"/"+row.id+"/delivery"}
+                className="inline-flex min-h-11 items-center md:min-h-9">Open</TextLink>},
           ]}
           empty={<EmptyState title={basePath.startsWith("/admin/")?"Every active workspace has submitted":"No matching workspace has an outstanding submission"}
             description={query.q?"No matching workspaces on this page.":"All matching workspaces have a submission."} />}
@@ -200,7 +198,7 @@ export async function ProjectAdminSubmissionsPage({
           ["Reviewed",summary.reviewed,"APPROVED"],
         ] as const).map(([name,count,status])=>{
           const pressed=query.submissionStatus===status;
-          return <Link key={name} role="button" aria-pressed={pressed}
+          return <TextLink variant="bare" key={name} role="button" aria-pressed={pressed}
             href={projectAdminSubmissionHref(queuePath,
               status==="APPROVED"?query:{...query,status:"ACTIVE"},
               pressed?undefined:status)}
@@ -209,7 +207,7 @@ export async function ProjectAdminSubmissionsPage({
             <span className="block text-xs font-semibold text-body">{name}</span>
             <span className="mt-2 block text-2xl font-semibold tabular-nums text-foreground">{count}</span>
             {pressed?<span className="mt-1 block text-xs font-semibold text-link">Selected · clear filter</span>:null}
-          </Link>;
+          </TextLink>;
         })}
       </div>:<Banner tone="warning">
         Submission totals are temporarily unavailable. The filtered submissions below are still visible.
@@ -270,9 +268,9 @@ export async function ProjectAdminSubmissionsPage({
           }}
           columns={[
             {key:"workspace",header:"Workspace",mobilePriority:"primary",
-              cell:row=><Link href={basePath+"/"+row.projectId+"/delivery"}
-                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-                {row.projectTitle}</Link>},
+              cell:row=><TextLink href={basePath+"/"+row.projectId+"/delivery"}
+                className="inline-flex min-h-11 items-center md:min-h-9">
+                {row.projectTitle}</TextLink>},
             {key:"kind",header:"Submission type",mobilePriority:"secondary",
               cell:row=>row.attachments.some(item=>item&&typeof item==="object"&&
                 "kind" in item&&item.kind==="FILE")?"File upload":
@@ -332,9 +330,9 @@ export async function ProjectAdminSubmissionsPage({
                   workspaceTitle={row.projectTitle} status={row.status}
                   locked={!!row.lockedAt} projectStatus={row.projectStatus}
                   allowLock={allowLock}/>:null}
-                <Link href={basePath+"/"+row.projectId+"/delivery?from=submissions"}
-                  className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
-                  Open</Link>
+                <TextLink href={basePath+"/"+row.projectId+"/delivery?from=submissions"}
+                  className="inline-flex min-h-11 items-center md:min-h-9">
+                  Open</TextLink>
               </div>},
           ]}
           empty={<EmptyState
@@ -342,7 +340,7 @@ export async function ProjectAdminSubmissionsPage({
             description={query.q||query.submissionStatus||query.status?
               "Clear the filters to view all available submissions.":
               "Final project deliveries will appear when learners submit their work."}
-            action={<Link href={queuePath} className="text-link underline">Clear filters</Link>}/>}
+            action={<TextLink href={queuePath}>Clear filters</TextLink>}/>}
         />
       </section>
 

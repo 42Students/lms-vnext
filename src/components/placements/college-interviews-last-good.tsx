@@ -1,6 +1,6 @@
 "use client";
 import {createContext,useCallback,useContext,useEffect,useState,type ReactNode} from "react";
-import Link from "next/link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Snapshot={route:string;content:ReactNode};
 type Store={previous:Snapshot|null;save:(route:string,content:ReactNode)=>void};
@@ -25,7 +25,7 @@ export function CollegeInterviewsStaleFallback({retryHref}:{retryHref:string}){
     <div role="alert" className="border-l-2 border-warning bg-warning-subtle p-3 text-sm">
       <strong>Couldn't refresh interviews.</strong>{" "}
       {sameRoute?"Showing the last successfully loaded interview schedule; it may be out of date. Changes are unavailable until refresh succeeds.":"The latest interview schedule could not be loaded."}
-      {" "}<Link href={retryHref} prefetch={false} className="font-semibold text-link underline">Retry</Link>
+      {" "}<TextLink href={retryHref} prefetch={false}>Retry</TextLink>
     </div>
     {sameRoute?<div aria-label="Previously loaded interview schedule" inert className="pointer-events-none opacity-80">{previous.content}</div>:null}
   </div>;

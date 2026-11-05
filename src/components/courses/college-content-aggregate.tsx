@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import { Pagination } from "@/components/ui/pagination";
 import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-copy";
 import { CollegeStudentVisibilityControl } from "./college-student-visibility-control";
@@ -18,6 +17,8 @@ import {
 import type { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Data = Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 type Item=Data["items"][number];
@@ -60,10 +61,9 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
         eyebrow="College Admin · Courses & Content"
         title={title}
         actions={
-          <Link href="/college/lessons"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+          <ButtonLink variant="secondary" href="/college/lessons">
             Lessons
-          </Link>
+          </ButtonLink>
         }
       /> : null}
       <section aria-label={title + " filters"} className="border-b border-border pb-4 print:hidden">
@@ -203,10 +203,9 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
             className="min-h-11 w-full md:min-h-9 md:w-auto">
             Filter
           </Button>
-          <Link href={path}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+          <ButtonLink variant="secondary" href={path}>
             Clear
-          </Link>
+          </ButtonLink>
         </form>
       </section>
       <CollegeContentCsvExport legacyLessonContent={videos} filename={videos?"lesson-content.csv":"resources-page-"+data.query.page+".csv"}
@@ -229,8 +228,8 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
             {selectedLesson?data.total+" matching "+(data.total===1?"record":"records"):
              "Select a course and lesson to view existing content."}
           </p>
-          <Link href={collegeContentHref(data.kind,{...data.query,page:1})}
-           className="text-xs font-semibold text-primary-text hover:underline">Refresh</Link>
+          <TextLink href={collegeContentHref(data.kind,{...data.query,page:1})}
+           className="text-xs">Refresh</TextLink>
         </div>
         {!selectedLesson?<p className="p-6 text-center text-sm text-muted-foreground">
           Choose Course, then Lesson, and press Filter to load the Existing Content table.
@@ -267,8 +266,8 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
               {item.status!=="ARCHIVED"?<CollegeStudentVisibilityControl
                contentId={item.id} initialVisible={item.visibleToStudents}
                initialUpdatedAt={item.updatedAt.toISOString()}/>:null}
-              <Link className="text-xs font-semibold text-primary-text hover:underline"
-               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>Manage</Link>
+              <TextLink className="text-xs"
+               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>Manage</TextLink>
              </div>},
           ]:[
             {key:"title",header:"Title",mobilePriority:"primary" as const,
@@ -299,8 +298,8 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
               {item.status!=="ARCHIVED"?<CollegeStudentVisibilityControl contentId={item.id}
                initialVisible={item.visibleToStudents}
                initialUpdatedAt={item.updatedAt.toISOString()}/>:null}
-              <Link className="text-xs font-semibold text-primary-text hover:underline"
-               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>Manage</Link>
+              <TextLink className="text-xs"
+               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>Manage</TextLink>
              </div>},
           ]}
         />}

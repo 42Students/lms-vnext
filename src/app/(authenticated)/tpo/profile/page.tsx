@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -11,6 +10,7 @@ import { getOwnTpoProfile } from "@/modules/placements/tpo-self-profile-service"
 import { formatTpoProfileRole } from "@/modules/placements/tpo-utility-model";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 
@@ -34,10 +34,9 @@ export default async function TpoProfilePage() {
   return <div className="min-w-0 space-y-6" aria-label="Profile overview">
     <PageHeader title="Profile"
       description="How students and recruiters see you in the placement workspace"
-      actions={<Link href="/tpo/more"
-        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+      actions={<ButtonLink variant="secondary" href="/tpo/more">
         Back to More
-      </Link>} />
+      </ButtonLink>} />
 
     <div className="max-w-[860px] space-y-4">
       <TpoProfileRefresh />

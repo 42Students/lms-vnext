@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { and, eq, isNull } from "drizzle-orm";
@@ -10,6 +9,7 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { requireProjectManageAccess } from "@/modules/projects/access";
 import { projectInstanceIdSchema } from "@/modules/projects/validation";
+import { TextLink } from "@/components/ui/text-link";
 
 /** The legacy project URL delegates to the canonical summary only after
  * establishing that the selected Super Admin can actually see that project.
@@ -35,10 +35,10 @@ export default async function SuperAdminProjectPage({
     <PageHeader title="Project workspace"/>
     <ErrorState title="No college selected"
       description="Select a college in the header to open its project workspaces. Existing workspaces in other colleges stay private."
-      action={<Link href="/admin/projects"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      action={<TextLink href="/admin/projects"
+        className="inline-flex min-h-11 items-center md:min-h-9">
         Back to workspaces
-      </Link>}/>
+      </TextLink>}/>
   </div>;
   const parsed = projectInstanceIdSchema.safeParse(projectId);
   let canonicalId:string|null=parsed.success?parsed.data:null;
@@ -59,10 +59,10 @@ export default async function SuperAdminProjectPage({
   }
   if(!canonicalId)return <ErrorState title="Could not load this workspace."
     description="This project link does not match a workspace in the selected college. Choose it from the workspace list."
-    action={<Link href="/admin/projects"
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+    action={<TextLink href="/admin/projects"
+      className="inline-flex min-h-11 items-center md:min-h-9">
       Back to workspaces
-    </Link>}/>;
+    </TextLink>}/>;
   await requireProjectManageAccess(context,canonicalId);
   // Only canonical audited deep-link context survives a legacy redirect.
   // Reject arrays or oversized values rather than reflecting arbitrary URL keys.

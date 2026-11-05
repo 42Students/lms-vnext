@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { listScopedAdminNotificationPage } from "@/modules/activity/notification-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Query = Record<string, string | string[] | undefined>;
 const statuses = ["SENT", "SCHEDULED", "PROCESSING", "FAILED", "DELETED"] as const;
@@ -51,7 +52,7 @@ export default async function NotificationDeliveryPage({
     return (
       <main className="space-y-4">
         <PageHeader title="Notification delivery" description="Review scheduled and completed notification delivery." />
-        <p role="alert">Invalid delivery filters. <Link href="/admin/notification-delivery" className="underline">Reset filters</Link></p>
+        <p role="alert">Invalid delivery filters. <TextLink href="/admin/notification-delivery">Reset filters</TextLink></p>
       </main>
     );
   }
@@ -72,17 +73,16 @@ export default async function NotificationDeliveryPage({
   return (
     <main className="min-w-0 space-y-6">
       <PageHeader title="Notification delivery" description="Review delivery states separately from announcement visibility and read receipts." />
-      <Link href="/admin/announcements" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Back to announcements</Link>
+      <TextLink href="/admin/announcements" className="inline-flex min-h-11 items-center md:min-h-9">Back to announcements</TextLink>
       <section aria-label="Delivery status filters" className="space-y-2">
         <Heading level={2} size="lg">Delivery history</Heading>
         <nav aria-label="Filter delivery status" className="flex flex-wrap gap-2">
-          <Link href="/admin/notification-delivery" aria-current={!status ? "page" : undefined} className="inline-flex min-h-11 items-center rounded border px-3 text-sm">All</Link>
+          <ButtonLink variant="secondary" href="/admin/notification-delivery" aria-current={!status ? "page" : undefined}>All</ButtonLink>
           {statuses.map((value) => (
-            <Link key={value} href={"/admin/notification-delivery?status=" + value}
-              aria-current={status === value ? "page" : undefined}
-              className="inline-flex min-h-11 items-center rounded border px-3 text-sm">
+            <ButtonLink variant="secondary" key={value} href={"/admin/notification-delivery?status=" + value}
+              aria-current={status === value ? "page" : undefined}>
               {value} ({result.deliveryStatusCounts[value] ?? 0})
-            </Link>
+            </ButtonLink>
           ))}
         </nav>
       </section>
@@ -114,8 +114,8 @@ export default async function NotificationDeliveryPage({
         ))}
       </ol>
       <nav aria-label="Delivery history pages" className="flex flex-wrap gap-3">
-        {pageNo > 0 ? <Link href={urlFor(pageNo - 1)} className="inline-flex min-h-11 items-center rounded border px-4">Newer</Link> : null}
-        {last < result.pagination.total ? <Link href={urlFor(pageNo + 1)} className="inline-flex min-h-11 items-center rounded border px-4">Older</Link> : null}
+        {pageNo > 0 ? <ButtonLink variant="secondary" href={urlFor(pageNo - 1)}>Newer</ButtonLink> : null}
+        {last < result.pagination.total ? <ButtonLink variant="secondary" href={urlFor(pageNo + 1)}>Older</ButtonLink> : null}
       </nav>
     </main>
   );

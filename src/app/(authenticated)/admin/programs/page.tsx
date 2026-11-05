@@ -1,5 +1,4 @@
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
@@ -14,6 +13,7 @@ import { listProgramContents } from "@/modules/admin-ui/program-contents-service
 import { listDepartments } from "@/modules/departments/service";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminProgramsPage({
  searchParams,
@@ -23,7 +23,7 @@ export default async function SuperAdminProgramsPage({
     <PageHeader title="Programs"/>
     <ErrorState title="Program access denied"
       description="Your account cannot access Super Admin programs."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Back to dashboard</Link>}/>
+      action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Back to dashboard</TextLink>}/>
   </div>;
   const collegeId = context.adminScope?.collegeId ?? null;
 
@@ -36,7 +36,7 @@ export default async function SuperAdminProgramsPage({
         return <div className="min-w-0 space-y-4">
           <PageHeader title="Programs" />
           <ErrorState title="Invalid page number" description="Choose a valid page of the global program directory."
-            action={<Link href="/admin/programs" className="font-semibold text-link underline">Return to first page</Link>} />
+            action={<TextLink href="/admin/programs">Return to first page</TextLink>} />
         </div>;
       const page=rawPage?Number(rawPage):1;
       const directory=await listGlobalProgramsForSuperAdmin(context,{page}).catch(()=>null);
@@ -44,7 +44,7 @@ export default async function SuperAdminProgramsPage({
         <PageHeader title="Programs" description={context.adminScope?.organizationId?"Organization program catalogue":"Platform-wide program catalogue"} />
         <ErrorState title="Could not load programs"
           description="The global program catalogue is unavailable. No rows are assumed empty, and no college has been selected."
-          action={<Link href={"/admin/programs?page="+page} className="font-semibold text-link underline">Retry program directory</Link>} />
+          action={<TextLink href={"/admin/programs?page="+page}>Retry program directory</TextLink>} />
       </div>;
       return <div className="min-w-0 space-y-5">
         <PageHeader title="Programs"
@@ -72,8 +72,8 @@ export default async function SuperAdminProgramsPage({
           </Table>
         </div>:<EmptyState title="No programs found" description="No active college programs are available in the platform catalogue."/>}
         <nav aria-label="Program directory pagination" className="flex flex-wrap gap-4 text-sm font-semibold">
-          {directory.page>1?<Link href={"/admin/programs?page="+(directory.page-1)} className="text-link underline">Previous page</Link>:null}
-          {directory.page<directory.totalPages?<Link href={"/admin/programs?page="+(directory.page+1)} className="text-link underline">Next page</Link>:null}
+          {directory.page>1?<TextLink href={"/admin/programs?page="+(directory.page-1)}>Previous page</TextLink>:null}
+          {directory.page<directory.totalPages?<TextLink href={"/admin/programs?page="+(directory.page+1)}>Next page</TextLink>:null}
         </nav>
         <p className="text-xs text-muted-foreground">This list is informational. Changes require an explicitly selected college.</p>
       </div>;
@@ -91,7 +91,7 @@ export default async function SuperAdminProgramsPage({
    <PageHeader title="Programs"/>
    <ErrorState title="Invalid program filters"
     description="Search must be at most 100 characters. Choose a page from 1 to 10000 and a size from 1 to 100."
-    action={<Link href="/admin/programs" className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>}/>
+    action={<TextLink href="/admin/programs" className="inline-flex min-h-11 items-center">Clear filters</TextLink>}/>
   </div>;
   const [programRead,departmentRead]=await Promise.allSettled([
     listProgramsPage(context,collegeId,filters.data),
@@ -101,7 +101,7 @@ export default async function SuperAdminProgramsPage({
     <PageHeader title="Programs"/>
     <ErrorState title="We could not load this page"
       description="The selected college's program directory could not be verified. No changes were made."
-      action={<Link href="/admin/programs" className="lms-inline-link inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Retry loading programs</Link>}/>
+      action={<TextLink href="/admin/programs" className="inline-flex min-h-11 items-center md:min-h-9">Retry loading programs</TextLink>}/>
   </div>;
   const programPage=programRead.value;
   const programs=programPage.programs;
@@ -117,7 +117,7 @@ export default async function SuperAdminProgramsPage({
       <strong>Couldn&apos;t refresh all program details.</strong>
       The current program list is verified, but {departmentRead.status==="rejected"?"departments":"course contents"} could not be loaded.
       Edits are paused to avoid incomplete selections.
-      <Link href="/admin/programs" className="lms-inline-link font-semibold underline underline-offset-4">Retry loading details</Link>
+      <TextLink href="/admin/programs">Retry loading details</TextLink>
     </Alert>
     {programs.length===0?<EmptyState title="No programs found. Create a department first." description="No programs are recorded in the selected college."/>:
       <section aria-label="Programs read-only">

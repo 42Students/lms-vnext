@@ -2,7 +2,6 @@ import { Tabs } from "@/components/ui/tabs";
 import {ErrorState} from "@/components/ui/error-state";
 import {getLearnerPlacementJourney} from "@/modules/placements/learner-journey-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -10,6 +9,7 @@ import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge
 import { getOwnLearnerApplicationHistory } from "@/modules/placements/learner-application-detail-service";
 import { placementApplicationIdSchema } from "@/modules/placements/validation";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function dateInIst(value: Date): string {
   if(!Number.isFinite(value.getTime()))return "Date unavailable";
@@ -43,8 +43,8 @@ export default async function LearnerApplicationHistoryPage({
       <PageHeader title="Application status history"/>
       <ErrorState title="Couldn't load application status history"
         description="Your saved application has not been changed. Try reloading the authorized status timeline."
-        action={<Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)+"/history"}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
+        action={<TextLink href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)+"/history"}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
     </div>;
   }
   if (!history) notFound();
@@ -86,13 +86,13 @@ export default async function LearnerApplicationHistoryPage({
           {value:"/learn/my-placements/calendar",label:"Schedule",href:"/learn/my-placements/calendar"},
           {value:"/learn/my-placements/offers",label:"Offers",href:"/learn/my-placements/offers"},
         ]}/>
-      <Link
+      <TextLink
         href={"/learn/my-placements/applications?applicationId=" +
           encodeURIComponent(history.applicationId)}
-        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring"
+        className="inline-flex min-h-11 md:min-h-9 items-center text-sm"
       >
         ← Back to application
-      </Link>
+      </TextLink>
       <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4">
         <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Status history</Heading>
         <p className="mt-2 max-w-2xl text-sm leading-[22px] text-body">

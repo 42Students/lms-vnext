@@ -34,6 +34,7 @@ import { projectTemplateIdSchema } from "@/modules/projects/validation";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function formatDate(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -127,7 +128,7 @@ export async function SuperAdminTemplateSubviewPage({
         <PageHeader title="Template"/>
         <div role="alert" className="border-y border-warning-border bg-warning-subtle px-4 py-3 text-sm">
           <p className="font-semibold">Template not found</p>
-          <Link href="/admin/projects/templates" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">← Back to templates</Link>
+          <TextLink href="/admin/projects/templates" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">← Back to templates</TextLink>
         </div>
       </div>;
     }
@@ -141,8 +142,7 @@ export async function SuperAdminTemplateSubviewPage({
       <PageHeader title="Template"/>
       <ErrorState title="Failed to load template"
         description="Template could not be loaded. Review your access and try again."
-        action={<Link href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/"+section}
-          className="font-semibold text-primary-text">Retry</Link>}/>
+        action={<TextLink href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/"+section}>Retry</TextLink>}/>
     </div>;
   }
 
@@ -214,10 +214,9 @@ export async function SuperAdminTemplateSubviewPage({
         actions={<div className="flex min-w-0 flex-wrap items-center gap-2">
           <PageBackLink href="/admin/projects/templates" label="Back to templates"/>
           {detail.template.status==="PUBLISHED"?
-            <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">
+            <ButtonLink variant="primary" href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}>
               Use this template
-            </Link>:
+            </ButtonLink>:
             <span aria-disabled="true" title="Only a published template can be used to create a workspace"
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-muted px-4 text-sm text-muted-foreground md:min-h-9">
               Use this template
@@ -593,7 +592,7 @@ export async function SuperAdminTemplateSubviewPage({
         historyLoadFailed ? (
           <ErrorState title="Failed to load version history"
             description="Template details are available, but the version history could not be loaded."
-            action={<Link href={templateVersionHistoryHref(templateId,1)} className="font-semibold text-primary-text">Retry version history</Link>}/>
+            action={<TextLink href={templateVersionHistoryHref(templateId,1)}>Retry version history</TextLink>}/>
         ) : detail.versions.length === 0 ? (
           <NoItems
             title="No version history available"
@@ -665,17 +664,15 @@ export async function SuperAdminTemplateSubviewPage({
                   </div>
 
                   <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <Link href={templateVersionComparisonHref(detail.template.id,version.id)+"?from=versions"+(historyPaging?"&page="+historyPaging.page:"")+"#compare"}
-                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+                    <ButtonLink variant="secondary" href={templateVersionComparisonHref(detail.template.id,version.id)+"?from=versions"+(historyPaging?"&page="+historyPaging.page:"")+"#compare"}>
                       Compare changes
-                    </Link>
+                    </ButtonLink>
                     {isCurrent?<span aria-disabled="true" title="This is the template's current content"
                       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 text-sm text-muted-foreground md:min-h-9">Roll back</span>:
-                      <Link href={templateVersionComparisonHref(detail.template.id,version.id)+"?from=versions"+(historyPaging?"&page="+historyPaging.page:"")}
-                        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9"
+                      <ButtonLink variant="secondary" href={templateVersionComparisonHref(detail.template.id,version.id)+"?from=versions"+(historyPaging?"&page="+historyPaging.page:"")}
                         title="Compare this revision before rollback">
                         Roll back
-                      </Link>}
+                      </ButtonLink>}
                     {!isCurrent?<span className="text-xs text-muted-foreground">Review changed fields before enabling rollback.</span>:null}
                   </div>
 

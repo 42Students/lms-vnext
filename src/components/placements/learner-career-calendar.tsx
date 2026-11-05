@@ -4,7 +4,6 @@ import { CalendarGrid } from "@/components/ui/calendar-grid";
 import calendarStyles from "./legacy-calendar-theme.module.css";
 import styles from "./learner-career-calendar.module.css";
 
-import Link from "next/link";
 import {useSearchParams} from "next/navigation";
 import {readLearnerCalendarUrl,learnerCalendarHref,type LearnerCalendarUrlState} from "@/modules/placements/learner-career-calendar-url-model";
 import { useState } from "react";
@@ -36,6 +35,8 @@ import {LearnerRoundConfirmAttendance} from "./learner-round-confirm-attendance"
 import {LearnerScheduleReschedule} from "./learner-schedule-reschedule";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const views: CareerCalendarView[] = ["agenda", "month", "week", "day"];
 type EventFilter = LearnerCalendarUrlState["kind"];
@@ -352,10 +353,10 @@ export function LearnerCareerCalendar({
                         >
                         Event details
                       </Button>
-                      {(!event.eventType||event.eventType==="ROUND")?<Link href={learnerCareerCalendarEventTarget(event)}
-                        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] hover:underline focus-visible:underline">
+                      {(!event.eventType||event.eventType==="ROUND")?<TextLink href={learnerCareerCalendarEventTarget(event)}
+                        className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-[var(--lms-control-height)]">
                         Open exact round →
-                      </Link>:null}
+                      </TextLink>:null}
                     </div>
                   </li>
                 ))}
@@ -405,10 +406,10 @@ export function LearnerCareerCalendar({
                 onClick={()=>showEventDetail(event)}>
                 Event details
               </Button>
-              {(!event.eventType||event.eventType==="ROUND")?<Link href={hrefForEvent(event)}
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
+              {(!event.eventType||event.eventType==="ROUND")?<TextLink href={hrefForEvent(event)}
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
                 View application →
-              </Link>:null}
+              </TextLink>:null}
             </div>
           </article>
         ))}
@@ -458,17 +459,17 @@ export function LearnerCareerCalendar({
                   ):null}
                   <div className="flex flex-wrap gap-3">
                     {(!event.eventType||event.eventType==="ROUND")?<>
-                    <Link href={learnerCareerCalendarEventTarget(event)}
-                      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                    <TextLink href={learnerCareerCalendarEventTarget(event)}
+                      className="inline-flex min-h-11 items-center md:min-h-9">
                       Open exact round
-                    </Link>
-                    <Link href="/learn/my-placements/schedule?view=coming"
-                      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                    </TextLink>
+                    <TextLink href="/learn/my-placements/schedule?view=coming"
+                      className="inline-flex min-h-11 items-center md:min-h-9">
                       Check attendance or request reschedule
-                    </Link></>:event.jobId&&(event.eventType==="APPLICATION_DEADLINE"||event.eventType==="JOB_IMPORTANT_DATE")?
-                      <Link href={hrefForEvent(event)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                    </TextLink></>:event.jobId&&(event.eventType==="APPLICATION_DEADLINE"||event.eventType==="JOB_IMPORTANT_DATE")?
+                      <TextLink href={hrefForEvent(event)} className="inline-flex min-h-11 items-center md:min-h-9">
                         {event.eventType==="APPLICATION_DEADLINE"?"Open job before applications close":"View related job"}
-                      </Link>:null}
+                      </TextLink>:null}
                   </div>
                 </li>
               ))}
@@ -479,10 +480,10 @@ export function LearnerCareerCalendar({
         {...(selected ? {description:selected.companyName+" · "+selected.roleTitle} : {})}
         footer={
           <div className="flex min-w-0 w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-            {selected?<Link href={learnerCareerCalendarEventTarget(selected)}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)]">
+            {selected?<ButtonLink variant="secondary" href={learnerCareerCalendarEventTarget(selected)}
+              className="w-full sm:w-auto">
               Open exact round
-            </Link>:null}
+            </ButtonLink>:null}
             <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" type="button" onClick={()=>setSelectedKey(null)}
               >
               Close

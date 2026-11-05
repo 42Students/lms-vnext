@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { listSuperAdminCalendarAppointments } from "@/modules/placements/super-admin-calendar-appointment-directory";
 import { PageHeader } from "@/components/ui/page-header";
@@ -10,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 const TYPES=["ALL","SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"] as const;
 const STATUSES=["ALL","ACTIVE","SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED",
@@ -36,7 +36,7 @@ export default async function SuperAdminCalendarAppointmentsPage({
  const query=await searchParams;
  if(Object.values(query).some(Array.isArray))return <div className="min-w-0 space-y-4">
   <PageHeader title="Interview appointments"/>
-  <Alert tone="error">Invalid appointment filters. <Link href="/admin/placements/calendar/appointments" className="font-semibold text-link underline">Reset</Link></Alert>
+  <Alert tone="error">Invalid appointment filters. <TextLink href="/admin/placements/calendar/appointments">Reset</TextLink></Alert>
  </div>;
  const scalar=(value:string|string[]|undefined)=>typeof value==="string"?value:undefined;
  const type=validOption(scalar(query["type"]),TYPES,"ALL");
@@ -67,9 +67,9 @@ export default async function SuperAdminCalendarAppointmentsPage({
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Interview appointments"
    description="Candidate interviews across the selected college, independent of the calendar's visible month."
-   actions={<Link href="/admin/placements/calendar"
-    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-    Calendar view</Link>}/>
+   actions={<TextLink href="/admin/placements/calendar"
+    className="inline-flex min-h-11 items-center md:min-h-9">
+    Calendar view</TextLink>}/>
   <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,1fr))_auto] xl:items-end">
    <Label stack>Search
     <Input type="search" name="q" maxLength={100} defaultValue={search}
@@ -87,8 +87,8 @@ export default async function SuperAdminCalendarAppointmentsPage({
      {MODES.map(item=><option key={item} value={item}>{item==="ALL"?"All modes":item==="ONLINE"?"Online":"In-person"}</option>)}
     </Select></Label>
    <Button type="submit" className="min-h-11 w-full md:min-h-9">Filter</Button>
-   <Link href="/admin/placements/calendar/appointments"
-    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Reset</Link>
+   <TextLink href="/admin/placements/calendar/appointments"
+    className="inline-flex min-h-11 items-center md:min-h-9">Reset</TextLink>
   </form>
   {result.truncated?<Alert tone="warning">Showing up to 2,000 appointments. Conflict indicators may be incomplete outside this bounded sample. Narrow the college's interview search for current appointments.</Alert>:null}
   <p role="status" className="text-sm text-body">
@@ -121,16 +121,16 @@ export default async function SuperAdminCalendarAppointmentsPage({
      {key:"mode",header:"Location / Mode",mobilePriority:"secondary",cell:item=>
       (item.mode==="ONLINE"?"Online":"In-person")+" · "+(item.mode==="ONLINE"?"Meeting link":item.venue||"Venue not assigned")},
      {key:"applications",header:"Applications",mobilePriority:"action",cell:item=>
-      <Link href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?"+
+      <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?"+
        new URLSearchParams({collegeId:result.collegeId,...(item.applicationId ? {applicationId:item.applicationId} : {})}).toString()}
-       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-       View applications</Link>},
+       className="inline-flex min-h-11 items-center md:min-h-9">
+       View applications</TextLink>},
     ]}
    />}
   {pages>1?<nav aria-label="Interview appointment pages" className="flex items-center justify-between gap-3 text-sm">
-   {selectedPage>1?<Link href={href(selectedPage-1)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous</Link>:<span/>}
+   {selectedPage>1?<TextLink href={href(selectedPage-1)} className="inline-flex min-h-11 items-center md:min-h-9">Previous</TextLink>:<span/>}
    <span>Page {selectedPage} of {pages}</span>
-   {selectedPage<pages?<Link href={href(selectedPage+1)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next</Link>:<span/>}
+   {selectedPage<pages?<TextLink href={href(selectedPage+1)} className="inline-flex min-h-11 items-center md:min-h-9">Next</TextLink>:<span/>}
   </nav>:null}
  </div>;
 }

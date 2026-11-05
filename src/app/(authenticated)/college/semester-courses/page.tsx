@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { Alert } from "@/components/ui/alert";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -7,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { CollegeTermMappingRetained } from "@/components/academics/college-term-mapping-retained";
 import { listCollegeTermMappings } from "@/modules/academics/college-term-mapping-service";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeSemesterCoursesPage() {
   const context = await getCurrentRequestContext();
@@ -23,13 +23,12 @@ export default async function CollegeSemesterCoursesPage() {
   return <div className="min-w-0 space-y-6 md:space-y-6">
     <PageHeader title="Semester–Course Mapping"
       description="Define the curriculum for each semester and spot courses that still need faculty coverage."
-      actions={<Link href="/college/courses"
-        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-primary-text)] transition-[background-color,border-color] duration-[var(--lms-motion-fast)] md:min-h-9 motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+      actions={<ButtonLink variant="secondary" href="/college/courses">
         Course offerings
-      </Link>} />
+      </ButtonLink>} />
     <nav aria-label="Academic setup" className="flex min-w-0 flex-wrap items-center gap-4 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
-      <Link href="/college/academics" className="font-semibold text-primary-text hover:underline">Academic workspace</Link>
-      <Link href="/college/programs" className="font-semibold text-primary-text hover:underline">Programs</Link>
+      <TextLink href="/college/academics">Academic workspace</TextLink>
+      <TextLink href="/college/programs">Programs</TextLink>
       <span aria-current="page" className="border-b-2 border-[var(--lms-primary)] pb-1 font-semibold text-foreground">Semester–Course Mapping</span>
     </nav>
     {curriculumData?.lookupFailures.length ? <Alert tone="warning" title="Curriculum lookup incomplete">

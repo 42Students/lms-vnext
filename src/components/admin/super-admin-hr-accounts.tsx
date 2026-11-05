@@ -5,7 +5,6 @@ import {
   useState,
   useTransition,
 } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -41,6 +40,7 @@ import {
 } from "./super-admin-hr-types";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type DialogState =
   | { kind: "create" }
@@ -753,12 +753,12 @@ export function SuperAdminHrAccounts({
          <svg aria-hidden="true" className={refreshing?"size-4 animate-spin":"size-4"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 11a8 8 0 1 0-2 6M20 5v6h-6"/></svg>{refreshing?"Refreshing…":"Refresh"}
         </Button>
 
-        <Link
+        <ButtonLink variant="secondary"
           href="/admin/recruiters"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-ring lg:min-h-9 lg:w-auto md:min-h-9"
+          className="w-full lg:w-auto"
         >
           Clear
-        </Link>
+        </ButtonLink>
       </form>
 
       {loadError?<Alert tone="error" title="Recruiter accounts could not be loaded">
@@ -790,12 +790,11 @@ export function SuperAdminHrAccounts({
               }
               action={
                 filters.q || filters.status ? (
-                  <Link
+                  <ButtonLink variant="secondary"
                     href="/admin/recruiters"
-                    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-ring md:min-h-9"
                   >
                     Clear filters
-                  </Link>
+                  </ButtonLink>
                 ) : (
                   <Button className="min-h-11 w-full md:w-auto md:min-h-9 print:hidden" disabled={saving||pending||optionsLoading} onClick={()=>void openCreate()}>
                     Add recruiter
@@ -846,15 +845,14 @@ export function SuperAdminHrAccounts({
 
               <div className="flex min-w-0 flex-wrap gap-2">
                 {list.page > 1 ? (
-                  <Link
+                  <ButtonLink variant="secondary"
                     href={pageHref(
                       filters,
                       list.page - 1,
                     )}
-                    className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 md:min-h-9 text-sm"
                   >
                     Previous
-                  </Link>
+                  </ButtonLink>
                 ) : (
                   <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 md:min-h-9">
                     Previous
@@ -862,15 +860,14 @@ export function SuperAdminHrAccounts({
                 )}
 
                 {list.page < list.totalPages ? (
-                  <Link
+                  <ButtonLink variant="secondary"
                     href={pageHref(
                       filters,
                       list.page + 1,
                     )}
-                    className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 md:min-h-9 text-sm"
                   >
                     Next
-                  </Link>
+                  </ButtonLink>
                 ) : (
                   <span className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 opacity-50 md:min-h-9">
                     Next

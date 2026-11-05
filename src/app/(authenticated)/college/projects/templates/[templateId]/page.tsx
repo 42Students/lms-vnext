@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -16,13 +15,14 @@ import {ProjectsServiceError} from "@/modules/projects/errors";
 import {getAssignedProjectTemplateDetail} from "@/modules/projects/template-service";
 import {publishableProjectTemplateBlueprintSchema} from "@/modules/projects/validation";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 const subtitle="Maintained by 42Students — use this template to start a workspace.";
 const backHref="/college/projects/templates";
-const backAction=<Link href={backHref}
- className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body hover:bg-primary-subtle focus-ring md:min-h-9">
+const backAction=<ButtonLink variant="secondary" href={backHref}>
  Back to templates
-</Link>;
+</ButtonLink>;
 
 export default async function CollegeProjectTemplateDetailPage({
  params,
@@ -34,12 +34,11 @@ export default async function CollegeProjectTemplateDetailPage({
   description={subtitle}
   actions={<div className="flex min-w-0 flex-wrap gap-2">
    {backAction}
-   {useAction?<Link href={"/college/projects/create?templateId="+encodeURIComponent(templateId)}
-    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9">
+   {useAction?<ButtonLink variant="primary" href={"/college/projects/create?templateId="+encodeURIComponent(templateId)}>
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none"
      stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
     Use this template
-   </Link>:<Button disabled aria-label="Use this template unavailable"
+   </ButtonLink>:<Button disabled aria-label="Use this template unavailable"
     className="min-h-11 gap-2 md:min-h-9">
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none"
      stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
@@ -68,10 +67,10 @@ export default async function CollegeProjectTemplateDetailPage({
   {header(false)}
   {detailResult.kind==="missing"?
    <EmptyState title="Template not found" description="This published template is not assigned to the selected college."
-    action={<Link href={backHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Back to templates</Link>}/>:
+    action={<TextLink href={backHref} className="inline-flex min-h-11 items-center md:min-h-9">Back to templates</TextLink>}/>:
    <ErrorState title="Template could not be loaded" description="Failed to load template. Your selection was not changed."
-    action={<Link href={"/college/projects/templates/"+encodeURIComponent(templateId)}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>}
+    action={<TextLink href={"/college/projects/templates/"+encodeURIComponent(templateId)}
+     className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>}
  </div>;
  const detail=detailResult.value;
  // Successful legacy numeric bookmarks canonicalize only after an authorized

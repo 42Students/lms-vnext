@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -18,6 +17,8 @@ import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function TpoDriveRoundsPage({
   params,searchParams,
@@ -33,7 +34,7 @@ export default async function TpoDriveRoundsPage({
   if(Array.isArray(requested)||!valid)return <div className="space-y-3">
    <PageHeader title="Rounds and schedule"/>
    <p role="alert" className="rounded-lg border border-border p-4 text-sm">Invalid round selection. No candidate schedule was loaded.</p>
-   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"} className="font-semibold text-link underline">Reset selection</Link>
+   <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"}>Reset selection</TextLink>
   </div>;
   const drive = await getPlacementDriveDay(context, jobId);
   const ids=drive.rounds.filter(r=>r.kind==="INTERVIEW").map(r=>r.id);
@@ -71,7 +72,7 @@ export default async function TpoDriveRoundsPage({
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader eyebrow="TPO · Drive workspace" title="Rounds and schedule"
       description="Plan the drive rounds, check bookings and record company results."
-      actions={<Link href={root + "#drive-round-actions"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">Manage and reorder rounds</Link>} />
+      actions={<ButtonLink variant="secondary" href={root + "#drive-round-actions"} className="w-full sm:w-auto">Manage and reorder rounds</ButtonLink>} />
 
     <TpoDriveRoundsPrototypeReview jobId={jobId} rounds={drive.rounds}
        selectedId={typeof requested==="string"?requested:null} now={new Date()}
@@ -102,14 +103,14 @@ export default async function TpoDriveRoundsPage({
         No open round action is recorded. Review completion and audit history.
       </p>}
       <div className="flex flex-wrap gap-3 text-sm">
-        {nextRound?<Link href={root+"/rounds/"+encodeURIComponent(nextRound.id)+"/results"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        {nextRound?<TextLink href={root+"/rounds/"+encodeURIComponent(nextRound.id)+"/results"}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Review next round results
-        </Link>:null}
-        {pendingProposals+pendingChanges>0?<Link href={root+"/candidate-schedule"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        </TextLink>:null}
+        {pendingProposals+pendingChanges>0?<TextLink href={root+"/candidate-schedule"}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Review schedule requests
-        </Link>:null}
+        </TextLink>:null}
       </div>
     </section>
     {drive.rounds.length === 0
@@ -126,10 +127,10 @@ export default async function TpoDriveRoundsPage({
                 <Heading level={2} size="base" className="mt-1 break-words leading-6 text-foreground">{round.name}</Heading>
                 <p className="mt-1 flex min-w-0 flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={round.status==="COMPLETED"?"success":round.status==="CANCELLED"?"error":round.status==="SCHEDULED"?"info":"warning"}>{round.status}</StatusBadge><span>{round.mode} · {date(round.scheduledAt)}</span></p>
               </div>
-              <Link href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] sm:w-auto border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+              <ButtonLink variant="secondary" href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}
+                className="w-full sm:w-auto">
                 See who / record results
-              </Link>
+              </ButtonLink>
             </div>
             <dl className="mt-3 grid min-w-0 grid-cols-2 gap-3 border-t border-border pt-3 text-sm md:grid-cols-3">
               <div><dt className="text-xs text-muted-foreground">Students in round</dt><dd className="font-semibold">{round.participants.length}</dd></div>
@@ -147,10 +148,10 @@ export default async function TpoDriveRoundsPage({
               <div><dt className="text-body">Platform</dt><dd>{round.platform || "Not specified"}</dd></div>
               <div><dt className="text-body">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes + " minutes" : "Not specified"}</dd></div>
             </dl>
-            {round.kind==="INTERVIEW"?<Link href={root+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
-              className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+            {round.kind==="INTERVIEW"?<ButtonLink variant="secondary" href={root+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
+              className="mt-3">
               Slots and rooms · {countFor(proposals,round.id)+countFor(requests,round.id)} need review
-            </Link>:null}
+            </ButtonLink>:null}
             <Disclosure title={<>Round instructions and links <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="mt-3 min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
               <div className="flex min-w-0 flex-col gap-2 pb-2 sm:flex-row sm:flex-wrap">
             {round.whatToBring ? <p className="mt-3 text-sm text-body">Bring: {round.whatToBring}</p> : null}

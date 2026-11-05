@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -30,9 +29,9 @@ export default async function MentorLearnerVisibilityPreview({
  });
  const back="/mentor/projects/"+encodeURIComponent(projectId);
  return <main className="mx-auto max-w-5xl space-y-6 p-4 md:p-6">
-   <Link href={back+"?tab=overview"} className="text-sm font-semibold underline">
+   <TextLink href={back+"?tab=overview"} className="text-sm">
      ← Back to Mentor project
-   </Link>
+   </TextLink>
    <div>
      <Heading level={1} size="2xl">Student-visible project preview</Heading>
      <p className="mt-2 text-sm text-muted-foreground">

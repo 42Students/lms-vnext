@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
@@ -40,8 +39,8 @@ export default async function MentorLandingPage() {
       <ButtonLink variant="primary" href="/mentor?retry=1" className="mt-6">
         Retry access check
       </ButtonLink>:
-      <Link href="/mentor/notifications" className="mt-6 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9">
+      <ButtonLink variant="primary" href="/mentor/notifications" className="mt-6">
         View notifications
-      </Link>}
+      </ButtonLink>}
   </section>;
 }

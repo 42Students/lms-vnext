@@ -1,11 +1,11 @@
 "use client";
-import Link from "next/link";
 import {useState} from "react";
 import { Select } from "@/components/ui/select";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export type MentorSprintDetailRow={
   id:string;sequence:number;title:string;release:string;
@@ -76,9 +76,9 @@ export function MentorSprintDetailTable({projectId,rows}:{
             <td className="p-2 tabular-nums">{row.donePoints??"Not recorded"}</td>
             <td className="p-2 tabular-nums">{row.carriedCount}</td>
             <td className="p-2 tabular-nums">{row.openCount??"Not recorded"}</td>
-            <td className="p-2"><Link className="font-semibold text-link underline"
+            <td className="p-2"><TextLink
               href={base+"?tab=board&sprint="+encodeURIComponent(row.id)}>
-              View tasks</Link></td>
+              View tasks</TextLink></td>
           </tr>)}</tbody>
         </Table>
       </div>}

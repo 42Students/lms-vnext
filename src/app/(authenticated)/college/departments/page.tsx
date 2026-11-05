@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,6 +10,7 @@ import {
   listDepartments,
   resolveDepartmentUsage,
 } from "@/modules/departments/service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeDepartmentsPage() {
   const context = await getCurrentRequestContext();
@@ -44,7 +44,7 @@ export default async function CollegeDepartmentsPage() {
       <PageHeader
         title="Departments"
         description="Create, find, export and manage the departments in your college."
-        actions={<Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Academic periods and sections →</Link>}
+        actions={<TextLink href="/college/academics" className="inline-flex min-h-11 items-center md:min-h-9">Academic periods and sections →</TextLink>}
       />
       <Tabs ariaLabel="Academic Setup" value="departments" renderPanel={false} items={[
         {value:"departments",label:"Departments",href:"/college/departments"},

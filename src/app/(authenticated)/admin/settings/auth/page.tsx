@@ -1,5 +1,4 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {can} from "@/modules/permissions/policy";
@@ -10,6 +9,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {platformAuthPostureItems} from "@/modules/platform-settings/auth-posture-model";
 import {LEGACY_TENANT_SETTING_SPECS} from "@/modules/platform-settings/legacy-setting-specs";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export default async function SuperAdminAuthSettings(){
  const context=await getCurrentRequestContext();
  // Privileged auth posture is read-only, but even the key inventory must not
@@ -43,7 +43,7 @@ export default async function SuperAdminAuthSettings(){
     <code className="break-all text-xs">{spec.key}</code>
     {spec.dangerous?<StatusBadge tone="warning" className="ml-2">High impact · deployment gated</StatusBadge>:null}
    </li>)}</ul>
-   <Link href="/admin/settings" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Open Global Tenant Settings editor</Link>
+   <TextLink href="/admin/settings" className="inline-flex min-h-11 items-center md:min-h-9">Open Global Tenant Settings editor</TextLink>
   </section>
   <p className="text-xs text-muted-foreground leading-5">No credentials, cookie secrets, signing keys, permitted IPs, provider tokens or environment values are displayed or editable.</p>
  </div>;

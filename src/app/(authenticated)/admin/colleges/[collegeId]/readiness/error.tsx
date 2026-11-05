@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function CollegeReadinessError({
   reset,
@@ -24,12 +24,12 @@ export default function CollegeReadinessError({
             Recheck
           </Button>
 
-          <Link
+          <ButtonLink variant="secondary"
             href="/admin/colleges"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] sm:w-auto border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring md:min-h-9"
+            className="w-full sm:w-auto"
           >
             Colleges
-          </Link>
+          </ButtonLink>
         </div>
       }
     />

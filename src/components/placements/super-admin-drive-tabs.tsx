@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
+import { TextLink } from "@/components/ui/text-link";
 
 const tabs = [
  {label:"Overview",suffix:""},
@@ -15,7 +15,7 @@ export function SuperAdminDriveTabs({jobId,active}:{
  const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
  return <div className="space-y-3">
   <nav aria-label="Drive breadcrumb" className="flex flex-wrap gap-2 text-sm">
-   <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring" href="/admin/placements/drives">Drives</Link>
+   <TextLink className="inline-flex min-h-11 items-center" href="/admin/placements/drives">Drives</TextLink>
    <span aria-hidden="true">›</span><span>Drive workspace</span>
   </nav>
   <Tabs ariaLabel="Drive tabs" renderPanel={false} value={active}

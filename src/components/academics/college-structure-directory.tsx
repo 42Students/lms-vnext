@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { CollegeSectionLifecycleAction } from "@/components/academics/college-section-lifecycle-action";
 import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
@@ -28,6 +27,7 @@ import { Select } from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeClasses>>
@@ -58,10 +58,9 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         title={title}
         description={classes ? "Create class sections and manage their students, capacity and recurring sessions." :
           "Manage elective slots, course offerings and eligible students."}
-        actions={<Link href="/college/academics"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+        actions={<ButtonLink variant="secondary" href="/college/academics">
           Academic workspace
-        </Link>}
+        </ButtonLink>}
       />
       <div className={classes ? "grid min-w-0 items-start gap-[var(--lms-space-4)] lg:grid-cols-24" : "contents"}>
       {prepend ? <div data-slot="page-tools" className="min-w-0 lg:col-span-10">{prepend}</div> : null}
@@ -89,8 +88,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
           <Input form="college-structure-directory-filters" type="search" name="q" maxLength={100} defaultValue={"q" in data.query ? data.query.q : undefined}
             className="min-h-11 min-w-0 md:min-h-9" placeholder={classes ? "Search classes" : "Search slots"} />
         </Label>}
-        action={filtered ? <Link href={path}
-          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Clear filters</Link> : null}>
+        action={filtered ? <ButtonLink variant="secondary" href={path}>Clear filters</ButtonLink> : null}>
         <section aria-label={title + " filters"} className="min-w-0">
         <form id="college-structure-directory-filters" method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
           {classes && data.kind === "CLASSES" ? <CollegeClassScopeFilters programs={data.programs} cohorts={classOptions?.cohorts ?? []}
@@ -387,10 +385,9 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
             <Button variant="primary" type="submit" className="min-h-11 md:hidden">
               Filter
             </Button>
-            {filtered ? <Link href={path}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+            {filtered ? <ButtonLink variant="secondary" href={path}>
               Clear
-            </Link> : null}
+            </ButtonLink> : null}
           </div>
         </form>
       </section></FilterBar>
@@ -411,8 +408,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                 "No elective slots yet. Choose New slot to create your first."
               : "No rows on this page. Choose an earlier page."}
            </p>
-           {filtered ? <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">
-             Clear filters and view all {title.toLowerCase()}</Link> : null}
+           {filtered ? <TextLink href={path} className="inline-flex min-h-11 items-center">
+             Clear filters and view all {title.toLowerCase()}</TextLink> : null}
           </div>
         ) : (
           <>{data.kind === "CLASSES" ? (
@@ -421,8 +418,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               empty={<p>No classes match these filters.</p>}
               columns={[
                 {key:"class",header:"Class/Section Name",mobilePriority:"primary",cell:item=><>
-                  <Link href={"/college/academics/sections/"+encodeURIComponent(item.id)}
-                    className="font-semibold text-primary-text hover:underline">{item.name}</Link>
+                  <TextLink href={"/college/academics/sections/"+encodeURIComponent(item.id)}>{item.name}</TextLink>
                   <p className="mt-1 text-xs text-muted-foreground">{item.code}</p>
                 </>},
                 {key:"program",header:"Program",mobilePriority:"secondary",cell:item=>
@@ -437,9 +433,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                   ? <span role="status" className="text-warning-text">Unavailable</span> : item.activeLearners},
                 {key:"manage",header:"Actions",mobilePriority:"action",className:"min-w-[252px]",cell:item=>
                   <div className="flex min-w-[252px] flex-wrap items-center gap-[var(--lms-space-2)]">
-                    <Link href={"/college/classes/recurring-preview?classId="+encodeURIComponent(item.id)}
-                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text"
-                      title={"Schedule sessions for "+item.name} aria-label={"Schedule recurring sessions for "+item.name}>Schedule</Link>
+                    <ButtonLink variant="secondary" href={"/college/classes/recurring-preview?classId="+encodeURIComponent(item.id)}
+                      title={"Schedule sessions for "+item.name} aria-label={"Schedule recurring sessions for "+item.name}>Schedule</ButtonLink>
                     <CollegeClassRowActions row={item}
                       {...(classOptions ? { cohorts: classOptions.cohorts, periods: classOptions.periods } : {})}/>
                     <CollegeSectionLifecycleAction row={{
@@ -458,8 +453,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               columns={[
                 {key:"slot",header:"Slot",mobilePriority:"primary",className:"min-w-[180px]",cell:item=>
                   <div className="min-w-0">
-                    <Link href={"/college/electives/"+encodeURIComponent(item.id)}
-                      className="font-semibold text-primary-text hover:underline">{item.name}</Link>
+                    <TextLink href={"/college/electives/"+encodeURIComponent(item.id)}>{item.name}</TextLink>
                     {item.description ? <p title={item.description}
                       className="mt-1 max-w-[200px] truncate text-xs text-muted-foreground">
                       {item.description}
@@ -483,17 +477,15 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                   </StatusBadge>},
                 {key:"actions",header:"Actions",mobilePriority:"action",className:"min-w-[252px]",cell:item=>
                   <div className="flex min-w-[252px] flex-wrap items-center gap-2">
-                    <Link href={"/college/electives/"+encodeURIComponent(item.id)}
-                      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+                    <ButtonLink variant="secondary" href={"/college/electives/"+encodeURIComponent(item.id)}>
                       Open
-                    </Link>
+                    </ButtonLink>
                     {electiveOptions && item.status==="ACTIVE" ? <>
                       <CollegeSlotManager options={electiveOptions} row={item}/>
                       <CollegeElectiveOfferingManager slotId={item.id}/>
-                      <Link href={"/college/electives/"+encodeURIComponent(item.id)+"/allocate"}
-                        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+                      <ButtonLink variant="secondary" href={"/college/electives/"+encodeURIComponent(item.id)+"/allocate"}>
                         Eligible students
-                      </Link>
+                      </ButtonLink>
                     </> : null}
                     <CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
                       version={item.version} status={item.status}/>
@@ -513,12 +505,10 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         </div>
         <div className="flex gap-2">
           {data.query.page > 1 ? (
-            <Link href={collegeStructureHref(data.kind, { ...data.query, page: data.query.page - 1 })}
-              className="rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link>
+            <ButtonLink variant="secondary" href={collegeStructureHref(data.kind, { ...data.query, page: data.query.page - 1 })}>Previous</ButtonLink>
           ) : null}
           {data.query.page < data.totalPages ? (
-            <Link href={collegeStructureHref(data.kind, { ...data.query, page: data.query.page + 1 })}
-              className="rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-primary-text">Next</Link>
+            <ButtonLink variant="secondary" href={collegeStructureHref(data.kind, { ...data.query, page: data.query.page + 1 })}>Next</ButtonLink>
           ) : null}
         </div>
       </nav>

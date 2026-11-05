@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -23,7 +22,7 @@ export default async function SuperAdminAssignmentsPage({
   if (!query.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
     <ErrorState title="Invalid assignment filters" description="Check search, status and page."
-      action={<Link href="/admin/assignments" className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<TextLink href="/admin/assignments" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>} />
   </div>;
   const retryHref=adminAssessmentHref("ASSIGNMENT",query.data);
   const context = await getCurrentRequestContext();
@@ -31,7 +30,7 @@ export default async function SuperAdminAssignmentsPage({
     <PageHeader title="Assignments" />
     <ErrorState title="Assignment access denied"
       description="Your account cannot access Super Admin assignments."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Back to dashboard</Link>} />
+      action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Back to dashboard</TextLink>} />
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
@@ -48,14 +47,14 @@ export default async function SuperAdminAssignmentsPage({
     <PageHeader title="Assignments" />
     <ErrorState title="Assignments could not be loaded"
       description="The assignment directory could not be loaded. Your filters have not changed."
-      action={<Link href={retryHref}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading assignments</Link>} />
+      action={<TextLink href={retryHref}
+        className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading assignments</TextLink>} />
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title="Assignments" />
     <nav aria-label="Academic courses" className="flex flex-wrap gap-3 border-b border-border pb-3 text-sm">
-      <Link href="/admin/courses" className="font-semibold text-link underline">Courses &amp; Content</Link>
+      <TextLink href="/admin/courses">Courses &amp; Content</TextLink>
       <span aria-current="page" className="font-semibold text-foreground">Assignments</span>
     </nav>
     <section aria-label="Assignment actions and filters" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
@@ -73,9 +72,9 @@ export default async function SuperAdminAssignmentsPage({
     {lessonsResult.status==="rejected"?<Alert tone="warning" role="alert">
       <strong>Course list unavailable · Section list unavailable.</strong>
       <span>Assignment creation options could not be verified. Existing assignments remain visible, but creation is paused.</span>
-      <Link href={retryHref} className="lms-inline-link font-semibold underline underline-offset-4">
+      <TextLink href={retryHref}>
         Retry courses and sections
-      </Link>
+      </TextLink>
     </Alert>:null}
     <AdminAssessmentDirectory data={data} showHeader={false} />
     </section>

@@ -1,8 +1,8 @@
 "use client";
-import Link from "next/link";
 import {useEffect,useRef,useState} from "react";
 import {TpoBellPanel} from "@/components/tpo/tpo-bell-panel";
 import {tpoHeaderSnapshotSchema,type TpoHeaderSnapshot} from "@/modules/activity/tpo-header-snapshot-model";
+import { TextLink } from "@/components/ui/text-link";
 
 export function TpoHeaderIndicators({initial}:{initial:TpoHeaderSnapshot}){
  const [snapshot,setSnapshot]=useState<{value:TpoHeaderSnapshot;revision:number}>({value:initial,revision:0});
@@ -30,7 +30,7 @@ export function TpoHeaderIndicators({initial}:{initial:TpoHeaderSnapshot}){
  },[]);
  const {messages,items,unread}=snapshot.value;
  return <div className="flex min-w-0 items-center gap-3">
-  <Link href="/tpo/messages" aria-label={"Messages"+(messages?", "+messages+" unread":"")}
+  <TextLink variant="bare" href="/tpo/messages" aria-label={"Messages"+(messages?", "+messages+" unread":"")}
    className="relative inline-flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface text-foreground transition-colors hover:bg-primary-subtle focus-ring md:h-9 md:w-9 md:min-h-9 md:min-w-9"
    title="Messages">
    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -40,7 +40,7 @@ export function TpoHeaderIndicators({initial}:{initial:TpoHeaderSnapshot}){
    {messages>0?<span aria-label={messages+" unread"} className="absolute -right-1.5 -top-1.5 inline-flex min-h-[16px] min-w-[16px] items-center justify-center rounded-[var(--lms-radius-pill)] border-2 border-surface bg-[var(--lms-topbar-unread)] px-0.5 text-center text-xs font-bold leading-none text-[color:var(--lms-on-primary)]">
     {messages>99?"99+":messages}
    </span>:null}
-  </Link>
+  </TextLink>
   <TpoBellPanel initialUnread={unread} items={items} revision={snapshot.revision}/>
   {error?<span role="status" className="max-w-32 text-xs text-warning-text">{error}</span>:null}
  </div>;

@@ -1,5 +1,4 @@
 import { Tabs } from "@/components/ui/tabs";
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -14,6 +13,7 @@ import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-serv
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import {projectRecruiterRoundResults,recruiterResultTableHref,recruiterResultTableQuerySchema} from "@/modules/placements/recruiter-round-results-read-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Search={jobId?:string|string[];roundId?:string|string[];outcome?:string|string[]};
 export default async function HrRoundResultsPage({searchParams}:{searchParams:Promise<Search>}) {
  const context=await getCurrentRequestContext();
@@ -23,17 +23,17 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    roundId:raw.roundId||undefined,outcome:raw.outcome||undefined});
  if(!query.success) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Round Results" />
    <ErrorState title="Invalid round filters" description="Choose a valid hiring drive, round and outcome filter."
-    action={<Link href="/hr/round-results" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Clear filters</Link>}/></div>;
+    action={<TextLink href="/hr/round-results" className="min-h-11 md:min-h-9 inline-flex items-center">Clear filters</TextLink>}/></div>;
  if(!query.data.jobId) {
    const jobs=(await listOwnRecruiterPlacementJobs(context)).filter(item=>item.job.archivedAt===null);
    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Round Results"
      description="Choose one of your employer's authorized published or closed hiring drives. Private college applications are never listed." />
     {jobs.length?<section className="min-w-0 divide-y divide-border border-t border-border">{jobs.map(item=>
-     <Link key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
+     <TextLink variant="bare" key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
        className="block min-h-11 min-w-0 px-2 py-4 hover:bg-[var(--lms-table-hover)] focus-ring">
        <span className="block break-words font-semibold text-foreground">{item.job.title}</span>
        <span className="mt-1 block break-words text-sm text-body">{item.collegeName} · {item.job.status}</span>
-     </Link>)}</section>:<EmptyState title="No hiring drives" description="There are no authorized drives available for round review." action={<Link href="/hr/drives" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Drives</Link>}/>}
+     </TextLink>)}</section>:<EmptyState title="No hiring drives" description="There are no authorized drives available for round review." action={<TextLink href="/hr/drives" className="inline-flex min-h-11 items-center md:min-h-9">Drives</TextLink>}/>}
    </div>;
  }
  let workspace:Awaited<ReturnType<typeof getRecruiterPlacementWorkspace>>;
@@ -58,8 +58,8 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    <PageHeader title="Round Results"
     description={workspace.company.name+" · "+workspace.college.name+" · "+workspace.job.title} />
    <nav aria-label="Round review navigation" className="flex min-w-0 flex-col gap-x-5 gap-y-1 border-b border-border pb-3 text-sm md:flex-row md:items-center">
-     <Link href="/hr/round-results" className="inline-flex min-h-11 md:min-h-9 items-center font-medium text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Choose another drive</Link>
-     <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Open hiring rounds & staging</Link>
+     <TextLink href="/hr/round-results" className="inline-flex min-h-11 md:min-h-9 items-center">Choose another drive</TextLink>
+     <TextLink href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-11 md:min-h-9 items-center">Open hiring rounds & staging</TextLink>
    </nav>
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="border-b border-border pb-4 md:pb-5">
@@ -84,7 +84,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
            key:row.key,name:row.name,outcome:row.outcome,status:row.status,
            scorePercent:row.scorePercent,waitlistRank:row.waitlistRank,
          }))}
-       />:<EmptyState title="No matching candidates" description="No shared candidates match this outcome." action={<Link href={recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:"ALL"})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">ALL</Link>}/>}
+       />:<EmptyState title="No matching candidates" description="No shared candidates match this outcome." action={<TextLink href={recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:"ALL"})} className="inline-flex min-h-11 items-center md:min-h-9">ALL</TextLink>}/>}
        <p className="text-xs text-muted-foreground leading-5">STAGED results are awaiting placement-cell review; APPLIED results are recorded decisions. This read-only table does not submit or notify applicants.</p>
       </>}
     </section>:null}

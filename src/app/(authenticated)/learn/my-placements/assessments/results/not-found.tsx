@@ -1,4 +1,4 @@
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
-export default function AssessmentResultsNotFound(){return <section className="min-w-0 space-y-4"><PageHeader title="Assessment results unavailable"/><Alert tone="warning">The requested assessment results link is invalid or unavailable.</Alert><Link href="/learn/my-placements/assessments/results" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle hover:text-primary-hover focus-ring sm:w-auto md:min-h-9">View official assessment results</Link></section>;}
+import { ButtonLink } from "@/components/ui/button-link";
+export default function AssessmentResultsNotFound(){return <section className="min-w-0 space-y-4"><PageHeader title="Assessment results unavailable"/><Alert tone="warning">The requested assessment results link is invalid or unavailable.</Alert><ButtonLink variant="secondary" href="/learn/my-placements/assessments/results" className="w-full sm:w-auto">View official assessment results</ButtonLink></section>;}

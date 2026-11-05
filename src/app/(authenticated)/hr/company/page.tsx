@@ -9,7 +9,6 @@ import { Tabs } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { ErrorState } from "@/components/ui/error-state";
@@ -57,7 +56,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const collegeQuery = z.string().uuid().optional().safeParse(repeated?null:one(query.collegeId));
   if (!collegeQuery.success) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
-      action={<Link href="/hr/company" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Choose college</Link>} /></div>;
+      action={<TextLink href="/hr/company" className="min-h-11 md:min-h-9 inline-flex items-center">Choose college</TextLink>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
   const requestedTab = one(query.tab);
   const teamQuery = hrTeamSearchSchema.safeParse(one(query.q));
@@ -75,7 +74,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   const tab: string = requestedTab === "team" ? "team" : "company";
   if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
-      action={<Link href="/hr/company?tab=team" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Clear search</Link>} /></div>;
+      action={<TextLink href="/hr/company?tab=team" className="min-h-11 md:min-h-9 inline-flex items-center">Clear search</TextLink>} /></div>;
   const result = await getRecruiterCompanyTeam(context, requestedCollegeId, true).catch(error=>{
     if(error instanceof AuthorizationError)throw error;
     return null;
@@ -83,7 +82,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   if(!result)return <div className="min-w-0 space-y-4">
     <PageHeader title="Company & Team"/>
     <ErrorState title="Could not load this" description="Your recruiter college access could not be loaded."
-      action={<Link href="/hr/company" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>
+      action={<TextLink href="/hr/company" className="inline-flex min-h-11 items-center">Retry</TextLink>}/>
   </div>;
 
   if (result.status !== "READY") {
@@ -193,10 +192,10 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       <PageHeader
         title="Company & Team"
         description={"Your work with "+result.grant.collegeName}
-        actions={<Link href="/recruiter/profile"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">
+        actions={<TextLink href="/recruiter/profile"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Your profile
-        </Link>}/>
+        </TextLink>}/>
 
       {result.choices.length > 1 ? <NeedsDoingChips label="College access:"
         selectedKey={result.grant.collegeId}
@@ -255,11 +254,11 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             {overview.recent.length ? <div className="mt-4 space-y-2">
               <Heading level={4} size="sm" className="text-foreground">Recent hiring drives</Heading>
               <div className="divide-y divide-border border-y border-border">
-              {overview.recent.map(job=><Link key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
+              {overview.recent.map(job=><TextLink variant="bare" key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
                 className="flex min-h-11 min-w-0 flex-wrap items-center justify-between gap-2 py-3 text-sm transition-colors hover:bg-[var(--lms-table-hover)] md:min-h-9 focus-ring">
                 <span className="min-w-0 flex-1 break-words font-medium text-primary-text">{job.title}</span>
                 <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":job.status==="CANCELLED"?"error":"neutral"}>{job.status}</StatusBadge>
-              </Link>)}
+              </TextLink>)}
               </div>
             </div> : <p className="mt-4 text-sm text-muted-foreground">No published or closed drives for this relationship.</p>}
             <SummaryStrip label="Hiring footprint with this college" className="mt-4" steps={[
@@ -273,10 +272,10 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         <section className="border-b border-border pb-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Recruiter team</Heading>
-            <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] focus-ring md:min-h-9">
+            <TextLink href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
+              className="inline-flex min-h-11 items-center text-sm md:min-h-9">
               Export authorized team CSV
-            </Link>
+            </TextLink>
           </div>
           <p className="mt-2 text-sm text-body">
             Colleagues from your company who work with this college. To add one, ask the placement cell to invite them with their work email; the placement cell decides who gets access.
@@ -299,7 +298,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               {hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)}
             </p>:null}
           {teamPageResult.rows.length===0 ? <EmptyState title={teamQuery.data?"No matching teammates":"Only you so far"} description={hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)??"No teammates on this page."}
-            action={teamQuery.data ? <Link href={base+"&tab=team"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear search</Link> : undefined}/> : (
+            action={teamQuery.data ? <TextLink href={base+"&tab=team"} className="inline-flex min-h-11 items-center md:min-h-9">Clear search</TextLink> : undefined}/> : (
             <div className="mt-4 min-w-0 divide-y divide-border border-y border-border">
               {teamPageResult.rows.map((member) => (
                 <div key={member.userId} className="flex min-w-0 flex-col gap-2 py-3 md:flex-row md:items-start md:justify-between">

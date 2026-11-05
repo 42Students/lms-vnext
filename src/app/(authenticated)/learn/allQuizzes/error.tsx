@@ -2,9 +2,9 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { TextLink } from "@/components/ui/text-link";
 
 export default function LearnerAssessmentsError({
   reset,
@@ -20,9 +20,9 @@ export default function LearnerAssessmentsError({
       </Alert>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Try again</Button>
-        <Link href="/learn/courses" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">
+        <TextLink href="/learn/courses" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">
           {LEARNER_BACK_TO_COURSES}
-        </Link>
+        </TextLink>
       </div>
     </div>
   );

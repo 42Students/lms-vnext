@@ -1,13 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Tabs } from "@/components/ui/tabs";
 import {
   SUPER_ADMIN_PLACEMENT_OVERSIGHT_PRIMARY,
   SUPER_ADMIN_PLACEMENT_OVERSIGHT_ADDITIONAL,
 } from "@/modules/placements/super-admin-placement-nav-model";
+import { TextLink } from "@/components/ui/text-link";
 
 type OversightLink = { href: string; label: string };
 function items(links: readonly OversightLink[]) {
@@ -30,13 +30,13 @@ export function SuperAdminPlacementOversightNav({inactiveCount}:{inactiveCount?:
       value={active(primaryLinks,pathname)}
       items={items(primaryLinks)} />
     <div className="flex min-w-0 flex-wrap items-center justify-end">
-      <Link href="/admin/placements/drives"
+      <TextLink href="/admin/placements/drives"
         aria-current={allDrivesActive?"page":undefined}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+        className="inline-flex min-h-11 items-center md:min-h-9">
         All drives{typeof inactiveCount==="number"&&Number.isSafeInteger(inactiveCount)&&inactiveCount>0
          ?` (including ${inactiveCount} closed/draft)`:""}
         <span aria-hidden="true" className="ml-1">→</span>
-      </Link>
+      </TextLink>
     </div>
     <Disclosure title="More placement reports" defaultOpen={additionalActive} className="border-t border-border pt-3">
       <div className="mt-3">

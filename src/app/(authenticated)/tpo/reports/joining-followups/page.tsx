@@ -7,7 +7,6 @@ import { Alert } from "@/components/ui/alert";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -19,6 +18,7 @@ import {getTpoJoiningFollowups} from "@/modules/placements/tpo-joining-followup-
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Search={seasonId?:string|string[];state?:string|string[]};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoJoiningFollowupsPage({searchParams}:{searchParams:Promise<Search>}){
@@ -37,7 +37,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
   <PageHeader title="Joining follow-ups"
    description="Accepted-offer joining evidence, pending confirmations and deferred dates."
    actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-     <Link href="/tpo/reports/joining-status" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Joining outcomes</Link>
+     <TextLink href="/tpo/reports/joining-status" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">← Joining outcomes</TextLink>
      {report.season?<ButtonLink variant="primary" href={"/api/placements/reports/joining-followups?"+params.toString()}
     className="w-full sm:w-auto">
     Export CSV</ButtonLink>:null}
@@ -76,9 +76,9 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
        <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{o.companyName} · {o.roleTitle}</Heading>
        <p className="mt-1 text-sm text-body leading-[22px]">{o.candidateName??"Name not recorded"} · {o.jobTitle}</p>
        <p className="mt-1 text-sm text-body leading-[22px]">{o.joiningStatus??"PENDING"} · Joining date: {o.scheduledDate??"Not recorded"}</p>
-       <Link href={"/tpo/placements/jobs/"+o.jobId+"/joining"}
-         className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link hover:underline">
-         Open drive joining records →</Link>
+       <TextLink href={"/tpo/placements/jobs/"+o.jobId+"/joining"}
+         className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm">
+         Open drive joining records →</TextLink>
      </article>)}</section>}
   </>}
  </div>;

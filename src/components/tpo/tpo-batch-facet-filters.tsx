@@ -3,10 +3,10 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import {useState} from "react";
 import {filterTpoBatchFacets,type TpoBatchFacetQuery,type TpoBatchFacetRow,type TpoBatchFacetState} from "@/modules/placements/tpo-batch-facets-model";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 type Row=TpoBatchFacetRow;
 export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row[];
  initial:TpoBatchFacetQuery;baseQuery:Readonly<Record<string,string>>}){
@@ -81,7 +81,7 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
    <div className="flex flex-wrap gap-2 text-sm">
     <Button variant="secondary" type="button" onClick={()=>setSelected({states:[],programs:[],departments:[],finalYears:[]})}
      >Reset</Button>
-    <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-ring md:min-h-9">Clear all</Link>
+    <ButtonLink variant="secondary" href="/tpo/batches">Clear all</ButtonLink>
     <Button type="submit" >Show {count}</Button>
    </div>
   </form>

@@ -1,9 +1,9 @@
 "use client";
-import Link from "next/link";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** Saved consent is distinct from a live provider token verification. */
 export function MentorGoogleCalendarAccount({connected,available,connectedAt}:{
@@ -58,10 +58,10 @@ export function MentorGoogleCalendarAccount({connected,available,connectedAt}:{
       variant="secondary" onClick={()=>void verify()}>
       Verify Google access
     </Button>:null}
-    <Link className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold"
+    <ButtonLink variant="secondary"
       href="/api/mentor/calendar/google/connect">
       {connected?"Reconnect Google Calendar":"Connect Google Calendar"}
-    </Link>
+    </ButtonLink>
     {connected?<Button type="button" disabled={busy} loading={busy}
       variant="secondary" onClick={()=>void disconnect()}>
       Disconnect Google Calendar

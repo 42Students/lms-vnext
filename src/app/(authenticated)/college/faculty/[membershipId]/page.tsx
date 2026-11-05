@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -19,6 +18,7 @@ import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
@@ -69,8 +69,8 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     <section className="min-w-0 border-b border-border pb-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)]">Faculty record</Heading>
-        <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Lifecycle audit</Link>
+        <TextLink href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
+          className="inline-flex min-h-11 items-center md:min-h-9">Lifecycle audit</TextLink>
       </div>
       <dl className="mt-4 grid min-w-0 gap-x-6 gap-y-3 text-sm md:grid-cols-2 [&_dd]:min-w-0 [&_dd]:break-words [&_dd]:font-medium [&_dd]:text-foreground">
         <div><dt className="text-muted-foreground">Title</dt><dd>{data.person.academicTitle ?? "Not recorded"}</dd></div>
@@ -124,8 +124,8 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         {data.assignments.length === 0
         ? <EmptyState title="No teaching assignments" description="No college-scoped teaching assignments recorded."
             action={data.filter.status!=="ALL"||data.filter.role!=="ALL" ?
-              <Link href={`/college/faculty/${encodeURIComponent(membershipId)}`}
-                className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">All assignments</Link>
+              <TextLink href={`/college/faculty/${encodeURIComponent(membershipId)}`}
+                className="inline-flex min-h-11 items-center md:min-h-9">All assignments</TextLink>
               : null}/>
         : <DataTable
             caption="Persisted teaching assignments"
@@ -135,10 +135,9 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             columns={[
               { key: "course", header: "Course", mobilePriority: "primary",
                 cell: item => item.offeringId&&!item.metadataIncomplete
-                  ? <Link href={`/college/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-                      className="font-semibold text-link hover:underline active:text-[var(--lms-primary-text)] focus-ring hover:text-[var(--lms-primary-text)] underline-offset-4">
+                  ? <TextLink href={`/college/courses/offerings/${encodeURIComponent(item.offeringId)}`}>
                       {item.courseName}{item.courseCode?" ("+item.courseCode+")":""}
-                    </Link>
+                    </TextLink>
                   : <span className="font-medium text-muted-foreground" title="Historical assignment has incomplete course metadata">
                       {item.courseName} (historical assignment; metadata unavailable)
                     </span> },
@@ -152,9 +151,9 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       <nav aria-label="Teaching assignment pages" className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
         <span>{data.pagination.total===0?0:(data.pagination.page-1)*data.pagination.pageSize+1}–{Math.min(data.pagination.total,data.pagination.page*data.pagination.pageSize)} of {data.pagination.total} assignments</span>
         <span className="flex items-center gap-3">
-          {data.pagination.page>1?<Link className="font-semibold text-link underline" href={`?status=${encodeURIComponent(data.filter.status)}&role=${encodeURIComponent(data.filter.role)}&pageSize=${data.pagination.pageSize}&page=${data.pagination.page-1}`}>Previous</Link>:null}
+          {data.pagination.page>1?<TextLink href={`?status=${encodeURIComponent(data.filter.status)}&role=${encodeURIComponent(data.filter.role)}&pageSize=${data.pagination.pageSize}&page=${data.pagination.page-1}`}>Previous</TextLink>:null}
           Page {data.pagination.page} of {data.pagination.totalPages}
-          {data.pagination.page<data.pagination.totalPages?<Link className="font-semibold text-link underline" href={`?status=${encodeURIComponent(data.filter.status)}&role=${encodeURIComponent(data.filter.role)}&pageSize=${data.pagination.pageSize}&page=${data.pagination.page+1}`}>Next</Link>:null}
+          {data.pagination.page<data.pagination.totalPages?<TextLink href={`?status=${encodeURIComponent(data.filter.status)}&role=${encodeURIComponent(data.filter.role)}&pageSize=${data.pagination.pageSize}&page=${data.pagination.page+1}`}>Next</TextLink>:null}
         </span>
       </nav>
       <p className="mt-3 text-xs text-muted-foreground">

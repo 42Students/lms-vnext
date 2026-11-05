@@ -1,7 +1,6 @@
 import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import { learnerUpcomingQuizEligible } from "@/modules/courses/learner-course-upcoming-quiz-model";
 import { learnerCourseHomeCompletion } from "@/modules/courses/learner-course-home-completion-model";
 import { learnerCourseHomeActionLabel } from "@/modules/courses/learner-course-home-action-label-model";
@@ -18,6 +17,7 @@ import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 type Workspace = Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
 
@@ -357,17 +357,17 @@ export function LearnerCourseOverview({
               Lesson names describe the curriculum, not promises of learning outcomes.
             </p>
           </div>
-          <Link href={`/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] md:min-h-9">
+          <TextLink href={`/learn/courses/${deliveryId}/roadmap`}
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             Full learning path →
-          </Link>
+          </TextLink>
         </div>
         {pathPreview.lessons.length ? (
           <ol className="mt-4 grid gap-2 md:grid-cols-2">
             {pathPreview.lessons.map((lesson)=>(
               <li key={lesson.id} className="rounded-lg border border-border p-3">
-                <Link href={`/learn/courses/${deliveryId}/roadmap?lesson=${encodeURIComponent(lesson.id)}`}
-                  className="flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] md:min-h-9">{lesson.name}</Link>
+                <TextLink href={`/learn/courses/${deliveryId}/roadmap?lesson=${encodeURIComponent(lesson.id)}`}
+                  className="flex min-h-11 items-center text-sm md:min-h-9">{lesson.name}</TextLink>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {lesson.progress===null?"No published trackable items"
                     : `${lesson.completed} of ${lesson.total} items completed · ${lesson.progress}%`}
@@ -409,9 +409,9 @@ export function LearnerCourseOverview({
                 : homeCompletion.detail}
             </p>
           </div>
-          {deliveryId ? <Link
+          {deliveryId ? <ButtonLink variant="primary"
             href={nextAction?.href ?? `/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:focus-outline"
+            className="shrink-0"
           >
             <NextActionIcon kind={priorityActivity?.type==="Live Session"?"session":priorityActivity?"deadline":"lesson"}/>
             {readOnly
@@ -421,7 +421,7 @@ export function LearnerCourseOverview({
                 : nextAction
                   ? "Continue"
                    : "Start learning"}
-          </Link>:<span aria-disabled="true" title="Loading course…" className="inline-flex min-h-12 items-center rounded-[var(--lms-control-radius)] border border-border px-5 text-sm font-semibold text-muted-foreground">
+          </ButtonLink>:<span aria-disabled="true" title="Loading course…" className="inline-flex min-h-12 items-center rounded-[var(--lms-control-radius)] border border-border px-5 text-sm font-semibold text-muted-foreground">
             Loading course…
           </span>}
         </div>
@@ -475,35 +475,32 @@ export function LearnerCourseOverview({
                 Official class announcements, saved completions, upcoming assessments, and live sessions.
               </p>
             </div>
-            <Link
+            <TextLink
               href={`/learn/courses/${deliveryId}/roadmap`}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] md:min-h-9"
+              className="inline-flex min-h-11 items-center text-sm md:min-h-9"
             >
               Learning Path
-            </Link>
+            </TextLink>
           </div>
           <nav aria-label="Recent course update categories" className="mt-4 flex flex-wrap gap-2">
-            <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=assessments"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-ring motion-reduce:transition-none md:min-h-9">Assessments</Link>
-            <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-ring motion-reduce:transition-none md:min-h-9">Discussions</Link>
-            <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=live-sessions"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-ring motion-reduce:transition-none md:min-h-9">Live Sessions</Link>
+            <ButtonLink variant="secondary" href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=assessments"}>Assessments</ButtonLink>
+            <ButtonLink variant="secondary" href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/discussions"}>Discussions</ButtonLink>
+            <ButtonLink variant="secondary" href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=live-sessions"}>Live Sessions</ButtonLink>
           </nav>
           <div className="mt-4 divide-y divide-border">
             {unifiedUpdates.map((update) => (
               <article key={update.key} className="py-3 first:pt-0 last:pb-0">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <Link href={update.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary-text focus-ring min-w-0 max-md:min-h-11">
+                    <TextLink href={update.href} className="block truncate text-sm text-foreground min-w-0 max-md:min-h-11">
                       {update.title}
-                    </Link>
+                    </TextLink>
                     <p className="mt-1 text-xs text-muted-foreground">{update.detail}</p>
                     {update.body ? <ExpandableCourseUpdate body={update.body} /> : null}
                   </div>
-                  <Link href={update.href} aria-label={`Open ${update.title}`} className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center text-primary-text hover:text-primary-hover focus-ring md:min-h-9 md:min-w-9">
+                  <TextLink href={update.href} aria-label={`Open ${update.title}`} className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center md:min-h-9 md:min-w-9">
                     →
-                  </Link>
+                  </TextLink>
                 </div>
               </article>
             ))}

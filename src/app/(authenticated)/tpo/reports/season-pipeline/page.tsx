@@ -6,7 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -18,6 +17,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoSeasonPipeline } from "@/modules/placements/tpo-season-pipeline-service";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Search = { seasonId?: string | string[]; jobId?: string | string[] };
 function first(input: string | string[] | undefined) {
@@ -51,9 +51,9 @@ export default async function TpoSeasonPipelinePage({
       <PageHeader eyebrow="TPO · Reports" title="Season pipeline"
         description="Recorded application, screening, offer and joining evidence for one placement season."
         actions={<div className="flex w-full min-w-0 flex-col-reverse items-stretch gap-[var(--lms-space-2)] md:w-auto md:flex-row md:items-center">
-          <Link href="/tpo/reports" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline-offset-4 hover:underline focus-ring md:min-h-9">
+          <TextLink href="/tpo/reports" className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">
             ← All reports
-          </Link>
+          </TextLink>
           {report.season ? <ButtonLink variant="primary" href={"/api/placements/reports/season-pipeline?" + csvQuery.toString()}>
             Export funnel CSV
           </ButtonLink> : null}

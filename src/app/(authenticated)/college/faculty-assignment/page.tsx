@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS, facultyAssignmentRoleLabel } from "@/modules/courses/college-courses-copy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
@@ -22,6 +21,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -35,7 +35,7 @@ export default async function CollegeFacultyAssignmentPage({
     <PageHeader title="Faculty Assignment"/>
     <ErrorState title="Admin not assigned to a college"
       description="Contact your administrator to assign your College Admin membership before editing faculty assignments."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+      action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>}/>
   </div>;
   const raw = await searchParams;
   const parsed = facultyAssignmentQuerySchema.safeParse(
@@ -49,8 +49,8 @@ export default async function CollegeFacultyAssignmentPage({
       <PageHeader title="Faculty Assignment" />
       <ErrorState title="Invalid assignment filters"
         description="The status, page or search is invalid; no assignments were loaded."
-        action={<Link href="/college/faculty-assignment"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>} />
+        action={<TextLink href="/college/faculty-assignment"
+          className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Clear filters</TextLink>} />
     </div>
   );
 
@@ -92,8 +92,8 @@ export default async function CollegeFacultyAssignmentPage({
       <PageHeader
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}
-        actions={<Link href="/college/faculty"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Faculty directory</Link>}
+        actions={<TextLink href="/college/faculty"
+          className="inline-flex min-h-11 items-center md:min-h-9">Faculty directory</TextLink>}
       />
       <section aria-label="Teaching assignments overview" className="grid grid-cols-2 divide-x divide-y divide-border overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface lg:grid-cols-4 lg:divide-y-0">
        {([
@@ -110,10 +110,10 @@ export default async function CollegeFacultyAssignmentPage({
       <Disclosure title={FACULTY_ASSIGNMENT_COPY.createTitle} className="min-w-0 border-y border-[var(--lms-canvas-border)]" contentClassName="pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
         <CollegeFacultyAssignmentCreate {...options} />
       </Disclosure>
-      <Link prefetch={false} download href={facultyAssignmentCsvHref(query)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">
+      <TextLink prefetch={false} download href={facultyAssignmentCsvHref(query)}
+        className="inline-flex min-h-11 items-center md:min-h-9">
         Export filtered faculty assignments CSV
-      </Link>
+      </TextLink>
       <FilterBar title="Filters" activeCount={Number(Boolean(query.q)) + Number(Boolean(query.courseCode)) + Number(Boolean(query.sectionCode)) + Number(query.status !== "ACTIVE") + Number(query.role !== "ALL")}
         search={<Label stack className="min-w-0">
           Faculty, course or class
@@ -155,8 +155,8 @@ export default async function CollegeFacultyAssignmentPage({
           </Label>
           <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap xl:col-span-4">
             <Button type="submit" className="min-h-11 w-full md:hidden">Filter</Button>
-            <Link href="/college/faculty-assignment"
-              className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>
+            <TextLink href="/college/faculty-assignment"
+              className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">Clear</TextLink>
           </div>
         </form>
       </FilterBar>
@@ -179,10 +179,10 @@ export default async function CollegeFacultyAssignmentPage({
                 mobilePriority: "primary", cell: item => item.facultyName },
               { key: "course", header: FACULTY_ASSIGNMENT_COPY.columns.course,
                 mobilePriority: "secondary", cell: item => <>
-                  <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">
+                  <TextLink href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
+                    className="inline-flex min-h-11 items-center md:min-h-9">
                     {item.courseName}
-                  </Link>
+                  </TextLink>
                   <p className="mt-1 text-xs text-muted-foreground">{item.courseCode}</p>
                 </> },
               { key: "class", header: FACULTY_ASSIGNMENT_COPY.columns.class,
@@ -222,10 +222,10 @@ export default async function CollegeFacultyAssignmentPage({
       <nav aria-label="Faculty assignment pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
         <span className="text-muted-foreground">{total===0?0:(query.page-1)*25+1}-{Math.min(total,query.page*25)} of {total} · Page {query.page} of {totalPages} · 25/page</span>
         <div className="flex gap-2">
-          {query.page > 1 ? <Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring"
-            href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page - 1 })}>Previous</Link> : null}
-          {query.page < totalPages ? <Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring"
-            href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page + 1 })}>Next</Link> : null}
+          {query.page > 1 ? <TextLink className="inline-flex min-h-11 items-center md:min-h-9"
+            href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page - 1 })}>Previous</TextLink> : null}
+          {query.page < totalPages ? <TextLink className="inline-flex min-h-11 items-center md:min-h-9"
+            href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page + 1 })}>Next</TextLink> : null}
         </div>
       </nav>
       <p className="text-xs text-muted-foreground">

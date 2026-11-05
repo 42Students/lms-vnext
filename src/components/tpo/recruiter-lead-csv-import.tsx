@@ -9,7 +9,6 @@ import {Tabs} from "@/components/ui/tabs";
 import {FileUpload} from "@/components/ui/file-upload";
 import {Checkbox} from "@/components/ui/checkbox";
 
-import Link from "next/link";
 import {recruiterXlsxToCsv} from "@/modules/placements/tpo-lead-xlsx-import-model";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -22,6 +21,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 const template = "name,email,phone,companyName,designation,source\r\n" +
   "Example Recruiter,recruiter@example.org,,Example Company,HR,REFERRAL\r\n";
@@ -222,7 +222,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"status",header:"Validation",mobilePriority:"secondary",cell:item=><span>
                         <StatusBadge tone={item.error?"error":existingNumbers.has(item.row)?"info":skipRows.includes(item.row)?"warning":"success"}>{item.error??(existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}</StatusBadge>
                         {existing.find(entry=>entry.row===item.row)?
-                          <Link className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline" href={"/tpo/recruiters/"+encodeURIComponent(existing.find(entry=>entry.row===item.row)!.leadId)}>Open</Link>:null}
+                          <TextLink className="ml-2 inline-flex min-h-11 items-center" href={"/tpo/recruiters/"+encodeURIComponent(existing.find(entry=>entry.row===item.row)!.leadId)}>Open</TextLink>:null}
                       </span>},
                       {key:"include",header:"Include",mobilePriority:"action",cell:item=><Label variant="choice" className="inline-flex min-h-11 items-center gap-2"><Checkbox aria-label={"Include row "+item.row}
                         disabled={!item.lead||existingNumbers.has(item.row)||busy||Boolean(result)}
@@ -281,10 +281,10 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       {key:"row",header:"File row",mobilePriority:"primary",cell:item=>item.row},
                       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="created"?"success":item.status==="duplicate"?"info":item.status==="invalid"?"error":"warning"}>{item.status}</StatusBadge>},
                       {key:"details",header:"Details",mobilePriority:"secondary",cell:item=>item.leadId?
-                        <Link href={"/tpo/recruiters/"+encodeURIComponent(item.leadId)}
-                          className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring focus-visible:underline">
+                        <TextLink href={"/tpo/recruiters/"+encodeURIComponent(item.leadId)}
+                          className="inline-flex min-h-11 items-center">
                           Open created lead
-                        </Link>:(item.reason??"—")},
+                        </TextLink>:(item.reason??"—")},
                     ]}/>
                 </ScrollCue>
               </div>

@@ -3,7 +3,6 @@ import {FacultyPrototypeAssignmentReport} from "@/components/courses/faculty-pro
 import styles from "@/components/courses/faculty-report-legacy-charts.module.css";
 import { Disclosure } from "@/components/ui/disclosure";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {parseFacultyAssessmentReportRoute,facultyAssignmentReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
@@ -25,6 +24,7 @@ import {CoursesServiceError} from "@/modules/courses/errors";
 import { facultySubmissionListHref } from "@/modules/courses/faculty-assignment-submissions-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function FacultyAssignmentReportPage({
   params,
@@ -39,7 +39,7 @@ export default async function FacultyAssignmentReportPage({
   if(!parsed)return <section className="min-w-0 space-y-4">
     <PageHeader title="Assignment report" />
     <ErrorState title="Report not found." description="This assignment report link is not valid."
-      action={<Link href="/teacher/allAssignments" className="font-semibold text-primary-text underline">Back to assignments</Link>}/>
+      action={<TextLink href="/teacher/allAssignments">Back to assignments</TextLink>}/>
   </section>;
   let report:Awaited<ReturnType<typeof getFacultyAssignmentReport>>;
   try {
@@ -56,12 +56,12 @@ export default async function FacultyAssignmentReportPage({
       if(choices.length>1)return <section className="min-w-0 space-y-4">
         <PageHeader title="Assignment report" description="Select a Section to view this report."/>
         <nav aria-label="Choose a teaching Section for the report" className="grid min-w-0 gap-2">
-          {choices.map(item=><Link key={item.deliveryId}
+          {choices.map(item=><ButtonLink variant="secondary" key={item.deliveryId}
             href={"/teacher/report/assignment/"+encodeURIComponent(parsed.assessmentId)+
               "?deliveryId="+encodeURIComponent(item.deliveryId)}
-            className="flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text underline focus-ring">
+            className="flex min-w-0">
               {item.sectionName} · {item.courseName} · {item.lessonName}
-            </Link>)}
+            </ButtonLink>)}
         </nav>
       </section>;
     }
@@ -237,11 +237,10 @@ export default async function FacultyAssignmentReportPage({
         <FacultyReportCsvDownload href={facultyReportCsvHref({
           kind:"assignment",assessmentId:assignment.id,deliveryId:assignment.deliveryId,
         })}/>
-        <Link href={facultySubmissionListHref({assignmentId:assignment.id,
-          deliveryId:assignment.deliveryId,filter:"ALL",page:1})}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9">
+        <ButtonLink variant="secondary" href={facultySubmissionListHref({assignmentId:assignment.id,
+          deliveryId:assignment.deliveryId,filter:"ALL",page:1})}>
           Filter submissions and export
-        </Link>
+        </ButtonLink>
       </section>
       <section aria-labelledby="section-view-submissions" id="submissions" className="scroll-mt-16 border-b border-[var(--lms-canvas-border)] py-4">
         <Heading level={2} size="lg" id="section-view-submissions" className="leading-7 text-[var(--lms-heading)]">View submissions</Heading>

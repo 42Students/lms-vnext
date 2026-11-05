@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {PopoverPanel} from "@/components/ui/popover";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -15,6 +14,7 @@ import { accountActionCopy, type AccountMenuVariant } from "../college-account-c
 import { topbarInitials } from "./portal-config";
 import { ChevronIcon } from "./icons";
 import style from "./topbar.module.css";
+import { TextLink } from "@/components/ui/text-link";
 
 const avatarTriggerClass = `${style.avatar} max-md:!min-h-11 max-md:!min-w-11`;
 const accountMenuClass = `${style.menu} !min-h-0`;
@@ -127,12 +127,12 @@ export function TopbarAccountMenu({
         <p className={style.accountHeading}>{roleLabel}</p>
         <p className={style.accountSubheading}>{organizationName}</p>
       </div>
-      {mentorPortal?<Link href="/mentor/account"
+      {mentorPortal?<TextLink variant="bare" href="/mentor/account"
         onClick={()=>setOpen(false)} className={style.menuItem}>
         Mentor profile details
-      </Link>:null}
-      {copy.accountHref ? <Link href={copy.accountHref}
-        onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel}</Link> : null}
+      </TextLink>:null}
+      {copy.accountHref ? <TextLink variant="bare" href={copy.accountHref}
+        onClick={() => setOpen(false)} className={style.menuItem}>{copy.accountLabel}</TextLink> : null}
       {adminScopeChoices || workspaceChoices(memberships).length > 1 ? <>
         <hr className={style.menuDivider}/>
         <p className={style.accountSectionHeading}>Switch workspace</p>

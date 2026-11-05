@@ -8,7 +8,6 @@ import { Select } from "@/components/ui/select";
 import {useEffect,useState,type FormEvent} from "react";
 import {useUnsavedDriveGuard} from "./use-unsaved-drive-guard";
 import {useToast} from "@/components/ui/toast";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -23,6 +22,8 @@ import {isDrivePayCategory} from "@/modules/placements/drive-pay-category-model"
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 type Draft=Awaited<ReturnType<typeof getTpoDriveEditState>>;
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
@@ -318,10 +319,10 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     Changing the company requires its separately authorized reassignment workflow;
     saving job terms cannot silently transfer company or recruiter access.
    </p>
-   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
-    className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+   <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
+    className="mt-2 inline-flex min-h-9 items-center text-sm">
     View linked company and role details
-   </Link>
+   </TextLink>
   </section>
   <Label className="block text-[length:var(--lms-font-sm)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></Label>
   <section aria-label="Selection rounds preview" className="min-w-0 space-y-2 border-b border-border pb-3">
@@ -337,10 +338,10 @@ export function TpoDriveEditForm({job}:{job:Draft}){
      </li>)}</ol>}
    {!job.roundsComplete?<p role="status" className="text-xs text-warning">
     Showing the first 100 rounds. Visit the rounds workspace for the full list.</p>:null}
-   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/rounds"}
-    className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline md:min-h-9">
+   <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/rounds"}
+    className="inline-flex min-h-11 items-center text-xs md:min-h-9">
     Manage selection rounds
-   </Link>
+   </TextLink>
    <p className="text-xs text-muted-foreground">
     Company identity, recruiter ownership, role packages and round schedules require
     their separate authorized editing workflows.</p>
@@ -488,10 +489,10 @@ export function TpoDriveEditForm({job}:{job:Draft}){
      Program, section and backlog restrictions must use the server-validated eligibility policy.
      Changing visible marks alone does not replace those safeguards.
     </p>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
-     className="mt-2 inline-flex min-h-9 items-center text-link underline">
+    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
+     className="mt-2 inline-flex min-h-9 items-center">
      Review full saved eligibility and role policy
-    </Link>
+    </TextLink>
    </div>
   </section>
   <fieldset className="space-y-3 border-y border-border py-3">
@@ -551,13 +552,13 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    </p>:null}
   <div id="drive-save-actions" className="flex min-w-0 scroll-mt-20 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
    <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">{pending?"Saving…":"Save changes"}</Button>
-   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline sm:w-auto md:min-h-9"
-    href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>
-   {job.status==="DRAFT"?<Link
+   <ButtonLink variant="secondary" className="w-full sm:w-auto"
+    href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</ButtonLink>
+   {job.status==="DRAFT"?<ButtonLink variant="secondary"
     href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"?publish=1#drive-lifecycle-publish"}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline sm:w-auto md:min-h-9">
+    className="w-full sm:w-auto">
      Review &amp; publish
-    </Link>:null}
+    </ButtonLink>:null}
   </div>
  </form>
  <aside aria-label="Drive setup review" className="min-w-0 space-y-4 lg:sticky lg:top-20">
@@ -585,8 +586,8 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     <li className="flex items-start gap-3">
      <span aria-hidden="true" className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-xs font-bold">4</span>
      <div><strong>Rounds</strong><p className="text-xs text-muted-foreground">Managed separately after saving the drive</p>
-      <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/rounds"}
-       className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">View rounds</Link>
+      <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/rounds"}
+       className="inline-flex min-h-9 items-center text-xs">View rounds</TextLink>
      </div>
     </li>
    </ol>
@@ -655,8 +656,8 @@ export function TpoDriveEditForm({job}:{job:Draft}){
       </dl>
      </li>)}</ul>:
      <p className="text-sm text-muted-foreground">No role packages recorded.</p>}
-   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
-     className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Review and edit role packages</Link>
+   <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
+     className="mt-2 inline-flex min-h-9 items-center text-sm">Review and edit role packages</TextLink>
     <p className="mt-1 text-xs text-muted-foreground">
      Additional role packages use the authorized role-option editor and are saved separately from this job-level form.
     </p>

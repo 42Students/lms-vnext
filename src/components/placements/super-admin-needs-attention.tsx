@@ -1,8 +1,9 @@
 "use client";
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 type Attention={code:string;jobId:string;jobTitle:string;companyName:string;count:number;priority:string;detail?:string|null;learnerName?:string|null};
 type CategoryRead={code:string;affected:number;jobs:number;samples:readonly Attention[];sampleBasis?:"learners"|"drives"};
 const categories=[
@@ -29,7 +30,7 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
  </section>;
  if(!available)return <section aria-label="Needs attention" role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-error bg-[var(--lms-error-subtle)] p-4 text-sm">
   <span>Couldn't check for anything that needs attention.</span>
-  <Link href={basePath} className="min-h-9 font-semibold text-link underline">Retry</Link>
+  <TextLink href={basePath} className="min-h-9">Retry</TextLink>
  </section>;
  if(total===0)return <section role="status" aria-label="Needs attention"
    className="flex items-center gap-2 rounded-[var(--lms-canvas-radius)] border border-success bg-[var(--lms-success-subtle)] p-4 text-sm text-success">
@@ -61,14 +62,14 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
        params.set("returnTo",basePath);
        const href=basePath+"/jobs/"+encodeURIComponent(item.jobId)+
         (category.tab===null?"":"/applications?"+params.toString());
-       return <Link key={item.jobId+"-"+index} href={href}
+       return <ButtonLink variant="secondary" key={item.jobId+"-"+index} href={href}
         aria-label={(item.learnerName?item.learnerName+", ":"")+item.jobTitle+", "+category.label+", "+item.count+" affected"}
-        className="flex min-h-11 md:min-h-[var(--lms-control-height)] min-w-0 items-center justify-between gap-3 rounded px-1 py-1 text-[13px] text-[color:var(--lms-warning-strong)] hover:bg-[color:var(--lms-gold-subtle)] focus-ring">
+        className="flex min-w-0">
         <span className="min-w-0 truncate">{item.learnerName?<strong className="font-semibold">{item.learnerName} · </strong>:null}{item.companyName?item.companyName+" — ":""}{item.jobTitle}</span>
         <span className="flex shrink-0 items-center gap-1 text-xs text-[color:var(--lms-gold-accent)]">{item.detail??item.count+" affected"}
          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
         </span>
-       </Link>;
+       </ButtonLink>;
       })}</div>
      {category.rows.length>3?<Button variant="ghost" type="button" size="sm"
       onClick={()=>setExpanded(previous=>previous.includes(category.code)?previous.filter(x=>x!==category.code):[...previous,category.code])}>
@@ -79,9 +80,9 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
          <>Showing top {shown.length} of {category.affected} affected candidate records across {category.distinctDrives} flagged drives.</>:
          <>Showing top {shown.length} of {category.distinctDrives} flagged drives ({category.affected} affected records across the category).</>}
         {" "}Open a drive to review all matching candidates.</p>
-       <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center font-semibold underline focus-ring">
+       <TextLink href={basePath+"/drives"} className="inline-flex min-h-11 items-center">
         +{Math.max(0,(category.sampleBasis==="learners"?category.affected:category.distinctDrives)-shown.length)} more {category.sampleBasis==="learners"?"records":"drives"} — browse all drives
-       </Link>
+       </TextLink>
       </div>:null}
     </div>;
    })}

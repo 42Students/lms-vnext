@@ -1,6 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Checkbox } from "@/components/ui/checkbox";
-import Link from "next/link";
 import { CollegeBatchGraduateButton } from "@/components/academics/college-batch-graduate-button";
 import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -25,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Search = Record<string, string | string[] | undefined>;
 function first(value: string | string[] | undefined) {
@@ -41,7 +41,7 @@ export default async function CollegeBatchPromotionPage({
     <Alert tone="warning" title="Admin not assigned to a college">
       You must be assigned to a college to view and manage batch promotion. Contact your administrator.
     </Alert>
-    <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Choose a college in your account switcher →</Link>
+    <TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Choose a college in your account switcher →</TextLink>
   </div>;
   const incoming = await searchParams;
   const showCompleted = first(incoming["showCompleted"]) === "1";
@@ -66,7 +66,7 @@ export default async function CollegeBatchPromotionPage({
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
-      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>} />
+      action={<TextLink href="/college/batch-promotion" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>} />
   </div>;
   const [optionsResult,previewResult]=await Promise.allSettled([
     listCollegePromotionOptions(context,parsed.data,
@@ -79,7 +79,7 @@ export default async function CollegeBatchPromotionPage({
       <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />}/>
       <ErrorState title="Could not load batches"
         description="Batch and program choices could not be verified. No promotion was applied."
-        action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+        action={<TextLink href="/college/batch-promotion" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
     </div>;
   }
   if(previewResult.status==="rejected" && previewResult.reason instanceof AuthorizationError)
@@ -130,7 +130,7 @@ export default async function CollegeBatchPromotionPage({
     <Alert tone="info">Promotion moves the entire batch to the next semester. Check mapped courses and faculty assignments before promoting.</Alert>
     {previewError?<Alert tone="warning">
       Could not verify this promotion. Please retry. Existing batch records remain available below.
-      <Link href="/college/batch-promotion" className="ml-2 font-semibold text-link underline">Retry</Link>
+      <TextLink href="/college/batch-promotion" className="ml-2">Retry</TextLink>
     </Alert>:null}
     <section aria-label="College batch directory" className="min-w-0 space-y-3">
       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Batch Promotion</Heading>
@@ -166,7 +166,7 @@ export default async function CollegeBatchPromotionPage({
             (preview?.batch.id===row.id && row.currentTermNumber!==null &&
              row.currentTermNumber>=preview.batch.durationTerms
               ?<CollegeBatchGraduateButton cohortId={row.id} batchName={row.name}/>
-              :<Link href={batchPreviewHref(row)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Promote · Preview</Link>):
+              :<TextLink href={batchPreviewHref(row)} className="inline-flex min-h-11 items-center md:min-h-9">Promote · Preview</TextLink>):
             <span className="text-xs text-muted-foreground">{row.status==="COMPLETED"?"Graduated":"No action available"}</span>},
         ]}
         empty={<EmptyState title={showInactive?"No batches found":"No active batches."} description={showInactive?"No batches match the current filters.":"Turn on Show completed / inactive to view the rest."}/> }/>
@@ -186,8 +186,8 @@ export default async function CollegeBatchPromotionPage({
             </Label>
             <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply</Button>
           </form>
-          {currentBatchPage>1?<Link href={currentUrl(currentBatchPage-1)} className="font-semibold text-link underline">Previous</Link>:null}
-          {currentBatchPage<totalBatchPages?<Link href={currentUrl(currentBatchPage+1)} className="font-semibold text-link underline">Next</Link>:null}
+          {currentBatchPage>1?<TextLink href={currentUrl(currentBatchPage-1)}>Previous</TextLink>:null}
+          {currentBatchPage<totalBatchPages?<TextLink href={currentUrl(currentBatchPage+1)}>Next</TextLink>:null}
         </div>
       </div>
     </section>
@@ -262,9 +262,9 @@ export default async function CollegeBatchPromotionPage({
                   {blocker==="NEXT_TERM_NO_MAPPED_COURSES"?<>
                     Cannot promote: Semester {preview.plan.targetTermNumber} has no mapped courses.
                     Configure the semester curriculum first.{" "}
-                    <Link href="/college/semester-courses" className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4">
+                    <TextLink href="/college/semester-courses">
                       Map semester courses
-                    </Link>
+                    </TextLink>
                   </>:blocker.replaceAll("_"," ")}
                 </li>)}
               </ul>

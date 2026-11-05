@@ -1,7 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import {TpoOptionalEmailsEditor} from "@/components/tpo/tpo-optional-emails-editor";
 import {TpoSmsCapEditor} from "@/components/tpo/tpo-communication-settings-editors";
 import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
@@ -13,6 +12,7 @@ import {tpoStudentNoticesOverview} from "@/modules/placements/tpo-student-notice
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {tpoStudentNoticeNavigation} from "@/modules/placements/tpo-student-notice-navigation-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function TpoStudentNoticesSettings(){
  const ctx=await getCurrentRequestContext();
@@ -36,12 +36,12 @@ export default async function TpoStudentNoticesSettings(){
    <Heading level={2} size="lg" id="section-college-placement-notices" className="text-[var(--lms-heading)]">College placement notices</Heading>
    <p className="text-sm text-body leading-[22px]" role="status">{view.publishedSummary}</p>
    <p className="text-xs text-muted-foreground leading-5">The count describes only the current announcements reader result, not confirmed individual delivery or read receipts.</p>
-   <Link href={view.noticeHref} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 print:hidden">Manage actual placement announcements</Link>
+   <TextLink href={view.noticeHref} className="inline-flex min-h-11 items-center md:min-h-9 print:hidden">Manage actual placement announcements</TextLink>
   </section>
   <section aria-labelledby="section-preparation-and-readiness" className="min-w-0 space-y-3">
    <Heading level={2} size="lg" id="section-preparation-and-readiness" className="text-[var(--lms-heading)]">Preparation &amp; readiness</Heading>
    <p role="status" className="text-sm text-body leading-[22px]">{view.prepSummary}</p>
-   <Link href={view.prepHref} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 print:hidden">Configure available preparation courses</Link>
+   <TextLink href={view.prepHref} className="inline-flex min-h-11 items-center md:min-h-9 print:hidden">Configure available preparation courses</TextLink>
   </section>
   </div>
   {communication.ready?<TpoSmsCapEditor key={ctx.membership?.collegeId??"unscoped"} initial={communication.smsMonthlyCap} version={communication.version}/>:
@@ -61,12 +61,12 @@ export default async function TpoStudentNoticesSettings(){
    <Heading level={2} size="lg" id="section-emails-switched-on" className="text-[var(--lms-heading)]">Emails switched on</Heading>
    <Alert tone="warning">Couldn&apos;t check which emails are switched on.</Alert>
    <p className="text-xs text-muted-foreground leading-5">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
-   <Link href="/tpo/settings/templates" className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-ring md:min-h-9 print:hidden">View available message templates</Link>
+   <TextLink href="/tpo/settings/templates" className="inline-flex min-h-11 items-center text-sm md:min-h-9 print:hidden">View available message templates</TextLink>
   </section>
   </Disclosure>
   <nav aria-label="Notice and notification destinations" className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] text-sm print:hidden md:flex-row md:items-center">
-    <Link href={destinations.inbox} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 print:hidden">Open personal notifications inbox</Link>
-    <Link href={destinations.preferences} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 print:hidden">Review notification preferences</Link>
+    <TextLink href={destinations.inbox} className="inline-flex min-h-11 items-center md:min-h-9 print:hidden">Open personal notifications inbox</TextLink>
+    <TextLink href={destinations.preferences} className="inline-flex min-h-11 items-center md:min-h-9 print:hidden">Review notification preferences</TextLink>
   </nav>
  </div>;
 }

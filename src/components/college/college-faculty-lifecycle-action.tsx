@@ -6,8 +6,8 @@ import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useId, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
   membershipId: string; name: string; status: "ACTIVE" | "SUSPENDED" | "ENDED";
@@ -93,8 +93,8 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
         </svg>
         <span className="sr-only">{actionLabel}</span>
       </Button>
-      <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
-        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline underline-offset-4 focus-ring sm:w-auto md:min-h-9">Audit history</Link>
+      <TextLink href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
+        className="inline-flex min-h-11 w-full items-center justify-center text-xs sm:w-auto md:min-h-9">Audit history</TextLink>
     </div>
     {success?<Alert tone="success">{success}</Alert>:null}
     {!editing && error?<Alert tone="error">{error}</Alert>:null}
@@ -120,7 +120,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
             onChange={e=>{setReason(e.target.value);if(error)setError("");}} className="min-h-11 w-full md:min-h-9"/>
           <span id={`${reasonId}-hint`} className="text-xs font-normal leading-5 text-body">At least 3 characters are required.</span>
         </Label>:null}
-        {error?<Alert tone="error">{error} {error.includes("Sign in again")?<Link href="/login" className="font-semibold underline">Sign in</Link>:null}</Alert>:null}
+        {error?<Alert tone="error">{error} {error.includes("Sign in again")?<TextLink href="/login">Sign in</TextLink>:null}</Alert>:null}
       </div> : null}
     </ConfirmDialog>
   </div>;

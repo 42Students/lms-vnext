@@ -2,8 +2,8 @@
 
 import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import {useLastCollegeLessons} from "@/components/courses/college-lessons-last-good";
+import { TextLink } from "@/components/ui/text-link";
 
 export default function CollegeLessonsError({ error, reset }: {
   error: Error & { digest?: string;
@@ -29,8 +29,8 @@ export default function CollegeLessonsError({ error, reset }: {
       description={lastGood?"Showing the previous successful lesson list for these same filters. It may be outdated.":detail}
       action={<div className="flex flex-wrap items-center gap-3">
         <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
-        <Link href="/college/lessons" className="text-sm font-semibold text-primary-text underline">
-          Return to lessons</Link>
+        <TextLink href="/college/lessons" className="text-sm">
+          Return to lessons</TextLink>
       </div>} />
     {lastGood?<section aria-label="Last successfully loaded lessons" className="min-w-0">
       {lastGood}

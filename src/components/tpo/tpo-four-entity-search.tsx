@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {safeTpoFindResult, type TpoFindResult} from "@/components/shell/topbar/tpo-find-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Suggestion=TpoFindResult;
 const groups=["Recruiter Leads","Drives","Students","Companies"] as const;
@@ -61,9 +61,9 @@ export function TpoFourEntitySearch({initialQuery=""}:{initialQuery?:string}){
       <Heading level={2} size="sm" className="text-foreground">{group}</Heading>
       <ul className="mt-2 space-y-1 text-sm">
         {results.filter(item=>item.group===group).slice(0,5).map(item=><li key={item.href+item.label}>
-          <Link href={item.href} className="inline-flex min-h-9 min-w-0 items-center break-words font-medium text-primary-text underline">
+          <TextLink href={item.href} className="inline-flex min-h-9 min-w-0 items-center break-words">
             {item.label}
-          </Link>
+          </TextLink>
         </li>)}
         {!results.some(item=>item.group===group)?<li className="text-xs text-muted-foreground">No matches</li>:null}
       </ul>

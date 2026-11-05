@@ -1,6 +1,5 @@
 import {CollegeDriveApplicationsSizeControl} from "@/components/placements/college-drive-applications-size-control";
 import { CollegeDriveApplicationsExport } from "@/components/college/college-drive-applications-export";
-import Link from "next/link";
 import { z } from "zod";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getPlacementJob } from "@/modules/placements/job-service";
@@ -23,6 +22,7 @@ import {CollegeApplicationsDebouncedSearch} from "@/components/placements/colleg
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
   params: Promise<{jobId:string}>;
@@ -39,7 +39,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     <PageHeader title="Applications" />
     <ErrorState title="Invalid job ID"
       description="This placement drive link is invalid. Return to the college drive list and choose a valid drive."
-      action={<Link href="/college/placements/jobs" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Back to drives</Link>} />
+      action={<TextLink href="/college/placements/jobs" className="inline-flex min-h-11 items-center md:min-h-9">Back to drives</TextLink>} />
   </div>;
   const rawParams=await searchParams;
   const query = driveApplicationsParams(rawParams);
@@ -48,7 +48,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   if (!query) return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications" />
     <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid."
-      action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>
+      action={<TextLink href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications`} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>
   </div>;
   // Independent reads: a failed register does not discard an available job header,
   // and failed selector options must never hide a usable applicant list.
@@ -67,11 +67,11 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     {departments:[],programs:[],cohorts:[]};
   if (pipelineResult.status==="rejected") return <div className="min-w-0 space-y-5">
     <PageHeader title={"Applications"+(job ? " · "+job.title : "")}
-      actions={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/overview`} className="text-link underline">Drive overview</Link>} />
+      actions={<TextLink href={`/college/placements/jobs/${encodeURIComponent(jobId)}/overview`}>Drive overview</TextLink>} />
     {job ? <Alert tone="info">Drive: {job.title} · {job.status}. The drive details remain available even though its applicant register could not be loaded.</Alert> : null}
     <ErrorState title="Applications could not be loaded"
       description="The applicant register could not be refreshed. No application data has been changed. Retry the same scoped view."
-      action={<Link href={driveApplicationsHref(jobId,query)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Retry applications</Link>} />
+      action={<TextLink href={driveApplicationsHref(jobId,query)} className="inline-flex min-h-11 items-center md:min-h-9">Retry applications</TextLink>} />
   </div>;
   const data = pipelineResult.value;
   const assessmentUrl = job?.legacyPostingDetails?.assessmentUrl;
@@ -90,7 +90,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title={"Applications ("+data.total.toLocaleString("en-IN")+")"}
       description={data.drive.title+" · Review applications, move candidates through hiring stages and notify them about decisions."}
-      actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Drive overview</Link>} />
+      actions={<TextLink href={`/college/placements/jobs/${jobId}/overview`} className="min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center">Drive overview</TextLink>} />
     <nav aria-label="Drive sections" className="min-w-0">
       <Tabs ariaLabel="Drive sections" renderPanel={false} value="applications"
         items={[
@@ -122,7 +122,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     </Alert> : <Alert tone="info">No assessment URL is recorded for this drive.</Alert>}
     {filterResult.status==="rejected" ? <Alert tone="warning">
       Department, program and batch choices could not be refreshed. Existing filters and the applicant register are still available.
-      {" "}<Link href={driveApplicationsHref(jobId,query)} className="font-semibold underline underline-offset-4">Retry filter choices</Link>
+      {" "}<TextLink href={driveApplicationsHref(jobId,query)}>Retry filter choices</TextLink>
     </Alert> : null}
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">
       <span>{data.total.toLocaleString("en-IN")} matching applications</span>
@@ -143,7 +143,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
         {(query.q || query.status!=="ALL" || query.screening!=="ALL" || query.source!=="ALL" || query.departmentId || query.programId || query.cohortId) ?
-          <Link href={driveApplicationsHref(jobId,{...query,q:"",status:"ALL",screening:"ALL",source:"ALL",departmentId:undefined,programId:undefined,cohortId:undefined,page:1})} className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : null}
+          <TextLink href={driveApplicationsHref(jobId,{...query,q:"",status:"ALL",screening:"ALL",source:"ALL",departmentId:undefined,programId:undefined,cohortId:undefined,page:1})} className="inline-flex min-h-11 items-center justify-center md:min-h-9">Clear filters</TextLink> : null}
       </div>
       <Disclosure title="Advanced filters" className="md:col-span-2"
         defaultOpen={Boolean(query.status!=="ALL" || query.screening!=="ALL" || query.source!=="ALL" || query.departmentId || query.programId || query.cohortId)}>
@@ -175,13 +175,13 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       </p>
       <DataTable caption="College drive applicant register" columns={columns}
         rows={data.items} getRowKey={row=>row.id}
-        empty={<EmptyState title="No matching applications" description="No applications match these filters." action={<Link href={driveApplicationsHref(jobId,{...query,q:"",status:"ALL",screening:"ALL",source:"ALL",stage:"ALL",departmentId:undefined,programId:undefined,cohortId:undefined,page:1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>} />
+        empty={<EmptyState title="No matching applications" description="No applications match these filters." action={<TextLink href={driveApplicationsHref(jobId,{...query,q:"",status:"ALL",screening:"ALL",source:"ALL",stage:"ALL",departmentId:undefined,programId:undefined,cohortId:undefined,page:1})} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>} />
      </section>:
      <CollegeApplicationPipelineControls key={jobId+":"+JSON.stringify(query)} jobId={jobId} rows={data.items} total={data.total} query={query} initialDetailId={initialDetailId}/>}
     <nav aria-label="Application pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-sm)] text-[var(--lms-body-text)] sm:flex-row sm:items-center">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex min-w-0 flex-wrap gap-3 max-md:[&_a]:flex-1 max-md:[&_a]:justify-center">
-        {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring" href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}
-        {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring" href={driveApplicationsHref(jobId,{...query,page:query.page+1})}>Next</Link>:null}
+        {query.page>1?<ButtonLink variant="secondary" href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</ButtonLink>:null}
+        {query.page<data.totalPages?<ButtonLink variant="secondary" href={driveApplicationsHref(jobId,{...query,page:query.page+1})}>Next</ButtonLink>:null}
       </div>
     </nav>
     <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">

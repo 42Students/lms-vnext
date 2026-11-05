@@ -4,7 +4,6 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -16,6 +15,7 @@ import { projectMutation } from "./project-api";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 import { ProjectCollegeLearnerPicker } from "./project-college-learner-picker";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export type AssignedProjectTemplateChoice = {
   templateId: string;
@@ -292,14 +292,14 @@ export function CreateProjectControl({
       standalone ? (
         <EmptyState title="No assigned templates"
           description="Create an independent Project workspace from a published template assigned to this college."
-          action={<Link href={basePath + "/templates"}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">Templates</Link>}
+          action={<TextLink href={basePath + "/templates"}
+            className="inline-flex min-h-11 items-center md:min-h-9">Templates</TextLink>}
         />
       ) : (
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" disabled>Create Project</Button>
           <span className="text-xs text-body">Assign a published template to this college before creating a project.</span>
-          <Link href={basePath+"/templates"} className="text-xs font-semibold text-link underline">View templates</Link>
+          <TextLink href={basePath+"/templates"} className="text-xs">View templates</TextLink>
         </div>
       )
     );

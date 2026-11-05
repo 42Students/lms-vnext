@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {useRef,useState,useTransition,type FormEvent} from "react";
 import {useToast} from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
@@ -19,6 +18,7 @@ import {
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Cohort = { id: string; name: string; code: string; programName: string; programId: string };
 type Period = { id: string; name: string; code: string };
@@ -153,9 +153,9 @@ export function CollegeClassCreate({ cohorts, periods,
     {!cohorts.length || !periods.length
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
         {!cohorts.length
-          ? <>No planned or active batches in this college. <Link href="/college/academics" className="font-semibold underline">Set up programs and batches</Link> first.</>
+          ? <>No planned or active batches in this college. <TextLink href="/college/academics">Set up programs and batches</TextLink> first.</>
           : <>No usable academic periods in this college. Create a period first.{" "}
-            <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Set up academic periods</Link>
+            <TextLink href={academicSetupHref} className="inline-flex min-h-11 items-center md:min-h-9">Set up academic periods</TextLink>
           </>}
       </p>
       : <form ref={formRef} noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)]">

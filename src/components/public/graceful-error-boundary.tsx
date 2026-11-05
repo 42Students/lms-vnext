@@ -6,13 +6,13 @@
  * exception text, the Next digest or a provider response to a customer.
  */
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { friendlyReference } from "@/lib/friendly-error";
 import { GracefulScreen } from "@/components/public/graceful-screen";
 import { createRequestId } from "@/lib/request-id";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export function isStaleChunkError(error: Error): boolean {
   return /ChunkLoadError|Loading chunk failed|Failed to fetch dynamically imported module|Importing a module script failed/i
@@ -82,10 +82,10 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       </div> : null}
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
         <Button type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={reset}>Try again</Button>
-        <Link href={homeHref}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link md:min-h-9 md:w-auto focus-ring hover:underline">
+        <ButtonLink variant="secondary" href={homeHref}
+          className="w-full md:w-auto">
           Go to home
-        </Link>
+        </ButtonLink>
       </div>
     </section>;
   }
@@ -114,9 +114,9 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
           className="inline-flex min-h-11 items-center justify-center rounded-full border border-[color:var(--lms-primary-hover)] bg-surface px-6 py-3 text-sm font-semibold text-[color:var(--lms-primary-hover)] hover:bg-[color:var(--lms-primary-subtle)] focus-ring">
           Go back
         </Button>
-        <Link href="/" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[color:var(--lms-primary-hover)] bg-[color:var(--lms-primary-hover)] px-6 py-3 text-sm font-semibold text-[color:var(--lms-on-primary)] no-underline hover:bg-[color:var(--lms-primary-text)] focus-ring">
+        <ButtonLink variant="secondary" href="/">
           Go to Home
-        </Link>
+        </ButtonLink>
       </div>
       <Button type="button" variant="link" onClick={reset} className="mt-4 min-h-11 text-sm">
         Try again

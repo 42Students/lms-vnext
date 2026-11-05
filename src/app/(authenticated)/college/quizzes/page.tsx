@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Banner } from "@/components/ui/banner";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
@@ -10,6 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import {CurrentPageRetry} from "@/components/ui/current-page-retry";
 import { collegeAssessmentListQuerySchema } from "@/modules/courses/college-assessment-aggregate-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export const metadata={title:"Quizzes · 42LMS"};
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -38,7 +38,7 @@ export default async function CollegeQuizzesPage({
         <PageHeader title="Quizzes" />
         <ErrorState title="Invalid assessment filters"
           description="The requested search, status or page is invalid. No records were loaded."
-          action={<Link href="/college/quizzes" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 lms-inline-link">Clear filters</Link>} />
+          action={<TextLink href="/college/quizzes" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>} />
       </div>
     );
   }

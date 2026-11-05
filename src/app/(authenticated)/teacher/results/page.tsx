@@ -3,7 +3,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -15,6 +14,8 @@ import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-s
 import {facultyResultsCsvHref} from "@/modules/courses/faculty-results-export";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Search = Record<string,string|string[]|undefined>;
 
@@ -26,7 +27,7 @@ export default async function FacultyAssessmentResultsPage({
   const raw = await searchParams;
   const parsed = parseFacultyResultsSearchParams(raw);
   if (!parsed.success) {
-    return <div className="min-w-0 space-y-3"><PageHeader title="Assessment results"/><ErrorState title="Invalid assessment filters" description="Review the assessment search and filters." role="alert" action={<Link href="/teacher/results" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
+    return <div className="min-w-0 space-y-3"><PageHeader title="Assessment results"/><ErrorState title="Invalid assessment filters" description="Review the assessment search and filters." role="alert" action={<TextLink href="/teacher/results" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/></div>;
   }
   const context = await getCurrentRequestContext();
   const data = await getFacultyAssessmentResults(context,parsed.data);
@@ -35,14 +36,14 @@ export default async function FacultyAssessmentResultsPage({
     <PageHeader title="Assessment results"
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-        <Link href="/teacher/response-followups"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
+        <ButtonLink variant="secondary" href="/teacher/response-followups"
+          className="w-full sm:w-auto">
           Response follow-ups
-        </Link>
-        <Link href="/teacher/allAssignments"
-          className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
+        </ButtonLink>
+        <TextLink href="/teacher/allAssignments"
+          className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm sm:w-auto md:min-h-9">
           All Assignments
-        </Link>
+        </TextLink>
       </div>} />
     <form method="get" action="/teacher/results"
       className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
@@ -99,19 +100,19 @@ export default async function FacultyAssessmentResultsPage({
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
         Filter
       </Button>
-      <Link href="/teacher/results" className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] sm:w-auto focus-ring">
+      <TextLink variant="bare" href="/teacher/results" className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] sm:w-auto focus-ring">
         Clear
-      </Link>
+      </TextLink>
     </form>
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
-      <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
+      <ButtonLink variant="secondary" href={facultyResultsCsvHref({...data.query,page:data.page})}
+       className="w-full sm:w-auto">
        Export this page CSV (no learner names)
-      </Link>
+      </ButtonLink>
     </div>
     {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
-      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-ring hover:text-[var(--lms-primary-text)]">Clear result filters</Link> : null}</div>
+      description={emptyState.description} />{emptyState.clearFilters ? <TextLink href="/teacher/results" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm">Clear result filters</TextLink> : null}</div>
       : <div className="divide-y divide-border border-y border-border">
         {data.items.map(item =>
           <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
@@ -140,10 +141,10 @@ export default async function FacultyAssessmentResultsPage({
                   <dd className="mt-1 break-words text-lg font-semibold leading-7 tabular-nums text-foreground">{value}</dd>
                 </div>)}
             </dl>
-            <Link href={item.reportHref}
-              className="mt-3 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 hover:underline focus-ring">
+            <TextLink href={item.reportHref}
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">
               Open Section report →
-            </Link>
+            </TextLink>
           </article>)}
       </div>}
     {data.totalPages > 1 ? <Pagination label="Assessment result pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyResultsHref({...data.query,page})} /> : null}

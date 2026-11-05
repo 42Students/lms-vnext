@@ -3,7 +3,6 @@ import {ErrorState} from "@/components/ui/error-state";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import { PageLoading } from "@/components/ui/page-loading";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerJobsBrowse } from "@/components/placements/learner-jobs-browse";
@@ -14,6 +13,7 @@ import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service"
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
   return {
@@ -81,10 +81,10 @@ export default async function LearnerPlacementJobsPage() {
     <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Drives</Heading>
     <ErrorState title="Placement drives unavailable"
       description="Your placement drives could not be loaded. This is not an empty jobs list. Try again."
-      action={<Link href="/learn/my-placements/jobs"
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+      action={<TextLink href="/learn/my-placements/jobs"
+        className="inline-flex min-h-11 items-center">
         Retry loading drives
-      </Link>}/>
+      </TextLink>}/>
   </div>;
   const {rows,snapshotNowIso}=browseRead.value;
   // An empty feed caused by a missing or ambiguous academic enrollment is not
@@ -97,10 +97,10 @@ export default async function LearnerPlacementJobsPage() {
       description={enrollmentState==="NO_ACTIVE_ENROLLMENT"
         ?"You do not have an active program and batch enrollment, so no placement drives are available to you. Contact your placement cell or college administrator."
         :"More than one active program enrollment was found for you, so drives cannot be matched safely. Contact your college administrator to fix your enrollment."}
-      action={<Link href="/learn/my-placements"
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+      action={<TextLink href="/learn/my-placements"
+        className="inline-flex min-h-11 items-center">
         Back to placement dashboard
-      </Link>}/>
+      </TextLink>}/>
   </div>;
   const savedRead=await readOptionalLearnerPlacementSource(
     ()=>listOwnPlacementSavedJobs(context));
@@ -110,10 +110,10 @@ export default async function LearnerPlacementJobsPage() {
     <div className="min-w-0 space-y-5">
       <div className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-3 sm:flex-row sm:items-center sm:justify-between">
         <Heading level={2} size="lg" className="leading-6 text-[var(--lms-heading)]">Drives</Heading>
-        <Link href="/learn/my-placements/rules?from=drives"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
+        <TextLink href="/learn/my-placements/rules?from=drives"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Review placement rules and preparation →
-        </Link>
+        </TextLink>
       </div>
 
       
@@ -122,10 +122,10 @@ export default async function LearnerPlacementJobsPage() {
           <Banner tone="warning" role="alert">
             Your saved jobs could not be fully loaded. Save and unsave actions are
             temporarily unavailable until the existing bookmarks can be checked.
-            <Link href="/learn/my-placements/jobs"
-              className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+            <TextLink href="/learn/my-placements/jobs"
+              className="ml-2 inline-flex min-h-9 items-center">
               Retry saved jobs
-            </Link>
+            </TextLink>
           </Banner>
           <p role="status" className="text-sm text-body">
             {rows.length} available role option(s) loaded. Review a published drive
@@ -139,9 +139,9 @@ export default async function LearnerPlacementJobsPage() {
                   {row.company.name} · {row.job.title}
                 </strong>
                 <span className="block text-xs text-body">{row.roleOption.title} · {row.roleOption.locations.length?row.roleOption.locations.join(", "):"Not specified"}</span>
-                {href ? <Link href={href} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
+                {href ? <TextLink href={href} className="inline-flex min-h-9 items-center text-sm">
                   Review drive details →
-                </Link> : null}
+                </TextLink> : null}
               </li>;
             })}
           </ul> : <p role="status" className="text-sm text-body">No published drives were returned.</p>}

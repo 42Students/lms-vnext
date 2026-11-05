@@ -1,14 +1,14 @@
-import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
 import { learnerCompanyPreviewNonApplicantMessage } from "@/modules/placements/learner-application-detail-service";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function LearnerApplicationCompanyNotFound() {
   return (
     <section className="min-w-0 space-y-4">
       <PageHeader title="Company details unavailable" description={learnerCompanyPreviewNonApplicantMessage} />
       <Alert tone="warning">Only your own application can open this preview. No other learner or employer data is disclosed.</Alert>
-      <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-ring sm:w-auto md:min-h-9">Back to applications</Link>
+      <ButtonLink variant="secondary" href="/learn/my-placements/applications" className="w-full sm:w-auto">Back to applications</ButtonLink>
     </section>
   );
 }

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -12,6 +11,7 @@ import {
   learnerAttemptResultLabel, learnerQuizAttemptDateLabel, learnerQuizQuestionAwardLabel, learnerQuizSelectedAnswerMessage, ownQuizHistorySelection,
 } from "@/modules/courses/learner-quiz-history-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Props={
   params:Promise<{quizId:string}>;
@@ -31,10 +31,10 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
     <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." />
     <ul className="min-w-0 divide-y divide-border border-y border-border">
       {resolution.options.map(option=><li key={option.deliveryId} className="min-w-0 py-[var(--lms-space-2)]">
-        <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-ring"
+        <TextLink className="inline-flex min-h-11 max-w-full items-center break-words md:min-h-9"
           href={"/learn/allQuizzes/"+encodeURIComponent(path.quizId)+"?deliveryId="+encodeURIComponent(option.deliveryId)}>
           {option.courseName}
-        </Link>
+        </TextLink>
       </li>)}
     </ul>
   </div>;
@@ -62,18 +62,18 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
           <div className="min-w-0 flex-1"><Heading level={3} size="sm" className="text-[var(--lms-heading)]">Attempt {attempt.attemptNumber}</Heading>
           <p className="mt-1 text-xs text-muted-foreground">{date(attempt.submittedAt)}</p>
           <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={attempt.resultsVisible?"success":"neutral"}>{attempt.resultsVisible?"Results published":"Results pending"}</StatusBadge>{learnerAttemptResultLabel(attempt)}</p></div>
-          <Link href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
+          <TextLink href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
             aria-current={selected?.id===attempt.id?"page":undefined}
-            className="inline-flex min-h-11 w-full shrink-0 items-center justify-center text-sm font-semibold text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] md:min-h-9 focus-ring">
+            className="inline-flex min-h-11 w-full shrink-0 items-center justify-center text-sm sm:w-auto md:min-h-9">
             {attempt.resultsVisible ? "View result" : "View attempt"}
-          </Link>
+          </TextLink>
         </li>)}
       </ol>}
     </section>
     {selected ? <section className="min-w-0 space-y-3 border-b border-border pb-[var(--lms-space-4)]">
       <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Attempt {selected.attemptNumber} result</Heading>
-        <Link href={historyUrl} className="inline-flex min-h-11 w-full items-center justify-center text-sm text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-ring">Close detail</Link>
+        <TextLink href={historyUrl} className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">Close detail</TextLink>
       </div>
       <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-body leading-[1.6]"><StatusBadge tone={selected.resultsVisible?"success":"neutral"}>{selected.resultsVisible?"Published":"Not published"}</StatusBadge>{learnerAttemptResultLabel(selected)}</p>
       {selected.resultsVisible ? selected.answers.length===0 ? (

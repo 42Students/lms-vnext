@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -9,6 +8,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
 import {tpoOfferEvidenceQuery} from "@/modules/placements/tpo-offer-evidence-model";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function TpoOfferEvidencePage({params}:{params:Promise<{jobId:string;offerId:string}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -28,8 +28,8 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
   <PageHeader eyebrow="TPO · Offer evidence" title={data.candidate.name+" · "+data.offer.role}
    description="Persisted offer and joining events. Recorded internal reasons are disclosed only within authorized college scope."
    actions={<>
-    <Link className="inline-flex min-h-11 items-center w-full justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline focus-ring md:w-auto md:min-h-9 print:hidden" href={base+"/offers"}>← Offer register</Link>
-    <Link className="inline-flex min-h-11 items-center w-full justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline focus-ring md:w-auto md:min-h-9 print:hidden" href={"/tpo/students/"+encodeURIComponent(data.candidate.membershipId)+"/history"}>Learner placement history →</Link>
+    <ButtonLink variant="secondary" className="w-full md:w-auto print:hidden" href={base+"/offers"}>← Offer register</ButtonLink>
+    <ButtonLink variant="secondary" className="w-full md:w-auto print:hidden" href={"/tpo/students/"+encodeURIComponent(data.candidate.membershipId)+"/history"}>Learner placement history →</ButtonLink>
    </>}/>
   <section aria-label="Current offer facts" className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border xl:grid-cols-5 print:overflow-visible">
    {facts.map(([name,value])=><div key={name} className="min-w-0 border-b border-r border-border px-3 py-3 even:border-r-0 last:border-b-0 xl:border-b-0 xl:border-r xl:last:border-r-0">

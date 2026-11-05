@@ -4,7 +4,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -18,6 +17,7 @@ import {
 import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Params = {
   filter?: string | string[];
@@ -46,7 +46,7 @@ export default async function MentorTeamCoveragePage({
   });
   if (duplicated || !parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title="Team coverage" description="Invalid team coverage filters" />
-    <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link">Clear filters</Link>
+    <TextLink href="/mentor/team-coverage" className="inline-flex min-h-11 items-center">Clear filters</TextLink>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -57,10 +57,10 @@ export default async function MentorTeamCoveragePage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Team coverage"
       description="Active team composition across your currently assigned, non-archived projects."
-      actions={<Link href="/mentor/projects"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
+      actions={<TextLink href="/mentor/projects"
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Projects
-      </Link>} />
+      </TextLink>} />
     {!data.enabled
       ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
           Projects access is disabled for this membership. No team records were loaded.
@@ -89,7 +89,7 @@ export default async function MentorTeamCoveragePage({
           </Label>
           <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
             <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-            {hasFilters?<Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring lms-inline-link">Clear</Link>:null}
+            {hasFilters?<TextLink href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm">Clear</TextLink>:null}
           </div>
           <Disclosure title="More team coverage filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
           <Label stack>Project state
@@ -128,10 +128,10 @@ export default async function MentorTeamCoveragePage({
           ? data.projectCount===0
             ? <EmptyState title="No currently assigned active projects"
                 description="There are no current non-archived project assignments for this mentor. No historical team or staffing status is inferred."
-                action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-ring">Projects</Link>} />
+                action={<TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Projects</TextLink>} />
             : <EmptyState title="No projects match these filters"
                 description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments."
-                action={<Link href={hasFilters ? "/mentor/team-coverage" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-ring">{hasFilters ? "Clear filters" : "Projects"}</Link>} />
+                action={<TextLink href={hasFilters ? "/mentor/team-coverage" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm md:min-h-9">{hasFilters ? "Clear filters" : "Projects"}</TextLink>} />
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
             <article key={item.projectId} className="py-[var(--lms-space-3)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -155,18 +155,18 @@ export default async function MentorTeamCoveragePage({
                 </div>
               </dl>
               <div className="mt-4 flex flex-wrap gap-4">
-                <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=team"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring">
+                <TextLink href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=team"}
+                  className="inline-flex min-h-11 items-center text-sm">
                   Team workspace →
-                </Link>
-                <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-history"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring">
+                </TextLink>
+                <TextLink href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-history"}
+                  className="inline-flex min-h-11 items-center text-sm">
                   Membership history →
-                </Link>
-                <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-meetings"}
-                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring">
+                </TextLink>
+                <TextLink href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "/team-meetings"}
+                  className="inline-flex min-h-11 items-center text-sm">
                   Team meeting log →
-                </Link>
+                </TextLink>
               </div>
             </article>)}</div>}
         {data.totalPages > 1 ? <Pagination label="Team coverage pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamCoverageHref({...data.query,page})}/> : null}

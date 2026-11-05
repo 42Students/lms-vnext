@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import { CollegeSetupChecklist } from "@/components/admin/college-setup-checklist";
@@ -20,6 +19,7 @@ import { formatCollegeHeaderDate } from "@/modules/admin-ui/college-dashboard-ca
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeOverviewPage() {
   const context = await getCurrentRequestContext();
@@ -32,9 +32,9 @@ export default async function CollegeOverviewPage() {
     </Alert>
     <section aria-label="Quick Actions" className="space-y-2 border-t border-border pt-3">
       <Heading level={2} size="base" className="text-[var(--lms-heading)]">Quick Actions</Heading>
-      <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      <TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">
         Choose an available workspace
-      </Link>
+      </TextLink>
       <p className="text-xs text-muted-foreground">College-specific changes remain disabled until your membership is verified.</p>
     </section>
   </div>;
@@ -91,17 +91,17 @@ export default async function CollegeOverviewPage() {
       {dashboard?<CollegeDashboardCards cards={dashboard.cards}/>:<div className="space-y-2">
         <CollegeDashboardSectionFailure title="At a glance"/>
         <p className="text-sm text-muted-foreground">Couldn't load this. Refresh to try again.</p>
-        <Link href="/college" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>
+        <TextLink href="/college" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
       </div>}
       <CollegeAdminQuickActions />
       {dashboard?<CollegeSetupChecklist phases={dashboard.setup.phases}/>:<CollegeDashboardSectionFailure title="College setup checklist"/>}
       <Disclosure title="Other college actions" className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-3 py-3 text-sm">
           <CollegeEditDialog college={college} triggerLabel="Edit college"/>
-          <Link href="/college/contacts" className="text-primary-text underline">Contacts</Link>
-          <Link href="/college/announcements" className="text-primary-text underline">Announcements</Link>
-          <Link href="/college/verification" className="text-primary-text underline">Verification</Link>
-          <Link href="/college/branding" className="text-primary-text underline">Branding</Link>
+          <TextLink href="/college/contacts">Contacts</TextLink>
+          <TextLink href="/college/announcements">Announcements</TextLink>
+          <TextLink href="/college/verification">Verification</TextLink>
+          <TextLink href="/college/branding">Branding</TextLink>
           <span className="text-xs text-muted-foreground">{college.code} · {college.city||"—"} · {college.state||"—"} · {college.country||"—"}</span>
         </div>
       </Disclosure>

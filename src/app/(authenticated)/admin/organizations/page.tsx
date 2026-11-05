@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { OrganizationActions } from "@/components/admin/organization-actions";
 import {TenantRestoreAction} from "@/components/admin/tenant-restore-action";
@@ -25,6 +24,7 @@ import {organizationCreatedIstDate} from "@/modules/organizations/organization-c
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type OrganizationRow = Awaited<
   ReturnType<typeof listOrganizations>
@@ -40,20 +40,20 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
   if(!isRecoveryEntityType(selectedRestoreType))return <div className="min-w-0 space-y-4">
     <PageHeader title="Deleted Items"/>
     <ErrorState title="Invalid deleted item type" description="Choose one of the supported entity types from the recovery directory."
-      action={<Link href="/admin/organizations?type=organization" className="font-semibold text-link underline">Clear type filter</Link>}/>
+      action={<TextLink href="/admin/organizations?type=organization">Clear type filter</TextLink>}/>
   </div>;
   if (!filters) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Organizations"/>
     <ErrorState title="Invalid organization directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/organizations" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+      action={<TextLink href="/admin/organizations" className="inline-flex min-h-11 w-full items-center justify-center md:min-h-9 rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>}/>
   </div>;
   const organizations = await listOrganizations(context).catch(()=>null);
   if(!organizations)return <div className="min-w-0 space-y-4">
     <PageHeader title="Organizations"/>
     <ErrorState title="Unable to load organizations"
       description="The organization directory could not be loaded. No data from a previous safety scope is displayed."
-      action={<Link href="/admin/organizations" className="font-semibold text-link underline">Retry</Link>}/>
+      action={<TextLink href="/admin/organizations">Retry</TextLink>}/>
   </div>;
   const {q,pageSize}=filters;
   const matching=organizations.filter(item=>item.name.toLocaleLowerCase("en-IN").includes(q.toLocaleLowerCase("en-IN")));
@@ -134,7 +134,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
                   maxLength={100} placeholder="Search organizations" className="min-h-11 w-full sm:w-[200px] md:min-h-9"/>
                 <input type="hidden" name="pageSize" value={pageSize}/>
                 <Button type="submit" variant="secondary" size="sm">Search</Button>
-                {q?<Link href={"/admin/organizations?pageSize="+pageSize} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Clear</Link>:null}
+                {q?<TextLink href={"/admin/organizations?pageSize="+pageSize} className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear</TextLink>:null}
               </form>
               <OrganizationDirectoryRefresh/>
             </div>
@@ -179,7 +179,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         </div>
         {!archiveResponse.ok?<ErrorState title={selectedRestoreType==="college"?"Unable to load archived colleges":"Unable to load archived organizations"}
           description="Archived inventory is temporarily unavailable; no empty-state claim is made."
-          action={<Link href={"/admin/organizations?type="+(selectedRestoreType==="college"?"college":"organization")} className="font-semibold text-link underline">Retry</Link>}/>:
+          action={<TextLink href={"/admin/organizations?type="+(selectedRestoreType==="college"?"college":"organization")}>Retry</TextLink>}/>:
         selectedRestoreType==="organization"?<div className="min-w-0 overflow-x-auto">
           <Table className="min-w-[460px]">
             <caption className="sr-only">Archived organizations (first 200 in the authorized scope)</caption>

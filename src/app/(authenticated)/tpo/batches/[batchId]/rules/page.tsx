@@ -2,13 +2,13 @@ import {PageHeader} from "@/components/ui/page-header";
 import {batchRuleDate} from "@/modules/placements/tpo-batch-labels-model";
 import {TpoBatchRuleEditor} from "@/components/tpo/tpo-batch-rule-editor";
 import {tpoBatchRuleOverridesSchema} from "@/modules/placements/tpo-batch-rules-model";
-import Link from "next/link";
 import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import { TpoBatchDecisionControl } from "@/components/tpo/tpo-batch-decision-control";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getLegacyCompatibleBatchDetails } from "@/modules/placements/tpo-batch-legacy-detail-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 export default async function BatchRules({params}:{params:Promise<{batchId:string}>}){
  const {batchId}=await params;
@@ -56,6 +56,6 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
     upliftPct:college.upliftPct,minResponseHours:college.minResponseHours}}
   initialOverride={stored.data} expectedVersion={lifecycle?.updatedAt.toISOString()??"none"}
   readOnly={!ready||Boolean(lifecycle?.finishedAt)}/>:<p role="alert">Batch rules could not be read safely. Refresh before editing.</p>}
- <Link href="/tpo/settings/rules" className="lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm text-link underline focus-ring md:min-h-9">View college placement rules</Link>
+ <ButtonLink variant="secondary" href="/tpo/settings/rules">View college placement rules</ButtonLink>
  </div>;
 }

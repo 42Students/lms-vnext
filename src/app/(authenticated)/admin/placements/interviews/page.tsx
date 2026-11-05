@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
@@ -12,6 +11,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 
@@ -35,10 +35,10 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
   if(typeof value==="string"&&value.length<=100)calendarQuery.set(key,value);
  }
  const calendarHref="/admin/placements/calendar?"+calendarQuery.toString();
- const returnLink=<Link href={calendarHref}
-  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+ const returnLink=<TextLink href={calendarHref}
+  className="inline-flex min-h-11 items-center md:min-h-9">
   Open interview calendar →
- </Link>;
+ </TextLink>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
   <PageHeader title="Interviews" actions={returnLink}/>
   <ErrorState title="Select a college" description="Candidate appointments and academic departments require an exact college scope."/>
@@ -53,7 +53,7 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
   return <div className="min-w-0 space-y-4">
    <PageHeader title="Interviews" actions={returnLink}/>
    <ErrorState title="Could not load appointments" description="Select an authorized college and retry its candidate appointment roster."
-     action={<Link href="/admin/placements/interviews" className="font-semibold text-primary-text underline">Retry appointments</Link>}/>
+     action={<TextLink href="/admin/placements/interviews">Retry appointments</TextLink>}/>
   </div>;
  }
  const items=report.items;
@@ -98,9 +98,9 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
  };
  const columns:DataTableColumn<(typeof items)[number]>[]=[
   {key:"job",header:"Job",mobilePriority:"primary",cell:item=><div className="min-w-0">
-    <Link href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?collegeId="+encodeURIComponent(context.adminScope!.collegeId!)}
-      className="block font-semibold text-link underline underline-offset-2 focus-ring">
-      {item.title}</Link>
+    <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?collegeId="+encodeURIComponent(context.adminScope!.collegeId!)}
+      className="block">
+      {item.title}</TextLink>
     <span className="block text-xs text-muted-foreground">{item.subtitle.split(" · ").slice(1).join(" · ")}</span>
    </div>},
   {key:"candidate",header:"Candidate",cell:item=><div className="min-w-0">
@@ -120,8 +120,8 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
   {key:"date",header:"Date & Time",cell:item=><span className="whitespace-nowrap">{detail(item,"Date & Time")}</span>},
   {key:"interviewer",header:"Interviewer",cell:item=>detail(item,"Interviewer")},
   {key:"mode",header:"Mode",cell:item=>detail(item,"Mode").replaceAll("_"," ")},
-  {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><Link href={item.href??calendarHref}
-    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Open appointment</Link>},
+  {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><TextLink href={item.href??calendarHref}
+    className="inline-flex min-h-11 items-center md:min-h-9">Open appointment</TextLink>},
  ];
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Interviews"
@@ -130,11 +130,11 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
   {!departmentsRead.ok?<Alert tone="warning" role="status">
    Candidate appointments were loaded but their department mapping is unavailable.
    No other college's details are shown.{" "}
-   <Link href={pageHref(report.query.page)} className="font-semibold text-primary-text underline underline-offset-2">Retry department mapping</Link>
+   <TextLink href={pageHref(report.query.page)}>Retry department mapping</TextLink>
   </Alert>:null}
   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
    <p className="text-sm text-body">{report.total} appointments · page {report.query.page} of {report.totalPages}</p>
-   <Link href={calendarHref} className="text-sm font-semibold text-primary-text underline">Manage bookings and schedules →</Link>
+   <TextLink href={calendarHref} className="text-sm">Manage bookings and schedules →</TextLink>
   </div>
   <DataTable caption="Candidate interview appointments" rows={items} columns={columns}
    getRowKey={item=>item.id} mobileMode="scroll" empty={<p role="status"
@@ -142,10 +142,10 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
     No candidate appointments in this scope or selected job. Open the interview calendar to schedule a new booking.
    </p>}/>
   <nav aria-label="Interview appointment pages" className="flex flex-wrap justify-between gap-3">
-   {report.query.page>1?<Link href={pageHref(report.query.page-1)}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">← Previous</Link>:<span/>}
-   {report.query.page<report.totalPages?<Link href={pageHref(report.query.page+1)}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Next →</Link>:null}
+   {report.query.page>1?<TextLink href={pageHref(report.query.page-1)}
+     className="inline-flex min-h-11 items-center md:min-h-9">← Previous</TextLink>:<span/>}
+   {report.query.page<report.totalPages?<TextLink href={pageHref(report.query.page+1)}
+     className="inline-flex min-h-11 items-center md:min-h-9">Next →</TextLink>:null}
   </nav>
  </div>;
 }

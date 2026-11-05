@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import {CurrentPageRetry} from "@/components/ui/current-page-retry";
 import {reportPageReadFailure} from "@/observability/page-read-failure";
 import {notFound} from "next/navigation";
@@ -15,6 +14,7 @@ import {
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { TextLink } from "@/components/ui/text-link";
 
 type AssignmentSearchParams = { course?: string | string[]; page?:string|string[] };
 
@@ -176,10 +176,10 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
       />
       <nav aria-label="Assignment list pages" className="flex min-w-0 flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
         <span role="status">Page {page} of {totalPages} · {totalAssignments} matching assignments</span>
-        {page>1?<Link href={learnerAssignmentListHref(page-1,overview.selectedCourseId)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous assignments</Link>:null}
-        {page<totalPages?<Link href={learnerAssignmentListHref(page+1,overview.selectedCourseId)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next assignments</Link>:null}
+        {page>1?<TextLink href={learnerAssignmentListHref(page-1,overview.selectedCourseId)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Previous assignments</TextLink>:null}
+        {page<totalPages?<TextLink href={learnerAssignmentListHref(page+1,overview.selectedCourseId)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Next assignments</TextLink>:null}
       </nav>
       <p className="text-xs text-muted-foreground">Search, state and sort controls apply to the assignments on this page. Choose a course to load its authorized assignments before searching.</p>
     </div>

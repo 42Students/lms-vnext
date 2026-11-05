@@ -4,7 +4,6 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { LEARNER_LEGACY_NOTICES_TITLE } from "@/modules/placements/learner-placement-copy-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -36,6 +35,8 @@ import {TpoNoticeAcknowledge} from "@/components/tpo/tpo-notice-acknowledge";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 // Old LMS learner filter pills: legacy-styles/components___learn-notifications.scss:82-121
 const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-[var(--lms-neutral-200)] bg-transparent px-4 py-2 text-sm font-medium leading-[1.3] text-[var(--lms-neutral-500)] transition-[color,background,border-color] duration-[var(--lms-motion-fast)] hover:border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] hover:text-[var(--lms-primary)] focus-ring aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary)] aria-[current=page]:text-[var(--lms-on-primary)] aria-[current=page]:hover:border-[var(--lms-primary-hover)] aria-[current=page]:hover:bg-[var(--lms-primary-hover)] aria-[current=page]:hover:text-[var(--lms-on-primary)]";
@@ -112,25 +113,25 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       <div>
         <PageHeader title={LEARNER_LEGACY_NOTICES_TITLE}
           description="Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown." />
-        <Link href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Back to My Placements</Link>
+        <TextLink href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Back to My Placements</TextLink>
 
         {hadInvalidNoticeFilters ? <Banner tone="warning" className="mt-2">Some notice filters were invalid and have been reset to safe defaults.</Banner> : null}
         {ready && (!collegeNoticesRead.available || !personalAlerts.available) ? (
           <Banner tone="error" role="alert" className="mt-2" action={
-            <Link href="/learn/my-placements/announcements"
-              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
+            <TextLink href="/learn/my-placements/announcements"
+              className="inline-flex min-h-9 items-center">Retry</TextLink>
           }>Couldn&apos;t load everything. The available notices are shown below.</Banner>
         ) : null}
       </div>
       <nav aria-label="Placement notice views" className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-0">
-        <Link href={tabHref("announcements")} aria-current={activeView==="announcements"?"page":undefined}
+        <TextLink variant="bare" href={tabHref("announcements")} aria-current={activeView==="announcements"?"page":undefined}
           className={"inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-4 text-sm font-semibold "+(activeView==="announcements"?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-primary-text")}>
           Announcements <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs">{noticeUnread===null?"Unread ?":noticeUnread+" unread"}</span>
-        </Link>
-        <Link href={tabHref("updates")} aria-current={activeView==="updates"?"page":undefined}
+        </TextLink>
+        <TextLink variant="bare" href={tabHref("updates")} aria-current={activeView==="updates"?"page":undefined}
           className={"inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-4 text-sm font-semibold "+(activeView==="updates"?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-primary-text")}>
           Updates about you ({unreadCount.available?unreadCount.items[0]:"?"} unread)
-        </Link>
+        </TextLink>
       </nav>
       <section id="college-notices" aria-label="College placement announcements" hidden={activeView!=="announcements"} className="min-w-0 space-y-4 scroll-mt-24">
       <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="College notice search" className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:gap-3">
@@ -146,8 +147,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
             placeholder="Title or message" className="min-h-11 min-w-0" />
         </Label>
         <Button type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Search</Button>
-        {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Clear search</Link> : null}
+        {queryText ? <TextLink href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey,alertQ,source})}
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">Clear search</TextLink> : null}
       </form>
       <Disclosure title="More notice filters" defaultOpen={pinnedOnly || recentOnly || source !== "all" || sortKey !== "pinned" || undefined}>
         <div className="space-y-3 pt-3">
@@ -168,26 +169,26 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply sort</Button>
       </form>
       <nav aria-label="Notice filter" className={placementFilterNavClass}>
-        <Link href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={!pinnedOnly ? "page" : undefined} className={placementFilterPillClass}>All notices</Link>
-        <Link href={learnerNoticeFilterHref({pinned:true,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={pinnedOnly ? "page" : undefined} className={placementFilterPillClass}>Pinned only</Link>
+        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={!pinnedOnly ? "page" : undefined} className={placementFilterPillClass}>All notices</TextLink>
+        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:true,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} aria-current={pinnedOnly ? "page" : undefined} className={placementFilterPillClass}>Pinned only</TextLink>
       </nav>
       <nav aria-label="Notice author filter" className={placementFilterNavClass}>
-        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source:"all"})}
+        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source:"all"})}
           aria-current={source==="all"?"page":undefined}
           className={placementFilterPillClass}>
           All college notice authors
-        </Link>
-        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source:"placement-cell"})}
+        </TextLink>
+        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source:"placement-cell"})}
           aria-current={source==="placement-cell"?"page":undefined}
           className={placementFilterPillClass}>
           Placement-cell authored
-        </Link>
+        </TextLink>
       </nav>
       <nav aria-label="Notice recency filter" className={placementFilterNavClass}>
-        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:false,q:queryText,sort:sortKey,alertQ,source})} aria-current={!recentOnly ? "page" : undefined}
-          className={placementFilterPillClass}>All available dates</Link>
-        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:true,q:queryText,sort:sortKey,alertQ,source})} aria-current={recentOnly?"page":undefined}
-          className={placementFilterPillClass}>Last 30 days</Link>
+        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:false,q:queryText,sort:sortKey,alertQ,source})} aria-current={!recentOnly ? "page" : undefined}
+          className={placementFilterPillClass}>All available dates</TextLink>
+        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:true,q:queryText,sort:sortKey,alertQ,source})} aria-current={recentOnly?"page":undefined}
+          className={placementFilterPillClass}>Last 30 days</TextLink>
       </nav>
         </div>
       </Disclosure>
@@ -195,18 +196,18 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       {pageClamped && collegeNoticesRead.available ? (
         <p role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           The requested notice page no longer exists in the current filtered results. Showing page {pages.page} instead.
-          <Link href={noticePageUrl(pages.page)} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+          <TextLink href={noticePageUrl(pages.page)} className="ml-2 inline-flex min-h-11 items-center md:min-h-9">
             Update page link
-          </Link>
+          </TextLink>
         </p>
       ) : null}
       {ready && collegeNoticesRead.available && learnerNoticeMissing(filters.focus,focused.found) ? (
         <div role="status" className="min-w-0 border-b border-border bg-[var(--lms-neutral-50)] px-4 py-3 text-sm leading-[1.5] text-body">
           That notice is not among your currently visible college notices. It may have expired or become unavailable to your membership.
-          <Link href={learnerNoticeRecoveryHref(filters.focus)}
-            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+          <TextLink href={learnerNoticeRecoveryHref(filters.focus)}
+            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center">
             Search all my visible notices
-          </Link>
+          </TextLink>
         </div>
       ) : null}
       {ready && collegeNoticesRead.available && activeView === "announcements" ? (
@@ -222,10 +223,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       ) : !collegeNoticesRead.available ? (
         <Banner tone="warning" role="alert">
           College notices are temporarily unavailable. Your personal placement alerts are still accessible below.
-          <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
-            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+          <TextLink href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
+            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center">
             Retry college notices
-          </Link>
+          </TextLink>
         </Banner>
       ) : notices.length === 0 ? (
         <p role="status" className="flex min-h-[180px] min-w-0 flex-col items-center justify-center gap-4 px-6 py-12 text-center text-sm leading-[1.5] text-[var(--lms-neutral-500)]">
@@ -252,7 +253,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                {notice.bodyLinks.length ? <div className="mt-2 flex flex-wrap gap-2" aria-label="Links in notice">
                  {notice.bodyLinks.map(href => <ThirdPartyLink key={href} href={href} label={href+" ↗"} />)}
                </div> : null}
-              {notice.driveHref?<Link href={notice.driveHref} className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open the drive</Link>:null}
+              {notice.driveHref?<TextLink href={notice.driveHref} className="mt-2 inline-flex min-h-11 items-center">Open the drive</TextLink>:null}
                {notice.buttonUrl && notice.buttonLabel ? (
                  <div className="mt-3 min-w-0">
                    <ThirdPartyLink href={notice.buttonUrl} label={`${notice.buttonLabel} ↗`} />
@@ -262,10 +263,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
               {notice.unread===true&&ownReceipts.has(notice.id)?
                 <LearnerNoticeReadAction notificationId={ownReceipts.get(notice.id)!.notificationId}/>:null}
               {learnerNoticeHref(notice.id) ? (
-                <Link href={learnerNoticeHref(notice.id)!}
-                  className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+                <TextLink href={learnerNoticeHref(notice.id)!}
+                  className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
                   Link to this notice
-                </Link>
+                </TextLink>
               ) : null}
               {notice.publicationDateUnavailable
                 ? <span className="mt-3 block text-xs text-muted-foreground">Publication date unavailable</span>
@@ -281,16 +282,16 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       )}
       {pages.total > 0 ? <nav aria-label="College notice pages" className="flex flex-col items-start gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
         <p className="text-muted-foreground">{pages.from}–{pages.to} of {pages.total} loaded matching notices</p>
-        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[8px] md:rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Previous</Link> : null}
+        {pages.page>1 ? <ButtonLink variant="secondary" href={noticePageUrl(pages.page-1)}>Previous</ButtonLink> : null}
         <span aria-current="page">Page {pages.page} of {pages.pages}</span>
-        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[8px] md:rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Next</Link> : null}
+        {pages.page<pages.pages ? <ButtonLink variant="secondary" href={noticePageUrl(pages.page+1)}>Next</ButtonLink> : null}
       </nav> : null}
       </section>
       <section hidden={activeView!=="updates"} aria-label="Personal placement updates" className="min-w-0 space-y-4">
       <div id="personal-updates" className="scroll-mt-24 border-t border-border pt-6"><Heading level={2} size="lg" className="text-foreground">Updates about you</Heading></div>
       <nav aria-label="Personal alert filter" className={placementFilterNavClass}>
-        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
-        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
+        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={!unreadOnly?"page":undefined}>All personal alerts</TextLink>
+        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={unreadOnly?"page":undefined}>Unread personal alerts</TextLink>
       </nav>
       <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="Personal alert search" className="flex min-w-0 flex-wrap items-end gap-3">
         <Input type="hidden" name="show" value="updates"/>
@@ -310,18 +311,18 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       {alertQ ? (
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs text-muted-foreground">This search covers the latest 20 loaded personal alerts, not your full notification history.</p>
-          <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ:"",sort:sortKey,source})}
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+          <TextLink href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ:"",sort:sortKey,source})}
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
             Clear personal alert search
-          </Link>
+          </TextLink>
         </div>
       ) : null}
       {personalAlerts.available ?
         <LearnerPlacementAlerts alerts={searchedAlerts} filtered={Boolean(alertQ)} unreadOnly={unreadOnly} /> :
         <Banner tone="warning" role="alert">
           Personal placement alerts are temporarily unavailable; the college notice results above remain accessible.
-          <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
-            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Retry personal alerts</Link>
+          <TextLink href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
+            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center">Retry personal alerts</TextLink>
         </Banner>}
 
       </section>

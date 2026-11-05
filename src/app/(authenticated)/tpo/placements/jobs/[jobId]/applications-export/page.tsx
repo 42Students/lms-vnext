@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -14,6 +13,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 export default async function TpoApplicationsExportPage({params,searchParams}:{
  params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[]}>;
 }){
@@ -30,7 +30,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
   <PageHeader eyebrow="TPO · Export applicants" title={result.job.title+" · Applications"}
    description="Read-only college-scoped export preview without internal screening notes."
    actions={<div className="flex w-full flex-col items-stretch gap-2 md:w-auto md:flex-row md:items-center">
-    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring md:min-h-9 w-full md:w-auto">← Applicants</Link>
+    <TextLink href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9 w-full md:w-auto">← Applicants</TextLink>
     <ButtonLink variant="secondary" href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download>Download all matching CSV</ButtonLink>
    </div>}/>
   <form method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">

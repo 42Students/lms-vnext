@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -8,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { ErrorState } from "@/components/ui/error-state";
 import { listSuperAdminCompanyDriveHistory } from "@/modules/placements/admin-company-drive-history-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminCompanyDrivesPage({params}:{
   params: Promise<{companyId:string}>;
@@ -22,8 +22,8 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
     <PageHeader title="Company drive history" actions={<PageBackLink href="/admin/companies" label="Companies"/>}/>
     <ErrorState title="Could not load company drive history"
       description="The selected college's drive history is temporarily unavailable. Your company selection has not changed."
-      action={<Link className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
-        href={"/admin/companies/"+encodeURIComponent(companyId)+"/drives"}>Retry</Link>}/>
+      action={<TextLink className="inline-flex min-h-11 items-center md:min-h-9"
+        href={"/admin/companies/"+encodeURIComponent(companyId)+"/drives"}>Retry</TextLink>}/>
   </div>;
   const data=history.value;
   if(!data)notFound();
@@ -49,8 +49,8 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
         {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:job=>job.deadline?.toISOString().slice(0,10)??"—"},
         {key:"applicants",header:"Applicants",mobilePriority:"secondary",cell:job=>job.applicants},
         {key:"hired",header:"Hired",mobilePriority:"secondary",cell:job=>job.hired},
-        {key:"actions",header:"Actions",mobilePriority:"action",cell:job=><Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9"
-          href={`/admin/placements/jobs/${job.id}`}>Open drive →</Link>},
+        {key:"actions",header:"Actions",mobilePriority:"action",cell:job=><TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9"
+          href={`/admin/placements/jobs/${job.id}`}>Open drive →</TextLink>},
       ]}/>
     {data.truncated ? <p className="text-sm text-muted-foreground">
       Showing first 500 drives. More historical records may exist. Totals above cover the displayed drives only.

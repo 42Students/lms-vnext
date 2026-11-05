@@ -1,5 +1,4 @@
 import { PageHeader } from "@/components/ui/page-header";
-import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { Tabs } from "@/components/ui/tabs";
 import { Alert } from "@/components/ui/alert";
@@ -13,6 +12,7 @@ import {tpoCompanyAuditKindSchema,tpoCompanyAuditHref,tpoCompanyAuditExportHref}
 import {companyShareAuditPageHref} from "@/modules/placements/company-share/audit-page-model";
 import {parseCompanyShareAuditQuery} from "@/modules/placements/company-share/audit-query-model";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  params:Promise<{jobId:string}>;
@@ -25,8 +25,8 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  if(Object.values(search).some(Array.isArray))return <div className="min-w-0 space-y-3">
   <PageHeader title="Invalid share-audit filters"/>
   <Alert tone="error">Only one event kind and page number can be selected at a time.</Alert>
-  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"}
-   className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+  <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"}
+   className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
  </div>;
  const rawKind=search.kind,rawPage=search.page;
  const parsed=parseCompanyShareAuditQuery({kind:rawKind,page:rawPage});
@@ -34,7 +34,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-3">
   <PageHeader title="Invalid share-audit filters" />
   <Alert tone="error">Choose a valid event kind and page number. No access history was loaded.</Alert>
-  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Clear filters</Link>
+  <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] md:min-h-9">Clear filters</TextLink>
  </div>;
  const {kind,page:auditPage}=parsed.data;
  const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
@@ -43,7 +43,7 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
 
   <PageHeader title="Company-share access history"
    actions={<>
-    <Link href={back} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-ring md:w-auto md:min-h-9">Back to company-share preview</Link>
+    <ButtonLink variant="secondary" href={back} className="w-full md:w-auto">Back to company-share preview</ButtonLink>
     {result.ready?<ButtonLink variant="secondary" href={tpoCompanyAuditExportHref(jobId,kind)} className="w-full md:w-auto">Export access history CSV</ButtonLink>:null}
    </>}/>
   <Tabs ariaLabel="Company-share event filters" value={kind} renderPanel={false}
@@ -66,10 +66,10 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
     ]}/>}
   {result.ready?<nav aria-label="Access history pages" className="flex min-w-0 flex-col gap-2 border-t border-border pt-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
    <span>{result.total} events · Page {result.page} of {result.totalPages}, 25 per page</span>
-   {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold sm:w-auto text-[var(--lms-teal-deep)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Previous</Link>:null}
-   {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
-    className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Next</Link>:null}
+   {result.page>1?<ButtonLink variant="secondary" href={companyShareAuditPageHref(jobId,kind,result.page-1)}
+    className="w-full sm:w-auto">Previous</ButtonLink>:null}
+   {result.limited?<TextLink href={companyShareAuditPageHref(jobId,kind,result.page+1)}
+    className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9">Next</TextLink>:null}
   </nav>:null}
  </div>;
 }

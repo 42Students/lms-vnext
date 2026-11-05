@@ -1,6 +1,6 @@
-import Link from "next/link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Small legacy read-only policy card on the Attendance landing screen. */
 export function AttendancePolicySummaryCard({
@@ -36,8 +36,8 @@ export function AttendancePolicySummaryCard({
    </div>
   </dl>
   <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-border pt-3 text-xs text-muted-foreground">
-   {hasCollegeOverride===null?<Link href={retryHref} className="font-semibold text-primary-text underline" aria-label="Reload attendance policy">Reload policy</Link>:null}
-   {settingsHref?<Link href={settingsHref} className="font-semibold text-primary-text underline">Attendance policy settings</Link>:null}
+   {hasCollegeOverride===null?<TextLink href={retryHref} aria-label="Reload attendance policy">Reload policy</TextLink>:null}
+   {settingsHref?<TextLink href={settingsHref}>Attendance policy settings</TextLink>:null}
   </div>
  </section>;
 }

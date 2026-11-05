@@ -3,7 +3,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -16,6 +15,8 @@ import {
 } from "@/modules/courses/faculty-assignment-submissions-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[];publication?:string|string[]};
 
@@ -29,9 +30,9 @@ export default async function FacultyAssignmentSubmissionsPage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid Section submission filters"} />
-    <Link href="/teacher/allAssignments" className="text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-ring hover:text-[var(--lms-primary-text)]">
+    <TextLink href="/teacher/allAssignments" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">
       Back to All Assignments
-    </Link>
+    </TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   const query=parsed.data;
@@ -48,12 +49,12 @@ export default async function FacultyAssignmentSubmissionsPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Assignment submissions"
       description={[report.assignment.courseName, report.assignment.sectionName].join(" · ")}
-      actions={<Link href={"/teacher/report/assignment/"+
+      actions={<ButtonLink variant="secondary" href={"/teacher/report/assignment/"+
         encodeURIComponent(report.assignment.id)+"?deliveryId="+
         encodeURIComponent(report.assignment.deliveryId)}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:w-auto md:min-h-[var(--lms-control-height)] focus-ring hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
+        className="w-full md:w-auto">
         Full Section report
-      </Link>} />
+      </ButtonLink>} />
     <form method="get" className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-end">
       <Input type="hidden" name="deliveryId" value={query.deliveryId}/>
       {query.filter!=="ALL"?<Input type="hidden" name="filter" value={query.filter}/>:null}
@@ -65,8 +66,8 @@ export default async function FacultyAssignmentSubmissionsPage({
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full max-md:text-[16px]"/>
       </Label>
       <Button type="submit" variant="primary" className="w-full md:w-auto">Search</Button>
-      <Link href={facultySubmissionListHref({...query,q:"",page:1})}
-        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text md:w-auto md:min-h-[var(--lms-control-height)] focus-ring hover:text-[var(--lms-primary-text)]">Clear search</Link>
+      <TextLink href={facultySubmissionListHref({...query,q:"",page:1})}
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm md:w-auto md:min-h-[var(--lms-control-height)]">Clear search</TextLink>
     </form>
     <Tabs ariaLabel="Submission grading filters" value={query.filter} renderPanel={false}
       items={(["ALL","GRADED","UNGRADED","LATE"] as const).map(filter=>({
@@ -88,9 +89,9 @@ export default async function FacultyAssignmentSubmissionsPage({
         {data.total.toLocaleString("en-IN")} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
       <div className="min-w-0 space-y-1">
-        <Link href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline md:w-auto md:min-h-[var(--lms-control-height)] focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
+        <ButtonLink variant="secondary" href={csvHref} className="w-full md:w-auto">
           Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
-        </Link>
+        </ButtonLink>
         <p className="max-w-prose text-xs leading-5 text-muted-foreground">{facultySubmissionCsvScopeNote(query)}</p>
       </div>
     </div>

@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import {useEffect,useState,type ReactNode} from "react";
 import {Banner} from "@/components/ui/banner";
 import {ErrorState} from "@/components/ui/error-state";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Per-mounted user/college/drive snapshot; never cache candidate names or
  * emails on disk, and never let stale pipeline mutation controls stay active.
@@ -15,8 +15,8 @@ export function CollegeShortlistedLastGood({available,children,retryHref,closeHr
  useEffect(()=>{if(available)setLastGood(children);},[available,children]);
  if(available)return <>{children}</>;
  const actions=<nav aria-label="Shortlisted refresh recovery" className="flex flex-wrap gap-4">
-  <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">Retry</Link>
-  <Link href={closeHref} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">Close</Link>
+  <TextLink href={retryHref} className="inline-flex min-h-11 items-center">Retry</TextLink>
+  <TextLink href={closeHref} className="inline-flex min-h-11 items-center">Close</TextLink>
  </nav>;
  return <section aria-label="Shortlisted data refresh" className="min-w-0 space-y-4">
   <ErrorState title="Could not refresh shortlisted applications"

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {InlineNotice} from "@/components/ui/inline-notice";
@@ -24,6 +23,8 @@ import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 const field = "mt-1 w-full";
 const label = "block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
@@ -293,7 +294,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         onClick={()=>void linkCreatedIssue(created)}>Retry linking Known Error</Button>:null}
 
       <div className="flex flex-wrap gap-3">
-        <Link className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring motion-reduce:transition-none" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
+        <ButtonLink variant="secondary" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</ButtonLink>
         <Button disabled={uploading}
           onClick={() => {setCreated("");setDraft({...initial,...recentContext});clearDraft();setError("");clearScreenshots();}}
           type="button" className="min-h-11 md:min-h-9">Report another</Button>
@@ -444,7 +445,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         {similarSearched&&similarResults.length?<div role="status" className="mt-2 text-sm">
           {similarResults.length?<ul className="divide-y divide-border">
             {similarResults.map(issue=><li key={issue.publicId} className="py-3">
-              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-ring">{issue.publicId}</Link>
+              <TextLink href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-11 items-center md:min-h-9">{issue.publicId}</TextLink>
               <span className="ml-2 inline-flex align-middle"><StatusBadge tone="neutral">{issue.status}</StatusBadge></span>
               <p className="mt-1 break-words text-xs text-body leading-[20px]">{issue.description.slice(0,160)}</p>
             </li>)}

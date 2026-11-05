@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Params={q?:string|string[];page?:string|string[]};
 export default async function MentorSearchPage({searchParams}:{
@@ -61,11 +62,11 @@ export default async function MentorSearchPage({searchParams}:{
     {!invalid&&parsed?.success&&pageParse.success?<nav
       aria-label="Mentor search results pagination"
       className="flex flex-wrap items-center gap-4">
-      {page>0?<Link className="min-h-11 text-link underline"
-        href={destination(page-1)}>← Previous results</Link>:null}
+      {page>0?<TextLink className="min-h-11"
+        href={destination(page-1)}>← Previous results</TextLink>:null}
       <span aria-live="polite">Page {page+1}</span>
-      {found.hasMore?<Link className="min-h-11 text-link underline"
-        href={destination(page+1)}>More results →</Link>:null}
+      {found.hasMore?<TextLink className="min-h-11"
+        href={destination(page+1)}>More results →</TextLink>:null}
     </nav>:null}
     {parsed?.success&&results.length>0?<p className="prototype-mentor-search-note">
       Only currently assigned Mentor projects and their active members are searchable.

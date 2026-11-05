@@ -1,7 +1,6 @@
 import {DataTable} from "@/components/ui/data-table";
 import {MetricBar} from "@/components/ui/metric-bar";
 import yearStyles from "@/components/tpo/legacy-company-year-chart.module.css";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -23,6 +22,7 @@ import { getTpoCompanyDetailReadOnly } from "@/modules/placements/tpo-company-de
 import { getTpoPublicJoinLinkStatus } from "@/modules/placements/tpo-public-join-link-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function dateLabel(value: Date | null) {
   if (!value) return "—";
@@ -98,30 +98,27 @@ export default async function TpoCompanyDetailPage({
         description="College-linked contacts, placement drives, hiring records and a timeline drawn from persisted events only."
         actions={
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-            <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary">
+            <ButtonLink variant="primary" href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}>
               Create drive
-            </Link>
-            <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-              className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-ring">
+            </ButtonLink>
+            <ButtonLink variant="secondary" href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}>
               Add contact
-            </Link>
-      <Link
+            </ButtonLink>
+      <TextLink
         href="/tpo/companies"
-        className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-ring"
+        className="inline-flex min-h-11 items-center text-sm"
       >
         ← All companies
-      </Link>
+      </TextLink>
 
           </div>
         }
       />
 
       <nav aria-label="Company sections" className="flex flex-wrap gap-1 border-b border-border pb-3 text-sm">
-        <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 font-semibold text-link hover:bg-primary-subtle">
+        <ButtonLink variant="secondary" href={"/tpo/companies?name="+encodeURIComponent(company.name)}>
           Company Memory · People, Drives, Documents, Team, Timeline
-        </Link>
+        </ButtonLink>
         <TextLink href="#company-students-placed" className="inline-flex min-h-11 items-center px-3">Students placed, by year</TextLink>
         <TextLink href="#company-canonical-timeline" className="inline-flex min-h-11 items-center px-3">Company history</TextLink>
       </nav>
@@ -182,34 +179,29 @@ export default async function TpoCompanyDetailPage({
       </Disclosure>
       <Disclosure title="Company CRM views" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
       <nav aria-label="Company CRM views" className="flex flex-wrap gap-3">
-        <Link href={"/tpo/companies/"+encodeURIComponent(route.companyId)+"/team"}
-         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">
+        <ButtonLink variant="secondary" href={"/tpo/companies/"+encodeURIComponent(route.companyId)+"/team"}>
          Open in Team · Company discussion
-        </Link>
-        <Link
+        </ButtonLink>
+        <ButtonLink variant="secondary"
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/manage"}
-          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]"
         >
           Edit / archive relationship
-        </Link>
-        <Link
+        </ButtonLink>
+        <ButtonLink variant="secondary"
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/people"}
-          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]"
         >
           Manage contact people
-        </Link>
-        <Link
+        </ButtonLink>
+        <ButtonLink variant="primary"
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/contact-log"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-ring"
         >
           View contact activity log →
-        </Link>
-        <Link
+        </ButtonLink>
+        <ButtonLink variant="secondary"
           href={"/tpo/companies/" + encodeURIComponent(route.companyId) + "/feedback"}
-          className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]"
         >
           Internal recruiter feedback
-        </Link>
+        </ButtonLink>
       </nav>
 
       </Disclosure>
@@ -290,12 +282,11 @@ export default async function TpoCompanyDetailPage({
                 <li key={contact.id} className="py-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <Link
+                      <TextLink
                         href={`/tpo/recruiters/${encodeURIComponent(contact.id)}`}
-                        className="font-semibold text-link hover:underline"
                       >
                         {contact.name}
-                      </Link>
+                      </TextLink>
                       {contact.designation ? (
                         <p className="mt-1 text-sm text-body leading-[22px]">
                           {contact.designation}
@@ -352,8 +343,8 @@ export default async function TpoCompanyDetailPage({
                 columns={[
                   {key:"drive",header:"Drive",mobileLabel:"Drive",mobilePriority:"primary",
                    cell:drive=><div className="min-w-0">
-                    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}
-                     className="lms-inline-link inline-flex min-h-11 items-center break-words font-semibold text-link underline focus-ring">{drive.title}</Link>
+                    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}
+                     className="inline-flex min-h-11 items-center break-words">{drive.title}</TextLink>
                     <p className="mt-1 text-xs text-muted-foreground leading-5">{drive.employmentType.replaceAll("_"," ")}</p>
                    </div>},
                   {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",
@@ -404,8 +395,8 @@ export default async function TpoCompanyDetailPage({
                 {key:"issued",header:"Issued",mobileLabel:"Issued",mobilePriority:"secondary",
                  cell:offer=>dateLabel(offer.issuedAt)},
                 {key:"drive",header:"Drive",mobileLabel:"Drive",mobilePriority:"action",
-                 cell:offer=><Link href={"/tpo/placements/jobs/"+encodeURIComponent(offer.jobId)}
-                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">Open drive</Link>},
+                 cell:offer=><TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(offer.jobId)}
+                  className="inline-flex min-h-11 items-center">Open drive</TextLink>},
               ]}
             />
           </div>
@@ -428,7 +419,7 @@ export default async function TpoCompanyDetailPage({
           <p className="mt-1 text-sm text-body leading-[22px]">
             Most recent 100 canonical contact, drive, offer and joining events.
             For recruiter-lead activity history (up to 200), open
-            <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)} className="ml-1 font-semibold text-link underline">Company Memory</Link>.
+            <TextLink href={"/tpo/companies?name="+encodeURIComponent(company.name)} className="ml-1">Company Memory</TextLink>.
           </p>
         </div>
 
@@ -449,12 +440,12 @@ export default async function TpoCompanyDetailPage({
                       {event.description}
                     </p>
                     {event.href ? (
-                      <Link
+                      <TextLink
                         href={event.href}
-                        className="mt-2 inline-block text-sm font-semibold text-link hover:underline"
+                        className="mt-2 inline-block text-sm"
                       >
                         Open related record →
-                      </Link>
+                      </TextLink>
                     ) : null}
                   </div>
                   <time

@@ -1,6 +1,5 @@
 "use client";
 import {useMemo,useState} from "react";
-import Link from "next/link";
 import {TpoApplicantReviewForm} from "@/components/placements/tpo-applicant-review-form";
 import {applicantDrawerReviewable,type TpoApplicantReviewSnapshot}
  from "@/modules/placements/tpo-applicant-review-drawer-model";
@@ -8,6 +7,7 @@ import {applicantStage} from "@/modules/placements/tpo-applicant-pipeline-model"
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Candidate=TpoApplicantReviewSnapshot&{
  rollNumber:string|null;branchName:string|null;cgpaHundredths:number|null;
@@ -71,9 +71,9 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
       All across the scoped stage summary: {counts.all} applications · {counts.shortlisted} shortlisted · {counts.rejected} rejected.
       Counts here are page-scoped; complete stage totals are above.
      </p>
-     <Link href={root+"/not-applied"} className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
+     <TextLink href={root+"/not-applied"} className="inline-flex min-h-9 items-center text-xs">
       Registered, not applied
-     </Link>
+     </TextLink>
     </div>
    </div>
    <div role="region" aria-label="Page-scoped applicant review rows" className="min-w-0 overflow-x-auto">
@@ -114,9 +114,9 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
    </div>
    <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-border p-3 text-xs text-muted-foreground">
     <p>Select a student to review one at a time. Nothing is shared just by opening a record.</p>
-    <Link className="font-semibold text-link underline" href={root+"/applications-export"}>
+    <TextLink href={root+"/applications-export"}>
      Review and export the full matching roster
-    </Link>
+    </TextLink>
    </footer>
   </section>
   <aside aria-label="Selected applicant review" className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-5">
@@ -146,10 +146,10 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
        Skill matches, project details and resume recency are not verified in this roster projection;
        open the authorized full application for original documents and evidence.
       </p>
-      <Link href={root+"/applicants/"+encodeURIComponent(focused.id)}
-       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      <TextLink href={root+"/applicants/"+encodeURIComponent(focused.id)}
+       className="inline-flex min-h-11 items-center md:min-h-9">
        Open full profile and resume
-      </Link>
+      </TextLink>
      </section>
      {applicantDrawerReviewable(jobStatus,focused)&&focused.screeningUpdatedAt?
       <TpoApplicantReviewForm key={focused.id+":"+focused.screeningUpdatedAt}

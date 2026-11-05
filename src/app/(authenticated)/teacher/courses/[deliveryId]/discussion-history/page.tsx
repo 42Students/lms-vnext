@@ -3,7 +3,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -12,6 +11,8 @@ import {
 } from "@/modules/courses/faculty-discussion-history-model";
 import { getFacultyDiscussionHistory } from "@/modules/courses/faculty-discussion-history-service";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Params={action?:string|string[];page?:string|string[]};
 export default async function FacultyDiscussionHistoryPage({
@@ -21,17 +22,17 @@ export default async function FacultyDiscussionHistoryPage({
   const parsed=parseFacultyDiscussionHistoryLocation(deliveryId,raw);
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid discussion history filters"} />
-    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-ring hover:text-[var(--lms-primary-text)]">Back to Courses</Link>
+    <TextLink href="/teacher/courses" className="inline-flex min-h-11 items-center">Back to Courses</TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getFacultyDiscussionHistory(context,parsed.data);
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Faculty · Discussion audit" title="Discussion moderation history"
       description={[data.delivery.courseName,data.delivery.sectionName].join(" · ")}
-      actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-[var(--lms-control-height)]">
+      actions={<ButtonLink variant="secondary" href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
+        className="w-full sm:w-auto">
         Discussions
-      </Link>} />
+      </ButtonLink>} />
     <form role="search" aria-label="discussion history filters" method="get" className="grid min-w-0 gap-[8px] border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
       <Label stack className="min-w-0">Recorded action
         <Select name="action" defaultValue={data.query.action}
@@ -43,8 +44,8 @@ export default async function FacultyDiscussionHistoryPage({
         </Select>
       </Label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">Filter</Button>
-      <Link href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
-        className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-ring">Clear</Link>
+      <TextLink href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
+        className="inline-flex min-h-11 items-center justify-center px-3 text-sm">Clear</TextLink>
     </form>
     <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} recorded event{data.total===1?"":"s"}</p>
     {data.items.length===0?<EmptyState title="No registered moderation history"

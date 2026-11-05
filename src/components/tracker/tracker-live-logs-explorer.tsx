@@ -10,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 
 import {useEffect,useMemo,useRef,useState} from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -457,19 +456,19 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
               <Button variant="ghost" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
                 onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event)+"&detail="+encodeURIComponent(item.id))}>Copy permalink</Button></>:
               <span className="text-xs text-muted-foreground">Full detail is unavailable without a provider reference.</span>}
-            <Link href={"/tracker?context="+encodeURIComponent(
+            <TextLink href={"/tracker?context="+encodeURIComponent(
               [item.event,item.path,item.message,"Reference: "+(item.requestId??"none")].join("\n").slice(0,450))}
-              className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9 focus-visible:underline">Report this</Link>
+              className="inline-flex min-h-11 w-full items-center sm:w-auto md:min-h-9">Report this</TextLink>
             {item.knownErrorId?<>
-              <Link href={"/tracker/logs#known-error-"+item.knownErrorId}
-                className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9 focus-visible:underline">Known error details</Link>
+              <TextLink href={"/tracker/logs#known-error-"+item.knownErrorId}
+                className="inline-flex min-h-11 w-full items-center sm:w-auto md:min-h-9">Known error details</TextLink>
               <Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={mutating}
                 onClick={()=>{setMuteReason("");setMuteTarget({id:item.knownErrorId!,muted:item.muted===true});}}
                >
                 {item.muted?"Unmute this error":"Mute this error"}
               </Button>
-            </>:<Link href="/tracker/logs#known-errors"
-              className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9 focus-visible:underline">Open Known Errors</Link>}
+            </>:<TextLink href="/tracker/logs#known-errors"
+              className="inline-flex min-h-11 w-full items-center sm:w-auto md:min-h-9">Open Known Errors</TextLink>}
           </div>
         </Disclosure>
       </li>)}

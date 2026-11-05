@@ -1,9 +1,10 @@
 "use client";
-import Link from "next/link";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 function initials(name:string){
  return name.trim().split(/\s+/).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join("")||"S";
@@ -57,14 +58,12 @@ export function TpoStudentRosterInspector({student,onDetails,onDismiss}:{
   <div className="mt-4 flex flex-wrap gap-2">
    <Button type="button" variant="primary" onClick={onDetails}
     className="min-h-11 md:min-h-9">Review student</Button>
-   {needsReview?<Link href="/tpo/verification"
-    className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-link md:min-h-9">
+   {needsReview?<ButtonLink variant="secondary" href="/tpo/verification">
     Verification queue
-   </Link>:null}
-   <Link href="/tpo/placements"
-    className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-link md:min-h-9">
+   </ButtonLink>:null}
+   <ButtonLink variant="secondary" href="/tpo/placements">
     Drives
-   </Link>
+   </ButtonLink>
   </div>
   <dl className="mt-4 space-y-3 border-t border-border pt-3 text-[13px]">
    <div className="flex items-start justify-between gap-3">
@@ -97,12 +96,12 @@ export function TpoStudentRosterInspector({student,onDetails,onDismiss}:{
    </dl>
   </section>
   <div className="mt-4 space-y-2 border-t border-border pt-3">
-   <Link href={studentHref+"/history"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+   <TextLink href={studentHref+"/history"} className="inline-flex min-h-11 items-center text-sm md:min-h-9">
     Placement history
-   </Link>
-   <div><Link href={studentHref+"/participation"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+   </TextLink>
+   <div><TextLink href={studentHref+"/participation"} className="inline-flex min-h-11 items-center text-sm md:min-h-9">
     Review participation
-   </Link></div>
+   </TextLink></div>
   </div>
  </aside>;
 }

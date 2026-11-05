@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { StepIndicator } from "@/components/ui/step-indicator";
 import {AcademicDirectoryRefresh} from "@/components/admin/academic-directory-refresh";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const steps = [
   { label: "Departments", href: "/admin/departments" },
@@ -25,15 +25,13 @@ export function AcademicSetupSteps({ step, showRefresh = true }: { step: 1 | 2 |
       </div>
       <div className="grid min-w-0 grid-cols-1 gap-2 text-sm sm:flex sm:flex-wrap sm:items-center">
         {showRefresh ? <AcademicDirectoryRefresh/> : null}
-        <Link href="/admin/academics" className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring">Academic Setup overview →</Link>
-        {before ? <Link href={before.href}
-          className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring">
+        <ButtonLink variant="secondary" href="/admin/academics">Academic Setup overview →</ButtonLink>
+        {before ? <ButtonLink variant="secondary" href={before.href}>
           ← Previous: {before.label}
-        </Link> : <span aria-disabled="true" className="inline-flex min-h-11 md:min-h-9 items-center px-4 text-muted-foreground">Previous</span>}
-        {after ? <Link href={after.href}
-          className="inline-flex min-h-11 items-center justify-center text-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring">
+        </ButtonLink> : <span aria-disabled="true" className="inline-flex min-h-11 md:min-h-9 items-center px-4 text-muted-foreground">Previous</span>}
+        {after ? <ButtonLink variant="secondary" href={after.href}>
           Next: {after.label} →
-        </Link> : <span aria-disabled="true" className="inline-flex min-h-11 md:min-h-9 items-center px-4 text-muted-foreground">Next</span>}
+        </ButtonLink> : <span aria-disabled="true" className="inline-flex min-h-11 md:min-h-9 items-center px-4 text-muted-foreground">Next</span>}
       </div>
     </nav>
   );

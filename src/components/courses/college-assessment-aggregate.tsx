@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { collegeStatusLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
@@ -28,6 +27,8 @@ import {
 } from "@/modules/courses/college-assessment-aggregate-model";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Data = {
   kind: CollegeAssessmentKind;
@@ -82,15 +83,13 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
         title={name}
         actions={<div className="flex flex-wrap items-center gap-2">
           {isAssignment ? leading : null}
-          {data.items.length ? <Link prefetch={false} download
-            href={collegeAssessmentExportHref(data.kind,data.query,"PAGE")}
-            className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">
+          {data.items.length ? <ButtonLink variant="secondary" prefetch={false} download
+            href={collegeAssessmentExportHref(data.kind,data.query,"PAGE")}>
             <span aria-hidden="true">↓</span>Export CSV (page)
-          </Link> : <Button variant="secondary" type="button" disabled>Export CSV (page)</Button>}
-          <Link prefetch={false} download href={collegeAssessmentExportHref(data.kind,data.query)}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">
+          </ButtonLink> : <Button variant="secondary" type="button" disabled>Export CSV (page)</Button>}
+          <ButtonLink variant="secondary" prefetch={false} download href={collegeAssessmentExportHref(data.kind,data.query)}>
             Export all matching
-          </Link>
+          </ButtonLink>
         </div>}
       />
       <section aria-label="Assessment directory filters"
@@ -174,10 +173,10 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
             className="min-h-11 md:min-h-9">
             Filter
           </Button>
-          <Link href={collegeAssessmentHref(data.kind, { q: "", scope: "ALL", results: "ALL", duePresence: "ALL", dueWindow: "ALL", status: "ALL", page: 1 })}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">
+          <TextLink href={collegeAssessmentHref(data.kind, { q: "", scope: "ALL", results: "ALL", duePresence: "ALL", dueWindow: "ALL", status: "ALL", page: 1 })}
+            className="inline-flex min-h-11 items-center md:min-h-9">
             Clear
-          </Link>
+          </TextLink>
         </form>
       </section>
 
@@ -201,10 +200,10 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
                 <span className="mt-1 block text-xs text-muted-foreground">{item.status}</span>
               </div>},
             {key:"course",header:"Course",mobilePriority:"secondary" as const,
-              cell:(item:CollegeAssessmentAggregateItem)=><Link
+              cell:(item:CollegeAssessmentAggregateItem)=><TextLink
                 href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                className="block max-w-[180px] min-h-9 font-semibold text-primary-text hover:underline">
-                {item.courseName.trim()||"Course "+item.courseCode}</Link>},
+                className="block max-w-[180px] min-h-9">
+                {item.courseName.trim()||"Course "+item.courseCode}</TextLink>},
             {key:"scope",header:"Scope",mobilePriority:"secondary" as const,
               cell:(item:CollegeAssessmentAggregateItem)=><StatusBadge
                 tone={item.deliverySpecific?"warning":"neutral"}>
@@ -235,10 +234,10 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               cell:(item:CollegeAssessmentAggregateItem)=><strong className="block max-w-[224px] break-words">
                 {item.title.trim()||"Untitled quiz"}</strong>},
             {key:"course",header:"Course",mobilePriority:"secondary" as const,
-              cell:(item:CollegeAssessmentAggregateItem)=><Link
+              cell:(item:CollegeAssessmentAggregateItem)=><TextLink
                 href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                className="block max-w-[180px] min-h-9 font-semibold text-primary-text hover:underline">
-                {item.courseName.trim()||"Course "+item.courseCode}</Link>},
+                className="block max-w-[180px] min-h-9">
+                {item.courseName.trim()||"Course "+item.courseCode}</TextLink>},
             {key:"status",header:"Status",mobilePriority:"secondary" as const,
               cell:(item:CollegeAssessmentAggregateItem)=><StatusBadge
                 tone={item.status==="PUBLISHED"?"success":"neutral"}>{collegeStatusLabel(item.status)}</StatusBadge>},

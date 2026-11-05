@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Badge} from "@/components/ui/badge";
@@ -6,6 +5,7 @@ import {Banner} from "@/components/ui/banner";
 import {getOwnAcademicEvidence} from "@/modules/placements/eligibility-service";
 import {getOwnLearnerAcademicSummary} from "@/modules/people/learner-academic-summary-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Membership-owned, read-only current enrollment. Never claim that grades,
  * imported marks or private evidence were verified by this summary. */
@@ -45,7 +45,7 @@ export default async function LearnerAcademicRecordPage(){
   value===null||!Number.isFinite(value) ? "Not recorded" :
    value.toLocaleString("en-IN",{maximumFractionDigits:2})+suffix;
  return <div className="min-w-0 space-y-5">
-  <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
+  <TextLink href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">← Profile</TextLink>
   <PageHeader title="Academic record" description="Your college-recorded current program enrollment."/>
   <section className="min-w-0 border-t border-border pt-4">
    <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)]">Current academic enrollment</Heading>
@@ -75,7 +75,7 @@ export default async function LearnerAcademicRecordPage(){
    </div>
    {!evidenceResult.available ? <Banner tone="warning" className="mt-3">
     Placement academic evidence could not be loaded. Your enrollment remains available above.
-    <Link href="/learn/profile/academic-record" className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
+    <TextLink href="/learn/profile/academic-record" className="ml-2 inline-flex min-h-9 items-center">Retry</TextLink>
    </Banner> : !evidence ? <p role="status" className="mt-3 text-sm text-body">
     No placement academic score record is available for this membership.
     This is separate from whether you have an active academic enrollment.
@@ -123,9 +123,9 @@ export default async function LearnerAcademicRecordPage(){
     Placement-eligibility evidence has its own VERIFIED/SELF precedence and may differ from Education document review.
     A saved percentage alone is not a final eligibility decision for a published drive.
    </p>
-   <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+   <TextLink href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">
     Review education verification →
-   </Link>
+   </TextLink>
   </section>
  </div>;
 }

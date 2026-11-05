@@ -9,7 +9,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {useRouter} from "next/navigation";
 import {learnerAssessmentCourseHref} from "@/modules/courses/learner-assessment-course-query-model";
@@ -50,6 +49,7 @@ import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAss
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type AssignmentResource = {
   id: string;
@@ -248,7 +248,7 @@ export function LearnerAssessmentOverview({
   if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
     return <Alert tone="error" role="alert">
       Couldn&apos;t load your class, so quizzes can&apos;t be shown.
-      <Link href="/learn/allQuizzes" className="inline-flex min-h-11 w-fit items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Retry</Link>
+      <TextLink href="/learn/allQuizzes" className="inline-flex min-h-11 w-fit items-center md:min-h-9">Retry</TextLink>
     </Alert>;
   }
   if (visibleItems.length === 0) {
@@ -442,11 +442,11 @@ export function LearnerAssessmentOverview({
                   </svg>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <Link href={"/quiz?quizId="+encodeURIComponent(item.id)+"&deliveryId="+encodeURIComponent(item.deliveryId)+(state.review?"&review=true":"")}
+                  <TextLink href={"/quiz?quizId="+encodeURIComponent(item.id)+"&deliveryId="+encodeURIComponent(item.deliveryId)+(state.review?"&review=true":"")}
                     aria-label={"View quiz "+(item.title.trim()||"Untitled quiz")}
-                    className="block min-h-9 break-words text-base font-semibold text-primary-text hover:underline">
+                    className="block min-h-9 break-words text-base">
                     {item.title.trim()||"Untitled quiz"}
-                  </Link>
+                  </TextLink>
                   <p className="mt-1 text-sm text-body">{item.courseName} · {item.lessonName}</p>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {item.dueAt?"Due: "+formatDate(item.dueAt):"Due: -"}
@@ -463,10 +463,9 @@ export function LearnerAssessmentOverview({
                   </dl>
                 </div>
                 <div className="flex shrink-0 flex-wrap items-center gap-3 sm:flex-col sm:items-end">
-                  <Link href={"/quiz?quizId="+encodeURIComponent(item.id)+"&deliveryId="+encodeURIComponent(item.deliveryId)+(state.review?"&review=true":"")}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">{state.action}</Link>
-                  <Link href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
-                    className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline md:min-h-9">Attempt history</Link>
+                  <ButtonLink variant="secondary" href={"/quiz?quizId="+encodeURIComponent(item.id)+"&deliveryId="+encodeURIComponent(item.deliveryId)+(state.review?"&review=true":"")}>{state.action}</ButtonLink>
+                  <TextLink href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
+                    className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">Attempt history</TextLink>
                 </div>
               </article>;
             })}
@@ -566,20 +565,20 @@ export function LearnerAssessmentOverview({
                         {state.action}
                       </Button>
                     ) : (
-                      <Link
+                      <ButtonLink variant="primary"
                         href={href}
-                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:focus-outline md:w-auto"
+                        className="w-full md:w-auto"
                       >
                         {state.action}
-                      </Link>
+                      </ButtonLink>
                     )}
                     {item.kind === "QUIZ" ? (
-                      <Link
+                      <TextLink
                         href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 md:w-auto"
+                        className="inline-flex min-h-11 w-full items-center justify-center text-xs md:min-h-9 md:w-auto"
                       >
                         Attempt history
-                      </Link>
+                      </TextLink>
                     ) : null}
                   </div>
                 </div>
@@ -602,16 +601,16 @@ export function LearnerAssessmentOverview({
         {...(selectedAssignment ? {description:`${selectedAssignment.courseName} · ${selectedAssignment.lessonName}`} : {})}
         {...(selectedAssignment ? {footer: (
             <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-            <Link
+            <ButtonLink variant="primary"
               href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-ring md:min-h-9 md:w-auto text-sm"
+              className="w-full md:w-auto"
             >
               Open in Learning Path
-            </Link>
-            <Link href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9 md:w-auto text-sm">
+            </ButtonLink>
+            <ButtonLink variant="primary" href={"/learn/allAssignments/" + encodeURIComponent(selectedAssignment.id) + "?deliveryId=" + encodeURIComponent(selectedAssignment.deliveryId)}
+              className="w-full md:w-auto">
               Full assignment details
-            </Link>
+            </ButtonLink>
             </div>
           )} : {})}
       >
@@ -688,10 +687,10 @@ export function LearnerAssessmentOverview({
                   assignmentId={selectedAssignment.id}
                   deliveryId={selectedAssignment.deliveryId}/>
               ) : null}
-              <Link href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
-                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+              <TextLink href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
+                className="inline-flex min-h-11 items-center text-sm md:min-h-9">
                 Open assignment resources in Learning Path
-              </Link>
+              </TextLink>
             </section>
 
             {!loadError && !selectedAssignment.submissionReadUnavailable && selectedAssignment.submissionId ?

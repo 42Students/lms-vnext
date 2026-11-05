@@ -9,6 +9,7 @@ import {recruiterTodayHeadline} from "@/modules/placements/recruiter-today-headl
 import styles from "./recruiter-today-prototype.module.css";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type WeekEvent={id:string;kind:string;title:string;jobTitle:string;href:string;when:string};
 type Waiting={id:string;title:string;detail:string;href?:string};
@@ -72,7 +73,7 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
             <span className={styles.detail}>{task.description}</span>
           </div>
           <div className={styles.needActions}>
-            {task.href?<Link href={task.href} className={styles.primary}>{cta(task)}</Link>:null}
+            {task.href?<TextLink variant="bare" href={task.href} className={styles.primary}>{cta(task)}</TextLink>:null}
             <Button variant="bare" type="button" className={styles.button} title="Hide until something changes"
               onClick={()=>persist(putRecruiterTodayLater(later,task))}>Later</Button>
           </div>
@@ -85,7 +86,7 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
               <li>The placement cell reviews the request, confirms dates and publishes to students.</li>
               <li>Once applicants are shared, you can review and send results to the placement cell.</li>
             </ol>
-            <Link className={styles.primary} href={props.firstDriveHref}>Request your first drive</Link>
+            <TextLink variant="bare" className={styles.primary} href={props.firstDriveHref}>Request your first drive</TextLink>
           </div>:null}
         {!shown.length&&postponed===0&&props.hasDriveHistory===true&&!props.signalsUnavailable?
           <div className={styles.empty} role="status">You’re all caught up{props.collegeName?" at "+props.collegeName:""}. New applicants, replies and decisions show up here.</div>:null}
@@ -108,10 +109,10 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
         <section className={styles.card} aria-label="This week">
           <div className={styles.cardHead}><span className={styles.label}>THIS WEEK</span>
             <Link href={props.calendarHref}>Calendar ›</Link></div>
-          {props.weekEvents.length?props.weekEvents.map(item=><Link key={item.id} href={item.href} className={styles.event}>
+          {props.weekEvents.length?props.weekEvents.map(item=><TextLink variant="bare" key={item.id} href={item.href} className={styles.event}>
             <strong>{item.when}</strong>
             <span>{item.title}<span className={styles.small}> · {item.jobTitle}</span></span>
-          </Link>):<p className={styles.muted}>Nothing scheduled in the next 7 days.</p>}
+          </TextLink>):<p className={styles.muted}>Nothing scheduled in the next 7 days.</p>}
         </section>
         {(props.waiting.length>0||passive.length>0||props.waitingUnavailable)?
           <section className={styles.card} aria-label="Waiting on the placement cell">
@@ -127,7 +128,7 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
               <span className={styles.small}>{item.description}</span>
             </div>)}
           </section>:null}
-        {props.liveDrive?<Link href={props.liveDrive.href} className={styles.card+" "+styles.live}
+        {props.liveDrive?<TextLink variant="bare" href={props.liveDrive.href} className={styles.card+" "+styles.live}
           aria-label={"Open live drive "+props.liveDrive.title}>
           <span className={styles.label}>LIVE DRIVE</span>
           <strong>{props.liveDrive.title}</strong>
@@ -135,7 +136,7 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
             ?"Shared applicant count unavailable":props.liveDrive.sharedApplicants+" applicants shared with you"}</span>
           <span className={styles.small}>{props.liveDrive.deadline
             ?"Applications close "+props.liveDrive.deadline:"No deadline recorded"}</span>
-        </Link>:null}
+        </TextLink>:null}
       </aside>
     </div>
   </div>;

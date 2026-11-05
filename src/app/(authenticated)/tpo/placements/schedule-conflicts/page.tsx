@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -13,6 +12,7 @@ import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-confl
 import { tpoScheduleConflictsQuerySchema } from "@/modules/placements/tpo-schedule-conflicts-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = { days?: string | string[] };
 const dateTime = new Intl.DateTimeFormat("en-IN", {
@@ -42,8 +42,8 @@ export default async function TpoScheduleConflictsPage({
         <PageHeader eyebrow="TPO · Drive scheduling"
           title="Invalid scheduling window"
           description="Only a window of 1–90 days is supported." />
-        <Link href="/tpo/placements/schedule-conflicts"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">Reset window</Link>
+        <TextLink href="/tpo/placements/schedule-conflicts"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">Reset window</TextLink>
       </div>
     );
   }
@@ -61,7 +61,7 @@ export default async function TpoScheduleConflictsPage({
         eyebrow="TPO · Drive scheduling"
         title="Round venue conflicts"
         description="Potential same-venue overlaps in scheduled rounds of published drives. This is not a student timetable conflict detector."
-        actions={<Link href="/tpo/placements" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-ring sm:w-auto md:min-h-9">← Placement operations</Link>}
+        actions={<TextLink href="/tpo/placements" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">← Placement operations</TextLink>}
       />
       <form method="get" className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,14rem)_auto] sm:items-end">
         <Label>
@@ -109,10 +109,10 @@ export default async function TpoScheduleConflictsPage({
                 </p>
                 {[left, right].map((round) => (
                   <p key={round.id} className="text-sm text-body">
-                    <Link href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
-                      className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                    <TextLink href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
+                      className="text-[var(--lms-teal-deep)]">
                       {round.companyName} · {round.jobTitle} · {round.name}
-                    </Link>
+                    </TextLink>
                     {" — "}{dateTime.format(round.scheduledAt)} IST
                   </p>
                 ))}
@@ -133,10 +133,10 @@ export default async function TpoScheduleConflictsPage({
           <ul className="divide-y divide-border">
             {data.unassessable.map((round) => (
               <li key={round.id} className="grid min-w-0 gap-2 py-4 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)] sm:items-start">
-                <Link href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
-                  className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
+                <TextLink href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
+                  className="text-[var(--lms-teal-deep)]">
                   {round.jobTitle} · {round.name}
-                </Link>
+                </TextLink>
                 <span className="text-body">{round.reason}</span>
               </li>
             ))}

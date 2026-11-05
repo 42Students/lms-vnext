@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -23,6 +22,8 @@ import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStat
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function SuperAdminDrivesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -41,7 +42,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="Jobs Management (LMS)"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
-   action={<Link href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+   action={<TextLink href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>}/>
  </div>;
  // The retention identity includes actor, selected college AND validated
  // filters. It cannot reuse another college's or user's successful rows.
@@ -59,10 +60,10 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    description={loaded.denied
     ?"Your account cannot manage drives in this college."
     :"Failed to load jobs. Please try again. Your selected college and filters are preserved; no unverified or stale drive rows are displayed."}
-   action={<Link href={loaded.denied?"/dashboard":adminDriveDirectoryHref(parsed.data)}
-    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">
+   action={<TextLink href={loaded.denied?"/dashboard":adminDriveDirectoryHref(parsed.data)}
+    className="inline-flex items-center min-h-11 md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">
     {loaded.denied?"Back to dashboard":"Retry loading drives"}
-   </Link>}
+   </TextLink>}
   />
  </div>;
   // A denied scope must never reveal even the last successful dataset.
@@ -116,10 +117,10 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     const linkClass="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring";
     return <div className="flex min-w-0 flex-col items-start gap-2">
       <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-        <Link href={base} aria-label={"Open job "+row.job.title} className={linkClass}>View</Link>
-        <Link href={base+"/applications"} aria-label={"View applications for "+row.job.title}
-          className={linkClass}>View Applications</Link>
-        <Link href={base+"/settings"} aria-label={"Edit job "+row.job.title} className={linkClass}>Edit</Link>
+        <TextLink variant="bare" href={base} aria-label={"Open job "+row.job.title} className={linkClass}>View</TextLink>
+        <TextLink variant="bare" href={base+"/applications"} aria-label={"View applications for "+row.job.title}
+          className={linkClass}>View Applications</TextLink>
+        <TextLink variant="bare" href={base+"/settings"} aria-label={"Edit job "+row.job.title} className={linkClass}>Edit</TextLink>
         <SuperAdminDriveRowStatusAction jobId={row.job.id} title={row.job.title} status={row.job.status}/>
         <div aria-label={"Delete job "+row.job.title}><SuperAdminDriveArchive jobId={row.job.id} title={row.job.title}/></div>
       </div>
@@ -139,18 +140,17 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    description="Review and manage job postings for the selected college."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-end">
     <PageBackLink href="/admin/placements" label="Placement overview" />
-    <Link href="/admin/placements/retention" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Retention report</Link>
-    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Look up a student&apos;s placement status →</Link>
-    <Link href="/admin/placements/new"
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-ring">Create Job</Link>
+    <ButtonLink variant="secondary" href="/admin/placements/retention">Retention report</ButtonLink>
+    <ButtonLink variant="secondary" href="/admin/placements/student-lookup">Look up a student&apos;s placement status →</ButtonLink>
+    <ButtonLink variant="primary" href="/admin/placements/new">Create Job</ButtonLink>
    </div>} />
   <section aria-label="Jobs Management list" className="min-w-0 space-y-3">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">Active drives</Heading>
-      <Link href="/admin/placements/drives"
-        className="inline-flex min-h-9 items-center text-sm font-medium text-link underline underline-offset-4">
+      <TextLink href="/admin/placements/drives"
+        className="inline-flex min-h-9 items-center text-sm">
         All drives
-      </Link>
+      </TextLink>
     </div>
     <SuperAdminDriveDirectoryFilters q={parsed.data.q} status={parsed.data.status}
       pageSize={parsed.data.pageSize}/>
@@ -166,17 +166,17 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   <DataTable columns={columns} rows={data.items} getRowKey={row=>row.job.id}
     mobileMode="scroll" caption="Jobs table" empty={hasFilters?
       <EmptyState title="No jobs match your filters" description="Try a different search or clear the selected filters."
-        action={<Link href="/admin/placements/drives" className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-link underline">Clear filters</Link>}/>:
+        action={<ButtonLink variant="secondary" href="/admin/placements/drives">Clear filters</ButtonLink>}/>:
       <EmptyState title="No jobs yet" description="Create your first job posting to start accepting applications."
-        action={<Link href="/admin/placements/new" className="inline-flex min-h-11 items-center rounded-md bg-[var(--lms-button-primary)] px-4 font-semibold text-[color:var(--lms-on-primary)]">Create Job</Link>}/>
+        action={<ButtonLink variant="primary" href="/admin/placements/new">Create Job</ButtonLink>}/>
     }/>
   <div className="min-w-0 border-t border-border pt-[var(--lms-space-3)]"><Pagination page={data.page} pageCount={data.totalPages} hrefForPage={href} label="Drive list pages"/></div>
   <section aria-label="Student placement lookup" className="min-w-0 rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface p-4">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <Heading level={2} size="sm" className="m-0 text-[var(--lms-heading)]">Look up a student’s placement status</Heading>
-      <Link href="/admin/placements/student-lookup" className="text-xs font-semibold text-link underline underline-offset-4">
+      <TextLink href="/admin/placements/student-lookup" className="text-xs">
         Advanced lookup
-      </Link>
+      </TextLink>
     </div>
     <form action="/admin/placements/student-lookup" method="get"
       aria-label="Search student placement status" className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">

@@ -1,6 +1,5 @@
 "use client";
 import {useMemo,useState} from "react";
-import Link from "next/link";
 import {FacultyAssessmentCreate} from "./faculty-assessment-create";
 import type {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {facultyAssessmentSectionOptions,facultyAssessmentRowsForSection} from "@/modules/courses/faculty-assessment-section-filter-model";
@@ -8,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 export type AssessmentRow={
  key:string;kind:"Assignment"|"Quiz";deliveryId:string;title:string;courseCode:string;sectionName:string;
  dueAt:string|null;status:string;handedIn:number;eligible:number|null;toGrade:number|null;
@@ -75,10 +75,10 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
       item.kind==="Quiz"?item.reportHref:item.handedIn?item.primaryHref:item.editorHref;
     const status=draft?"Draft":pending?item.toGrade+" to grade":item.status==="PUBLISHED"?"Open":item.status;
     return <tr key={item.key}>
-     <td><Link href={item.editorHref} className="font-semibold text-[color:var(--lms-heading)] hover:underline">
+     <td><TextLink href={item.editorHref} className="text-[color:var(--lms-heading)]">
       <span className={"mr-2 rounded-full px-2 py-0.5 text-xs font-bold "+(item.kind==="Assignment"?
        "bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary)]":"bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]")}>{item.kind}</span>
-      {item.title}</Link></td>
+      {item.title}</TextLink></td>
      <td><span className="block text-sm">{item.courseCode}</span>
       <span className="faculty-proto-subtitle">{item.sectionName}</span></td>
      <td>{dateLabel(item.dueAt)}</td>
@@ -86,8 +86,8 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
      <td><span className={"rounded-full px-2 py-1 text-xs font-semibold "+(draft?
       "bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]":pending?"bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-text)]":"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success-strong)]")}>{status}</span></td>
      <td><div className="flex justify-end gap-2">
-      <Link href={primary} className="faculty-proto-action !min-h-9 !px-3 !py-1.5">{action}</Link>
-      <Link href={item.reportHref} className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5">Report</Link>
+      <TextLink variant="bare" href={primary} className="faculty-proto-action !min-h-9 !px-3 !py-1.5">{action}</TextLink>
+      <TextLink variant="bare" href={item.reportHref} className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5">Report</TextLink>
      </div></td>
     </tr>;
    })}</tbody>

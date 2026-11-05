@@ -1,7 +1,6 @@
 "use client";
 import {useRef,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
-import Link from "next/link";
 import {FacultyPrototypeBlueprintRowActions,type FacultyBlueprintRowEditor} from "./faculty-prototype-blueprint-row-actions";
 import {
  facultyMoveContentId,facultyContentOrderDirty,facultyContentOrderValid,
@@ -11,6 +10,7 @@ import {courseApiError} from "./learner-course-api";
 import {facultyBlueprintWriteNeedsReload} from "@/modules/courses/faculty-blueprint-write-recovery";
 import {facultyBlueprintFullContentOrder} from "@/modules/courses/faculty-blueprint-full-content-order";
 import { Button } from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 
 export type FacultyBlueprintItem={
  id:string;title:string;kind:string;description:string|null;
@@ -161,8 +161,8 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
      </div>
      <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[color:var(--lms-primary-subtle)] text-xs font-bold text-[color:var(--lms-button-primary)]">{glyph(item.kind)}</span>
      <span className="min-w-0 flex-1">
-      <Link className="block text-sm font-bold text-[color:var(--lms-heading)] hover:underline"
-       href={item.href}>{item.title}</Link>
+      <TextLink className="block text-sm text-[color:var(--lms-heading)]"
+       href={item.href}>{item.title}</TextLink>
       <span className="faculty-proto-subtitle">{item.description??item.kind.replaceAll("_"," ").toLowerCase()}</span>
      </span>
      <span className={"shrink-0 rounded-full px-2 py-1 text-xs font-semibold "+

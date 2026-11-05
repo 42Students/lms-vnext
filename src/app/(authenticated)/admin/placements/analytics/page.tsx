@@ -1,5 +1,4 @@
 import { MetricBar } from "@/components/ui/metric-bar";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-hiring-report-service";
@@ -21,6 +20,7 @@ import {Pagination} from "@/components/ui/pagination";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
@@ -40,7 +40,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
      :parsed.error.issues[0]?.path[0]==="programId"?"Select a valid program."
      :parsed.error.issues[0]?.path[0]==="cohortId"?"Select a valid batch."
      :"Check the date format and selected analytics filters."}
-   action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear all</Link>}/>
+   action={<TextLink href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear all</TextLink>}/>
  </div>;
  const context=await getCurrentRequestContext();
  const collegeSelected=Boolean(context.adminScope?.collegeId);
@@ -60,7 +60,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <PageHeader title="Placement Analytics"/>
   <ErrorState title="Failed to load hiring data"
    description={"Couldn't refresh hiring metrics. The "+scopeLabel+" hiring report could not be verified. Retry the current filters; no zero counts are implied."}
-   action={<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Retry hiring dashboard</Link>}/>
+   action={<TextLink href="/admin/placements/analytics">Retry hiring dashboard</TextLink>}/>
  </div>;
  const data=reportResult.value;
  const filters=filterResult.status==="fulfilled"?filterResult.value:null;
@@ -93,9 +93,9 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  const columns:DataTableColumn<Row>[]=[
   {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.jobId.startsWith("total:")?<strong>{row.companyName} total</strong>:row.companyName},
   {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Job",mobilePriority:"secondary",cell:row=>row.jobId.startsWith("total:")?<strong>Company total</strong>:
-   <Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)}
-    className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring underline-offset-4">
-     {row.jobTitle}</Link>},
+   <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)}
+    className="inline-flex min-h-11 items-center break-words md:min-h-9">
+     {row.jobTitle}</TextLink>},
   ...metricKeys.map((key,index)=>({
     key,header:COMPANY_HIRING_COLUMNS[index+2]??key,mobilePriority:"secondary" as const,
     cell:(row:Row)=><span className="tabular-nums">{row[key]}</span>,
@@ -111,12 +111,12 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    description={"Track the hiring funnel, conversion and company performance for the "+scopeLabel+". Filters apply consistently to the headline metrics, funnel and company report below."}
    />
   {filters===null?<Banner tone="warning"
-   action={collegeSelected?<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>:undefined}>
+   action={collegeSelected?<TextLink href={reportPageHref(reportPage)}>Retry dropdown choices</TextLink>:undefined}>
    {collegeSelected
     ?"Jobs, departments, programs and batches could not be loaded for filtering. The verified hiring results remain visible."
     :"Organization-wide hiring totals are visible. Select an individual college to use job, department, program and batch dropdown choices."}
   </Banner>:filters.filtersError?<Banner tone="warning" role="status"
-    action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
+    action={<TextLink href={reportPageHref(reportPage)}>Retry dropdown choices</TextLink>}>
     {filters.filtersError}
   </Banner>:null}
   <form method="get" action="/admin/placements/analytics" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 print:hidden">
@@ -154,11 +154,10 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    {[...params.entries()].map(([key,value])=>{
     const next=new URLSearchParams(params);
     next.delete(key);
-    return <Link key={key} href={"/admin/placements/analytics"+(next.size?"?"+next.toString():"")}
-     className="inline-flex min-h-11 items-center gap-2 rounded border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-2 font-medium text-primary-text hover:underline"
-     aria-label={"Remove "+key+" filter"}>{key==="appliedFrom"?"Applied from":key==="appliedTo"?"Applied to":key==="jobId"?"Job":key==="cohortId"?"Batch":key==="departmentId"?"Department":key==="programId"?"Program":"Search"}: {value}<span aria-hidden="true">×</span></Link>;
+    return <ButtonLink variant="secondary" key={key} href={"/admin/placements/analytics"+(next.size?"?"+next.toString():"")}
+     aria-label={"Remove "+key+" filter"}>{key==="appliedFrom"?"Applied from":key==="appliedTo"?"Applied to":key==="jobId"?"Job":key==="cohortId"?"Batch":key==="departmentId"?"Department":key==="programId"?"Program":"Search"}: {value}<span aria-hidden="true">×</span></ButtonLink>;
    })}
-   <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear all</Link>
+   <TextLink href="/admin/placements/analytics" className="inline-flex min-h-11 items-center">Clear all</TextLink>
   </div>:null}
   <p role="status" className="text-sm text-body">{data.matchingJobCount} matching drives · showing {data.rows.length} across {groups.length} displayed companies{data.truncated?" (row/CSV cap: 5,000 drives)":""}</p>
   {data.truncated?<Banner tone="warning">
@@ -205,7 +204,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     className="min-w-0 [&_table]:min-w-[952px]"
     empty={<EmptyState title={params.size?"No companies match these filters — try widening the date range or clearing filters":"No hiring data yet"}
      description={params.size?"Widen the selected date range or clear filters to review available hiring data.":"No hiring activity has been recorded for the "+scopeLabel+"."}
-     action={params.size?<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Clear filters</Link>:undefined}/>}/>
+     action={params.size?<TextLink href="/admin/placements/analytics">Clear filters</TextLink>:undefined}/>}/>
    {groups.length?<p className="text-xs text-muted-foreground">Company total rows summarize all matching drives across report pages, not just the currently visible page.</p>:null}
    {data.rows.length>10?<div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 text-sm sm:flex-row sm:items-center sm:justify-between">
     <span>Showing {(reportPage-1)*10+1}–{Math.min(reportPage*10,data.rows.length)} of {data.rows.length} drives</span>

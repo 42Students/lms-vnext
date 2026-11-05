@@ -2,10 +2,10 @@
 
 import {useEffect,useState} from "react";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
-import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Legacy 300ms company search; cancels pending navigation on continued typing. */
 export function SuperAdminCompanySearch({mode,initialQuery,initialVerified,initialDeleted}:{
@@ -53,8 +53,8 @@ export function SuperAdminCompanySearch({mode,initialQuery,initialVerified,initi
    <Checkbox checked={showDeleted} onChange={e=>setShowDeleted(e.target.checked)}/>
    Show deleted
   </Label>}
-  <Link href={"/admin/companies?view="+mode} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9">
+  <TextLink href={"/admin/companies?view="+mode} className="inline-flex min-h-11 items-center text-sm md:min-h-9">
    Clear
-  </Link>
+  </TextLink>
  </div>;
 }

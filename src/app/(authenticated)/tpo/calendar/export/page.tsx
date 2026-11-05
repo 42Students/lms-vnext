@@ -1,6 +1,5 @@
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -14,6 +13,7 @@ import {
 import { getTpoCalendarRoundExport } from "@/modules/placements/tpo-calendar-export-service";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = { from?: string | string[]; to?: string | string[] };
 const first = (value: string | string[] | undefined) =>
@@ -42,7 +42,7 @@ export default async function TpoCalendarExportPage({
   const params = parsed.success ? new URLSearchParams(parsed.data) : null;
   return <div className="min-w-0 space-y-4">
     <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
-      description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." actions={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center justify-center font-semibold text-link hover:underline focus-ring md:min-h-9">← TPO calendar</Link>}/>
+      description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." actions={<TextLink href="/tpo/calendar" className="inline-flex min-h-11 items-center justify-center md:min-h-9">← TPO calendar</TextLink>}/>
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <Label className="block w-full min-w-0">From (IST)
         <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
@@ -67,7 +67,7 @@ export default async function TpoCalendarExportPage({
           ? " More than 500 matched: this export is truncated, narrow the range."
           : ""}
       </p>
-      {result.rows.length === 0 ? <EmptyState title="No future scheduled rounds were found in this college for the chosen dates." description="Unscheduled, cancelled, completed and non-published drives are not inferred." action={<Link href="/tpo/calendar" className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">← TPO calendar</Link>}/> : null}
+      {result.rows.length === 0 ? <EmptyState title="No future scheduled rounds were found in this college for the chosen dates." description="Unscheduled, cancelled, completed and non-published drives are not inferred." action={<TextLink href="/tpo/calendar" className="md:min-h-9 inline-flex min-h-11 items-center">← TPO calendar</TextLink>}/> : null}
       {result.rows.length>0?<ButtonLink variant="primary" href={"/api/placements/tpo/calendar/export?" + params?.toString()}
         className="w-full sm:w-auto">
         Download rounds CSV

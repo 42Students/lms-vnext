@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
@@ -12,6 +11,7 @@ import {learnerWaitingOnYou,type LearnerBookedConfirmation} from "@/modules/plac
 import {learnerPlacementHeroPriority} from "@/modules/placements/learner-dashboard-hero-priority-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -104,7 +104,7 @@ export function LearnerPlacementsDashboard({
   const quietHero=next?.label==="All caught up"&&waitingOnYou.length===0&&!display.partial;
   const heroStyle=offerHero?"border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] dark:bg-[color:color-mix(in_srgb,var(--lms-warning-strong)_20%,transparent)]":
     eventHero?"border-[color:var(--lms-primary)] bg-[color:var(--lms-primary-subtle)] dark:bg-[color:color-mix(in_srgb,var(--lms-heading)_20%,transparent)]":
-    quietHero?"border-neutral-300 bg-surface-subtle":
+    quietHero?"border-[color:var(--lms-neutral-300)] bg-surface-subtle":
     "border-primary bg-primary-subtle";
   return (
     <section className="min-w-0 space-y-4" aria-label="Placement dashboard">
@@ -136,21 +136,21 @@ export function LearnerPlacementsDashboard({
               </p>
             ) : null}
           </div>
-          <Link
+          <ButtonLink variant="primary"
             href={quietHero?"/learn/profile":next.href}
-            className="inline-flex min-h-12 w-full shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-6 text-base font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:w-auto"
+            className="w-full shrink-0 md:w-auto"
           >
             {quietHero?"Update profile":legacyCta} →
-          </Link>
+          </ButtonLink>
         </div>
       </section> : (
         <p role="status" className="min-w-0 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm text-body">
           Next placement action is temporarily unavailable while key sources reload.
           Your current applications or schedule have not been treated as empty.
-          {safeFallback ? <Link href={safeFallback.href}
-            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline underline-offset-4">
+          {safeFallback ? <TextLink href={safeFallback.href}
+            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center">
             {safeFallback.label} →
-          </Link> : null}
+          </TextLink> : null}
         </p>
       )}
 
@@ -166,9 +166,9 @@ export function LearnerPlacementsDashboard({
             <p className="font-semibold text-foreground">{item.label}</p>
             <p className="text-xs text-body">{item.detail}</p>
           </div>
-          <Link href={item.href} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
+          <TextLink href={item.href} className="inline-flex min-h-11 md:min-h-9 items-center">
             {legacyWaitingAction(item.key,item.href)} →
-          </Link>
+          </TextLink>
         </li>)}</ul>:<p role="status" className="mt-2 text-sm text-muted-foreground">
           {next&&(next.label==="You have an offer"||next.label==="First step"||next.label==="Next scheduled event")
             ?"Nothing else is waiting on you."
@@ -179,10 +179,10 @@ export function LearnerPlacementsDashboard({
         className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <Heading level={3} size="lg" id="sp-week-title" className="text-foreground">Next 7 days</Heading>
-          <Link href="/learn/my-placements/calendar"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+          <TextLink href="/learn/my-placements/calendar"
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             Full schedule →
-          </Link>
+          </TextLink>
         </header>
         {display.weekEvents===null?<p role="status" className="mt-3 text-sm text-body">
           Upcoming events are temporarily unavailable. No empty schedule is assumed.
@@ -198,10 +198,10 @@ export function LearnerPlacementsDashboard({
               {event.roundName} · {event.companyName}
             </p>
             <p className="mt-1 text-xs text-body">{formatWhen(event.when)} · {event.rescheduled?"Rescheduled":"Scheduled"}</p>
-            <Link href={event.href}
-              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+            <TextLink href={event.href}
+              className="mt-2 inline-flex min-h-11 items-center text-sm md:min-h-9">
               See details →
-            </Link>
+            </TextLink>
           </li>)}
         </ul>}
       </section>
@@ -214,7 +214,7 @@ export function LearnerPlacementsDashboard({
             {onboarding.map((step,index)=>(
               <li key={step.href} className="min-w-0 rounded-lg border border-border p-3">
                 <p className="text-xs font-bold uppercase text-primary-text">Step {index+1}</p>
-                <Link href={step.href} className="mt-2 block min-h-11 break-words text-sm font-semibold text-primary-text underline underline-offset-4">{step.label} →</Link>
+                <TextLink href={step.href} className="mt-2 block min-h-11 break-words text-sm">{step.label} →</TextLink>
                 <p className="mt-1 text-xs leading-5 text-body">{step.detail}</p>
               </li>
             ))}
@@ -225,14 +225,14 @@ export function LearnerPlacementsDashboard({
       <section aria-labelledby="learner-dashboard-stages-heading" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Heading level={3} size="base" id="learner-dashboard-stages-heading" className="text-foreground">Where your applications stand</Heading>
-          <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">All applications →</Link>
+          <TextLink href="/learn/my-placements/applications" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">All applications →</TextLink>
         </div>
         {display.applications===0 ? <p role="status" className="mt-2 text-sm text-body">
             You haven't applied to a drive yet.{" "}
-            <Link href="/learn/my-placements/jobs" className="font-semibold text-primary-text underline">Browse drives open to you</Link>
+            <TextLink href="/learn/my-placements/jobs">Browse drives open to you</TextLink>
           </p> : display.applications!==null&&display.activeApplications===0 ? (
             <p role="status" className="mt-2 text-sm text-body">No application is in progress right now.{" "}
-              <Link href="/learn/my-placements/jobs" className="font-semibold text-primary-text underline">Browse drives open to you</Link>
+              <TextLink href="/learn/my-placements/jobs">Browse drives open to you</TextLink>
             </p>
           ) : applicationFunnel===null ? <p role="status" className="mt-2 text-sm text-body">Application stages are currently unavailable. They have not been counted as zero.</p>
           : <SummaryStrip className="mt-3" label="Application stages"
@@ -247,10 +247,9 @@ export function LearnerPlacementsDashboard({
             <p className="mt-1 break-words text-sm font-semibold text-foreground">{display.urgentAssessment.roundName} · {display.urgentAssessment.companyName}</p>
             <p className="mt-1 text-xs text-body">{formatWhen(display.urgentAssessment.when)} · Scheduled time, not provider submission deadline</p>
           </div>
-          <Link href={display.urgentAssessment.href}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+          <ButtonLink variant="secondary" href={display.urgentAssessment.href}>
             Review assessment →
-          </Link>
+          </ButtonLink>
         </aside>
       ) : null}
       {display.urgentInterview ? (
@@ -261,10 +260,9 @@ export function LearnerPlacementsDashboard({
             <p className="mt-1 break-words text-sm font-semibold text-foreground">{display.urgentInterview.roundName} · {display.urgentInterview.companyName}</p>
             <p className="mt-1 text-xs text-body">{formatWhen(display.urgentInterview.when)} · Scheduled, not attendance-confirmed</p>
           </div>
-          <Link href={display.urgentInterview.href}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+          <ButtonLink variant="secondary" href={display.urgentInterview.href}>
             Review interview →
-          </Link>
+          </ButtonLink>
         </aside>
       ) : null}
       {display.activeOffers !== null && display.activeOffers > 0 ? (
@@ -277,9 +275,9 @@ export function LearnerPlacementsDashboard({
               Review the issued offer terms and expiration before responding.
             </p>
           </div>
-          <Link href="/learn/my-placements/offers?status=pending" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
+          <TextLink href="/learn/my-placements/offers?status=pending" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             Review offers →
-          </Link>
+          </TextLink>
         </div>
       ) : null}
 
@@ -295,10 +293,9 @@ export function LearnerPlacementsDashboard({
               {formatWhen(display.nextScheduledEvent.when)} · {display.nextScheduledEvent.rescheduled?"Approved reschedule":"Recorded schedule"}
             </p>
           </div>
-          <Link href={display.nextScheduledEvent.href}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+          <ButtonLink variant="secondary" href={display.nextScheduledEvent.href}>
             View event details →
-          </Link>
+          </ButtonLink>
         </aside>
       ) : null}
       <div className="grid gap-4 lg:grid-cols-2">
@@ -317,14 +314,14 @@ export function LearnerPlacementsDashboard({
             <ul className="divide-y divide-border">
               {display.attention.map((event) => (
                 <li key={event.applicationId + ":" + event.roundId} className="py-3 first:pt-0 last:pb-0">
-                  <Link href={event.href} className="block rounded-md hover:text-primary-text focus-ring">
+                  <TextLink href={event.href} className="block rounded-md">
                     <p className="text-sm font-semibold text-foreground">{event.roundName}</p>
                     <p className="mt-1 text-xs text-body">{event.companyName} · {formatWhen(event.when)}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {event.kind === "ASSESSMENT" ? "Assessment" : "Interview"}
                       {event.rescheduled ? " · Rescheduled" : ""}
                     </p>
-                  </Link>
+                  </TextLink>
                 </li>
               ))}
             </ul>
@@ -339,12 +336,12 @@ export function LearnerPlacementsDashboard({
               {" "}need attention. Only the first three are shown here.
             </p>
           ) : null}
-          <Link href="/learn/my-placements/calendar"
-            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+          <TextLink href="/learn/my-placements/calendar"
+            className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
             {display.attentionOverflow!==null&&display.attentionOverflow>0
               ? `View ${display.attentionOverflow} more in career calendar →`
               : "Open career calendar →"}
-          </Link>
+          </TextLink>
         </section>
 
         <section className="min-w-0 space-y-3 border-b border-border py-4 md:py-6" aria-labelledby="placement-week-heading">
@@ -364,14 +361,14 @@ export function LearnerPlacementsDashboard({
                   {day.events.length===0 ? <p className="mt-1 text-xs text-muted-foreground">No rounds scheduled</p> :
                     <ul className="mt-2 space-y-2">{day.events.map(event=>(
                       <li key={event.applicationId+":"+event.roundId}>
-                        <Link href={event.href} className="block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text focus-ring">
+                        <TextLink href={event.href} className="block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] text-sm">
                           {event.companyName} · {event.roundName}
                           <span className="mt-1 block text-xs font-normal text-body">{formatWhen(event.when)}</span>
-                        </Link>
-                         <Link href={"/learn/my-placements?requestRoundId="+encodeURIComponent(event.roundId)}
-                           className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline md:min-h-9">
+                        </TextLink>
+                         <TextLink href={"/learn/my-placements?requestRoundId="+encodeURIComponent(event.roundId)}
+                           className="mt-1 inline-flex min-h-11 items-center text-xs md:min-h-9">
                            Ask to reschedule →
-                         </Link>
+                         </TextLink>
                       </li>
                     ))}</ul>}
                   {day.total>day.events.length?<p className="mt-1 text-xs text-muted-foreground">{day.total-day.events.length} more that day · open full calendar</p>:null}
@@ -386,9 +383,9 @@ export function LearnerPlacementsDashboard({
               {display.fullWeekEventCount-shownWeekEvents===1?" event":" events"} are included in the full calendar.
             </p>
           ) : null}
-          <Link href="/learn/my-placements/schedule" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
+          <TextLink href="/learn/my-placements/schedule" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             Full schedule →
-          </Link>
+          </TextLink>
         </section>
       </div>
     </section>

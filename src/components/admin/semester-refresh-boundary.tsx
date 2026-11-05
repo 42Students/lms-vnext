@@ -1,8 +1,8 @@
 "use client";
 
 import {useEffect,useState,type ReactNode} from "react";
-import Link from "next/link";
 import {Banner} from "@/components/ui/banner";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Keep only a same-user, same-college, same-filter successful directory
  * visible when a subsequent server refresh fails. No local storage is used;
@@ -29,7 +29,7 @@ export function SemesterRefreshBoundary({
     <Banner tone="warning">
       Couldn't refresh semesters. Showing the last successfully loaded list for this college and these filters.
       Changes since that load may be missing.{" "}
-      <Link href={retryHref} className="font-semibold text-link underline underline-offset-4">Retry loading semesters</Link>
+      <TextLink href={retryHref}>Retry loading semesters</TextLink>
     </Banner>
     {previous}
   </div>;

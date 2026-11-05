@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function UnknownTpoReportPage({
   params,
@@ -46,10 +46,10 @@ export default async function UnknownTpoReportPage({
       <PageHeader
         title="Unknown report"
         description="This report is not available. Check the address or return to the report list."
-        actions={<Link href="/tpo/reports"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto md:min-h-9">
+        actions={<ButtonLink variant="primary" href="/tpo/reports"
+          className="w-full sm:w-auto">
           Back to reports
-        </Link>}
+        </ButtonLink>}
       />
       <Alert tone="error">
         <p className="text-sm leading-6 text-body">

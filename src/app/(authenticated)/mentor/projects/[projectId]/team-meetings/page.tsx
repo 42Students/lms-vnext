@@ -5,7 +5,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -17,6 +16,7 @@ import {
 } from "@/modules/projects/mentor-team-meetings-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Params={status?:string|string[];type?:string|string[];outcome?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorTeamMeetingsPage({
@@ -32,7 +32,7 @@ export default async function MentorTeamMeetingsPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid meeting history filters"} />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
+    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center">Projects</TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);
@@ -42,10 +42,10 @@ export default async function MentorTeamMeetingsPage({
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Team &amp; meeting log"
       description={data.enabled?data.projectTitle:"Projects access is disabled. No private team or meeting data was loaded."}
-      actions={<Link data-unskin="" href={board}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+      actions={<TextLink data-unskin="" href={board}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Team workspace
-      </Link>} />
+      </TextLink>} />
     {!data.enabled?<section role="status"
       className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No private team or meeting data was loaded.
@@ -112,13 +112,13 @@ export default async function MentorTeamMeetingsPage({
           </Label>
             </div>
           </Disclosure>
-          {filtered?<Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>:null}
+          {filtered?<TextLink href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear</TextLink>:null}
         </form>
       </FilterBar>
       <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} registered meeting{data.total===1?"":"s"} match</p>
       {data.items.length===0?<EmptyState title="No recorded meetings"
-        description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." action={filtered?<Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Clear</Link>:<Link href={board} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Team workspace</Link>} />
+        description="No persisted meeting records match this project and filter. No session, outcome or attendance has been inferred." action={filtered?<TextLink href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={board} className="inline-flex min-h-11 items-center md:min-h-9">Team workspace</TextLink>} />
         :<ol aria-label="team meetings entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(meeting=>
           <li key={meeting.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -143,11 +143,11 @@ export default async function MentorTeamMeetingsPage({
                   endsAt={meeting.endsAt.toISOString()}
                   updatedAt={meeting.updatedAt.toISOString()}/>
               </div>:null}
-            <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
+            <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+
               "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+              className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">
               View outcome notes
-            </Link>
+            </TextLink>
           </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Meeting history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTeamMeetingsHref({...data.query,page})}/>:null}
     </>}

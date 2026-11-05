@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
+import { TextLink } from "@/components/ui/text-link";
 
 export default function TpoRequestsError({ reset }: { reset: () => void }) {
   return (
@@ -14,9 +14,9 @@ export default function TpoRequestsError({ reset }: { reset: () => void }) {
           <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={reset}>
             Retry requests
           </Button>
-          <Link href="/tpo/students" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">
+          <TextLink href="/tpo/students" className="inline-flex min-h-11 items-center md:min-h-9">
             Back to students
-          </Link>
+          </TextLink>
         </div>
       }
     />

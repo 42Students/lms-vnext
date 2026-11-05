@@ -1,7 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import {CopyFindingForClaude} from "@/components/admin/copy-finding-for-claude";
@@ -31,6 +30,8 @@ import {
 } from "@/modules/module-access/admin-trace-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = Record<
   string,
@@ -111,12 +112,12 @@ export default async function SuperAdminLearnerAccessTracePage({
           title="Invalid learner search"
           description="Check the search text and page number. No learner access data was loaded."
           action={
-            <Link
+            <ButtonLink variant="secondary"
               href={basePath}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] w-full md:w-auto justify-center"
+              className="w-full md:w-auto"
             >
               Clear filters
-            </Link>
+            </ButtonLink>
           }
         />
       </div>
@@ -164,24 +165,21 @@ export default async function SuperAdminLearnerAccessTracePage({
       <PageHeader
         title={`${college.name} · Learner access trace`}
         description={`Explain why an active learner's Projects, Placements and Electives module settings resolve to On or Off. The selected college is fixed to ${college.code}.`}
-        actions={<Link href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← {college.name} access hierarchy</Link>}
+        actions={<TextLink href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-sm md:min-h-9">← {college.name} access hierarchy</TextLink>}
       />
 
       <nav className="flex min-w-0 flex-wrap gap-2" aria-label="Module access trace sections">
-        <Link href={adminModuleTraceHref(college.id,{overridesOnly:"only"})}
-         aria-current={query.overridesOnly==="only"?"page":undefined}
-         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        <ButtonLink variant="secondary" href={adminModuleTraceHref(college.id,{overridesOnly:"only"})}
+         aria-current={query.overridesOnly==="only"?"page":undefined}>
          Stored learner overrides
-        </Link>
-        <Link href={adminModuleTraceHref(college.id,{overridesOnly:"locked"})}
-         aria-current={query.overridesOnly==="locked"?"page":undefined}
-         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href={adminModuleTraceHref(college.id,{overridesOnly:"locked"})}
+         aria-current={query.overridesOnly==="locked"?"page":undefined}>
          Locked learner overrides
-        </Link>
-        <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}>
          Recent module changes
-        </Link>
+        </ButtonLink>
       </nav>
       <section className="min-w-0 space-y-4 border-t border-border pt-4">
         <div>
@@ -237,12 +235,11 @@ export default async function SuperAdminLearnerAccessTracePage({
             Search
           </Button>
 
-          <Link
+          <ButtonLink variant="secondary"
             href={basePath}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]"
           >
             Clear
-          </Link>
+          </ButtonLink>
         </form>
 
         <p className="m-0 text-sm text-muted-foreground">
@@ -266,16 +263,16 @@ export default async function SuperAdminLearnerAccessTracePage({
           columns={[
             {key:"learner",header:"Learner",mobilePriority:"primary",cell:learner=><strong>{learner.displayName||"Unnamed learner"}</strong>},
             {key:"roll",header:"Roll number",mobilePriority:"secondary",cell:learner=>learner.rollNumber||"—"},
-            {key:"trace",header:"Access trace",mobilePriority:"action",cell:learner=><Link
+            {key:"trace",header:"Access trace",mobilePriority:"action",cell:learner=><TextLink
               href={adminModuleTraceHref(college.id,{
                 q:query.q,page,overridesOnly:query.overridesOnly,
                 ...(query.overridesModule !== undefined ? {overridesModule: query.overridesModule} : {}),storedValue:query.storedValue,
                 membershipId:learner.membershipId,
               })}
               aria-current={selected?.membershipId===learner.membershipId?"true":undefined}
-              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 items-center md:min-h-9">
               {selected?.membershipId===learner.membershipId?"Selected":"Explain access →"}
-            </Link>},
+            </TextLink>},
           ]}/>
 
         <nav
@@ -288,7 +285,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
           <div className="flex min-w-0 flex-wrap gap-2">
             {page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={adminModuleTraceHref(
                   college.id,
                   {
@@ -300,14 +297,13 @@ export default async function SuperAdminLearnerAccessTracePage({
                     ...(query.membershipId !== undefined ? {membershipId: query.membershipId} : {}),
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 ← Previous
-              </Link>
+              </ButtonLink>
             ) : null}
 
             {page < totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={adminModuleTraceHref(
                   college.id,
                   {
@@ -319,10 +315,9 @@ export default async function SuperAdminLearnerAccessTracePage({
                     ...(query.membershipId !== undefined ? {membershipId: query.membershipId} : {}),
                   },
                 )}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 Next →
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         </nav>
@@ -345,8 +340,8 @@ export default async function SuperAdminLearnerAccessTracePage({
                 : ""}
             </p>
 
-            <Link href={`/admin/features/${encodeURIComponent(college.id)}?scope=MEMBERSHIP&scopeId=${encodeURIComponent(selected.membershipId)}`}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Inspect this learner&apos;s stored rules in the hierarchy →</Link>
+            <TextLink href={`/admin/features/${encodeURIComponent(college.id)}?scope=MEMBERSHIP&scopeId=${encodeURIComponent(selected.membershipId)}`}
+              className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">Inspect this learner&apos;s stored rules in the hierarchy →</TextLink>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               Resolution checks the current membership,
               section, cohort, program, department,
@@ -392,19 +387,18 @@ export default async function SuperAdminLearnerAccessTracePage({
                (step.winner?" (winning)":"")),
            ].join(String.fromCharCode(10))),
            ].join(String.fromCharCode(10,10))}/>
-          <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
+          <ButtonLink variant="secondary" href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}>
             Inspect membership overrides and locks →
-          </Link>
+          </ButtonLink>
           <nav aria-label="Selected learner access actions" className="flex min-w-0 flex-wrap gap-3">
-           <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+           <TextLink href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             View audited module changes
-           </Link>
-           <Link href={adminModuleTraceHref(college.id,{overridesOnly:"only",membershipId:selected.membershipId})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+           </TextLink>
+           <TextLink href={adminModuleTraceHref(college.id,{overridesOnly:"only",membershipId:selected.membershipId})}
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             See learner in override register
-           </Link>
+           </TextLink>
           </nav>
           <section className="min-w-0 border-t border-border pt-6" aria-label="Student overrides and locks">
             <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">Student overrides and locks</Heading>

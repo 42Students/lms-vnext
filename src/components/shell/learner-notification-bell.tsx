@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {PopoverPanel} from "@/components/ui/popover";
 import {TopbarNotificationEmpty} from "./topbar/notification-empty";
@@ -12,6 +11,7 @@ import {ScrollCue} from "@/components/ui/scroll-cue";
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 import {learnerNotificationTarget} from "@/modules/activity/learner-notification-inbox-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Due={key:string;title:string;body:string;href:string;dueAt:string};
 type Row={notification:{id:string;title:string;body:string;actionHref:string|null;
  readAt:string|null;createdAt:string};event:{module:string}};
@@ -84,10 +84,10 @@ export function LearnerNotificationBell(){
   return ()=>document.removeEventListener("keydown",escape);
  },[open,mobile]);
  const panelFooter=<>
-   <Link href="/learn/notifications" onClick={()=>setOpen(false)}
-     className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:underline">
+   <TextLink href="/learn/notifications" onClick={()=>setOpen(false)}
+     className="mt-3 inline-flex min-h-11 items-center">
      See all notifications
-   </Link>
+   </TextLink>
  </>;
  const panelBody=<>
    {error?<div className="min-w-0 space-y-2 border-b border-border pb-3"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
@@ -101,10 +101,10 @@ export function LearnerNotificationBell(){
     <Heading level={3} size="sm" id="learner-bell-due-heading" className="text-[var(--lms-heading)]">Assignments due within 48 hours</Heading>
     <ul className="mt-2 space-y-2">
      {due.slice(0,3).map(item=><li key={item.key}>
-      <Link href={item.href} onClick={()=>setOpen(false)}
+      <TextLink variant="bare" href={item.href} onClick={()=>setOpen(false)}
        className="block min-h-11 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body hover:bg-primary-subtle focus-ring">
        {item.body}
-      </Link></li>)}
+      </TextLink></li>)}
     </ul>
     <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
      Live Course deadlines, not emailed or marked as read.
@@ -114,13 +114,13 @@ export function LearnerNotificationBell(){
     {items.slice(0,8).map(row=>{
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
      return <li key={row.notification.id}>
-      <Link href={target} onClick={()=>setOpen(false)}
+      <TextLink variant="bare" href={target} onClick={()=>setOpen(false)}
         className="block min-h-11 min-w-0 px-3 py-3 text-sm text-body hover:bg-primary-subtle focus-ring">
        <span className="block font-semibold text-foreground">{row.notification.title}
         {row.notification.readAt===null?" · New":""}</span>
        <span className="mt-1 block min-w-0 line-clamp-2 break-words leading-[1.5] text-muted-foreground">{row.notification.body}</span>
        <time dateTime={row.notification.createdAt} className="mt-1 block text-xs text-muted-foreground leading-[20px]">{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(row.notification.createdAt))}</time>
-      </Link>
+      </TextLink>
      </li>;
     })}
    </ul></ScrollCue>

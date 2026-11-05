@@ -18,9 +18,10 @@ import {parseProjectAdminReassignMentorQuery,projectAdminReassignMentorHref,
 import {findLegacyReassignmentMentorMembership} from "@/modules/projects/mentor-reassignment-legacy-lookup-service";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
-import Link from "next/link";
 import {ProjectMentorWorkloadTable} from "./project-mentor-workload-table";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export async function ProjectAdminReassignMentorPage({
   collegeId,
@@ -43,15 +44,13 @@ export async function ProjectAdminReassignMentorPage({
   }catch{
    return <ErrorState title="Mentor bookmark could not be resolved"
      description="The selected college's mentor identity mapping is unavailable. Retry before changing the mentor filter."
-     action={<Link href={basePath+"/reassign-mentor"}
-      className="text-link underline">Open mentor directory</Link>}/>;
+     action={<TextLink href={basePath+"/reassign-mentor"}>Open mentor directory</TextLink>}/>;
   }
   if(!recovered.ok)return <div className="min-w-0 space-y-4">
    <PageHeader title="Bulk mentor reassignment"/>
    <ErrorState title="Mentor bookmark could not be resolved"
     description="This historic mentor ID has no active, verified match in the selected college. Choose a mentor from the current directory."
-    action={<Link href={basePath+"/reassign-mentor"}
-      className="text-link underline">Choose a current mentor</Link>}/>
+    action={<TextLink href={basePath+"/reassign-mentor"}>Choose a current mentor</TextLink>}/>
   </div>;
   const parsed=parseProjectAdminReassignMentorQuery(recovered.params);
   if(!parsed.success)return <div className="min-w-0 space-y-[16px]">
@@ -59,8 +58,8 @@ export async function ProjectAdminReassignMentorPage({
     <ProjectAdminNav basePath={basePath} active="workspaces" />
     <ErrorState title="Invalid mentor reassignment filters"
       description="Check the mentor, workspace, search, status, page and rows filters, or clear them to continue."
-      action={<Link href={basePath+"/reassign-mentor"}
-        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Clear filters</Link>}/>
+      action={<TextLink href={basePath+"/reassign-mentor"}
+        className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Clear filters</TextLink>}/>
   </div>;
   const {fromMentorId,projectId:initialProjectId,mentorSearch,mentorPage,...filters}=parsed.data;
   const query={...filters,...(fromMentorId !== undefined ? {fromMentorId} : {})} satisfies ProjectAdminCollectionQuery;
@@ -78,8 +77,8 @@ export async function ProjectAdminReassignMentorPage({
       <ProjectAdminNav basePath={basePath} active="workspaces"/>
       <ErrorState title={projectsRead.status==="rejected"?"Failed to load project workspaces":"Mentor workload could not be loaded"}
         description="The workspace, mentor or workload details could not be verified. No reassignment action is available."
-        action={<Link href={projectAdminReassignMentorHref(basePath,parsed.data)}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Retry loading mentor reassignment</Link>}/>
+        action={<TextLink href={projectAdminReassignMentorHref(basePath,parsed.data)}
+          className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Retry loading mentor reassignment</TextLink>}/>
     </div>;
   const projects=projectsRead.value;
   const mentors=mentorsRead.status==="fulfilled"?mentorsRead.value:[];
@@ -98,8 +97,8 @@ export async function ProjectAdminReassignMentorPage({
       {mentorsRead.status==="rejected"?<ErrorState
         title="Mentor options could not be loaded"
         description="The workspace list and workload are available, but reassignment is disabled until current mentor permissions can be verified."
-        action={<Link className="font-semibold text-link underline"
-          href={projectAdminReassignMentorHref(basePath,parsed.data)}>Retry mentors</Link>}/>:null}
+        action={<TextLink
+          href={projectAdminReassignMentorHref(basePath,parsed.data)}>Retry mentors</TextLink>}/>:null}
       <Disclosure title="Mentor workload"
         defaultOpen className="border-b border-border pb-4" contentClassName="pt-2">
         <ProjectMentorWorkloadTable rows={sortedWorkload}
@@ -118,17 +117,16 @@ export async function ProjectAdminReassignMentorPage({
             placeholder="Enter mentor name or email" className="w-full"/>
         </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9">Find mentor</Button>
-        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:underline">Clear mentor search</Link>:null}
+        {mentorSearch?<ButtonLink variant="secondary" href={basePath+"/reassign-mentor"}>Clear mentor search</ButtonLink>:null}
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground md:col-span-full">
           <span>Mentors · page {mentorPage} · {mentors.length} result{mentors.length===1?"":"s"} on this page</span>
           <nav className="flex flex-wrap gap-3" aria-label="Eligible mentor pages">
-            {mentorPage>1?<Link className="font-semibold text-link underline"
+            {mentorPage>1?<TextLink
               href={projectAdminReassignMentorHref(basePath,{...parsed.data,mentorPage:mentorPage-1})}>
-                Previous mentors</Link>:null}
-            {mentors.length===100&&mentorPage<1000?<Link
-              className="font-semibold text-link underline"
+                Previous mentors</TextLink>:null}
+            {mentors.length===100&&mentorPage<1000?<TextLink
               href={projectAdminReassignMentorHref(basePath,{...parsed.data,mentorPage:mentorPage+1})}>
-                Next mentors</Link>:null}
+                Next mentors</TextLink>:null}
           </nav>
         </div>
       </form>
@@ -149,7 +147,7 @@ export async function ProjectAdminReassignMentorPage({
           </Select>
         </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9">Apply mentor filter</Button>
-        {fromMentorId ? <Link href={basePath + "/reassign-mentor"} className="text-sm font-semibold underline">Clear current mentor</Link> : null}
+        {fromMentorId ? <TextLink href={basePath + "/reassign-mentor"} className="text-sm">Clear current mentor</TextLink> : null}
       </form>
       </Disclosure>
       {mentorsRead.status==="fulfilled"?<ProjectMentorReassignment

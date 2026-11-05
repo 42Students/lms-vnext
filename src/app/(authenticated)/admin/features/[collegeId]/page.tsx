@@ -1,7 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -35,6 +34,8 @@ import {AcademicModuleScopeInventory} from "@/components/admin/academic-module-s
 import {listCollegeModuleScopeChoices} from "@/modules/module-access/admin-descendant-rule-write";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = Record<string,string|string[]|undefined>;
 
@@ -60,10 +61,10 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <PageHeader title="Module Access" />
         <ErrorState title="Invalid module access filters"
           description="The module, scope or requested page is invalid. No college module rules were loaded."
-          action={<Link href={"/admin/features/"+encodeURIComponent(collegeId)}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 md:min-h-9">
+          action={<TextLink href={"/admin/features/"+encodeURIComponent(collegeId)}
+            className="inline-flex min-h-11 items-center text-sm w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 md:min-h-9">
             Clear filters
-          </Link>} />
+          </TextLink>} />
       </div>
     );
   }
@@ -79,10 +80,10 @@ export default async function SuperAdminCollegeModuleAccessPage({
       <PageHeader title="Module Access" />
       <ErrorState title="Couldn't load module access"
         description="The selected college hierarchy could not be loaded. No module rules were changed."
-        action={<Link href={"/admin/features/"+encodeURIComponent(collegeId)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+        action={<TextLink href={"/admin/features/"+encodeURIComponent(collegeId)}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Retry loading module access
-        </Link>}/>
+        </TextLink>}/>
     </div>;
   }
   const result = moduleRead.value;
@@ -134,7 +135,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       <PageHeader
         title="Module Access"
         description={`Manage Projects and Placements for ${college.name} (${college.code}), with a college-scoped hierarchy and effective locks.`}
-        actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← Feature Controls</Link>}
+        actions={<TextLink href="/admin/features" className="inline-flex min-h-11 items-center text-sm md:min-h-9">← Feature Controls</TextLink>}
       />
 
       <Banner tone="info">
@@ -147,35 +148,32 @@ export default async function SuperAdminCollegeModuleAccessPage({
         </div>
       </Banner>
       <nav aria-label="Module access workspace actions" className="flex flex-wrap gap-3">
-        <Link href={"/admin/features/"+encodeURIComponent(college.id)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        <ButtonLink variant="secondary" href={"/admin/features/"+encodeURIComponent(college.id)}>
           Refresh
-        </Link>
-        <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}>
           Recent changes
-        </Link>
+        </ButtonLink>
       </nav>
       <LearnerModuleAccessDrawer collegeId={college.id}/>
-      <Link href={`/admin/features/${encodeURIComponent(college.id)}/trace?overridesOnly=only`}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+      <TextLink href={`/admin/features/${encodeURIComponent(college.id)}/trace?overridesOnly=only`}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Review learner overrides and inherited settings →
-      </Link>
+      </TextLink>
 
       <nav aria-label="Learner access explanation" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
         <p className="max-w-2xl text-sm leading-6 text-body">
           Find an active learner to trace the module-access decision through membership, academic scopes, college, organization, global rules and defaults.
         </p>
-        <Link href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">
+        <ButtonLink variant="secondary" href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
+          className="w-full sm:w-auto">
           Open learner access trace →
-        </Link>
+        </ButtonLink>
       </nav>
 
-      <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
+      <ButtonLink variant="secondary" href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}>
         View audited college module changes →
-      </Link>
+      </ButtonLink>
       <section className="grid min-w-0 gap-x-6 gap-y-0 md:grid-cols-2 xl:grid-cols-3">
         {modules.map((decision) => (
           <article
@@ -226,7 +224,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             </dl>:<Banner tone="warning" role="status">
               Verified placements impact counts could not be loaded. Review
               college jobs, applications, offers and interviews before disabling access.
-              <Link href="/admin/placements" className="ml-2 font-semibold text-primary-text underline">Review placements</Link>
+              <TextLink href="/admin/placements" className="ml-2">Review placements</TextLink>
             </Banner>}
           </div>
         ))}
@@ -266,7 +264,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         </Label>
         </Disclosure>
         <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">Filter overrides</Button>
-        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Reset</Link>
+        <ButtonLink variant="secondary" href={"/admin/features/" + encodeURIComponent(college.id)}>Reset</ButtonLink>
       </form>
 
       <section className="min-w-0 space-y-3">
@@ -343,9 +341,9 @@ export default async function SuperAdminCollegeModuleAccessPage({
         </> : <Banner tone="warning" role="status">
           Couldn't load student overrides or the academic hierarchy. Existing college
           module decisions are still shown above. No descendant rules were changed.
-          <Link href={pageHref(result.page)} className="ml-2 font-semibold text-primary-text underline">
+          <TextLink href={pageHref(result.page)} className="ml-2">
             Retry loading student overrides
-          </Link>
+          </TextLink>
         </Banner>}
       </section>
       <section className="min-w-0 space-y-3">
@@ -394,20 +392,18 @@ export default async function SuperAdminCollegeModuleAccessPage({
           </p>
           <div className="flex flex-wrap gap-2">
             {result.page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={pageHref(result.page - 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 ← Previous
-              </Link>
+              </ButtonLink>
             ) : null}
             {result.page < result.totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={pageHref(result.page + 1)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 Next →
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         </nav>

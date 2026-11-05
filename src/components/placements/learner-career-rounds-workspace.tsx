@@ -9,7 +9,6 @@ import {learnerAssessmentExternalLaunch} from "@/modules/placements/learner-asse
 import {learnerAssessmentDueHref,readLearnerAssessmentDueFromUrl} from "@/modules/placements/learner-assessment-bucket-url-model";
 import {learnerAssessmentMissingSchedule} from "@/modules/placements/learner-assessment-missing-schedule-model";
 import {learnerAssessmentPastReview} from "@/modules/placements/learner-assessment-past-review-model";
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FilterChip } from "@/components/ui/filter-chip";
@@ -320,14 +319,11 @@ export function LearnerCareerRoundsWorkspace({
           </StatusBadge>
         </div>
         <nav aria-label="Placement schedule views" className="flex flex-wrap items-center gap-2 text-sm">
-          <Link href="/learn/my-placements/schedule?view=coming"
-            className="font-semibold text-link underline underline-offset-4">
+          <TextLink href="/learn/my-placements/schedule?view=coming">
             Full Schedule · Coming up
-          </Link>
-          <Link href="/learn/my-placements/schedule?view=past"
-            className="font-semibold text-link underline underline-offset-4">Past</Link>
-          <Link href="/learn/my-placements/schedule?view=calendar"
-            className="font-semibold text-link underline underline-offset-4">Calendar</Link>
+          </TextLink>
+          <TextLink href="/learn/my-placements/schedule?view=past">Past</TextLink>
+          <TextLink href="/learn/my-placements/schedule?view=calendar">Calendar</TextLink>
         </nav>
         <div className="flex gap-2 overflow-x-auto pb-2 md:flex-wrap" role="group" aria-label="Filter by schedule">
           {timeChoices.map(({ value, label }) => (
@@ -440,10 +436,10 @@ export function LearnerCareerRoundsWorkspace({
             {pastReview.count} assessment schedule{pastReview.count===1?"":"s"} passed
           </Heading>
           <p className="mt-2 text-sm text-body">{pastReview.notice}</p>
-          <Link href="/learn/my-placements/assessments/results"
-            className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
+          <TextLink href="/learn/my-placements/assessments/results"
+            className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
             Check officially applied results →
-          </Link>
+          </TextLink>
         </aside>
       ):null}
       {kind==="ASSESSMENT"&&dueBucket==="unscheduled"&&missingSchedule&&missingSchedule.count>0 ? (
@@ -502,30 +498,30 @@ export function LearnerCareerRoundsWorkspace({
         title={selected?.roundName ?? "Placement round"}
         {...(selected ? {description:selected.companyName+" · "+selected.roleTitle} : {})}
         footer={<div className="flex min-w-0 w-full flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-          <Link
+          <ButtonLink variant="secondary"
             href={selected
               ? "/learn/my-placements/applications?applicationId=" + encodeURIComponent(selected.applicationId)
               : "/learn/my-placements/applications"}
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
-          >View application</Link>
+            className="w-full md:w-auto"
+          >View application</ButtonLink>
           {kind === "INTERVIEW" && selected ? (
-            <Link
+            <ButtonLink variant="secondary"
               href={"/learn/my-placements/interviews?applicationId=" +
                 encodeURIComponent(selected.applicationId) +
                 "&roundId=" + encodeURIComponent(selected.roundId)}
-              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
+              className="w-full md:w-auto"
             >
               Direct link
-            </Link>
+            </ButtonLink>
           ) : null}
           {kind === "INTERVIEW" && selected ? (
-            <Link
+            <ButtonLink variant="secondary"
               href={"/learn/my-placements?requestRoundId=" +
                 encodeURIComponent(selected.roundId) + "#round-reschedule"}
-              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-center text-sm font-semibold text-primary-text md:w-auto"
+              className="w-full md:w-auto"
             >
               Request reschedule
-            </Link>
+            </ButtonLink>
           ) : null}
           <Button className="min-h-[var(--lms-control-height)] max-md:min-h-11 w-full md:w-auto" onClick={() => setSelectedKey(null)}>Close</Button>
         </div>}

@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 import authStyles from "@/components/public/public-auth-skin.module.css";
-import Link from "next/link";
 import {Card} from "@/components/ui/card";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** Transient preview failures are not equivalent to an invalid or expired link. */
 export function PublicJoinPreviewRetry({scope,token}:{
@@ -13,8 +13,8 @@ export function PublicJoinPreviewRetry({scope,token}:{
    <PageHeader title="We couldn’t load this page" />
    <p role="alert" className="max-w-prose break-words text-sm leading-6 text-body">Check your connection and try again. Your invitation was not used.
     If the problem continues, ask the placement cell for help.</p>
-   <Link href={root+encodeURIComponent(token)}
-    className="mt-4 inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto rounded-[var(--lms-control-radius)] border border-primary bg-primary px-5 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-ring">Retry</Link>
+   <ButtonLink variant="primary" href={root+encodeURIComponent(token)}
+    className="mt-4 w-full md:w-auto">Retry</ButtonLink>
   </Card>
  </main>;
 }

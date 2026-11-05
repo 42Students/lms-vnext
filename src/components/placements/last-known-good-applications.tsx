@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useState,type ReactNode} from "react";
-import Link from "next/link";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Keep the last successful *page-local* view when a refresh fails.
  * The server supplies a scope-specific React key (college, drive, filters),
@@ -17,10 +17,10 @@ export function LastKnownGoodApplications({valid,retryHref,children}:{
   <div role="alert" className="flex flex-wrap items-center gap-3 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
    <span>Unable to refresh applications. The previous page is shown below as outdated,
     read-only data and may have changed. Try again before taking any action.</span>
-   <Link href={retryHref}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
+   <TextLink href={retryHref}
+    className="inline-flex min-h-11 items-center">
     Retry applications
-   </Link>
+   </TextLink>
   </div>
   <div inert className="min-w-0 opacity-80" aria-label="Outdated application snapshot">
    {snapshot}

@@ -1,12 +1,12 @@
 "use client";
 import {useEffect,useRef,useState,type FormEvent} from "react";
-import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import type {ProjectParticipantListQuery} from "./project-participant-list-controls";
 import {learnerProjectMobileFilterSummary} from "@/modules/projects/learner-project-mobile-filter-model";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const statuses = [
   ["CURRENT","Current only"],["ACTIVE","Active"],["IN_PROGRESS","In progress"],
@@ -43,7 +43,7 @@ export function LearnerProjectMobileFilters({query}:{query:ProjectParticipantLis
       form.current?.requestSubmit();
     },350);
   }
-  const label="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]";
+  const label="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]";
   return (
     <section className="min-w-0 space-y-2 md:hidden" aria-label="Project search and filters">
       <form ref={form} method="get" action="/learn/projects"
@@ -107,10 +107,9 @@ export function LearnerProjectMobileFilters({query}:{query:ProjectParticipantLis
           </Select>
         </Label>
         <Button type="submit" className="min-h-11" onClick={cancelDebounce}>Apply</Button>
-        <Link href="/learn/projects" onClick={cancelDebounce}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:bg-primary-subtle">
+        <ButtonLink variant="secondary" href="/learn/projects" onClick={cancelDebounce}>
           Clear filters
-        </Link>
+        </ButtonLink>
       </form>
       <p role="status" aria-live="polite" className="m-0 text-xs leading-5 text-muted-foreground">
         {searchPending?"Updating project search…":active.count>0

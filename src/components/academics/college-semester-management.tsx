@@ -4,7 +4,6 @@ import { Switch } from "@/components/ui/selection-controls";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRef, useState, useTransition, type FormEvent } from "react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { useToast } from "@/components/ui/toast";
@@ -18,6 +17,7 @@ import { SEMESTER_COPY } from "@/modules/academics/semester-copy";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type ProgramOption = { id: string; name: string; code: string };
 type SemesterRow = {
@@ -129,7 +129,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">
           Create a program before adding semesters.{" "}
-          <Link href={programsHref} className="font-semibold text-[var(--lms-link-text)] underline">Go to Programs</Link>
+          <TextLink href={programsHref}>Go to Programs</TextLink>
         </p>
       ) : (
         <form noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-3)]">

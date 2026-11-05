@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { and, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -21,7 +20,7 @@ export default async function CollegeElectiveSlotDetail({params}:{
   const {slotId} = await params;
   if (!z.string().uuid().safeParse(slotId).success) notFound();
   const member = await resolveActingCollege(context, "academics.read");
-  const back = <Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Back to electives</Link>;
+  const back = <TextLink href="/college/electives" className="inline-flex min-h-11 items-center md:min-h-9">Back to electives</TextLink>;
   let slot: {
     id: string; name: string; description: string | null; version: number;
     credits: number; minPick: number; maxPick: number; status: string;
@@ -74,7 +73,7 @@ export default async function CollegeElectiveSlotDetail({params}:{
       slot.status === "ACTIVE" ? <ErrorState title="Could not load elective options"
         description="Retry options before editing this slot."
         action={<TextLink href={"/college/electives/" + encodeURIComponent(slotId)}>Retry options</TextLink>} /> : null}
-    <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/allocate"}
-      className="inline-flex min-h-9 items-center font-semibold text-link underline">Eligible students</Link>
+    <TextLink href={"/college/electives/" + encodeURIComponent(slotId) + "/allocate"}
+      className="inline-flex min-h-9 items-center">Eligible students</TextLink>
   </div>;
 }

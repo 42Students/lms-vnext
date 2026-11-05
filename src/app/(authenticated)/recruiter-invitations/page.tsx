@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -6,6 +5,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {RecruiterPendingInvitations} from "@/components/hr/recruiter-pending-invitations";
 import {listSignedInRecruiterPendingInvites} from "@/modules/placements/public-recruiter-invite-accept-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 
@@ -26,7 +26,7 @@ export default async function RecruiterInvitationsPage(){
    <PageHeader title="Recruiter invitations"/>
    <ErrorState title="Could not load your invitations"
     description="The invitation list is unavailable. No invitation has been accepted or declined."
-    action={<Link href="/recruiter-invitations" className="font-semibold text-link underline">Retry</Link>}/>
+    action={<TextLink href="/recruiter-invitations">Retry</TextLink>}/>
   </div>;
  }
  return <div className="min-w-0 space-y-4">
@@ -37,6 +37,6 @@ export default async function RecruiterInvitationsPage(){
     total={invitations.length} hasMore={false}/>:
    <EmptyState title="No pending recruiter invitations"
     description="Any college invitations awaiting your decision will appear here. You can still use other authorized roles."
-    action={<Link href="/dashboard" className="font-semibold text-link underline">Back to dashboard</Link>}/>}
+    action={<TextLink href="/dashboard">Back to dashboard</TextLink>}/>}
  </div>;
 }

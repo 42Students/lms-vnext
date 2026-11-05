@@ -6,7 +6,6 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {getMentorMeetingChangeHistory} from "@/modules/projects/mentor-meeting-history-service";
 import {PROJECT_MEETING_HISTORY_TITLE} from "@/db/schema/project-audit-staged";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -18,6 +17,7 @@ import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-proje
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Params={importance?:string|string[];view?:string|string[];window?:string|string[];order?:string|string[];page?:string|string[];pageSize?:string|string[];meetingKey?:string|string[];meetingPage?:string|string[]};
 
@@ -33,9 +33,9 @@ export default async function MentorProjectActivityHistoryPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title="Invalid activity filters" />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-ring hover:text-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
+    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">
       Return to projects
-    </Link>
+    </TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorProjectActivityHistory(context,parsed.data);
@@ -54,10 +54,10 @@ export default async function MentorProjectActivityHistoryPage({
   return <div className={mentorProjectActivityMobileLayout}>
     <PageHeader eyebrow="Mentor · Project Activity" title="Recorded project activity"
       description={data.enabled?data.title+" · Events linked to this assigned project.":"Projects access is disabled. No private project activity was loaded."}
-      actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">
+      actions={<TextLink data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Project activity workspace
-      </Link>} />
+      </TextLink>} />
     {!data.enabled ?
       <section role="status" className="border-b border-border pb-4 text-sm text-body">
         Projects access is disabled. No project activity was loaded.
@@ -118,8 +118,8 @@ export default async function MentorProjectActivityHistoryPage({
         </Label>
           </div>
         </Disclosure>
-        {filtered?<Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
-          className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring hover:text-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">Clear</Link>:null}
+        {filtered?<TextLink href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
+          className="inline-flex min-h-11 items-center px-3 py-2 text-sm md:min-h-[var(--lms-control-height)]">Clear</TextLink>:null}
       </form></FilterBar>
       <p className="text-sm text-body leading-[22px]">
         {data.total.toLocaleString("en-IN")} matching persisted event{data.total===1?"":"s"}
@@ -127,19 +127,19 @@ export default async function MentorProjectActivityHistoryPage({
       {data.query.view!=="MEETINGS"?<p className="text-sm text-body">
         Project lifecycle and audit events are separate from the authoritative
         meeting-edit revisions. {" "}
-        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
-         "/activity-history?view=MEETINGS"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+
+         "/activity-history?view=MEETINGS"} className="inline-flex min-h-11 items-center md:min-h-9">
           View meeting change history
-        </Link>
+        </TextLink>
         {" "}for actor, changed fields and redacted before/after details.
       </p>:null}
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
+        <TextLink data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
           "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"&&data.query.order==="NEWEST"?"":"?"+
             new URLSearchParams({importance:data.query.importance,view:data.query.view,window:data.query.window,order:data.query.order}).toString())}
-          download className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">
+          download className="inline-flex min-h-11 items-center break-words text-sm md:min-h-9">
           Export recorded events CSV (max 200)
-        </Link>
+        </TextLink>
         {data.total>200?<span role="status">
           Export omits {data.total-200} additional matching events.
         </span>:null}
@@ -151,7 +151,7 @@ export default async function MentorProjectActivityHistoryPage({
          </p>
         : data.items.length===0 ? <EmptyState title="No recorded project activity"
         description="No registered activity events match this project and importance filter. Missing audit producers or pre-migration records cannot be inferred."
-        action={filtered?<Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-[var(--lms-control-height)]">Clear</Link>:undefined} />
+        action={filtered?<TextLink href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})} className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Clear</TextLink>:undefined} />
         : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(event=>
           <li key={event.id} className="min-w-0 break-words py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -169,8 +169,8 @@ export default async function MentorProjectActivityHistoryPage({
         className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
           <Heading level={2} size="lg" className="text-[var(--lms-heading)]">{PROJECT_MEETING_HISTORY_TITLE}</Heading>
-          <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=meetings"}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Back to meetings</Link>
+          <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=meetings"}
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">Back to meetings</TextLink>
         </div>
         <p className="text-sm text-body">Recorded meeting revisions, newest first. Each revision is
           scoped to this project and can be filtered by meeting key. Actor names and allowed
@@ -185,14 +185,14 @@ export default async function MentorProjectActivityHistoryPage({
               placeholder="All project meetings"/>
           </Label>
           <Button type="submit" variant="secondary">Filter</Button>
-          {meetingKey?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history?view=MEETINGS"}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
-            Clear</Link>:null}
+          {meetingKey?<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history?view=MEETINGS"}
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
+            Clear</TextLink>:null}
         </form>
         {!meetingHistory ? <p role="alert" className="text-sm text-error">
           Meeting history could not be loaded. Other activity events are still available.
-          <Link href={mentorProjectActivityHref({...data.query,view:"MEETINGS",page:1})}
-            className="ml-2 inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Retry</Link>
+          <TextLink href={mentorProjectActivityHref({...data.query,view:"MEETINGS",page:1})}
+            className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
         </p> : meetingHistory.items.length===0 ?
           <EmptyState title="No meeting changes recorded"
             description="No persisted typed meeting revisions match this project and meeting key. This does not mean no generic project activity occurred or that pre-migration edits never happened."/> :

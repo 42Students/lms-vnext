@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function NotFound() {
   return <section className="min-w-0">
     <PageHeader title="Page not found"
       description="This page may have moved or is no longer available. Please return home."
-      actions={<Link href="/teach/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto md:min-h-9">Go to home</Link>} />
+      actions={<ButtonLink variant="primary" href="/teach/courses" className="w-full sm:w-auto">Go to home</ButtonLink>} />
   </section>;
 }

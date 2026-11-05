@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import {useEffect,useRef,useState,type MouseEvent} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -12,6 +11,7 @@ import {BellIcon} from "./icons";
 import style from "./topbar.module.css";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type PreviewResponse={items:MentorUnifiedNotification[];hasMore:boolean};
 /** The Mentor portal gets its own verified merged-source bell, not the generic
@@ -136,12 +136,12 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
         {new Date(item.occurredAt).toLocaleDateString("en-IN",{
          day:"numeric",month:"short",timeZone:"Asia/Kolkata"})}
        </time>
-       {href?<Link href={href}
+       {href?<TextLink href={href}
          onClick={event=>void markOne(event,item,href)}
          aria-disabled={working===key}
-         className="min-h-8 text-link underline">
+         className="min-h-8">
           {working===key?"Marking read…":"Open →"}
-       </Link>:null}
+       </TextLink>:null}
       </div>
      </li>;
     })}
@@ -150,10 +150,10 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
     <Button variant="bare" type="button" className="text-xs underline"
      disabled={working!==null||busy}
      onClick={()=>setConfirmOpen(true)}>Mark all read</Button>
-    <Link href="/mentor/notifications" onClick={()=>setOpen(false)}
-      className="text-sm font-semibold text-link underline">
+    <TextLink href="/mentor/notifications" onClick={()=>setOpen(false)}
+      className="text-sm">
       See all{hasMore?" notifications":" notifications"} →
-    </Link>
+    </TextLink>
    </div>
   </section>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}

@@ -7,11 +7,11 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 import {useEffect,useRef,useState} from "react";
-import Link from "next/link";
 import {StudentRuleEditor} from "@/components/admin/student-rule-editor";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Learner={membershipId:string;displayName:string|null;rollNumber:string|null};
 type Rule={module:"projects"|"electives";label:string;stored:boolean|null;locked:boolean;blocked:boolean};
 type TraceStep={level:string;inChain:boolean;source:"PERSISTED"|"SOURCE_DEFAULT"|"NONE";
@@ -333,10 +333,10 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
      onClick={()=>void lookup(search,detail.membershipId)} disabled={loading}>
      Recheck access after a change
     </Button>
-    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
+    <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9"
      href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace?membershipId="+encodeURIComponent(detail.membershipId)}>
      Open full access trace →
-    </Link>
+    </TextLink>
      <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={close} aria-label="Close student explanation">Close</Button>
     </div>
     <p className="text-xs text-body leading-5">This reads persisted learner access. It does not sign in as the student.</p>

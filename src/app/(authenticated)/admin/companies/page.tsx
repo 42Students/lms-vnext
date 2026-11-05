@@ -4,7 +4,6 @@ import {Banner} from "@/components/ui/banner";
 import type {AdminCompanyRow} from "@/modules/placements/admin-company-directory-model";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
 import {SuperAdminCollegeCompanyCreate,SuperAdminCollegeCompanyRelationshipActions}
@@ -28,6 +27,7 @@ import {findCompanyNameIdentityConflicts} from "@/modules/placements/company-cur
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function SuperAdminCompaniesPage({
   searchParams,
@@ -37,7 +37,7 @@ export default async function SuperAdminCompaniesPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Companies" />
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
-      action={<Link href="/admin/companies" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<TextLink href="/admin/companies" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>} />
   </div>;
   const context=await getCurrentRequestContext();
   const view=params["view"]==="GLOBAL"?"GLOBAL":context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
@@ -50,8 +50,8 @@ export default async function SuperAdminCompaniesPage({
    <Banner tone="warning" role="alert">
     Clear the selected organization and college scope in the Super Admin header before opening the platform-wide company catalogue. This Global tab never shows a college-only list under a global heading.
    </Banner>
-   {context.adminScope?.collegeId?<Link href="/admin/companies?view=COLLEGE" className="font-semibold text-primary-text underline">
-     View this college&apos;s companies</Link>:null}
+   {context.adminScope?.collegeId?<TextLink href="/admin/companies?view=COLLEGE">
+     View this college&apos;s companies</TextLink>:null}
   </div>;
   if(view==="GLOBAL")return <SuperAdminGlobalCompanyCatalogue context={context} filters={parsed.data}/>;
   const [directoryResult,collegesResult]=await Promise.allSettled([
@@ -63,7 +63,7 @@ export default async function SuperAdminCompaniesPage({
    return <div className="min-w-0 space-y-5">
     <PageHeader title="Companies"/>
     <ErrorState title="Couldn't load companies" description="The authorized company directory could not be loaded. Existing filters are preserved, but no stale company rows from another scope are shown."
-     action={<Link href={retry} className="font-semibold text-primary-text underline">Retry companies</Link>}/>
+     action={<TextLink href={retry}>Retry companies</TextLink>}/>
    </div>;
   }
   const data=directoryResult.value;
@@ -128,9 +128,9 @@ export default async function SuperAdminCompaniesPage({
       <Disclosure title="Merge" className="min-w-0">
        <SuperAdminCompanyMerge companies={[{id:row.companyId,name:row.name}]}/>
       </Disclosure>:null}
-     <Link href={"/admin/companies/"+encodeURIComponent(row.companyId)+"/drives"}
+     <TextLink href={"/admin/companies/"+encodeURIComponent(row.companyId)+"/drives"}
      
-      className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">History</Link>
+      className="inline-flex min-h-11 md:min-h-9 items-center">History</TextLink>
      <Disclosure title="Company details" contentClassName="space-y-2 pb-3">
       <p className="text-xs text-body">Added by: {row.addedByType??"—"}</p>
       <p className="break-all text-xs text-body">Domains: {row.domains?.length?row.domains.join(", "):"None"}</p>
@@ -138,8 +138,8 @@ export default async function SuperAdminCompaniesPage({
       {row.industry?<p className="text-xs text-body">Industry: {row.industry}</p>:null}
       {row.about?<p className="text-xs text-body">{row.about}</p>:null}
       <p className="text-xs text-body">Linked colleges: {row.companyCollegeCount??0}</p>
-      <Link href={"/admin/companies?"+new URLSearchParams({companyId:row.companyId,status:"ALL",companyStatus:"ALL",trust:"ALL",view:"COLLEGE"}).toString()}
-       className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Review relationships</Link>
+      <TextLink href={"/admin/companies?"+new URLSearchParams({companyId:row.companyId,status:"ALL",companyStatus:"ALL",trust:"ALL",view:"COLLEGE"}).toString()}
+       className="inline-flex min-h-11 md:min-h-9 items-center">Review relationships</TextLink>
      </Disclosure>
     </div>},
   ];
@@ -158,11 +158,11 @@ export default async function SuperAdminCompaniesPage({
     </Banner>:null}
     {data.query.companyId ? <Alert tone="info">
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
-      <Link href="/admin/companies" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-ring">Show all employers</Link>
+      <TextLink href="/admin/companies">Show all employers</TextLink>
     </Alert> : null}
     <div className="flex flex-wrap gap-3 text-sm">
-      <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Show deleted (archived) companies →</Link>
-      <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Active companies →</Link>
+      <ButtonLink variant="secondary" href="/admin/companies?status=ALL&companyStatus=ARCHIVED">Show deleted (archived) companies →</ButtonLink>
+      <ButtonLink variant="secondary" href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE">Active companies →</ButtonLink>
     </div>
     {context.adminScope?.collegeId?
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
@@ -251,10 +251,9 @@ export default async function SuperAdminCompaniesPage({
     </form>
     <p role="status" className="text-sm text-body">Showing {data.rows.length.toLocaleString("en-IN")} of {data.total.toLocaleString("en-IN")} college-company relationships · page {data.query.page} of {data.totalPages}.</p>
 
-    {data.total>0?<Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring">
+    {data.total>0?<ButtonLink variant="secondary" href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}>
       ↓ Export CSV (matching filters; up to 2,000 rows)
-    </Link>:<Button type="button" variant="secondary" disabled>Export CSV</Button>}
+    </ButtonLink>:<Button type="button" variant="secondary" disabled>Export CSV</Button>}
     <DataTable caption="This college's companies" columns={collegeColumns} rows={collegeRows}
       sortHref={(key,next)=>{
        const sort=key==="company"?(next==="ascending"?"NAME":"NAME_DESC"):
@@ -275,8 +274,8 @@ export default async function SuperAdminCompaniesPage({
     <p className="text-xs text-muted-foreground">Results contain up to 10 scoped relationships per page. Dates and default page-local ordering use IST; “Never posted” means no drive activity has been recorded.</p>
     {data.truncated ? <p className="text-sm text-muted-foreground">Only 10 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
-      {data.query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
-      {data.query.page < data.totalPages ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,trust:data.query.trust,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</Link> : null}
+      {data.query.page > 1 ? <ButtonLink variant="secondary" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</ButtonLink> : null}
+      {data.query.page < data.totalPages ? <ButtonLink variant="secondary" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,trust:data.query.trust,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</ButtonLink> : null}
     </nav>
     <Disclosure title="Company curation" className="min-w-0" contentClassName="space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]">
     <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Company curation candidates">
@@ -307,6 +306,6 @@ export default async function SuperAdminCompaniesPage({
     </section>
     </Disclosure>
 
-    <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline focus-ring">← Placement operations</Link>
+    <TextLink href="/admin/placements" className="inline-flex min-h-11 items-center text-sm">← Placement operations</TextLink>
   </div>;
 }

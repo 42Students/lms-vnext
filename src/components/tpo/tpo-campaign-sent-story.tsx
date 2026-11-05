@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 type CampaignReceipt={leadId:string;name:string;status:string};
 type CampaignStory={
@@ -107,13 +107,13 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      {recipientsReady&&rejected.length?<ul className="mt-3 divide-y divide-border rounded-lg border border-border">
       {rejected.map(row=><li key={row.leadId} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
        <span className="text-sm font-semibold text-foreground">{row.name}</span>
-       <Link href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
-        className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Review recruiter</Link>
+       <TextLink href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
+        className="inline-flex min-h-9 items-center text-sm">Review recruiter</TextLink>
       </li>)}
      </ul>:null}
      <div className="mt-3 flex flex-wrap gap-4 text-sm">
-      <Link href="/tpo/companies/today" className="font-semibold text-link underline">Open Today</Link>
-      <Link href="/tpo/messages?tab=recruiters" className="font-semibold text-link underline">Check recruiter messages</Link>
+      <TextLink href="/tpo/companies/today">Open Today</TextLink>
+      <TextLink href="/tpo/messages?tab=recruiters">Check recruiter messages</TextLink>
      </div>
     </section>
     <section aria-label="Everyone it went to">
@@ -131,8 +131,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
         {recipients.slice(0,25).map(row=><tr key={row.leadId}>
          <td className="p-2 break-words font-semibold text-foreground">{row.name}</td>
          <td className="p-2"><span className={"inline-flex rounded-full px-2 py-1 text-xs font-semibold "+receiptTone(row.status)}>{receiptText(row.status)}</span></td>
-         <td className="p-2"><Link href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
-           className="font-semibold text-link underline">Open recruiter</Link></td>
+         <td className="p-2"><TextLink href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}>Open recruiter</TextLink></td>
         </tr>)}
        </tbody>
       </Table>

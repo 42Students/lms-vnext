@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -16,6 +15,7 @@ import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-servic
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 const KINDS=[["TALK","Discussion"],["TEST","Test"],["VENDOR_TEST","Vendor test"],["GD","Group discussion"],["INTERVIEW","Interview"]] as const;
 export default async function HrRoundsEditorPage({params}:{
  params:Promise<{jobId:string}>;
@@ -36,7 +36,7 @@ export default async function HrRoundsEditorPage({params}:{
    description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."
    actions={<nav aria-label="Drive round links" className="flex flex-wrap items-center gap-2 text-sm">
     <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Back to drive rounds"/>
-    <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Back to Drives</Link>
+    <TextLink href="/hr/drives" className="inline-flex min-h-11 items-center md:min-h-9">Back to Drives</TextLink>
    </nav>} />
   <section id="add-round" className="min-w-0 border-b border-border pb-4">
    <Disclosure title="Add a round" defaultOpen={rounds.length===0} className="min-w-0">
@@ -67,7 +67,7 @@ export default async function HrRoundsEditorPage({params}:{
   <section className="min-w-0 space-y-3">
    <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Current rounds ({rounds.length})</Heading>
    {rounds.length===0?<EmptyState title="No hiring rounds" description="This drive has no hiring rounds. Add a round using the form above."
-    action={<Link href="#add-round" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Add a round</Link>} />:null}
+    action={<TextLink href="#add-round" className="inline-flex min-h-11 items-center md:min-h-9">Add a round</TextLink>} />:null}
    {rounds.length>0?<div className="hidden min-w-0 md:block">
     <HrRoundEditorGrid
      scopeKey={context.user.id+":"+jobId}
@@ -104,11 +104,11 @@ export default async function HrRoundsEditorPage({params}:{
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto md:justify-self-start">Save changes</Button>
      </form>
      </Disclosure>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
-    {round.editable?<Link
+    {round.editable?<TextLink
       href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
-      className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:hidden md:min-h-9">
+      className="inline-flex min-h-11 w-full items-center justify-center text-sm md:hidden md:min-h-9">
       Review round removal
-    </Link>:null}
+    </TextLink>:null}
    </article>)}
   </section>
  </div>;

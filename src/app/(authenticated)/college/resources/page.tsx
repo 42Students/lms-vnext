@@ -1,5 +1,4 @@
 import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {CollegeContentAuthoringControl} from "@/components/courses/college-content-authoring-control";
 import {getCollegeContentAuthoringOptions,collegeExistingContentFiltersFromSearch} from "@/modules/courses/college-content-authoring-service";
@@ -10,6 +9,8 @@ import { collegeContentQuerySchema, collegeContentSearchParams } from "@/modules
 import { listCollegeContentAggregate } from "@/modules/courses/college-content-aggregate-service";
 import {collegeContentCsvHref} from "@/modules/courses/college-content-export-model";
 import {CollegeResourceLastGood} from "@/components/college/college-resource-last-good";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeResourcesPage({
   searchParams,
@@ -27,7 +28,7 @@ export default async function CollegeResourcesPage({
         <PageHeader title="Resources" />
         <ErrorState title="Invalid resource filters"
           description="The title, status or page filter is invalid. No content was loaded."
-          action={<Link href="/college/resources" className="md:min-h-9 inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] font-semibold text-link underline lms-inline-link hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Clear filters</Link>} />
+          action={<TextLink href="/college/resources" className="md:min-h-9 inline-flex min-h-11 items-center">Clear filters</TextLink>} />
       </div>
     );
   }
@@ -56,12 +57,12 @@ export default async function CollegeResourcesPage({
   return <div className="min-w-0 space-y-4">
     <PageHeader title="Resources"
       description="Give a lesson reading material: files, links and notes, together in one resource."
-      actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Lessons</Link>} />
+      actions={<ButtonLink variant="secondary" href="/college/lessons">Lessons</ButtonLink>} />
     <nav className="flex flex-wrap items-center gap-5 border-b border-[var(--lms-canvas-border)]" aria-label="Courses & Content">
-      <Link href="/college/lessons" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-sm text-body md:min-h-9">Lessons</Link>
-      <Link href="/college/resources" aria-current="page"
-        className="inline-flex min-h-11 items-center border-b-2 border-[var(--lms-primary)] text-sm font-semibold text-primary-text md:min-h-9">Resources</Link>
-      <Link href="/college/videos" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-sm text-body md:min-h-9">Videos</Link>
+      <TextLink variant="bare" href="/college/lessons" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-sm text-body md:min-h-9">Lessons</TextLink>
+      <TextLink href="/college/resources" aria-current="page"
+        className="inline-flex min-h-11 items-center border-b-2 border-[var(--lms-primary)] text-sm md:min-h-9">Resources</TextLink>
+      <TextLink variant="bare" href="/college/videos" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-sm text-body md:min-h-9">Videos</TextLink>
     </nav>
     {authoring?<CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons}
       deliveries={authoring.deliveries} existing={authoring.existing}
@@ -70,17 +71,16 @@ export default async function CollegeResourcesPage({
       <div className="space-y-2">
         <ErrorState title="Could not load courses"
           description="Course selections for resources are unavailable; the existing list can still be viewed."
-          action={<Link href="/college/resources" className="font-semibold text-link underline">Retry</Link>}/>
+          action={<TextLink href="/college/resources">Retry</TextLink>}/>
         <ErrorState title="Could not load lessons"
           description="Lesson selections for resource authoring are unavailable."
-          action={<Link href="/college/resources" className="font-semibold text-link underline">Retry</Link>}/>
+          action={<TextLink href="/college/resources">Retry</TextLink>}/>
       </div>}
     <CollegeResourceLastGood
       key={context.user.id+":"+context.membership.id+":"+JSON.stringify(filters)}
       data={catalogue}/>
-    <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",filters)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 md:min-h-9 text-sm font-semibold text-link hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+    <ButtonLink variant="secondary" download prefetch={false} href={collegeContentCsvHref("RESOURCE",filters)}>
       Export filtered resource metadata CSV
-    </Link>
+    </ButtonLink>
   </div>;
 }

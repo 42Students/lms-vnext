@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -12,6 +11,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {parseCollegeVerificationPageQuery,collegeVerificationFilterError} from "@/modules/verification/page-query";
 import {verificationLastPage,verificationPageUrl} from "@/modules/verification/page-range";
 import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions,listVerificationProgramOptions} from "@/modules/verification/filter-options-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 export default async function CollegeVerificationPage({searchParams}:{
@@ -25,7 +25,7 @@ export default async function CollegeVerificationPage({searchParams}:{
  if(!hasMembershipRole(context,"COLLEGE_ADMIN"))return <div className="min-w-0 space-y-4">
   <PageHeader title="Profile verification"/>
   <Alert tone="info" title="You cannot verify profiles here">Profile verification is available to an assigned College Admin in the selected college. Switch to the correct college and role to review requests.</Alert>
-  <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>
+  <TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>
  </div>;
  // Verify persisted membership separately from loading database queue rows.
  try{await requireCollegeVerificationActor(context);}

@@ -1,10 +1,10 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import {facultyQuizParamsSchema} from "@/modules/courses/faculty-quiz-authoring-model";
 import {FacultyChoiceQuizBuilder} from "@/components/courses/faculty-choice-quiz-builder";
 import {PageHeader} from "@/components/ui/page-header";
 import {notFound} from "next/navigation";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function Page({params,searchParams}:{params:Promise<{deliveryId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {deliveryId}=facultyQuizParamsSchema.parse(await params);
  const workspace=await getFacultyCourseWorkspace(await getCurrentRequestContext(),deliveryId);
@@ -20,7 +20,7 @@ export default async function Page({params,searchParams}:{params:Promise<{delive
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader eyebrow="Faculty · Courses" title="Section quizzes"
    description={workspace.course.courseName+" · "+workspace.course.sectionName}
-   actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">Back to course</Link>} />
+   actions={<ButtonLink variant="secondary" href={"/teacher/courses/"+encodeURIComponent(deliveryId)} className="w-full sm:w-auto">Back to course</ButtonLink>} />
   {workspace.lessons.length?<FacultyChoiceQuizBuilder key={initialLessonId??"default"} initialLessonId={initialLessonId} deliveryId={deliveryId}
    lessons={workspace.lessons.map(l=>({id:l.id,name:l.name}))} quizzes={quizzes}/>:
    <section role="status" className="border-y border-[var(--lms-canvas-border)] bg-transparent py-4">No registered lessons are available for this Section. Publish a learning path first.</section>}

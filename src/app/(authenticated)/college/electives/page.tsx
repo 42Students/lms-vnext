@@ -1,5 +1,4 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
-import Link from "next/link";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
@@ -15,6 +14,7 @@ import {
 } from "@/modules/academics/college-structure-directory-model";
 import { listCollegeElectives } from "@/modules/academics/college-structure-directory-service";
 import { electiveCsvHref, ELECTIVES_EXPORT_CAP } from "@/modules/academics/college-elective-export-model";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeElectivesPage({
   searchParams,
@@ -35,7 +35,7 @@ export default async function CollegeElectivesPage({
     <PageHeader title="Electives is turned off for this college" />
     <p className="text-sm text-body leading-[22px]">Your college administrator can ask 42Students to switch Electives back on.
       Existing elective records are kept; this page cannot create or change electives while the module is off.</p>
-    <Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Return to college dashboard</Link>
+    <TextLink href="/college" className="inline-flex min-h-11 items-center md:min-h-9">Return to college dashboard</TextLink>
   </section>;
 
   const params=await searchParams;
@@ -58,7 +58,7 @@ export default async function CollegeElectivesPage({
     <PageHeader title="Electives" />
     <ErrorState title="Invalid elective filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
-      action={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>} />
+      action={<TextLink href="/college/electives" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Clear filters</TextLink>} />
   </div>;
   const [directoryRead,optionsRead]=await Promise.allSettled([
     listCollegeElectives(context,parsed.data),listCollegeElectiveSlotOptions(context),
@@ -66,7 +66,7 @@ export default async function CollegeElectivesPage({
   if(directoryRead.status==="rejected")return <section className="min-w-0 space-y-4">
     <PageHeader title="Electives"/>
     <Alert tone="error">Could not load elective slots. No empty results have been inferred.</Alert>
-    <Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry slots</Link>
+    <TextLink href="/college/electives" className="inline-flex min-h-11 items-center md:min-h-9">Retry slots</TextLink>
   </section>;
   // An option-read failure must not hide the already-authorized directory.
   // Keep its rows visible and retry the editor options independently.
@@ -86,11 +86,11 @@ export default async function CollegeElectivesPage({
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-center">
         {!options?<ErrorState title="Couldn't load elective slot options"
           description="Program and period choices could not be refreshed. Existing slots are still available below."
-          action={<Link href="/college/electives" className="font-semibold text-link underline">Retry options</Link>}/>:null}
-        <Link prefetch={false} download href={electiveCsvHref(data.query)}
-          className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+          action={<TextLink href="/college/electives">Retry options</TextLink>}/>:null}
+        <TextLink prefetch={false} download href={electiveCsvHref(data.query)}
+          className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">
           Export filtered electives CSV
-        </Link>
+        </TextLink>
       </div>
       <Alert tone="info">An elective slot is one choice for an eligible program and semester. For example, students may pick one of three courses. Create a slot, add its course offerings, then review allocation and student counts.</Alert>
       <p className="max-w-[80ch] text-xs leading-5 text-muted-foreground">

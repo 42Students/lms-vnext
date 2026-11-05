@@ -1,14 +1,14 @@
 "use client";
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 export default function FacultyQuizReportError({reset}:{error:Error&{digest?:string};reset:()=>void}) {
  return <section role="alert" className="min-w-0 space-y-4">
  <PageHeader title="Unable to load Quiz Report" />
  <p className="max-w-prose text-sm leading-6 text-body">We could not load the report. Check that you still have an active teaching assignment for this Section.</p>
  <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
   <Button type="button" onClick={reset} className="w-full sm:w-auto">Retry report</Button>
-  <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring sm:w-auto md:min-h-9">Back to all quizzes</Link>
+  <ButtonLink variant="secondary" href="/teacher/allQuizzes" className="w-full sm:w-auto">Back to all quizzes</ButtonLink>
  </div>
  </section>;
 }

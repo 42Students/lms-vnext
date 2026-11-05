@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {listMyProjectInstances} from "@/modules/projects/member-service";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type {NotificationListItem} from "@/components/activity/notification-list";
 
@@ -31,6 +30,8 @@ import {mentorAttentionKindSchema,mentorAttentionProjectSchema,mentorAttentionOr
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
@@ -85,7 +86,7 @@ async function MentorNotificationsContent({
   const attentionOrder=mentorAttentionOrderSchema.safeParse(first(raw.attentionOrder)??"RECENT");
   if (!parsed.success||!kind.success||!projectId.success||!attentionOrder.success) return <section role="alert" className="min-w-0 max-w-full space-y-3">
     <PageHeader title="Invalid notification filters" />
-    <Link href={MENTOR_INBOX} className="inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Return to newest notifications</Link>
+    <TextLink href={MENTOR_INBOX} className="inline-flex min-h-11 md:min-h-9 items-center">Return to newest notifications</TextLink>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -202,10 +203,10 @@ async function MentorNotificationsContent({
           "Unread · "+unifiedUnreadCount+" loaded":"Unread · "+unifiedUnreadCount],
         ["subs","Submissions"],["meet","Meetings"],
         ["tasks","Tasks and teams"],["ann","From the college"],
-      ] as const).map(([value,label])=><Link key={value}
+      ] as const).map(([value,label])=><TextLink variant="bare" key={value}
         href={value==="all"?MENTOR_INBOX:value==="unread"?MENTOR_INBOX+"?pill=unread&view=unread":MENTOR_INBOX+"?pill="+value}
         aria-current={selectedPill===value?"page":undefined}
-        className={selectedPill===value?"is-active":undefined}>{label}</Link>)}
+        className={selectedPill===value?"is-active":undefined}>{label}</TextLink>)}
     </nav>
     {(selectedPill==="all"||selectedPill==="unread")&&ownSourceReceipts?
       <MentorUnifiedReadAll loadedUnread={unifiedUnreadCount}
@@ -223,8 +224,8 @@ async function MentorNotificationsContent({
       <p className="mt-1 text-sm text-body leading-[22px]">
         {allRelevantFailed?"No verified notification source could be loaded.":`Could not load: ${failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.`}
       </p>
-      <Link href={retryHref}
-        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-ring hover:text-[var(--lms-primary-text)]">Retry sources</Link>
+      <TextLink href={retryHref}
+        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center">Retry sources</TextLink>
     </Alert> : null}
     {allSourcesEmpty?<div role="status" className="flex items-center gap-3 border-b border-border py-6">
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
@@ -249,13 +250,13 @@ async function MentorNotificationsContent({
     {(selectedPill==="all"||selectedPill==="unread")&&inbox?.cursor.invalid?
       <Alert tone="error" role="alert">
         Personal notification cursor is invalid.
-        <Link href={MENTOR_INBOX} className="ml-2 inline-flex min-h-11 items-center text-link underline">
-          Return to newest notifications</Link>
+        <TextLink href={MENTOR_INBOX} className="ml-2 inline-flex min-h-11 items-center">
+          Return to newest notifications</TextLink>
       </Alert>:null}
     {(selectedPill==="all"||selectedPill==="unread")&&nextHref?
-      <Link href={nextHref} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-link underline">
+      <ButtonLink variant="secondary" href={nextHref}>
         Older personal notifications →
-      </Link>:null}
+      </ButtonLink>:null}
     <div className="prototype-mentor-notifications-columns">
       <div className="prototype-mentor-notifications-feed">
     {(selectedPill==="subs"||selectedPill==="meet"||selectedPill==="tasks")&&!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
@@ -295,7 +296,7 @@ async function MentorNotificationsContent({
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter attention
         </Button>
-        {attentionFiltered?<Link href={MENTOR_INBOX+"?pill="+selectedPill} className="inline-flex min-h-11 md:min-h-9 items-center text-sm text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+        {attentionFiltered?<TextLink href={MENTOR_INBOX+"?pill="+selectedPill} className="inline-flex min-h-11 md:min-h-9 items-center text-sm">Clear</TextLink>:null}
       </form>
       {!projectAccess?.projects.enabled
         ? <p role="status" className="border-b border-border pb-4 text-sm text-body leading-[22px]">
@@ -308,7 +309,7 @@ async function MentorNotificationsContent({
           : <div className="min-w-0 divide-y divide-border border-b border-border">{shownAlerts.map(alert=>
               <article key={alert.key}
                 className="block min-h-11 min-w-0 py-4 transition md:min-h-[var(--lms-control-height)]">
-                <Link href={alert.href} className="block min-h-11 rounded focus-ring">
+                <TextLink variant="bare" href={alert.href} className="block min-h-11 rounded focus-ring">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <Heading level={3} className="min-w-0 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{alert.title}</Heading>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
@@ -324,7 +325,7 @@ async function MentorNotificationsContent({
                   </StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body leading-[22px]">{alert.description}</p>
-                </Link>
+                </TextLink>
                 {ownSourceReceipts?<MentorSourceNotificationRead
                   receiptKey={mentorAttentionReceiptKey(alert)}
                   read={sourceRead(mentorAttentionReceiptKey(alert))}/>:null}

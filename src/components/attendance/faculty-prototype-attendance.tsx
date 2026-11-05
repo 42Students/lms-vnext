@@ -1,6 +1,5 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {facultyAttendanceMarkingWindow} from "@/modules/attendance/faculty-marking-window";
 import {facultyAttendanceWriteNeedsReload} from "@/modules/attendance/faculty-attendance-write-recovery";
@@ -152,8 +151,8 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
     monthLabel(s.startsAt)===monthLabel(new Date().toISOString())).map(s=><li key={s.id}
     className="flex flex-wrap items-center justify-between gap-4 py-3 text-sm">
     <span>{sessionLabel(s.startsAt)} · {s.title}</span>
-    <Link className="faculty-proto-link" href={selectedHref(s.id)}>
-     {s.attendanceStatus==="MARKED"?"Review marks":"Mark attendance"}</Link>
+    <TextLink variant="bare" className="faculty-proto-link" href={selectedHref(s.id)}>
+     {s.attendanceStatus==="MARKED"?"Review marks":"Mark attendance"}</TextLink>
    </li>)}</ol>
    <TextLink variant="bare" className="faculty-proto-link mt-3 inline-block" href="#faculty-attendance-editor">Open detailed monthly report below</TextLink>
   </section>:!selected?
@@ -172,7 +171,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
       placeholder="Find a student by name" className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm"/>
      <Button variant="secondary" type="button" onClick={()=>setMarks(new Map(scopeRecords.map(s=>[s.membershipId,"PRESENT" as const])))}
       disabled={!writable||!scopeRecords.length}>Mark everyone present</Button>
-     <Link className="faculty-proto-secondary" href={base+"?sessionId="+encodeURIComponent(selected.id)+"&schedule=1#faculty-attendance-scheduling"}>Schedule a class</Link>
+     <TextLink variant="bare" className="faculty-proto-secondary" href={base+"?sessionId="+encodeURIComponent(selected.id)+"&schedule=1#faculty-attendance-scheduling"}>Schedule a class</TextLink>
     </div>
    </div>
    <ul className="divide-y divide-[color:var(--lms-neutral-100)]">{visible.map(student=>{
@@ -236,10 +235,10 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
   </div>:null}
   {sessions.length>1&&view==="mark"?<div className="flex flex-wrap gap-2">
    <span className="self-center text-xs font-bold text-[color:var(--lms-text-muted)]">Other class sessions</span>
-   {sessions.slice(0,6).map(session=><Link key={session.id} href={selectedHref(session.id)}
-    className="faculty-proto-pill no-underline"
+   {sessions.slice(0,6).map(session=><TextLink key={session.id} href={selectedHref(session.id)}
+    className="faculty-proto-pill"
     aria-current={session.id===selected?.id?"page":undefined}>
-    {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(new Date(session.startsAt))}</Link>)}
+    {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(new Date(session.startsAt))}</TextLink>)}
   </div>:null}
  </section>;
 }

@@ -1,4 +1,3 @@
-import Link from "next/link";
 
 import { collegeIdSchema } from "@/modules/colleges/validation";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -16,6 +15,8 @@ import { tenantSetupLinksAvailable } from "@/modules/colleges/admin-tenant-lifec
 import { superAdminVerificationHref } from "@/modules/verification/admin-links";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 type ManageTab="web-address"|"sign-in"|"branding"|"admins"|"activity";
 const manageTabs:readonly {id:ManageTab;label:string;path:string;description:string}[]=[
  {id:"web-address",label:"Web address",path:"subdomain",description:"Register and verify this college's domain before enabling sign-in."},
@@ -36,7 +37,7 @@ export default async function TenantDetail({params,searchParams}:{
    <PageHeader title="Manage College" actions={<PageBackLink href="/admin/colleges" label="Colleges" />}/>
    <ErrorState title="Missing collegeId"
      description="This drawer requires a valid college record. Return to Colleges and select a college to manage."
-     action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Back to colleges</Link>}/>
+     action={<TextLink href="/admin/colleges" className="inline-flex min-h-11 items-center md:min-h-9">Back to colleges</TextLink>}/>
  </div>;
  let item:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>;
  try {item=await getSuperAdminTenantLifecycleDetail(context,collegeId);}
@@ -46,15 +47,15 @@ export default async function TenantDetail({params,searchParams}:{
      <PageHeader title="Manage College" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
      <ErrorState title="Missing collegeId"
       description="The college record is no longer available. Refresh the Colleges list and select a college to manage."
-      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh Colleges list</Link>}/>
+      action={<TextLink href="/admin/colleges" className="inline-flex min-h-11 items-center md:min-h-9">Refresh Colleges list</TextLink>}/>
     </div>;
    if(error instanceof AuthorizationError) throw error;
    return <div className="min-w-0 space-y-4">
      <PageHeader title="Manage College" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
      <ErrorState title="College setup unavailable"
        description="This college's setup information could not be loaded. No changes have been made."
-       action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)}
-         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry college setup</Link>}/>
+       action={<TextLink href={"/admin/colleges/"+encodeURIComponent(collegeId)}
+         className="inline-flex min-h-11 items-center md:min-h-9">Retry college setup</TextLink>}/>
    </div>;
  }
  const fields=[
@@ -86,27 +87,27 @@ export default async function TenantDetail({params,searchParams}:{
    <Heading level={2} size="lg" className="text-foreground">{active.label}</Heading>
    <p className="text-sm text-body">{active.description}</p>
    {active.id==="activity"?<div className="flex flex-wrap gap-3">
-    <Link href={"/activity?collegeId="+encodeURIComponent(item.id)}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View scoped activity</Link>
-    <Link href={"/api/activity/admin-export?collegeId="+encodeURIComponent(item.id)}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Export activity CSV</Link>
-   </div>:<Link href={base+"/"+active.path}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+    <TextLink href={"/activity?collegeId="+encodeURIComponent(item.id)}
+     className="inline-flex min-h-11 items-center md:min-h-9">View scoped activity</TextLink>
+    <TextLink href={"/api/activity/admin-export?collegeId="+encodeURIComponent(item.id)}
+     className="inline-flex min-h-11 items-center md:min-h-9">Export activity CSV</TextLink>
+   </div>:<TextLink href={base+"/"+active.path}
+    className="inline-flex min-h-11 items-center md:min-h-9">
      Open {active.label} editor
-   </Link>}
+   </TextLink>}
    {active.id==="web-address"?<p className="text-xs text-muted-foreground">Register the hostname and verify ownership in deployment infrastructure. DNS verification is a separate manual approval before production activation.</p>:null}
    {active.id==="branding"?<p className="text-xs text-muted-foreground">Saving branding produces success and error feedback in the scoped editor; no other college is changed.</p>:null}
   </section>
   <Disclosure title="Additional college setup links" className="min-w-0">
   <div className="mt-3 grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2">
    {tenantSetupLinksAvailable(item.status,item.organizationStatus) ? <>
-   {context.adminScope?.collegeId===item.id ? <Link href="/admin/tenants/setup" className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Set up this college</Link> : null}
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Readiness</Link>
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/branding`} className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Branding</Link>
-   {superAdminVerificationHref(item.id,item.status,item.organizationStatus) ? <Link href={superAdminVerificationHref(item.id,item.status,item.organizationStatus)!} className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Profile Verification</Link> : null}
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/admins`} className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Admins</Link>
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/signin`} className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Sign-in Methods</Link>
-   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Web address</Link>
+   {context.adminScope?.collegeId===item.id ? <ButtonLink variant="secondary" href="/admin/tenants/setup" className="w-full">Set up this college</ButtonLink> : null}
+   <ButtonLink variant="secondary" href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="w-full">Readiness</ButtonLink>
+   <ButtonLink variant="secondary" href={`/admin/colleges/${encodeURIComponent(item.id)}/branding`} className="w-full">Branding</ButtonLink>
+   {superAdminVerificationHref(item.id,item.status,item.organizationStatus) ? <ButtonLink variant="secondary" href={superAdminVerificationHref(item.id,item.status,item.organizationStatus)!} className="w-full">Profile Verification</ButtonLink> : null}
+   <ButtonLink variant="secondary" href={`/admin/colleges/${encodeURIComponent(item.id)}/admins`} className="w-full">Admins</ButtonLink>
+   <ButtonLink variant="secondary" href={`/admin/colleges/${encodeURIComponent(item.id)}/signin`} className="w-full">Sign-in Methods</ButtonLink>
+   <ButtonLink variant="secondary" href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="w-full">Web address</ButtonLink>
    </> : <p className="text-sm text-muted-foreground">Setup links are unavailable while this college or its organization is archived.</p>}
   </div>
   </Disclosure>
@@ -125,8 +126,7 @@ export default async function TenantDetail({params,searchParams}:{
    </p>:null}
 
   <div className="flex min-w-0 justify-start print:hidden">
-   <Link href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Export activity CSV</Link>
+   <ButtonLink variant="secondary" href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}>Export activity CSV</ButtonLink>
   </div>
  </div>;
 }

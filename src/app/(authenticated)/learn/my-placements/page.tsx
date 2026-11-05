@@ -1,5 +1,4 @@
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import {LearnerGeneralRequests} from "@/components/placements/learner-general-requests";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import { redirect } from "next/navigation";
@@ -47,6 +46,7 @@ import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-servi
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function LearnerPlacementsPage({
   searchParams,
@@ -280,14 +280,14 @@ export default async function LearnerPlacementsPage({
          {value:"/learn/my-placements/rules",label:"Placements",href:"/learn/my-placements/rules"},
         ]}/>
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <Link href="/learn/my-placements/preparation"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+        <TextLink href="/learn/my-placements/preparation"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Placement preparation checklist →
-        </Link>
-        <Link href="/learn/my-placements/notification-preferences"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+        </TextLink>
+        <TextLink href="/learn/my-placements/notification-preferences"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Placement notification choices →
-        </Link>
+        </TextLink>
       </div>
 
       {debarRead.status==="fulfilled"&&debarRead.value?<Alert tone="warning" role="alert">
@@ -300,9 +300,9 @@ export default async function LearnerPlacementsPage({
         {debarRead.value.reasons.length?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
           Reason: {debarRead.value.reasons.join("; ")}
         </p>:null}
-        <Link href="/learn/my-placements/support" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
+        <TextLink href="/learn/my-placements/support" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center">
           Think this is wrong? Tell the placement cell
-        </Link>
+        </TextLink>
       </Alert>:null}
       <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} registration={registrationRead.status==="fulfilled"?registrationRead.value:null}
         profileFixes={verificationCue?.editHrefs??[]} acceptedOffer={countingOfferKnown?Boolean(countingAcceptedOffer):null} />
@@ -310,14 +310,14 @@ export default async function LearnerPlacementsPage({
         className="min-w-0 border-b border-border py-4">
        <div className="flex flex-wrap items-center justify-between gap-3">
         <Heading level={2} size="lg" id="learner-next-seven-days-title" className="text-heading">Next 7 days</Heading>
-        <Link href="/learn/my-placements/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Full schedule →</Link>
+        <TextLink href="/learn/my-placements/calendar" className="inline-flex min-h-11 items-center md:min-h-9">Full schedule →</TextLink>
        </div>
        {!availability.rounds?<p role="status" className="mt-3 text-sm text-body">Upcoming events are temporarily unavailable. No empty schedule is assumed.</p>:
         dashboard.weekEvents.length?<ul className="mt-3 divide-y divide-border">
          {dashboard.weekEvents.slice(0,7).map(event=><li key={event.applicationId+":"+event.roundId} className="flex flex-wrap items-center justify-between gap-3 py-3">
           <div><p className="font-semibold">{event.roundName} · {event.companyName}</p>
            <p className="text-xs text-body">{event.roleTitle} · {dateFormatter.format(event.when)} IST</p></div>
-          <Link href={event.href} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View event →</Link>
+          <TextLink href={event.href} className="inline-flex min-h-11 items-center md:min-h-9">View event →</TextLink>
          </li>)}
         </ul>:<p className="mt-3 text-sm text-body">No scheduled events recorded for the next seven days.</p>}
       </section>
@@ -325,7 +325,7 @@ export default async function LearnerPlacementsPage({
        className="min-w-0 border-b border-border py-4">
        <div className="flex flex-wrap items-center justify-between gap-3">
         <Heading level={2} size="lg" id="learner-application-progress-title" className="text-heading">Where your applications stand</Heading>
-        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">All applications →</Link>
+        <TextLink href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center md:min-h-9">All applications →</TextLink>
        </div>
        {!availability.journey?<p role="status" className="mt-3 text-sm text-body">Application journeys could not be loaded. No progress has been inferred.</p>:
         liveApplications.length?<ul className="mt-3 divide-y divide-border">
@@ -341,8 +341,8 @@ export default async function LearnerPlacementsPage({
             {item.results.map(round=>round.roundName+": "+round.outcome).join(" → ")}
            </p>:null}
           </div>
-          <Link href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(item.applicationId)}
-           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Open →</Link>
+          <TextLink href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(item.applicationId)}
+           className="inline-flex min-h-11 items-center md:min-h-9">Open →</TextLink>
          </li>)}
         </ul>:<p className="mt-3 text-sm text-body">No ongoing applications.</p>}
       </section>
@@ -350,10 +350,10 @@ export default async function LearnerPlacementsPage({
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
           <Heading level={2} size="base" id="learner-college-notice-preview" className="text-foreground">Latest from the placement cell</Heading>
           <div className="flex flex-wrap gap-3">
-            <Link href="/learn/my-placements/announcements"
-              className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View all visible notices →</Link>
-            <Link href="/learn/my-placements/announcements?source=placement-cell"
-              className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">From placement cell →</Link>
+            <TextLink href="/learn/my-placements/announcements"
+              className="inline-flex min-h-11 md:min-h-9 items-center text-sm">View all visible notices →</TextLink>
+            <TextLink href="/learn/my-placements/announcements?source=placement-cell"
+              className="inline-flex min-h-11 md:min-h-9 items-center text-sm">From placement cell →</TextLink>
           </div>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">These are notices visible to your college membership, not necessarily placement-cell announcements.</p>
@@ -362,9 +362,9 @@ export default async function LearnerPlacementsPage({
           : collegeNotices.length===0 ? <p className="mt-3 text-sm text-body">No notices yet.</p>
           : <ul className="mt-3 space-y-2">{collegeNotices.map(notice=><li key={notice.id} className="min-w-0 border-b border-border py-3 last:border-b-0">
               {learnerNoticeHref(notice.id) ? (
-                <Link href={learnerNoticeHref(notice.id)!} className="inline-flex min-h-11 md:min-h-9 items-center break-words text-sm font-semibold text-primary-text underline">
+                <TextLink href={learnerNoticeHref(notice.id)!} className="inline-flex min-h-11 md:min-h-9 items-center break-words text-sm">
                   {notice.title} →
-                </Link>
+                </TextLink>
               ) : <p className="break-words text-sm font-semibold text-foreground">{notice.title}</p>}
               <p className="mt-1 line-clamp-2 text-sm text-body">{notice.message}</p>
               <time dateTime={notice.createdAt} className="text-xs text-muted-foreground">{learnerNoticeRelativeDay(notice.createdAt,new Date())}</time>
@@ -381,19 +381,19 @@ export default async function LearnerPlacementsPage({
                 <p className="font-semibold text-foreground">{alert.title}{alert.unread?" · Unread":""}</p>
                 <p className="mt-1 line-clamp-2">{alert.body}</p>
                  <time className="mt-1 block text-xs text-muted-foreground" dateTime={alert.createdAt.toISOString()}>{learnerNoticeRelativeDay(alert.createdAt,new Date())}</time>
-                {alert.actionHref?<Link href={alert.actionHref} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Open update →</Link>:null}
+                {alert.actionHref?<TextLink href={alert.actionHref} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center">Open update →</TextLink>:null}
               </li>
             ))}
           </ul>}
-          <Link href="/learn/my-placements/announcements#personal-updates"
-            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all personal updates →</Link>
+          <TextLink href="/learn/my-placements/announcements#personal-updates"
+            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">See all personal updates →</TextLink>
         </div>
       </section>
       {registrationRead.status==="fulfilled"?<LearnerPlacementRegistration registration={registrationRead.value}/>:(
         <Alert tone="warning" role="alert" aria-label="Placement registration">
           <Heading level={2} className="text-foreground">Registration</Heading>
           <p className="mt-2 text-sm text-body">Your batch registration status is temporarily unavailable. No registration choice has been assumed.</p>
-          <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">Retry registration</Link>
+          <TextLink href="/learn/my-placements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center">Retry registration</TextLink>
         </Alert>
       )}
       {overviewUnavailable ? <Alert tone="error" role="alert">
@@ -402,17 +402,17 @@ export default async function LearnerPlacementsPage({
           Your placement results have not been changed. Some account and registration
           information may still be visible, but your journey and schedule could not be verified.
         </p>
-        <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+        <TextLink href="/learn/my-placements" className="mt-2 inline-flex min-h-9 items-center">
           Retry
-        </Link>
+        </TextLink>
       </Alert> : null}
       {!availability.rounds || !availability.journey ? <Alert tone="warning" role="status">
         {availability.rounds
           ?"Your schedule and application history could not both be checked. Missing timeline entries are unknown, not proof of no events."
           :"Your scheduled placement rounds could not be loaded. No upcoming event count has been assumed."}
-        <Link href="/learn/my-placements" className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+        <TextLink href="/learn/my-placements" className="ml-2 inline-flex min-h-9 items-center">
           Retry
-        </Link>
+        </TextLink>
       </Alert> : null}
       <LearnerPlacementPartialAlert missing={display.failed} />
       {countingAcceptedOffer ? <Alert tone="info" role="status">
@@ -424,9 +424,9 @@ export default async function LearnerPlacementsPage({
           This accepted offer is recorded as counting toward placement. You may
           still be eligible for other drives under your college's policy and each drive's eligibility rules.
         </p>
-        <Link href="/learn/my-placements/jobs" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+        <TextLink href="/learn/my-placements/jobs" className="mt-2 inline-flex min-h-9 items-center">
           Browse other eligible drives →
-        </Link>
+        </TextLink>
       </Alert> : null}
 
 
@@ -435,9 +435,9 @@ export default async function LearnerPlacementsPage({
         className="min-w-0 border-b border-border py-4 md:py-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Heading level={2} size="base" id="learner-placement-verification" className="text-foreground">Profile verification</Heading>
-          <Link href="/learn/profile/verification" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
+          <TextLink href="/learn/profile/verification" className="inline-flex min-h-11 md:min-h-9 items-center">
             Review education and identity verification →
-          </Link>
+          </TextLink>
         </div>
         <p className="mt-2 text-sm text-body">
           {verificationCue ? verificationCue.summary :
@@ -446,10 +446,10 @@ export default async function LearnerPlacementsPage({
         {verificationCue && verificationCue.editHrefs.length>0 ? (
           <div className="mt-2 flex flex-wrap gap-3">
             {verificationCue.editHrefs.map(link=>(
-              <Link key={link.href} href={link.href}
-                className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+              <TextLink key={link.href} href={link.href}
+                className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
                 {link.label} →
-              </Link>
+              </TextLink>
             ))}
           </div>
         ) : null}

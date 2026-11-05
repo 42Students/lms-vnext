@@ -5,7 +5,6 @@ import { StatTile } from "@/components/ui/stat-tile";
 import { MetricBar } from "@/components/ui/metric-bar";
 import reportStyles from "./report-bar-chart.module.css";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {collegeHiringAnalyticsHref} from "@/modules/placements/college-hiring-analytics-model";
 import type {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
@@ -17,6 +16,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
 const order=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED",
@@ -80,17 +80,17 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
       <span className="rounded-full border border-[color:var(--lms-border-strong)] bg-[color:var(--lms-info-blue-surface)] px-3 py-1 text-[color:var(--lms-info-blue)]">
         Applied: {q.from||"Any date"} – {q.to||"Today"}
       </span>
-      <Link href={clearRangeHref} aria-label="Clear applied date range"
-        className="inline-flex min-h-11 items-center gap-1 font-semibold text-link underline md:min-h-9">Clear date range <span aria-hidden="true">×</span></Link>
+      <TextLink href={clearRangeHref} aria-label="Clear applied date range"
+        className="inline-flex min-h-11 items-center gap-1 md:min-h-9">Clear date range <span aria-hidden="true">×</span></TextLink>
     </div>:null}
    <Disclosure title="Filters" defaultOpen={Boolean(q.departmentId||q.programId||q.cohortId||q.from||q.to||
       data.filters.errors.departments||data.filters.errors.programs||data.filters.errors.cohorts)||undefined} className="min-w-0 print:hidden">
      {(["departments","programs","cohorts"] as const).map(key=>data.filters.errors[key]?
       <p key={key} role="alert" className="mt-2 text-sm text-warning-text">
        {data.filters.errors[key]}{" "}
-       <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined,
+       <TextLink href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined,
          departmentId:q.departmentId,programId:q.programId,cohortId:q.cohortId,from:q.from,to:q.to})}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+        className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
       </p>:null)}
      <form method="get" className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-5">
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
@@ -126,8 +126,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     </fieldset>
     <div className="flex min-w-0 flex-col items-stretch gap-2 md:col-span-2 md:flex-row md:items-center lg:col-span-5">
      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
-     <Link href={collegeHiringAnalyticsHref({})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm hover:bg-primary-subtle focus-ring md:min-h-9">Clear all</Link>
+     <ButtonLink variant="secondary" href={collegeHiringAnalyticsHref({})}>Clear all</ButtonLink>
     </div>
      </form>
    </Disclosure>
@@ -148,8 +147,8 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    <Heading level={2} size="lg">Hiring Funnel · observed progress</Heading>
    {data.totalApplications===0?<div className="space-y-2">
     <p>{filtered?"No data for the selected filters":"No applications yet to show in the hiring funnel"}</p>
-    <Link href={collegeHiringAnalyticsHref({})}
-     className="font-semibold text-primary-text underline focus-ring max-md:inline-flex max-md:min-h-11 max-md:items-center">Clear filters</Link>
+    <TextLink href={collegeHiringAnalyticsHref({})}
+     className="max-md:inline-flex max-md:min-h-11 max-md:items-center">Clear filters</TextLink>
    </div>:<div className="space-y-3">
     {order.map(stage=><div key={stage} className={reportStyles["chartRow"]}>
       <div className="min-w-0 space-y-1">
@@ -180,7 +179,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    {data.companyReportUnavailable ? (
      <div role="alert" className="flex flex-wrap items-center justify-between gap-2 border border-error/30 bg-error/5 px-3 py-2 text-sm">
        <span>Could not load the company-wise hiring report. The headline metrics may still be available.</span>
-       <Link className="font-semibold text-primary-text underline" href={collegeHiringAnalyticsHref({...raw})}>Retry company report</Link>
+       <TextLink href={collegeHiringAnalyticsHref({...raw})}>Retry company report</TextLink>
      </div>
    ) : <DataTable
     caption="Company-wise Hiring Report"
@@ -199,7 +198,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
       <p role="status" className="text-body">{filtered?
         "No companies match these filters — try widening the date range or clearing filters":
         "No company hiring reports have been recorded yet"}</p>
-      <Link href={collegeHiringAnalyticsHref({})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>
+      <TextLink href={collegeHiringAnalyticsHref({})} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
     </div>}
    />}
    {!data.companyReportUnavailable&&data.companyRows.length>pageSize?<nav aria-label="Company report pages"

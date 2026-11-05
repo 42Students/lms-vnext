@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -8,6 +7,8 @@ import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-r
 import {TpoDriveRecruiterReviewInvite} from "@/components/placements/tpo-drive-recruiter-review-invite";
 import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
 import {PlacementsServiceError} from "@/modules/placements/errors";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 export default async function TpoChangeRequestsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
@@ -20,16 +21,16 @@ export default async function TpoChangeRequestsPage({params}:{params:Promise<{jo
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="TPO · Drive workspace" title={(data?.job.title??"Drive")+" · Change requests"}
    description="Track requested company changes, review replies and agree or decline with a permanent record."
-   actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
-    className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-ring md:min-h-9 md:w-auto">Back to drive</Link>}/>
+   actions={<TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
+    className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-9 md:w-auto">Back to drive</TextLink>}/>
   <section aria-label="Change request actions" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
    <p className="min-w-0 flex-1 text-sm text-body">Request a change without leaving this drive workspace. Discussion remains attached to this drive.</p>
-   <Link href="#new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline md:min-h-9">
+   <ButtonLink variant="secondary" href="#new">
     Request a change
-   </Link>
+   </ButtonLink>
   </section>
   {!loadFailed&&data?.storageReady&&data.party==="TPO"?<TpoDriveRecruiterReviewInvite jobId={jobId}/>:null}
-  {loadFailed||!data?<Alert tone="error">Couldn\u0027t load the change requests. <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/change-requests"} className="font-semibold underline">Retry</Link></Alert>:
+  {loadFailed||!data?<Alert tone="error">Couldn\u0027t load the change requests. <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/change-requests"}>Retry</TextLink></Alert>:
    !data.storageReady?<Alert tone="warning">
    {data.pendingMessage} Changes cannot be recorded until the platform migration is registered.</Alert>
    :<section id="new" aria-label="Drive change requests" className="min-w-0 scroll-mt-24 space-y-3">

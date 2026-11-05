@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
@@ -10,6 +9,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {getFacultyPublishedGradebookLearner} from
   "@/modules/courses/faculty-gradebook-service";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function FacultyLearnerGradebookPage({
   params,
@@ -30,7 +30,7 @@ export default async function FacultyLearnerGradebookPage({
     <PageHeader eyebrow="Faculty · Published learner scores"
       title={data.learner.displayName||data.learner.email||"Unnamed learner"}
       description={data.delivery.courseName+" · "+data.delivery.sectionName}
-      actions={<Link href={root} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">← Published gradebook</Link>} />
+      actions={<ButtonLink variant="secondary" href={root} className="w-full sm:w-auto">← Published gradebook</ButtonLink>} />
     <section className="border-b border-border pb-5" aria-label="Recorded score totals">
       <dl className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-3">
         <div><dt className="text-xs text-muted-foreground">Published scores</dt><dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{data.learner.gradedCount}/{data.learner.publishedAssessments}</dd></div>

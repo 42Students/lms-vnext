@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { PopoverListbox } from "@/components/ui/popover";
@@ -10,6 +9,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type LearnerCourse = {
   deliveryId: string;
@@ -104,7 +104,7 @@ export function LearnerTopbarTools() {
                 onClick={()=>{setLoadFailed(false);setLoading(true);setReloadCount(current=>current+1);}}>Retry</Button></div>:null}
             {loading ? <p role="status" className="m-0 px-3 py-4 text-sm text-muted-foreground">Loading courses…</p> : matches.length > 0 ? (
               matches.map((course) => (
-                <Link
+                <TextLink variant="bare"
                   key={course.deliveryId}
                   href={"/learn/courses/" + encodeURIComponent(course.deliveryId) + "/home"}
                   onClick={() => {
@@ -119,7 +119,7 @@ export function LearnerTopbarTools() {
                   <p className="mt-1 min-w-0 break-words text-xs text-muted-foreground">
                     {course.courseCode} · {course.sectionName}
                   </p>
-                </Link>
+                </TextLink>
               ))
             ) : (
               <p className="m-0 px-3 py-4 text-sm text-muted-foreground">

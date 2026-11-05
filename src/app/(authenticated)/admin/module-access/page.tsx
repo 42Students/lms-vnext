@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
@@ -7,6 +6,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { getModuleAccessOverviewMetrics } from "@/modules/module-access/admin-overview-metrics-service";
 import SuperAdminCollegeModuleAccessPage from "@/app/(authenticated)/admin/features/[collegeId]/page";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Legacy hierarchy editor follows the active college selector, not a
  * global list. The embedded college page exposes editable college,
@@ -28,10 +28,10 @@ export default async function SuperAdminModuleAccessPage({
         <span className="block">Module access is deliberately college-scoped. Choose a college in the header to inspect inherited access without mixing tenants.</span>
         No hierarchy, student overrides or historic decisions have been loaded.
       </Banner>
-      <Link href="/admin/colleges"
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+      <TextLink href="/admin/colleges"
+        className="inline-flex min-h-11 items-center md:min-h-9">
         Find a college
-      </Link>
+      </TextLink>
     </div>;
   }
 
@@ -52,23 +52,23 @@ export default async function SuperAdminModuleAccessPage({
       </div>
       {metrics.available&&metrics.value.studentOverrides>0?<Banner tone="warning">
         {metrics.value.studentOverrides} learner override(s) or stored learner membership rule(s) need review.
-        <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace"}
-         className="ml-2 font-semibold text-link underline">Review →</Link>
+        <TextLink href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace"}
+         className="ml-2">Review →</TextLink>
       </Banner>:null}
       <nav aria-label="Module Access tools" className="mt-3 flex flex-wrap gap-3">
-        <Link href={`/admin/features/${encodeURIComponent(collegeId)}/history`}
-          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+        <TextLink href={`/admin/features/${encodeURIComponent(collegeId)}/history`}
+          className="inline-flex min-h-9 items-center">
           Recent changes
-        </Link>
+        </TextLink>
         <ModuleAccessHierarchyActions/>
-        <Link href={`/admin/features/${encodeURIComponent(collegeId)}/trace`}
-          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+        <TextLink href={`/admin/features/${encodeURIComponent(collegeId)}/trace`}
+          className="inline-flex min-h-9 items-center">
           Search learner
-        </Link>
-        <Link href="/admin/module-access"
-          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+        </TextLink>
+        <TextLink href="/admin/module-access"
+          className="inline-flex min-h-9 items-center">
           Refresh
-        </Link>
+        </TextLink>
       </nav>
     </section>
     <div data-module-access-hierarchy className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">

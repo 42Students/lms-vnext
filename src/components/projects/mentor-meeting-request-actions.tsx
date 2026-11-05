@@ -1,7 +1,6 @@
 "use client";
 
 import {useState,type FormEvent} from "react";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
@@ -14,6 +13,7 @@ import {mentorMeetingHasDifferentRequestedWindow}
 import {fromIstLocalInput} from "@/modules/projects/mentor-meeting-reschedule-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 const displayIst=(instant:string)=>{
   const date=new Date(instant);
@@ -149,6 +149,6 @@ export function MentorMeetingRequestActions({meeting}:{
         </div>
       </form>
     </Dialog>
-    <Link href={editor} className="text-sm underline">Open full meeting editor</Link>
+    <TextLink href={editor} className="text-sm">Open full meeting editor</TextLink>
   </section>;
 }

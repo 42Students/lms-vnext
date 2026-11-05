@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { resolveOwnLearnerCalendarFilters } from "@/modules/academics/learner-calendar-filter-model";
 import {learnerCalendarQuerySchema} from "@/modules/academics/learner-calendar-filter-model";
@@ -13,6 +12,7 @@ import { getLearnerClassSchedule } from "@/modules/academics/learner-schedule-se
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { AcademicsServiceError } from "@/modules/academics/errors";
 import { CoursesServiceError } from "@/modules/courses/errors";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function LearnerCalendarPage({searchParams}:{
   searchParams:Promise<{view?:string|string[];month?:string|string[];deliveryId?:string|string[]}>;
@@ -88,10 +88,10 @@ export default async function LearnerCalendarPage({searchParams}:{
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader title="Class Schedule" actions={(
-        <Link href="/learn/attendance/calendar"
-          className="inline-flex min-h-[var(--lms-control-height)] w-full max-md:min-h-11 items-center justify-center md:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+        <ButtonLink variant="secondary" href="/learn/attendance/calendar"
+          className="w-full md:w-auto">
           Attendance calendar →
-        </Link>
+        </ButtonLink>
       )} />
       
       <LearnerClassSchedule

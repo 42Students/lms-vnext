@@ -1,17 +1,38 @@
 {
  "schemaVersion": 1,
  "files": {
+  "src/app/(authenticated)/activity/page.tsx": {
+   "link-bare": 2
+  },
   "src/app/(authenticated)/admin/classes/loading.tsx": {
    "handrolled-skeleton": 1
   },
   "src/app/(authenticated)/admin/colleges/[collegeId]/verification/loading.tsx": {
    "handrolled-skeleton": 1
   },
+  "src/app/(authenticated)/admin/content-order/page.tsx": {
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/admin/inbound-mail/page.tsx": {
+   "link-bare": 1
+  },
   "src/app/(authenticated)/admin/lecture-halls/page.tsx": {
    "raw-control": 1
   },
   "src/app/(authenticated)/admin/placements/calendar/loading.tsx": {
    "handrolled-skeleton": 1
+  },
+  "src/app/(authenticated)/admin/placements/drives/page.tsx": {
+   "link-bare": 3
+  },
+  "src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx": {
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/admin/placements/organization-jobs/page.tsx": {
+   "link-bare": 4
+  },
+  "src/app/(authenticated)/admin/placements/page.tsx": {
+   "link-bare": 8
   },
   "src/app/(authenticated)/admin/placements/retention/page.tsx": {
    "handrolled-skeleton": 1
@@ -20,31 +41,64 @@
    "handrolled-skeleton": 1
   },
   "src/app/(authenticated)/admin/projects/workspaces/new/page.tsx": {
-   "class-conflict": 1
+   "link-bare": 2
   },
   "src/app/(authenticated)/admin/settings/page.tsx": {
-   "link-bare": 1
+   "link-bare": 2
   },
   "src/app/(authenticated)/authenticated-print.css": {
    "important": 35
   },
-  "src/app/(authenticated)/college/attendance/page.tsx": {
-   "class-conflict": 1
+  "src/app/(authenticated)/college/activity/page.tsx": {
+   "link-bare": 2
+  },
+  "src/app/(authenticated)/college/companies/page.tsx": {
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/college/content-order/page.tsx": {
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/college/hiring-dashboard/page.tsx": {
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx": {
+   "link-bare": 2
+  },
+  "src/app/(authenticated)/college/projects/create/page.tsx": {
+   "link-bare": 1
   },
   "src/app/(authenticated)/college/projects/deleted/loading.tsx": {
    "handrolled-skeleton": 3
   },
   "src/app/(authenticated)/college/resources/page.tsx": {
-   "class-conflict": 1
+   "link-bare": 2
   },
   "src/app/(authenticated)/college/videos/page.tsx": {
-   "class-conflict": 1
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/dashboard/page.tsx": {
+   "link-bare": 2
+  },
+  "src/app/(authenticated)/hr/calendar/page.tsx": {
+   "link-bare": 3
+  },
+  "src/app/(authenticated)/hr/company/page.tsx": {
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/hr/company/reports/page.tsx": {
+   "link-bare": 1
   },
   "src/app/(authenticated)/hr/profile/loading.tsx": {
    "handrolled-skeleton": 1
   },
+  "src/app/(authenticated)/hr/round-results/page.tsx": {
+   "link-bare": 1
+  },
   "src/app/(authenticated)/learn/allAssignments/page.tsx": {
    "handrolled-skeleton": 2
+  },
+  "src/app/(authenticated)/learn/attendance/calendar/page.tsx": {
+   "link-bare": 2
   },
   "src/app/(authenticated)/learn/attendance/page.tsx": {
    "handrolled-skeleton": 3
@@ -52,11 +106,26 @@
   "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/loading.tsx": {
    "handrolled-skeleton": 1
   },
+  "src/app/(authenticated)/learn/my-placements/announcements/page.tsx": {
+   "link-bare": 10
+  },
+  "src/app/(authenticated)/learn/my-placements/offers/page.tsx": {
+   "link-bare": 5
+  },
   "src/app/(authenticated)/learn/my-placements/schedule/loading.tsx": {
    "handrolled-skeleton": 1
   },
+  "src/app/(authenticated)/learn/my-placements/support/page.tsx": {
+   "link-bare": 2
+  },
+  "src/app/(authenticated)/learn/notifications/history/page.tsx": {
+   "link-bare": 2
+  },
   "src/app/(authenticated)/learn/notifications/page.tsx": {
    "handrolled-skeleton": 5
+  },
+  "src/app/(authenticated)/learn/profile/completeness/page.tsx": {
+   "link-bare": 2
   },
   "src/app/(authenticated)/learn/profile/page.tsx": {
    "handrolled-skeleton": 1
@@ -65,6 +134,7 @@
    "handrolled-skeleton": 3
   },
   "src/app/(authenticated)/mentor/notifications/page.tsx": {
+   "link-bare": 2,
    "handrolled-skeleton": 1
   },
   "src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx": {
@@ -73,8 +143,17 @@
   "src/app/(authenticated)/mentor/projects/[projectId]/loading.tsx": {
    "handrolled-skeleton": 1
   },
+  "src/app/(authenticated)/mentor/projects/[projectId]/page.tsx": {
+   "link-bare": 2
+  },
   "src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx": {
    "important": 4
+  },
+  "src/app/(authenticated)/mentor/projects/page.tsx": {
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/mentor/reviews/page.tsx": {
+   "link-bare": 1
   },
   "src/app/(authenticated)/mentor/team-coverage/page.tsx": {
    "important": 6
@@ -82,10 +161,14 @@
   "src/app/(authenticated)/superadmin/[...legacy]/loading.tsx": {
    "handrolled-skeleton": 1
   },
+  "src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx": {
+   "link-bare": 1
+  },
   "src/app/(authenticated)/teacher/calendar/loading.tsx": {
    "handrolled-skeleton": 1
   },
   "src/app/(authenticated)/teacher/calendar/page.tsx": {
+   "link-bare": 3,
    "important": 1
   },
   "src/app/(authenticated)/teacher/contacts/[contactsTab]/loading.tsx": {
@@ -97,7 +180,14 @@
   "src/app/(authenticated)/teacher/courses/[deliveryId]/loading.tsx": {
    "handrolled-skeleton": 1
   },
+  "src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx": {
+   "link-bare": 7
+  },
+  "src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx": {
+   "link-bare": 1
+  },
   "src/app/(authenticated)/teacher/report/assignment/[contentId]/grade/page.tsx": {
+   "link-bare": 6,
    "important": 16
   },
   "src/app/(authenticated)/teacher/report/quiz/[quizId]/loading.tsx": {
@@ -106,17 +196,49 @@
   "src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx": {
    "important": 4
   },
+  "src/app/(authenticated)/teacher/results/page.tsx": {
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/tpo/announcements/page.tsx": {
+   "link-bare": 2
+  },
+  "src/app/(authenticated)/tpo/audit/page.tsx": {
+   "link-bare": 1
+  },
   "src/app/(authenticated)/tpo/batches/[batchId]/page.tsx": {
    "handrolled-skeleton": 1
   },
+  "src/app/(authenticated)/tpo/batches/page.tsx": {
+   "link-bare": 1
+  },
+  "src/app/(authenticated)/tpo/companies/archived/page.tsx": {
+   "link-bare": 2
+  },
+  "src/app/(authenticated)/tpo/follow-ups/page.tsx": {
+   "link-bare": 1
+  },
   "src/app/(authenticated)/tpo/home/page.tsx": {
+   "link-bare": 2,
    "raw-details": 1
   },
+  "src/app/(authenticated)/tpo/messages/page.tsx": {
+   "link-bare": 2
+  },
   "src/app/(authenticated)/tpo/placements/lifecycle/page.tsx": {
-   "class-conflict": 7
+   "link-bare": 3
   },
   "src/app/(authenticated)/tpo/reports/page.tsx": {
+   "link-bare": 7,
    "focus-style-off": 1
+  },
+  "src/app/(authenticated)/tpo/students/page.tsx": {
+   "link-bare": 2
+  },
+  "src/app/(authenticated)/tpo/students/requests/page.tsx": {
+   "link-bare": 3
+  },
+  "src/app/(authenticated)/tpo/verification/page.tsx": {
+   "link-bare": 1
   },
   "src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx": {
    "raw-details": 2
@@ -137,13 +259,11 @@
    "important": 4
   },
   "src/app/home/page.tsx": {
+   "link-bare": 1,
    "focus-style-off": 1
   },
   "src/app/page.tsx": {
    "link-bare": 8
-  },
-  "src/app/universities/page.tsx": {
-   "font-size-off-scale": 1
   },
   "src/app/verify-email/page.tsx": {
    "button-bare": 1
@@ -168,7 +288,7 @@
    "important": 41
   },
   "src/components/academics/learner-class-schedule.tsx": {
-   "class-conflict": 1,
+   "link-bare": 1,
    "important": 8
   },
   "src/components/academics/legacy-class-month-grid.module.css": {
@@ -183,6 +303,12 @@
   },
   "src/components/activity/notification-list.tsx": {
    "important": 1
+  },
+  "src/components/activity/notification-toolbar.tsx": {
+   "link-bare": 3
+  },
+  "src/components/admin/admin-dashboard-actions.tsx": {
+   "link-bare": 1
   },
   "src/components/admin/college-branding-form.tsx": {
    "important": 2
@@ -241,7 +367,7 @@
   },
   "src/components/attendance/faculty-prototype-attendance.tsx": {
    "button-bare": 2,
-   "link-bare": 2,
+   "link-bare": 4,
    "important": 6
   },
   "src/components/auth/login-form.tsx": {
@@ -305,35 +431,50 @@
    "important": 6
   },
   "src/components/courses/faculty-course-home-signals.tsx": {
-   "button-bare": 1
+   "button-bare": 1,
+   "link-bare": 1
   },
   "src/components/courses/faculty-course-item-viewer.tsx": {
    "important": 2
+  },
+  "src/components/courses/faculty-course-list.tsx": {
+   "link-bare": 1
+  },
+  "src/components/courses/faculty-course-workspace.tsx": {
+   "link-bare": 4
   },
   "src/components/courses/faculty-item-actions.tsx": {
    "important": 1
   },
   "src/components/courses/faculty-prototype-assessment-directory.tsx": {
+   "link-bare": 2,
    "raw-control": 1,
    "important": 6
   },
   "src/components/courses/faculty-prototype-assignment-report.tsx": {
+   "link-bare": 4,
    "raw-control": 1,
    "important": 17
   },
   "src/components/courses/faculty-prototype-blueprint.tsx": {
    "button-bare": 2,
+   "link-bare": 1,
    "important": 8
   },
   "src/components/courses/faculty-prototype-course-directory.tsx": {
+   "link-bare": 2,
    "raw-control": 1,
    "important": 4
   },
   "src/components/courses/faculty-prototype-course-priorities.tsx": {
+   "link-bare": 2,
    "important": 3
   },
   "src/components/courses/faculty-prototype-lesson-items.tsx": {
    "button-bare": 2
+  },
+  "src/components/courses/faculty-prototype-schedule.tsx": {
+   "link-bare": 2
   },
   "src/components/courses/faculty-prototype-student-directory.tsx": {
    "button-bare": 2,
@@ -346,20 +487,20 @@
   "src/components/courses/faculty-report-legacy-charts.module.css": {
    "important": 13
   },
-  "src/components/courses/faculty-video-preview.tsx": {
-   "motion-literal": 1
-  },
   "src/components/courses/learner-assessment-metrics.module.css": {
    "important": 17
-  },
-  "src/components/courses/learner-assessment-overview.tsx": {
-   "class-conflict": 2
   },
   "src/components/courses/learner-course-discussion.tsx": {
    "important": 19
   },
+  "src/components/courses/learner-course-list.tsx": {
+   "link-bare": 1
+  },
   "src/components/courses/learner-course-progress.module.css": {
    "important": 2
+  },
+  "src/components/courses/learner-course-workspace.tsx": {
+   "link-bare": 1
   },
   "src/components/courses/learner-live-class-link.tsx": {
    "important": 5
@@ -379,6 +520,9 @@
   "src/components/courses/legacy-upload-meter.module.css": {
    "important": 5
   },
+  "src/components/courses/super-admin-content-directory-page.tsx": {
+   "link-bare": 1
+  },
   "src/components/courses/super-admin-section-syllabus-order.tsx": {
    "button-bare": 1
   },
@@ -386,13 +530,13 @@
    "important": 3
   },
   "src/components/faculty/faculty-today-panel.tsx": {
+   "link-bare": 4,
    "important": 4
   },
   "src/components/hr/hr-drive-draft-form.tsx": {
    "important": 2
   },
   "src/components/hr/hr-recruiter-bell.tsx": {
-   "focus-style-off": 3,
    "important": 13
   },
   "src/components/hr/recruiter-calendar-legacy.module.css": {
@@ -402,8 +546,11 @@
    "button-bare": 1
   },
   "src/components/hr/recruiter-company-prototype.tsx": {
-   "link-bare": 1,
+   "link-bare": 5,
    "raw-control": 1
+  },
+  "src/components/hr/recruiter-conversation-workspace.tsx": {
+   "link-bare": 2
   },
   "src/components/hr/recruiter-drive-funnel.module.css": {
    "important": 7
@@ -418,11 +565,14 @@
    "important": 5
   },
   "src/components/hr/recruiter-today-prototype.tsx": {
-   "button-bare": 2
+   "button-bare": 2,
+   "link-bare": 4
+  },
+  "src/components/marketing/marketing-header-client.tsx": {
+   "link-bare": 7
   },
   "src/components/marketing/marketing-layout.tsx": {
-   "link-bare": 1,
-   "font-size-off-scale": 1
+   "link-bare": 7
   },
   "src/components/placements/admin-placement-create-dialog.tsx": {
    "important": 1
@@ -434,6 +584,7 @@
    "important": 2
   },
   "src/components/placements/college-drive-attention-cards.tsx": {
+   "link-bare": 1,
    "important": 1
   },
   "src/components/placements/college-drive-create-dialog.tsx": {
@@ -441,6 +592,9 @@
   },
   "src/components/placements/college-drive-edit-dialog.tsx": {
    "important": 1
+  },
+  "src/components/placements/college-drive-pipeline-overview.tsx": {
+   "link-bare": 1
   },
   "src/components/placements/college-hiring-date-filters.tsx": {
    "button-bare": 1
@@ -472,9 +626,6 @@
   "src/components/placements/learner-placement-metrics.module.css": {
    "important": 34
   },
-  "src/components/placements/learner-placements-dashboard.tsx": {
-   "palette-class": 1
-  },
   "src/components/placements/learner-save-drive-button.tsx": {
    "button-bare": 1
   },
@@ -484,11 +635,14 @@
   "src/components/placements/legacy-tpo-report-stats.module.css": {
    "important": 16
   },
+  "src/components/placements/placement-calendar-workspace.tsx": {
+   "link-bare": 1
+  },
   "src/components/placements/placement-draft-edit-form.tsx": {
    "link-bare": 1
   },
-  "src/components/placements/placement-job-create-form.tsx": {
-   "class-conflict": 1
+  "src/components/placements/placement-drive-workspace.tsx": {
+   "link-bare": 1
   },
   "src/components/placements/placement-role-options.tsx": {
    "raw-details": 1
@@ -509,6 +663,7 @@
    "handrolled-skeleton": 1
   },
   "src/components/placements/tpo-drive-workspace-nav.tsx": {
+   "link-bare": 1,
    "important": 3
   },
   "src/components/placements/tpo-request-bulk-decision.tsx": {
@@ -520,26 +675,30 @@
   "src/components/placements/tpo-round-calendar-control.tsx": {
    "raw-details": 1
   },
+  "src/components/placements/tpo-settings-nav.tsx": {
+   "link-bare": 1
+  },
   "src/components/placements/tpo-week-hour-calendar.module.css": {
    "important": 25
   },
   "src/components/placements/tpo-week-hour-calendar.tsx": {
+   "link-bare": 1,
    "important": 2
   },
   "src/components/profile/learner-skill-catalog-input.tsx": {
    "important": 8
   },
   "src/components/projects/college-project-delivery-overview.tsx": {
-   "link-bare": 4
+   "link-bare": 8
   },
   "src/components/projects/learner-board-interactive.tsx": {
    "important": 1
   },
+  "src/components/projects/learner-board-task-index.tsx": {
+   "link-bare": 1
+  },
   "src/components/projects/learner-own-task-controls.tsx": {
    "important": 1
-  },
-  "src/components/projects/learner-project-mobile-filters.tsx": {
-   "class-conflict": 1
   },
   "src/components/projects/legacy-project-board.module.css": {
    "important": 20
@@ -557,10 +716,16 @@
   },
   "src/components/projects/mentor-meetings-calendar.tsx": {
    "button-bare": 1,
-   "link-bare": 1
+   "link-bare": 5
   },
   "src/components/projects/mentor-product-backlog.tsx": {
    "important": 2
+  },
+  "src/components/projects/mentor-prototype-home.tsx": {
+   "link-bare": 2
+  },
+  "src/components/projects/mentor-prototype-project-summaries.tsx": {
+   "link-bare": 2
   },
   "src/components/projects/mentor-release-editor.tsx": {
    "important": 2
@@ -568,11 +733,26 @@
   "src/components/projects/mentor-task-delete-control.tsx": {
    "important": 3
   },
+  "src/components/projects/project-admin-at-risk-page.tsx": {
+   "link-bare": 1
+  },
+  "src/components/projects/project-admin-audit-page.tsx": {
+   "link-bare": 1
+  },
+  "src/components/projects/project-admin-submissions-page.tsx": {
+   "link-bare": 1
+  },
   "src/components/projects/project-admin-workspace-quick-view.tsx": {
    "important": 10
   },
+  "src/components/projects/project-list.tsx": {
+   "link-bare": 3
+  },
   "src/components/projects/project-mentor-workload-table.tsx": {
    "button-bare": 1
+  },
+  "src/components/projects/project-participant-list-controls.tsx": {
+   "link-bare": 3
   },
   "src/components/projects/project-resource-files-panel.tsx": {
    "important": 1
@@ -581,43 +761,79 @@
    "important": 1
   },
   "src/components/projects/project-workspace.tsx": {
-   "link-bare": 1
+   "link-bare": 2
   },
   "src/components/projects/workspace-readiness-loading.tsx": {
    "handrolled-skeleton": 2
+  },
+  "src/components/public/error-page-view.tsx": {
+   "link-bare": 1
+  },
+  "src/components/public/error-recovery-actions.tsx": {
+   "link-bare": 1
   },
   "src/components/public/graceful-error-boundary.tsx": {
    "button-bare": 1
   },
   "src/components/public/graceful-screen.tsx": {
-   "button-bare": 1
+   "button-bare": 1,
+   "link-bare": 2
+  },
+  "src/components/public/public-page-loading.tsx": {
+   "link-bare": 1
   },
   "src/components/shell/account-actions.tsx": {
+   "link-bare": 2,
    "focus-style-off": 1
   },
-  "src/components/shell/faculty-prototype.css": {
-   "font-size-off-scale": 1
+  "src/components/shell/app-shell.tsx": {
+   "link-bare": 2
+  },
+  "src/components/shell/learner-faculty-mobile-footer.tsx": {
+   "link-bare": 1
+  },
+  "src/components/shell/learner-notification-bell.tsx": {
+   "link-bare": 2
+  },
+  "src/components/shell/learner-topbar-tools.tsx": {
+   "link-bare": 1
   },
   "src/components/shell/mobile-navigation.tsx": {
    "important": 5
   },
+  "src/components/shell/sidebar-nav.tsx": {
+   "link-bare": 1
+  },
   "src/components/shell/topbar/account-menu.tsx": {
+   "link-bare": 2,
    "important": 3
+  },
+  "src/components/shell/topbar/command-search.tsx": {
+   "link-bare": 4
   },
   "src/components/shell/topbar/faculty-find-suggestions.tsx": {
    "important": 2
   },
+  "src/components/shell/topbar/legacy-topbar.tsx": {
+   "link-bare": 2
+  },
   "src/components/shell/topbar/mentor-notification-bell-preview.tsx": {
    "button-bare": 3
   },
+  "src/components/shell/topbar/notification-actions.tsx": {
+   "link-bare": 1
+  },
   "src/components/shell/topbar/topbar.module.css": {
-   "important": 51,
-   "font-size-off-scale": 2
+   "important": 51
   },
   "src/components/shell/topbar/tpo-find-model.ts": {
    "important": 2
   },
+  "src/components/shell/topbar/tpo-notification-cluster.tsx": {
+   "link-bare": 2
+  },
   "src/components/shell/topbar/tpo-quick-create.tsx": {
+   "link-bare": 1,
    "important": 2
   },
   "src/components/tpo/legacy-batch-eligibility.module.css": {
@@ -633,12 +849,14 @@
    "important": 10
   },
   "src/components/tpo/recruiter-invite-landing.tsx": {
+   "link-bare": 3,
    "important": 1
   },
   "src/components/tpo/recruiter-lead-detail-workspace.tsx": {
-   "link-bare": 2
+   "link-bare": 5
   },
   "src/components/tpo/recruiter-leads-workspace.tsx": {
+   "link-bare": 3,
    "raw-details": 1
   },
   "src/components/tpo/recruiter-prototype-inspector.tsx": {
@@ -656,24 +874,49 @@
   "src/components/tpo/tpo-audit-grid.tsx": {
    "handrolled-skeleton": 1
   },
+  "src/components/tpo/tpo-batch-workspace-tabs.tsx": {
+   "link-bare": 1
+  },
   "src/components/tpo/tpo-campaign-prototype-sidebar.tsx": {
-   "button-bare": 2
+   "button-bare": 2,
+   "link-bare": 1
   },
   "src/components/tpo/tpo-companies-spreadsheet.tsx": {
    "button-bare": 1
   },
   "src/components/tpo/tpo-companies-today.tsx": {
    "button-bare": 4,
-   "link-bare": 3
+   "link-bare": 12
+  },
+  "src/components/tpo/tpo-company-memory-workspace.tsx": {
+   "link-bare": 2
   },
   "src/components/tpo/tpo-conversation-bubble.module.css": {
    "important": 10
+  },
+  "src/components/tpo/tpo-drive-rounds-prototype-review.tsx": {
+   "link-bare": 1
   },
   "src/components/tpo/tpo-drive-students-prototype-review.tsx": {
    "button-bare": 1
   },
   "src/components/tpo/tpo-find-shortcut.tsx": {
    "important": 4
+  },
+  "src/components/tpo/tpo-header-indicators.tsx": {
+   "link-bare": 1
+  },
+  "src/components/tpo/tpo-home-prototype-focus.tsx": {
+   "link-bare": 2
+  },
+  "src/components/tpo/tpo-messages-tabs.tsx": {
+   "link-bare": 1
+  },
+  "src/components/tpo/tpo-mobile-footer.tsx": {
+   "link-bare": 1
+  },
+  "src/components/tpo/tpo-more-navigation.tsx": {
+   "link-bare": 1
   },
   "src/components/tpo/tpo-notice-audience-picker.tsx": {
    "button-bare": 1
@@ -684,11 +927,20 @@
   "src/components/tpo/tpo-notice-delete-confirm.tsx": {
    "important": 1
   },
+  "src/components/tpo/tpo-notice-prototype-sidebar.tsx": {
+   "link-bare": 1
+  },
   "src/components/tpo/tpo-notice-read-progress.tsx": {
    "important": 2
   },
+  "src/components/tpo/tpo-prototype-section-tabs.tsx": {
+   "link-bare": 1
+  },
   "src/components/tpo/tpo-recruiter-message-reply.tsx": {
    "button-bare": 1
+  },
+  "src/components/tpo/tpo-request-prototype-workspace.tsx": {
+   "link-bare": 1
   },
   "src/components/tpo/tpo-settings-team-manage.tsx": {
    "button-bare": 1
@@ -699,11 +951,18 @@
   "src/components/tpo/tpo-team-message-actions.tsx": {
    "important": 1
   },
-  "src/components/tpo/tpo-team-people-prototype.tsx": {
-   "button-bare": 1,
+  "src/components/tpo/tpo-team-messages-directory.tsx": {
    "link-bare": 3
   },
+  "src/components/tpo/tpo-team-people-prototype.tsx": {
+   "button-bare": 1,
+   "link-bare": 4
+  },
+  "src/components/tpo/tpo-today-alternate-views.tsx": {
+   "link-bare": 10
+  },
   "src/components/tpo/tpo-topbar-new-menu.tsx": {
+   "link-bare": 1,
    "focus-style-off": 1
   },
   "src/components/tracker/independent-audit-findings-board.tsx": {
@@ -711,6 +970,9 @@
   },
   "src/components/tracker/known-errors-workspace.tsx": {
    "important": 1
+  },
+  "src/components/tracker/tracker-admin-nav.tsx": {
+   "link-bare": 1
   },
   "src/components/tracker/tracker-issue-logs-panel.tsx": {
    "handrolled-skeleton": 1
@@ -834,12 +1096,6 @@
   },
   "src/modules/projects/mentor-sprint-signoff-snapshot-model.ts": {
    "important": 1
-  },
-  "src/proxy.ts": {
-   "font-family-off": 1
-  },
-  "src/styles/college-admin-north-star.css": {
-   "font-size-off-scale": 1
   },
   "src/styles/legacy-skin.css": {
    "important": 168

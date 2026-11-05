@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
@@ -358,9 +357,9 @@ export function PlacementEmployerRelationships({
         <div role="status" className="space-y-2 py-6 text-sm text-body">
           <p>No companies yet. Add a company with a work email domain or public website
              before creating placement drives or inviting recruiters.</p>
-          <Link href="/college/placements/companies" className="font-semibold text-link underline">
+          <TextLink href="/college/placements/companies">
             Open Companies
-          </Link>
+          </TextLink>
         </div>
       ) : (
         <div className="min-w-0 overflow-x-auto">
@@ -628,12 +627,11 @@ export function PlacementEmployerRelationships({
                   {historyData.items.map((job) => (
                     <tr key={job.id}>
                       <td className="p-3">
-                        <Link
+                        <TextLink
                           href={`/college/placements/jobs/${encodeURIComponent(job.id)}/overview`}
-                          className="font-semibold text-link underline underline-offset-2 hover:text-[var(--lms-primary-text)] focus-ring"
                         >
                           {job.title}
-                        </Link>
+                        </TextLink>
                       </td>
                       <td className="p-3 text-body">{job.status}</td>
                       <td className="p-3 text-body">{historyDate(job.publishedAt)}</td>

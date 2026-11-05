@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getSuperAdminCollegeAtGlance} from "@/modules/colleges/admin-college-at-glance-service";
 import {CollegeAtGlancePanel} from "@/components/admin/college-at-glance-panel";
 import {getSuperAdminTodayBoard} from "@/modules/colleges/admin-today-attention-service";
@@ -43,6 +42,8 @@ import {
 } from "@/modules/projects/member-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Four platform-level destinations from the old LMS; never show tenant counts without a selected college. */
 const PLATFORM_GLOBAL_LINKS = [
@@ -78,12 +79,12 @@ function MetricCard({
   );
 
   return href ? (
-    <Link
+    <TextLink variant="bare"
       href={href}
       className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-canvas-border)] hover:bg-primary-subtle focus-ring"
     >
       {content}
-    </Link>
+    </TextLink>
   ) : (
     <section className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)]">
       {content}
@@ -110,14 +111,14 @@ async function SuperAdminDashboard({
         </p>
       </section>
       <nav aria-label="Platform operations" className="grid min-w-0 gap-4 sm:grid-cols-2">
-        {PLATFORM_GLOBAL_LINKS.map(item=><Link key={item.href} href={item.href}
+        {PLATFORM_GLOBAL_LINKS.map(item=><TextLink variant="bare" key={item.href} href={item.href}
           className="flex min-h-24 min-w-0 items-start justify-between gap-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)] hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="min-w-0 space-y-1">
             <span className="block text-base font-semibold text-[var(--lms-heading)]">{item.label}</span>
             <span className="block text-sm leading-[22px] text-body">{item.description}</span>
           </span>
           <span aria-hidden="true" className="shrink-0 font-semibold text-primary-text">→</span>
-        </Link>)}
+        </TextLink>)}
       </nav>
       <p role="note" className="flex items-start gap-3 border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm leading-[22px] text-body">
         <span aria-hidden="true" className="text-xl">▦</span><span>Select a college in the header to see live college totals, issues needing attention, and college-scoped shortcuts.</span>
@@ -513,8 +514,8 @@ async function MembershipDashboard({
       {hasWorkspace("COLLEGE_ADMIN") ? <>
         <CollegeAdminDashboardActions />
         <nav aria-label="More college administration" className="flex flex-wrap gap-3">
-          <Link href="/college/people" className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Manage students</Link>
-          <Link href="/college/academics" className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Academic setup</Link>
+          <ButtonLink variant="secondary" href="/college/people">Manage students</ButtonLink>
+          <ButtonLink variant="secondary" href="/college/academics">Academic setup</ButtonLink>
         </nav>
       </> : null}
     </div>
@@ -557,15 +558,15 @@ export default async function DashboardPage() {
         {pendingInvites?.length ? <section aria-label="Recruiter invitations awaiting consent"
           className="min-w-0 space-y-2 border-b border-border py-3">
           <p className="text-sm text-body">You have {pendingInvites.length} recruiter college invitation{pendingInvites.length===1?"":"s"} awaiting your decision.</p>
-          <Link href="/recruiter-invitations"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          <TextLink href="/recruiter-invitations"
+            className="inline-flex min-h-11 items-center md:min-h-9">
             Review recruiter invitations →
-          </Link>
+          </TextLink>
         </section> : null}
-        {pendingInvites===null ? <Link href="/recruiter-invitations"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        {pendingInvites===null ? <TextLink href="/recruiter-invitations"
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Check recruiter invitations
-        </Link> : null}
+        </TextLink> : null}
         <MembershipChooser
           memberships={memberships}
         />

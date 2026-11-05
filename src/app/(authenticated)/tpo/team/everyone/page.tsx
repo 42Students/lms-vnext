@@ -2,7 +2,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageBackLink } from "@/components/ui/page-back-link";
-import Link from "next/link";
 import {TpoEveryoneControls} from "@/components/tpo/tpo-everyone-controls";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,6 +10,7 @@ import {readTpoTeamEveryone} from "@/modules/placements/tpo-team-everyone-servic
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {TPO_EVERYONE_DESCRIPTION,TPO_EVERYONE_TITLE,TPO_EVERYONE_WELCOME} from "@/modules/placements/tpo-team-everyone-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function TpoEveryonePage({searchParams}:{
  searchParams:Promise<{page?:string|string[]}>,
@@ -28,7 +28,7 @@ export default async function TpoEveryonePage({searchParams}:{
    actions={<PageBackLink href="/tpo/team?tab=conversations" label="Team conversations" />} />
   {result.status==="FAILED"?<Alert tone="error">
    <p>Could not load Everyone right now. Your messages were not changed.</p>
-   <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 lms-inline-link">Retry Everyone</Link>
+   <TextLink href="/tpo/team/everyone" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">Retry Everyone</TextLink>
   </Alert>:result.status==="NOT_REGISTERED"?<p role="status" className="border-l-2 border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
@@ -42,8 +42,8 @@ export default async function TpoEveryonePage({searchParams}:{
       </li>)}
      </ol>:<EmptyState title={TPO_EVERYONE_WELCOME} description="Write the first message to Everyone below." />}
     <nav aria-label="Everyone message pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
-     {result.page>1?<Link href={"/tpo/team/everyone?page="+(result.page-1)} className="inline-flex min-h-11 items-center text-link underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 lms-inline-link">Newer messages</Link>:null}
-     {result.page<result.pages?<Link href={"/tpo/team/everyone?page="+(result.page+1)} className="inline-flex min-h-11 items-center text-link underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 lms-inline-link">Older messages</Link>:null}
+     {result.page>1?<TextLink href={"/tpo/team/everyone?page="+(result.page-1)} className="inline-flex min-h-11 items-center md:min-h-9">Newer messages</TextLink>:null}
+     {result.page<result.pages?<TextLink href={"/tpo/team/everyone?page="+(result.page+1)} className="inline-flex min-h-11 items-center md:min-h-9">Older messages</TextLink>:null}
     </nav>
    </section>
    <TpoEveryoneControls muted={result.muted} actorUserId={context.user.id}/>

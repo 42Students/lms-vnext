@@ -1,6 +1,5 @@
 import {DataTable} from "@/components/ui/data-table";
 import {EmptyState} from "@/components/ui/empty-state";
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -9,6 +8,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveAbout} from "@/modules/placements/tpo-drive-about-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 const format=(value:number|null)=>value===null?"Not recorded":"₹"+(value/100000).toLocaleString("en-IN")+" LPA";
 const when=(value:string|null)=>value?new Intl.DateTimeFormat("en-IN",{
@@ -92,9 +92,9 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
     <Heading level={3}>Related company requests</Heading>
     {data.previousRequests.length?<ul className="mt-2 divide-y divide-border text-sm">
       {data.previousRequests.map(request=><li key={request.id} className="py-3">
-       <Link className="font-semibold text-[var(--lms-teal-deep)] underline"
+       <TextLink className="text-[var(--lms-teal-deep)]"
          href={"/tpo/placements/requests?requestId="+encodeURIComponent(request.id)}>
-         {request.proposedTitle??"Recruiter drive request"}</Link>
+         {request.proposedTitle??"Recruiter drive request"}</TextLink>
        <span className="ml-2 inline-block break-words text-body">{request.status} · {when(request.createdAt)}</span>
        {request.decisionNote?<p className="text-body">Decision: {request.decisionNote}</p>:null}
       </li>)}
@@ -118,7 +118,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
   {["CLOSED","CANCELLED"].includes(data.job.status)?<section className="border-b border-border pb-6">
    <Heading level={2}>Closed drive summary</Heading>
    <p className="mt-2 text-sm">{data.closeSummary.applications} recorded applications · {data.closeSummary.offers} offer versions.</p>
-   <Link className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-ring" href={root+"/closeout"}>See the close-out report</Link>
+   <TextLink className="mt-2 inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]" href={root+"/closeout"}>See the close-out report</TextLink>
   </section>:null}
   <section id="activity" aria-label="Drive activity" className="scroll-mt-24 border-b border-border pb-6">
    <Heading level={2}>Recent activity · last {data.feed.length} (maximum 100)</Heading>

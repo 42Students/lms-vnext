@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {SuperAdminPlatformBlockAction} from "@/components/admin/super-admin-platform-block-action";
@@ -10,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import {getSuperAdminMembershipDetail} from "@/modules/people/admin-membership-detail-service";
 import {getAdminLearnerProfileSections} from "@/modules/people/admin-learner-profile-sections-service";
 import {AdminLearnerProfileSections} from "@/components/admin/admin-learner-profile-sections";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function MembershipDetail({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
  const context=await getCurrentRequestContext();
@@ -40,10 +40,10 @@ export default async function MembershipDetail({params}:{params:Promise<{members
     <dd className="mt-[var(--lms-space-1)] break-words text-sm leading-6 text-body">{field.value}</dd>
    </div>)}
   </dl>
-  <Link href={"/admin/people/directory/"+encodeURIComponent(membershipId)+"/audit"}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] sm:w-auto border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+  <ButtonLink variant="secondary" href={"/admin/people/directory/"+encodeURIComponent(membershipId)+"/audit"}
+    className="w-full sm:w-auto">
     View audit trail →
-   </Link>
+   </ButtonLink>
   <p className="max-w-3xl text-xs leading-5 text-muted-foreground">This page shows only this membership, not roles at other colleges.</p>
   {learnerSections?<AdminLearnerProfileSections name={detail.name??"Unnamed student"} sections={learnerSections}/>:null}
   {isSuperAdmin(context)&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?

@@ -191,6 +191,7 @@ export function scanFile(path, rawSource) {
     for (const m of source.matchAll(/<details(?=[\s>])/g)) add("raw-details", m.index, m[0]);
     for (const m of source.matchAll(/animate-pulse/g)) add("handrolled-skeleton", m.index, m[0]);
     for (const m of source.matchAll(/<a(?=[\s>])/g)) add("raw-link", m.index, m[0]);
+    for (const m of source.matchAll(/<Link(?=[\s])[^>]*?\bclassName=/g)) add("raw-link", m.index, "<Link className");
     for (const m of source.matchAll(/<img(?=[\s>/])/g)) add("raw-image", m.index, m[0]);
   }
 
@@ -226,14 +227,14 @@ export function scanFile(path, rawSource) {
     if (/!important/i.test(value)) add("important", at, `${prop}:${value}`);
     switch (prop) {
       case "font-size": {
-        if (isVar || /^(inherit|initial|unset)$/.test(v) || v === "100%" || v === "1em") break;
+        if (isVar || /^(inherit|initial|unset)$/.test(v) || v === "100%" || v === "1em" || /^0(px)?$/.test(v)) break;
         const m = /^(-?[0-9.]+)(px|rem)$/.exec(v);
         if (m) { if (!inSet(FONT_SIZE_SCALE_PX, px(num(m[1]), m[2]))) add("font-size-off-scale", at, `${prop}:${value}`); }
         else add("font-size-off-scale", at, `${prop}:${value}`);
         break;
       }
       case "font-family": {
-        if (!/^(inherit|initial|unset)\b/.test(v) && !/var\(--font-(inter|jetbrains-mono|mono)\)|var\(--lms-font/.test(v)) add("font-family-off", at, `${prop}:${value}`);
+        if (!/^(inherit|initial|unset)\b/.test(v) && !/^(Inter|JetBrains Mono|ui-monospace)\b/.test(v) && !/var\(--font-(inter|jetbrains-mono|mono)\)|var\(--lms-font/.test(v)) add("font-family-off", at, `${prop}:${value}`);
         break;
       }
       case "font-weight": {
@@ -322,29 +323,29 @@ export function scanFile(path, rawSource) {
     T(/\btext-(?:[6-9]xl)\b/g, (m) => add("font-size-off-scale", m.index, m[0]));
     T(/\brounded(?:-[trbl]{1,2}|-[se]{1,2})?-\[([0-9.]+)(px|rem)\]/g, (m) => { if (!inSet(RADIUS_SCALE_PX, px(num(m[1]), m[2]))) add("radius-off-scale", m.index, m[0]); });
     T(/\brounded(?:-[trbl]{1,2})?-(2xl|3xl|4xl)\b/g, (m) => add("radius-off-scale", m.index, m[0]));
-    T(/(?<![\w-])font-\[([0-9]+)\]/g, (m) => { if (!inSet(FONT_WEIGHTS, num(m[1]))) add("font-weight-off-scale", m.index, m[0]); });
-    T(/(?<![\w-])font-(thin|extralight|light|extrabold|black)\b/g, (m) => add("font-weight-off-scale", m.index, m[0]));
-    T(/(?<![\w-])leading-\[([0-9.]+)(px|rem)?\]/g, (m) => {
+    T(/(?<![\w.-])font-\[([0-9]+)\]/g, (m) => { if (!inSet(FONT_WEIGHTS, num(m[1]))) add("font-weight-off-scale", m.index, m[0]); });
+    T(/(?<![\w.-])font-(thin|extralight|light|extrabold|black)\b/g, (m) => add("font-weight-off-scale", m.index, m[0]));
+    T(/(?<![\w.-])leading-\[([0-9.]+)(px|rem)?\]/g, (m) => {
       const ok = m[2] ? inSet(LINE_HEIGHT_PX, px(num(m[1]), m[2])) : inSet(LINE_HEIGHT_UNITLESS, num(m[1]));
       if (!ok) add("line-height-off-scale", m.index, m[0]);
     });
-    T(/(?<![\w-])leading-(snug|relaxed|loose|3)\b/g, (m) => add("line-height-off-scale", m.index, m[0]));
-    T(/(?<![\w-])tracking-\[(-?[0-9.]+(?:px|em))\]/g, (m) => { if (!LETTER_SPACING.includes(normEm(m[1]))) add("letter-spacing-off-scale", m.index, m[0]); });
-    T(/(?<![\w-])border(?:-[trblxy])?-\[([0-9.]+)px\]/g, (m) => { if (!inSet(BORDER_WIDTH_PX, num(m[1]))) add("border-width-off-scale", m.index, m[0]); });
-    T(/(?<![\w-])border(?:-[trblxy])?-(4|8)\b/g, (m) => add("border-width-off-scale", m.index, m[0]));
-    T(/(?<![\w-])opacity-\[([0-9.]+)\]/g, (m) => { if (!inSet(OPACITY, num(m[1]))) add("opacity-off-scale", m.index, m[0]); });
-    T(/(?<![\w-])opacity-([0-9]+)\b/g, (m) => { if (!inSet(OPACITY, num(m[1]) / 100)) add("opacity-off-scale", m.index, m[0]); });
-    T(/(?<![\w-])-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me|gap|gap-x|gap-y|space-x|space-y)-\[(-?[0-9.]+)(px|rem)\]/g, (m) => { if (!spacingOk(px(num(m[1]), m[2]))) add("spacing-off-grid", m.index, m[0]); });
-    T(/(?<![\w-])-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me|gap|gap-x|gap-y|space-x|space-y)-(?:2\.5|3\.5)\b/g, (m) => add("spacing-off-grid", m.index, m[0]));
-    T(/(?<![\w-])shadow-\[(?!var\()/g, (m) => add("shadow-literal", m.index, m[0]));
-    T(/(?<![\w-])shadow-(2xl|inner)\b/g, (m) => add("shadow-literal", m.index, m[0]));
-    T(/(?<![\w-])z-(?:\[([0-9-]+)\]|([0-9]+))(?![\w-])/g, (m) => { if (!inSet(Z_LITERAL_OK, num(m[1] ?? m[2]))) add("z-index-literal", m.index, m[0]); });
-    T(/(?<![\w-])(?:duration|delay)-(?:\[[0-9.]+m?s\]|[0-9]+)(?![\w-])/g, (m) => add("motion-literal", m.index, m[0]));
-    T(/(?<![\w-])ease-(?:in|out|in-out|\[(?!var\()[^\]]+\])(?![\w-])/g, (m) => add("motion-literal", m.index, m[0]));
-    T(/(?<![\w-])animate-(?!pulse\b|spin\b|none\b)[a-z[]/g, (m) => add("motion-literal", m.index, m[0]));
-    T(/(?<![\w-])(?:[a-z0-9-]+:)*-?(?:w|h|min-w|min-h|max-w|max-h|size|top|left|right|bottom|inset|inset-x|inset-y|basis)-\[(-?[0-9.]+)px\]/g, (m) => { const n = Math.abs(num(m[1])); if (!(n % 4 === 0 || n === 1 || n === 2 || n === 6)) add("size-off-grid", m.index, m[0]); });
-    T(/(?<![\w-])(?:[a-z0-9-]+:)*(?:outline(?:-offset)?|ring(?:-offset)?)-(?!none\b|hidden\b)(?:\[|[0-9]|inset\b)[^\s"'`]*/g, (m) => add("focus-style-off", m.index, m[0]));
-    T(/(?<![\w-])(?:[a-z0-9-]+:)*text-\[(?:clamp|[0-9.]+(?:vw|vh|rem|em))[^\]]*\]/g, (m) => add("font-size-off-scale", m.index, m[0]));
+    T(/(?<![\w.-])leading-(snug|relaxed|loose|3)\b/g, (m) => add("line-height-off-scale", m.index, m[0]));
+    T(/(?<![\w.-])tracking-\[(-?[0-9.]+(?:px|em))\]/g, (m) => { if (!LETTER_SPACING.includes(normEm(m[1]))) add("letter-spacing-off-scale", m.index, m[0]); });
+    T(/(?<![\w.-])border(?:-[trblxy])?-\[([0-9.]+)px\]/g, (m) => { if (!inSet(BORDER_WIDTH_PX, num(m[1]))) add("border-width-off-scale", m.index, m[0]); });
+    T(/(?<![\w.-])border(?:-[trblxy])?-(4|8)\b/g, (m) => add("border-width-off-scale", m.index, m[0]));
+    T(/(?<![\w.-])opacity-\[([0-9.]+)\]/g, (m) => { if (!inSet(OPACITY, num(m[1]))) add("opacity-off-scale", m.index, m[0]); });
+    T(/(?<![\w.-])opacity-([0-9]+)\b/g, (m) => { if (!inSet(OPACITY, num(m[1]) / 100)) add("opacity-off-scale", m.index, m[0]); });
+    T(/(?<![\w.-])-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me|gap|gap-x|gap-y|space-x|space-y)-\[(-?[0-9.]+)(px|rem)\]/g, (m) => { if (!spacingOk(px(num(m[1]), m[2]))) add("spacing-off-grid", m.index, m[0]); });
+    T(/(?<![\w.-])-?(?:p|px|py|pt|pb|pl|pr|ps|pe|m|mx|my|mt|mb|ml|mr|ms|me|gap|gap-x|gap-y|space-x|space-y)-(?:2\.5|3\.5)\b/g, (m) => add("spacing-off-grid", m.index, m[0]));
+    T(/(?<![\w.-])shadow-\[(?!var\()/g, (m) => add("shadow-literal", m.index, m[0]));
+    T(/(?<![\w.-])shadow-(2xl|inner)\b/g, (m) => add("shadow-literal", m.index, m[0]));
+    T(/(?<![\w.-])z-(?:\[([0-9-]+)\]|([0-9]+))(?![\w-])/g, (m) => { if (!inSet(Z_LITERAL_OK, num(m[1] ?? m[2]))) add("z-index-literal", m.index, m[0]); });
+    T(/(?<![\w.-])(?:duration|delay)-(?:\[[0-9.]+m?s\]|[0-9]+)(?![\w-])/g, (m) => add("motion-literal", m.index, m[0]));
+    T(/(?<![\w.-])ease-(?:in|out|in-out|\[(?!var\()[^\]]+\])(?![\w-])/g, (m) => add("motion-literal", m.index, m[0]));
+    T(/(?<![\w.-])animate-(?!pulse\b|spin\b|none\b)[a-z[]/g, (m) => add("motion-literal", m.index, m[0]));
+    T(/(?<![\w.-])(?:[a-z0-9-]+:)*-?(?:w|h|min-w|min-h|max-w|max-h|size|top|left|right|bottom|inset|inset-x|inset-y|basis)-\[(-?[0-9.]+)px\]/g, (m) => { const n = Math.abs(num(m[1])); if (!(n % 4 === 0 || n === 1 || n === 2 || n === 6)) add("size-off-grid", m.index, m[0]); });
+    T(/(?<![\w.-])(?:[a-z0-9-]+:)*(?:outline(?:-offset)?|ring(?:-offset)?)-(?!none\b|hidden\b)(?:\[|[0-9]|inset\b)[^\s"'`]*/g, (m) => add("focus-style-off", m.index, m[0]));
+    T(/(?<![\w.-])(?:[a-z0-9-]+:)*text-\[(?:clamp|[0-9.]+(?:vw|vh|rem|em))[^\]]*\]/g, (m) => add("font-size-off-scale", m.index, m[0]));
     for (const m of source.matchAll(/<svg[^>]*?\b(?:width|height)="([0-9.]+)"/g)) { if (![12, 14, 16, 18, 20, 24, 32, 48, 64].includes(num(m[1])) && num(m[1]) < 40) add("icon-size-off", m.index, m[0].slice(0, 40)); }
     for (const m of source.matchAll(/"([^"\n]*)"|'([^'\n]*)'|`([^`]*)`/g)) {
       const body = m[1] ?? m[2] ?? m[3];

@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { collegeHiringAnalyticsHref } from "@/modules/placements/college-hiring-analytics-model";
 import {Input} from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type FilterKey = "seasonId" | "jobId" | "departmentId" | "programId" | "cohortId" | "from" | "to";
 type Filters = Partial<Record<FilterKey, string>>;
@@ -26,10 +26,10 @@ export function CollegeHiringDateFilters({ filters }: { filters: Filters }) {
           onChange={event => event.currentTarget.form?.requestSubmit()}
           />
       </Label>)}
-    <Link href={collegeHiringAnalyticsHref(base)}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+    <TextLink href={collegeHiringAnalyticsHref(base)}
+      className="inline-flex min-h-11 items-center text-sm md:min-h-9">
       Clear dates
-    </Link>
+    </TextLink>
     <Button variant="bare" type="submit" className="sr-only">Apply dates</Button>
   </form>;
 }

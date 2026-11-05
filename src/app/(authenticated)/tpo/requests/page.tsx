@@ -4,7 +4,6 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {FilterChipLink} from "@/components/ui/filter-chip";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Pagination} from "@/components/ui/pagination";
-import Link from "next/link";
 import {TpoGeneralRequestsPanel} from "@/components/placements/tpo-general-requests-panel";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
@@ -34,6 +33,8 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 type Params = { request?:string|string[];proof?:string|string[];branchId?:string|string[];
@@ -63,7 +64,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.request)))
    return <div className="min-w-0 space-y-4"><PageHeader title="Requests"/>
     <ErrorState title="Invalid request selection" description="Choose a request from the authorized queue."
-     action={<Link href="/tpo/requests" className="inline-flex min-h-11 items-center font-semibold text-link underline">Reset selection</Link>}/>
+     action={<TextLink href="/tpo/requests" className="inline-flex min-h-11 items-center">Reset selection</TextLink>}/>
    </div>;
   const parsed=parseGlobalTpoRequestFilters({
     status:first(raw.status),age:first(raw.age),sort:first(raw.sort),
@@ -77,7 +78,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     <PageHeader title="Requests"
       description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first."/>
     <ErrorState title="Invalid request filters" description="Check the request status, kind, age, sorting and page values. No request data was loaded."
-      action={<Link href="/tpo/requests" className="inline-flex min-h-11 md:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline focus-ring">Clear invalid filters</Link>}/>
+      action={<TextLink href="/tpo/requests" className="inline-flex min-h-11 md:min-h-9 items-center text-[13px]">Clear invalid filters</TextLink>}/>
   </div>;
   const loaded=await Promise.all([
     getTpoGlobalRequestsInbox(context,parsed.data),
@@ -89,7 +90,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   if(!loaded.ok)return <div className="min-w-0 space-y-4">
     <PageHeader title="Requests"/>
     <ErrorState title="Couldn't load requests" description="This refresh failed. Try again without changing any decisions."
-      action={<Link href="/tpo/requests" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>
+      action={<TextLink href="/tpo/requests" className="inline-flex min-h-11 items-center">Retry</TextLink>}/>
   </div>;
   const [data,jobChoices]=loaded.value;
   const outcomeResult=await getTpoAfterCollegeForRoster(context,data.requests.map(row=>row.membershipId));
@@ -174,19 +175,17 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
          </Label>
         </div>
       </Disclosure>
-      <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 md:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline focus-ring">Clear search, age and drive filters</Link>
+      <TextLink href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 md:min-h-9 items-center text-[13px]">Clear search, age and drive filters</TextLink>
     </form>
     <section aria-label="Needs doing first" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
      <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">Needs doing first</Heading>
      <p className="text-[14px] leading-5 text-[var(--lms-body-text)]">{data.summary.pending?data.summary.pending+" waiting for you.":"Nothing is waiting for you."}</p>
      <div className="flex flex-wrap gap-3 text-sm">
-      <Link href={href({...data.query,status:"PENDING",urgentOnly:true,page:1})} aria-current={data.query.urgentOnly?"page":undefined} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring">Urgent: a round within 24 hours · {attention.urgent}</Link>
-      <Link href={href({...data.query,status:"PENDING",age:"OLDER_THAN_2_DAYS",page:1})}
-       aria-current={data.query.age==="OLDER_THAN_2_DAYS"?"page":undefined}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring">Waiting more than 2 days · {attention.waitingOverTwoDays}</Link>
-      <Link href={href({...data.query,status:"PENDING",proof:"MISSING",page:1})}
-       aria-current={data.query.proof==="MISSING"?"page":undefined}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]">Proof missing · {data.requests.filter(row=>!row.proofAttached).length}</Link>
+      <ButtonLink variant="secondary" href={href({...data.query,status:"PENDING",urgentOnly:true,page:1})} aria-current={data.query.urgentOnly?"page":undefined}>Urgent: a round within 24 hours · {attention.urgent}</ButtonLink>
+      <ButtonLink variant="secondary" href={href({...data.query,status:"PENDING",age:"OLDER_THAN_2_DAYS",page:1})}
+       aria-current={data.query.age==="OLDER_THAN_2_DAYS"?"page":undefined}>Waiting more than 2 days · {attention.waitingOverTwoDays}</ButtonLink>
+      <ButtonLink variant="secondary" href={href({...data.query,status:"PENDING",proof:"MISSING",page:1})}
+       aria-current={data.query.proof==="MISSING"?"page":undefined}>Proof missing · {data.requests.filter(row=>!row.proofAttached).length}</ButtonLink>
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
     </section>
@@ -223,10 +222,10 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     {data.requests.length===0?<EmptyState
       title={data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you":"No requests in this period"}
       {...(data.total===0?{description:"Withdrawals, off-campus offers, registration changes and disputes from students show up here."}:{})}
-      action={<Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):tpoRequestClearAdvancedHref(data.query.status)}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+      action={<TextLink href={data.total>0?globalTpoRequestFirstPageHref(data.query):tpoRequestClearAdvancedHref(data.query.status)}
+        className="inline-flex min-h-11 items-center">
         {data.total>0?"First matching page":"Reset filters"}
-      </Link>}/>:
+      </TextLink>}/>:
       <div className="min-w-0 overflow-x-auto" role="region" aria-label="Requests table" tabIndex={0}>
         <Table className="min-w-[952px]">
           <thead><tr className="border-y border-border bg-muted text-left text-foreground">
@@ -282,10 +281,10 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
                   {request.status==="PENDING"?<TpoRequestDecisionControl requestId={request.id}
                     expectedUpdatedAt={request.updatedAt.toISOString()} requestType={request.requestType}/>:
                     <StatusBadge tone={request.status==="APPROVED"?"success":request.status==="REJECTED"?"error":"neutral"}>{request.status}</StatusBadge>}
-                  <Link href={tpoRequestContextLink(request).href}
-                    className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+                  <TextLink href={tpoRequestContextLink(request).href}
+                    className="mt-2 inline-flex min-h-9 items-center">
                     {tpoRequestContextLink(request).label}
-                  </Link>
+                  </TextLink>
                 </td>
               </tr>;
             })}

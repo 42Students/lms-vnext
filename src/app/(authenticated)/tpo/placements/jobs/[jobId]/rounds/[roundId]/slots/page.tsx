@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -7,6 +6,7 @@ import {Alert} from "@/components/ui/alert";
 import {TpoInterviewSlotPlanner} from "@/components/placements/tpo-interview-slot-planner";
 import {getTpoInterviewSlotWorkspace} from "@/modules/placements/tpo-interview-slot-service";
 import {PlacementsServiceError} from "@/modules/placements/errors";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 export default async function SlotsPage({params}:{params:Promise<{jobId:string;roundId:string}>}){
  const context=await getCurrentRequestContext();
@@ -18,8 +18,8 @@ export default async function SlotsPage({params}:{params:Promise<{jobId:string;r
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader eyebrow="TPO · Interviews" title={data.round.name+" · Slots and rooms"}
    description="Generate interview slots, book candidates and resolve room assignments before the drive day."
-   actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule"}
-     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring md:w-auto md:min-h-9">← Candidate schedule</Link>}/>
+   actions={<ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule"}
+     className="w-full md:w-auto">← Candidate schedule</ButtonLink>}/>
 
   {!data.storageReady?<Alert tone="warning">
    Candidate-specific interview slot storage has not been registered. The orchestrator must register

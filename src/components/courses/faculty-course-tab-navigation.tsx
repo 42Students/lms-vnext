@@ -1,12 +1,12 @@
 "use client";
 import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
-import Link from "next/link";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { facultyCourseTabs, facultyCourseTabFromPath, facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type FacultyTeachingSection = {
   deliveryId: string;
@@ -93,18 +93,18 @@ export function FacultyCourseTabNavigation({
       </div>
       <Disclosure title="Course tools" className="min-w-0">
       <nav aria-label="Course tools" className="mt-2 grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
-        <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-          className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] py-2 text-center text-[13px] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring sm:w-auto md:min-h-9">
+        <ButtonLink variant="secondary" href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
+          className="min-w-0 w-full sm:w-auto">
           Author Assignments
-        </Link>
-        <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-          className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] py-2 text-center text-[13px] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring sm:w-auto md:min-h-9">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
+          className="min-w-0 w-full sm:w-auto">
           Build Quizzes
-        </Link>
-        <Link href={"/teacher/live-classes?deliveryId="+encodeURIComponent(deliveryId)}
-          className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] py-2 text-center text-[13px] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring sm:w-auto md:min-h-9">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href={"/teacher/live-classes?deliveryId="+encodeURIComponent(deliveryId)}
+          className="min-w-0 w-full sm:w-auto">
           Live Classes
-        </Link>
+        </ButtonLink>
       </nav>
       </Disclosure>
       <Tabs className="faculty-prototype-course-tabs" ariaLabel="Faculty course tabs" value={activeTab} renderPanel={false}

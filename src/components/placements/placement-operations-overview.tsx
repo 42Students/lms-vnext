@@ -1,7 +1,6 @@
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { StatTile } from "@/components/ui/stat-tile";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
-import Link from "next/link";
 import { SuperAdminDriveQuickSearch } from "@/components/placements/super-admin-drive-quick-search";
 import {SuperAdminNeedsAttention} from "@/components/placements/super-admin-needs-attention";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -11,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
@@ -60,7 +61,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
           <Button type="submit" variant="secondary">Apply</Button>
         </form>:null}
       </div>
-      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." action={<Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Drive lifecycle</Link>} /></div> :
+      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." action={<ButtonLink variant="secondary" href={basePath+"/drives"}>Drive lifecycle</ButtonLink>} /></div> :
         <div className="min-w-0 divide-y divide-border">{operations.workQueue.map((item, index) =>
           <div key={item.jobId + item.code + index} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
@@ -68,7 +69,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
               <p className="mt-2 font-semibold text-foreground">{item.jobTitle}</p>
               <p className="mt-1 text-sm text-body">{item.companyName} · {item.code.toLowerCase().split("_").join(" ")}</p>
             </div>
-            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-11 md:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
+            <ButtonLink variant="secondary" href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="shrink-0">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</ButtonLink>
           </div>)}</div>}
     </section>}
     {showDriveSearch?<section className="min-w-0 space-y-3" aria-label="Active placement drives">
@@ -81,8 +82,8 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Link href={basePath+"/new"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 text-sm font-semibold text-on-primary hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">New Drive</Link>
-          <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">All drives</Link>
+          <ButtonLink variant="primary" href={basePath+"/new"}>New Drive</ButtonLink>
+          <TextLink href={basePath+"/drives"} className="inline-flex min-h-11 items-center text-sm md:min-h-9">All drives</TextLink>
         </div>
       </div>
       <SuperAdminDriveQuickSearch basePath={basePath}
@@ -98,7 +99,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         })}/>
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3 text-xs text-muted-foreground">
         <span>Showing a sample of active drives. {operations.summary.totalJobs} drives in the complete directory.</span>
-        <Link href={basePath+"/drives"} className="min-h-9 font-semibold text-link underline">All drives</Link>
+        <TextLink href={basePath+"/drives"} className="min-h-9">All drives</TextLink>
       </div>
     </section>:null}
     <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
@@ -130,7 +131,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         <div className="divide-y divide-border">{operations.upcomingRounds.map(round =>
           <div key={round.roundId} className="flex min-w-0 flex-col gap-[var(--lms-space-2)] py-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
             <div><p className="m-0 font-semibold text-foreground">{round.companyName} · {round.jobTitle}</p><p className="mt-1 text-sm text-body">{round.sequence}. {round.name} · {formatWhen(round.scheduledAt, round.timezone)}</p></div>
-            <Link href={basePath + "/jobs/" + round.jobId} className="text-sm font-semibold text-primary-text hover:text-primary-hover">Open drive →</Link>
+            <TextLink href={basePath + "/jobs/" + round.jobId} className="text-sm">Open drive →</TextLink>
           </div>)}</div>}
     </section>
     <section className="border-b border-border pb-6">
@@ -138,7 +139,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       <div className="divide-y divide-border">{operations.jobs.map(item =>
         <div key={item.job.id} className="flex min-w-0 flex-col gap-[var(--lms-space-3)] py-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
           <div><div className="flex flex-wrap items-center gap-2"><p className="m-0 font-semibold text-foreground">{item.job.title}</p><StatusBadge tone={item.job.status === "PUBLISHED" ? "success" : item.job.status === "DRAFT" ? "warning" : "neutral"}>{item.job.status}</StatusBadge></div><p className="mt-1 text-sm text-body">{item.job.company.name} · {item.metrics.submittedApplications} applications · {item.metrics.roundCount} rounds</p></div>
-          <Link href={basePath + "/jobs/" + item.job.id} className="text-sm font-semibold text-primary-text hover:text-primary-hover">Open drive →</Link>
+          <TextLink href={basePath + "/jobs/" + item.job.id} className="text-sm">Open drive →</TextLink>
         </div>)}</div>
     </section>
   </div>;

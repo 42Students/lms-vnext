@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { and, eq, sql } from "drizzle-orm";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getDb } from "@/db/client";
@@ -10,6 +9,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import type {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import type {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const stages=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const;
@@ -73,15 +73,15 @@ export async function CollegeDriveAttentionBanner({jobId,attention}:{
         flag.category==="MISSING_OFFER_LETTER"?"Offer letter missing":"Closing soon, low conversion";
       return <li key={flag.category}>
         <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">
-          <Link href={flag.href} className="underline underline-offset-2">{title}</Link>
+          <TextLink href={flag.href}>{title}</TextLink>
           <span className="rounded-full bg-[color:var(--lms-gold-subtle)] px-2 py-0.5 text-xs">{flag.count}</span>
         </div>
         {rows.length>0?<ul className="mt-1 space-y-1 pl-2">{rows.map(row=><li key={row.id}>
-          <Link className="inline-flex min-h-11 items-center text-sm underline underline-offset-2 focus-ring md:min-h-9"
+          <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9"
             href={base+"/applications?stage="+stage+"&applicationId="+encodeURIComponent(row.id)}>
             {row.name||"Applicant"} — Review application →
-          </Link>
-        </li>)}</ul>:<Link href={flag.href} className="mt-1 inline-block text-sm underline">View matching applications →</Link>}
+          </TextLink>
+        </li>)}</ul>:<TextLink href={flag.href} className="mt-1 inline-block text-sm">View matching applications →</TextLink>}
         {flag.count>rows.length?<p className="pl-2 text-xs">Showing {rows.length} of {flag.count} affected candidates. Open the filtered list for all.</p>:null}
       </li>;
     })}</ul>
@@ -102,18 +102,18 @@ export async function CollegeDrivePipelineOverview({jobId,data}:{
       ["Applications",base+"/applications"],
       ["Schedule",base+"/interviews"],
       ["Settings",base+"/settings"],
-    ] as const).map(([label,href])=><Link key={href} href={href} role="tab"
+    ] as const).map(([label,href])=><TextLink variant="bare" key={href} href={href} role="tab"
       aria-selected={label==="Overview"} tabIndex={label==="Overview"?0:-1}
       className={"inline-flex min-h-11 items-center border-b-2 px-2 text-sm font-semibold focus-ring "+
        (label==="Overview"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
       {label}
-    </Link>)}
+    </TextLink>)}
   </nav>
 
   <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-border pb-3" aria-label="Additional drive actions">
-    <Link href={base+"/shortlisted"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">
+    <TextLink href={base+"/shortlisted"} className="inline-flex min-h-11 items-center md:min-h-9">
       View Shortlisted →
-    </Link>
+    </TextLink>
   </div>
   <section className="space-y-3" aria-label="College application pipeline">
    <Heading level={2} size="lg">Pipeline</Heading>

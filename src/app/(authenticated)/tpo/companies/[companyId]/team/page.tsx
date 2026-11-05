@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -8,6 +7,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {Alert} from "@/components/ui/alert";
 import {TpoCompanyTeamComposer} from "@/components/tpo/tpo-company-team-composer";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function TpoCompanyTeamPage({params}:{
  params:Promise<{companyId:string}>;
@@ -29,8 +29,8 @@ export default async function TpoCompanyTeamPage({params}:{
  return <div className="min-w-0 space-y-4">
   <PageHeader  title={result.status==="READY"?
    "Company discussion · "+result.companyName:"Company discussion"}
-   description="A college-private conversation about this company. Recruiters and students cannot read it." actions={<Link href={"/tpo/companies/"+encodeURIComponent(companyId)}
-   className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm text-link underline focus-ring md:min-h-9">Back to company</Link>}/>
+   description="A college-private conversation about this company. Recruiters and students cannot read it." actions={<TextLink href={"/tpo/companies/"+encodeURIComponent(companyId)}
+   className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">Back to company</TextLink>}/>
   {result.status==="NOT_REGISTERED"?
    <Alert tone="warning">
     Company Team discussions require their registered database migration. No messages were inferred from private conversations.

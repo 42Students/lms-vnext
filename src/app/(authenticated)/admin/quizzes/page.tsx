@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -25,14 +24,14 @@ export default async function SuperAdminQuizzesPage({
   if (!query.success) return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Quizzes" eyebrow="Courses & Content"/>
     <ErrorState title="Invalid quiz filters" description="Check search, status and page."
-      action={<Link href="/admin/quizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>} />
+      action={<TextLink href="/admin/quizzes" className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto">Clear filters</TextLink>} />
   </div>;
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context)) return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Quizzes" eyebrow="Courses & Content"/>
     <ErrorState title="Quiz access denied"
       description="Your account cannot access Super Admin quizzes."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Back to dashboard</Link>}/>
+      action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto">Back to dashboard</TextLink>}/>
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Quizzes" eyebrow="Courses & Content"/>
@@ -50,7 +49,7 @@ export default async function SuperAdminQuizzesPage({
     <PageHeader title="Quizzes"/>
     <ErrorState title="Quiz access denied"
       description="The selected college is not accessible in your organization or administrative scope. Choose an authorized college."
-      action={<Link href="/admin/quizzes" className="font-semibold text-primary-text underline">Retry selected college</Link>}/>
+      action={<TextLink href="/admin/quizzes">Retry selected college</TextLink>}/>
   </div>;}
   // Listing availability and creation options fail independently. A failed
   // options read must not hide authorized quiz results; failed directory reads
@@ -63,8 +62,8 @@ export default async function SuperAdminQuizzesPage({
     <PageHeader title="Quizzes" eyebrow="Courses & Content"/>
     <ErrorState title="Quizzes could not be loaded"
       description="Failed to fetch quizzes. Please try again. Your selected college and filters have not changed."
-      action={<Link href={adminAssessmentHref("QUIZ",query.data)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry loading quizzes</Link>}/>
+      action={<TextLink href={adminAssessmentHref("QUIZ",query.data)}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto">Retry loading quizzes</TextLink>}/>
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 max-w-full space-y-4">
@@ -95,7 +94,7 @@ export default async function SuperAdminQuizzesPage({
         </Select>
        </Label>
        <Button type="submit" >Apply</Button>
-       {query.data.courseCode?<Link href="/admin/quizzes" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear</Link>:null}
+       {query.data.courseCode?<TextLink href="/admin/quizzes" className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:null}
       </form>
       <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
        Quizzes fetched successfully · {data.total.toLocaleString("en-IN")} matching quizzes in this college · {data.items.length} on this page.
@@ -107,8 +106,7 @@ export default async function SuperAdminQuizzesPage({
         lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>:
       <Alert tone="warning">
         Quiz setup options could not be loaded. Existing quizzes remain visible.{" "}
-        <Link href={adminAssessmentHref("QUIZ",query.data)}
-          className="font-semibold text-primary-text underline">Retry options</Link>.
+        <TextLink href={adminAssessmentHref("QUIZ",query.data)}>Retry options</TextLink>.
       </Alert>}
     </div>
     <AdminAssessmentDirectory key={context.adminScope.collegeId}

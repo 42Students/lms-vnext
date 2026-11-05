@@ -1,5 +1,4 @@
 import { z } from "zod";
-import Link from "next/link";
 import { Banner } from "@/components/ui/banner";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -20,6 +19,7 @@ import { listMyLearnerProjectDueStates } from "@/modules/projects/learner-projec
 import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 import { learnerProjectArchiveState } from "@/modules/projects/learner-project-archive-model";
 import { learnerProjectHasBlockedTasks } from "@/modules/projects/learner-project-work-model";
+import { TextLink } from "@/components/ui/text-link";
 
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -114,9 +114,9 @@ export default async function LearnerProjectsPage({
       <PageHeader title="Projects" description="Choose a project to open its workspace." />
       {invalidFilters ? <Banner tone="warning" role="status">
         Some project filters were invalid and have been reset to safe defaults.
-        <Link href="/learn/projects" className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+        <TextLink href="/learn/projects" className="ml-2 inline-flex min-h-9 items-center">
           Clear filters
-        </Link>
+        </TextLink>
       </Banner> : null}
       {query.page!==page ? <Banner tone="info" role="status">
         That project page is no longer available. Showing page {page} instead.

@@ -1,5 +1,4 @@
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -16,6 +15,8 @@ import {
   getTpoTrustedCompanies,
 } from "@/modules/placements/tpo-settings-people-service";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function TpoTrustedCompaniesPage() {
   const context = await getCurrentRequestContext();
@@ -38,12 +39,11 @@ export default async function TpoTrustedCompaniesPage() {
         title="Trusted Companies"
         description="Review and confirm changes to college-specific employer trust flags. Trusted email domains are explicit college-scoped entries, separate from company trust flags."
         actions={
-          <Link
+          <ButtonLink variant="secondary"
             href="/tpo/settings/team"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
           >
             Placement Team
-          </Link>
+          </ButtonLink>
         }
       />
       <TpoSettingsNav active="trusted" compact />
@@ -116,8 +116,7 @@ export default async function TpoTrustedCompaniesPage() {
             empty={<p>No active placement company relationships are available for this college.</p>}
             columns={[
               {key:"company",header:"Company",mobilePriority:"primary",cell:company=>
-                <Link href={"/tpo/companies/"+encodeURIComponent(company.companyId)}
-                  className="font-semibold text-link underline">{company.name}</Link>},
+                <TextLink href={"/tpo/companies/"+encodeURIComponent(company.companyId)}>{company.name}</TextLink>},
               {key:"trust",header:"Trust status",mobilePriority:"secondary",cell:company=>
                 <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                   <StatusBadge tone={company.isTrusted?"success":"neutral"}>

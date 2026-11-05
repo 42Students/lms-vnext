@@ -1,11 +1,11 @@
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyAssessmentOverview } from "@/components/courses/faculty-assessment-overview";
 import { FacultyAssessmentCreate } from "@/components/courses/faculty-assessment-create";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function FacultyAllQuizzesPage({searchParams}:{
  searchParams:Promise<{content?:string}>;
@@ -23,10 +23,10 @@ export default async function FacultyAllQuizzesPage({searchParams}:{
           <Badge tone="neutral">{overview.quizzes.length} {overview.quizzes.length===1?"Quiz":"Quizzes"}</Badge>
           <Badge tone="neutral">{new Set(overview.quizzes.map(quiz=>quiz.courseCode)).size} {new Set(overview.quizzes.map(quiz=>quiz.courseCode)).size===1?"Course":"Courses"}</Badge>
         </div>
-        <Link href="/teacher/results"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] md:min-h-9">
+        <TextLink href="/teacher/results"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Assessment results overview →
-        </Link>
+        </TextLink>
       </div>
       <FacultyAssessmentOverview filesEnabled={assignmentFilesRuntimeEnabled()} overview={overview} kind="QUIZ" initialQuizId={initialQuizId} />
     </div>

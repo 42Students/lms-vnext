@@ -1,9 +1,9 @@
 "use client";
-import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 
 const NAV=[
  {label:"Platform",href:"/platform"},
@@ -41,14 +41,14 @@ export function MarketingHeaderClient(){
  const dismiss=()=>setOpen(false);
  return <header ref={ref} className={"sticky top-0 z-(--lms-z-shell) min-h-[68px] border-b backdrop-blur-lg transition-[background-color,box-shadow,border-color] motion-reduce:transition-none "+(scrolled?"border-[var(--lms-canvas-border)] bg-[color:color-mix(in_srgb,var(--lms-white)_95%,transparent)] shadow-(--lms-elevation-3)":"border-transparent bg-[color:color-mix(in_srgb,var(--lms-white)_90%,transparent)]")}>
   <nav aria-label="Primary" className="relative mx-auto flex min-h-[68px] max-w-[1180px] flex-wrap items-center justify-between gap-3 px-5">
-   <Link href="/" onClick={dismiss} className="inline-flex min-h-11 items-center focus-ring" aria-label="42 LMS home">
+   <TextLink variant="bare" href="/" onClick={dismiss} className="inline-flex min-h-11 items-center focus-ring" aria-label="42 LMS home">
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <Img src="/assets/images/legacy-42lms-logo.svg" width={151} height={37} alt="42 LMS" className="h-[36px] w-[152px] object-contain"/>
-   </Link>
+   </TextLink>
    <div className="hidden lg:flex items-center gap-5">
-    {NAV.map(item=><Link key={item.href} href={item.href} className={navLink}>{item.label}</Link>)}
-    <Link href="/login" className={navLink}>Login</Link>
-    <Link href="/request-demo" className={demoLink}>Request a Demo <span aria-hidden="true" className="ml-2">↗</span></Link>
+    {NAV.map(item=><TextLink variant="bare" key={item.href} href={item.href} className={navLink}>{item.label}</TextLink>)}
+    <TextLink variant="bare" href="/login" className={navLink}>Login</TextLink>
+    <TextLink variant="bare" href="/request-demo" className={demoLink}>Request a Demo <span aria-hidden="true" className="ml-2">↗</span></TextLink>
    </div>
    <Button ref={button} type="button" aria-label="Toggle menu" aria-expanded={open} aria-controls="marketing-mobile-menu"
     onClick={()=>setOpen(value=>!value)}
@@ -59,9 +59,9 @@ export function MarketingHeaderClient(){
    </Button>
    <div id="marketing-mobile-menu" hidden={!open} className="absolute inset-x-0 top-full z-(--lms-z-shell) border-b border-[var(--lms-canvas-border)] bg-surface px-5 pb-5 pt-2 shadow-xl lg:!hidden">
     <div className="flex flex-col items-stretch gap-1">
-     {NAV.map(item=><Link onClick={dismiss} key={item.href} href={item.href} className={navLink}>{item.label}</Link>)}
-     <Link href="/login" onClick={dismiss} className={navLink}>Login</Link>
-     <Link href="/request-demo" onClick={dismiss} className={demoLink}>Request a Demo <span aria-hidden="true" className="ml-2">↗</span></Link>
+     {NAV.map(item=><TextLink variant="bare" onClick={dismiss} key={item.href} href={item.href} className={navLink}>{item.label}</TextLink>)}
+     <TextLink variant="bare" href="/login" onClick={dismiss} className={navLink}>Login</TextLink>
+     <TextLink variant="bare" href="/request-demo" onClick={dismiss} className={demoLink}>Request a Demo <span aria-hidden="true" className="ml-2">↗</span></TextLink>
     </div>
    </div>
   </nav>

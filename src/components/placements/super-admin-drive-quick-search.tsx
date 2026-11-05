@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import {SuperAdminDriveDuplicate} from "@/components/placements/super-admin-drive-duplicate";
 import {SuperAdminDriveDeadline} from "@/components/placements/super-admin-drive-deadline";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
-import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export type QuickDrive = {
   id: string; title: string; companyName: string; status: string;
@@ -42,7 +43,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
   return <section aria-label="Find drives" className="space-y-3 border-b border-border pb-5">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
     <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Find a drive</Heading>
-    <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">View all drives →</Link>
+    <ButtonLink variant="secondary" href={basePath+"/drives"}>View all drives →</ButtonLink>
     </div>
     <div className="flex flex-wrap items-end gap-3">
       <Label stack className="min-w-52 flex-1">Search by drive or company
@@ -83,9 +84,9 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
           </div>
           <div className="min-w-0 flex-1">
             <Heading level={3} size="base" className="break-words text-foreground">
-              <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)} className="after:absolute after:inset-0 hover:text-link focus-ring">
+              <TextLink href={basePath+"/jobs/"+encodeURIComponent(job.id)} className="after:absolute after:inset-0">
                {job.title}
-              </Link>
+              </TextLink>
             </Heading>
             <p className="mt-1 break-words text-sm text-body">{job.companyName}</p>
             <p className="mt-3 text-sm text-muted-foreground">{job.applicants} {job.applicants===1?"applicant":"applicants"}</p>
@@ -96,8 +97,8 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
             </p>:null}
           </div>
           <div className="relative z-(--lms-z-raised) flex min-w-0 flex-wrap items-center gap-3 border-t border-border pt-3 text-sm font-semibold">
-            <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/applications"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Applications</Link>
-            <Link href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/settings"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Edit</Link>
+            <TextLink href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/applications"} className="inline-flex min-h-11 items-center md:min-h-9">Applications</TextLink>
+            <TextLink href={basePath+"/jobs/"+encodeURIComponent(job.id)+"/settings"} className="inline-flex min-h-11 items-center md:min-h-9">Edit</TextLink>
             <Disclosure title={<>
                <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
                <span className="sr-only">More actions</span>
@@ -114,7 +115,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
        <Heading level={3} className="text-foreground">{jobs.every(job=>job.status!=="PUBLISHED")&&filter==="ACTIVE"&&!pattern?
         "No active drives yet":pattern?"No drives match your search":"No drives match this status"}</Heading>
        <p className="text-sm text-body">{pattern?"Try a different search or clear the search field.":filter==="ACTIVE"?"Published drives will appear here once a drive is open.":"Use the full directory to find or create a drive."}</p>
-       <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center font-semibold text-link underline">View all drives</Link>
+       <TextLink href={basePath+"/drives"} className="inline-flex min-h-11 items-center">View all drives</TextLink>
     </div>}
     {matching.length>60?<p className="text-xs text-muted-foreground leading-5">
       Showing the first 60. Narrow the search to find another drive.

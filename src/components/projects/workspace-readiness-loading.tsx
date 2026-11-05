@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Six-row legacy readiness skeleton. This is only a loading placeholder;
  * the authorized readiness service still determines readiness and permissions.
@@ -19,8 +19,8 @@ export function WorkspaceReadinessLoading({basePath}:{basePath:string}){
        <span className="h-4 min-w-0 flex-1 animate-pulse rounded bg-surface-secondary"/>
      </div>)}
    </div>
-   <Link href={basePath} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+   <TextLink href={basePath} className="inline-flex min-h-11 items-center md:min-h-9">
      Back to workspaces
-   </Link>
+   </TextLink>
  </section>;
 }

@@ -2,7 +2,6 @@ import {DataTable} from "@/components/ui/data-table";
 import {Disclosure} from "@/components/ui/disclosure";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -16,6 +15,7 @@ import {
   tpoCompanyContactLogQuerySchema,
 } from "@/modules/placements/tpo-company-contact-log-service";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = { page?: string | string[]; type?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -61,8 +61,8 @@ export default async function TpoCompanyContactLogPage({
         
         title={log.companyName + " · Contact log"}
         description="Read-only CRM interaction history for contacts explicitly linked to this college-company relationship."
-        actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-          className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline hover:underline focus-ring md:min-h-9 w-full md:w-auto">← Company details</Link>}
+        actions={<TextLink href={"/tpo/companies/" + encodeURIComponent(companyId)}
+          className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9 w-full md:w-auto">← Company details</TextLink>}
       />
       {!log.available ? (
         <Alert tone="warning">
@@ -115,7 +115,7 @@ export default async function TpoCompanyContactLogPage({
             caption="Recorded company contact interactions"
             rows={log.rows}
             getRowKey={(row)=>row.id}
-            empty={<EmptyState title="No recorded contact interactions match this filter." description="Calls, emails and messages are not inferred from invitations or drives." action={<Link href={path} className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">Filter</Link>}/>}
+            empty={<EmptyState title="No recorded contact interactions match this filter." description="Calls, emails and messages are not inferred from invitations or drives." action={<TextLink href={path} className="md:min-h-9 inline-flex min-h-11 items-center">Filter</TextLink>}/>}
             columns={[
               {key:"contact",header:"Contact",mobileLabel:"Contact",mobilePriority:"primary",cell:(row)=>row.contactName},
               {key:"type",header:"Type",mobileLabel:"Type",mobilePriority:"secondary",cell:(row)=>row.type},
@@ -128,14 +128,14 @@ export default async function TpoCompanyContactLogPage({
             <span className="text-body">Page {log.page} of {log.pages}</span>
             <div className="flex flex-wrap gap-3">
               {log.page > 1 ? (
-                <Link href={href(log.page - 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">
+                <TextLink href={href(log.page - 1)} className="inline-flex min-h-11 items-center md:min-h-9">
                   ← Previous
-                </Link>
+                </TextLink>
               ) : null}
               {log.pages !== null && log.page < log.pages ? (
-                <Link href={href(log.page + 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">
+                <TextLink href={href(log.page + 1)} className="inline-flex min-h-11 items-center md:min-h-9">
                   Next →
-                </Link>
+                </TextLink>
               ) : null}
             </div>
           </nav>:null}

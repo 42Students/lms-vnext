@@ -1,8 +1,8 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
-import Link from "next/link";
 import { Banner } from "@/components/ui/banner";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {listSuperAdminScreeningQueue} from "@/modules/admin-ui/super-admin-placement-screenings-service";
+import { TextLink } from "@/components/ui/text-link";
 const statuses=["ALL","PENDING","HOLD","REJECTED"] as const;
 export default async function SuperAdminScreeningsPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
@@ -21,8 +21,8 @@ export default async function SuperAdminScreeningsPage({searchParams}:{searchPar
       applications, not this manual decision queue. Open each application
       for any recorded assessment scores and the appropriate job context.
       Missing scores are never treated as zero or sorted ahead of scores.
-      <Link href="/admin/placements/applications"
-       className="ml-2 font-semibold text-primary-text underline">View applications and scores</Link>
+      <TextLink href="/admin/placements/applications"
+       className="ml-2">View applications and scores</TextLink>
     </p>
   </div>}
   statuses={statuses} searchParams={searchParams} loader={q=>listSuperAdminScreeningQueue(context,q)}/>;

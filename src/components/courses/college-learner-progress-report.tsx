@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,8 @@ import { StatTile } from "@/components/ui/stat-tile";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
 
@@ -71,14 +72,14 @@ export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Resul
     className="min-h-11 w-full md:min-h-9">
     {pending?"Loading…":report?"Refresh":"Show progress"}
    </Button>
-   <Link href="/college/course-progress"
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-ring md:min-h-9">
+   <ButtonLink variant="secondary" href="/college/course-progress"
+    className="w-full">
     Clear
-   </Link>
+   </ButtonLink>
   </form>
   {!choices.length?<div role="status" className="flex flex-wrap items-center gap-2 border border-border p-3 text-sm">
    Class and Course choices are currently unavailable or none are assigned.
-   <Link href="/college/course-progress" className="font-semibold text-link underline">Retry choices</Link>
+   <TextLink href="/college/course-progress">Retry choices</TextLink>
   </div>:null}
   {selectionError?<p role="alert" className="border border-[var(--lms-canvas-border)] p-3 text-sm text-[var(--lms-error)]">
    {selectionError}
@@ -102,12 +103,12 @@ export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Resul
     <p>Assignments submitted: {report.totalAssignments} measurable item(s)</p>
     <p>Quizzes attempted: {report.totalQuizzes} measurable item(s)</p>
    </div>
-   {report.rows.length>0?<Link prefetch={false} download
+   {report.rows.length>0?<ButtonLink variant="secondary" prefetch={false} download
     href={"/api/courses/college/learner-progress/export?"+
      new URLSearchParams({offeringId:report.chosen.offeringId,deliveryId:report.chosen.deliveryId}).toString()}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-ring md:min-h-9 print:hidden">
+    className="print:hidden">
     Export per-learner CSV
-   </Link>:<Button variant="secondary" type="button" disabled>Export per-learner CSV</Button>}
+   </ButtonLink>:<Button variant="secondary" type="button" disabled>Export per-learner CSV</Button>}
    <DataTable
     caption="Course Progress by learner"
     rows={pageRows}

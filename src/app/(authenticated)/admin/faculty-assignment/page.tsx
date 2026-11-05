@@ -4,7 +4,6 @@ import {courseTeachingAssignments,courseSectionDeliveries,courseOfferings,course
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {redirect} from "next/navigation";
 import {isSuperAdmin} from "@/modules/identity/context";
-import Link from "next/link";
 import {Alert} from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
@@ -13,6 +12,8 @@ import {SuperAdminFacultyAssignmentCreate,SuperAdminTeachingRoleEdit} from "@/co
 import {COURSE_TEACHING_ROLES} from "@/modules/courses/constants";
 import {getAdminCourseWorkspace} from "@/modules/courses/admin-course-workspace";
 import {listAdminFacultyAssignments,getSuperAdminFacultyAssignmentClasses} from "@/modules/admin-ui/super-admin-faculty-assignments-service";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 const statuses=["ALL","ACTIVE","ENDED"] as const;
 export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -51,11 +52,11 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
  return <div className="min-w-0 space-y-4 md:space-y-6">
   {collegeId&&classesResult.status==="rejected"?<Alert tone="warning" title="Some selection options are unavailable">
    Classes could not be loaded. Current faculty assignments remain available.
-   {" "}<Link href="/admin/faculty-assignment" className="font-semibold underline">Retry options</Link>.
+   {" "}<TextLink href="/admin/faculty-assignment">Retry options</TextLink>.
   </Alert>:null}
   {collegeId&&workspaceResult.status==="rejected"?<Alert tone="warning" title="Teaching assignment options are unavailable">
    Creation is temporarily disabled until the selected college's faculty and course choices can be verified.
-   {" "}<Link href="/admin/faculty-assignment" className="font-semibold underline">Retry options</Link>.
+   {" "}<TextLink href="/admin/faculty-assignment">Retry options</TextLink>.
   </Alert>:null}
   <AdminScopedReadPage
   intro={workspace?<div className="space-y-4">
@@ -72,7 +73,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
    </section>:<p role="status" className="text-sm text-muted-foreground">Faculty assignment totals are temporarily unavailable.</p>}
    <section aria-label="Create Faculty Assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
    <SuperAdminFacultyAssignmentCreate deliveries={editorDeliveries} faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>
-   <Link href="/admin/courses" className="inline-flex min-h-11 items-center self-start rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Create teaching assignment →</Link>
+   <ButtonLink variant="secondary" href="/admin/courses" className="self-start">Create teaching assignment →</ButtonLink>
   </section>
   </div>:null}
   classOptions={classes} title="Faculty Assignments" path="/admin/faculty-assignment" statuses={statuses}
@@ -98,9 +99,9 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
           with a revision check and activity log. Ending an association keeps
           its historical attendance and assessment records.
         </p>
-        <Link href="/admin/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+        <TextLink href="/admin/courses" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Open course delivery setup →
-        </Link>
+        </TextLink>
       </Disclosure>
       <Disclosure title={"End assignment "+row.id} className="min-w-0 rounded-[var(--lms-control-radius)] border border-error px-2"
         contentClassName="flex min-w-0 flex-col items-start gap-2 pb-3 pt-2">

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DataTable } from "@/components/ui/data-table";
@@ -15,6 +14,7 @@ import {
 } from "@/modules/groups/admin-read-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 type Detail = Awaited<ReturnType<typeof getCollegeGroupDetail>>;
 
@@ -160,10 +160,10 @@ export default async function CollegeGroupDetailPage({
 
       {rule ? (
         <section className="border-t border-border pt-4">
-          <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
+          <TextLink href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
+            className="inline-flex min-h-11 items-center md:min-h-9">
             Preview persisted membership rule (read-only)
-          </Link>
+          </TextLink>
           <p className="mt-1 text-xs text-muted-foreground">
             Counts are a bounded eligibility preview, not automatic enrollment or a promised refresh result.
           </p>
@@ -204,10 +204,10 @@ export default async function CollegeGroupDetailPage({
       {group.kind === "STUDY_GROUP" ? <section className="min-w-0 space-y-3">
         <Disclosure title="Manage members" className="min-w-0">
           <div className="min-w-0 space-y-3 pt-3">
-        <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
+        <TextLink href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Validate member CSV (dry run)
-        </Link>
+        </TextLink>
         <CollegeStudyMemberActions groupId={group.id} name={group.name}
           members={members} available={available} />
           </div>

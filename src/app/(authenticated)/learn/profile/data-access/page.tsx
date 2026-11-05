@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {getOwnLearnerAcademicSummary} from "@/modules/people/learner-academic-summary-service";
@@ -10,6 +9,7 @@ import {placementApplications,placementJobs,placementCompanyRelationships,placem
 import {placementCompanyShareSelections} from "@/db/schema/placement-company-share-selection";
 import {placementCompanyApplicantShares} from "@/db/schema/placement-company-shares";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** LEARNER-profile-misc-18: self-only, read-only data-access explanation. */
 export default async function LearnerProfileDataAccessPage({
@@ -45,11 +45,11 @@ export default async function LearnerProfileDataAccessPage({
   getOwnLearnerTpoSharePage(context,tpoPage),
  ]);
  return <div className="min-w-0 space-y-5">
-  <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-ring">← Profile</Link>
+  <TextLink href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">← Profile</TextLink>
   <PageHeader title="Who has my data" description="Your saved academic details, access boundaries and recorded changes."/>
   <p className="max-w-3xl text-xs leading-5 text-muted-foreground">
     The old learner academic-record and data-access GET endpoints are represented by
-    authenticated, membership-scoped pages at <Link href="/learn/profile/academic-record" className="font-semibold text-link underline">Academic record</Link> and this page.
+    authenticated, membership-scoped pages at <TextLink href="/learn/profile/academic-record">Academic record</TextLink> and this page.
     Requests are always scoped to your signed-in membership; no other learner identifier is accepted.
     Imported legacy date-times are displayed in Asia/Kolkata (IST); when the source lacked a timezone,
     migration provenance must be checked before interpreting an original instant.
@@ -67,7 +67,7 @@ export default async function LearnerProfileDataAccessPage({
    <Heading level={2} size="base" id="data-access-academic-record" className="leading-6 text-[var(--lms-heading)]">Academic record</Heading>
    <p className="mt-2 max-w-3xl break-words text-sm leading-[22px] text-body">Your current college may manage your program enrollment and class records. This is not a published transcript or proof of degree completion.</p>
    <p className="mt-2 max-w-3xl break-words text-sm leading-[22px] text-body">Current program: {academic.enrollment?.program??"Not recorded"}</p>
-   <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-ring">View academic record →</Link>
+   <TextLink href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center">View academic record →</TextLink>
   </section>
   <section aria-labelledby="data-access-company-shares" className="min-w-0 border-t border-border pt-4">
    <Heading level={2} size="base" id="data-access-company-shares" className="leading-6 text-[var(--lms-heading)]">Shared with companies</Heading>
@@ -102,8 +102,8 @@ export default async function LearnerProfileDataAccessPage({
     </li>)}
    </ul>:<p role="status" className="mt-3 text-sm text-body">No historical recruiter links for jobs you applied to are recorded.</p>}
    <nav aria-label="Recruiter link history pages" className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
-    {tpoShares.page>1?<Link href={"/learn/profile/data-access?tpoPage="+(tpoShares.page-1)} className="text-link underline">Previous links</Link>:null}
-    {tpoShares.hasMore?<Link href={"/learn/profile/data-access?tpoPage="+(tpoShares.page+1)} className="text-link underline">Next links</Link>:null}
+    {tpoShares.page>1?<TextLink href={"/learn/profile/data-access?tpoPage="+(tpoShares.page-1)}>Previous links</TextLink>:null}
+    {tpoShares.hasMore?<TextLink href={"/learn/profile/data-access?tpoPage="+(tpoShares.page+1)}>Next links</TextLink>:null}
    </nav>
   </section>
   <section aria-labelledby="data-access-changes" className="min-w-0 border-t border-border pt-4">

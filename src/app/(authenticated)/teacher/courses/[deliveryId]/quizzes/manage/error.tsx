@@ -1,14 +1,14 @@
 "use client";
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 export default function Error({reset}:{error:Error;reset:()=>void}){
  return <section className="min-w-0 space-y-4">
   <PageHeader title="Unable to load Section quizzes" />
   <p role="alert" className="max-w-xl text-sm leading-6 text-body">The quiz editor could not be loaded. Retry to recheck Section access and saved drafts.</p>
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
    <Button onClick={reset}>Retry</Button>
-   <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9">Back to courses</Link>
+   <ButtonLink variant="secondary" href="/teacher/courses">Back to courses</ButtonLink>
   </div>
  </section>;
 }

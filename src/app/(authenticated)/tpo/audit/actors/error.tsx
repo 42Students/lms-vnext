@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { TextLink } from "@/components/ui/text-link";
 
 export default function RouteError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return <div className="min-w-0 space-y-4">
@@ -13,10 +13,10 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
       description="Recorded activity could not be retrieved; no zero count is inferred."
       action={<>
         <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
-        <Link href="/tpo/audit"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
+        <TextLink href="/tpo/audit"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           ← All audit sources
-        </Link>
+        </TextLink>
       </>}
     />
   </div>;

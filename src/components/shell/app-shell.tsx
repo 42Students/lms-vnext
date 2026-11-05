@@ -10,7 +10,6 @@ import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import {PrototypePortalFrame} from "./prototype-portal-frame";
-import Link from "next/link";
 import {ShellLogoMark, ShellLogoWordmark} from "./shell-nav-icons";
 import { LegacyTopbar } from "./topbar/legacy-topbar";
 import { RouteAnnouncer } from "./route-announcer";
@@ -96,18 +95,18 @@ export async function AppShell({
         <TextLink href="#lms-main-content" className="sr-only">Skip to content</TextLink>
       <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar relative z-(--lms-z-sticky-inline) hidden h-screen shrink-0 flex-col md:flex">
         <div className="lms-sidebar-logo-row flex h-20 shrink-0 items-center justify-center border-b border-[var(--lms-sidebar-border)] px-2">
-          <Link href={homeHref} aria-label="42Students LMS home"
+          <TextLink variant="bare" href={homeHref} aria-label="42Students LMS home"
             className="lms-sidebar-brand-link inline-flex h-11 items-center justify-center rounded-lg focus-ring">
             <span className="lms-prototype-wordmark" aria-hidden="true">42LMS</span>
             <span className="lms-sidebar-brand-mark"><ShellLogoMark /></span>
              <span className="lms-sidebar-brand-wordmark"><ShellLogoWordmark /></span>
-          </Link>
+          </TextLink>
         </div>
         <div className="lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4">
           <ShellWidgetBoundary name="Sidebar navigation" fallbackHref={homeHref}><Suspense fallback={null}><SidebarNav items={navigation} /></Suspense></ShellWidgetBoundary>
         </div>
         {prototypePortal === "recruiter" ? (
-          <Link href="/hr/drives/new" className="lms-prototype-recruiter-action">+ Request a drive</Link>
+          <TextLink variant="bare" href="/hr/drives/new" className="lms-prototype-recruiter-action">+ Request a drive</TextLink>
         ) : null}
         <div className="lms-sidebar-role-details min-w-0 border-t border-[var(--lms-sidebar-border)]">
           <p className="m-0 min-w-0 truncate text-xs font-semibold text-muted-foreground">

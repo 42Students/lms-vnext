@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import {useEffect,useState} from "react";
 import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 
 export default function CollegeContactsError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const [noticeVisible,setNoticeVisible]=useState(true);
@@ -21,6 +21,6 @@ export default function CollegeContactsError({ reset }: { error: Error & { diges
     </div>:null}
     <ErrorState title="Couldn't load contacts" description="Something went wrong on our end. Please refresh the page or try again shortly."
     action={<><Button variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>
-      <Link href="/college/contacts" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link></>} />
+      <TextLink href="/college/contacts" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear filters</TextLink></>} />
   </>;
 }

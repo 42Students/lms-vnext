@@ -2,13 +2,13 @@ import { Alert } from "@/components/ui/alert";
 import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "./faculty-course-home-signals.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
-import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Signals = Awaited<
   ReturnType<typeof getFacultyCourseHomeSignals>
@@ -82,7 +82,7 @@ export function FacultyCourseHomeSignals({
             </p>
           </div>
           {contextReady
-            ? <Link href={reviewHref} className={actionClass}>{actionIcon}{actionLabel}</Link>
+            ? <TextLink variant="bare" href={reviewHref} className={actionClass}>{actionIcon}{actionLabel}</TextLink>
             : <Button variant="bare" type="button" disabled title="Loading course…" className={actionClass}>
                 {actionIcon}{actionLabel}
               </Button>}
@@ -95,17 +95,17 @@ export function FacultyCourseHomeSignals({
               ? "Faculty course signals could not be loaded. You can still use the other course tabs."
               : `Some faculty course signals are incomplete (${missing.join(", ")}). Unknown metrics are shown as unavailable, not zero.`}
           </p>
-          <Link href={facultyCourseTabHref(deliveryId,"home")+"?refreshSignals=1"}
-            className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-[var(--lms-control-height)]">
+          <TextLink href={facultyCourseTabHref(deliveryId,"home")+"?refreshSignals=1"}
+            className="mt-2 inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">
             Retry signals
-          </Link>
+          </TextLink>
         </Alert>
       ) : null}
 
-      {blueprintFocusHref?<Link href={blueprintFocusHref}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+      {blueprintFocusHref?<TextLink href={blueprintFocusHref}
+        className="inline-flex min-h-11 items-center text-sm">
         View pending assignment in Blueprint
-      </Link>:null}
+      </TextLink>:null}
       <section aria-label="Pending work">
         <div className="mb-3">
           <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">
@@ -176,12 +176,12 @@ export function FacultyCourseHomeSignals({
                 {signals.atRiskTotal>signals.atRisk.length?" · View all for remaining students":""}
               </p>
             </div>
-            <Link
+            <TextLink
               href={`/teacher/courses/${deliveryId}/students`}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-ring md:min-h-[var(--lms-control-height)]"
+              className="inline-flex min-h-11 items-center text-sm md:min-h-[var(--lms-control-height)]"
             >
               View all {signals.atRiskTotal} students
-            </Link>
+            </TextLink>
           </div>
           <ul className="mt-4 divide-y divide-border">
             {signals.atRisk.slice(0, 5).map((learner) => (
@@ -201,8 +201,8 @@ export function FacultyCourseHomeSignals({
                     <p>Submissions missing: {learner.missingSubmissionCount}</p>
                     <p>Average grade: {learner.averageGradePercent===null?"No graded work":learner.averageGradePercent+"%"}</p>
                   </div>
-                  <Link href={`/teacher/courses/${encodeURIComponent(deliveryId)}/students`}
-                    className="mt-2 inline-flex min-h-11 items-center text-primary-text underline focus-ring md:min-h-[var(--lms-control-height)]">View students</Link>
+                  <TextLink href={`/teacher/courses/${encodeURIComponent(deliveryId)}/students`}
+                    className="mt-2 inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">View students</TextLink>
                 </Disclosure>
               </li>
             ))}
@@ -219,10 +219,10 @@ export function FacultyCourseHomeSignals({
         <p className="mt-1 text-sm text-muted-foreground">
           Current learner averages across graded assignments.
         </p>
-        <Link href="/teacher/allAssignments"
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-ring md:min-h-[var(--lms-control-height)]">
+        <TextLink href="/teacher/allAssignments"
+          className="mt-2 inline-flex min-h-11 items-center text-sm md:min-h-[var(--lms-control-height)]">
           View all assessments
-        </Link>
+        </TextLink>
         {signals.performance.studentAverages.length<3?
           <p className="mt-2 text-xs text-muted-foreground">
             Grade a few submissions to see the class&apos;s score spread here.

@@ -1,8 +1,8 @@
-import Link from "next/link";
 import type {
   LearnerRecentPlacementEvent,
 } from "@/modules/placements/learner-recent-placement-activity-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function formatIst(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -26,10 +26,10 @@ export function LearnerRecentPlacementActivity({
         <Heading level={2} size="base" id="recent-placement-activity" className="m-0 text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
           Recent placement activity
         </Heading>
-        <Link href="/learn/my-placements/applications"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
+        <TextLink href="/learn/my-placements/applications"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           My applications →
-        </Link>
+        </TextLink>
       </div>
       <p className="mt-2 text-sm text-body leading-[22px]">
         Your recorded applications, final screening decisions and applied round outcomes.
@@ -44,8 +44,8 @@ export function LearnerRecentPlacementActivity({
         <ol className="mt-4 divide-y divide-border">
           {events.map((event) => (
             <li key={event.id} className="py-3 first:pt-0 last:pb-0">
-              <Link href={event.href}
-                className="block min-h-11 min-w-0 rounded-md py-2 hover:text-primary-text focus-ring">
+              <TextLink href={event.href}
+                className="block min-h-11 min-w-0 rounded-md py-2">
                 <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-center md:justify-between md:gap-4">
                   <span className="break-words text-sm font-semibold text-foreground">{event.heading}</span>
                   <time dateTime={event.occurredAt.toISOString()}
@@ -54,7 +54,7 @@ export function LearnerRecentPlacementActivity({
                   </time>
                 </div>
                 <p className="mt-1 break-words text-sm text-body leading-[22px]">{event.detail}</p>
-              </Link>
+              </TextLink>
             </li>
           ))}
         </ol>

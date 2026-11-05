@@ -1,5 +1,4 @@
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
 import { ZodError } from "zod";
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { PlacementsServiceError } from "@/modules/placements/errors";
@@ -10,6 +9,8 @@ import { can } from "@/modules/permissions/policy";
 import {tpoDriveTabHref} from "@/modules/placements/tpo-drive-tab-model";
 import {ErrorState} from "@/components/ui/error-state";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function TpoPlacementDrivePage({
   params,
@@ -37,10 +38,10 @@ export default async function TpoPlacementDrivePage({
     if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")
       return <ErrorState title="This drive doesn't exist"
         description="This drive is not available in your college."
-        action={<Link href="/tpo/placements/jobs" className="text-link underline">Go to Drives</Link>}/>;
+        action={<TextLink href="/tpo/placements/jobs">Go to Drives</TextLink>}/>;
     return <ErrorState title="Could not load drive"
       description="Please retry loading this drive."
-      action={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)} className="text-link underline">Retry</Link>}/>;
+      action={<TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}>Retry</TextLink>}/>;
   }
   const tab=Array.isArray(query.tab)?query.tab[0]:query.tab;
   if(tab&&["applicants","rounds","offers","drive-day","discussion","about","overview"].includes(tab)){
@@ -61,22 +62,21 @@ export default async function TpoPlacementDrivePage({
   return (
     <div className="min-w-0 space-y-4">
       <div className="flex flex-wrap justify-end gap-2" aria-label="Drive discussions">
-        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
-         className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+        <ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}>
          Discussion
-        </Link>
+        </ButtonLink>
       </div>
       <PlacementDriveWorkspace context={context} jobId={jobId} eyebrow="TPO" openPublish={openPublish}/>
       <Disclosure title={<>
           Drive shortcuts <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
         </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-3">
       <nav aria-label="Drive shortcuts" className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-      <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
-        className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">Discuss →</Link>
-      <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/interview-slots"}
-        className="inline-flex min-h-11 w-full max-w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
+      <ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
+        className="w-full sm:w-auto">Discuss →</ButtonLink>
+      <ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/interview-slots"}
+        className="w-full max-w-full sm:w-auto">
         Employer interview slot proposals →
-      </Link>
+      </ButtonLink>
       </nav>
       </Disclosure>
     </div>

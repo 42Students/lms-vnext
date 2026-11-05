@@ -2,7 +2,6 @@ import { StatTile } from "@/components/ui/stat-tile";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Badge } from "@/components/ui/badge";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
-import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Tabs } from "@/components/ui/tabs";
@@ -41,6 +40,8 @@ import {
   getFacultyCourseWorkspace,
 } from "@/modules/courses/faculty-course-service";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -282,12 +283,12 @@ function AssignmentItem({
         </div>
       ) : null}
 
-      <Link
+      <ButtonLink variant="secondary"
         href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
-        className="mt-3 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring md:min-h-9"
+        className="mt-3"
       >
         Assignment Report
-      </Link>
+      </ButtonLink>
       <FacultyAssignmentReview
         filesEnabled={assignmentFilesRuntimeEnabled()}
         assignmentId={item.id}
@@ -384,12 +385,12 @@ function QuizItem({
         </div>
       ) : null}
 
-      <Link
+      <ButtonLink variant="secondary"
         href={`/teacher/report/quiz/${item.id}?deliveryId=${encodeURIComponent(deliveryId)}`}
-        className="mt-3 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring md:min-h-9"
+        className="mt-3"
       >
         Quiz Report
-      </Link>
+      </ButtonLink>
       <FacultyQuizLearnerPreview quizId={item.id} deliveryId={deliveryId}/>
       <FacultyQuizReview
         quizId={item.id}
@@ -437,18 +438,16 @@ export function FacultyCourseWorkspace({
           {course.courseCode} · {course.sectionName} · {course.academicPeriodName}
         </p>
         {view!=="BLUEPRINT"?(      <nav aria-label="Overview actions" className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
-        <Link
+        <ButtonLink variant="secondary"
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
         >
           Section reports hub
-        </Link>
-        <Link
+        </ButtonLink>
+        <ButtonLink variant="secondary"
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
         >
           Current Section students
-        </Link>
+        </ButtonLink>
       </nav>):null}
       </div>
 
@@ -474,8 +473,8 @@ export function FacultyCourseWorkspace({
         deliveryId={course.deliveryId}
       />:<div role="alert" className="border-b border-border pb-4 text-sm text-body">
         Some course state could not be loaded. The Blueprint is still available.
-        <Link href={facultyCourseTabHref(course.deliveryId,"home")+"?refreshSignals=1"}
-          className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry signals</Link>
+        <TextLink href={facultyCourseTabHref(course.deliveryId,"home")+"?refreshSignals=1"}
+          className="ml-2 inline-flex min-h-11 items-center">Retry signals</TextLink>
       </div>}
 
       <section aria-label="In this Course" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
@@ -514,26 +513,26 @@ export function FacultyCourseWorkspace({
       </section>
 
       <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")}
+        <TextLink variant="bare" href={facultyCourseTabHref(course.deliveryId,"blueprint")}
           className="rounded-[var(--lms-control-radius)] focus-ring">
           <Metric label="Lessons" value={summary.lessons}
             detail="Open your Blueprint lessons →"/>
-        </Link>
-        <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=LECTURES"}
+        </TextLink>
+        <TextLink variant="bare" href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=LECTURES"}
           className="rounded-[var(--lms-control-radius)] focus-ring">
           <Metric label="Content" value={summary.contents}
             detail="Browse lectures and section materials →"/>
-        </Link>
-        <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=ASSESSMENTS"}
+        </TextLink>
+        <TextLink variant="bare" href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=ASSESSMENTS"}
           className="rounded-[var(--lms-control-radius)] focus-ring">
           <Metric label="Assignments" value={summary.assignments}
             detail="Browse lesson assignments →"/>
-        </Link>
-        <Link href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/quizzes"}
+        </TextLink>
+        <TextLink variant="bare" href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/quizzes"}
           className="rounded-[var(--lms-control-radius)] focus-ring">
           <Metric label="Quizzes" value={summary.quizzes}
             detail="Review quizzes and learner results →"/>
-        </Link>
+        </TextLink>
         <Metric
           label="Draft items"
           value={summary.draftItems}
@@ -602,18 +601,18 @@ export function FacultyCourseWorkspace({
             }))}
           />
           {selectedLessonId?<nav aria-label="Lesson navigation" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
-            <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center">
+            <TextLink href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="max-md:inline-flex max-md:min-h-11 max-md:items-center">
               Back to Blueprint
-            </Link>
+            </TextLink>
             {workspace.lessons.map((lesson,index)=>lesson.id===selectedLessonId?(
               <div key={lesson.id} className="flex flex-wrap items-center gap-3 text-sm">
-                {index>0?<Link className="text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1]?.id ?? "")}>
+                {index>0?<TextLink className="max-md:inline-flex max-md:min-h-11 max-md:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1]?.id ?? "")}>
                   Previous lesson
-                </Link>:null}
+                </TextLink>:null}
                 <span className="text-muted-foreground">Lesson {index+1} of {workspace.lessons.length}</span>
-                {index+1<workspace.lessons.length?<Link className="text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1]?.id ?? "")}>
+                {index+1<workspace.lessons.length?<TextLink className="max-md:inline-flex max-md:min-h-11 max-md:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1]?.id ?? "")}>
                   Next lesson
-                </Link>:null}
+                </TextLink>:null}
               </div>
             ):null)}
           </nav>:null}
@@ -681,10 +680,10 @@ export function FacultyCourseWorkspace({
                       </div>}
                       className="group min-w-0 border-b border-border bg-transparent py-3">
 
-                      {!selectedLessonId?<Link href={"?lesson="+encodeURIComponent(lesson.id)}
-                        className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                      {!selectedLessonId?<TextLink href={"?lesson="+encodeURIComponent(lesson.id)}
+                        className="mb-3 inline-flex min-h-11 items-center text-sm">
                         View lesson details →
-                      </Link>:<div className="mb-3 flex flex-wrap gap-2 text-xs">
+                      </TextLink>:<div className="mb-3 flex flex-wrap gap-2 text-xs">
                         <Badge tone="neutral">
                           {lesson.contents.length} content
                         </Badge>

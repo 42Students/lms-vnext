@@ -1,5 +1,4 @@
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { LearnerPlacementAlerts } from "@/components/placements/learner-placement-alerts";
@@ -16,6 +15,7 @@ import {learnerPlacementCellOfferEmptyMessage} from "@/modules/placements/learne
 import { getOwnLearnerPlacementRulesView } from "@/modules/placements/learner-placement-rules-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function LearnerPlacementCellPage({
  searchParams,
@@ -45,19 +45,19 @@ export default async function LearnerPlacementCellPage({
       {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
         <Alert tone="warning" role="alert">
           Personal placement alerts are temporarily unavailable. Your official offers and requests remain accessible.
-          <Link href="/learn/my-placements/placement" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          <TextLink href="/learn/my-placements/placement" className="ml-2 inline-flex min-h-11 items-center md:min-h-9">
             Retry personal alerts
-          </Link>
+          </TextLink>
         </Alert>
       )}
       <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 pt-4 pb-0 md:px-6 md:pt-6">
         <LearnerPlacementRegistration registration={registration}/>
       </div>
-      {!requestRead.available ? <Alert tone="warning" role="alert">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry requests</Link></Alert> : null}
+      {!requestRead.available ? <Alert tone="warning" role="alert">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <TextLink href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center md:min-h-9">Retry requests</TextLink></Alert> : null}
       <section id="requests" className="scroll-mt-24 min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6" aria-labelledby="placement-requests-heading">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
           <Heading level={2} size="lg" id="placement-requests-heading" className="text-[var(--lms-heading)]">Your requests</Heading>
-          <Link href="/learn/my-placements/support" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Request history →</Link>
+          <TextLink href="/learn/my-placements/support" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Request history →</TextLink>
         </div>
         <p className="text-sm text-body">All types of placement requests are tracked in My support-request history. Application, round and offer requests appear below alongside the other request form.</p>
       {requestWorkspace ? <LearnerPlacementRequests
@@ -90,22 +90,22 @@ export default async function LearnerPlacementCellPage({
             Placement rules could not be loaded. Use the full rules page to retry.
           </Alert>
         )}
-        <Link href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Read placement rules</Link>
+        <TextLink href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm">Read placement rules</TextLink>
       </section>
       <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
         <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">Need help with a placement decision?</Heading>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
-        <Link href="/learn/my-placements/support" className="mr-4 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">My support-request history →</Link>
-        <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Read placement rules →</Link>
+        <TextLink href="/learn/my-placements/support" className="mr-4 mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">My support-request history →</TextLink>
+        <TextLink href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">Read placement rules →</TextLink>
       </section>
       {offerRows.length===0 ? (
         <section aria-labelledby="learner-official-offers-heading" className="border-b border-border pb-6">
           <Heading level={2} size="base" id="learner-official-offers-heading" className="text-[var(--lms-heading)]">Official offers</Heading>
           <p className="mt-2 text-sm text-body">{learnerPlacementCellOfferEmptyMessage(offerRows.length)}</p>
-          <Link href="/learn/my-placements/applications"
-            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
+          <TextLink href="/learn/my-placements/applications"
+            className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">
             Review my applications →
-          </Link>
+          </TextLink>
         </section>
       ) : <LearnerPlacementOffers
         extensionsAvailable={requestRead.available}
@@ -122,7 +122,7 @@ export default async function LearnerPlacementCellPage({
       <section id="schedule" aria-labelledby="placement-schedule-heading" className="scroll-mt-24 min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
           <Heading level={2} size="lg" id="placement-schedule-heading" className="text-[var(--lms-heading)]">Your schedule</Heading>
-          <Link href="/learn/my-placements/schedule" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">View all rounds →</Link>
+          <TextLink href="/learn/my-placements/schedule" className="inline-flex min-h-11 items-center text-sm md:min-h-9">View all rounds →</TextLink>
         </div>
         {!requestRead.available?<p role="status" className="text-sm text-body">Schedule details cannot be verified right now. Open the full schedule to retry.</p>:
         requestWorkspace && requestWorkspace.rounds.length>0?(
@@ -142,15 +142,15 @@ export default async function LearnerPlacementCellPage({
       <section id="notices" aria-labelledby="placement-notices-heading" className="scroll-mt-24 min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
           <Heading level={2} size="lg" id="placement-notices-heading" className="text-[var(--lms-heading)]">Notices and placement alerts</Heading>
-          <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Read all college notices →</Link>
+          <TextLink href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Read all college notices →</TextLink>
         </div>
         <p className="text-sm leading-6 text-body">College-wide notices are published in Announcements. Personal alerts are separate and may include attendance or placement-status changes.</p>
         {alertRead.available?<p role="status" className="text-sm text-body">{alertRead.items.length} recent personal placement {alertRead.items.length===1?"alert":"alerts"} shown above. This is not a count of official notices.</p>:
           <p role="status" className="text-sm text-body">Personal alert history is temporarily unavailable. Official notices remain accessible.</p>}
         <div className="flex flex-wrap gap-4">
-          <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Placement-cell authored notices →</Link>
-          <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Notification preferences →</Link>
-          <Link href="/learn/my-placements/placement?request=absence-dispute#requests" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Wrongly marked absent? Ask the placement cell →</Link>
+          <TextLink href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Placement-cell authored notices →</TextLink>
+          <TextLink href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Notification preferences →</TextLink>
+          <TextLink href="/learn/my-placements/placement?request=absence-dispute#requests" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Wrongly marked absent? Ask the placement cell →</TextLink>
         </div>
       </section>
     </div>

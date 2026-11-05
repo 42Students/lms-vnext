@@ -1,10 +1,10 @@
 "use client";
-import Link from "next/link";
 import {useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {TPO_MORE_GROUPS} from "@/modules/placements/tpo-utility-model";
 import {apiFetch} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Counts={requests:number;messages:number;notifications:number;team:number|null};
 function showBadge(count:number){
@@ -82,7 +82,7 @@ export function TpoMoreNavigation(){
        const count=item.href==="/tpo/requests"?counts?.requests:
          item.href==="/tpo/messages"?counts?.messages:undefined;
        const badge=count===undefined?null:showBadge(count);
-       return <Link key={item.href} href={item.href}
+       return <TextLink variant="bare" key={item.href} href={item.href}
         className="group flex min-h-16 min-w-0 items-center gap-3 border-t border-[var(--lms-canvas-border)] bg-surface px-3 py-[12px] transition-colors duration-[var(--lms-motion-fast)] first:border-t-0 hover:bg-[var(--lms-primary-subtle)] focus-visible:bg-[var(--lms-primary-subtle)] focus-ring-inset md:min-h-[68px] md:px-[16px] md:py-3">
         <span aria-hidden="true"
           className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[color:var(--lms-border)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-500)] md:size-[40px]">
@@ -94,7 +94,7 @@ export function TpoMoreNavigation(){
         </span>
         {badge?<span aria-label={item.href==="/tpo/messages"?count+" unread messages":count+" waiting requests"} className="inline-flex min-w-6 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-on-primary">{badge}</span>:null}
         <svg aria-hidden="true" className="size-3 shrink-0 text-muted-foreground transition-transform duration-[var(--lms-motion-fast)] group-hover:translate-x-[2px] group-hover:text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 5 7 7-7 7"/></svg>
-       </Link>;
+       </TextLink>;
       })}
      </div>
     </section>;

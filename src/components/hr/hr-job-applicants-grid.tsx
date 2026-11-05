@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import {TpoGrid} from "@/components/tpo/grid/tpo-grid";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Only the recruiter-shared, server-paginated applicant projection can enter the sheet. */
 export type HrJobApplicantSheetRow={
@@ -59,9 +59,9 @@ export function HrJobApplicantsGrid({rows,scopeKey}:{
   rows={rows} rowKey={row=>row.id} columns={visibleColumns}
   storageKey={"hr-shared-applicants:"+scopeKey}
   mobilePrimaryKeys={["applicant","screening","role","application"]}
-  rowActions={row=><Link href={row.reviewHref}
-   className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring">
+  rowActions={row=><TextLink href={row.reviewHref}
+   className="inline-flex min-h-11 md:min-h-9 items-center">
    Review applicant
-  </Link>}
+  </TextLink>}
  />;
 }

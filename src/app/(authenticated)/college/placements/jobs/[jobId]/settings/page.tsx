@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {ErrorState} from "@/components/ui/error-state";
 import {Tabs} from "@/components/ui/tabs";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -24,6 +23,7 @@ import { CollegeDriveSettingsDirtyGuard } from "@/components/placements/college-
 import {listCollegeCompanyDirectory} from "@/modules/placements/college-company-directory-service";
 import {CollegeDraftCompanyPicker} from "@/components/placements/college-draft-company-picker";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 // Use a static route template: never put tenant/job IDs or filter values in
 // structured error metadata. Authorization failures must reach the role fence
@@ -46,8 +46,8 @@ export default async function CollegeDriveSettingsPage({
       <PageHeader title="Settings"/>
       <ErrorState title="Admin not assigned to a college"
         description="Contact your administrator to assign the College Admin role before managing placement jobs."
-        action={<Link href="/dashboard"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+        action={<TextLink href="/dashboard"
+          className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>}/>
     </div>;
   }
   const access = await resolveOptionalModuleAccess(context);
@@ -55,7 +55,7 @@ export default async function CollegeDriveSettingsPage({
     <PageHeader title="Settings"/>
     <ErrorState title="Placements unavailable"
       description="Placements is turned off for this college. Ask a Super Admin to enable Placements in Module Access before editing job settings."
-      action={<Link href="/college/module-access" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View college module access</Link>}/>
+      action={<TextLink href="/college/module-access" className="inline-flex min-h-11 items-center md:min-h-9">View college module access</TextLink>}/>
   </div>;
   const {jobId}=await params;
   const base="/college/placements/jobs/"+encodeURIComponent(jobId);
@@ -73,7 +73,7 @@ export default async function CollegeDriveSettingsPage({
       <PageHeader title="Settings"/>
       <ErrorState title="Drive details could not be loaded"
         description="The drive could not be verified. Editing is disabled until the latest record is available."
-        action={<Link href={base+"/settings"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+        action={<TextLink href={base+"/settings"} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
     </div>;
   }
   if(overviewResult.status==="rejected")
@@ -130,16 +130,16 @@ export default async function CollegeDriveSettingsPage({
     ?overviewResult.value.counts.applications:null;
   return <CollegeDriveSettingsDirtyGuard className="min-w-0 space-y-[var(--lms-space-4)]">
     <nav aria-label="Drive breadcrumb" className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      <Link href={returnTo} className="inline-flex min-h-9 items-center font-semibold text-link underline">Drives</Link>
+      <TextLink href={returnTo} className="inline-flex min-h-9 items-center">Drives</TextLink>
       <span aria-hidden="true">/</span><span className="min-w-0 truncate">{drive?.companyName??drive?.title??job.title}</span>
       <span aria-hidden="true">/</span><span aria-current="page">Settings</span>
     </nav>
     <PageHeader title="Settings" description={drive?.title??job.title}
       actions={<div className="flex flex-wrap items-center gap-3">
-        <Link className="inline-flex min-h-9 items-center font-semibold text-link underline"
-         href={base+"/settings"}>Refresh</Link>
-        <Link className="inline-flex min-h-9 items-center font-semibold text-link underline"
-         href={base+"/overview"}>Overview</Link>
+        <TextLink className="inline-flex min-h-9 items-center"
+         href={base+"/settings"}>Refresh</TextLink>
+        <TextLink className="inline-flex min-h-9 items-center"
+         href={base+"/overview"}>Overview</TextLink>
       </div>}/>
     <Tabs ariaLabel="Drive sections" renderPanel={false} value="settings"
       items={[
@@ -153,11 +153,11 @@ export default async function CollegeDriveSettingsPage({
       {typeof applicationCount==="number"?
         <span>{applicationCount} total application{applicationCount===1?"":"s"}</span>:
         <span role="status" className="text-warning-text">Applicant count unavailable; check before changing status.</span>}
-      <Link href={base+"/applications"} className="font-semibold text-link underline">View applications</Link>
+      <TextLink href={base+"/applications"}>View applications</TextLink>
     </div>
     {!drive?<Alert tone="warning">
       Applicant impact could not be verified. Review the drive overview before any high-impact lifecycle action.
-      <Link href={base+"/settings"} className="ml-2 font-semibold text-link underline">Retry</Link>
+      <TextLink href={base+"/settings"} className="ml-2">Retry</TextLink>
     </Alert>:null}
     <section aria-label="Linked company" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
       <Heading level={2} size="base" className="text-[var(--lms-heading)]">Company</Heading>
@@ -166,8 +166,8 @@ export default async function CollegeDriveSettingsPage({
         Company names can be searched in the college-scoped directory. Verified relationships
         cannot be silently replaced on a published drive.
       </p>
-      <Link href="/college/placements/companies"
-        className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline">Search companies</Link>
+      <TextLink href="/college/placements/companies"
+        className="mt-2 inline-flex min-h-9 items-center">Search companies</TextLink>
       <p className="mt-1 text-xs text-muted-foreground">The company relationship is college-scoped.
         It cannot be replaced by free-text editing on this page; manage verified company relationships
         in the placement operations workspace before creating a replacement draft.</p>

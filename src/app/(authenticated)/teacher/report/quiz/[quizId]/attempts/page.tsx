@@ -2,7 +2,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { hidesFacultyQuizRouteError } from "@/modules/courses/faculty-quiz-report-route-errors";
@@ -14,6 +13,8 @@ import { facultyQuizAttemptsQuerySchema,facultyQuizAttemptSearchSchema,facultyQu
 import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-attempts-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Query={deliveryId?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[];view?:string|string[]};
 export default async function FacultyQuizAttemptPage({
@@ -29,7 +30,7 @@ export default async function FacultyQuizAttemptPage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid Quiz Section or pagination"} />
-    <Link href="/teacher/allQuizzes" className="text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-ring hover:text-[var(--lms-primary-text)]">All Quizzes</Link>
+    <TextLink href="/teacher/allQuizzes" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">All Quizzes</TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   let data: Awaited<ReturnType<typeof getFacultyQuizAttemptDrilldown>>;
@@ -44,10 +45,10 @@ export default async function FacultyQuizAttemptPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Faculty · Quiz Report" title="Individual Quiz attempts"
       description={data.quiz.title+" · "+data.quiz.sectionName}
-      actions={<Link href={back}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] focus-ring hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">
+      actions={<ButtonLink variant="secondary" href={back}
+        className="w-full sm:w-auto">
         Full Quiz report
-      </Link>} />
+      </ButtonLink>} />
     <section className="min-w-0 border-b border-border py-4">
       <p className="text-sm text-body leading-[22px]">
         {data.quiz.resultsPublished
@@ -93,8 +94,8 @@ export default async function FacultyQuizAttemptPage({
           placeholder="Learner Name" className="min-h-11 md:min-h-[var(--lms-control-height)] w-full max-md:text-[16px]" />
       </Label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">Search</Button>
-      <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,"",data.query.view)}
-        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] focus-ring hover:text-[var(--lms-primary-text)]">Clear</Link>
+      <TextLink href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,"",data.query.view)}
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-[var(--lms-control-height)]">Clear</TextLink>
     </form>
     {data.items.length===0?<EmptyState title="No matching Quiz attempts"
       description={data.query.q||data.query.view!=="ALL"?"No attempts match these filters in your authorized Section. Clear the filters to see the full history.":"There are no persisted attempts in your authorized Section. This does not mean that results were published."} />

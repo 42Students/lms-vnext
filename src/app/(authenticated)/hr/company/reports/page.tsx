@@ -7,7 +7,6 @@ import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -30,6 +29,8 @@ import {hrCompanyReportPageSignals} from "@/modules/placements/hr-report-page-si
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   collegeId?: string | string[];
@@ -80,12 +81,11 @@ export default async function RecruiterCompanyReportsPage({
           title="Invalid report filters"
           description="Check the selected college, drive status and page values. No report data was loaded."
           action={
-            <Link
+            <ButtonLink variant="secondary"
               href="/hr/company/reports"
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring"
             >
               Clear filters
-            </Link>
+            </ButtonLink>
           }
         />
       </div>
@@ -100,14 +100,13 @@ export default async function RecruiterCompanyReportsPage({
       <PageHeader title="Company & Team" description="Reports"/>
       <ErrorState title="Could not load reports"
         description="The report data could not be loaded for this recruiter account and college. No incomplete totals are shown."
-        action={<Link href="/hr/company/reports"
-          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-ring">
+        action={<ButtonLink variant="secondary" href="/hr/company/reports">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
             <path d="M20 11a8 8 0 1 0-2 5.5M20 4v7h-7"/>
           </svg>
           Retry reports
-        </Link>}/>
+        </ButtonLink>}/>
     </div>;
   }
 
@@ -132,7 +131,7 @@ export default async function RecruiterCompanyReportsPage({
 
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {report.choices.map((grant) => (
-                <Link
+                <TextLink variant="bare"
                   key={grant.id}
                   href={recruiterCompanyReportsHref({
                     collegeId: grant.collegeId,
@@ -145,7 +144,7 @@ export default async function RecruiterCompanyReportsPage({
                   <span className="mt-1 block text-xs text-muted-foreground">
                     View this college&apos;s report →
                   </span>
-                </Link>
+                </TextLink>
               ))}
             </div>
           </section>
@@ -185,13 +184,13 @@ export default async function RecruiterCompanyReportsPage({
         title="Company & Team"
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
         actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:gap-4 max-md:flex-col max-md:items-stretch">
-          <Link href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">
+          <TextLink href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             Export report CSV
-          </Link>
-          <Link href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-body underline underline-offset-4 focus-ring md:min-h-9">
+          </TextLink>
+          <TextLink href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center text-sm text-body md:min-h-9">
             Drives →
-          </Link>
+          </TextLink>
         </div>}
       />
 
@@ -276,14 +275,14 @@ export default async function RecruiterCompanyReportsPage({
 
           <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
 
-          <Link
+          <TextLink
             href={recruiterCompanyReportsHref({
               collegeId,
             })}
-            className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-body underline underline-offset-4 md:min-h-9 md:w-auto focus-ring"
+            className="inline-flex min-h-11 w-full items-center justify-center text-sm text-body md:min-h-9 md:w-auto"
           >
             Clear filters
-          </Link>
+          </TextLink>
         </form>
       </Disclosure>
 
@@ -319,8 +318,8 @@ export default async function RecruiterCompanyReportsPage({
             description={query.status==="ALL"&&summary.total===0
               ?"Reports appear once you have a drive with applicants."
               :"No matching drives for these filters. Review the college or clear the selected drive status."}
-            action={query.status !== "ALL" ? <Link href={recruiterCompanyReportsHref({collegeId})}
-              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link> : undefined}
+            action={query.status !== "ALL" ? <TextLink href={recruiterCompanyReportsHref({collegeId})}
+              className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink> : undefined}
           />
         ) : (
           <HrCompanyReportsGrid
@@ -346,31 +345,29 @@ export default async function RecruiterCompanyReportsPage({
 
           <div className="flex flex-wrap gap-2">
             {page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={recruiterCompanyReportsHref({
                   collegeId,
                   status: query.status,
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring"
               >
                 Previous
-              </Link>
+              </ButtonLink>
             ) : null}
 
             {page < totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={recruiterCompanyReportsHref({
                   collegeId,
                   status: query.status,
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring"
               >
                 Next
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         </nav> : null}

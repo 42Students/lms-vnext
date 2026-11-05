@@ -6,7 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -18,6 +17,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPlacedStudentsByBranch } from "@/modules/placements/tpo-placed-branch-service";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Search = { seasonId?: string | string[]; jobId?: string | string[] };
 function first(input: string | string[] | undefined) { return Array.isArray(input) ? input[0] : input; }
 export default async function TpoPlacedByBranchPage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -36,7 +36,7 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
     <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader eyebrow="TPO · Reports" title="Placed students by branch"
         description="Unique learners with accepted offers and confirmed joins by current branch and season."
-        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Reports</Link>{report.season ? <ButtonLink variant="primary"
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><TextLink href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">← Reports</TextLink>{report.season ? <ButtonLink variant="primary"
           href={"/api/placements/reports/placed-branch?" + csvParams}
           className="w-full sm:w-auto">
           Download CSV

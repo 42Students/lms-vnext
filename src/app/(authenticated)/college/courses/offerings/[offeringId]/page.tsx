@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { z } from "zod";
 import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -10,6 +9,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminOfferingLearningPage } from "@/components/courses/admin-offering-learning-page";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeOfferingLearningPage({
   params,
@@ -59,7 +59,7 @@ export default async function CollegeOfferingLearningPage({
         description={legacyLink
           ? "Older course IDs and course slugs do not identify a unique semester offering. Choose the college's current course offering; no unrelated college data is opened."
           : "This link does not contain a valid course offering identifier."}
-        action={<Link href="/college/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Browse course offerings</Link>} />
+        action={<TextLink href="/college/courses" className="inline-flex min-h-11 items-center md:min-h-9">Browse course offerings</TextLink>} />
     </div>;
   }
   const query=await searchParams;
@@ -69,8 +69,8 @@ export default async function CollegeOfferingLearningPage({
       <PageHeader title="Course section unavailable" />
       <ErrorState title="Invalid section selection"
         description="This section link is invalid. Clear the selection to view the authorized course offering."
-        action={<Link href={`/college/courses/offerings/${encodeURIComponent(offeringId)}`}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear section selection</Link>} />
+        action={<TextLink href={`/college/courses/offerings/${encodeURIComponent(offeringId)}`}
+          className="inline-flex min-h-11 items-center md:min-h-9">Clear section selection</TextLink>} />
     </div>;
   }
   const deliveryId=selected??null;

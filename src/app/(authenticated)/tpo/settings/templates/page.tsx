@@ -1,13 +1,13 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { requireTpoBatchActor } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { TPO_MANUAL_MESSAGE_TEMPLATES } from "@/modules/placements/tpo-communication-prep-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic = "force-dynamic";
 export default async function TpoCommunicationTemplatesPage() {
@@ -24,6 +24,6 @@ export default async function TpoCommunicationTemplatesPage() {
       <Label className="block text-[length:var(--lms-font-sm)] print:hidden">Draft text<Textarea readOnly value={item.body} rows={5} className="mt-[6px] w-full resize-y"/></Label>
       <p className="hidden whitespace-pre-wrap break-words text-sm print:block leading-[22px]">{item.body}</p>
     </section>)}</div>
-    <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline sm:w-auto sm:justify-start focus-ring md:min-h-9 print:hidden">Review batches and their actual deadlines</Link>
+    <TextLink href="/tpo/batches" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto sm:justify-start md:min-h-9 print:hidden">Review batches and their actual deadlines</TextLink>
   </div>;
 }

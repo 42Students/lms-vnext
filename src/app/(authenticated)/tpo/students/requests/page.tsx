@@ -1,6 +1,5 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -20,6 +19,8 @@ import {
 import {Input} from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   status?: string | string[];
@@ -142,12 +143,12 @@ export default async function TpoStudentRequestsPage({
             No requests were loaded because one or more filters
             are invalid.
           </p>
-          <Link
+          <TextLink
             href="/tpo/students/requests"
-            className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9"
+            className="mt-4 inline-flex min-h-11 items-center md:min-h-9"
           >
             Clear filters
-          </Link>
+          </TextLink>
         </Alert>
       </div>
     );
@@ -188,12 +189,11 @@ export default async function TpoStudentRequestsPage({
          title="Student Requests"
         description="Read-only, college-scoped placement withdrawal, round reschedule and offer extension requests. Open the related placement job for operational context."
         actions={
-          <Link
+          <ButtonLink variant="secondary"
             href="/tpo/students"
-            className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-ring md:min-h-9"
           >
             Students intelligence
-          </Link>
+          </ButtonLink>
         }
       />
 
@@ -201,34 +201,34 @@ export default async function TpoStudentRequestsPage({
         aria-label="Students workspace tabs"
         className="flex flex-wrap gap-2 border-b border-border pb-3"
       >
-        <Link
+        <TextLink variant="bare"
           href="/tpo/students"
           className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-transparent px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-ring md:min-h-9"
         >
           Students roster
-        </Link>
-        <Link
+        </TextLink>
+        <TextLink
           href="/tpo/students/requests"
           aria-current="page"
-          className="lms-inline-link inline-flex min-h-11 items-center border-b-2 border-primary px-4 py-2 text-sm font-semibold text-link underline focus-ring md:min-h-9"
+          className="inline-flex min-h-11 items-center border-b-2 border-primary px-4 py-2 text-sm md:min-h-9"
         >
           Requests
-        </Link>
+        </TextLink>
       </nav>
 
       <nav aria-label="Request decision history" className="flex flex-wrap gap-3 border-b border-border pb-3 text-sm">
-        <Link href={requestsHref({status:"PENDING",search:query.search,pageSize:query.pageSize})}
+        <TextLink href={requestsHref({status:"PENDING",search:query.search,pageSize:query.pageSize})}
           aria-current={!query.includeDecided?"page":undefined}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Pending only</Link>
-        <Link href={requestsHref({search:query.search,pageSize:query.pageSize,includeDecided:true,decidedDays:30})}
+          className="inline-flex min-h-11 items-center md:min-h-9">Pending only</TextLink>
+        <TextLink href={requestsHref({search:query.search,pageSize:query.pageSize,includeDecided:true,decidedDays:30})}
           aria-current={query.includeDecided&&query.decidedDays!== "ALL"?"page":undefined}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Last 30 days of decisions</Link>
-        <Link href={requestsHref({search:query.search,pageSize:query.pageSize,includeDecided:true,decidedDays:"ALL"})}
+          className="inline-flex min-h-11 items-center md:min-h-9">Last 30 days of decisions</TextLink>
+        <TextLink href={requestsHref({search:query.search,pageSize:query.pageSize,includeDecided:true,decidedDays:"ALL"})}
           aria-current={query.includeDecided&&query.decidedDays==="ALL"?"page":undefined}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">All history</Link>
+          className="inline-flex min-h-11 items-center md:min-h-9">All history</TextLink>
       </nav>
       <section className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-3 xl:grid-cols-5">
-        <Link
+        <TextLink variant="bare"
           href={requestsHref({...tpoStudentRequestShortcutFilters(query.search,query.pageSize),
             includeDecided:query.includeDecided,decidedDays:query.decidedDays})}
           aria-current={!query.status ? "page" : undefined}
@@ -243,10 +243,10 @@ export default async function TpoStudentRequestsPage({
           <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
             {data.summary.total}
           </p>
-        </Link>
+        </TextLink>
 
         {STATUSES.map((status) => (
-          <Link
+          <TextLink variant="bare"
             key={status}
             href={requestsHref({...tpoStudentRequestShortcutFilters(query.search,query.pageSize,status),
               includeDecided:status!=="PENDING"||query.includeDecided,
@@ -267,7 +267,7 @@ export default async function TpoStudentRequestsPage({
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
               {counts[status]}
             </p>
-          </Link>
+          </TextLink>
         ))}
       </section>
 
@@ -342,12 +342,12 @@ export default async function TpoStudentRequestsPage({
               {" · "}showing {firstItem}–{lastItem}
             </p>
           </div>
-          <Link
+          <TextLink
             href="/tpo/students/requests"
-            className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto sm:justify-start hover:underline focus-ring md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto sm:justify-start md:min-h-9"
           >
             Clear filters
-          </Link>
+          </TextLink>
         </div>
 
         {data.requests.length === 0 ? (
@@ -357,15 +357,15 @@ export default async function TpoStudentRequestsPage({
                 ? "This page is outside the matching result range."
                 : "No student requests match these filters."}
             </p>
-            <Link
+            <TextLink
               href={requestsHref({
                 ...baseFilters,
                 page: 1,
               })}
-              className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-ring md:min-h-9"
+              className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9"
             >
               First page
-            </Link>
+            </TextLink>
           </div>
         ) : (
           <>
@@ -390,10 +390,10 @@ export default async function TpoStudentRequestsPage({
                 <time dateTime={request.requestedAt.toISOString()} className="block text-xs text-muted-foreground">
                   {formatRequestedAt(request.requestedAt)} IST
                 </time>
-                <Link href={`/tpo/placements/jobs/${encodeURIComponent(request.jobId)}`}
-                  className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline focus-ring sm:w-auto sm:justify-start md:min-h-9">
+                <TextLink href={`/tpo/placements/jobs/${encodeURIComponent(request.jobId)}`}
+                  className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto sm:justify-start md:min-h-9">
                   Open placement job
-                </Link>
+                </TextLink>
                 {request.status==="PENDING" ? <TpoRequestDecisionControl
                   requestId={request.id} expectedUpdatedAt={request.updatedAt.toISOString()}
                   requestType={request.requestType}/> : null}
@@ -464,12 +464,12 @@ export default async function TpoStudentRequestsPage({
                     </td>
 
                     <td className="px-4 py-4">
-                      <Link
+                      <TextLink
                         href={`/tpo/placements/jobs/${encodeURIComponent(request.jobId)}`}
-                        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9"
+                        className="inline-flex min-h-11 items-center md:min-h-9"
                       >
                         Open placement job →
-                      </Link>
+                      </TextLink>
                     </td>
                     <td className="px-4 py-4">
                       {request.status === "PENDING" ? (
@@ -498,27 +498,25 @@ export default async function TpoStudentRequestsPage({
             className="flex flex-wrap gap-2"
           >
             {data.page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={requestsHref({
                   ...baseFilters,
                   page: data.page - 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-ring md:min-h-9"
               >
                 Previous
-              </Link>
+              </ButtonLink>
             ) : null}
 
             {data.page < data.totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={requestsHref({
                   ...baseFilters,
                   page: data.page + 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-ring md:min-h-9"
               >
                 Next
-              </Link>
+              </ButtonLink>
             ) : null}
           </nav>
         </div>

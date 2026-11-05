@@ -6,13 +6,13 @@ import {
   useRef,
   useState,
 } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type AttendanceStatus =
   | "WAITING"
@@ -183,12 +183,11 @@ export function DriveDayRoster({
             : "")
         }
         actions={
-          <Link
+          <ButtonLink variant="secondary"
             href="/tpo/drive-day"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-foreground transition hover:bg-muted md:min-h-9 hover:underline"
           >
             Back
-          </Link>
+          </ButtonLink>
         }
       />
 

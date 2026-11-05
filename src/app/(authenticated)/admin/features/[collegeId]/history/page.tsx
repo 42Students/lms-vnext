@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -7,6 +6,8 @@ import {ModuleHistoryDrawer} from "@/components/admin/module-history-drawer";
 import {EmptyState} from "@/components/ui/empty-state";
 import {collegePolicyHistoryQuery,collegePolicyHistoryHref} from "@/modules/module-access/admin-college-rule-history-model";
 import {listCollegeFeatureHistory} from "@/modules/module-access/admin-college-rule-history-service";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function SuperAdminCollegeFeatureHistory({params,searchParams}:{
  params:Promise<{collegeId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -21,10 +22,10 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
   <ModuleHistoryDrawer collegeId={collegeId}>
   <PageHeader title="Recent module-access changes" description={"Recent changes to Projects, Placements and Electives at college, academic and learner scope for "+result.college.name+"."} actions={<PageBackLink href={"/admin/features/"+encodeURIComponent(collegeId)} label="College module access"/>}/>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-  <Link href={collegePolicyHistoryHref(collegeId,cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null).replace("/history","/history/export")}
-    className="inline-flex min-h-11 w-full items-center justify-center self-start rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9 hover:text-[var(--lms-primary-text)]">
+  <ButtonLink variant="secondary" href={collegePolicyHistoryHref(collegeId,cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null).replace("/history","/history/export")}
+    className="w-full self-start sm:w-auto">
     Export CSV
-  </Link>
+  </ButtonLink>
   </div>
   {result.items.length===0?<EmptyState title="No module-access changes" description="No module-access changes recorded for this college yet."/>:
    <ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{result.items.map(item=><li key={item.id} className="min-w-0 py-4">
@@ -36,10 +37,10 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
     <p className="mt-1 break-words text-xs text-body">Scope: {item.scope}{item.studentCount===undefined?"":" · "+item.studentCount+" students"}</p>
     <p className="mt-2 break-words text-xs text-muted-foreground">{item.actorName || "System"}</p>
    </li>)}</ol>}
-  {result.nextCursor?<Link href={collegePolicyHistoryHref(collegeId,result.nextCursor)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9 hover:text-[var(--lms-primary-text)]">Load more changes →</Link>:null}
+  {result.nextCursor?<ButtonLink variant="secondary" href={collegePolicyHistoryHref(collegeId,result.nextCursor)} className="w-full sm:w-auto">Load more changes →</ButtonLink>:null}
   <nav aria-label="Other module-access reviews" className="mt-3 flex flex-wrap gap-3 border-t border-border pt-3">
-   <Link href={"/admin/features/"+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Review overrides →</Link>
-   <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Search learner access →</Link>
+   <TextLink href={"/admin/features/"+encodeURIComponent(collegeId)} className="inline-flex min-h-11 items-center md:min-h-9">Review overrides →</TextLink>
+   <TextLink href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace"} className="inline-flex min-h-11 items-center md:min-h-9">Search learner access →</TextLink>
   </nav>
   </ModuleHistoryDrawer>
  </div>;

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -26,6 +25,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminLessonsPage({
   searchParams,
@@ -44,11 +44,11 @@ export default async function SuperAdminLessonsPage({
   if (!parsed.success||!validPageSize||!validAllCourses) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
-      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<TextLink href="/admin/lessons" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader title="Lessons" actions={<Link href="/admin/lessons/index" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Global lesson index</Link>} />
+    <PageHeader title="Lessons" actions={<ButtonLink variant="secondary" href="/admin/lessons/index">Global lesson index</ButtonLink>} />
     <Alert tone="warning" role="alert" title="Select a college to manage Lessons">
       Choose a college in the header above to see its lessons.
     </Alert>
@@ -63,8 +63,8 @@ export default async function SuperAdminLessonsPage({
     <PageHeader title="Lessons" />
     <ErrorState title="Lessons unavailable"
       description="The lesson directory could not be loaded. Your filters have not changed."
-      action={<Link href={adminLearningHref("LESSONS",parsed.data)}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading lessons</Link>} />
+      action={<TextLink href={adminLearningHref("LESSONS",parsed.data)}
+        className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading lessons</TextLink>} />
   </div>;
   const data=dataResult.value;
   const hasCourseSelection=Boolean(data.query.courseCode)||allCourses;
@@ -95,7 +95,7 @@ export default async function SuperAdminLessonsPage({
     <LessonPageSizePreference storageKey="admin-lessons-page-size" />
     <PageHeader title="Lessons"
       description="Authored lessons in the selected college."
-      actions={<Link href="/admin/lessons/index" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Global lesson index</Link>}
+      actions={<ButtonLink variant="secondary" href="/admin/lessons/index">Global lesson index</ButtonLink>}
     />
     
     <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
@@ -103,11 +103,11 @@ export default async function SuperAdminLessonsPage({
         <Heading level={2} size="lg" className="mb-4 text-foreground">Create New Lesson</Heading>
         {pathsResult.status==="fulfilled"?<SuperAdminLessonCreate paths={paths}/>:
           <Alert tone="warning" role="alert">Courses could not be loaded.{" "}
-            <Link href={selectedScopeHref(data.query)} className="font-semibold underline">Retry</Link>
+            <TextLink href={selectedScopeHref(data.query)}>Retry</TextLink>
           </Alert>}
         {pathsResult.status==="fulfilled"&&paths.length===0?<p className="mt-3 text-sm text-body">
           No courses in this college yet.{" "}
-          <Link href="/admin/courses" className="font-semibold text-primary-text underline">Go to Courses</Link>
+          <TextLink href="/admin/courses">Go to Courses</TextLink>
         </p>:null}
       </aside>
       <section aria-label="Lessons table" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
@@ -115,8 +115,7 @@ export default async function SuperAdminLessonsPage({
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <Heading level={2} size="lg" className="text-foreground">Lessons</Heading>
           <div className="flex flex-wrap items-center gap-2">
-            <Link href={selectedScopeHref(data.query)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Refresh</Link>
+            <ButtonLink variant="secondary" href={selectedScopeHref(data.query)}>Refresh</ButtonLink>
             {hasCourseSelection?<ButtonLink variant="secondary" download="lessons.csv" href={"/api/admin/lessons/export?"+new URLSearchParams({
               q:data.query.q,status:data.query.status,
               ...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),
@@ -154,13 +153,13 @@ export default async function SuperAdminLessonsPage({
         </Select>
       </Label>
       <div className="flex flex-wrap items-center gap-2">
-        {!allCourses?<Link href={viewAllHref}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+        {!allCourses?<TextLink href={viewAllHref}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           View all courses (slower)
-        </Link>:<Link href={closeAllHref}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+        </TextLink>:<TextLink href={closeAllHref}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Close all-courses view
-        </Link>}
+        </TextLink>}
         {allCourses?<Alert tone="warning">
           Loading all courses may take longer. Use a single course when possible.
         </Alert>:null}
@@ -179,14 +178,14 @@ export default async function SuperAdminLessonsPage({
           </Label>
         </div>
       </Disclosure>
-      <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-ring md:min-h-9" href="/admin/lessons">Clear filters</Link>
+      <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9" href="/admin/lessons">Clear filters</TextLink>
     </form>
     <p className="mt-3 text-sm text-muted-foreground">{hasCourseSelection?data.total.toLocaleString("en-IN"):"0"} matching lessons · on this page: {summary.authored} content records, {summary.published} published{" "}
-      <Link href={selectedScopeHref(data.query)} className="font-semibold text-primary-text underline underline-offset-4">Reload results</Link>
+      <TextLink href={selectedScopeHref(data.query)}>Reload results</TextLink>
     </p>
     {filtersResult.status==="rejected"?<Alert tone="warning">
       Courses could not be loaded. The lesson directory and your applied filters remain visible.{" "}
-      <Link href={adminLearningHref("LESSONS",data.query)} className="font-semibold underline">Retry filter choices</Link>.
+      <TextLink href={adminLearningHref("LESSONS",data.query)}>Retry filter choices</TextLink>.
     </Alert>:null}
 
     {listedLessons.length?<SuperAdminLessonBulkVisibility lessons={listedLessons} listIncomplete={listIncomplete}/>:null}
@@ -247,10 +246,10 @@ export default async function SuperAdminLessonsPage({
                           other.learningPathId===lesson.learningPathId&&other.sequence===lesson.sequence-1)}
                         canMoveDown={listedLessons.some(other=>
                           other.learningPathId===lesson.learningPathId&&other.sequence===lesson.sequence+1)}/>:null}
-                      <Link href={"/admin/courses/offerings/"+encodeURIComponent(lesson.offeringId)}
-                        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                      <TextLink href={"/admin/courses/offerings/"+encodeURIComponent(lesson.offeringId)}
+                        className="inline-flex min-h-11 items-center md:min-h-9">
                         Open offering to add lessons
-                      </Link>
+                      </TextLink>
                     </div>
                   </Disclosure>
                 </div>:<p className="text-xs text-muted-foreground">
@@ -266,8 +265,8 @@ export default async function SuperAdminLessonsPage({
         data.query.q?"No matching lessons. Clear search to see the course.":
         data.query.courseCode?"No lessons in this course yet. Create one on the left.":
         "No lessons found"}
-      {data.query.q?<Link href={selectedScopeHref({...data.query,q:"",page:1})}
-        className="ml-2 font-semibold text-primary-text underline">Clear search</Link>:null}
+      {data.query.q?<TextLink href={selectedScopeHref({...data.query,q:"",page:1})}
+        className="ml-2">Clear search</TextLink>:null}
     </div>}
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
       <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
@@ -291,7 +290,7 @@ export default async function SuperAdminLessonsPage({
         hrefForPage={page=>selectedScopeHref({...data.query,page})}
         label="Lesson pages" showBoundaryLinks={false}/>:null}
     </div>
-    <Link href="/admin/courses" className="mt-4 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-ring">← Courses</Link>
+    <TextLink href="/admin/courses" className="mt-4 inline-flex min-h-11 md:min-h-9 items-center">← Courses</TextLink>
       </section>
     </div>
   </div>;

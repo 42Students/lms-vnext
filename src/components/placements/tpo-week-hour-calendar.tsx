@@ -8,7 +8,6 @@ import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect,useMemo,useRef,useState} from "react";
 import {positionWeekEvents,type WeekGridEvent} from "@/modules/placements/tpo-week-grid-model";
@@ -17,6 +16,7 @@ import {TpoCalendarMoveFollowup,type TpoCalendarLeadOption} from "./tpo-calendar
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
@@ -210,14 +210,14 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
          draggable onDragStart={dragEvent=>{dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId!);dragEvent.dataTransfer.effectAllowed="move";}}
          onClick={()=>setMove({id:event.followupId!,currentIst:calendarDueAtToIstLocal(new Date(event.startsAt))})}
          style={position} className={"absolute z-(--lms-z-raised) overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles["event"]+" [min-height:44px] !max-w-none !rounded-[var(--lms-control-radius)]"}>{inner}</Button>:
-       event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title} data-event-kind={event.kind}
+       event.href?<TextLink variant="bare" key={event.id} href={event.href} title={event.companyName+" · "+event.title} data-event-kind={event.kind}
         draggable={canCreate&&Boolean(event.followupId)}
         onDragStart={dragEvent=>{
          if(!event.followupId)return;
          dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId);
          dragEvent.dataTransfer.effectAllowed="move";
         }}
-        style={position} className={"absolute z-(--lms-z-raised) overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles["event"]}>{inner}</Link>:
+        style={position} className={"absolute z-(--lms-z-raised) overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles["event"]}>{inner}</TextLink>:
        <div key={event.id} data-event-kind={event.kind} style={position} className={"absolute z-(--lms-z-raised) overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles["event"]}>{inner}</div>;
       })}
       {offHours.length?<div className="absolute inset-x-0 bottom-0 z-(--lms-z-sticky-inline) space-y-1 border-t border-border bg-surface/95 p-1">

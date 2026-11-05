@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -13,6 +12,7 @@ import {auditFindingHistoryActionLabel} from "@/modules/bug-tracker/audit-findin
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 export async function generateMetadata({params}:{params:Promise<{publicId:string}>}){
  const {publicId}=await params;
  return {title:publicId+" · 42 Tracker"};
@@ -66,8 +66,8 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   </section>
   <Disclosure title="Related tools" className="min-w-0">
     <div className="flex min-w-0 flex-wrap items-center gap-4 pt-3">
-  <Link href={"/tracker/audit-findings?area="+encodeURIComponent(finding.area)+"&q="+encodeURIComponent(finding.title.slice(0,100))}
-   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9">Looks similar</Link>
+  <TextLink href={"/tracker/audit-findings?area="+encodeURIComponent(finding.area)+"&q="+encodeURIComponent(finding.title.slice(0,100))}
+   className="inline-flex min-h-11 items-center md:min-h-9">Looks similar</TextLink>
   <IndependentFindingCopyAction finding={{
    id:finding.externalId,title:finding.title,summary:finding.summary,steps:finding.steps,
    expected:finding.expected,actual:finding.actual,sourceRepo:finding.sourceRepo,

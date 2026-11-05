@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
@@ -16,6 +15,7 @@ import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-servi
 import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
 import {learnerJobReturnToDrivesHref} from "@/modules/placements/learner-drives-return-model";
 import {placementJobIdSchema} from "@/modules/placements/validation";
+import { TextLink } from "@/components/ui/text-link";
 
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
   return {
@@ -101,8 +101,8 @@ export default async function LearnerPlacementJobDetailPage({
      description="The link may be outdated. Browse current drives or find your application in My applications."/>
     {shell}
     <div className="flex flex-wrap gap-4">
-     <Link href={back} className="text-sm font-semibold text-primary-text underline">Browse drives</Link>
-     <Link href="/learn/my-placements/applications" className="text-sm font-semibold text-primary-text underline">My applications</Link>
+     <TextLink href={back} className="text-sm">Browse drives</TextLink>
+     <TextLink href="/learn/my-placements/applications" className="text-sm">My applications</TextLink>
     </div>
    </div>;
   }
@@ -129,8 +129,8 @@ export default async function LearnerPlacementJobDetailPage({
     <ErrorState title="We couldn't load this drive"
       description="The drive could not be checked right now. Retry before assuming it is no longer available."
       action={<nav aria-label="Drive recovery" className="flex flex-wrap gap-4">
-        <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading drive</Link>
-        <Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Browse drives</Link>
+        <TextLink href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center">Retry loading drive</TextLink>
+        <TextLink href={back} className="inline-flex min-h-11 items-center">Browse drives</TextLink>
       </nav>}/>
   </div>;
   const rows=feedResult.value.filter(row=>row.job.id===jobId);
@@ -141,8 +141,8 @@ export default async function LearnerPlacementJobDetailPage({
     <ErrorState title="We couldn't load this drive"
       description="Drive history could not be checked. Your earlier applications have not been treated as missing."
       action={<nav aria-label="Drive recovery" className="flex flex-wrap gap-4">
-        <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading drive</Link>
-        <Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Browse drives</Link>
+        <TextLink href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center">Retry loading drive</TextLink>
+        <TextLink href={back} className="inline-flex min-h-11 items-center">Browse drives</TextLink>
       </nav>}/>
   </div>;
   if(rows.length===0&&!journey)return <div className="min-w-0 space-y-4">
@@ -150,22 +150,22 @@ export default async function LearnerPlacementJobDetailPage({
     {shell}
     <EmptyState title="This drive can't be shown" description="The link is unavailable, unpublished, or no longer visible to your selected college. No application history for this drive could be found in your account."
       action={<nav aria-label="Other placement options" className="flex flex-wrap gap-4">
-        <Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Browse drives</Link>
-        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-link underline">My applications</Link>
+        <TextLink href={back} className="inline-flex min-h-11 items-center">Browse drives</TextLink>
+        <TextLink href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center">My applications</TextLink>
       </nav>} />
   </div>;
   return <div className="min-w-0 space-y-5">
    {rows.length===0 && journey ?
     <PageHeader title="Placement drive history" description="Your recorded application journey remains available."
-      actions={<Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline md:min-h-9">← Back to drives</Link>} /> : null}
+      actions={<TextLink href={back} className="inline-flex min-h-11 items-center text-[13px] md:min-h-9">← Back to drives</TextLink>} /> : null}
    {/* Published jobs supply their own PageHeader through LearnerPlacementJobDetail.
        Do not duplicate the h1 from this route. */}
    {shell}
    {failedJourney?<Banner tone="warning" role="alert">
      Your saved drive history could not be loaded. Current published job information is available; retry before assuming there is no earlier application.
-     <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="ml-2 font-semibold underline">Retry history</Link>
+     <TextLink href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="ml-2">Retry history</TextLink>
    </Banner>:null}
-   {!savedJobs.available ? <Banner tone="warning" role="alert">Your saved-job status could not be verified. Bookmark controls may show an outdated selection; refresh before changing saved jobs. Drive details remain available. <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="font-semibold underline">Retry saved jobs</Link></Banner> : null}
+   {!savedJobs.available ? <Banner tone="warning" role="alert">Your saved-job status could not be verified. Bookmark controls may show an outdated selection; refresh before changing saved jobs. Drive details remain available. <TextLink href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)}>Retry saved jobs</TextLink></Banner> : null}
    {rows.length>0 && rows.some(row => Boolean(row.job.jobDescriptionObjectPath)) ?
      <LearnerJobDescriptionLink jobId={jobId}/> : null}
    {rows.length>0?<LearnerPlacementJobDetail items={rows.map(toItem)}

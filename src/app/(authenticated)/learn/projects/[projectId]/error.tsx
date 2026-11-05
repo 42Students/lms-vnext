@@ -1,7 +1,7 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 export default function LearnerProjectDetailError({
   reset,
 }: {
@@ -16,7 +16,7 @@ export default function LearnerProjectDetailError({
       </p>
       <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
         <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
-        <Link href="/learn/projects" className="inline-flex min-h-11 w-full sm:w-auto md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-body hover:underline">Back to Projects</Link>
+        <ButtonLink variant="secondary" href="/learn/projects" className="w-full sm:w-auto">Back to Projects</ButtonLink>
       </div>
     </section>
   );

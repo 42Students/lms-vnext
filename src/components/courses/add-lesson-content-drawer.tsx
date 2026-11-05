@@ -23,10 +23,10 @@
  */
 
 import { useState } from "react";
-import Link from "next/link";
 import { Drawer } from "@/components/ui/drawer";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -199,18 +199,17 @@ export function AddLessonContentDrawer({
           <p className="text-sm leading-5 text-body">
             Use the full Quiz Builder to add a quiz to this lesson.
           </p>
-          <Link
+          <ButtonLink variant="secondary"
             href={
               "/teacher/courses/" +
               encodeURIComponent(deliveryId) +
               "/quizzes/manage?lesson=" +
               encodeURIComponent(lessonId)
             }
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:opacity-100 focus-ring"
             onClick={handleClose}
           >
             Open Quiz Builder
-          </Link>
+          </ButtonLink>
           <Button variant="link" size="inline"
             type="button"
             className="block"
@@ -227,18 +226,17 @@ export function AddLessonContentDrawer({
           <p className="text-sm leading-5 text-body">
             Use the full Assignment Builder to add an assignment to this lesson.
           </p>
-          <Link
+          <ButtonLink variant="secondary"
             href={
               "/teacher/courses/" +
               encodeURIComponent(deliveryId) +
               "/assignments/manage?lesson=" +
               encodeURIComponent(lessonId)
             }
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 py-2 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:opacity-100 focus-ring"
             onClick={handleClose}
           >
             Open Assignment Builder
-          </Link>
+          </ButtonLink>
           <Button variant="link" size="inline"
             type="button"
             className="block"
@@ -259,7 +257,7 @@ export function AddLessonContentDrawer({
             >
               ← Back to content types
             </Button>
-            <Link
+            <ButtonLink variant="secondary"
               href={
                 "/teacher/courses/" +
                 encodeURIComponent(deliveryId) +
@@ -268,11 +266,10 @@ export function AddLessonContentDrawer({
                 "&advanced=1&create=VIDEO#faculty-video-upload-" +
                 lessonId
               }
-              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]"
               onClick={handleClose}
             >
               Upload a video file instead →
-            </Link>
+            </ButtonLink>
           </div>
           <FacultyLessonAuthoring
             key={"drawer-youtube:" + lessonId}

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -12,6 +11,7 @@ import { placementApplicationIdSchema } from "@/modules/placements/validation";
 import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-service";
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function when(date:Date) {
   return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(date)+" IST";
@@ -31,8 +31,8 @@ export default async function LearnerApplicationDetailPage({params}:{
       <PageHeader title="Application details" />
       <ErrorState title="Could not load application details"
         description="Your recorded application status is unavailable. No changes were made."
-        action={<Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Retry application details</Link>} />
+        action={<TextLink href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry application details</TextLink>} />
     </div>;
   }
   if(!record)notFound();
@@ -44,12 +44,12 @@ export default async function LearnerApplicationDetailPage({params}:{
     <PageHeader title={record.roleTitle}
       description={record.companyName+" · Own application status and timeline"}
       actions={<StatusBadge tone={applicationStatusTone(record.currentStatus)}>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
-    <Link href="/learn/my-placements/applications"
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9">← Applications</Link>
+    <TextLink href="/learn/my-placements/applications"
+      className="inline-flex min-h-11 items-center text-sm md:min-h-9">← Applications</TextLink>
 
     {!scheduled.available ? <Banner tone="warning" role="status">
       Round bookings could not be checked. Withdrawal is temporarily restricted to a placement-cell review for your safety.
-      <Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)} className="ml-2 font-semibold underline">Retry round bookings</Link>
+      <TextLink href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)} className="ml-2">Retry round bookings</TextLink>
     </Banner> : null}
     <section className="border-b border-border py-4 md:py-6">
       <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -61,10 +61,10 @@ export default async function LearnerApplicationDetailPage({params}:{
       <p className="mt-2 text-sm text-body leading-[22px]">
         {requiresRequest?"A booked round requires the placement cell to review your withdrawal request. Your application stays active until approved.":"Withdrawing requires a reason and confirmation. Only a successful response updates your status."}
       </p>
-      <Link href={"/learn/my-placements/applications/"+encodeURIComponent(record.applicationId)+"/company"}
-        className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9">
+      <TextLink href={"/learn/my-placements/applications/"+encodeURIComponent(record.applicationId)+"/company"}
+        className="mt-4 inline-flex min-h-11 items-center text-sm md:min-h-9">
         View recorded company details →
-      </Link>
+      </TextLink>
     </section>
     <section className="border-b border-border py-4 md:py-6" aria-label="Recorded application timeline">
       <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Status timeline</Heading>

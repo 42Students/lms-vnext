@@ -3,7 +3,6 @@ import {getDb} from "@/db/client";
 import {assignmentSubmissions,courseAssignments} from "@/db/schema";
 import {getFacultyAttendanceWorkspace} from "@/modules/attendance/faculty-service";
 import {facultyCourseMonthAttendanceEvidence} from "@/modules/courses/faculty-course-month-attendance-model";
-import Link from "next/link";
 import { parseFacultyCourseListLocation } from "@/modules/courses/faculty-course-list-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseList } from "@/components/courses/faculty-course-list";
@@ -17,6 +16,7 @@ import { listFacultyCourseCardSummaries } from "@/modules/courses/faculty-course
 import { listFacultyCourseAssignmentDiagnostics } from "@/modules/courses/faculty-course-service";
 import { FacultyCoursesRetry } from "./faculty-courses-retry";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function TeacherCoursesPage({searchParams}: {
   searchParams: Promise<Record<string,string|string[]|undefined>>;
@@ -27,10 +27,10 @@ export default async function TeacherCoursesPage({searchParams}: {
     <PageHeader title="My Courses" />
     <Alert tone="error" className="min-w-0">
       The Course filters could not be understood. No other Section has been loaded.
-      <Link href="/teacher/courses"
-        className="ml-2 font-semibold text-primary-text underline inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-ring">
+      <TextLink href="/teacher/courses"
+        className="ml-2 inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">
         Reset filters
-      </Link>
+      </TextLink>
     </Alert>
   </div>;
   const listResult=await getFacultyCourseList(context,query).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));

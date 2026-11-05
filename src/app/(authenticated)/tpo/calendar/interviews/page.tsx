@@ -1,7 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -13,6 +12,8 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoInterviewReadiness} from "@/modules/placements/tpo-interview-readiness-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 type Props={searchParams:Promise<{days?:string|string[];page?:string|string[];q?:string|string[]}>};
 export default async function TpoInterviewReadinessPage({searchParams}:Props){
  const context=await getCurrentRequestContext();
@@ -23,7 +24,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
  const href=(page:number)=>"/tpo/calendar/interviews?"+new URLSearchParams({days:String(data.days),page:String(page),...(data.q?{q:data.q}:{})}).toString();
  return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Interview rounds" title="Interview schedule readiness"
-   description="Pending and scheduled round-level interviews. Candidate-specific slots are not recorded here." actions={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9 lms-inline-link">← Calendar</Link>}/>
+   description="Pending and scheduled round-level interviews. Candidate-specific slots are not recorded here." actions={<TextLink href="/tpo/calendar" className="inline-flex min-h-11 items-center text-sm md:min-h-9">← Calendar</TextLink>}/>
   <form action="/tpo/calendar/interviews" method="get"
     className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]" aria-label="Filter interviews">
    <Label className="min-w-0">Search company, drive or round
@@ -41,23 +42,23 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
     label={key.replaceAll(/([A-Z])/g," $1")} value={n} />)}
   </section>
   <p role="status" className="text-sm text-body leading-[1.6]">Interview rounds page {data.page}: {data.rows.length} actionable results. Pages are drawn from the persisted round book.</p>
-  {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found." action={<Link href="/tpo/calendar/interviews" className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">Apply</Link>}/>:
+  {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found." action={<TextLink href="/tpo/calendar/interviews" className="md:min-h-9 inline-flex min-h-11 items-center">Apply</TextLink>}/>:
    <section aria-label="Interview rounds" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {data.rows.map(r=><article key={r.id} className="min-w-0 space-y-2 py-4">
     <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{r.companyName} · {r.jobTitle}</Heading>
     <p className="mt-1 text-sm text-body leading-[22px]">{r.name} · {r.state.replaceAll("_"," ")} · {r.mode??"Mode not recorded"}</p>
     <p className="mt-1 text-sm text-body leading-[22px]">{r.scheduledAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(r.scheduledAt)) + " IST":"Start not scheduled"} · {r.venue??"Venue not recorded"}</p>
     <p className="mt-1 text-xs text-[var(--lms-muted-text)] leading-5">Duration: {r.durationMinutes??"Not recorded"} minutes</p>
-    <Link href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link hover:underline lms-inline-link">
+    <TextLink href={"/tpo/placements/jobs/"+r.jobId+"/candidate-schedule"} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm">
       View round and candidate readiness →
-    </Link>
+    </TextLink>
     {r.status==="SCHEDULED"&&r.updatedAt?
       <TpoInterviewRescheduleForm round={{id:r.id,updatedAt:r.updatedAt,
        scheduledAt:r.scheduledAt,mode:r.mode,venue:r.venue,meetingUrl:r.meetingUrl??null}}/>:null}
    </article>)}</section>}
   {(data.page>1||data.limited)?<nav aria-label="Interview round pages" className="flex flex-wrap gap-3">
-   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Previous 200</Link>:null}
-   {data.limited?<Link href={href(data.page+1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring">Next 200</Link>:null}
+   {data.page>1?<ButtonLink variant="secondary" href={href(data.page-1)}>Previous 200</ButtonLink>:null}
+   {data.limited?<ButtonLink variant="secondary" href={href(data.page+1)}>Next 200</ButtonLink>:null}
   </nav>:null}
   <p className="text-xs text-[var(--lms-muted-text)] leading-5">No interviewer identities, per-candidate slots or calendar invitations are invented from the round schedule.</p>
  </div>;

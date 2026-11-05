@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export type ProjectListItem = {
   id: string;
@@ -124,7 +124,7 @@ export function ProjectList({
                 timeZone:"Asia/Kolkata",
               }).format(activityAt):"No recorded activity";
             return (
-              <Link key={item.id}
+              <TextLink variant="bare" key={item.id}
                 href={item.href ?? basePath + "/" + encodeURIComponent(item.id)}
                 className="prototype-mentor-table-row"
                 aria-label={item.title + ". " + state + ". Open project."}
@@ -170,7 +170,7 @@ export function ProjectList({
                   <span className="prototype-mentor-state-dot" aria-hidden="true" />
                   {state}
                 </span>
-              </Link>
+              </TextLink>
             );
           })}
         </div>
@@ -190,7 +190,7 @@ export function ProjectList({
         const completion=Math.min(100,Math.max(0,Math.round(item.progressPercent??0)));
         const course=item.courseLabel?.trim()||"Project";
         const mentor=item.mentorName?.trim()||"Mentor";
-        return <Link key={item.id} href={item.href??basePath+"/"+encodeURIComponent(item.id)}
+        return <TextLink variant="bare" key={item.id} href={item.href??basePath+"/"+encodeURIComponent(item.id)}
           className="group flex min-w-0 flex-col rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:p-5">
           <div className="flex min-w-0 items-center justify-between gap-2">
             <span className={"inline-flex max-w-full items-center rounded px-2 py-0.5 text-xs font-semibold "+
@@ -235,7 +235,7 @@ export function ProjectList({
               Open workspace <span aria-hidden="true" className="ml-1">→</span>
             </span>
           </div>
-        </Link>;
+        </TextLink>;
       })}
     </div>;
   }
@@ -243,7 +243,7 @@ export function ProjectList({
   return (
     <div className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"min-w-0 divide-y divide-border":"grid min-w-0 gap-4 lg:grid-cols-2 xl:grid-cols-3"}>
       {items.map((item) => (
-        <Link
+        <TextLink variant="bare"
           key={item.id}
           href={item.href ?? basePath + "/" + item.id}
           className={basePath==="/learn/projects"||basePath==="/mentor/projects"?"group flex min-w-0 flex-col py-4 first:pt-0 last:pb-0 transition-colors hover:bg-primary-subtle focus-ring sm:py-5":"group flex min-h-56 flex-col rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 transition-shadow duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] focus-ring"}
@@ -349,7 +349,7 @@ export function ProjectList({
               <span className="sr-only">Open workspace</span>→
             </span>
           </div>
-        </Link>
+        </TextLink>
       ))}
     </div>
   );

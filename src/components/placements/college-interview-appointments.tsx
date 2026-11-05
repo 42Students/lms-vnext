@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import {useToast} from "@/components/ui/toast";
 import { Textarea } from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
@@ -334,9 +333,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    <div><Heading level={2} size="lg">Candidate interviews</Heading>
     <p className="mt-1 text-sm text-body">Schedule, edit, cancel, mark Completed or No Show. Actions are audited and notify the learner.</p></div>
    <div className="flex flex-col gap-2 sm:flex-row">
-    <Link href={appRoot} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
+    <ButtonLink variant="secondary" href={appRoot}>
       View applications
-    </Link>
+    </ButtonLink>
     <Button type="button" variant="secondary" aria-pressed={showConflictsOnly}
       onClick={()=>setShowConflictsOnly(value=>!value)} className="min-h-11 md:min-h-9">
       {showConflictsOnly?"Show all interviews":"Conflicts only ("+appointments.filter(hasConflict).length+")"}
@@ -374,8 +373,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       <div><dt className="font-semibold">Interviewer</dt><dd>{row.interviewer??"Not recorded"}</dd></div>
      </dl>
      <div className="mt-3 flex flex-wrap gap-2">
-      <Link href={applicationHref(row.applicationId)} aria-label={"View application for "+(person?.name??"candidate")+" in "+(jobTitle??"this placement drive")}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline">View application</Link>
+      <ButtonLink variant="secondary" href={applicationHref(row.applicationId)} aria-label={"View application for "+(person?.name??"candidate")+" in "+(jobTitle??"this placement drive")}>View application</ButtonLink>
       {row.status!=="CANCELLED"?<ButtonLink variant="secondary" href={eventIcsHref(row)} download={"interview-"+row.id+".ics"}
        aria-label={"Download calendar file for "+eventTitle(row)}>↓ Download .ics</ButtonLink>:null}
       {row.status==="SCHEDULED"?<Button type="button" variant="secondary" disabled={busy} onClick={()=>open(row)}>Edit</Button>:null}
@@ -429,11 +427,10 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       {key:"actions",header:"Actions",mobilePriority:"action",
         cell:row=><Disclosure title="Actions" className="min-w-0 md:min-w-40">
           <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] pb-2 md:flex-row md:flex-wrap">
-     <Link href={applicationHref(row.applicationId)}
-       aria-label={"View application for "+(applicant(row.applicationId)?.name??"candidate")+" in "+(jobTitle??"this placement drive")}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] underline md:min-h-9">
+     <ButtonLink variant="secondary" href={applicationHref(row.applicationId)}
+       aria-label={"View application for "+(applicant(row.applicationId)?.name??"candidate")+" in "+(jobTitle??"this placement drive")}>
        View application
-     </Link>
+     </ButtonLink>
      {row.status!=="CANCELLED"?<ButtonLink variant="secondary" download={"interview-"+row.id+".ics"}
       href={eventIcsHref(row)} aria-label={"Download calendar file for "+eventTitle(row)}>
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor"

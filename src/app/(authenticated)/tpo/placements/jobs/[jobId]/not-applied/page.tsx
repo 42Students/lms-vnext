@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -7,6 +6,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Alert} from "@/components/ui/alert";
 import {listTpoEligibleNonApplicants,getTpoNonApplicantReminderPreview} from "@/modules/placements/tpo-remind-not-applied-service";
 import {TpoNonApplicantActions} from "@/components/tpo/tpo-non-applicant-actions";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 export default async function TpoRegisteredNonApplicants({
@@ -27,9 +27,9 @@ export default async function TpoRegisteredNonApplicants({
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Registered, not applied"
    description={"Registered, eligible students who have not submitted an application for "+result.jobTitle+"."}
-   actions={<Link href={base+"/applicants-pipeline"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+   actions={<TextLink href={base+"/applicants-pipeline"} className="inline-flex min-h-11 items-center md:min-h-9">
     ← Applicants
-   </Link>}/>
+   </TextLink>}/>
   <Alert tone="info">This list is independent of the submitted-applicant filters. No unauthorized learner profile or email is shown. The server checks current eligibility again before any addition or reminder.</Alert>
   <TpoNonApplicantActions jobId={jobId} roles={result.roles}
    students={result.students} canAdd={result.canAdd}
@@ -39,9 +39,9 @@ export default async function TpoRegisteredNonApplicants({
   {!result.students.length?<EmptyState title="No registered, eligible students awaiting an application"
    description="Every currently eligible registered student has applied, or none are available for this page."/>:null}
   <nav aria-label="Non-applicant pages" className="flex flex-wrap items-center justify-between gap-3">
-   {page>1?<Link href={base+"/not-applied?page="+(page-1)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">← Previous</Link>:<span/>}
+   {page>1?<TextLink href={base+"/not-applied?page="+(page-1)} className="inline-flex min-h-11 items-center md:min-h-9">← Previous</TextLink>:<span/>}
    <span className="text-sm text-body">Page {page} · {result.total} eligible non-applicants</span>
-   {result.hasMore?<Link href={base+"/not-applied?page="+(page+1)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next →</Link>:null}
+   {result.hasMore?<TextLink href={base+"/not-applied?page="+(page+1)} className="inline-flex min-h-11 items-center md:min-h-9">Next →</TextLink>:null}
   </nav>
  </div>;
 }

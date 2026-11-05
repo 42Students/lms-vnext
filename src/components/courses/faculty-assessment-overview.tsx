@@ -6,7 +6,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -24,6 +23,8 @@ import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigatio
 import { FacultyAssessmentLifecycle } from "./faculty-assessment-lifecycle";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
 type Assessment = Overview["assignments"][number] | Overview["quizzes"][number];
@@ -270,13 +271,12 @@ export function FacultyAssessmentOverview({
                           deliveryId={item.deliveryId}
                         />
                       ) : null}
-                      <Link
+                      <ButtonLink variant="secondary"
                         href={"/teacher/courses/" + encodeURIComponent(item.deliveryId) +
                           (item.kind === "QUIZ" ? "/quizzes/manage" : "/assignments/manage")}
-                        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 hover:underline"
                       >
                         Manage {item.kind === "QUIZ" ? "quiz" : "assignment"}
-                      </Link>
+                      </ButtonLink>
                       <FacultyAssessmentLifecycle
                         key={item.id + ":" + new Date(item.updatedAt).toISOString()}
                         kind={item.kind}
@@ -288,23 +288,20 @@ export function FacultyAssessmentOverview({
                       />
                     </>
                   ) : null}
-                  <Link
+                  <ButtonLink variant="secondary"
                     href={`/teacher/report/${item.kind === "QUIZ" ? "quiz" : "assignment"}/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 hover:underline"
                   >
                     View Report
-                  </Link>
-                  {item.kind==="ASSIGNMENT"?<Link
-                    href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}#submissions`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 hover:underline">
+                  </ButtonLink>
+                  {item.kind==="ASSIGNMENT"?<ButtonLink variant="secondary"
+                    href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}#submissions`}>
                     View submissions
-                  </Link>:null}
-                  <Link
+                  </ButtonLink>:null}
+                  <ButtonLink variant="secondary"
                     href={facultyCourseTabHref(item.deliveryId, "blueprint")}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 hover:underline"
                   >
                     Open Course
-                  </Link>
+                  </ButtonLink>
                   </Disclosure>
                 </div>
               </div>
@@ -370,10 +367,10 @@ export function FacultyAssessmentOverview({
               {viewedItem.description||"No additional instructions provided."}
             </p>
           </section>
-          <Link href={facultyCourseTabHref(viewedItem.deliveryId,"blueprint")}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          <TextLink href={facultyCourseTabHref(viewedItem.deliveryId,"blueprint")}
+            className="inline-flex min-h-11 items-center md:min-h-9">
             Open Course
-          </Link>
+          </TextLink>
         </div> : null}
       </Drawer>
 

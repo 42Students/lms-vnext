@@ -1,5 +1,4 @@
 import { Pagination } from "@/components/ui/pagination";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DataTable } from "@/components/ui/data-table";
@@ -18,6 +17,7 @@ import {
   type GroupListRow,
 } from "@/modules/groups/admin-read-service";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 const STATUS_TONE = {
   ACTIVE: "success",
@@ -61,7 +61,7 @@ export default async function CollegeGroupsPage({
     <PageHeader title="Student Groups" />
     <ErrorState title="Invalid group filters"
       description="Choose a supported group type, status and page. Remove repeated or unrelated filters."
-      action={<Link href="/college/groups" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}/>
+      action={<TextLink href="/college/groups" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Clear filters</TextLink>}/>
   </div>;
   const { kind, status, offset } = filters;
   // The old Student Groups reader defaulted to ordinary study groups.
@@ -126,12 +126,12 @@ export default async function CollegeGroupsPage({
           Apply
         </Button>
         {kind || status ? (
-          <Link
+          <TextLink
             href="/college/groups"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring"
+            className="inline-flex min-h-11 items-center md:min-h-9"
           >
             Clear filters
-          </Link>
+          </TextLink>
         ) : null}
       </form>
 
@@ -146,7 +146,7 @@ export default async function CollegeGroupsPage({
       {result.items.length === 0 ? (
         <EmptyState
           title="No groups found"
-          action={kind || status ? <Link href="/college/groups" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : undefined}
+          action={kind || status ? <TextLink href="/college/groups" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink> : undefined}
           description={
             kind || status
               ? "No groups match these filters."
@@ -161,12 +161,12 @@ export default async function CollegeGroupsPage({
                 key: "name",
                 header: "Group",
                 cell: (row: GroupListRow) => (
-                  <Link
+                  <TextLink
                     href={`/college/groups/${row.id}`}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring"
+                    className="inline-flex min-h-11 items-center md:min-h-9"
                   >
                     {row.name}
-                  </Link>
+                  </TextLink>
                 ),
               },
               { key: "kind", header: "Type", cell: (row) => label(row.kind) },

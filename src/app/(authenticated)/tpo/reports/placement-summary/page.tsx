@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import {Disclosure} from "@/components/ui/disclosure";
 import { redirect } from "next/navigation";
@@ -27,6 +26,7 @@ import { getPlacementReportDetails } from "@/modules/placements/report-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -197,11 +197,11 @@ export default async function TpoPlacementSummaryPage({
           </Alert>:null}
           {!dimensions?<Alert tone="warning" className="flex-row flex-wrap items-center justify-between">
             <p className="text-warning-text">Batch filter unavailable. Drive dimension details could not be loaded; the season report remains available, but no drive-row totals are inferred.</p>
-            <Link href={"/tpo/reports/placement-summary?"+new URLSearchParams({
+            <ButtonLink variant="secondary" href={"/tpo/reports/placement-summary?"+new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
               ...(companyId?{companyId}:{}),...(workMode?{workMode}:{}),...(payCategory?{payCategory}:{}),
-            }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-link">Retry</Link>
+            }).toString()}>Retry</ButtonLink>
           </Alert>:null}
           {dimensions?<p role="status" className="text-xs text-muted-foreground">
            Showing {shownDrives.length} of {byDrive.length} drive rows. This filters the drive table only.

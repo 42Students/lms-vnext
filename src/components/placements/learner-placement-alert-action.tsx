@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
+import { TextLink } from "@/components/ui/text-link";
 
 /** GR-80 / LEARNER-placements-01: recipient-scoped acknowledgment before opening.
  * GET never writes. The POST route independently verifies membership ownership.
@@ -38,12 +38,12 @@ export function LearnerPlacementAlertAction({id,href,unread}:{
  }
  return <div className="mt-2 flex flex-wrap items-center gap-3" aria-busy={pending}>
   {isUnread?<span role="status" className="text-xs font-semibold text-primary-text">(Unread)</span>:null}
-  {safeHref?<Link href={safeHref}
+  {safeHref?<TextLink href={safeHref}
      onClick={event=>{if(event.defaultPrevented||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
        event.preventDefault();void open();}}
-     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+     className="inline-flex min-h-11 items-center text-sm md:min-h-9">
      {pending?"Marking as read…":"Open related page →"}
-   </Link>:isUnread?<Button variant="link" className="max-md:min-h-11" type="button" onClick={()=>void markRead()} disabled={pending}>
+   </TextLink>:isUnread?<Button variant="link" className="max-md:min-h-11" type="button" onClick={()=>void markRead()} disabled={pending}>
       {pending?"Marking as read…":"Mark as read"}
    </Button>:null}
   {error?<p role="alert" className="w-full text-xs font-semibold text-error leading-5">{error}</p>:null}

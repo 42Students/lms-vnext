@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -12,6 +11,8 @@ import {
   tpoStudentHistoryQuerySchema,
 } from "@/modules/placements/tpo-student-history-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = { page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -55,17 +56,17 @@ export default async function TpoLearnerPlacementHistoryPage({
         description="Read-only application status, versioned round results, offer transitions and joining evidence across persisted placement seasons."
         actions={
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <Link
+          <TextLink
             href="/tpo/students"
-            className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline hover:underline focus-ring md:min-h-9"
-          >← Back to Students</Link>
-          <Link
+            className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9"
+          >← Back to Students</TextLink>
+          <ButtonLink variant="secondary"
             href={"/tpo/students/" +
               encodeURIComponent(history.learner.membershipId) + "/participation"}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground sm:w-auto md:min-h-9"
+            className="w-full sm:w-auto"
           >
             Participation decision
-          </Link>
+          </ButtonLink>
           </div>
         }
       />
@@ -104,8 +105,8 @@ export default async function TpoLearnerPlacementHistoryPage({
                     {item.companyName} · {item.seasonName} · {item.roleTitle}
                   </p>
                   {item.addedByCollege?<p className="mt-1 text-sm font-semibold leading-[22px]">Added by the college</p>:null}
-                  {item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
-                    className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Open drive</Link>:null}
+                  {item.jobId?<TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
+                    className="mt-2 inline-flex min-h-11 items-center md:min-h-9">Open drive</TextLink>:null}
                 </div>
                 <span className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-1 text-xs font-semibold text-foreground">
                   {item.applicationStatus}
@@ -225,14 +226,14 @@ export default async function TpoLearnerPlacementHistoryPage({
         <span>Page {history.page} of {history.totalPages} · {history.total} application(s)</span>
         <div className="flex gap-4">
           {history.page > 1 ? (
-            <Link href={href(history.page - 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">
+            <TextLink href={href(history.page - 1)} className="inline-flex min-h-11 items-center md:min-h-9">
               ← Previous
-            </Link>
+            </TextLink>
           ) : null}
           {history.page < history.totalPages ? (
-            <Link href={href(history.page + 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">
+            <TextLink href={href(history.page + 1)} className="inline-flex min-h-11 items-center md:min-h-9">
               Next →
-            </Link>
+            </TextLink>
           ) : null}
         </div>
       </nav>

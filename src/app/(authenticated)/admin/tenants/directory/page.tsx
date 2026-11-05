@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { TenantDirectoryCsvControl } from "@/components/admin/tenant-directory-csv-control";
 import { tenantDirectoryExportHref } from "@/modules/colleges/admin-tenant-export-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -19,6 +18,8 @@ import { DataTable } from "@/components/ui/data-table";
 import { parseTenantLifecycleSearchParams, tenantLifecycleHref } from "@/modules/colleges/admin-tenant-lifecycle-model";
 import { getSuperAdminTenantLifecycleDirectory } from "@/modules/colleges/admin-tenant-lifecycle-service";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function TenantDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
@@ -35,7 +36,7 @@ export default async function TenantDirectory({searchParams}:{
  if(!parsed) return <div className="min-w-0 space-y-4">
   <PageHeader title="Tenant Setup" />
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
-   action={<Link href="/admin/tenants/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}/>
+   action={<TextLink href="/admin/tenants/directory" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Clear filters</TextLink>}/>
  </div>;
  let data:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDirectory>>;
  try{
@@ -47,7 +48,7 @@ export default async function TenantDirectory({searchParams}:{
    <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant directory unavailable"
     description="Colleges and organizations could not be loaded. Try again with the same filters."
-    action={<Link href={tenantLifecycleHref(parsed)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry tenant directory</Link>}/>
+    action={<TextLink href={tenantLifecycleHref(parsed)} className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Retry tenant directory</TextLink>}/>
   </div>;
  }
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
@@ -56,15 +57,15 @@ export default async function TenantDirectory({searchParams}:{
   <PageHeader title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-    <Link href="/admin/domains"
-      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-on-primary active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-on-primary focus-ring">Domains</Link>
-    <Link href="/admin/tenants/setup"
-      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-on-primary active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-on-primary focus-ring">Get this college ready to go live</Link>
+    <ButtonLink variant="primary" href="/admin/domains"
+      className="w-full sm:w-auto">Domains</ButtonLink>
+    <ButtonLink variant="primary" href="/admin/tenants/setup"
+      className="w-full sm:w-auto">Get this college ready to go live</ButtonLink>
     <TenantDirectoryCsvControl organizations={data.organizations} href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />
-    <Link href="/admin/tenants/create"
-      className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] sm:w-auto border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-ring">
+    <ButtonLink variant="primary" href="/admin/tenants/create"
+      className="w-full sm:w-auto">
       Create an organization and its colleges
-    </Link>
+    </ButtonLink>
    </div>} />
   <Tabs ariaLabel="Tenant Setup stages" renderPanel={false} value="directory"
     items={[
@@ -107,10 +108,10 @@ export default async function TenantDirectory({searchParams}:{
     getRowKey={tenant=>tenant.id}
     columns={[
       {key:"college",header:"College",mobilePriority:"primary",cell:tenant=><>
-        <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
-          className="inline-flex min-h-11 min-w-0 items-center break-words font-semibold text-primary-text underline md:min-h-9 underline-offset-4 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring">
+        <TextLink href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
+          className="inline-flex min-h-11 min-w-0 items-center break-words md:min-h-9">
           {tenant.name}
-        </Link>
+        </TextLink>
         <span className="mt-1 block break-all text-xs text-muted-foreground">{tenant.code}</span>
       </>},
       {key:"code",header:"Unique ID",mobilePriority:"secondary",cell:tenant=>tenant.uniqueId},
@@ -124,11 +125,11 @@ export default async function TenantDirectory({searchParams}:{
       {key:"location",header:"Location",mobilePriority:"secondary",cell:tenant=>
         [tenant.city,tenant.state,tenant.country].filter(Boolean).join(", ")||"Location not recorded"},
       {key:"action",header:"Manage College",mobilePriority:"action",cell:tenant=>
-        <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring">Manage →</Link>},
+        <TextLink href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Manage →</TextLink>},
     ]}
     empty={<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."
-      action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring w-full md:w-auto md:min-h-9">Clear filters</Link>}/>}
+      action={<TextLink href="/admin/tenants" className="inline-flex min-h-11 items-center w-full md:w-auto md:min-h-9">Clear filters</TextLink>}/>}
   />
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={url} label="Tenant pages" />
  </div>;

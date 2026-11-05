@@ -1,5 +1,4 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
-import Link from "next/link";
 
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
@@ -21,6 +20,8 @@ import {colleges} from "@/db/schema";
 import {eq} from "drizzle-orm";
 import { SuperAdminTemplatePreviewControl } from "@/components/admin/super-admin-template-preview-control";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function SuperAdminProjectTemplateDetailPage({
   params,searchParams,
@@ -74,8 +75,8 @@ export default async function SuperAdminProjectTemplateDetailPage({
       <PageHeader title="Project template"/>
       <ErrorState title="Failed to load template"
         description="This template could not be loaded. Check your active scope and retry; no version or college assignment details are shown."
-        action={<Link href={"/admin/projects/templates/"+encodeURIComponent(id.data)}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry template details</Link>}/>
+        action={<TextLink href={"/admin/projects/templates/"+encodeURIComponent(id.data)}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto">Retry template details</TextLink>}/>
     </div>;
   }
 
@@ -101,18 +102,17 @@ export default async function SuperAdminProjectTemplateDetailPage({
             >
               {detail.template.status}
             </StatusBadge>
-            {can(context,"activity.read")?<Link
+            {can(context,"activity.read")?<TextLink
               href={"/admin/projects/audit?subjectType=project_template&subjectId="+encodeURIComponent(detail.template.id)}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
-              Audit trail</Link>:null}
+              className="inline-flex min-h-11 items-center text-sm md:min-h-9">
+              Audit trail</TextLink>:null}
             {detail.currentVersion?
               <SuperAdminTemplatePreviewControl title={detail.template.title} blueprint={detail.currentVersion.blueprint}/> :
               <span role="status" className="text-xs text-muted-foreground">No preview available</span>}
             {detail.template.status==="PUBLISHED"&&context.adminScope?.collegeId&&
              detail.assignments.some(a=>a.collegeId===context.adminScope?.collegeId)?
-             <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)] focus-ring">
-              Use this template</Link>:
+             <ButtonLink variant="primary" href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}>
+              Use this template</ButtonLink>:
              <span role="status" className="text-xs text-muted-foreground">
               {context.adminScope?.collegeId?"Assign a published template to this college to create workspaces.":"Choose a college to use this template."}
              </span>}

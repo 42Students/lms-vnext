@@ -4,7 +4,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -14,6 +13,7 @@ import {mentorResourceDirectoryHref,parseMentorResourceDirectorySearch}
 import {mentorResourceDirectoryFilterLayout} from "@/modules/projects/mentor-resource-directory-layout-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Search={required?:string|string[];link?:string|string[];description?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
@@ -22,8 +22,8 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  const parsed=parseMentorResourceDirectorySearch(projectId,raw);
  if(!parsed)return <section role="alert" className="space-y-3">
   <PageHeader title="Invalid resource filters" />
-  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
-   className="inline-flex min-h-11 items-center text-link underline focus-ring hover:text-[var(--lms-primary-text)]">Clear invalid filters</Link>
+  <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
+   className="inline-flex min-h-11 items-center">Clear invalid filters</TextLink>
  </section>;
  const data=await getMentorResourceDirectory(await getCurrentRequestContext(),parsed);
  const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -34,10 +34,10 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader eyebrow="Mentor · Project resources" title="Registered resource links"
    description={data.projectTitle}
-   actions={<Link data-unskin="" href={base+"?tab=resources"}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+   actions={<TextLink data-unskin="" href={base+"?tab=resources"}
+    className="inline-flex min-h-11 items-center text-sm md:min-h-9">
      Project resources
-   </Link>}/>
+   </TextLink>}/>
   {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
    Projects access is disabled; resource metadata was not loaded.
   </section>:<>
@@ -85,14 +85,14 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     </Label>
       </div>
     </Disclosure>
-    {hasFilters?<Link href={base+"/resources-directory"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+    {hasFilters?<TextLink href={base+"/resources-directory"} className="inline-flex min-h-11 items-center text-sm">Clear</TextLink>:null}
    </form></FilterBar>
    <div className="flex flex-wrap items-center gap-3">
-    <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
+    <TextLink data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
       "/mentor-resources-export"+filters}
-      download className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+      download className="inline-flex min-h-11 items-center text-sm md:min-h-9">
      Export resource metadata CSV (max 200)
-    </Link>
+    </TextLink>
     {data.exportOmitted>0?<p role="status" className="text-xs text-body leading-5">
      Export omits {data.exportOmitted} matching resource records.
     </p>:null}
@@ -101,7 +101,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    {data.items.length===0?<EmptyState title="No matching resources"
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":
-     "Clear the filters to see other registered resource metadata."} action={<Link href={base+"/resources-directory"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Clear</Link>} />:
+     "Clear the filters to see other registered resource metadata."} action={<TextLink href={base+"/resources-directory"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>} />:
    <ol className="min-w-0 divide-y divide-border border-y border-border">
     {data.items.map(resource=><li key={resource.id}
      className="min-w-0 py-4">
@@ -113,10 +113,10 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      </div>
      {resource.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
       {resource.description}</p>:null}
-     {resource.safeUrl?<Link href={resource.safeUrl} rel="noopener noreferrer"
-      className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring hover:text-[var(--lms-primary-text)]">
+     {resource.safeUrl?<TextLink href={resource.safeUrl} rel="noopener noreferrer"
+      className="mt-3 inline-flex min-h-11 items-center text-sm">
       Open HTTPS resource
-     </Link>:<p className="mt-2 text-xs text-muted-foreground leading-5">
+     </TextLink>:<p className="mt-2 text-xs text-muted-foreground leading-5">
       No safe HTTPS link recorded.
      </p>}
     </li>)}

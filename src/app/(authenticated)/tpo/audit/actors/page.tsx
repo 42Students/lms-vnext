@@ -6,7 +6,6 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {DataTable} from "@/components/ui/data-table";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -18,6 +17,7 @@ import {tpoAuditEntityHref} from "@/modules/placements/tpo-audit-entity-link-mod
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   actorId?: string | string[];
@@ -53,9 +53,9 @@ export default async function TpoActorAuditPage({
   if (!parsed.success) {
     return <section role="alert" className="min-w-0 space-y-3">
       <PageHeader title="Invalid audit filters" />
-      <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring md:min-h-9" href="/tpo/audit/actors">
+      <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9" href="/tpo/audit/actors">
         Clear filters
-      </Link>
+      </TextLink>
     </section>;
   }
   const data = await getTpoActorAudit(context, parsed.data);
@@ -82,10 +82,10 @@ export default async function TpoActorAuditPage({
           className="w-full md:w-auto">
           Export matching CSV (first 2,000)
         </ButtonLink>
-        <Link href="/tpo/audit"
-          className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9 md:w-auto">
+        <TextLink href="/tpo/audit"
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-9 md:w-auto">
           ← All audit sources
-        </Link>
+        </TextLink>
       </>}/>
     <form role="search" aria-label="audit actors filters" action="/tpo/audit/actors" method="get"
       className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-4">
@@ -133,9 +133,9 @@ export default async function TpoActorAuditPage({
       </Disclosure>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         <Button type="submit" className="w-full sm:w-auto">Apply filters</Button>
-        <Link href="/tpo/audit/actors" className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
+        <TextLink href="/tpo/audit/actors" className="inline-flex min-h-11 items-center justify-center px-3 text-sm md:min-h-9">
           Reset filters
-        </Link>
+        </TextLink>
       </div>
     </form>
     <section className="min-w-0 space-y-4">
@@ -150,12 +150,11 @@ export default async function TpoActorAuditPage({
           title={data.total===0
             ?"No canonical placement events match these exact filters."
             :"This page is outside the available records. Choose an earlier page."}
-          action={<Link href={data.total===0
+          action={<ButtonLink variant="secondary" href={data.total===0
               ?(hasExactFilters?"/tpo/audit/actors":"/tpo/audit")
-              :urlForPage(data.totalPages)}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] focus-ring md:min-h-9">
+              :urlForPage(data.totalPages)}>
             {data.total===0?(hasExactFilters?"Reset filters":"← All audit sources"):"Choose an earlier page."}
-          </Link>}/>} 
+          </ButtonLink>}/>} 
         columns={[
           {key:"action",header:"Action",mobileLabel:"Action",mobilePriority:"primary",
            cell:(row)=>row.eventType},
@@ -167,10 +166,10 @@ export default async function TpoActorAuditPage({
            cell:(row)=>row.entityType},
           {key:"entity",header:"Entity ID",mobileLabel:"Entity ID",mobilePriority:"action",
            cell:(row)=>tpoAuditEntityHref(row.entityType,row.entityId)?
-            <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!}
-             className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
+            <TextLink href={tpoAuditEntityHref(row.entityType,row.entityId)!}
+             className="inline-flex min-h-11 items-center">
              Open {row.entityType.replaceAll("_"," ")} →
-            </Link>:
+            </TextLink>:
             <span title="No safe direct page is registered for this entity type">{row.entityId}</span>},
         ]}
       />

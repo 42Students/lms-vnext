@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -18,6 +17,7 @@ import {mentorActivityMatchesDateFilters,mentorActivityIstDayKey}
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;subjectType?:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
@@ -457,10 +457,10 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
          <StatusBadge tone="neutral">{mentorActivityCategory(event.eventType)}</StatusBadge>
         </div>
        </div>
-       <Link className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline"
+       <TextLink className="mt-2 inline-flex min-h-9 items-center text-sm"
          href={mentorEventHref(projectId,event)}>
          Open related record →
-       </Link>
+       </TextLink>
       </article></Fragment>)}
      </div>}
   {resourceAudit&&totalPages>1?<nav aria-label="Resource audit pages" className="flex items-center gap-2">

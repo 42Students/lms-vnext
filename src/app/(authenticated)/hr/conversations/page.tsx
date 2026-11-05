@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { ErrorState } from "@/components/ui/error-state";
 import { Banner } from "@/components/ui/banner";
 import { ScrollCue } from "@/components/ui/scroll-cue";
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -30,6 +29,8 @@ import {selectRecruiterWorkspaceThread} from "@/modules/placements/hr-conversati
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[];thread?:string|string[];view?:string|string[]};
 
@@ -61,7 +62,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  if(!parsed.success)return <div className="min-w-0 space-y-3">
   <PageHeader title="Messages"/>
   <ErrorState title="Invalid conversation filters" description="Review the college and conversation filters."
-    action={<Link href="/hr/conversations" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-ring">Reset</Link>}/></div>;
+    action={<TextLink href="/hr/conversations" className="inline-flex min-h-11 md:min-h-9 items-center">Reset</TextLink>}/></div>;
  const result=await listHrConversations(context,parsed.data).catch((error:unknown)=>{
    if(error instanceof AuthorizationError)throw error;
    return null;
@@ -171,8 +172,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         </li>)}
       </ol></ScrollCue>:null}
       {generalHistoryResult?.ok?<div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>:null}
-      <Link href={"/hr/conversations/"+generalThread.id}
-        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Open full conversation</Link>
+      <TextLink href={"/hr/conversations/"+generalThread.id}
+        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center">Open full conversation</TextLink>
     </div>:null}
     {generalLookup && !generalLookup.ok?
       <p role="status" className="mt-3 text-sm text-body leading-[1.6]">
@@ -190,8 +191,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </form>:null}
    </section>
      </RecruiterGeneralDrawer>:null}
-     <Link href="/hr/notifications"
-       className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline md:min-h-9">Notification inbox</Link>
+     <TextLink href="/hr/notifications"
+       className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">Notification inbox</TextLink>
     </div>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
@@ -211,9 +212,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
       <p className="mt-1 max-w-prose whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-body">{item.body}</p>
       <p className="mt-1 text-xs text-muted-foreground">{when(item.createdAt)} IST</p>
-      <Link href={item.href} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+      <TextLink href={item.href} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center">
        View your drive request
-      </Link>
+      </TextLink>
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
     </li>)}</ul>
    </Disclosure>:null}
@@ -279,20 +280,18 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    <p className="text-sm text-body">Showing {result.first.toLocaleString("en-IN")}–{result.last.toLocaleString("en-IN")} of {result.total.toLocaleString("en-IN")} conversations · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
    {result.items.length?<ol className="min-w-0 divide-y divide-border border-y border-border">
     {visibleRows.map(row=><li key={row.id} className="min-w-0 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
-     <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1"><Link href={"/hr/conversations/"+row.id}
-      className="inline-flex min-h-11 min-w-0 flex-1 items-center gap-2 break-words [overflow-wrap:anywhere] font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring"><span aria-hidden="true" className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--lms-primary-subtle)] text-[18px] text-[var(--lms-primary-text)]">✉{row.unread>0?<span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full bg-[var(--lms-warning)]"/>:null}</span>{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
+     <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1"><TextLink href={"/hr/conversations/"+row.id}
+      className="inline-flex min-h-11 min-w-0 flex-1 items-center gap-2 break-words [overflow-wrap:anywhere] md:min-h-9"><span aria-hidden="true" className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--lms-primary-subtle)] text-[18px] text-[var(--lms-primary-text)]">✉{row.unread>0?<span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full bg-[var(--lms-warning)]"/>:null}</span>{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</TextLink>
      {row.unread>0?<Badge tone="warning" aria-label={row.unread+" unread messages"} className="shrink-0 self-center">{row.unread} new</Badge>:null}</div>
      {row.preview?<p className="mt-1 max-w-3xl truncate text-sm leading-6 text-body">
       {row.preview.text}
      </p>:null}
      <p className="mt-1 break-words text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
     </li>)}
-   </ol>:<EmptyState title={parsed.data.q?"No conversations match your search":"No messages yet"} description={parsed.data.q?"Try another drive or message search.":"Write to the placement cell, or open a drive to discuss its hiring process."} action={<Link href={hrConversationsHref({collegeId:result.collegeId,q:"",unreadOnly:"false",sort:"LATEST",scope:"ALL",page:1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Reset</Link>}/>}
+   </ol>:<EmptyState title={parsed.data.q?"No conversations match your search":"No messages yet"} description={parsed.data.q?"Try another drive or message search.":"Write to the placement cell, or open a drive to discuss its hiring process."} action={<TextLink href={hrConversationsHref({collegeId:result.collegeId,q:"",unreadOnly:"false",sort:"LATEST",scope:"ALL",page:1})} className="inline-flex min-h-11 items-center md:min-h-9">Reset</TextLink>}/>}
    {result.pages>1 ? <nav aria-label="Conversation pages" className="flex min-w-0 flex-wrap gap-3 max-md:[&>a]:w-full max-md:[&>a]:justify-center">
-    {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-radius-shell-control)] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring text-sm">Previous</Link>:null}
-    {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-radius-shell-control)] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring text-sm">Next</Link>:null}
+    {result.page>1?<ButtonLink variant="secondary" href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}>Previous</ButtonLink>:null}
+    {result.page<result.pages?<ButtonLink variant="secondary" href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}>Next</ButtonLink>:null}
    </nav> : null}
    </section>
   </>}

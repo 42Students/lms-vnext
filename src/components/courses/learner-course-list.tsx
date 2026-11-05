@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { useId, type ReactNode } from "react";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 
-import Link from "next/link";
 import { LearnerCourseCardImage } from "./learner-course-card-image";
 import {learnerCourseImageResetKey} from "@/modules/courses/learner-course-image-reset-key-model";
 import { learnerCourseCreditSummary } from "@/modules/courses/learner-course-credit-summary-model";
@@ -33,6 +32,7 @@ import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/co
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 
 const PAGE_SIZE = 48;
@@ -52,10 +52,10 @@ function LearnerCourseCardSurface({
       {children}
     </div>;
   }
-  return <Link href={href}
+  return <TextLink variant="bare" href={href}
     className={baseClass + " transition hover:border-primary hover:shadow-sm focus-ring"}>
     {children}
-  </Link>;
+  </TextLink>;
 }
 
 /** Compact keyboard-openable, anchored legacy metric pills. */
@@ -268,10 +268,10 @@ export function LearnerCourseList({
                     {learnerCourseUnavailableReason(row) ? (
                       <span aria-disabled="true" className="text-muted-foreground">{row.course.courseName}</span>
                     ) : (
-                      <Link className="text-link hover:underline"
+                      <TextLink
                         href={`/learn/courses/${encodeURIComponent(row.course.deliveryId)}/home`}>
                         {row.course.courseName}
-                      </Link>
+                      </TextLink>
                     )}
                   </li>
                 ))}

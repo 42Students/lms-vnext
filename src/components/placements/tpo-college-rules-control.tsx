@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {TPO_RULE_LIMITS,tpoRuleBoundsValid} from "@/modules/placements/tpo-rule-limits";
-import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -11,6 +10,7 @@ import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 type Rules = {
   countsAsPlacedAt: string;
@@ -162,7 +162,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         to answer an offer. A placement officer can review any permitted extension separately.
        </p>
        <p className="py-4">CTC and dream-drive tiers are configured through
-        <Link href="/tpo/settings/job-types" className="mx-1 font-semibold text-link underline underline-offset-2">Job types</Link>;
+        <TextLink href="/tpo/settings/job-types" className="mx-1">Job types</TextLink>;
         the offer uplift above is the persisted college-wide threshold.
        </p>
       </div>

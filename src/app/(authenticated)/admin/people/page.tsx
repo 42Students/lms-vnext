@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SuperAdminPeopleCsvControl } from "@/components/admin/super-admin-people-csv-control";
 import { superAdminPeopleExportHref } from "@/modules/people/admin-users-export-model";
 import { redirect } from "next/navigation";
@@ -29,6 +28,8 @@ import {
 import type { PersonMembershipView } from "@/modules/people/service";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 const columns: DataTableColumn<PersonMembershipView>[] = [
   {
@@ -122,10 +123,9 @@ export default async function SuperAdminPeoplePage({
           title="Select a college to continue"
           description="Select an Organization + College in the header above to view people. Your chosen Admin/TPO filter is preserved."
         />
-        <Link href={"/admin/people/directory"+(role!=="ALL"?"?role="+encodeURIComponent(role):"")}
-          className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+        <ButtonLink variant="secondary" href={"/admin/people/directory"+(role!=="ALL"?"?role="+encodeURIComponent(role):"")}>
           Browse all permitted Users &amp; Roles without selecting a college →
-        </Link>
+        </ButtonLink>
       </div>
     );
   }
@@ -137,7 +137,7 @@ export default async function SuperAdminPeoplePage({
    <PageHeader title="College Admin and TPO accounts"/>
    <ErrorState title="Could not load administrator accounts"
     description="The authorized membership directory is temporarily unavailable. No empty list has been assumed."
-    action={<Link href={href(requestedPage)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+    action={<TextLink href={href(requestedPage)} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
   </div>;
   const people=peopleResult.value;
   const totals=await Promise.allSettled(["ALL","LEARNER","FACULTY","TPO"].map(memberRole=>
@@ -154,7 +154,7 @@ export default async function SuperAdminPeoplePage({
         title="College Admin and TPO accounts"
         description="Manage administrator and placement-cell access in the selected college."
         actions={<div className="flex min-w-0 flex-wrap items-center gap-2">
-          <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">People Directory</Link>
+          <TextLink href="/admin/people/directory" className="inline-flex min-h-11 items-center md:min-h-9">People Directory</TextLink>
           <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
           <PersonOnboardDialog collegeId={collegeId} forcedRole="COLLEGE_ADMIN" />
           <PersonOnboardDialog collegeId={collegeId} forcedRole="TPO" />
@@ -171,7 +171,7 @@ export default async function SuperAdminPeoplePage({
         {href:"/admin/students",label:"Student accounts"},
         {href:"/admin/faculty",label:"Faculty accounts"},
         {href:"/admin/faculty-assignment",label:"Teaching assignments"},
-       ].map(item=><Link key={item.href} href={item.href} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">{item.label}</Link>)}
+       ].map(item=><ButtonLink variant="secondary" key={item.href} href={item.href}>{item.label}</ButtonLink>)}
       </nav>
       <section aria-label="College people totals" className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4">
        {(["Active memberships","Students","Faculty","TPO"] as const).map((label,i)=><div key={label} className="rounded border border-border bg-surface p-3">
@@ -202,10 +202,10 @@ export default async function SuperAdminPeoplePage({
          <PageSizeSelect name="pageSize" defaultValue={pageSize} options={[10,20,50]} />
         </div>
        </Disclosure>
-       <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+       <TextLink href="/admin/people" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
       </form>
       <p role="status" aria-live="polite" className="text-sm text-body">{people.pagination.total} matching contacts</p>
-      <Link href="/admin/people/directory" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-ring sm:w-auto md:min-h-9">Browse platform users & roles →</Link>
+      <TextLink href="/admin/people/directory" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9">Browse platform users & roles →</TextLink>
       <DataTable empty={<EmptyState title="No matching contacts" description="No college memberships match the current filters." />}
         columns={columns}
         rows={people.items}

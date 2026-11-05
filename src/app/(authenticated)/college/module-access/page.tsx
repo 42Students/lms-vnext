@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { Banner } from "@/components/ui/banner";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** The legacy College Admin module-access entry stays within the college role
  * workspace; tenant-wide locks and global permissions stay with Super Admin.
@@ -26,9 +26,9 @@ export default async function CollegeModuleAccessPage() {
     <section aria-label="College module access destinations" className="space-y-3 border-y border-[var(--lms-canvas-border)] py-4">
       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Module workspaces</Heading>
       <nav className="flex flex-wrap gap-4 text-sm">
-        <Link href="/college/academics" className="min-h-11 inline-flex items-center font-semibold text-primary-text underline md:min-h-9">Academic setup</Link>
-        <Link href="/college/projects" className="min-h-11 inline-flex items-center font-semibold text-primary-text underline md:min-h-9">Projects</Link>
-        <Link href="/college/placements" className="min-h-11 inline-flex items-center font-semibold text-primary-text underline md:min-h-9">Placements</Link>
+        <TextLink href="/college/academics" className="min-h-11 inline-flex items-center md:min-h-9">Academic setup</TextLink>
+        <TextLink href="/college/projects" className="min-h-11 inline-flex items-center md:min-h-9">Projects</TextLink>
+        <TextLink href="/college/placements" className="min-h-11 inline-flex items-center md:min-h-9">Placements</TextLink>
       </nav>
       <p className="text-sm text-body">If a module is unavailable, request a policy review from the platform administrator. A missing workspace is not proof that a module is enabled.</p>
     </section>

@@ -3,7 +3,6 @@ import { FilterBar } from "@/components/ui/filter-bar";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
@@ -19,6 +18,7 @@ import { CollegeDirectoryPageSize } from "@/components/academics/college-directo
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeSemesters>>
@@ -47,10 +47,9 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
           : "Manage cohorts, their academic year and current semester."}
         actions={<>
           {actions}
-          <Link href="/college/academics"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)]">
+          <ButtonLink variant="secondary" href="/college/academics">
             Academic workspace
-          </Link>
+          </ButtonLink>
         </>}
       />
       <div className="grid min-w-0 grid-cols-1 items-start gap-6 xl:grid-cols-24">
@@ -254,9 +253,9 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
             <Button variant="primary" type="submit" className="min-h-11 md:hidden">
               Filter
             </Button>
-            {hasFilters ? <Link href={path} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+            {hasFilters ? <ButtonLink variant="secondary" href={path}>
               Clear
-            </Link> : null}
+            </ButtonLink> : null}
           </div>
         </form>
       </section></FilterBar>
@@ -276,12 +275,12 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
                 : "No batches yet. Create a program first."
               : "No records exist on this page. Select an earlier page."}
            </p>
-           {hasFilters ? <Link href={path}
-             className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link">
-             Clear filters and view all {title.toLowerCase()}</Link> :
-             <Link href="/college/programs"
-               className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link">
-               Go to Programs</Link>}
+           {hasFilters ? <TextLink href={path}
+             className="inline-flex min-h-11 items-center">
+             Clear filters and view all {title.toLowerCase()}</TextLink> :
+             <TextLink href="/college/programs"
+               className="inline-flex min-h-11 items-center">
+               Go to Programs</TextLink>}
           </div>
         ) : (
           <>{data.kind === "SEMESTERS" ? (
@@ -353,16 +352,14 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
         <CollegeDirectoryPageSize current={data.query.pageSize} />
         <div className="flex gap-2">
           {data.query.page > 1 ? (
-            <Link href={academicDirectoryHref(data.kind, { ...data.query, page: data.query.page - 1 })}
-              className="rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 py-2 font-semibold text-[var(--lms-link-text)]">
+            <ButtonLink variant="secondary" href={academicDirectoryHref(data.kind, { ...data.query, page: data.query.page - 1 })}>
               Previous
-            </Link>
+            </ButtonLink>
           ) : null}
           {data.query.page < data.totalPages ? (
-            <Link href={academicDirectoryHref(data.kind, { ...data.query, page: data.query.page + 1 })}
-              className="rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 py-2 font-semibold text-[var(--lms-link-text)]">
+            <ButtonLink variant="secondary" href={academicDirectoryHref(data.kind, { ...data.query, page: data.query.page + 1 })}>
               Next
-            </Link>
+            </ButtonLink>
           ) : null}
         </div>
       </nav>

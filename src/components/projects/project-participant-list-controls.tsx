@@ -3,9 +3,10 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useEffect,useRef,type FormEvent} from "react";
-import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export type ProjectParticipantListQuery = {
   search?: string;
@@ -219,12 +220,12 @@ export function ProjectParticipantListControls({
       {!mentor?<Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
         Apply
       </Button>:null}
-      {hasFilters ? <Link
+      {hasFilters ? <ButtonLink variant="secondary"
         href={basePath}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:bg-primary-subtle"
+        className="w-full"
       >
         Clear filters
-      </Link> : null}
+      </ButtonLink> : null}
     </form>
   );
 }
@@ -292,7 +293,7 @@ export function ProjectParticipantPagination({
           : <>{total} result{total===1?"":"s"} · Page {page} of {totalPages}</>}
       </p>
       <nav aria-label="Project pages" className="flex flex-wrap items-center justify-center gap-2">
-        <Link
+        <TextLink variant="bare"
           href={href(
             Math.max(1, page - 1),
           )}
@@ -306,15 +307,15 @@ export function ProjectParticipantPagination({
           }
         >
           Previous
-        </Link>
-        {pages.map(value=><Link key={value} href={href(value)}
+        </TextLink>
+        {pages.map(value=><TextLink variant="bare" key={value} href={href(value)}
           aria-current={value===page?"page":undefined}
           aria-label={"Page "+value}
           className={"inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border px-3 font-semibold focus-ring "+
             (value===page?"border-primary bg-primary-subtle text-primary-text":"border-border hover:bg-muted")}>
           {value}
-        </Link>)}
-        <Link
+        </TextLink>)}
+        <TextLink variant="bare"
           href={href(
             Math.min(
               totalPages,
@@ -333,7 +334,7 @@ export function ProjectParticipantPagination({
           }
         >
           Next
-        </Link>
+        </TextLink>
       </nav>
     </div>
   );

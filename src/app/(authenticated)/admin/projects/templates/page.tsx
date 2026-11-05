@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -20,6 +19,8 @@ import { can } from "@/modules/permissions/policy";
 import { templateDirectoryHref, parseSuperAdminTemplateDirectoryQuery } from "@/modules/projects/super-admin-template-directory-model";
 import { listSuperAdminTemplateDirectory } from "@/modules/projects/super-admin-template-directory-service";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
 function tone(status:string){
  return status==="PUBLISHED"?"success" as const:status==="ARCHIVED"?"neutral" as const:"warning" as const;
@@ -32,7 +33,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  if(!query.success)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Project templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
-   action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-ring w-full md:w-auto md:min-h-9">Clear filters</Link>}/>
+   action={<TextLink href="/admin/projects/templates" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto md:min-h-9">Clear filters</TextLink>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!can(context,"project-template.read"))
@@ -52,13 +53,13 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Templates could not be loaded"
     description="The template catalogue could not be loaded. Your search and status filters are unchanged; try again."
-    action={<Link href={templateDirectoryHref(query.data)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-ring w-full md:w-auto md:min-h-9">Retry loading templates</Link>}/>
+    action={<TextLink href={templateDirectoryHref(query.data)} className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto md:min-h-9">Retry loading templates</TextLink>}/>
   </div>;
  }
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
-   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary hover:border-[var(--lms-button-primary)]-hover hover:bg-[var(--lms-button-primary)]-hover focus-ring md:min-h-9 md:w-auto">Create template</Link>:undefined}/>
+   actions={can(context,"project-template.manage")?<ButtonLink variant="primary" href="/admin/projects/templates/new" className="w-full md:w-auto">Create template</ButtonLink>:undefined}/>
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <section aria-label="Templates" className="min-w-0 space-y-4">
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
@@ -83,8 +84,8 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     mobileMode="scroll"
     columns={[
       {key:"template",header:"Template",mobilePriority:"primary",cell:item=><>
-        <Link href={"/admin/projects/templates/"+encodeURIComponent(item.id)+"/overview"}
-          className="inline-flex items-center min-h-11 md:min-h-9 break-words font-semibold text-primary-text underline-offset-2 hover:underline focus-ring hover:text-[var(--lms-primary-text)]">{item.title.trim()||item.slug}</Link>
+        <TextLink href={"/admin/projects/templates/"+encodeURIComponent(item.id)+"/overview"}
+          className="inline-flex items-center min-h-11 md:min-h-9 break-words">{item.title.trim()||item.slug}</TextLink>
         <p className="mt-1 break-words text-xs text-muted-foreground">{item.summary?.trim()||"—"}</p>
         <p className="mt-1 text-xs text-muted-foreground">{item.activeAssignments} active assignments in {data.assignmentScope.toLowerCase()} scope</p>
       </>},
@@ -101,14 +102,14 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
         </div>:<span className="text-muted-foreground">Not configured</span>},
       {key:"action",header:"Action",mobilePriority:"action",cell:item=>
         <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <Link href={"/admin/projects/templates/"+encodeURIComponent(item.id)+"/overview"}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Open</Link>
+          <TextLink href={"/admin/projects/templates/"+encodeURIComponent(item.id)+"/overview"}
+            className="inline-flex min-h-11 items-center md:min-h-9">Open</TextLink>
           {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
             templateId={item.id} title={item.title} status={item.status}/>:null}
         </div>},
     ]}
     empty={<EmptyState title="No templates match your filters" description="No global template metadata matches these filters."
-      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring w-full md:w-auto md:min-h-9">Clear filters</Link>}/>}
+      action={<TextLink href="/admin/projects/templates" className="inline-flex min-h-11 items-center w-full md:w-auto md:min-h-9">Clear filters</TextLink>}/>}
   />
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateDirectoryHref({...data.query,page})} label="Template pages" />
   </section>

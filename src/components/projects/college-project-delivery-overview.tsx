@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,collegeMemberships,users} from "@/db/schema";
@@ -45,7 +44,7 @@ export async function CollegeProjectDeliveryOverview({projectId,basePath="/colle
  try{delivery=await listProjectSubmissions(context,project.id);}
  catch{return <ErrorState title="Final delivery could not be loaded"
   description="The workspace is still accessible. Retry loading its submission and review."
-  action={<Link className={linkStyle} href={path+"/delivery"}>Retry delivery</Link>}/>;}
+  action={<TextLink variant="bare" className={linkStyle} href={path+"/delivery"}>Retry delivery</TextLink>}/>;}
  const last=delivery.submissions.at(-1)??null;
  const review=last?delivery.reviews.filter(item=>item.submissionId===last.id).at(-1)??null:null;
  const actorIds=[last?.submittedByMembershipId,review?.reviewedByMembershipId].filter((id):id is string=>Boolean(id));
@@ -67,11 +66,11 @@ export async function CollegeProjectDeliveryOverview({projectId,basePath="/colle
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="Final delivery" title={project.title}
    description="Review the final submission package, evidence, revisions and mentor feedback."
-   actions={<Link className={linkStyle} href={path}>Workspace overview</Link>}/>
+   actions={<TextLink variant="bare" className={linkStyle} href={path}>Workspace overview</TextLink>}/>
   <nav aria-label="Project workspace sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3">
    {[["Summary","summary"],["Tasks","tasks"],["Delivery","delivery"],["Activity","activity"]].map(([label,section])=>
-    <Link key={section} href={path+"/"+section} aria-current={section==="delivery"?"page":undefined}
-      className={linkStyle+(section==="delivery"?" border-primary bg-primary-subtle":"")}>{label}</Link>)}
+    <TextLink variant="bare" key={section} href={path+"/"+section} aria-current={section==="delivery"?"page":undefined}
+      className={linkStyle+(section==="delivery"?" border-primary bg-primary-subtle":"")}>{label}</TextLink>)}
   </nav>
   <section aria-labelledby="delivery-summary" className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
    <div className="flex flex-wrap items-center justify-between gap-3">
@@ -81,7 +80,7 @@ export async function CollegeProjectDeliveryOverview({projectId,basePath="/colle
    </div>
    {!last?<div className="space-y-3">
      <EmptyState title="No final delivery has been submitted yet." description="Ask the project team to submit its final package; individual task evidence remains in Tasks."/>
-     <Link className={linkStyle} href={path+"/tasks"}>See task submissions</Link>
+     <TextLink variant="bare" className={linkStyle} href={path+"/tasks"}>See task submissions</TextLink>
     </div>:<>
      <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">{facts.map(fact=>
       <div key={fact.label}><dt className="text-xs text-muted-foreground">{fact.label}</dt>

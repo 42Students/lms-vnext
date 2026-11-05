@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { Pagination } from "@/components/ui/pagination";
 import {CollegeArchivedLessonRestore} from "./college-archived-lesson-restore";
 import {LessonActions} from "./admin-learning-structure-actions";
@@ -21,6 +20,8 @@ import type {
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeLessons>>
@@ -44,10 +45,9 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
         title={title}
         {...(!lessons ? {description:COLLEGE_COURSE_TAB_COPY.progressDescription} : {})}
         actions={
-          <Link href="/college/courses"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+          <ButtonLink variant="secondary" href="/college/courses">
             Course offerings
-          </Link>
+          </ButtonLink>
         }
       /> : null}
       <div className={lessons&&prepend?"grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]":"min-w-0"}>
@@ -565,9 +565,9 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
             </div>
           </Disclosure>
           <Button type="submit" className="min-h-11 w-full px-6 md:min-h-9 md:w-auto">Filter</Button>
-          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+          <ButtonLink variant="secondary" href={href}>
             Clear
-          </Link>
+          </ButtonLink>
         </form>
       </section>
       {data.kind==="LESSONS" && data.items.length>0 ?
@@ -599,10 +599,10 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                   mobilePriority:"primary" as const,cell:item=><strong className="break-words text-foreground">{item.name.trim()||"Untitled lesson"}</strong>},
                 {key:"course",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.course,mobilePriority:"secondary" as const,
                   cell:item=><div className="min-w-0">
-                    <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+                    <TextLink href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                      className="inline-flex min-h-11 items-center break-words md:min-h-9">
                       {item.courseName} ({item.courseCode})
-                    </Link>
+                    </TextLink>
                     <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
                   </div>},
                 {key:"order",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.order,mobilePriority:"secondary" as const,
@@ -614,10 +614,10 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                       <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
                       <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
                         visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
-                    <Link href={collegeOfferingProgressHref(item.offeringId)}
-                      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+                    <TextLink href={collegeOfferingProgressHref(item.offeringId)}
+                      className="inline-flex min-h-11 items-center text-sm md:min-h-9">
                       View recorded course activity
-                    </Link>
+                    </TextLink>
                   </div>},
                 {key:"actions",header:"Actions",mobilePriority:"action" as const,
                   cell:item=>item.status==="ARCHIVED"
@@ -648,15 +648,15 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               columns={[
                 {key:"course",header:"Course / offering",mobilePriority:"primary" as const,
                   cell:item=><div className="min-w-0">
-                    <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+                    <TextLink href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                      className="inline-flex min-h-11 items-center break-words md:min-h-9">
                       {item.courseName} ({item.courseCode})
-                    </Link>
+                    </TextLink>
                     <p className="text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
-                    <Link href={collegeOfferingLessonsHref(item.offeringId)}
-                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+                    <TextLink href={collegeOfferingLessonsHref(item.offeringId)}
+                      className="inline-flex min-h-11 items-center md:min-h-9">
                       View authored lessons
-                    </Link>
+                    </TextLink>
                   </div>},
                 {key:"state",header:"Offering state",mobilePriority:"secondary" as const,
                   cell:item=><StatusBadge tone={item.offeringStatus==="ACTIVE"?"success":"neutral"}>{item.offeringStatus}</StatusBadge>},

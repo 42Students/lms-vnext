@@ -4,8 +4,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export function ScopedMembershipLifecycleActions({membershipId,displayName,status,roleLabel}:{
  membershipId:string;displayName:string;status:string;roleLabel?:"Student"|"Faculty";
@@ -111,9 +111,9 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
   </Button>:
     <p className="text-xs text-muted-foreground">Ended membership · read only</p>}
   <div className="flex flex-wrap items-center gap-3">
-   <Link href="/admin/otp-lockout" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+   <TextLink href="/admin/otp-lockout" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
     Clear OTP lockout
-   </Link>
+   </TextLink>
    {roleLabel==="Faculty"&&status!=="ENDED"?<Button variant="danger" type="button"
      disabled={busy||retireBusy} onClick={()=>void prepareRetirement()}>
      {retireBusy?"Checking dependencies…":"Retire Faculty"}

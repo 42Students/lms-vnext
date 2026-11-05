@@ -1,8 +1,8 @@
-import Link from "next/link";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
 import {projectTpoReportRecordLinks,type TpoReportRecordLinkRow} from "@/modules/placements/tpo-report-record-links-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export function TpoReportRecordLinks({
  kind,drives,companies,
 }:{
@@ -20,14 +20,14 @@ export function TpoReportRecordLinks({
    <div><Heading level={3} size="sm" className="text-[var(--lms-heading)]">Drives</Heading>
     {data.driveLinks.length===0?<EmptyState title="No drive records to open."/>:
      <ul className="mt-2 divide-y divide-border">{data.driveLinks.map(item=><li key={item.id} className="py-2">
-      <Link href={item.href} className="inline-flex min-h-11 items-center break-words text-[13px] font-semibold text-[var(--lms-link-text)] hover:underline md:min-h-9">{item.name} · {item.company} →</Link>
+      <TextLink href={item.href} className="inline-flex min-h-11 items-center break-words text-[13px] md:min-h-9">{item.name} · {item.company} →</TextLink>
      </li>)}</ul>}
     {data.drivesTruncated?<Alert tone="warning">Only the first 100 drive links are shown; use report filters to narrow the list.</Alert>:null}
    </div>
    <div><Heading level={3} size="sm" className="text-[var(--lms-heading)]">Companies</Heading>
     {data.companyLinks.length===0?<EmptyState title="No company records to open."/>:
      <ul className="mt-2 divide-y divide-border">{data.companyLinks.map(item=><li key={item.id} className="py-2">
-      <Link href={item.href} className="inline-flex min-h-11 items-center break-words text-[13px] font-semibold text-[var(--lms-link-text)] hover:underline md:min-h-9">{item.name} →</Link>
+      <TextLink href={item.href} className="inline-flex min-h-11 items-center break-words text-[13px] md:min-h-9">{item.name} →</TextLink>
      </li>)}</ul>}
     {data.companiesTruncated?<Alert tone="warning">Only the first 100 company links are shown; use report filters to narrow the list.</Alert>:null}
    </div>

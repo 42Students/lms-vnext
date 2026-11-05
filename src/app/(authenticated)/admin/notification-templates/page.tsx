@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
@@ -6,6 +5,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {logInitialZeptoMailTemplateReadiness,zeptoMailTemplateReadiness} from "@/modules/notifications/zeptomail-template-readiness";
 import { Table } from "@/components/ui/table";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 /** Operators see per-event status, never provider template keys. */
@@ -16,14 +16,14 @@ export default async function NotificationTemplateReadinessPage(){
    <PageHeader title="Notification template readiness"/>
    <ErrorState title="Global Super Admin access required"
     description="Clear your selected organization and college. Template provisioning is platform-wide and is not editable here."
-    action={<Link href="/admin/settings" className="font-semibold text-primary-text underline">Admin settings</Link>}/>
+    action={<TextLink href="/admin/settings">Admin settings</TextLink>}/>
   </div>;
  logInitialZeptoMailTemplateReadiness();
  const report=zeptoMailTemplateReadiness();
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin" title="Notification template readiness"
    description="Read-only configuration checks. No template identifiers or credentials are displayed."
-   actions={<Link href="/admin/notification-templates" className="font-semibold text-primary-text underline">Recheck</Link>}/>
+   actions={<TextLink href="/admin/notification-templates">Recheck</TextLink>}/>
   <div className="flex flex-wrap items-center gap-3">
    <StatusBadge tone={report.ready?"success":"warning"}>{report.ready?"Required templates ready":"Some templates missing"}</StatusBadge>
    <span className="text-sm text-muted-foreground">{report.missing} required event templates missing · {report.disabled} intentionally disabled channels</span>

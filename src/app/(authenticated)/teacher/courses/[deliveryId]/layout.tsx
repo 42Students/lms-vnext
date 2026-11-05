@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import Link from "next/link";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { CoursesServiceError } from "@/modules/courses/errors";
@@ -66,9 +65,9 @@ export default async function FacultyCourseTabLayout({
   return (
     <div className="min-w-0 space-y-5">
       <header className="min-w-0">
-       <Link href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-[color:var(--lms-button-primary)] hover:underline">
+       <TextLink href="/teacher/courses" className="inline-flex min-h-11 items-center text-sm text-[color:var(--lms-button-primary)]">
         ‹ Courses
-       </Link>
+       </TextLink>
        <Heading level={1} className="faculty-proto-heading mt-1">{active.courseName}</Heading>
        <p className="faculty-proto-subtitle mt-1">
         {active.courseCode}

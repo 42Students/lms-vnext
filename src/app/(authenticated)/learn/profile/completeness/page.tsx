@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -9,6 +8,7 @@ import {learnerProfileChecklist} from "@/modules/people/learner-profile-checklis
 import {learnerProfileCareerCoverage,learnerCareerCompletionMessage} from "@/modules/people/learner-profile-career-coverage-model";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function ProfileCompleteness({searchParams}:{
   searchParams:Promise<{show?:string|string[]}>;
@@ -28,9 +28,9 @@ export default async function ProfileCompleteness({searchParams}:{
     {value:"filled",label:"Filled"},
   ] as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">
+    <TextLink href="/learn/profile" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
       ← Back to Profile
-    </Link>
+    </TextLink>
     <PageHeader title="Profile completion checklist"
       description="Read-only coverage of the fields saved to your learner profile." />
     <section className="min-w-0 border-b border-border pb-4">
@@ -49,7 +49,7 @@ export default async function ProfileCompleteness({searchParams}:{
       </Disclosure>
     </section>
     <nav aria-label="Checklist filters" className="flex min-w-0 max-w-full flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0">
-      {options.map(option=><Link key={option.value}
+      {options.map(option=><TextLink variant="bare" key={option.value}
         href={"/learn/profile/completeness?show="+option.value}
         aria-current={readiness.show===option.value ? "page" : undefined}
         className={
@@ -58,7 +58,7 @@ export default async function ProfileCompleteness({searchParams}:{
             "border-[var(--lms-neutral-200)] bg-transparent text-[var(--lms-neutral-500)] hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-primary)]")
         }>
         {option.label}
-      </Link>)}
+      </TextLink>)}
     </nav>
     <section className="border-t border-border pt-4">
       <Heading level={2} size="base" className="text-[var(--lms-heading)]">Your sections</Heading>
@@ -66,7 +66,7 @@ export default async function ProfileCompleteness({searchParams}:{
         No sections match this filter. Choose All sections to review the full checklist.
       </p> : <ul className="mt-4 divide-y divide-border border-y border-border">
         {readiness.items.map(item=><li key={item.section} className="min-w-0">
-          <Link href={"/learn/profile?section="+encodeURIComponent(item.section)}
+          <TextLink variant="bare" href={"/learn/profile?section="+encodeURIComponent(item.section)}
             className="flex min-h-11 min-w-0 flex-col items-start gap-2 px-1 py-3 text-sm text-foreground hover:bg-primary-subtle sm:flex-row sm:items-center sm:justify-between sm:gap-3 focus-ring">
             <span className="min-w-0 break-words">{item.label}
               {(["personal-details","contacts","education","skills"].includes(item.section))?
@@ -75,7 +75,7 @@ export default async function ProfileCompleteness({searchParams}:{
             <span className={"shrink-0 text-xs font-semibold "+(item.completed?"text-success":"text-muted-foreground")}>
               {item.completed?"Filled":"Not filled"}
             </span>
-          </Link>
+          </TextLink>
         </li>)}
       </ul>}
     </section>

@@ -82,7 +82,7 @@ export default function UniversitiesPage(){
     <div className="mx-auto max-w-[1180px] space-y-7 px-5">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--lms-primary-text)]">Connected journey</p>
       <Heading level={2} id="university-journey-heading"
-        className="text-[clamp(1.75rem,3vw,2.25rem)] text-[var(--lms-heading)]">
+        className="text-2xl md:text-3xl text-[var(--lms-heading)]">
         From classroom to career
       </Heading>
       <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

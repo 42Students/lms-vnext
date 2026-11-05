@@ -5,7 +5,7 @@ import {resolveFacultyCourseDeliveryForLink,listFacultyCourseDeliveries} from "@
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
-import Link from "next/link";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function FacultyCourseDefaultPage({
   params, searchParams,
@@ -26,7 +26,7 @@ export default async function FacultyCourseDefaultPage({
     <PageHeader title="Course workspace"/>
     <ErrorState title="Faculty access required"
       description="This course workspace is available to assigned faculty members."
-      action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline">Back to courses</Link>}/>
+      action={<TextLink href="/teacher/courses" className="inline-flex min-h-11 items-center">Back to courses</TextLink>}/>
   </div>;
   // Resolve historical course codes/slugs only against this faculty member's
   // current, authorized teaching assignments. Numeric legacy identifiers do
@@ -43,7 +43,7 @@ export default async function FacultyCourseDefaultPage({
       <PageHeader title="Course workspace"/>
       <ErrorState title="Teaching assignment unavailable"
         description="Your current faculty account is not assigned to this course or class."
-        action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline">My teaching courses</Link>}/>
+        action={<TextLink href="/teacher/courses" className="inline-flex min-h-11 items-center">My teaching courses</TextLink>}/>
     </div>;
 
   // Legacy bookmarks retained their full query. Preserve repeated keys,

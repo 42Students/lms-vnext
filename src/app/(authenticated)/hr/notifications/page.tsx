@@ -1,6 +1,5 @@
 import { Tabs } from "@/components/ui/tabs";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -16,6 +15,8 @@ import {listHrNotifications} from "@/modules/placements/hr-notifications-service
 import {groupHrNotificationPage} from "@/modules/placements/hr-notification-groups-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function HrMessagesPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[];page?:string|string[];q?:string|string[]}>
 }) {
@@ -27,10 +28,10 @@ export default async function HrMessagesPage({searchParams}:{
  });
  if(!query.success)return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader title="Notifications"
-   actions={<Link href="/hr/conversations"
-     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto">Recruiter conversations</Link>}/>
+   actions={<TextLink href="/hr/conversations"
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-9 md:w-auto">Recruiter conversations</TextLink>}/>
   <ErrorState title="Invalid inbox filter" description="Review the college, search and unread options." role="alert"
-   action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Reset</Link>}/>
+   action={<TextLink href="/hr/notifications" className="inline-flex min-h-11 items-center md:min-h-9">Reset</TextLink>}/>
  </div>;
  const result=await listHrNotifications(context,query.data);
  const time=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
@@ -40,14 +41,14 @@ export default async function HrMessagesPage({searchParams}:{
   <PageHeader title="Notifications"
    description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."
    actions={<>
-     <Link href="/hr/conversations" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto">
+     <TextLink href="/hr/conversations" className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-9 md:w-auto">
        Open recruiter conversations
-     </Link>
-     {result.status==="READY"?<Link
+     </TextLink>
+     {result.status==="READY"?<TextLink
        href={"/api/placements/recruiter/notifications/export?collegeId="+encodeURIComponent(result.collegeId)+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)}
-       className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto hover:text-[var(--lms-primary-hover)] focus-ring">
+       className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-9 md:w-auto">
        Export scoped notifications CSV
-     </Link>:null}
+     </TextLink>:null}
    </>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body leading-[22px]">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
@@ -87,8 +88,8 @@ export default async function HrMessagesPage({searchParams}:{
        className="border-b border-border pb-4">
        <div className="flex flex-wrap items-center justify-between gap-2">
          <Heading level={2} size="lg" className="text-[var(--lms-heading)] leading-[1.4]">
-           <Link href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
-             className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">{group.title}</Link>
+           <TextLink href={"/hr/placements/jobs/"+encodeURIComponent(group.jobId)}
+             className="min-h-11 md:min-h-9 inline-flex items-center">{group.title}</TextLink>
          </Heading>
          <span className="text-xs text-muted-foreground">{group.items.length} on this page · {group.unread} unread</span>
        </div>
@@ -105,20 +106,18 @@ export default async function HrMessagesPage({searchParams}:{
      </section>)}
    </div>:<EmptyState title="No matching notifications"
      description="No matching notifications for this employer and college."
-     action={query.data.q||query.data.unreadOnly==="true" ? <Link href={"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Reset</Link> : undefined}/>}
+     action={query.data.q||query.data.unreadOnly==="true" ? <TextLink href={"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)} className="inline-flex min-h-11 items-center md:min-h-9">Reset</TextLink> : undefined}/>}
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground leading-5">
        {result.first?result.first+"–"+result.last:"No rows on this page"}
        {" of "+(query.data.unreadOnly==="true"?result.unread:result.total).toLocaleString("en-IN")}
       </p>
       <div className="flex flex-wrap gap-2">
-       {result.page>1?<Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page-1)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Previous</Link>:null}
-       {result.page<result.pages?<Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page+1)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Next</Link>:null}
+       {result.page>1?<ButtonLink variant="secondary" href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page-1)}>Previous</ButtonLink>:null}
+       {result.page<result.pages?<ButtonLink variant="secondary" href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page+1)}>Next</ButtonLink>:null}
       </div>
     </nav>
-   <p className="text-xs text-muted-foreground leading-5"><Link href="/hr/messages" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
+   <p className="text-xs text-muted-foreground leading-5"><TextLink href="/hr/messages" className="min-h-11 md:min-h-9 inline-flex items-center">Messages</TextLink> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
   </>}
  </div>;
 }

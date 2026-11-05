@@ -11,10 +11,10 @@ import { useState, type FormEvent } from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 type Choices = {
   programs: {id:string;name:string}[];
@@ -170,7 +170,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
         {pending?"Registering…":"Register student"}
       </Button>
       {result&&<Alert tone={result.startsWith("Partially")?"warning":"success"}>{result}</Alert>}
-      {savedMemberId?<Link href={"/college/students/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Open registered student profile →</Link>:null}
+      {savedMemberId?<TextLink href={"/college/students/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center md:min-h-9">Open registered student profile →</TextLink>:null}
       {error&&<Alert tone="error">{error}</Alert>}
     </div>
   </form></>;

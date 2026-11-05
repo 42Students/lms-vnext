@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -12,6 +11,7 @@ import {getPlacementDriveDay} from "@/modules/placements/drive-day-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:string}>}){
@@ -35,25 +35,23 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
  return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · Selections"}
    description="Record the company's selections, verify placement rules, and release the offers."
-   actions={<Link href={root+"/offers"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring sm:w-auto md:min-h-9">Offer register</Link>}/>
+   actions={<ButtonLink variant="secondary" href={root+"/offers"} className="w-full sm:w-auto">Offer register</ButtonLink>}/>
   {eligibleActions?<section aria-label="Next selection actions"
     className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
     <Heading level={2} size="base" className="text-[var(--lms-heading)]">Next action for this drive</Heading>
     <div className="flex min-w-0 flex-wrap gap-2">
-      {readyToApply?<Link href={root+"/rounds/"+encodeURIComponent(readyToApply.id)+"/results"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] md:min-h-9">
+      {readyToApply?<ButtonLink variant="secondary" href={root+"/rounds/"+encodeURIComponent(readyToApply.id)+"/results"}>
         Apply {readyToApply.name} results · {readyToApply.count}
-      </Link>:null}
+      </ButtonLink>:null}
       {toVerify>0?<ButtonLink variant="secondary" href="#selections-release-actions">
         Verify {toVerify} selections
       </ButtonLink>:null}
       {toRelease>0?<ButtonLink variant="secondary" href="#selections-release-actions">
         Release {toRelease} verified selections
       </ButtonLink>:null}
-      {shareableApplicants>0?<Link href={root+"/share-preview"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
+      {shareableApplicants>0?<ButtonLink variant="secondary" href={root+"/share-preview"}>
         Share {shareableApplicants} eligible applicants with company
-      </Link>:null}
+      </ButtonLink>:null}
     </div>
     {!roundsResult.ok?<p className="text-xs text-muted-foreground">
       Round-result counts could not be verified. Open Rounds to inspect outstanding results.
@@ -62,10 +60,10 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
       <p className="text-sm text-body">No recorded result, selection or applicant action is waiting here.</p>:null}
   </section>:null}
   <nav aria-label="Selection related pages" className="flex min-w-0 flex-wrap items-center gap-3 text-sm font-semibold leading-5">
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9" href={root+"/rounds"}>Review completed rounds</Link>
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] md:min-h-9" href={root+"/waitlist"}>Waitlist</Link>
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] md:min-h-9" href={root+"/share-preview"}>Share with company</Link>
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] md:min-h-9" href={root+"/share-audit"}>Access history</Link>
+   <TextLink className="inline-flex min-h-11 items-center md:min-h-9" href={root+"/rounds"}>Review completed rounds</TextLink>
+   <TextLink className="inline-flex min-h-11 items-center md:min-h-9" href={root+"/waitlist"}>Waitlist</TextLink>
+   <TextLink className="inline-flex min-h-11 items-center md:min-h-9" href={root+"/share-preview"}>Share with company</TextLink>
+   <TextLink className="inline-flex min-h-11 items-center md:min-h-9" href={root+"/share-audit"}>Access history</TextLink>
   </nav>
   {!data.storageReady?<Alert tone="warning">
     <strong>Selections are not available yet.</strong> {data.pendingMessage}

@@ -2,10 +2,10 @@
 import { MenuSeparator } from "@/components/ui/menu";
 import { Dropdown } from "@/components/ui/dropdown";
 
-import Link from "next/link";
 import {usePathname,useSearchParams} from "next/navigation";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import {TPO_TOPBAR_QUICK_LINKS} from "@/modules/placements/tpo-topbar-links";
+import { TextLink } from "@/components/ui/text-link";
 export function TpoTopbarNewMenu({collegeId}:{collegeId:string}){
  const pathname=usePathname(),query=useSearchParams();
  const companyName=pathname==="/tpo/companies"?(query.get("name")||"").trim().slice(0,150):"";
@@ -22,7 +22,7 @@ export function TpoTopbarNewMenu({collegeId}:{collegeId:string}){
   triggerClassName="min-h-11 w-full justify-center border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
   <nav role="menu" aria-label={companyName?"Create work for "+companyName:"Create placement work"}
    className="grid min-w-0 w-full gap-1 md:w-[min(19rem,calc(100vw_-_3rem))]">
-   {links.map(item=><Link role="menuitem" key={item.href} href={item.href} className={navClass}>{item.label}</Link>)}
+   {links.map(item=><TextLink variant="bare" role="menuitem" key={item.href} href={item.href} className={navClass}>{item.label}</TextLink>)}
    {companyName?<MenuSeparator />:null}
    <div className="min-w-0 border-t border-border pt-1"><TpoNewFollowupModal collegeId={collegeId}/></div>
   </nav>

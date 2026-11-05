@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { ListRow } from "@/components/ui/list-row";
 import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
 import { COLLEGE_SETUP_GUIDE_COPY } from "@/modules/admin-ui/admin-dashboard-navigation";
 import type { collegeChecklistProjection } from "@/modules/admin-ui/college-setup-checklist-model";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Phases = ReturnType<typeof collegeChecklistProjection>;
 
@@ -32,10 +32,10 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
             detail={step.count > 0
               ? `${step.count} qualifying record${step.count === 1 ? "" : "s"}`
               : "No qualifying records"}
-            action={step.href ? <Link href={step.href}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 print:hidden">
+            action={step.href ? <ButtonLink variant="secondary" href={step.href}
+              className="print:hidden">
               Open
-            </Link> : <span className="text-xs text-muted-foreground">Page unavailable</span>} />)}
+            </ButtonLink> : <span className="text-xs text-muted-foreground">Page unavailable</span>} />)}
         </ul>
       </section>)}
     </div>}

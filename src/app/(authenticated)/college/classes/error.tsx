@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default function CollegeClassesError({ error, reset }: {
   error: Error & { digest?: string }; reset: () => void;
@@ -17,7 +17,7 @@ export default function CollegeClassesError({ error, reset }: {
       <p className="mt-2 text-sm">The class list could not be read. Retry without losing your selected college.</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Button type="button" onClick={reset}>Retry</Button>
-        <Link href="/college/classes" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Clear filters</Link>
+        <TextLink href="/college/classes" className="inline-flex min-h-9 items-center">Clear filters</TextLink>
       </div>
     </div>
   </section>;

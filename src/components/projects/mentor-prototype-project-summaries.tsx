@@ -143,7 +143,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
           {sprints.map(sprint=>{
             const value=chartPoints(sprint);
             const planned=value.planned,completed=value.done;
-            return <Link href={base+"?tab=board&sprint="+encodeURIComponent(sprint.id)}
+            return <TextLink variant="bare" href={base+"?tab=board&sprint="+encodeURIComponent(sprint.id)}
               key={sprint.id} className="prototype-mentor-sprint-bar"
               aria-label={"Sprint "+sprint.sequence+": "+(value.recorded?
                 completed+" points done against "+planned+
@@ -154,7 +154,7 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
                 <span style={{height:Math.max(0,Math.round(100*completed/maxPts))+"%"}} className="prototype-mentor-bar-done" />
               </span>
               <small>{sprint.sequence}</small>
-            </Link>;
+            </TextLink>;
           })}
         </div>:<p className="prototype-mentor-summary-empty">No sprints have been planned yet.</p>}
       <div className="prototype-mentor-chart-legend">
@@ -232,11 +232,11 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
             </div>
           ):null}
           <div className="prototype-mentor-release-sprints">
-            {group.map(sprint=><Link key={sprint.id} href={base+"?tab=board&sprint="+encodeURIComponent(sprint.id)}
+            {group.map(sprint=><TextLink variant="bare" key={sprint.id} href={base+"?tab=board&sprint="+encodeURIComponent(sprint.id)}
               title={"Sprint "+sprint.sequence+": "+sprint.status}
               className={"prototype-mentor-release-dot "+statusTone(sprint.status)}>
               {sprint.sequence}
-            </Link>)}
+            </TextLink>)}
           </div>
           {!readOnly&&workspace.project.status==="ACTIVE"?(
             <div className="prototype-mentor-sprint-action-list">

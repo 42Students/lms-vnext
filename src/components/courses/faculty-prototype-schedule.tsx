@@ -1,10 +1,10 @@
 "use client";
 import {useState} from "react";
-import Link from "next/link";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 export type FacultyCalendarItem={id:string;title:string;sectionName:string;courseCode:string|null;
  startsAt:string;location:string|null;deliveryId:string|null};
 function istDay(instant:string):string{
@@ -88,9 +88,9 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
        className={"mt-2 rounded-md border-l-2 px-2 py-2 text-xs "+tone}>
       <p className="font-semibold text-[color:var(--lms-heading)]">{localTime(e.startsAt)} · {e.courseCode??e.title} · {e.sectionName}</p>
       {e.location?<p className="mt-1 text-[color:var(--lms-text-body)]">{e.location}</p>:null}
-      {e.deliveryId?<Link className="faculty-proto-link mt-1 inline-block"
+      {e.deliveryId?<TextLink variant="bare" className="faculty-proto-link mt-1 inline-block"
        href={"/teacher/courses/"+encodeURIComponent(e.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(e.id)}>
-        Take attendance</Link>:null}
+        Take attendance</TextLink>:null}
      </article>})}
      {!selectedEvents.some(e=>istDay(e.startsAt)===key)?<p className="mt-3 text-xs text-[color:var(--lms-neutral-400)]">No scheduled classes</p>:null}
     </section>)}
@@ -100,7 +100,7 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
    <Heading level={2} size="xs" className="uppercase text-[color:var(--lms-text-muted)]">Next 3 classes</Heading>
    {ordered.length?<ol className="mt-2 divide-y divide-[color:var(--lms-border)]">{ordered.map(e=><li key={e.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
     <span><strong>{istDay(e.startsAt)===today?"Today":dayLabel(istDay(e.startsAt))} {localTime(e.startsAt)}</strong> · {e.courseCode??e.title} · {e.sectionName}{e.location?" · "+e.location:""}</span>
-    {e.deliveryId?<Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(e.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(e.id)}>Take attendance</Link>:null}
+    {e.deliveryId?<TextLink variant="bare" className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(e.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(e.id)}>Take attendance</TextLink>:null}
    </li>)}</ol>:<p className="faculty-proto-subtitle mt-2">No upcoming classes in the verified timetable window.</p>}
   </section>
   <p className="faculty-proto-subtitle">The schedule is set by the college admin. To change a class, ask them; you can mark attendance on any scheduled class day. Open the advanced calendar for dates outside this loaded window.</p>

@@ -4,7 +4,6 @@ import {Fragment,useEffect,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {safeTpoShellCounters,shellUnreadBadge,type TpoShellCounters} from "./shell-counts-model";
 import Image from "next/image";
-import Link from "next/link";
 import {usePathname,useSearchParams} from "next/navigation";
 import {cx} from "@/lib/class-names";
 import {canonicalShellPath,scopedShellNavigation,shellNavIconKey,
@@ -16,6 +15,7 @@ import {facultyPrototypeSidebarActive} from "./faculty-prototype-navigation";
 import {superAdminLegacyGroupForPath} from "@/modules/people/super-admin-legacy-tabs-model";
 import {collegeLegacyGroupForPath} from "@/modules/people/college-legacy-tabs-model";
 import "./sidebar-legacy.css";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Only TPO displays uppercase group words in the legacy shell.
  * Recruiter, learner, faculty and admin lists separate groups with hairlines. */
@@ -145,7 +145,7 @@ export function SidebarNav({
        </div>
       :index>0?<div className="lms-nav-group-rule" role="separator" />:null
      :null}
-    <Link href={item.href}
+    <TextLink variant="bare" href={item.href}
      aria-label={badge&&count!==null?`${item.label}, ${count} pending`:item.label}
      title={item.label}
      aria-current={active?"page":undefined}
@@ -162,7 +162,7 @@ export function SidebarNav({
      </span>
      <span className="lms-nav-label min-w-0">{item.label}</span>
      {badge?<span className="lms-sidebar-badge" aria-label={count+" pending"}>{badge}</span>:null}
-    </Link>
+    </TextLink>
    </Fragment>;
   })}</nav>;
 }

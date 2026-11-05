@@ -1,11 +1,11 @@
 "use client";
-import Link from "next/link";
 import {useState,type KeyboardEvent} from "react";
 import {Drawer} from "@/components/ui/drawer";
 import {useRouter} from "next/navigation";
 import {TpoApplicantReviewForm} from "./tpo-applicant-review-form";
 import {applicantDrawerReviewable,type TpoApplicantReviewSnapshot} from "@/modules/placements/tpo-applicant-review-drawer-model";
 import {Button} from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}:{
  jobId:string;jobStatus:string;app:TpoApplicantReviewSnapshot;previousId?:string;nextId?:string;
 }){
@@ -38,14 +38,14 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
      expectedUpdatedAt={app.screeningUpdatedAt}/>:
     <p role="status" className="text-sm text-body">This application is read-only. Review requires a published drive and a pending or held submitted application.</p>}
    <nav aria-label="Review neighbours" className="flex flex-col gap-2 border-t border-border pt-4 text-sm sm:flex-row sm:items-center sm:justify-between">
-    {previousId?<Link href={applicantHref(previousId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline hover:text-[var(--lms-primary-text)] focus-ring">← Previous applicant</Link>:null}
-    {nextId?<Link href={applicantHref(nextId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline hover:text-[var(--lms-primary-text)] focus-ring">Next applicant →</Link>:null}
+    {previousId?<TextLink href={applicantHref(previousId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)]">← Previous applicant</TextLink>:null}
+    {nextId?<TextLink href={applicantHref(nextId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)]">Next applicant →</TextLink>:null}
    </nav>
    <p className="text-xs text-body">Use left and right arrows outside form controls to open the previous or next applicant.</p>
-   <Link href={applicantHref(app.id)}
-    className="inline-flex min-h-11 w-full items-center justify-center border-t border-[var(--lms-field-hover-border)] pt-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline sm:w-auto sm:justify-start md:min-h-9 rounded-[var(--lms-control-radius)] focus-ring">
+   <TextLink href={applicantHref(app.id)}
+    className="inline-flex min-h-11 w-full items-center justify-center border-t border-[var(--lms-field-hover-border)] pt-3 text-sm text-[var(--lms-teal-deep)] sm:w-auto sm:justify-start md:min-h-9 rounded-[var(--lms-control-radius)]">
     Open full applicant detail →
-   </Link>
+   </TextLink>
    </div>
   </Drawer>
  </>;

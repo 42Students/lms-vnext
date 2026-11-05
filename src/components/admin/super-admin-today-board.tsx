@@ -1,10 +1,10 @@
 "use client";
 import {useRef,useTransition} from "react";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {SUPER_ADMIN_TODAY_LABELS,type SuperAdminTodayMetrics} from "@/modules/colleges/admin-today-attention-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Scope comes exclusively from the parent dashboard's authenticated server
  * read. Refresh re-executes that read; it never accepts a client college ID. */
@@ -55,18 +55,18 @@ function AttentionCard({item,loading,failed}:{item:Metric;loading:boolean;failed
     <><p className="text-sm text-body leading-5">{item.detail}</p>
       {item.rows?.length?<ul className="divide-y divide-border border-y border-border text-sm" aria-label={item.title+" preview"}>
        {item.rows.map((row,index)=><li key={index} className="min-w-0 py-2">
-        {row.href?<Link href={row.href} className="font-semibold text-link underline">
-         {row.primary}</Link>:<strong className="text-[var(--lms-heading)]">{row.primary}</strong>}
+        {row.href?<TextLink href={row.href}>
+         {row.primary}</TextLink>:<strong className="text-[var(--lms-heading)]">{row.primary}</strong>}
         <p className="mt-1 text-xs leading-5 text-body">{row.secondary}</p>
        </li>)}
        {(item.moreCount??0)>0?<li className="py-2 text-xs font-semibold">
-        <Link href={item.href} className="text-link underline">and {item.moreCount} more{item.moreLabel?" "+item.moreLabel:""}</Link>
+        <TextLink href={item.href}>and {item.moreCount} more{item.moreLabel?" "+item.moreLabel:""}</TextLink>
        </li>:null}
       </ul>:null}
-      <Link href={item.href} className="inline-flex min-h-9 items-center font-semibold text-link underline">
+      <TextLink href={item.href} className="inline-flex min-h-9 items-center">
        {item.icon===0?"Open attendance":item.icon===3?"Faculty assignment":
         item.icon===5?"Quizzes":"Review "+item.title.toLowerCase()}
-      </Link>
+      </TextLink>
     </>}
   </div>
  </article>;

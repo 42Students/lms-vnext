@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {TrackerIssueCopyActions} from "@/components/tracker/tracker-issue-copy-actions";
 import {TrackerReporterIssueDetail} from "@/components/tracker/tracker-reporter-issue-detail";
 import {TrackerScreenshotGallery} from "@/components/tracker/tracker-screenshot-gallery";
@@ -104,7 +103,7 @@ export default async function TrackerIssueDetailPage({
       <TrackerAdminNav />
       <ErrorState title="Issue could not be loaded."
         description="The issue details could not be refreshed. The report was not modified."
-        action={<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="font-semibold text-link underline underline-offset-4">Retry issue</Link>} />
+        action={<TextLink href={"/tracker/issues/"+encodeURIComponent(publicId)}>Retry issue</TextLink>} />
     </div>;
   }
 
@@ -126,8 +125,8 @@ export default async function TrackerIssueDetailPage({
 
   return (
     <div className="min-w-0 space-y-4">
-      <Link href="/tracker/issues"
-        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">← All issues</Link>
+      <TextLink href="/tracker/issues"
+        className="inline-flex min-h-11 md:min-h-9 items-center text-sm">← All issues</TextLink>
       <header className="flex min-w-0 flex-col justify-between gap-4 border-b border-border pb-4 lg:flex-row">
         <div className="min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-muted-foreground">
@@ -166,7 +165,7 @@ export default async function TrackerIssueDetailPage({
         <section aria-label="Evidence" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4">
           <Heading level={2} size="xs" className="uppercase tracking-wide text-muted-foreground">Evidence</Heading>
           {detail.attachmentsUnavailable?<Alert tone="warning">Screenshots could not be loaded right now. The report remains available.
-            {" "}<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="text-link underline">Retry screenshots</Link>
+            {" "}<TextLink href={"/tracker/issues/"+encodeURIComponent(publicId)}>Retry screenshots</TextLink>
           </Alert>:null}
           {detail.attachments.length?
             <TrackerScreenshotGallery publicId={issue.publicId} screenshots={detail.attachments}/>:
@@ -213,7 +212,7 @@ export default async function TrackerIssueDetailPage({
 
       {detail.activityUnavailable ? <Alert tone="warning" title="Activity could not be loaded">
         Workflow events are temporarily unavailable; the issue details are still visible.
-        {" "}<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="font-semibold underline underline-offset-4">Retry activity</Link>
+        {" "}<TextLink href={"/tracker/issues/"+encodeURIComponent(publicId)}>Retry activity</TextLink>
       </Alert> : null}
       {!detail.activityUnavailable&&detail.activities.length>0?
         <section aria-label="Activity" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4">
@@ -229,15 +228,15 @@ export default async function TrackerIssueDetailPage({
               {activity.note?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{activity.note}</p>:null}
             </li>)}
           </ol>
-          {detail.nextActivityCursor?<Link href={(auditMode?"/tracker/audit-findings/":"/tracker/issues/")+
+          {detail.nextActivityCursor?<TextLink href={(auditMode?"/tracker/audit-findings/":"/tracker/issues/")+
             encodeURIComponent(publicId)+"?"+new URLSearchParams({
               ...detail.nextActivityCursor,
               ...(cursor.attachmentBeforeCreatedAt&&cursor.attachmentBeforeId?{
                 attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
               }:{}),
-            }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">
+            }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center">
             Older audit events
-          </Link>:null}
+          </TextLink>:null}
         </section>:null}
 
     </div>

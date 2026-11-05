@@ -1,5 +1,4 @@
 import {notFound} from "next/navigation";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
@@ -12,6 +11,7 @@ import {readAdminCollegeSignInPolicy} from "@/modules/colleges/admin-signin-poli
 import {CollegeSigninMethodForm} from "@/components/admin/college-signin-method-form";
 import {collegeIdSchema} from "@/modules/colleges/validation";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeSignInMethods({params}:{params:Promise<{collegeId:string}>}){
   const context=await getCurrentRequestContext();
@@ -20,7 +20,7 @@ export default async function CollegeSignInMethods({params}:{params:Promise<{col
  if(!collegeIdSchema.safeParse(collegeId).success)return <div className="min-w-0 space-y-4">
   <PageHeader title="Sign-in methods" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
   <EmptyState title="Choose a college" description="Select a college to manage its sign-in settings."
-   action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Browse colleges</Link>}/>
+   action={<TextLink href="/admin/colleges" className="inline-flex min-h-11 items-center">Browse colleges</TextLink>}/>
  </div>;
 
  let result:Awaited<ReturnType<typeof readAdminCollegeSignInPolicy>>|null=null;
@@ -36,10 +36,10 @@ export default async function CollegeSignInMethods({params}:{params:Promise<{col
    <Alert tone="error">Sign-in settings could not be loaded.</Alert>
    <ErrorState title="Couldn't load this college's sign-in settings."
      description="The current saved login policy could not be verified. Saving is disabled until the authorized settings are loaded."
-     action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/signin"}
-       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+     action={<TextLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/signin"}
+       className="inline-flex min-h-11 items-center md:min-h-9">
        Reload
-     </Link>}/>
+     </TextLink>}/>
  </div>;
  const {college,policy}=result;
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
@@ -49,8 +49,8 @@ export default async function CollegeSignInMethods({params}:{params:Promise<{col
   <section aria-label="Sign-in" className="min-w-0 max-w-3xl space-y-[var(--lms-space-4)] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Sign-in</Heading>
-   <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/signin"}
-    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Reload</Link>
+   <TextLink href={"/admin/colleges/"+encodeURIComponent(college.id)+"/signin"}
+    className="inline-flex min-h-11 items-center md:min-h-9">Reload</TextLink>
   </div>
   {policy.kind==="INVALID_POLICY"?<Alert tone="error">Stored sign-in method is invalid. Please contact an administrator.</Alert>:null}
   <CollegeSigninMethodForm collegeId={college.id}

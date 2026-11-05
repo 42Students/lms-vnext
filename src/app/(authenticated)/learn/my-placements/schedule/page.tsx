@@ -2,7 +2,6 @@ import { Tabs } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Suspense } from "react";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -17,6 +16,7 @@ import {LearnerRoundConfirmAttendance} from "@/components/placements/learner-rou
 import {listOwnAppliedPlacementResults} from "@/modules/placements/result-service";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Dev legacy combines all learner rounds on one authorized Schedule page. */
 export default async function LearnerPlacementSchedulePage({searchParams}:{
@@ -40,7 +40,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     return <div className="min-w-0 space-y-4">
      <ErrorState title="Could not load your schedule"
       description="The schedule is unavailable; no empty list has been assumed."
-      action={<Link href="/learn/my-placements/schedule" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Retry schedule</Link>}/>
+      action={<TextLink href="/learn/my-placements/schedule" className="inline-flex min-h-11 items-center md:min-h-9">Retry schedule</TextLink>}/>
     </div>;
   }
   const workspace=workspaceResult.value;
@@ -214,10 +214,10 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       {outcomeText==="Marked absent" ? (
         <p className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
           Marked absent. If this is wrong, tell the placement cell.
-          <Link href="/learn/my-placements/placement#requests"
-            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
+          <TextLink href="/learn/my-placements/placement#requests"
+            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center">
             Wrong? Tell the placement cell
-          </Link>
+          </TextLink>
         </p>
       ) : null}
       {outcomeText?<p role="status" className="font-semibold text-foreground">{outcomeText} · Confirmed round result</p>:
@@ -227,7 +227,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   return (
     <div className="min-w-0 space-y-6">
       <p className="text-sm leading-6 text-body">Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice.</p>
-      {resultsUnavailable?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">Official results are unavailable. Scheduled appointments remain visible; retry to check final outcomes. <Link href="/learn/my-placements/schedule" className="font-semibold text-link underline">Retry</Link></p>:null}
+      {resultsUnavailable?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">Official results are unavailable. Scheduled appointments remain visible; retry to check final outcomes. <TextLink href="/learn/my-placements/schedule">Retry</TextLink></p>:null}
       {needsConfirmation>0?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm font-semibold">{needsConfirmation===1?"One round needs":String(needsConfirmation)+" rounds need"} your confirmation. Check your booking time, location and application before confirming.</p>:null}
       <Tabs ariaLabel="Schedule view" value={view} renderPanel={false} items={[
         { value: "coming", label: "Coming up"+(ahead.length+undated.length?" ("+(ahead.length+undated.length)+")":""), href: "/learn/my-placements/schedule?view=coming" },
@@ -236,7 +236,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       ]} />
       {view==="coming"?<section className="space-y-3" aria-label="Coming up">
         <Heading level={2} className="text-[var(--lms-font-lg)] leading-[26px] text-[var(--lms-heading)] md:text-[var(--lms-font-xl)] md:leading-7">Coming up ({ahead.length} dated)</Heading>
-        {ahead.length === 0 && undated.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">Nothing coming up. Dates will appear when the placement cell schedules a company round. <Link href="/learn/my-placements/applications" className="font-semibold text-link underline">View applications</Link></p> : null}
+        {ahead.length === 0 && undated.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">Nothing coming up. Dates will appear when the placement cell schedules a company round. <TextLink href="/learn/my-placements/applications">View applications</TextLink></p> : null}
         {ahead.length === 0 && undated.length > 0 ? <p role="status" className="text-sm text-body">
           {undated.length} upcoming round(s) have no confirmed time yet. Check the details below.
         </p> : null}
@@ -246,18 +246,17 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           {dateTile(row.exception?.scheduledAt??row.scheduledAt)}<div className="min-w-0 flex-1">
           <Heading level={3} className="text-[var(--lms-heading)]">{companyHeadline(row)}</Heading>
           <p className="text-sm text-body">
-            <Link href={"/learn/my-placements/applications/"+row.applicationId}
-              className="font-semibold text-primary-text underline">{row.roleTitle}</Link>
+            <TextLink href={"/learn/my-placements/applications/"+row.applicationId}>{row.roleTitle}</TextLink>
             {" · "+fmt(row.exception?.scheduledAt ?? row.scheduledAt)}
           </p>
           {details(row)}
           {roundCanBeManaged(row) ? <LearnerScheduleReschedule applicationId={row.applicationId} roundId={row.roundId}
             mode={(row.exception?.mode??row.mode)==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS"} venue={row.exception?.venue??row.venue}
             meetingUrl={row.exception?.meetingUrl??row.meetingUrl}/> : null}
-          <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
+          <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</TextLink>
           </div>
         </article>)}</section>)}
-        {ahead.length === 0 ? <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
+        {ahead.length === 0 ? <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9" href="/learn/my-placements/applications">See where your applications stand</TextLink> : null}
         {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 md:py-6">
           <Heading level={3} className="text-[var(--lms-heading)]">{companyHeadline(row)}</Heading>
           <p className="text-sm text-body">Date to be told</p>

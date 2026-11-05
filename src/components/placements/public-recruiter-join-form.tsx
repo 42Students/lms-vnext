@@ -3,7 +3,6 @@ import { PageHeader } from "@/components/ui/page-header";
 
 import authStyles from "@/components/public/public-auth-skin.module.css";
 
-import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +15,7 @@ import { publicRecruiterWorkEmailSchema } from "@/modules/placements/public-coll
 import { JOIN_ERROR_COPY,joinErrorMessage,joinFieldForCode,publicJoinResponseMessage,type JoinErrorField } from "@/modules/placements/public-join/error-copy";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type JoinField=JoinErrorField;
 function joinFieldForError(message:string):JoinField|null{
@@ -196,7 +196,7 @@ export function PublicRecruiterJoinForm({
             </div>
             <PageHeader title="This link is no longer valid" />
             <p className="mt-3 max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for a new one. Already joined? Sign in with your work email.</p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-ring">Sign in</Link>
+            <ButtonLink variant="primary" href="/login" className="mt-4 w-full">Sign in</ButtonLink>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
@@ -210,7 +210,7 @@ export function PublicRecruiterJoinForm({
             <p className="mt-3 text-sm text-body">
               {"Sign in with your work email, "+signInEmail+", on the college's placement address. We'll email you a code each time."}
             </p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-ring">Sign in</Link>
+            <ButtonLink variant="primary" href="/login" className="mt-4 w-full">Sign in</ButtonLink>
           </>
         ) : (
           <>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { ErrorState } from "@/components/ui/error-state";
@@ -7,6 +6,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementDriveWorkspace } from "@/components/placements/placement-drive-workspace";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegePlacementDrivePage({
   params,
@@ -29,7 +29,7 @@ export default async function CollegePlacementDrivePage({
       <PageHeader title="Placement Drives" />
       <ErrorState title="Could not load this drive."
         description="The drive ID is invalid. No changes were made."
-        action={<Link href="/college/placements/drives" className="font-semibold text-link underline">Back to Drives</Link>}/>
+        action={<TextLink href="/college/placements/drives">Back to Drives</TextLink>}/>
     </div>;
   }
   try {
@@ -42,9 +42,8 @@ export default async function CollegePlacementDrivePage({
       <ErrorState title="Could not load this drive."
         description="Drive details could not be refreshed. No changes were made."
         action={<div className="flex flex-wrap gap-3">
-          <Link href={"/college/placements/jobs/"+encodeURIComponent(jobId)} prefetch={false}
-            className="font-semibold text-link underline">Retry drive</Link>
-          <Link href="/college/placements/drives" className="font-semibold text-link underline">Back to Drives</Link>
+          <TextLink href={"/college/placements/jobs/"+encodeURIComponent(jobId)} prefetch={false}>Retry drive</TextLink>
+          <TextLink href="/college/placements/drives">Back to Drives</TextLink>
         </div>}/>
     </div>;
   }

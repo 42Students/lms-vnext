@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** Keep the mentor's project tab and URL while retrying a failed panel.
  * A route exception is not permission to load another project's details.
@@ -23,10 +23,10 @@ export default function MentorProjectError({ reset }: {
       description="Your project work has not been changed. Try again to reload the current tab."
       action={<div className="flex min-w-0 flex-wrap gap-3">
         <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry current tab</Button>
-        <Link href="/mentor/projects"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring sm:w-auto md:min-h-9 lms-inline-link hover:underline">
+        <ButtonLink variant="secondary" href="/mentor/projects"
+          className="w-full sm:w-auto">
           Back to projects
-        </Link>
+        </ButtonLink>
       </div>}/>
   </section>;
 }

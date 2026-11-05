@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -24,6 +23,8 @@ import {contactRecordLinks} from "@/modules/people/college-contacts-links";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {CollegeContactsLiveSearch} from "./college-contacts-live-search";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -44,14 +45,14 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <PageHeader title="People Directory"/>
   <ErrorState title="Admin not assigned to a college"
     description="You must be assigned to a college to browse the directory. Contact your administrator."
-    action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+    action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>}/>
  </div>;
  if(context.membership.status!=="ACTIVE"||
     !hasMembershipRole(context,"COLLEGE_ADMIN"))return <div className="min-w-0 space-y-4">
   <PageHeader title="People Directory"/>
   <ErrorState title="The contacts directory is for staff only"
    description="This directory is restricted to authorized college administration staff. Faculty and TPO members can use their own scoped people tools; learners and recruiters cannot view this roster."
-   action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+   action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>}/>
  </div>;
  const submitted=await searchParams;
  // Old pagination bookmarks used page=0 (or negative) for the first page.
@@ -73,7 +74,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     : collegeContactFilterMessage(error);
   return <div className="min-w-0 space-y-[var(--lms-space-4)]"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid contact filters" description={description}
-   action={<Link href="/college/contacts" className="inline-flex items-center min-h-11 md:min-h-9 underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-ring w-full md:w-auto">Reset contact filters</Link>}/></div>;}
+   action={<TextLink href="/college/contacts" className="inline-flex items-center min-h-11 md:min-h-9 w-full md:w-auto">Reset contact filters</TextLink>}/></div>;}
  const loaded=await Promise.all([
   listCollegeContacts(context,filter),listCollegeContactFilterOptions(context),
  ]).then(res=>({ok:true as const,res}),error=>({ok:false as const,error}));
@@ -82,7 +83,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   return <div className="min-w-0 space-y-4">
    <PageHeader title="People Directory"/>
    <ErrorState title="Couldn't load contacts" description="Your contacts could not be loaded. Try again."
-    action={<Link href={collegeContactsHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+    action={<TextLink href={collegeContactsHref(filter)} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
   </div>;
  }
  const [results,choices]=loaded.res;
@@ -96,7 +97,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
   <PageHeader title="People Directory"
    description="A read-only contact lookup for the selected college. Use the management pages for registration, profile changes, access, suspension or teaching allocation."
-   actions={<div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)]"><Link href="/college/students" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Student accounts</Link><Link href="/college/faculty" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Faculty accounts</Link><Link href="/college/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Teaching assignments</Link></div>}/>
+   actions={<div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)]"><TextLink href="/college/students" className="inline-flex min-h-11 items-center md:min-h-9">Student accounts</TextLink><TextLink href="/college/faculty" className="inline-flex min-h-11 items-center md:min-h-9">Faculty accounts</TextLink><TextLink href="/college/faculty-assignment" className="inline-flex min-h-11 items-center md:min-h-9">Teaching assignments</TextLink></div>}/>
   <Tabs ariaLabel="Contacts categories" renderPanel={false} value={filter.tab}
    items={[
     {value:"ALL",label:"All contacts",href:collegeContactsTabHref(filter,"ALL")},
@@ -105,7 +106,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    ]}/>
   <Banner tone="info">Student contact details are masked here and in CSV exports. Account management is separate.</Banner>
   {filter.membershipId&&<Banner tone="info"
-   action={<Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Show matching contact directory</Link>}>
+   action={<TextLink href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Show matching contact directory</TextLink>}>
    Showing the bookmarked contact record only.
   </Banner>}
   <div className="flex min-w-0 flex-wrap items-baseline gap-x-[var(--lms-space-4)] gap-y-[var(--lms-space-2)] text-xs leading-5 text-muted-foreground">
@@ -123,7 +124,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
       <span className="sr-only">Search contacts</span>
       <CollegeContactsLiveSearch value={filter.q}/>
      </Label>
-     {filter.q?<Link href={collegeContactsHref({...filter,q:"",page:1})} className="inline-flex min-h-9 items-center font-semibold text-link underline">Clear search</Link>:null}
+     {filter.q?<TextLink href={collegeContactsHref({...filter,q:"",page:1})} className="inline-flex min-h-9 items-center">Clear search</TextLink>:null}
     </div>}>
   <form id="college-contacts-filters" action="/college/contacts" method="get" aria-label="Filter college contacts" className="flex min-w-0 flex-wrap items-end gap-[8px]">
    <Input type="hidden" name="tab" value={filter.tab}/>
@@ -254,33 +255,33 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     </div>
    </Disclosure>
    <Button variant="secondary" type="submit" className="min-h-11 w-full md:hidden">Search contacts</Button>
-   <Link href={clearedCollegeContactsHref(filter.tab)}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>
+   <TextLink href={clearedCollegeContactsHref(filter.tab)}
+    className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
   </form>
   </FilterBar>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)]">
    <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
-   <Link href={"/api/college/contacts/export?"+new URLSearchParams({
+   <TextLink href={"/api/college/contacts/export?"+new URLSearchParams({
     tab:filter.tab,q:filter.q,...(filter.membershipId?{membershipId:filter.membershipId}:{}),...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,profile:filter.profile,enrollment:filter.enrollment,teaching:filter.teaching,teachingRole:filter.teachingRole,rollPresence:filter.rollPresence,registrationPresence:filter.registrationPresence,titlePresence:filter.titlePresence,departmentPresence:filter.departmentPresence,classPresence:filter.classPresence,...(filter.cohortId?{cohortId:filter.cohortId}:{}),...(filter.programId?{programId:filter.programId}:{}),...(filter.sectionId?{sectionId:filter.sectionId}:{}),...(filter.facultyDepartmentId?{facultyDepartmentId:filter.facultyDepartmentId}:{}),...(filter.employmentType?{employmentType:filter.employmentType}:{}),...(filter.facultyTitleQ?{facultyTitleQ:filter.facultyTitleQ}:{}),sort:filter.sort,
-   }).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">
+   }).toString()} className="inline-flex min-h-11 items-center md:min-h-9">
     Export filtered contacts CSV
-   </Link>
+   </TextLink>
   </div>
   <section aria-label="Contacts" className="min-w-0 space-y-[var(--lms-space-3)]">
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
    <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
    {results.items.length===0?<EmptyState title={emptyTitle} description={emptyDescription}
-      action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters in this tab</Link>}/>:
+      action={<TextLink href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Clear filters in this tab</TextLink>}/>:
     <DataTable rows={results.items} getRowKey={contact=>contact.membershipId}
       caption="Contacts" empty={<EmptyState title={emptyTitle} description={emptyDescription}
-        action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters in this tab</Link>}/>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
+        action={<TextLink href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Clear filters in this tab</TextLink>}/>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
       columns={[
         {key:"name",header:"Name",mobileLabel:"Name",mobilePriority:"primary" as const,
-         cell:contact=><Link href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
+         cell:contact=><TextLink href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
           aria-label={"View contact "+contact.name}
-          className="inline-flex min-h-11 items-center gap-3 font-semibold text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] focus-ring">
+          className="inline-flex min-h-11 items-center gap-3">
           <ContactAvatar initial={contact.avatarInitial} tint={contact.avatarTint}/>
-          <span className="break-words">{contact.name}</span></Link>},
+          <span className="break-words">{contact.name}</span></TextLink>},
         {key:"email",header:"Email",mobileLabel:"Email",mobilePriority:"secondary" as const,
          cell:contact=><span className="break-words [overflow-wrap:anywhere]">{contact.email}</span>},
         {key:"phone",header:"Contact",mobileLabel:"Contact",mobilePriority:"secondary" as const,
@@ -297,22 +298,22 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      <strong className="min-w-36 break-words">{contact.name}</strong>
      <StatusBadge tone={contact.status==="ACTIVE"?"success":contact.status==="SUSPENDED"?"warning":"neutral"}>{contact.status}</StatusBadge>
      <span className="text-xs text-muted-foreground">Joined {dateFormat.format(contact.joinedAt)} IST</span>
-     {contactRecordLinks(contact).map(link=><Link key={link.href} href={link.href} className="font-semibold text-link underline">{link.label}</Link>)}
+     {contactRecordLinks(contact).map(link=><TextLink key={link.href} href={link.href}>{link.label}</TextLink>)}
     </li>)}
    </ul>
   </Disclosure>:null}
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
    <p className="break-words text-muted-foreground">Page {filter.page} of {pageCount} · Showing {range.first}–{range.last} of {results.total} matching contacts</p>
    <nav aria-label="Mobile contact pages" className="flex items-center gap-3 md:hidden">
-    {filter.page>1?<Link href={collegeContactsHref({...filter,page:filter.page-1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link">Previous</Link>:
+    {filter.page>1?<ButtonLink variant="secondary" href={collegeContactsHref({...filter,page:filter.page-1})}>Previous</ButtonLink>:
      <span aria-disabled="true" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-muted-foreground opacity-60">Previous</span>}
-    {filter.page<pageCount?<Link href={collegeContactsHref({...filter,page:filter.page+1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link">Next</Link>:
+    {filter.page<pageCount?<ButtonLink variant="secondary" href={collegeContactsHref({...filter,page:filter.page+1})}>Next</ButtonLink>:
      <span aria-disabled="true" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-muted-foreground opacity-60">Next</span>}
    </nav>
    <div className="flex flex-wrap gap-2">
-    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 bg-surface hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring">First</Link>:null}
+    {filter.page>2?<ButtonLink variant="primary" href={collegeContactsHref({...filter,page:1})}>First</ButtonLink>:null}
     <Pagination page={filter.page} pageCount={pageCount} hrefForPage={page=>collegeContactsHref({...filter,page})} label="Contact directory pages"/>
-    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 bg-surface hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring">Last</Link>:null}
+    {filter.page<pageCount-1?<ButtonLink variant="primary" href={collegeContactsHref({...filter,page:pageCount})}>Last</ButtonLink>:null}
    </div>
   </div>
  </div>;

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -7,6 +6,7 @@ import { TpoDriveCancelForm } from "@/components/placements/tpo-drive-cancel-for
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getTpoDriveCancelPreview } from "@/modules/placements/tpo-drive-cancel-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function TpoDriveCancelPreviewPage({
   params,
@@ -29,7 +29,7 @@ export default async function TpoDriveCancelPreviewPage({
         eyebrow="TPO · Drive lifecycle"
         title={preview.title + " · Cancel drive"}
         description="Review what cancelling will change before an audited, reason-required cancellation."
-        actions={<Link href={"/tpo/placements/jobs/" + preview.id} className="inline-flex min-h-11 items-center w-full justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring md:min-h-9 md:w-auto">← Drive workspace</Link>}
+        actions={<TextLink href={"/tpo/placements/jobs/" + preview.id} className="inline-flex min-h-11 items-center w-full justify-center text-sm md:min-h-9 md:w-auto">← Drive workspace</TextLink>}
       />
       {preview.cancellable ? (
         <TpoDriveCancelForm preview={preview} />

@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Dropdown } from "@/components/ui/dropdown";
 import { TPO_TOPBAR_QUICK_LINKS } from "@/modules/placements/tpo-topbar-links";
 import { TpoNewFollowupModal } from "@/components/tpo/tpo-new-followup-modal";
 import { PlusIcon } from "./icons";
 import style from "./topbar.module.css";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Move the legacy TPO create menu into the real header, without losing the
  * follow-up action or company-prefilled new recruiter/drive destinations.
@@ -28,10 +28,10 @@ export function TpoQuickCreate({ collegeId }: { collegeId: string }) {
     triggerClassName={style.new} trigger={<><PlusIcon/><span className={style.newLabel}>New</span></>}>
     <nav className="grid w-full min-w-[min(15rem,calc(100vw_-_5rem))] max-w-full gap-0"
       aria-label={company ? "Create work for " + company : "Create placement work"}>
-      {links.map(link => <Link key={link.href} href={link.href}
+      {links.map(link => <TextLink variant="bare" key={link.href} href={link.href}
         className={`${style.menuItem} w-full min-w-0 break-words [overflow-wrap:anywhere]`}>
         {link.label}
-      </Link>)}
+      </TextLink>)}
       <hr className={style.menuDivider}/>
       <div className="min-w-0 [&>button]:!min-h-11 [&>button]:!px-[12px]">
         <TpoNewFollowupModal collegeId={collegeId}/>

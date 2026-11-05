@@ -1,7 +1,7 @@
-import Link from "next/link";
 import {MentorTaskCreate} from "./mentor-task-create";
 import {MentorSprintCreate} from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Dashboard shortcuts use the same validated project mutation dialogs as
  * the Task Board and Sprint timeline. Never send mentors into learner-only
@@ -36,14 +36,14 @@ export function MentorOverviewQuickActions({projectId,projectUpdatedAt,estimatio
     backlogTasks={backlogTasks} canPullBacklog/>:null}
   <MentorReleaseEditor projectId={projectId}
     existingReleaseCount={releases.length}/>
-  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
-    "/learner-preview"} className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+  <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+
+    "/learner-preview"} className="inline-flex min-h-9 items-center text-sm">
     Preview student-visible project →
-  </Link>
-  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
-    "?tab=resources"} className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+  </TextLink>
+  <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+
+    "?tab=resources"} className="inline-flex min-h-9 items-center text-sm">
     Add resource →
-  </Link>
+  </TextLink>
   <p className="w-full text-xs text-muted-foreground">
     Tasks and sprints save through the same permission- and version-checked
     project APIs as the Board and Sprint timeline. Resource authoring opens

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
@@ -12,6 +11,7 @@ import {
   previewCollegeGroupRule,
 } from "@/modules/groups/college-rule-preview-service";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeGroupRulePreviewPage({
   params,
@@ -33,8 +33,8 @@ export default async function CollegeGroupRulePreviewPage({
       return <ErrorState
         title="Rule preview unavailable"
         description="This group does not have a supported, configured rule. No learners were evaluated or changed."
-        action={<Link href={"/college/groups/" + encodeURIComponent(groupId)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Back to group</Link>}
+        action={<TextLink href={"/college/groups/" + encodeURIComponent(groupId)}
+          className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Back to group</TextLink>}
       />;
     }
     throw error;

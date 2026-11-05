@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +11,7 @@ import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-erro
 import {Button} from "@/components/ui/button";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Company = { relationshipId: string; name: string };
 type Season = { id: string; name: string; startDate: string; endDate: string };
@@ -178,7 +178,7 @@ export function TpoDraftDriveStepOneForm({
               setJobTypesState("loading");
               setJobTypesRetry(value => value + 1);
             }}>Retry</Button>{" "}
-            <Link href="/tpo/settings/job-types" className="font-semibold text-primary-text underline">Job type settings</Link>
+            <TextLink href="/tpo/settings/job-types">Job type settings</TextLink>
           </p> : null}
       </Label>
       <Label className="block">
@@ -187,7 +187,7 @@ export function TpoDraftDriveStepOneForm({
           disabled={pending} onChange={(event) => setDeadline(event.target.value)}/>
       </Label>
       {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
-      {unknownCreate?<p role="alert" className="text-sm text-body leading-[22px]">Review <Link href="/tpo/placements/lifecycle" className="text-primary-text underline">Drives</Link> before creating again. <Button type="button" variant="link" className="min-h-11 max-md:min-h-11" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</Button></p>:null}
+      {unknownCreate?<p role="alert" className="text-sm text-body leading-[22px]">Review <TextLink href="/tpo/placements/lifecycle">Drives</TextLink> before creating again. <Button type="button" variant="link" className="min-h-11 max-md:min-h-11" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</Button></p>:null}
       <Button type="submit" disabled={pending || unknownCreate || !companyRelationshipId || jobTypesState !== "ready" || !jobTypeLabel}
         >
         {pending ? "Saving draft…" : "Review and save draft"}

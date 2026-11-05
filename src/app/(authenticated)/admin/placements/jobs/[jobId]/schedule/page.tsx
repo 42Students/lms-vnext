@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
@@ -20,6 +19,7 @@ import { CollegeInterviewAppointments } from "@/components/placements/college-in
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function adminInterviewsHref(...args:Parameters<typeof driveInterviewsHref>){
  return driveInterviewsHref(...args)
@@ -35,7 +35,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <PageHeader title="Drives" description="Placement administration requires a college safety scope." />
     <Banner role="alert" tone="warning">
       <strong>Select a college to continue.</strong> Pick an Organization + College in the header to manage this drive schedule.{" "}
-      <Link href="/admin/placements" className="font-semibold text-primary-text underline">Go Back</Link>
+      <TextLink href="/admin/placements">Go Back</TextLink>
     </Banner>
   </div>;
   // Validate the platform actor and selected tenant before reading private rounds.
@@ -48,8 +48,8 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <PageHeader title="Interviews" description="Schedule candidate interviews and review interview rounds."/>
     <ErrorState title="Invalid interview filters"
       description="Round kind, status or page is invalid. No records were loaded."
-      action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/schedule"}
-        className="font-semibold text-primary-text underline w-full md:w-auto min-h-11 md:min-h-9">Clear filters</Link>}/>
+      action={<TextLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/schedule"}
+        className="w-full md:w-auto min-h-11 md:min-h-9">Clear filters</TextLink>}/>
   </div>;
   // Round metadata must not take down candidate appointments, or vice versa.
   const [roundResult,appointmentResult]=await Promise.allSettled([
@@ -160,11 +160,11 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   ];
   return <div className="min-w-0 space-y-5">
     <nav aria-label="Drive breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      <Link href="/admin/placements/drives" className="font-semibold text-primary-text hover:underline">Drives</Link>
+      <TextLink href="/admin/placements/drives">Drives</TextLink>
       <span aria-hidden="true">›</span>
-      <Link href={root} className="font-semibold text-primary-text hover:underline">
+      <TextLink href={root}>
         {data?.job.title??appointments?.job.title??"Drive #"+jobId.slice(0,8)}
-      </Link>
+      </TextLink>
     </nav>
     <PageHeader title="Calendar"
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
@@ -172,12 +172,12 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
         <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-body">
           This drive only
         </span>
-        <Link href={refreshHref} className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        <ButtonLink variant="secondary" href={refreshHref}>
           <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
             <path d="M20 11a8 8 0 1 0-2 6M20 4v7h-7"/>
           </svg> Refresh
-        </Link>
+        </ButtonLink>
       </div>}/>
     <Tabs ariaLabel="Drive workspace" value="Schedule" renderPanel={false}
       items={navItems.map(item=>({value:item.name,label:item.name,href:item.href}))}/>
@@ -248,26 +248,26 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       </Label>
       <div className="flex flex-wrap gap-2 sm:col-span-2 xl:col-span-4">
         <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
-        <Link href={resetHref}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+        <TextLink href={resetHref}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Clear filters
-        </Link>
+        </TextLink>
       </div>
     </form>
     <div className="flex min-w-0 flex-wrap gap-3 print:hidden">
-      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/schedule"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+      <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/schedule"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Clear filters
-      </Link>
-      <Link href={addConflictParam(refreshHref)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+      </TextLink>
+      <TextLink href={addConflictParam(refreshHref)}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Refresh interviews
-      </Link>
-      <Link href={conflictHref}
+      </TextLink>
+      <TextLink href={conflictHref}
         aria-current={conflictsOnly?"page":undefined}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         {conflictsOnly?"Show all appointments":"Show possible overlaps (this page)"}
-      </Link>
+      </TextLink>
       <TextLink href={exportHref} download="drive-interviews.csv"
         className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Export visible appointments (CSV)
@@ -276,9 +276,9 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <section aria-label="Candidate interviews" className="min-w-0 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Candidate interviews</Heading>
-       <Link href={conflictHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+       <ButtonLink variant="secondary" href={conflictHref}>
         {conflictsOnly?"Show all interviews":"Only schedule conflicts"} ({conflictIds.size} on this page)
-       </Link>
+       </ButtonLink>
       </div>
       {conflictsOnly?<Banner tone="info">Only conflicts found among the interviews loaded on this page are shown. Other drives and unloaded pages are not part of this preview.</Banner>:null}
       {appointments&&appointments.appointmentTotal===0?<p role="status" className="text-sm text-muted-foreground">
@@ -289,10 +289,10 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates (page {appointments.candidatePage} of {appointments.candidatePages}). Deep-link from the application detail to include an individual learner.
         </Banner>:null}
         <nav aria-label="Eligible candidate picker pages" className="flex flex-wrap items-center gap-3 text-sm">
-          {appointments.candidatePage>1?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1}))}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline">Previous candidates</Link>:null}
-          {appointments.candidatePage<appointments.candidatePages?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1}))}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline">Next candidates</Link>:null}
+          {appointments.candidatePage>1?<TextLink href={addConflictParam(adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1}))}
+            className="inline-flex min-h-11 items-center">Previous candidates</TextLink>:null}
+          {appointments.candidatePage<appointments.candidatePages?<TextLink href={addConflictParam(adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1}))}
+            className="inline-flex min-h-11 items-center">Next candidates</TextLink>:null}
         </nav>
         <p role="status" className="text-sm text-body">{appointments.appointmentTotal} matching candidate appointments · page {appointments.appointmentPage} of {appointments.appointmentPages}
           · {appointments.appointmentPageSize} per page{conflictsOnly?" · "+visibleCandidateRows.length+" possible overlaps on this page":""}</p>
@@ -312,18 +312,18 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           rounds={appointments.rounds} candidates={appointments.candidates}
           appointments={visibleCandidateRows} {...(query.applicationId !== undefined ? {preferredApplicationId:query.applicationId} : {})}/>
         <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
-          {appointments.appointmentPage>1?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1}))}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}
-          {appointments.appointmentPage<appointments.appointmentPages?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1}))}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next appointments</Link>:null}
+          {appointments.appointmentPage>1?<TextLink href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1}))}
+            className="inline-flex min-h-11 items-center md:min-h-9">Previous appointments</TextLink>:null}
+          {appointments.appointmentPage<appointments.appointmentPages?<TextLink href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1}))}
+            className="inline-flex min-h-11 items-center md:min-h-9">Next appointments</TextLink>:null}
         </nav>
       </> :
         <ErrorState title="Unable to load interviews. Please try again."
           description="Candidate interview appointments could not be refreshed. No empty or stale schedule is being represented as current."
-          action={<Link href={refreshHref}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          action={<TextLink href={refreshHref}
+            className="inline-flex min-h-11 items-center md:min-h-9">
             Refresh
-          </Link>}/>}
+          </TextLink>}/>}
     </section>
     <section aria-label="Persisted interview rounds" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
       <Heading level={2} className="text-[var(--lms-heading)]">Interview and GD rounds</Heading>
@@ -334,9 +334,9 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           empty={<EmptyState title={data.total===0?"No matching interview rounds":"No rounds on this page"}
             description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}/>}/>
       </> : <Banner tone="warning"
-        action={<Link href={refreshHref} className="font-semibold text-primary-text underline">
+        action={<TextLink href={refreshHref}>
           Retry rounds
-        </Link>}>
+        </TextLink>}>
         Unable to load interview rounds. Candidate appointments above remain independently available.
       </Banner>}
     </section>

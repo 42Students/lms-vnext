@@ -11,13 +11,13 @@ import { BoardColumn } from "@/components/ui/board-column";
 import styles from "./legacy-project-board.module.css";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
-import Link from "next/link";
 import {LearnerDeleteOwnTask} from "./learner-own-task-controls";
 import {canLearnerMoveOwnTask} from "@/modules/projects/learner-task-status-policy";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerBoardTaskHref,type LearnerTaskBoardUrlFilters} from "@/modules/projects/learner-board-task-detail-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;templateKey:string;
  updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null};
 type Sprint={id:string;status:string;title:string};
@@ -132,8 +132,8 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
        onDragStart={event=>{if(editable){event.dataTransfer.setData("text/plain",task.id);setDragging(true);}}}
         onDragEnd={()=>setDragging(false)}
        className={"border p-3 text-sm "+styles["card"]}>
-        <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
-         className="block break-words font-semibold text-primary-text focus-ring">{task.title}</Link>
+        <TextLink href={learnerBoardTaskHref(projectId,filters,task.id)}
+         className="block break-words">{task.title}</TextLink>
         <p className="mt-2 text-xs text-muted-foreground leading-[20px]">{task.priority}</p>
         {!readOnly && own && (task.sprintId===null||editable) && task.status==="TODO" &&
           task.templateKey.startsWith("learner-"+membershipId!.replaceAll("-","")+"-") ?

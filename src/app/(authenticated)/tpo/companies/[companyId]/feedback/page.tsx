@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -11,6 +10,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoCompanyFeedback } from "@/modules/placements/tpo-company-feedback-service";
 import { tpoCompanyFeedbackQuerySchema } from "@/modules/placements/tpo-company-feedback-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = { page?: string | string[] };
 const dateFormat = new Intl.DateTimeFormat("en-IN", {
@@ -44,10 +44,10 @@ export default async function TpoCompanyFeedbackPage({
     <div className="min-w-0 space-y-4">
       <PageHeader title={data.companyName + " · Internal feedback"}
         description="Recorded TPO recruiter notes for contacts explicitly linked to this college-company relationship."
-        actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-          className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring md:min-h-9 w-full md:w-auto justify-center">
+        actions={<TextLink href={"/tpo/companies/" + encodeURIComponent(companyId)}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto justify-center">
           ← Company details
-        </Link>}/>
+        </TextLink>}/>
       {!data.available ? (
         <Alert tone="warning">
           Registered recruiter note storage is unavailable in this database. No
@@ -73,16 +73,16 @@ export default async function TpoCompanyFeedbackPage({
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </Heading>
             {data.notes.length === 0 ? (
-              <EmptyState title="No saved NOTE-type CRM activities appear on this page." description="Calls, meetings, external communications and unstored feedback are not inferred." action={<Link href={"/tpo/companies/"+encodeURIComponent(companyId)} className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">← Company details</Link>}/>
+              <EmptyState title="No saved NOTE-type CRM activities appear on this page." description="Calls, meetings, external communications and unstored feedback are not inferred." action={<TextLink href={"/tpo/companies/"+encodeURIComponent(companyId)} className="md:min-h-9 inline-flex min-h-11 items-center">← Company details</TextLink>}/>
             ) : (
               <ul className="divide-y divide-[var(--lms-canvas-border)]">
                 {data.notes.map((item) => (
                   <li key={item.id} className="space-y-2 py-[var(--lms-space-4)]">
                     <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                      <Link href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
-                        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">
+                      <TextLink href={"/tpo/recruiters/" + encodeURIComponent(item.leadId)}
+                        className="inline-flex min-h-11 items-center md:min-h-9">
                         {item.contactName}
-                      </Link>
+                      </TextLink>
                       <time className="text-xs text-muted-foreground" dateTime={item.recordedAtIso}>
                         {dateFormat.format(new Date(item.recordedAtIso))} IST
                       </time>
@@ -97,12 +97,12 @@ export default async function TpoCompanyFeedbackPage({
             <span>Page {data.page} of {data.totalPages}</span>
             <div className="flex flex-wrap gap-3">
               {data.page > 1 ? (
-                <Link href={base + "?page=" + (data.page - 1)}
-                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">← Previous</Link>
+                <TextLink href={base + "?page=" + (data.page - 1)}
+                  className="inline-flex min-h-11 items-center md:min-h-9">← Previous</TextLink>
               ) : null}
               {data.totalPages !== null && data.page < data.totalPages ? (
-                <Link href={base + "?page=" + (data.page + 1)}
-                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">Next →</Link>
+                <TextLink href={base + "?page=" + (data.page + 1)}
+                  className="inline-flex min-h-11 items-center md:min-h-9">Next →</TextLink>
               ) : null}
             </div>
           </nav>:null}

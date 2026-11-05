@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import {TpoGrid} from "@/components/tpo/grid/tpo-grid";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import { TextLink } from "@/components/ui/text-link";
 
 /**
  * The parent recruiter results editor supplies only server-authorized applicants.
@@ -37,9 +37,9 @@ export function RecruiterResultReviewGrid({rows,scopeKey}:{
    rows={rows} columns={columns} rowKey={row=>row.id}
    mobilePrimaryKeys={["applicant","outcome","status","score"]}
    storageKey={"recruiter-result-review:"+scopeKey}
-   rowActions={row=><Link href={row.editHref}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 focus-ring md:min-h-9">
+   rowActions={row=><TextLink href={row.editHref}
+    className="inline-flex min-h-11 items-center text-sm md:min-h-9">
     Review row
-   </Link>}
+   </TextLink>}
  />;
 }

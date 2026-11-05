@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import {useEffect,useState,type ReactNode} from "react";
 import {Banner} from "@/components/ui/banner";
 import {ErrorState} from "@/components/ui/error-state";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Retain only this mounted, authorized page's last successful React tree.
  * Never persist private directory content in browser storage or serve a cache
@@ -21,13 +21,13 @@ export function AdminCoursesLastGood({available,children,retryHref}:{
    <Banner tone="warning" role="alert">
     The course directory could not be refreshed. Previously loaded rows are shown for reference only;
     editing is disabled until the selected college is revalidated.
-    <Link href={retryHref} className="ml-2 inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Retry loading courses</Link>
+    <TextLink href={retryHref} className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Retry loading courses</TextLink>
    </Banner>
    <div inert aria-label="Previously loaded courses; controls disabled" className="min-w-0 opacity-70">
     {lastGood}
    </div>
   </>:<ErrorState title="Could not load courses"
    description="The courses for this college could not be loaded. Your existing changes were not affected."
-   action={<Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry loading courses</Link>}/>}
+   action={<TextLink href={retryHref} className="inline-flex min-h-11 items-center md:min-h-9">Retry loading courses</TextLink>}/>}
  </section>;
 }

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { TextLink } from "@/components/ui/text-link";
 export default function MentorProjectsLoading(){
  return <section role="status" aria-busy="true" className="space-y-4">
   <p className="font-semibold text-foreground">Checking Projects access…</p>
@@ -16,8 +16,8 @@ export default function MentorProjectsLoading(){
      <SkeletonBlock className="h-8 w-24" />
     </div>)}
   </div>
-  <Link href="/mentor/notifications" className="inline-flex min-h-11 items-center text-link underline lms-inline-link">
+  <TextLink href="/mentor/notifications" className="inline-flex min-h-11 items-center">
    View notifications
-  </Link>
+  </TextLink>
  </section>;
 }

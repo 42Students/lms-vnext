@@ -1,6 +1,5 @@
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -13,6 +12,8 @@ import {
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Params = { kind?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -32,7 +33,7 @@ export default async function FacultyCourseAssessmentHealthPage({
   });
   if (!parsed.success) return <section role="alert" className="min-w-0 space-y-3">
     <PageHeader title={"Invalid Section report filters"} />
-    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Back to courses</Link>
+    <TextLink href="/teacher/courses" className="inline-flex min-h-11 items-center md:min-h-9">Back to courses</TextLink>
   </section>;
   const context = await getCurrentRequestContext();
   const data = await getFacultyCourseAssessmentHealth(context,parsed.data);
@@ -41,10 +42,10 @@ export default async function FacultyCourseAssessmentHealthPage({
     <PageHeader eyebrow="Faculty · Course Report" title="Section assessment health"
       description={[data.delivery.courseName,data.delivery.sectionName,
         data.delivery.academicPeriodName].join(" · ")}
-      actions={<Link href={back + "/students"}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-[var(--lms-control-height)]">
+      actions={<ButtonLink variant="secondary" href={back + "/students"}
+        className="w-full sm:w-auto">
         Section students
-      </Link>} />
+      </ButtonLink>} />
     <section className="border-b border-border pb-4">
       <Heading level={2} size="sm" className="text-[var(--lms-heading)]">Scope</Heading>
       <p className="mt-1 text-sm text-body leading-[22px]">
@@ -63,8 +64,8 @@ export default async function FacultyCourseAssessmentHealthPage({
         </Select>
       </Label>
       <Button type="submit" variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
-      <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
-        className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text hover:underline focus-ring md:min-h-9">Clear</Link>
+      <TextLink href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
+        className="inline-flex min-h-11 items-center justify-center px-3 text-sm md:min-h-9">Clear</TextLink>
     </form>
     <p role="status" className="text-sm text-body leading-[1.6]">
       {data.total} published assessment{data.total === 1 ? "" : "s"} in this Section
@@ -96,19 +97,19 @@ export default async function FacultyCourseAssessmentHealthPage({
           Faculty-only graded average: {item.averagePercent === null
             ? "Unknown" : item.averagePercent + "%"}.
         </p>
-        <Link href={item.href}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-ring md:min-h-9">
+        <TextLink href={item.href}
+          className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">
           Open exact Section report →
-        </Link>
+        </TextLink>
       </article>)}</div>}
     {data.totalPages > 1 ? <nav aria-label="Section assessment health pages"
       className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-3">
-        {data.page > 1 && <Link href={facultyCourseHealthHref({...data.query,page:data.page-1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Previous</Link>}
-        {data.page < data.totalPages && <Link href={facultyCourseHealthHref({...data.query,page:data.page+1})}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Next</Link>}
+        {data.page > 1 && <TextLink href={facultyCourseHealthHref({...data.query,page:data.page-1})}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">Previous</TextLink>}
+        {data.page < data.totalPages && <TextLink href={facultyCourseHealthHref({...data.query,page:data.page+1})}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">Next</TextLink>}
       </div>
     </nav> : null}
     <Disclosure title="How assessment health is counted" className="border-t border-border">

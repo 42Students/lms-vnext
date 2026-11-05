@@ -4,7 +4,6 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { ZodError } from "zod";
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { learnerCourseTabPath } from "@/modules/courses/learner-course-tab-route-model";
 import {resolveLegacyLearnerCourseDelivery} from "@/modules/courses/learner-course-legacy-route-service";
 import {learnerCourseTabPersistentQuery} from "@/modules/courses/learner-course-tab-context-model";
@@ -32,6 +31,8 @@ import {
 } from "@/modules/courses/learner-course-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -136,9 +137,9 @@ export default async function LearnerCourseTabPage({
          :"Could not load course. Content and completion counts may be incomplete."}
         <LearnerCourseStateRetry label="Retry" />
       </Banner>
-      <Link href="/learn/courses" className="font-semibold text-primary-text underline">
+      <TextLink href="/learn/courses">
         {LEARNER_BACK_TO_COURSES}
-      </Link>
+      </TextLink>
     </div>;
   }
   const workspace=workspaceResult.value;
@@ -167,9 +168,9 @@ export default async function LearnerCourseTabPage({
           </div>
         </div>
       </Banner>
-      <Link href="/learn/courses" className="font-semibold text-primary-text underline">
+      <TextLink href="/learn/courses">
         {LEARNER_BACK_TO_COURSES}
-      </Link>
+      </TextLink>
     </div>;
   }
 
@@ -218,10 +219,10 @@ export default async function LearnerCourseTabPage({
     content = (
       <>
       {displayResult.failed ? <Banner tone="warning" action={
-        <Link href={`/learn/courses/${encodeURIComponent(deliveryId)}/home`}
-          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+        <TextLink href={`/learn/courses/${encodeURIComponent(deliveryId)}/home`}
+          className="inline-flex min-h-9 items-center">
           Try again
-        </Link>
+        </TextLink>
       }>Failed to load course details.</Banner> : null}
       <LearnerCourseOverview
         deliveryId={deliveryId}
@@ -296,12 +297,12 @@ export default async function LearnerCourseTabPage({
           <Heading level={1} size="xl" className="m-0 min-w-0 max-w-full shrink break-words leading-[1.3] tracking-[-0.02em] text-[var(--lms-heading)] md:text-[30px]">
             {activeTab === "roadmap" ? "Learning Path" : courseTitle}
           </Heading>
-          <Link
+          <ButtonLink variant="secondary"
             href="/learn/courses"
-            className="inline-flex shrink-0 min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:bg-[var(--lms-canvas-muted)] focus-ring"
+            className="shrink-0"
           >
             {LEARNER_BACK_TO_COURSES}
-          </Link>
+          </ButtonLink>
         </div>
         <p className="text-sm text-[var(--lms-muted-text)]">
           {activeTab === "roadmap" ? courseTitle : "Course workspace"}
@@ -317,14 +318,14 @@ export default async function LearnerCourseTabPage({
         persistentQuery={learnerCourseTabPersistentQuery(query)}/>
       <Disclosure title="Course options">
         <nav aria-label="Additional course views" className="mt-2 flex flex-wrap gap-3 text-sm">
-          <Link href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
-            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          <TextLink href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
+            className="inline-flex min-h-9 items-center">
             Detailed progress
-          </Link>
-          <Link href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
-            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          </TextLink>
+          <TextLink href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
+            className="inline-flex min-h-9 items-center">
             Attendance history
-          </Link>
+          </TextLink>
         </nav>
       </Disclosure>
       <div key={deliveryId + ":" + activeTab} className="learn-course-tab-page min-w-0">

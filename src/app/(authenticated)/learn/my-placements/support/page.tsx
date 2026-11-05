@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnUnifiedLearnerRequests } from "@/modules/placements/learner-support-request-service";
@@ -7,6 +6,8 @@ import {LearnerSupportCancel} from "@/components/placements/learner-support-canc
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function LearnerSupportHistory({searchParams}:{
   searchParams:Promise<{status?:string|string[];type?:string|string[];page?:string|string[]}>;
 }) {
@@ -25,7 +26,7 @@ export default async function LearnerSupportHistory({searchParams}:{
   const supportFilterNavClass =
     "min-w-0 max-w-[calc(100vw_-_var(--lms-space-7))] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline md:min-h-9">← Placement Cell</Link>
+    <TextLink href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center text-sm md:min-h-9">← Placement Cell</TextLink>
     <PageHeader title="My support requests"
       description="Your placement and general college-team requests with decisions and follow-up in one history." />
     <section className="border-b border-border pb-6">
@@ -35,20 +36,20 @@ export default async function LearnerSupportHistory({searchParams}:{
       </p>
     </section>
     <nav aria-label="Request status" className={supportFilterNavClass}>
-      {choices.map(status=><Link key={status}
+      {choices.map(status=><TextLink variant="bare" key={status}
         aria-current={selectedStatus===status?"page":undefined}
         href={learnerSupportHistoryHref({status,type:selectedType})}
         className={supportFilterPillClass}>
         {status==="ALL"?"All requests":status.charAt(0)+status.slice(1).toLowerCase()}
-      </Link>)}
+      </TextLink>)}
     </nav>
     <nav aria-label="Request category" className={supportFilterNavClass}>
-      {requestTypes.map(type=><Link key={type}
+      {requestTypes.map(type=><TextLink variant="bare" key={type}
         aria-current={selectedType===type?"page":undefined}
         href={learnerSupportHistoryHref({status:selectedStatus,type})}
         className={supportFilterPillClass}>
         {type==="ALL"?"All types":placementRequestTypeLabel(type)}
-      </Link>)}
+      </TextLink>)}
     </nav>
     <p role="status" className="text-xs text-muted-foreground leading-5">
       {data.total.toLocaleString("en-IN")} matching requests · Page {data.page} of {data.totalPages}
@@ -77,14 +78,12 @@ export default async function LearnerSupportHistory({searchParams}:{
       </li>)}
     </ol>}
     <nav aria-label="Request history pages" className="flex flex-wrap gap-3">
-      {data.hasPrevious?<Link href={learnerSupportHistoryHref({status:selectedStatus,type:selectedType,page:data.page-1})}
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:underline">
+      {data.hasPrevious?<ButtonLink variant="secondary" href={learnerSupportHistoryHref({status:selectedStatus,type:selectedType,page:data.page-1})}>
         ← Newer requests
-      </Link>:null}
-      {data.olderPage!==null?<Link href={learnerSupportHistoryHref({status:selectedStatus,type:selectedType,page:data.page+1})}
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:underline">
+      </ButtonLink>:null}
+      {data.olderPage!==null?<ButtonLink variant="secondary" href={learnerSupportHistoryHref({status:selectedStatus,type:selectedType,page:data.page+1})}>
         Older requests →
-      </Link>:null}
+      </ButtonLink>:null}
     </nav>
   </div>;
 }

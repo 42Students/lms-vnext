@@ -1,8 +1,8 @@
 import type { getSuperAdminDrivePipeline } from "@/modules/placements/super-admin-drive-pipeline-service";
 import type {SuperAdminDriveAttention} from "@/modules/placements/super-admin-drive-attention-service";
-import Link from "next/link";
 import { Banner } from "@/components/ui/banner";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Pipeline = Awaited<ReturnType<typeof getSuperAdminDrivePipeline>>;
 
@@ -28,14 +28,14 @@ export function SuperAdminDrivePipeline({rows,attention=[],jobId}: {
       <span className="rounded bg-[color:var(--lms-gold-subtle)] px-2 py-0.5 tabular-nums">{item.count}</span>
      </p>
      <p className="mt-1">{item.details}</p>
-     <Link className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline"
+     <TextLink className="mt-2 inline-flex min-h-9 items-center"
       href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"+
         (item.stage||item.filter?"?"+new URLSearchParams({
           ...(item.stage?{stage:item.stage}:{}),
           ...(item.filter?{attention:item.filter}:{}),
         }).toString():"")}>
       Review applications →
-     </Link>
+     </TextLink>
     </li>)}
    </ul>
   </section>

@@ -1,7 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import {getSuperAdminLearningFilterOptions} from "@/modules/admin-ui/super-admin-learning-filter-options-service";
 import {SuperAdminCourseProgressSelector} from "@/components/courses/super-admin-course-progress-selector";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -22,6 +21,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminCourseProgressPage({
   searchParams,
@@ -32,7 +32,7 @@ export default async function SuperAdminCourseProgressPage({
   if (!parsed) return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title="Course Progress" />
     <ErrorState title="Invalid course progress filters" description="Search, status or page is invalid."
-      action={<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<TextLink href="/admin/course-progress" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>} />
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-6">
     <PageHeader title="Course Progress" />
@@ -46,8 +46,7 @@ export default async function SuperAdminCourseProgressPage({
     <PageHeader title="Course Progress"/>
     <ErrorState title="Couldn't refresh course progress"
       description="The selected college's progress report could not be loaded. Your current filters are preserved; no stale student data is shown."
-      action={<Link href={adminLearningHref("PROGRESS",parsed)}
-        className="font-semibold text-primary-text underline">Retry course progress</Link>}/>
+      action={<TextLink href={adminLearningHref("PROGRESS",parsed)}>Retry course progress</TextLink>}/>
   </div>;
   const data=dataResult.value;
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
@@ -113,9 +112,9 @@ export default async function SuperAdminCourseProgressPage({
     </form>
     {filtersResult.status==="rejected"?<Alert tone="warning">
       Some course-progress filters could not be loaded. Your saved filters still apply to the visible offerings.{" "}
-      <Link href={adminLearningHref("PROGRESS",data.query)} className="font-semibold text-primary-text underline">Retry filter choices</Link>.
+      <TextLink href={adminLearningHref("PROGRESS",data.query)}>Retry filter choices</TextLink>.
     </Alert>:null}
-    <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9 hover:underline" href="/admin/course-progress">Clear filters</Link>
+    <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9" href="/admin/course-progress">Clear filters</TextLink>
     {selected?<div className="space-y-3">
       <p className="text-sm font-semibold text-[var(--lms-heading)]">Selected batch: {selectedNames.batch} · Course: {selectedNames.course}</p>
       <dl className="grid min-w-0 grid-cols-2 gap-3 md:grid-cols-4">
@@ -157,10 +156,10 @@ export default async function SuperAdminCourseProgressPage({
             </td>
           </tr>)}</tbody>
         </Table>
-        <Link href={"/admin/course-progress/students?offeringId="+encodeURIComponent(inlineStudents.offeringId)}
-          className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text underline">
+        <TextLink href={"/admin/course-progress/students?offeringId="+encodeURIComponent(inlineStudents.offeringId)}
+          className="inline-flex min-h-11 items-center px-3 text-sm">
           View all students and filter by class
-        </Link>
+        </TextLink>
       </section> : <p className="text-sm text-body">
         {selected&&data.total>1
           ?"Choose one offering below to view its students. Progress from different classes is not combined."
@@ -183,14 +182,14 @@ export default async function SuperAdminCourseProgressPage({
           <div><dt className="text-xs text-muted-foreground">Completed content rows</dt><dd className="text-lg font-semibold tabular-nums">{item.completedRows}</dd></div>
           <div className="col-span-2"><dt className="text-xs text-muted-foreground">Learners with recorded activity</dt><dd className="text-lg font-semibold tabular-nums">{item.learnersWithRecords}</dd></div>
         </dl>
-        <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle underline focus-visible:outline focus-ring hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)]">
+        <ButtonLink variant="secondary" href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+          className="mt-3">
           Open offering →
-        </Link>
-        <Link href={`/admin/course-progress/students?offeringId=${encodeURIComponent(item.offeringId)}`}
-         className="ml-3 mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle hover:border-[var(--lms-primary)] focus-ring hover:text-[var(--lms-primary-text)]">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href={`/admin/course-progress/students?offeringId=${encodeURIComponent(item.offeringId)}`}
+         className="ml-3 mt-3">
           View student progress →
-        </Link>
+        </ButtonLink>
       </article>)}
     </div> : selected?<EmptyState title="No recorded course progress" description="No course offerings match these filters. The absence of records is not proof of incomplete student work." />:null}
     <div className="flex flex-wrap items-center justify-between gap-3">

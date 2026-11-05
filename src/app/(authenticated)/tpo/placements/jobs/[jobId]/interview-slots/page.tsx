@@ -2,7 +2,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {ZodError} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,6 +10,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listTpoRecruiterProposedSlots} from "@/modules/placements/tpo-recruiter-slot-review-service";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function TpoRecruiterSlotReviewPage({params}:{
  params:Promise<{jobId:string}>;
@@ -31,8 +31,8 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Interview slot proposals"
     description={data.job.title+" · Employer-proposed time blocks for your college."}
-    actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
-      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link md:w-auto hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">← Back to drive</Link>} />
+    actions={<ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
+      className="w-full md:w-auto">← Back to drive</ButtonLink>} />
   <Alert tone="info">
    Proposals and employer-internal reservations are not confirmed student interviews. The placement cell must arrange its own rooms, candidates and confirmed schedule separately.
   </Alert>

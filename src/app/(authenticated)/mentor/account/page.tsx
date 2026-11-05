@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getMentorAccountOverview} from
@@ -10,6 +9,7 @@ import {mentorGoogleConnectionState} from "@/modules/projects/mentor-google-cale
 import {getMentorEmailPreference} from "@/modules/projects/mentor-email-preference-service";
 import {MentorEmailPreferenceControls} from "@/components/projects/mentor-email-preference-controls";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 export default async function MentorAccountPage(){
@@ -47,10 +47,10 @@ export default async function MentorAccountPage(){
     Login email, phone and college assignment are identity-managed;
     changing them requires an authorized account workflow.
    </p>
-   <Link className="inline-flex min-h-11 items-center text-link underline"
+   <TextLink className="inline-flex min-h-11 items-center"
      href={account.hasFacultyProfile?"/teacher/profile/details":"/account/security"}>
       Edit available account details →
-   </Link>
+   </TextLink>
   </section>
   <section aria-label="Mentor teams and courses" className="space-y-3">
    <Heading level={2} size="lg">Current Mentor assignments</Heading>
@@ -60,8 +60,8 @@ export default async function MentorAccountPage(){
      {account.courses.length?<ul className="list-disc space-y-1 pl-6">
        {account.courses.map(course=><li key={course}>{course}</li>)}
      </ul>:<p>No course label is recorded for your current assigned teams.</p>}
-     <Link className="inline-flex min-h-11 items-center text-link underline"
-       href="/mentor/projects">Open my teams →</Link>
+     <TextLink className="inline-flex min-h-11 items-center"
+       href="/mentor/projects">Open my teams →</TextLink>
    </>:<p>Project access is disabled for this college.</p>}
   </section>
   <section aria-label="Connected services" className="space-y-3 border-t border-border pt-4">

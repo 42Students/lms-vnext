@@ -1,7 +1,6 @@
 import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -20,6 +19,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -62,7 +62,7 @@ export default async function CollegeActivityPage({
     <PageHeader title="Activity Log" />
     <ErrorState title="Invalid activity filters"
       description={invalidCollegeActivityCategory(raw["category"]) ?? "The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."}
-      action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>} />
+      action={<TextLink href="/college/activity" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Clear filters</TextLink>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data).catch((error:unknown)=>{
     if (error instanceof AuthorizationError) throw error;
@@ -90,8 +90,8 @@ export default async function CollegeActivityPage({
   }
   return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
     <PageHeader title="Activity Log"
-      actions={<Link href="/college/projects/audit"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">View project activity</Link>} />
+      actions={<TextLink href="/college/projects/audit"
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">View project activity</TextLink>} />
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3" aria-label="Activity controls">
       <nav aria-label="Activity categories" className="flex min-w-0 flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-[color:var(--lms-neutral-100)] p-1">
         {([
@@ -100,13 +100,13 @@ export default async function CollegeActivityPage({
           ["PROJECTS","Projects"],["EVERYTHING","Everything"],
         ] as const).map(([key,label])=>{
           const active=key===(data.query.category??(data.query.view==="EVERYTHING"?"EVERYTHING":"IMPORTANT"));
-          return <Link key={key} aria-current={active?"page":undefined}
+          return <TextLink variant="bare" key={key} aria-current={active?"page":undefined}
             href={collegeActivityHref({...data.query,loaded:1,category:key==="IMPORTANT"||key==="EVERYTHING"?undefined:key,
               view:key==="EVERYTHING"?"EVERYTHING":"IMPORTANT",module:undefined,importance:undefined})}
             className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
              (active?"bg-surface text-[color:var(--lms-button-primary-hover)] shadow-sm":"text-[var(--lms-body-text)] hover:bg-[color:color-mix(in_srgb,var(--lms-white)_70%,transparent)]")}>
             {label}
-          </Link>;
+          </TextLink>;
         })}
       </nav>
       <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -116,11 +116,11 @@ export default async function CollegeActivityPage({
             ["7 days",collegeActivityRecentHref(data.query,7,now)],
             ["30 days",collegeActivityRecentHref(data.query,30,now)],
             ["All time",collegeActivityAllTimeHref(data.query)],
-          ] as const).map(([label,href])=><Link key={label} href={href}
+          ] as const).map(([label,href])=><TextLink variant="bare" key={label} href={href}
             aria-current={collegeActivityHref(data.query)===href?"page":undefined}
             className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
               (collegeActivityHref(data.query)===href?"bg-surface text-[color:var(--lms-button-primary-hover)] shadow-sm":"text-[var(--lms-body-text)] hover:bg-[color:color-mix(in_srgb,var(--lms-white)_70%,transparent)]")}>
-            {label}</Link>)}
+            {label}</TextLink>)}
         </nav>
         <CollegeActivityRefresh />
         <CollegeActivityExportButton href={"/api/activity/college-export"+(exportParams.size?"?"+exportParams.toString():"")}
@@ -216,9 +216,9 @@ export default async function CollegeActivityPage({
           <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
             Apply filters
           </Button>
-          <Link href="/college/activity" className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
+          <TextLink href="/college/activity" className="inline-flex min-h-11 items-center justify-center md:min-h-9">
             Clear
-          </Link>
+          </TextLink>
         </div>
       </form>
     </section>
@@ -226,7 +226,7 @@ export default async function CollegeActivityPage({
       {data.groups.length===0?<EmptyState title={(data.query.view??"IMPORTANT")==="IMPORTANT"&&!data.query.category
         ? "Nothing important happened in this period." : "No activity in this period."}
         description="Try another category or date range to see recorded changes."
-        action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>} />:null}
+        action={<TextLink href="/college/activity" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>} />:null}
       {[...groupedByDay.entries()].map(([day,groups])=>
         <section key={day} className="space-y-3" aria-label={"Activity on "+day}>
           <Heading level={3} className="border-b border-[var(--lms-canvas-border)] pb-2 text-[var(--lms-font-base)] text-[var(--lms-heading)]">{day}</Heading>
@@ -259,8 +259,8 @@ export default async function CollegeActivityPage({
                   </dl>
                   <p className="mt-2 text-xs text-muted-foreground">Sanitized recorded metadata{group.count>1?" (latest event in this group)":""}:</p>
                   <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] py-2 text-xs">{JSON.stringify(sanitizeActivityMetadata(item.event.metadata),null,2)}</pre>
-                  <Link href={"/college/activity/"+encodeURIComponent(item.event.id)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">View full event</Link>
+                  <TextLink href={"/college/activity/"+encodeURIComponent(item.event.id)}
+                    className="inline-flex min-h-11 items-center md:min-h-9">View full event</TextLink>
                 </Disclosure>
                 </div>
               </li>;
@@ -272,14 +272,13 @@ export default async function CollegeActivityPage({
     <nav aria-label="Activity history pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Showing {data.items.length} events · {data.remainingCount.toLocaleString("en-IN")} older matching events</p>
       {data.nextCursor ? ((data.query.loaded ?? 1)<10
-        ? <Link href={collegeActivityHref({...data.query,loaded:(data.query.loaded ?? 1)+1})+"#activity-feed"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-link md:min-h-9">
+        ? <ButtonLink variant="secondary" href={collegeActivityHref({...data.query,loaded:(data.query.loaded ?? 1)+1})+"#activity-feed"}>
           Load more ({data.remainingCount.toLocaleString("en-IN")} older)
-        </Link>
-        : <Link href={collegeActivityHref({...data.query,loaded:1},data.nextCursor)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        </ButtonLink>
+        : <TextLink href={collegeActivityHref({...data.query,loaded:1},data.nextCursor)}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Older activity
-        </Link>) : <span className="text-muted-foreground">No older matching events</span>}
+        </TextLink>) : <span className="text-muted-foreground">No older matching events</span>}
     </nav>
     <p className="text-xs text-muted-foreground">
       Important shows high- and critical-importance events. Category views remain college-scoped; Everything includes all importance levels.

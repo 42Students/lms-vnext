@@ -8,7 +8,6 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -30,6 +29,7 @@ import { facultyYouTubeLinkIssue,facultyLiveClassIssue } from "@/modules/courses
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 
 
 type Mode =
@@ -775,20 +775,20 @@ export function FacultyLessonAuthoring({
           </Button>
           ) : null}
           {(!availableModes || availableModes.includes("ASSIGNMENT")) ? (
-          deliveryId?<Link
+          deliveryId?<ButtonLink variant="secondary"
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-[var(--lms-control-height)]">
+            className="min-w-0">
             + Assignment · Full builder
-          </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
+          </ButtonLink>:<Button size="md" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
             + Assignment
           </Button>
           ) : null}
           {(!availableModes || availableModes.includes("QUIZ")) ? (
-          deliveryId?<Link
+          deliveryId?<ButtonLink variant="secondary"
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-[var(--lms-control-height)]">
+            className="min-w-0">
             + Quiz · Full builder
-          </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("QUIZ")}>
+          </ButtonLink>:<Button size="md" variant="secondary" onClick={()=>setMode("QUIZ")}>
             + Quiz
           </Button>
           ) : null}

@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type {getOwnLearnerDriveJourney} from "@/modules/placements/learner-historical-drive-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Journey=NonNullable<Awaited<ReturnType<typeof getOwnLearnerDriveJourney>>>;
 /** LEARNER-placements-24: these are recorded job/round statuses only.
  * No unverified selection result or attendance claim is invented.
@@ -15,8 +15,8 @@ export function LearnerOwnDriveJourney({journey}:{journey:Journey}){
     "This drive was cancelled":"This drive is closed"}</Heading>
    {journey.reason?<p className="mt-2 text-sm text-body leading-[22px]">{journey.reason}</p>:null}
    <p className="mt-2 text-sm leading-[22px]">Your application history remains available.</p>
-   <Link className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline md:min-h-9"
-    href={"/learn/my-placements/applications/"+journey.applicationId}>View my application</Link>
+   <TextLink className="inline-flex min-h-11 items-center break-words md:min-h-9"
+    href={"/learn/my-placements/applications/"+journey.applicationId}>View my application</TextLink>
   </aside>:null}
   <section aria-label="Your progress" className="min-w-0 rounded-[12px] border border-border p-4 md:p-5">
    <Heading level={2}>Your progress</Heading>
@@ -24,8 +24,8 @@ export function LearnerOwnDriveJourney({journey}:{journey:Journey}){
    <p className="mt-2 text-xs text-muted-foreground">
      Interview bookings are confirmed through your application record. Check its updates for verified notifications.
    </p>
-   <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9"
-    href={"/learn/my-placements/applications/"+journey.applicationId}>See where your application stands</Link>
+   <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9"
+    href={"/learn/my-placements/applications/"+journey.applicationId}>See where your application stands</TextLink>
   </section>
   <section aria-label="Selection process" className="min-w-0 rounded-[12px] border border-border p-4 md:p-5">
    <Heading level={2}>Selection process</Heading>
@@ -34,10 +34,10 @@ export function LearnerOwnDriveJourney({journey}:{journey:Journey}){
      <p className="mt-1 text-xs text-muted-foreground">
        A round is scheduled for this drive; this does not by itself confirm your individual interview booking.
      </p>
-     <Link href={"/learn/my-placements/applications/"+journey.applicationId}
-       className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+     <TextLink href={"/learn/my-placements/applications/"+journey.applicationId}
+       className="mt-2 inline-flex min-h-11 items-center text-sm md:min-h-9">
        View your application and interview updates
-     </Link>
+     </TextLink>
    </div>:null}
    {journey.rounds.length?<ol className="mt-3 min-w-0 space-y-2">
     {journey.rounds.map(round=><li key={round.id} className="min-w-0 break-words border-t border-border py-3 text-sm">

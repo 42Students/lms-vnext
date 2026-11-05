@@ -1,5 +1,4 @@
 import { Tabs } from "@/components/ui/tabs";
-import Link from "next/link";
 import {LearnerPrepAssignmentCards} from "@/components/placements/learner-prep-assignment-cards";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import { redirect } from "next/navigation";
@@ -16,6 +15,7 @@ import {
 } from "@/modules/placements/learner-preparation-model";
 import { getOwnLearnerPlacementPreparation } from "@/modules/placements/learner-preparation-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Params={view?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -27,7 +27,7 @@ export default async function LearnerPlacementPreparationPage({
   const parsed=learnerPreparationQuerySchema.safeParse({view:first(raw.view)??undefined});
   if(!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Placement preparation" />
-    <ErrorState title="Invalid preparation filter" description="Choose a valid preparation category." action={<Link href="/learn/my-placements/preparation" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/>
+    <ErrorState title="Invalid preparation filter" description="Choose a valid preparation category." action={<TextLink href="/learn/my-placements/preparation" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear filters</TextLink>}/>
   </div>;
   const context=await getCurrentRequestContext();
   if(!hasMembershipRole(context,"LEARNER")) redirect("/dashboard");
@@ -40,17 +40,17 @@ export default async function LearnerPlacementPreparationPage({
       <PageHeader title="Placement preparation" />
       <ErrorState title="Could not load placement preparation"
         description="Your recorded preparation categories could not be loaded; no missing entries are assumed."
-        action={<Link href={learnerPreparationHref(parsed.data)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry preparation</Link>} />
+        action={<TextLink href={learnerPreparationHref(parsed.data)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry preparation</TextLink>} />
     </div>;
   }
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Placement preparation"
       description="A checklist of information and activity actually recorded for your account."
-      actions={<Link href="/learn/my-placements"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-ring md:min-h-9">
+      actions={<TextLink href="/learn/my-placements"
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         My Placements
-      </Link>} />
+      </TextLink>} />
     {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}
     <section aria-label="Recorded preparation summary"
       className="border-b border-border pb-4">
@@ -76,10 +76,10 @@ export default async function LearnerPlacementPreparationPage({
               <StatusBadge tone={item.recorded?"success":"neutral"}>{item.recorded?"Recorded":"Not recorded"}</StatusBadge>
             </div>
             <p className="mt-2 max-w-3xl text-sm leading-[22px] text-body">{item.description}</p>
-            <Link href={item.href}
-              className="mt-2 inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline md:min-h-9">
+            <TextLink href={item.href}
+              className="mt-2 inline-flex min-h-11 items-center break-words text-sm md:min-h-9">
               {item.recorded?"Review recorded information":"Review this section"} →
-            </Link>
+            </TextLink>
           </li>)}
         </ol>}
     <p className="text-xs text-muted-foreground leading-[1.6]">

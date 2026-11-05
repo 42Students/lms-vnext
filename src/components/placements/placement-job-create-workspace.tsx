@@ -1,6 +1,5 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import type { ReactNode } from "react";
-import Link from "next/link";
 import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,sections,cohorts,programs as programsTable,departments} from "@/db/schema";
@@ -16,6 +15,7 @@ import { listPlacementCompanies } from "@/modules/placements/company-service";
 import { listPlacementSeasons } from "@/modules/placements/season-service";
 import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { TextLink } from "@/components/ui/text-link";
 
 export async function PlacementJobCreateWorkspace({
   context,
@@ -119,7 +119,7 @@ export async function PlacementJobCreateWorkspace({
       />
       {supportLoadFailed || cohortsLoadFailed ? <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
         Some company or academic setup data could not be loaded. The available fields remain editable, but review company, season and eligibility choices before creating a drive.{" "}
-        <Link href={basePath+"/new"} className="font-semibold text-primary-text underline">Retry setup data</Link>
+        <TextLink href={basePath+"/new"}>Retry setup data</TextLink>
       </p> : null}
       {preFormActions ? <div className="min-w-0">{preFormActions}</div> : null}
       {canClone?<Disclosure title="Clone a past drive" defaultOpen={pastDrives.length>0}

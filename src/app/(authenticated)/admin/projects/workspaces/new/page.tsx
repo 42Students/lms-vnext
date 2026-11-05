@@ -7,9 +7,9 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import { ProjectsServiceError } from "@/modules/projects/errors";
-import Link from "next/link";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 import { requireTeamCreationAuthority } from "@/modules/projects/class-team-roster-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function AdminClassProjectWorkspacePage({searchParams}:{
  searchParams:Promise<{templateId?:string|string[];mode?:string|string[]}>;
@@ -32,7 +32,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
         description={denied
           ? "Your selected college cannot be used to create workspaces. Select an authorized college and try again."
           : "The college and template catalogue could not be loaded. No workspace was created."}
-        action={<Link href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto md:min-h-9">Retry opening workspace creator</Link>}/>
+        action={<TextLink href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center w-full md:w-auto md:min-h-9">Retry opening workspace creator</TextLink>}/>
     </div>;
   }
   const selectedQuery = await searchParams;
@@ -51,19 +51,19 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
       Choose an available template below; no workspace has been created.
     </Banner>:null}
     <nav aria-label="Workspace creation mode" className="flex flex-wrap gap-2 border-b border-border pb-3">
-      <Link href={"/admin/projects/workspaces/new"+(selected?"?templateId="+encodeURIComponent(selected):"")}
+      <TextLink variant="bare" href={"/admin/projects/workspaces/new"+(selected?"?templateId="+encodeURIComponent(selected):"")}
         aria-current={mode==="single"?"page":undefined}
         className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 font-semibold focus-ring "+(mode==="single"?"border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>
         Single workspace
-      </Link>
-      <Link href={"/admin/projects/workspaces/new?mode=teams"+(selected?"&templateId="+encodeURIComponent(selected):"")}
+      </TextLink>
+      <TextLink variant="bare" href={"/admin/projects/workspaces/new?mode=teams"+(selected?"&templateId="+encodeURIComponent(selected):"")}
         aria-current={mode==="teams"?"page":undefined}
         className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 font-semibold focus-ring "+(mode==="teams"?"border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>
         Class / team workspaces
-      </Link>
+      </TextLink>
     </nav>
     {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."
-      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring w-full md:w-auto md:min-h-9">Project templates</Link>}/> :
+      action={<TextLink href="/admin/projects/templates" className="inline-flex min-h-11 items-center w-full md:w-auto md:min-h-9">Project templates</TextLink>}/> :
       mode==="single" ? <CreateProjectControl key={context.user.id+":"+collegeId+":single"} standalone collegeId={collegeId} basePath="/admin/projects" templates={templates.map(t=>({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/> :
       <ClassTeamWorkspaceCreator key={context.user.id+":"+collegeId+":"+(context.adminScope?.organizationId??"")} collegeId={collegeId} userId={context.user.id} basePath="/admin/projects" initialTemplateId={selected} templates={templates.map(t => ({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/>}
   </div>;

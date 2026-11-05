@@ -4,7 +4,6 @@ import {getDb} from "@/db/client";
 import {collegeMemberships} from "@/db/schema";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeCreateForm } from "@/components/admin/college-create-form";
 import {CollegeBulkImport} from "@/components/admin/college-bulk-import";
@@ -27,6 +26,8 @@ import { listColleges } from "@/modules/colleges/service";
 import { listOrganizations } from "@/modules/organizations/service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type CollegeRow = Awaited<ReturnType<typeof listColleges>>[number] & {canManage:boolean;organizationName:string};
 
@@ -128,25 +129,22 @@ const columns: DataTableColumn<CollegeRow>[] = [
     className: "text-right",
     cell: (college) => (
       <div className="flex min-w-0 flex-wrap justify-start gap-2 md:justify-end">
-        <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">
+        <ButtonLink variant="secondary" href={`/admin/colleges/${encodeURIComponent(college.id)}`}>
           Manage
-        </Link>
+        </ButtonLink>
         {college.canManage?<CollegeEditDialog college={college} />:null}
         <Dropdown trigger="More" label={"More actions for "+college.name} align="end" mobileSheet triggerClassName="md:min-h-9!">
           <div className="grid min-w-0 gap-[var(--lms-space-2)]">
-        <Link role="menuitem"
+        <ButtonLink variant="secondary" role="menuitem"
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]"
         >
           Readiness
-        </Link>
-        <Link role="menuitem"
+        </ButtonLink>
+        <ButtonLink variant="secondary" role="menuitem"
           href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]"
         >
           Branding
-        </Link>
+        </ButtonLink>
         {college.canManage ? <>
           <CollegeArchiveButton collegeId={college.id} name={college.name} />
         </> : null}
@@ -175,7 +173,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     <PageHeader title="Colleges"/>
     <ErrorState title="Invalid college directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+      action={<TextLink href="/admin/colleges" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>}/>
   </div>;
   const [collegesResult,organizationsResult]=await Promise.all([
     listColleges(context).then(value=>({ok:true as const,value}))
@@ -193,7 +191,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     <PageHeader title="Colleges"/>
     <ErrorState title="Colleges could not be loaded"
       description="The authorized college directory could not be loaded. No tenant records were changed."
-      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry colleges</Link>}/>
+      action={<TextLink href="/admin/colleges" className="inline-flex min-h-11 items-center md:min-h-9">Retry colleges</TextLink>}/>
   </div>;
   const colleges=collegesResult.value;
   const organizations=organizationsResult.value;
@@ -266,13 +264,13 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       <PageHeader
         title="Colleges"
         description="Active colleges are constrained by the selected Super Admin safety scope."
-        actions={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9">Search tenant directory →</Link>}
+        actions={<TextLink href="/admin/tenants" className="inline-flex min-h-11 items-center md:min-h-9">Search tenant directory →</TextLink>}
       />
       {!organizationsResult.ok?<Banner tone="warning" role="status"
-        action={<Link href={href(page)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+        action={<TextLink href={href(page)}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           Retry organizations
-        </Link>}>
+        </TextLink>}>
         Organizations could not be loaded. College create, import, edit and archive actions
         are disabled until the authorized organization directory is available.
       </Banner>:null}
@@ -322,8 +320,8 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         </Select>
        </Label>
        <Button type="submit" className="w-full md:w-auto">Search</Button>
-       <Link href="/admin/colleges" className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9 underline-offset-4">Clear search</Link>
-       <Link href={href(page)} className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9 underline-offset-4">Refresh directory</Link>
+       <TextLink href="/admin/colleges" className="inline-flex min-h-11 items-center md:min-h-9">Clear search</TextLink>
+       <TextLink href={href(page)} className="inline-flex min-h-11 items-center md:min-h-9">Refresh directory</TextLink>
       </form>
       <p role="status" className="text-sm text-muted-foreground tabular-nums">{q||state||city||orgId?matches.length+" of "+rows.length:rows.length} colleges · Page {page} of {pages}</p>
       <p className="text-xs text-muted-foreground">{popularityRead.ok

@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useState,type ReactNode} from "react";
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** Retain only the last successfully server-authorized view in this mounted
  * tab. No browser storage, global cache or cross-membership snapshot.
@@ -22,7 +22,7 @@ export function LearnerProfileLastGood({failed,scopeKey,children}:{
     <p>Showing the last profile we loaded.</p>
     <p className="text-xs">This saved view may be out of date and cannot be edited until refresh succeeds.</p>
    </div>
-   <Link href="/learn/profile" className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 font-semibold text-link underline md:min-h-9">Retry</Link>
+   <ButtonLink variant="secondary" href="/learn/profile">Retry</ButtonLink>
   </section>
   <div inert aria-label="Last successfully loaded profile (read-only)">
    {last}

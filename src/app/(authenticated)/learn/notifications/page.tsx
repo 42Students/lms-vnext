@@ -3,7 +3,6 @@ import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courses,departments} from "@/db/schema";
 import { z } from "zod";
-import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { NotificationListItem } from "@/components/activity/notification-list";
@@ -16,6 +15,8 @@ import { requirePersistedLearnerNotificationMembership } from "@/modules/activit
 import { learnerNotificationInboxHref, learnerNotificationInboxQuerySchema } from "@/modules/activity/learner-notification-inbox-model";
 import { notFound, redirect } from "next/navigation";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function NotificationsLoading() {
   return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading notifications">
@@ -143,7 +144,7 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
       <PageHeader title="Notifications"/>
       {personalLoadFailed?<Alert tone="warning" role="alert" title="Personal notifications could not be loaded">
         This is a loading problem, not an empty inbox. Your college announcements below are still available.
-        <Link href={learnerNotificationInboxHref(query.data)} className="ml-2 font-semibold text-primary-text underline">Retry personal notifications</Link>
+        <TextLink href={learnerNotificationInboxHref(query.data)} className="ml-2">Retry personal notifications</TextLink>
       </Alert>:null}
       <LearnerNotificationsInbox
         key={query.data.category+":"+query.data.unread+":"+query.data.q+":"+(beforeId??"")}
@@ -163,8 +164,7 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
           createdAt: announcement.createdAt,
         }))}
       />
-      {personalPage.nextCursor?<Link
-        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-link underline underline-offset-4"
+      {personalPage.nextCursor?<ButtonLink variant="secondary"
         href={(()=>{
           const base=new URL(learnerNotificationInboxHref(query.data),"https://lms.local");
           base.searchParams.set("beforeCreatedAt",personalPage.nextCursor!.beforeCreatedAt.toISOString());
@@ -172,12 +172,12 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
           return base.pathname+base.search;
         })()}>
         Older personal notifications
-      </Link>:null}
-      {beforeId?<Link
-        className="ml-3 inline-flex min-h-11 items-center text-link underline underline-offset-4"
+      </ButtonLink>:null}
+      {beforeId?<TextLink
+        className="ml-3 inline-flex min-h-11 items-center"
         href={learnerNotificationInboxHref(query.data)}>
         Newest notifications
-      </Link>:null}
+      </TextLink>:null}
     </div>
   );
 }

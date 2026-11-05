@@ -4,7 +4,6 @@ import {StatusBadge,applicationStatusTone} from "@/components/ui/status-badge";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {safeTpoBrandLogoUrl} from "@/modules/placements/tpo-branding-model";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJourneyItem } from "@/components/placements/learner-placement-journey";
 import { LearnerApplicationsBrowse } from "@/components/placements/learner-applications-browse";
@@ -16,6 +15,7 @@ import {ownApplicationInterviewLinks} from "@/modules/placements/learner-applica
 import {ownApplicationAssessmentLinks} from "@/modules/placements/learner-application-assessment-links-model";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Cancellation detail is only shown when carried by a verified imported
  * posting. Absence is an explicit no-reason state, not a fabricated reason. */
@@ -38,8 +38,8 @@ export default async function LearnerPlacementApplicationsPage() {
     return <div className="min-w-0 space-y-4">
       <ErrorState title="Could not load applications"
         description="Your application history could not be loaded. No applications are assumed missing or withdrawn."
-        action={<Link href="/learn/my-placements/applications"
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry applications</Link>} />
+        action={<TextLink href="/learn/my-placements/applications"
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry applications</TextLink>} />
     </div>;
   }
   const roundsRead=rows.length>0
@@ -92,9 +92,9 @@ export default async function LearnerPlacementApplicationsPage() {
   return (
     <div className="min-w-0 space-y-6">
       <nav aria-label="Application actions" className="flex min-w-0 flex-wrap justify-end gap-3">
-        <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+        <TextLink href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Review all official offers →
-      </Link>
+      </TextLink>
       </nav>
 
       
@@ -149,10 +149,10 @@ export default async function LearnerPlacementApplicationsPage() {
              {optOutDeadline&&row.channel==="PLACEMENT_CELL"?" · Placement-cell opt-out until "+optOutDeadline:""}
            </p>:null}
           </div>
-          <Link href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(row.applicationId)}
-           className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+          <TextLink href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(row.applicationId)}
+           className="inline-flex min-h-11 shrink-0 items-center text-sm md:min-h-9">
            View application →
-          </Link>
+          </TextLink>
          </li>;
         })}
        </ul>
@@ -160,7 +160,7 @@ export default async function LearnerPlacementApplicationsPage() {
 
       {!roundsRead.available ? <Alert tone="error">
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
-        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Retry round shortcuts</Link>
+        <TextLink href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center md:min-h-9">Retry round shortcuts</TextLink>
       </Alert> : null}
       <Suspense fallback={<PageLoading label="Loading application filters" variant="row" count={8} />}>
         <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks}

@@ -1,12 +1,12 @@
 "use client";
 import {useState} from "react";
-import Link from "next/link";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import {Button} from "@/components/ui/button";
 import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 /** Preserve active query filters when navigating bounded academic hierarchy pages. */
 export function academicScopePageHref(baseHref: string, page: number): string | null {
  if (!isSafeInternalHref(baseHref) || !Number.isSafeInteger(page) || page<1) return null;
@@ -62,10 +62,8 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
   </div>
   {showPageStatus?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm print:hidden">
    <span>Academic hierarchy page {safePage} · {scopes.length} nodes on this page</span>
-   {prevHref?<Link href={prevHref}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">Previous hierarchy page</Link>:null}
-   {nextHref?<Link href={nextHref}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">Next hierarchy page</Link>:null}
+   {prevHref?<ButtonLink variant="secondary" href={prevHref}>Previous hierarchy page</ButtonLink>:null}
+   {nextHref?<ButtonLink variant="secondary" href={nextHref}>Next hierarchy page</ButtonLink>:null}
   </nav>:null}
  </section>;
 }

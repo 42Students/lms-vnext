@@ -1,9 +1,9 @@
 "use client";
-import Link from "next/link";
 import {useEffect,useRef} from "react";
 import {usePathname,useSearchParams} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function RouteError({reset}:{
   error: Error & {digest?:string}; reset:()=>void;
@@ -23,9 +23,9 @@ export default function RouteError({reset}:{
    <div className="flex flex-wrap justify-center gap-2">
     <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Try Again</Button>
     <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>window.location.reload()}>Refresh page</Button>
-    <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">
+    <ButtonLink variant="secondary" href="/learn/allQuizzes">
       Back to quizzes
-    </Link>
+    </ButtonLink>
    </div>
   </section>
  </main>;

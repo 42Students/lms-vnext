@@ -9,7 +9,6 @@ import {LoadingState} from "@/components/ui/loading-state";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useCallback,useEffect,useRef,useState,type FormEvent} from "react";
-import Link from "next/link";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
@@ -42,12 +41,12 @@ function formatTokens(body:string,members:TeamPayload["members"]){
       const name=members.find(m=>m.membershipId.toLowerCase()===chunk.slice(8).toLowerCase())?.name;
       return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">@{name??"team member"}</span>;
     }
-    if(chunk.startsWith("#drive:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-ring md:min-h-9 focus-visible:underline"
-      href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</Link>;
-    if(chunk.startsWith("#company:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-ring md:min-h-9 focus-visible:underline"
-      href={"/tpo/companies/"+encodeURIComponent(chunk.slice(9))}>{chunk}</Link>;
-    if(chunk.startsWith("#student:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-ring md:min-h-9 focus-visible:underline"
-      href={"/tpo/students/"+encodeURIComponent(chunk.slice(9))+"/participation"}>{chunk}</Link>;
+    if(chunk.startsWith("#drive:"))return <TextLink key={i} className="inline-flex min-h-11 items-center break-words md:min-h-9"
+      href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</TextLink>;
+    if(chunk.startsWith("#company:"))return <TextLink key={i} className="inline-flex min-h-11 items-center break-words md:min-h-9"
+      href={"/tpo/companies/"+encodeURIComponent(chunk.slice(9))}>{chunk}</TextLink>;
+    if(chunk.startsWith("#student:"))return <TextLink key={i} className="inline-flex min-h-11 items-center break-words md:min-h-9"
+      href={"/tpo/students/"+encodeURIComponent(chunk.slice(9))+"/participation"}>{chunk}</TextLink>;
     if(chunk.startsWith("@")||chunk.startsWith("#"))
       return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">{chunk}</span>;
     return chunk;

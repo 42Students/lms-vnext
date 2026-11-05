@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -10,6 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 export default async function TpoOutsideDriveDetail({params,searchParams}:{
  params:Promise<{recordId:string}>;searchParams:Promise<{q?:string|string[]}>;
 }){
@@ -21,8 +21,8 @@ export default async function TpoOutsideDriveDetail({params,searchParams}:{
  if(Array.isArray(raw)||typeof raw==="string"&&raw.length>80)return <div className="min-w-0 space-y-3">
   <PageHeader title="Recorded outside drive"/>
   <Alert tone="error">Use one learner search query with at most 80 characters.</Alert>
-  <Link href={"/tpo/placements/recorded-outside/"+encodeURIComponent(recordId)}
-   className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear search</Link>
+  <TextLink href={"/tpo/placements/recorded-outside/"+encodeURIComponent(recordId)}
+   className="inline-flex min-h-11 items-center md:min-h-9">Clear search</TextLink>
  </div>;
  const q=raw??"";
  let data:Awaited<ReturnType<typeof getTpoOutsideDriveParticipants>>;
@@ -31,7 +31,7 @@ export default async function TpoOutsideDriveDetail({params,searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · External history" title={data.record.title}
    description="Add participating learners and outcomes from a drive already completed outside the platform."
-   actions={<Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 w-full items-center justify-center text-[13px] font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">← All recorded outside drives</Link>}/>
+   actions={<TextLink href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 w-full items-center justify-center text-[13px] sm:w-auto md:min-h-9">← All recorded outside drives</TextLink>}/>
   <p className="text-sm text-body">Occurred {new Intl.DateTimeFormat("en-IN",{
    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(data.record.occurredAt)} IST</p>
   <form method="get" role="search" aria-label="Find college learners" className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">

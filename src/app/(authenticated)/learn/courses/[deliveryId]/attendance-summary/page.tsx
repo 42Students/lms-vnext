@@ -4,7 +4,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { Banner } from "@/components/ui/banner";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -14,6 +13,7 @@ import { learnerAttendanceMonthSchema } from "@/modules/courses/learner-course-d
 import { courseSectionDeliveryIdSchema } from "@/modules/courses/validation";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 const formatWhen = (value: Date) => new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium",
@@ -43,8 +43,8 @@ export default async function LearnerCourseAttendanceSummaryPage({
       <PageHeader title="Course attendance history" />
       <ErrorState title="Could not load course attendance"
         description="Your recorded attendance could not be loaded. No session has been assumed absent."
-        action={<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/attendance-summary"}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry attendance history</Link>} />
+        action={<TextLink href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/attendance-summary"}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry attendance history</TextLink>} />
     </div>;
   }
   if (!attendance) notFound();
@@ -56,14 +56,14 @@ export default async function LearnerCourseAttendanceSummaryPage({
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader title="Course attendance history" />
-      <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+      <TextLink href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         ← Course attendance
-      </Link>
+      </TextLink>
 
       {query.month!==undefined && !parsedMonth.success ? <Banner tone="warning" role="status">
         The month filter is invalid; all your available attendance months are shown.{" "}
-        <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/attendance-summary"} className="font-semibold underline">Clear month filter</Link>
+        <TextLink href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/attendance-summary"}>Clear month filter</TextLink>
       </Banner> : null}
       <Disclosure title="All-time course attendance">
         <section aria-label="All-time course attendance" className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-4">

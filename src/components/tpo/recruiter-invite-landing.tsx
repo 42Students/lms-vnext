@@ -3,7 +3,6 @@
 import authStyles from "@/components/public/public-auth-skin.module.css";
 import { PageHeader } from "@/components/ui/page-header";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { recruiterInvitePreviewDisposition,RECRUITER_INVITE_LOAD_ERROR_HEADING } from "@/modules/placements/recruiter-invite-preview-disposition-model";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Invite = {
   collegeName: string;
@@ -280,7 +280,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">
           It may have expired or already been used. Ask the placement cell to send you a new one. Already joined? Sign in with your work email.
         </p>
-        <Link className={actionLink} href="/login">Sign in</Link>
+        <TextLink variant="bare" className={actionLink} href="/login">Sign in</TextLink>
       </div>,
     );
   }
@@ -291,7 +291,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <PageHeader title="One more step" />
       <p className="text-sm font-semibold text-body">Your invitation is awaiting your account sign-in.</p>
       <p className="text-sm text-muted-foreground leading-[22px]">You already have a 42LMS account. Sign in on {invite.collegeName}&apos;s placement address as {joinedEmail} to accept the invitation.</p>
-      <Link className={actionLink} href="/login">Sign in</Link>
+      <TextLink variant="bare" className={actionLink} href="/login">Sign in</TextLink>
     </div>);
   }
   if(state==="joined"){
@@ -299,7 +299,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <span aria-hidden="true" className="mx-auto flex size-12 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-2xl text-[var(--lms-primary)]">✓</span>
       <PageHeader title={"You now have access to "+invite.collegeName} />
       <p className="text-sm text-muted-foreground leading-[22px]">Sign in with your work email, {joinedEmail}. We&apos;ll email you a code each time.</p>
-      <Link className={actionLink} href="/login">Sign in</Link>
+      <TextLink variant="bare" className={actionLink} href="/login">Sign in</TextLink>
     </div>);
   }
   if (state === "declined") {
@@ -424,7 +424,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       </div>
 
       <p className="mt-5 text-center text-xs text-muted-foreground leading-[20px]">
-        Already have an account? <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring focus-visible:underline" href="/login">Sign in</Link>
+        Already have an account? <TextLink className="inline-flex min-h-11 items-center md:min-h-9" href="/login">Sign in</TextLink>
       </p>
     </>,
   );

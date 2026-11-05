@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import ActivityPage from "@/app/(authenticated)/activity/page";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -16,6 +15,8 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function smsDate(value:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
@@ -29,7 +30,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
  catch{return <div className="min-w-0 space-y-4">
   <PageHeader title="Audit Log"/>
   <ErrorState title="Your session has expired" description="Sign in again to see authorized audit records."
-   action={<Link href="/login" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Sign in</Link>}/>
+   action={<TextLink href="/login" className="inline-flex min-h-11 items-center">Sign in</TextLink>}/>
  </div>;}
  if(!isSuperAdmin(context)){
   if(hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/activity");
@@ -42,7 +43,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
   <PageHeader eyebrow="Super Admin" title="Audit Log"/>
   <ErrorState title="Invalid audit filters" description={unsupported?
    "Unknown activity category: "+unsupported+".":"Check dates, college, page size and event filters."}
-   action={<Link href="/admin/audit" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>}/>
+   action={<TextLink href="/admin/audit" className="inline-flex min-h-11 items-center">Clear filters</TextLink>}/>
  </div>;
  const {smsPage,smsSize,allowGlobal,embedded,...activityParams}=parsed;
  const selectedCollege=context.adminScope?.collegeId??parsed.collegeId??null;
@@ -80,7 +81,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
  return <div className="min-w-0 space-y-5 md:space-y-6">
   <nav aria-label="Super Admin audit tabs" className="flex min-w-0 flex-wrap items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <span aria-current="page" className="inline-flex min-h-11 items-center border-b-2 border-[var(--lms-primary)] px-3 text-sm font-semibold text-primary-text md:min-h-9">Audit Log</span>
-   <Link href="/tracker/audit-findings" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-body hover:text-primary-text md:min-h-9">Audit Findings</Link>
+   <TextLink href="/tracker/audit-findings" className="inline-flex min-h-11 items-center px-3 text-sm text-body md:min-h-9">Audit Findings</TextLink>
   </nav>
   {blocked?<Alert tone="warning" title="Select a College to view audit logs">
    This scoped view cannot show platform-wide events. Select a college from the header, then retry.
@@ -110,7 +111,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
    </div>
    {!isGlobal?<Alert tone="info">SMS provider attempts are available only from the unscoped Super Admin support view. Switch out of the selected college or organization to inspect them; this section never falls back to global data within a scoped view.</Alert>:
     !smsRead?.ok?<Alert tone="error" title="Could not load SMS attempts">
-     <Link href={smsHref(currentSmsPage)} className="font-semibold text-primary-text underline">Retry SMS attempts</Link>
+     <TextLink href={smsHref(currentSmsPage)}>Retry SMS attempts</TextLink>
     </Alert>:!smsRead.ready?<Alert tone="warning">SMS provider-attempt ledger is not ready. No records or delivery counts are inferred from activity events.</Alert>:
      smsRead.rows.length===0?<p role="status" className="py-4 text-sm text-muted-foreground">No SMS attempts match this page.</p>:
      <div className="min-w-0 overflow-x-auto rounded border border-[var(--lms-canvas-border)]">
@@ -145,11 +146,9 @@ export default async function SuperAdminAuditPage({searchParams}:{
      Page {currentSmsPage+1} of {smsRead.totalPages} · {smsRead.total} matching attempts · maximum 200 per page
     </span>
     <div className="flex gap-2">
-     {currentSmsPage>0?<Link href={smsHref(currentSmsPage-1)}
-      className="inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-primary-text md:min-h-9">Previous</Link>:
+     {currentSmsPage>0?<ButtonLink variant="secondary" href={smsHref(currentSmsPage-1)}>Previous</ButtonLink>:
       <span aria-disabled="true" className="inline-flex min-h-11 items-center rounded border border-border px-3 text-muted-foreground opacity-60 md:min-h-9">Previous</span>}
-     {currentSmsPage+1<smsRead.totalPages?<Link href={smsHref(currentSmsPage+1)}
-      className="inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-primary-text md:min-h-9">Next</Link>:
+     {currentSmsPage+1<smsRead.totalPages?<ButtonLink variant="secondary" href={smsHref(currentSmsPage+1)}>Next</ButtonLink>:
       <span aria-disabled="true" className="inline-flex min-h-11 items-center rounded border border-border px-3 text-muted-foreground opacity-60 md:min-h-9">Next</span>}
     </div>
    </nav>:null}

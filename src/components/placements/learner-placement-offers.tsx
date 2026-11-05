@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { learnerOfferAnchor, learnerOfferHref } from "@/modules/placements/learner-offer-deep-link-model";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -26,6 +25,7 @@ import { Img } from "@/components/ui/img";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { TextLink } from "@/components/ui/text-link";
 
 type OfferAcceptImpact={
  offerId:string;offerStatus:string;expiresAt:string|null;blockedByAnotherAcceptedOffer:boolean;
@@ -314,7 +314,7 @@ export function LearnerPlacementOffers({
     return <section id="my-offers" aria-labelledby="sp-off-empty" className="space-y-3">
       <Heading level={2} size="lg" id="sp-off-empty" className="text-foreground">No offers yet</Heading>
       <p className="text-sm text-body">When a company selects you and the placement cell releases the offer, it shows here and you get a notice. You&apos;ll have time to read it and decide.{" "}
-        <Link href="/learn/my-placements/applications" className="font-semibold text-link underline">See where your applications stand</Link>
+        <TextLink href="/learn/my-placements/applications">See where your applications stand</TextLink>
       </p>
     </section>;
   }
@@ -351,9 +351,9 @@ export function LearnerPlacementOffers({
                   <p className="m-0 break-words text-sm font-semibold text-foreground">{item.companyName}</p>
                   <Heading level={3} size="base" className="mt-1 break-words text-foreground">
                     {offerJobHref(item) ? (
-                      <Link href={offerJobHref(item)!} className="text-link hover:underline focus-visible:underline">
+                      <TextLink href={offerJobHref(item)!}>
                         {item.roleTitle}{item.roleOption ? " · "+item.roleOption : ""}
-                      </Link>
+                      </TextLink>
                     ) : <span>{item.roleTitle}{item.roleOption ? " · "+item.roleOption : ""}</span>}
                   </Heading>
                   <p className="mt-1 break-words text-sm text-body">
@@ -402,16 +402,16 @@ export function LearnerPlacementOffers({
 
             <nav aria-label={`Offer links for ${item.companyName}`} className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
               {learnerOfferApplicationHref(item.applicationId) ? (
-                <Link href={learnerOfferApplicationHref(item.applicationId)!}
-                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">
+                <TextLink href={learnerOfferApplicationHref(item.applicationId)!}
+                  className="inline-flex min-h-11 items-center md:min-h-9">
                   View related application
-                </Link>
+                </TextLink>
               ) : null}
               {learnerOfferHref(item.offerId) ? (
-                <Link href={learnerOfferHref(item.offerId)!}
-                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">
+                <TextLink href={learnerOfferHref(item.offerId)!}
+                  className="inline-flex min-h-11 items-center md:min-h-9">
                   Link to this offer
-                </Link>
+                </TextLink>
               ) : null}
             </nav>
             <dl className="mt-3 grid min-w-0 gap-x-4 gap-y-3 border-t border-border pt-3 text-sm text-body sm:grid-cols-2">
@@ -460,12 +460,12 @@ export function LearnerPlacementOffers({
                   Number.isFinite(Date.parse(item.acceptedDisputableUntil)) &&
                   Number.isFinite(Date.parse(snapshotNowIso)) &&
                   Date.parse(item.acceptedDisputableUntil)>Date.parse(snapshotNowIso) ? (
-                    <Link className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline focus-visible:underline"
+                    <TextLink className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center"
                       href={"/learn/my-placements/placement?"+new URLSearchParams({
                         request:"acceptance-dispute",offerId:item.offerId,
                       }).toString()+"#requests"}>
                       Tell the placement cell
-                    </Link>
+                    </TextLink>
                   ) : <p className="mt-2">The recorded dispute window has ended. Contact your placement team for help.</p>}
               </aside>
             ) : null}
@@ -473,8 +473,8 @@ export function LearnerPlacementOffers({
               <p role="status" className="mt-4 text-sm font-semibold text-body">
                 Offer deadline extension requested. Your placement team has not approved it yet.
                 {" "}
-                <Link href="/learn/my-placements/support?status=PENDING&type=OFFER_EXTENSION"
-                  className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 focus-visible:underline">Review pending request</Link>
+                <TextLink href="/learn/my-placements/support?status=PENDING&type=OFFER_EXTENSION"
+                  className="inline-flex min-h-11 items-center md:min-h-9">Review pending request</TextLink>
               </p>
             ) : null}
             {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="INVALID" ? (
@@ -563,9 +563,9 @@ export function LearnerPlacementOffers({
 
       <p className="text-sm text-muted-foreground">
         Need more time on an offer, or got an offer outside campus?{" "}
-        <Link href="/learn/my-placements/placement#requests" className="font-semibold text-link underline">
+        <TextLink href="/learn/my-placements/placement#requests">
           Send a request to the placement cell
-        </Link>.
+        </TextLink>.
       </p>
 
       <Dialog open={extensionOffer!==null}
@@ -685,7 +685,7 @@ export function LearnerPlacementOffers({
               ))}
               {!acceptImpact.withdrawn.length&&!acceptImpact.declined.length&&!acceptImpact.stayed.length?
                 <p className="text-sm font-medium">Nothing else changes: you have no other active applications or offers.</p>:null}
-              <p className="text-xs text-muted-foreground"><Link href="/learn/my-placements/placement#rules" className="text-link underline">How your college&apos;s rules decide this</Link></p>
+              <p className="text-xs text-muted-foreground"><TextLink href="/learn/my-placements/placement#rules">How your college&apos;s rules decide this</TextLink></p>
               {acceptImpact.blockedByAnotherAcceptedOffer?<p role="alert" className="font-semibold text-error">
                 Another accepted offer is already recorded. You cannot accept this offer until the placement cell resolves the conflict.
               </p>:null}

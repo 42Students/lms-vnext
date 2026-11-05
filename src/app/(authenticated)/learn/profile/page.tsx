@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {learnerProfileSectionRecoveryNotice,learnerProfileResolveSection} from "@/modules/people/learner-profile-section-recovery-model";
 import {learnerSavedCodingProfiles} from "@/modules/placements/learner-saved-coding-profiles-model";
@@ -23,6 +22,8 @@ import { LearnerDefaultResumePicker } from "@/components/profile/learner-default
 import { listLearnerDefaultResumes } from "@/modules/placements/learner-default-resume-service";
 import { Heading } from "@/components/ui/heading";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type ProfileParams={section?:string|string[]};
 function ProfileLoading() {
@@ -71,7 +72,7 @@ async function LearnerProfileContent({
       <PageHeader title="Profile"/>
       <section role="alert" className="rounded-lg border border-border px-5 py-10 text-center">
         <p className="text-sm text-body">We couldn&apos;t load your profile. Please try again.</p>
-        <Link href="/learn/profile" className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border px-4 font-semibold text-primary-text underline md:min-h-9">Retry</Link>
+        <ButtonLink variant="secondary" href="/learn/profile" className="mt-3">Retry</ButtonLink>
       </section>
     </div>
     </LearnerProfileLastGood>;
@@ -115,7 +116,7 @@ async function LearnerProfileContent({
               You changed this after it was verified. The verified details stay in use until you send the changes for review.
             </Banner>:null}
         </div>:<Banner tone="info" className="mt-2">Verification status is temporarily unavailable.</Banner>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">Review verification status</Link>
+        <TextLink href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">Review verification status</TextLink>
       </section>
       <LearnerProfileWorkspace
         initialSection={initialSection}
@@ -130,10 +131,10 @@ async function LearnerProfileContent({
       <section aria-label="Private evidence receipts" className="min-w-0 border-b border-border pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Heading level={2} className="text-[var(--lms-heading)]">Private identity, marksheet and resume receipts</Heading>
-          <Link href="/learn/profile/verification"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+          <TextLink href="/learn/profile/verification"
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             Review receipts and verification →
-          </Link>
+          </TextLink>
         </div>
         {verification ? (
           <ul className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2">
@@ -152,8 +153,8 @@ async function LearnerProfileContent({
           </ul>
         ) : <Banner tone="warning" className="mt-2">
           Private receipt status couldn't load. No saved document has been assumed.
-          <Link href="/learn/profile/verification"
-            className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry receipts</Link>
+          <TextLink href="/learn/profile/verification"
+            className="ml-2 inline-flex min-h-9 items-center">Retry receipts</TextLink>
         </Banner>}
         <p className="mt-3 max-w-3xl text-xs leading-5 text-muted-foreground">
           Only receipt counts and scan states appear here. Private Aadhaar/PAN numbers and
@@ -161,12 +162,12 @@ async function LearnerProfileContent({
           A clean scan is not college verification or a default-resume selection.
         </p>
         <nav aria-label="Private profile details" className="mt-3 flex flex-wrap gap-4">
-          <Link href="/learn/profile?section=identity" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+          <TextLink href="/learn/profile?section=identity" className="inline-flex min-h-9 items-center text-sm">
             Review identity details →
-          </Link>
-          <Link href="/learn/profile?section=education" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+          </TextLink>
+          <TextLink href="/learn/profile?section=education" className="inline-flex min-h-9 items-center text-sm">
             Review education details →
-          </Link>
+          </TextLink>
         </nav>
       </section>
       {defaultResumes ? <LearnerDefaultResumePicker initial={defaultResumes} /> :
@@ -204,14 +205,14 @@ async function LearnerProfileContent({
         )}
       </section>
       <nav aria-label="Profile resources" className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-      <Link href="/learn/profile/academic-record"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-2 hover:underline focus-ring md:min-h-9">
+      <TextLink href="/learn/profile/academic-record"
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         View my academic record →
-      </Link>
-      <Link href="/learn/profile/data-access"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline-offset-2 hover:underline focus-ring md:min-h-9">
+      </TextLink>
+      <TextLink href="/learn/profile/data-access"
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Who has my data →
-      </Link>
+      </TextLink>
       </nav>
       <section aria-label="Verification status" className="min-w-0 border-b border-border pb-4">
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Education and identity verification</Heading>
@@ -233,7 +234,7 @@ async function LearnerProfileContent({
         </div>:<p role="status" className="mt-3 text-sm text-body">
           Verification requirements are temporarily unavailable. Open the verification page to retry.
         </p>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">View my verification status →</Link>
+        <TextLink href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">View my verification status →</TextLink>
       </section>
       <section aria-label="Coding profiles" className="min-w-0 border-b border-border pb-6">
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Coding platform profiles</Heading>
@@ -251,8 +252,8 @@ async function LearnerProfileContent({
         )}
         <p className="mt-2 text-xs text-muted-foreground">Save GitHub under Social profiles; add other coding sites as URL-type entries under Additional information using the exact platform name.</p>
         <div className="flex flex-wrap gap-4">
-          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">Edit GitHub →</Link>
-          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">Edit coding links →</Link>
+          <TextLink href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">Edit GitHub →</TextLink>
+          <TextLink href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">Edit coding links →</TextLink>
         </div>
       </section>
     </div>

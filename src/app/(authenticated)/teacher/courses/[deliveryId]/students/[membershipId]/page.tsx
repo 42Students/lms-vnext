@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable } from "@/components/ui/data-table";
 import { getFacultyStudentDetail } from "@/modules/courses/faculty-student-detail-service";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 function dateText(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -25,7 +26,7 @@ export default async function FacultyStudentDetailPage({
     <PageHeader eyebrow="Faculty · Course Students" title={name}
       description={[data.course.courseName, data.course.sectionName,
         data.course.academicPeriodName].join(" · ")}
-      actions={<Link href={root + "/students"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring sm:w-auto md:min-h-9">← Students</Link>} />
+      actions={<ButtonLink variant="secondary" href={root + "/students"} className="w-full sm:w-auto">← Students</ButtonLink>} />
     <section aria-label="Student Details" className="grid grid-cols-1 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-2 lg:grid-cols-4">
       {[
         ["Roll number", data.student.rollNumber ?? "Not assigned"],
@@ -76,10 +77,10 @@ export default async function FacultyStudentDetailPage({
                 mobilePriority:"secondary" as const,
                 cell:row=>row.markedAt?dateText(row.markedAt):"Not recorded" },
             ]}/>}
-      <Link href={root + "/attendanceDetail"}
-        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline focus-ring sm:w-auto md:min-h-9">
+      <TextLink href={root + "/attendanceDetail"}
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">
         View monthly class attendance →
-      </Link>
+      </TextLink>
     </section>
   </div>;
 }

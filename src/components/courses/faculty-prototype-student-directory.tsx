@@ -1,6 +1,5 @@
 "use client";
 import {useMemo,useState} from "react";
-import Link from "next/link";
 import type {FacultyCourseRosterLearner} from "@/components/courses/faculty-course-roster";
 import {facultyRosterCsv,facultyRosterFileName} from "@/modules/courses/faculty-roster-export";
 import type {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
@@ -96,7 +95,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
     return <tr key={student.membershipId}>
      <td><div className="flex items-center gap-3">
       <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--lms-primary-subtle)] text-xs font-bold text-[color:var(--lms-button-primary)]">{initials||"ST"}</span>
-      <Link className="font-semibold text-[color:var(--lms-heading)] hover:text-[color:var(--lms-button-primary)] hover:underline" href={detail}>{name}</Link>
+      <TextLink className="text-[color:var(--lms-heading)]" href={detail}>{name}</TextLink>
      </div></td>
      <td>{student.rollNumber??"—"}</td>
      <td>{percent(progress,"progress")}</td>

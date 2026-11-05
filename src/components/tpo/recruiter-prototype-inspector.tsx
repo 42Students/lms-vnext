@@ -1,10 +1,10 @@
 "use client";
-import Link from "next/link";
 import {RECRUITER_STAGE_LEGACY_LABELS,type TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lead-policy";
 import {tpoRecruiterFollowupSignal} from "@/modules/placements/tpo-recruiter-attention-model";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export type TpoRecruiterInspectorLead={
  id:string;name:string;designation:string|null;companyName:string|null;
@@ -54,7 +54,7 @@ export function TpoRecruiterPrototypeInspector({
    {lead.nextFollowupAt?<p className="mt-1 text-xs text-body">{when(lead.nextFollowupAt)}</p>:null}
   </section>
   <div className="mt-3 flex flex-wrap gap-2">
-   <Link href={href+"#tpo-recruiter-log-interaction"} className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary md:min-h-9">Log activity</Link>
+   <ButtonLink variant="primary" href={href+"#tpo-recruiter-log-interaction"}>Log activity</ButtonLink>
    {phone?<ButtonLink variant="secondary" href={"tel:"+phone}>Call</ButtonLink>:null}
    {email?<ButtonLink variant="secondary" href={email}>Email</ButtonLink>:null}
   </div>
@@ -70,7 +70,7 @@ export function TpoRecruiterPrototypeInspector({
     {lead.lastActivityType?<p className="mt-1 text-xs text-body">{lead.lastActivityType.replaceAll("_"," ").toLowerCase()}</p>:null}</div>
    <div className="py-3"><dt className="text-xs font-bold uppercase text-muted-foreground">Company</dt>
     <dd className="mt-1 text-foreground">{lead.companyName?
-     <Link href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)} className="font-semibold text-link underline">{lead.companyName}</Link>:"Not recorded"}</dd>
+     <TextLink href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)}>{lead.companyName}</TextLink>:"Not recorded"}</dd>
     <p className="mt-1 text-xs text-body">
      {lead.drivesRan===null?"Drive count unavailable":lead.drivesRan+" drives run"}
      {" · "}{lead.studentsPlaced===null?"Placed count unavailable":lead.studentsPlaced+" students placed"}
@@ -78,6 +78,6 @@ export function TpoRecruiterPrototypeInspector({
    <div className="py-3"><dt className="text-xs font-bold uppercase text-muted-foreground">Handled by</dt>
     <dd className="mt-1 text-foreground">{lead.ownerName??"Nobody yet"}</dd></div>
   </dl>
-  <Link href={href} className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Open full page</Link>
+  <TextLink href={href} className="mt-2 inline-flex min-h-11 items-center text-sm md:min-h-9">Open full page</TextLink>
  </aside>;
 }

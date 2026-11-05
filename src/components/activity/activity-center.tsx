@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
 import {Fragment,type ReactNode} from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 /** The raw forensic view is a different presentation from the readable
  * Activity feed. Historical IP/user-agent fields are not collected by this
@@ -237,7 +238,7 @@ export function ActivityCenter({
     return <EmptyState
       title={emptyTitle??(emptyActionHref.includes("/projects")?"No activity recorded yet":"Nothing important happened in this period.")}
       description={emptyDescription??"No activity in this period. Try another date, category or search."}
-      action={<Link href={emptyActionHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground underline focus-ring">Reset</Link>}
+      action={<ButtonLink variant="secondary" href={emptyActionHref}>Reset</ButtonLink>}
     />;
   }
 
@@ -283,10 +284,10 @@ export function ActivityCenter({
                           <div key={name}><dt className="font-semibold">{humanize(name)}</dt>
                             <dd>{detailValue(value)}</dd></div>)}
                       </dl>
-                      <Link href={"/activity/"+encodeURIComponent(item.event.id)}
-                        className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                      <TextLink href={"/activity/"+encodeURIComponent(item.event.id)}
+                        className="mt-2 inline-flex min-h-11 items-center md:min-h-9">
                         View details
-                      </Link>
+                      </TextLink>
                     </Disclosure>
                   </td>
                 </tr>
@@ -295,10 +296,10 @@ export function ActivityCenter({
           </tbody>
         </Table>
       </div>
-      {nextHref?<Link href={nextHref}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      {nextHref?<TextLink href={nextHref}
+        className="inline-flex min-h-11 items-center md:min-h-9">
         Load more ({nextRemaining} older)
-      </Link>:null}
+      </TextLink>:null}
     </div>
   );
 
@@ -364,12 +365,12 @@ export function ActivityCenter({
                   </p>
                 </div>
                 <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">
-                  <Link
+                  <ButtonLink variant="secondary"
                     href={`/activity/${item.event.id}`}
-                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground md:min-h-9 md:w-auto motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-ring"
+                    className="w-full md:w-auto"
                   >
                     View details
-                  </Link>
+                  </ButtonLink>
                 </div>
               </div>
               <Disclosure title={<>
@@ -415,12 +416,12 @@ export function ActivityCenter({
 
       {nextHref ? (
         <div className="flex justify-center">
-          <Link
+          <ButtonLink variant="secondary"
             href={nextHref}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 md:w-auto text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-ring"
+            className="w-full md:w-auto"
           >
             Load older activity ({nextRemaining} remaining) · next page
-          </Link>
+          </ButtonLink>
         </div>
       ) : null}
     </div>

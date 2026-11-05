@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -13,6 +12,7 @@ import {listTpoApplicantNotes} from "@/modules/placements/applicant-notes-servic
 import {ApplicantNotesPanel} from "@/components/placements/applicant-notes-panel";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
 export default async function TpoApplicantDetailPage({params}:Params){
  const context=await getCurrentRequestContext();
@@ -35,7 +35,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
   <PageHeader eyebrow="TPO · Applicant detail"
    title={data.application.student??"Name not recorded"}
    description={data.job.title+" · "+data.application.roleTitle}
-   actions={<Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring md:min-h-[var(--lms-control-height)] md:w-auto">← Applicant pipeline</Link>}/>
+   actions={<TextLink href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-[var(--lms-control-height)] md:w-auto">← Applicant pipeline</TextLink>}/>
   </div>
   <section className="border-b border-border pb-6">
    <Heading level={2} className="text-foreground">Application and screening</Heading>
@@ -45,9 +45,9 @@ export default async function TpoApplicantDetailPage({params}:Params){
        <dd className="mt-1 break-words text-sm text-foreground">{value}</dd>
       </div>)}
    </dl>
-   <Link href={"/tpo/students/"+data.application.membershipId+"/history"}
-    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-ring md:min-h-9">
-    View student placement history →</Link>
+   <TextLink href={"/tpo/students/"+data.application.membershipId+"/history"}
+    className="mt-4 inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] md:min-h-9">
+    View student placement history →</TextLink>
   </section>
   {data.application.screeningUpdatedAt && canReviewApplicant(data.applicantStatus, data.screening) ?
    <TpoApplicantReviewForm jobId={jobId} applicationId={applicationId}

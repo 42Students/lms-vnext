@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import dynamic from "next/dynamic";
 import {useMemo,useState} from "react";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -12,6 +11,7 @@ import {GridWorkspace} from "./grid/grid-workspace";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** Desktop: the old LMS Quartz spreadsheet. Phone: its responsive list fallback.
  * Keep server-side company/lead authorization and paging unchanged. */
@@ -73,8 +73,8 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
         {company.websiteUrl}<span aria-hidden="true" className="ml-1">↗</span></TextLink>
       :company.websiteUrl?<span className="break-all text-xs text-muted-foreground">{company.websiteUrl}</span>:null}
      {company.companyId
-      ?<Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-        className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-ring">Create drive</Link>
+      ?<TextLink href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
+        className="inline-flex min-h-11 md:min-h-9 items-center">Create drive</TextLink>
       :<span className="text-xs text-muted-foreground">Link company first</span>}
     </div>}
    />;
@@ -107,12 +107,10 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
     <p className="text-xs text-muted-foreground">Earlier-season placement comparisons are unavailable in this directory. Confirmed joins are not the same as placed students.</p>
    </div>
    <nav aria-label="Company actions" className="mt-4 flex flex-wrap gap-2">
-    {focused.companyId?<Link href={"/tpo/placements/new?company="+encodeURIComponent(focused.name)}
-     className="inline-flex min-h-11 items-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary md:min-h-9">Plan a drive</Link>:null}
-    <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(focused.name)}
-     className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-link md:min-h-9">Add contact</Link>
-    <Link href={companyHref(focused)}
-     className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Open company page</Link>
+    {focused.companyId?<ButtonLink variant="primary" href={"/tpo/placements/new?company="+encodeURIComponent(focused.name)}>Plan a drive</ButtonLink>:null}
+    <ButtonLink variant="secondary" href={"/tpo/recruiters?add=1&company="+encodeURIComponent(focused.name)}>Add contact</ButtonLink>
+    <TextLink href={companyHref(focused)}
+     className="inline-flex min-h-11 items-center text-sm md:min-h-9">Open company page</TextLink>
    </nav>
    {focused.websiteUrl&&safeTpoCompanyWebsiteUrl(focused.websiteUrl)?
     <TextLink href={safeTpoCompanyWebsiteUrl(focused.websiteUrl)!}

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -7,6 +6,7 @@ import {can} from "@/modules/permissions/policy";
 import {SuperAdminPlacementDetailView} from "@/components/admin/super-admin-placement-detail-view";
 import {getSuperAdminShortlistedDetail} from "@/modules/admin-ui/super-admin-shortlisted-detail-service";
 import {readSuperAdminPlacementId} from "@/modules/admin-ui/super-admin-placement-detail-model";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminShortlistedDetail({params}:{params:Promise<{applicationId:string}>}){
  const context=await getCurrentRequestContext();
@@ -21,7 +21,7 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
    <PageHeader title="Shortlisted applicant"/>
    <ErrorState title="Select a college to continue"
     description="An active Super Admin with a selected college is required to view shortlisted applicant details."
-    action={<Link href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Back to shortlisted applicants</Link>}/>
+    action={<TextLink href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Back to shortlisted applicants</TextLink>}/>
   </div>;
  }
  let detail:Awaited<ReturnType<typeof getSuperAdminShortlistedDetail>>;
@@ -32,7 +32,7 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
    <PageHeader title="Shortlisted applicant"/>
    <ErrorState title="Shortlisted applicant unavailable"
     description="This applicant detail could not be loaded. Your selected college has not changed."
-    action={<Link href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Back to shortlisted applicants</Link>}/>
+    action={<TextLink href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto">Back to shortlisted applicants</TextLink>}/>
   </div>;
  }
  if(!detail)notFound();

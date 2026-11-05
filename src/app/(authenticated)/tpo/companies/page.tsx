@@ -2,7 +2,6 @@ import {TpoCompaniesSpreadsheet} from "@/components/tpo/tpo-companies-spreadshee
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -20,6 +19,8 @@ import {
 import {tpoCompanyFiltersShapeValid} from "@/modules/placements/tpo-company-url-validation";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type PageProps = {
   searchParams: Promise<{
@@ -69,9 +70,9 @@ function invalidCompanyFilters(){
   <p className="mt-2 text-sm text-body leading-[22px]">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
-  <Link href="/tpo/companies?directory=1" className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring">
+  <TextLink href="/tpo/companies?directory=1" className="mt-4 inline-flex min-h-11 items-center">
    Clear filters
-  </Link>
+  </TextLink>
  </section>;
 }
 
@@ -126,16 +127,16 @@ export default async function TpoCompanyMemoryPage({
       <div className="flex flex-wrap items-center gap-2">
        <span className="text-sm text-muted-foreground">{item.linkedToCollege?
         "Linked to your college":"Not linked to your college"}</span>
-       {item.linkedToCollege?<Link href={"/tpo/companies?name="+encodeURIComponent(item.name)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline">
+       {item.linkedToCollege?<TextLink href={"/tpo/companies?name="+encodeURIComponent(item.name)}
+        className="inline-flex min-h-11 items-center">
         Open company details
-       </Link>:<span className="text-xs text-body">Use Add other above to link this employer.</span>}
+       </TextLink>:<span className="text-xs text-body">Use Add other above to link this employer.</span>}
       </div>
      </li>)}
     </ul>:q?<EmptyState title="No matching companies" description="Try another name or verified domain."/>:null}
-    <Link href="/tpo/companies?directory=1" className="inline-flex min-h-11 items-center text-link underline">
+    <TextLink href="/tpo/companies?directory=1" className="inline-flex min-h-11 items-center">
      Back to college companies
-    </Link>
+    </TextLink>
    </div>;
   }
 
@@ -175,16 +176,16 @@ export default async function TpoCompanyMemoryPage({
         actions={
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-end">
             <TpoCompanyCreateForm />
-            <Link href="/tpo/companies?discover=1" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Find or link company</Link>
-            <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Create drive</Link>
+            <TextLink href="/tpo/companies?discover=1" className="inline-flex min-h-11 items-center text-sm">Find or link company</TextLink>
+            <TextLink href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm">Create drive</TextLink>
             <Disclosure title="Company links" className="min-w-0 sm:relative">
               <nav aria-label="Other company destinations" className="mt-2 flex min-w-0 flex-col gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:absolute sm:right-0 sm:z-(--lms-z-sticky-inline) sm:w-52 sm:shadow-sm">
-                <Link href="/tpo/companies/archived" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-ring">
+                <ButtonLink variant="secondary" href="/tpo/companies/archived">
                   Archived relationships
-                </Link>
-                <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-ring">
+                </ButtonLink>
+                <ButtonLink variant="secondary" href="/tpo/recruiters">
                   Recruiter leads
-                </Link>
+                </ButtonLink>
               </nav>
             </Disclosure>
           </div>
@@ -272,13 +273,12 @@ export default async function TpoCompanyMemoryPage({
         </form>
 
         <div className="flex flex-wrap items-center gap-3">
-          {page.total<=2000?<Link
+          {page.total<=2000?<ButtonLink variant="secondary"
             href={"/api/placements/tpo/companies/export?"+new URLSearchParams({
               ...(query.search?{search:query.search}:{}),sort:query.sort,
-            }).toString()}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+            }).toString()}>
             Export companies CSV ({page.total})
-          </Link>:<p role="status" className="text-xs text-muted-foreground leading-5">
+          </ButtonLink>:<p role="status" className="text-xs text-muted-foreground leading-5">
             Narrow your search to 2,000 companies to export all matching rows.
           </p>}
         </div>
@@ -287,12 +287,12 @@ export default async function TpoCompanyMemoryPage({
             {page.total} matching company
             {page.total === 1 ? "" : " records"}
           </p>
-          <Link
+          <TextLink
             href="/tpo/companies?directory=1"
-            className="text-sm font-semibold text-link hover:underline"
+            className="text-sm"
           >
             Clear filters
-          </Link>
+          </TextLink>
         </div>
 
         {page.items.length === 0 ? (
@@ -302,13 +302,13 @@ export default async function TpoCompanyMemoryPage({
                 ? "This page is outside the available results."
                 : "No companies match these filters."}
               action={
-                <Link href={companiesHref({
+                <TextLink href={companiesHref({
                   ...(query.search !== undefined ? { search: query.search } : {}),
                   pageSize: query.pageSize,
                   sort: query.sort,
-                })} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
+                })} className="inline-flex min-h-11 items-center">
                   First page
-                </Link>
+                </TextLink>
               }
             />
           </div>
@@ -325,31 +325,29 @@ export default async function TpoCompanyMemoryPage({
           </p>
           <div className="flex gap-2">
             {page.page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={companiesHref({
                   ...(query.search !== undefined ? { search: query.search } : {}),
                   pageSize: query.pageSize,
                 sort: query.sort,
                   page: page.page - 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]"
               >
                 Previous
-              </Link>
+              </ButtonLink>
             ) : null}
 
             {page.page < page.totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={companiesHref({
                   ...(query.search !== undefined ? { search: query.search } : {}),
                   pageSize: query.pageSize,
                 sort: query.sort,
                   page: page.page + 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]"
               >
                 Next
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         </nav> : null}

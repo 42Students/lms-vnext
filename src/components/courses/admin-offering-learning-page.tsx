@@ -1,6 +1,5 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
 import {Alert} from "@/components/ui/alert";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
@@ -57,7 +56,7 @@ export async function AdminOfferingLearningPage({
    <Alert tone="error" role="alert" title="Server Notification">
     Lessons couldn&apos;t be loaded. Internal Server Error. Your changes have not been made.
    </Alert>
-   <Link href={backHref} className="font-semibold text-primary-text underline">Back to Courses</Link>
+   <TextLink href={backHref}>Back to Courses</TextLink>
    <TextLink href={retryHref}
     className="ml-3">Retry</TextLink>
   </div>;

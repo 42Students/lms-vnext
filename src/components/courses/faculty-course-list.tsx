@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import {FacultyCourseCover} from "./faculty-course-cover";
 import {FacultyCourseFilterAutoSubmit} from "./faculty-course-filter-auto-submit";
 import { facultyCourseListHref, type FacultyCourseListQuery } from "@/modules/courses/faculty-course-list-model";
@@ -15,6 +14,8 @@ import type { listFacultyCourseDeliveries, FacultyCourseAssignmentDiagnostic } f
 import type { FacultyCourseCardSummary } from "@/modules/courses/faculty-course-card-summary-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Course = Awaited<
   ReturnType<
@@ -106,9 +107,9 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
         <Disclosure title={scopeCount+" "+(scopeCount===1?"Teaching assignment":"Teaching assignments")} className="relative min-w-0">
           <ScrollCue axis="y" label="Teaching assignments" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {assignmentChoices.map(item=><li key={item.deliveryId}>
-              <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-ring" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
+              <TextLink className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
                 {item.courseName} · {item.sectionName} · {item.academicPeriodName}
-              </Link>
+              </TextLink>
             </li>)}
           </ul></ScrollCue>
         </Disclosure>
@@ -153,7 +154,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
         </div>
         <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
           <noscript><Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button></noscript>
-          <Link href="/teacher/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] md:w-auto bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear filters</Link>
+          <ButtonLink variant="secondary" href="/teacher/courses" className="w-full md:w-auto">Clear filters</ButtonLink>
           <p className="text-xs text-muted-foreground" aria-live="polite">
             Showing {visibleRows.length} of {pagination.total} matching course Sections
           </p>
@@ -163,12 +164,12 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
         <EmptyState
           title={query.q?"No courses match “"+query.q+"”":"No teaching assignments in this section."}
           description="Try changing the filters to see your courses."
-          action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Clear filters</Link>}
+          action={<TextLink href="/teacher/courses" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}
         />
       ) : (
       <div data-testid="teacher.courses.grid" className="grid min-w-0 gap-5 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:grid-cols-2 lg:grid-cols-3 md:p-6">
       {visibleRows.map(({ course, workspace,thumbnailUrl }) => (
-        <Link
+        <TextLink variant="bare"
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
           data-testid="teacher.courses.card.open"
@@ -229,15 +230,14 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
               </span>
             </div>
           </div>
-        </Link>
+        </TextLink>
       ))}
       </div>
       )}
       {pagination.page<pagination.totalPages ? <div className="flex flex-col items-center gap-2 border-t border-border pt-4">
-        <Link href={facultyCourseListHref({...query,page:pagination.page+1})}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-6 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9">
+        <ButtonLink variant="primary" href={facultyCourseListHref({...query,page:pagination.page+1})}>
           Show more courses
-        </Link>
+        </ButtonLink>
         <p className="text-xs text-muted-foreground">Showing {visibleRows.length} of {pagination.total} matching sections · add up to 48 at a time</p>
       </div> : null}
     </div>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
@@ -10,6 +9,7 @@ import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 
@@ -61,8 +61,8 @@ export default async function TenantResolvePreviewPage({
      </dl>
     </section>:null}
   </>}
-  <Link href="/admin/tenants/setup" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+  <TextLink href="/admin/tenants/setup" className="inline-flex min-h-9 items-center text-sm">
    Return to Tenant Setup
-  </Link>
+  </TextLink>
  </section>;
 }

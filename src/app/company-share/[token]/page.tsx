@@ -1,5 +1,4 @@
 import authStyles from "@/components/public/public-auth-skin.module.css";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { ErrorState } from "@/components/ui/error-state";
@@ -31,7 +30,7 @@ export default async function CompanySharePage({
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof).catch(()=>null);
  if(result===null)return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
   <section aria-label="Shared applicants unavailable" className="mx-auto mt-12 max-w-[480px] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5">
-   <ErrorState title="We couldn't load this share" description="We could not load this share. Please retry." action={<Link href={"/company-share/"+encodeURIComponent(token)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text md:min-h-9">Retry</Link>}/>
+   <ErrorState title="We couldn't load this share" description="We could not load this share. Please retry." action={<ButtonLink variant="secondary" href={"/company-share/"+encodeURIComponent(token)}>Retry</ButtonLink>}/>
   </section>
  </main>;
  if(result.kind==="CODE_REQUIRED"){
@@ -47,7 +46,7 @@ export default async function CompanySharePage({
     {canEmailCode?<ShareEmailCodeButton token={token}/>:null}
     <p className="text-xs leading-[20px] text-muted-foreground">{canEmailCode?
     "A code can be emailed only to your verified recruiter account. You can request it once per minute, up to three times per hour.":
-    <>To protect applicant privacy, email codes are available only to an authenticated recruiter with access to this company and college. <Link href="/login" className="font-semibold text-primary-text underline">Sign in</Link> with that account, or ask the placement cell for the original code.</>}</p>
+    <>To protect applicant privacy, email codes are available only to an authenticated recruiter with access to this company and college. <TextLink href="/login">Sign in</TextLink> with that account, or ask the placement cell for the original code.</>}</p>
    </div>
    <p className="mt-3 break-words text-xs leading-[20px] text-muted-foreground">The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
   </section>
@@ -57,7 +56,7 @@ export default async function CompanySharePage({
   <section aria-label="Restricted applicant share" className="mx-auto mt-12 max-w-[480px] space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
    <PageHeader title="This link is not valid any more." />
    <p className="text-sm text-body leading-[22px]">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
-   <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Home</Link>
+   <TextLink href="/" className="inline-flex min-h-11 items-center md:min-h-9">Home</TextLink>
   </section>
  </main>;
  const columns=["APPLICATION_ID",...safeCompanyShareColumns(result.selectedColumns).filter(key=>key!=="APPLICATION_ID")] as const;
@@ -116,8 +115,8 @@ export default async function CompanySharePage({
    getRowKey={row=>row.applicationId} caption="Shared applicants"
    empty={<div role="status" className="flex flex-wrap items-center justify-between gap-3">
     <p className="text-sm text-body leading-[22px]">No applicants found.</p>
-    {result.search?<Link href={companyShareApplicantHref(token,1,"")}
-      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>:null}
+    {result.search?<TextLink href={companyShareApplicantHref(token,1,"")}
+      className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:null}
    </div>}/>
   <Pagination page={result.page} pageCount={result.totalPages}
    hrefForPage={href} label="Share pages"/>

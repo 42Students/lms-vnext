@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {TpoNotificationRefresh} from "@/components/tpo/tpo-notification-refresh";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -19,6 +18,8 @@ import {
   tpoEffectiveReadAt,
 } from "@/modules/activity/tpo-notifications-model";
 import { getTpoPersonalInbox } from "@/modules/activity/tpo-notifications-service";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 
@@ -51,9 +52,9 @@ export default async function TpoNotificationsPage({
     return (
       <section className="min-w-0 space-y-4">
         <PageHeader title="Invalid notification filters" />
-        <Alert tone="error"><Link href={TPO_NOTIFICATIONS_PATH} className="inline-flex min-h-11 items-center text-primary-text underline focus-ring">
+        <Alert tone="error"><TextLink href={TPO_NOTIFICATIONS_PATH} className="inline-flex min-h-11 items-center">
           Return to newest notifications
-        </Link></Alert>
+        </TextLink></Alert>
       </section>
     );
   }
@@ -65,10 +66,10 @@ export default async function TpoNotificationsPage({
       <PageHeader title="Notifications" />
       <Alert tone="error">
         Could not load notifications.{" "}
-        <Link href={TPO_NOTIFICATIONS_PATH}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+        <TextLink href={TPO_NOTIFICATIONS_PATH}
+          className="inline-flex min-h-11 items-center">
           Retry
-        </Link>
+        </TextLink>
       </Alert>
     </section>;
   }
@@ -102,9 +103,9 @@ export default async function TpoNotificationsPage({
       {inbox.cursor.invalid ? (
         <Alert tone="error">
           The notification page link is invalid.{" "}
-          <Link href={tpoInboxPageHref(inbox.query.view)} className="font-semibold text-[var(--lms-teal-deep)] underline">
+          <TextLink href={tpoInboxPageHref(inbox.query.view)} className="text-[var(--lms-teal-deep)]">
             Return to newest notifications
-          </Link>
+          </TextLink>
         </Alert>
       ) : (
         <>
@@ -122,7 +123,7 @@ export default async function TpoNotificationsPage({
             <NotificationList
             variant="tpo"
             items={items}
-            emptyAction={emptyNavigation ? <p role="status" className="mt-4 text-sm text-body leading-[22px]">Your unread inbox is clear.{" "} <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link></p> : null}
+            emptyAction={emptyNavigation ? <p role="status" className="mt-4 text-sm text-body leading-[22px]">Your unread inbox is clear.{" "} <TextLink href={emptyNavigation.href} className="text-[var(--lms-teal-deep)]">{emptyNavigation.label}</TextLink></p> : null}
             readEndpoint="/api/tpo/notifications"
             emptyText={inbox.query.view === "unread" ? (firstPage?"No unread notifications":"No unread notifications on this page. Return to latest to review earlier unread items.") : "Nothing yet"}
           />
@@ -131,12 +132,12 @@ export default async function TpoNotificationsPage({
           {inbox.query.limit===200&&nextHref?<p role="note" className="text-xs text-muted-foreground">Latest 200 notifications shown. Show older opens the next page of history.</p>:null}
           {nextHref ? (
             <div className="flex justify-stretch md:justify-center">
-              <Link
+              <ButtonLink variant="secondary"
                 href={nextHref}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-primary hover:bg-primary-subtle focus-ring md:w-auto"
+                className="w-full md:w-auto"
               >
                 Show older
-              </Link>
+              </ButtonLink>
             </div>
           ) : null}
         </>

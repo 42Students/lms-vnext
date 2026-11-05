@@ -3,7 +3,6 @@ import progressStyles from "@/components/courses/learner-course-progress.module.
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -11,6 +10,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { getOwnLearnerCourseProgressBreakdown } from "@/modules/courses/learner-course-drilldown-service";
 import { courseSectionDeliveryIdSchema } from "@/modules/courses/validation";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function tone(status: string): "success" | "warning" | "neutral" | "info" {
   if (status === "COMPLETED") return "success";
@@ -36,8 +36,8 @@ export default async function LearnerCourseProgressPage({
       <PageHeader title="Course progress by lesson" />
       <ErrorState title="Could not load lesson progress"
         description="Your recorded completion state could not be loaded. No content has been marked incomplete."
-        action={<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/progress"}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry progress</Link>} />
+        action={<TextLink href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/progress"}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry progress</TextLink>} />
     </div>;
   }
   if (!progress) notFound();
@@ -50,10 +50,10 @@ export default async function LearnerCourseProgressPage({
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader title="Course progress by lesson" />
-      <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/home"}
-        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+      <TextLink href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/home"}
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
         ← Course overview
-      </Link>
+      </TextLink>
 
       {latestContentAttempt>1 ? (
         <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-soft-surface)] px-4 py-3 text-sm text-body">
@@ -128,12 +128,12 @@ export default async function LearnerCourseProgressPage({
                   ))}
                 </ul>
               ) : null}
-              <Link
+              <TextLink
                 href={"/learn/courses/" + encodeURIComponent(deliveryId) +
                   "/roadmap?lesson=" + encodeURIComponent(lesson.id)}
-                className="mt-4 inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-[var(--lms-control-height)] text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+                className="mt-4 inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-[var(--lms-control-height)] text-sm">
                 Open in learning path →
-              </Link>
+              </TextLink>
             </article>
           ))}
         </section>

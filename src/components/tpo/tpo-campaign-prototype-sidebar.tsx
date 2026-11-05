@@ -1,10 +1,11 @@
 "use client";
 import {useMemo,useState} from "react";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 export type TpoCampaignSidebarRow={
  campaign_id:string;title:string;subject:string;status:string;
  created_at:Date|string;createdByUserId:string;
@@ -41,9 +42,9 @@ export function TpoCampaignPrototypeSidebar({
  return <aside aria-label="Email campaign list" data-testid="tpo.campaigns.prototype-sidebar"
   className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface">
   <div className="space-y-2 border-b border-border p-4">
-   <Link href="/tpo/recruiters/campaigns/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-on-primary">
+   <ButtonLink variant="primary" href="/tpo/recruiters/campaigns/new" className="w-full">
     New email
-   </Link>
+   </ButtonLink>
    <Label className="sr-only" htmlFor="tpo-campaign-search">Search emails</Label>
    <Input id="tpo-campaign-search" type="search" placeholder="Search emails"
     value={search} onChange={event=>setSearch(event.target.value)}
@@ -66,7 +67,7 @@ export function TpoCampaignPrototypeSidebar({
     <Heading level={2} size="xs" className="px-4 py-3 uppercase tracking-wide text-muted-foreground">{heading}</Heading>
     <ul className="divide-y divide-border">{items.map(item=>
      <li key={item.campaign_id}>
-      <Link href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}
+      <TextLink variant="bare" href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}
        aria-current={activeId===item.campaign_id?"page":undefined}
        className={"block min-h-11 px-4 py-3 hover:bg-primary-subtle "+(activeId===item.campaign_id?
         "border-l-2 border-primary bg-primary-subtle":"")}>
@@ -78,7 +79,7 @@ export function TpoCampaignPrototypeSidebar({
        {item.status==="SENT"?<span className="mt-1 block text-xs text-muted-foreground">
         {item.sent} provider accepted{item.failed?" · "+item.failed+" failed":""}{item.skipped?" · "+item.skipped+" skipped":""}
        </span>:null}
-      </Link>
+      </TextLink>
      </li>)}</ul>
    </section>)}
   <p className="px-4 py-3 text-xs leading-5 text-muted-foreground">

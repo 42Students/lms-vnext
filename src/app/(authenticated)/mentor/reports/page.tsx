@@ -5,7 +5,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorReports} from "@/modules/projects/mentor-reports-service";
@@ -13,6 +12,7 @@ import {mentorReportsQuerySchema,mentorReportsHref}
   from "@/modules/projects/mentor-reports-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Search={taskCoverage?:string|string[];status?:string|string[];attention?:string|string[];assignment?:string|string[];order?:string|string[];
   search?:string|string[];page?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
@@ -30,7 +30,7 @@ export default async function MentorReportsPage({searchParams}:{
   });
   if(duplicated||!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title="Assigned project reports" description="Invalid mentor report filters" />
-    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <TextLink href="/mentor/reports" className="inline-flex min-h-11 items-center">Clear filters</TextLink>
   </section>;
   const data=await getMentorReports(await getCurrentRequestContext(),parsed.data);
   const statusMetrics=[
@@ -45,10 +45,10 @@ export default async function MentorReportsPage({searchParams}:{
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Assigned project reports"
       description="Persisted project states and actionable attention across your current assigned workspaces."
-      actions={<Link data-unskin="" href="/mentor/projects"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+      actions={<TextLink data-unskin="" href="/mentor/projects"
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Projects list
-      </Link>}/>
+      </TextLink>}/>
     {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects are disabled for this membership. Project report data was not loaded.
     </section>:<>
@@ -107,20 +107,20 @@ export default async function MentorReportsPage({searchParams}:{
             </Label>
             </div>
           </Disclosure>
-          {(data.query.status!=="ALL"||data.query.attention!=="ALL"||data.query.taskCoverage!=="ALL"||data.query.assignment!=="ALL"||data.query.order!=="UPDATED"||Boolean(data.query.search))?<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-ring">Clear</Link>:null}
+          {(data.query.status!=="ALL"||data.query.attention!=="ALL"||data.query.taskCoverage!=="ALL"||data.query.assignment!=="ALL"||data.query.order!=="UPDATED"||Boolean(data.query.search))?<TextLink href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear</TextLink>:null}
         </form>
       </FilterBar>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link data-unskin="" href={"/api/mentor/reports/export?"+
+        <TextLink data-unskin="" href={"/api/mentor/reports/export?"+
           new URLSearchParams({
             taskCoverage:data.query.taskCoverage,
             status:data.query.status,attention:data.query.attention,
             assignment:data.query.assignment,order:data.query.order,
             search:data.query.search,
           }).toString()} download
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Export filtered project report CSV (max 100)
-        </Link>
+        </TextLink>
         {data.exportOmitted>0?<span role="status">
           CSV omits {data.exportOmitted} matching assigned projects.
         </span>:null}
@@ -129,7 +129,7 @@ export default async function MentorReportsPage({searchParams}:{
       {data.items.length===0?<EmptyState title="No assigned projects match"
         description={data.projectCount===0?
           "No current Mentor assignments are registered for this membership.":
-          "Clear filters to see the other currently assigned project records."} action={<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Clear</Link>}/>:
+          "Clear filters to see the other currently assigned project records."} action={<TextLink href="/mentor/reports" className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>}/>:
         <ol aria-label="mentor reports entries" className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(project=>
           <li key={project.id} className="min-w-0 py-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -146,10 +146,10 @@ export default async function MentorReportsPage({searchParams}:{
               }).format(project.updatedAt)} IST
             </p>
             <div className="mt-3 flex flex-wrap gap-3 text-sm">
-              <Link href={"/mentor/projects/"+encodeURIComponent(project.id)}
-                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)]">Open project</Link>
-              <Link href={"/mentor/projects/"+encodeURIComponent(project.id)+"/risk-readiness"}
-                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)]">Risk / readiness</Link>
+              <TextLink href={"/mentor/projects/"+encodeURIComponent(project.id)}
+                className="inline-flex min-h-11 items-center md:min-h-9">Open project</TextLink>
+              <TextLink href={"/mentor/projects/"+encodeURIComponent(project.id)+"/risk-readiness"}
+                className="inline-flex min-h-11 items-center md:min-h-9">Risk / readiness</TextLink>
             </div>
           </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Mentor report pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReportsHref({...data.query,page})}/>:null}

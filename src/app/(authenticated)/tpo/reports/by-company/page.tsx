@@ -7,7 +7,6 @@ import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { buildTpoCompanyReportLinks } from "@/modules/placements/tpo-company-report-links-model";
 import {tpoCompanyPageCsvHref} from "@/modules/placements/tpo-company-page-csv-model";
 import { companyReportViewSchema, paginateCompanyReport, companyReportViewHref,companyReportHasUserFilters } from "@/modules/placements/tpo-company-report-view-model";
@@ -27,6 +26,7 @@ import { getPlacementReportWorkspace } from "@/modules/placements/report-service
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -55,7 +55,7 @@ export default async function TpoByCompanyReportPage({
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/by-company"/>;
   const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{}),...(first(query.outcome)?{outcome:first(query.outcome)}:{})});
-  if(!viewQuery.success)return <section className="min-w-0 space-y-3"><PageHeader title="Invalid company report filters" /><Alert tone="error"><p className="mt-2 text-sm text-body">Check search length and page number.</p><Link href="/tpo/reports/by-company" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Clear filters</Link></Alert></section>;
+  if(!viewQuery.success)return <section className="min-w-0 space-y-3"><PageHeader title="Invalid company report filters" /><Alert tone="error"><p className="mt-2 text-sm text-body">Check search length and page number.</p><TextLink href="/tpo/reports/by-company" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear filters</TextLink></Alert></section>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
     ...(first(query.seasonId) ? {seasonId:first(query.seasonId)} : {}),
@@ -111,10 +111,10 @@ export default async function TpoByCompanyReportPage({
       <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope. Export all filtered companies for every matching row, or export only this visible page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
       {view.total===0&&companyReportHasUserFilters(view.query)?<EmptyState title="No company records match these filters within the selected reporting scope." action={
-        <Link href={companyReportViewHref({...(workspace.selectedSeasonId ? {seasonId:workspace.selectedSeasonId} : {}),...(workspace.selectedJobId ? {jobId:workspace.selectedJobId} : {})})}
-          className="mt-3 inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline">
+        <TextLink href={companyReportViewHref({...(workspace.selectedSeasonId ? {seasonId:workspace.selectedSeasonId} : {}),...(workspace.selectedJobId ? {jobId:workspace.selectedJobId} : {})})}
+          className="mt-3 inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm">
           Clear company filters
-        </Link>}/>:null}
+        </TextLink>}/>:null}
 
       <ReportTable
         title="Company placement performance"
@@ -142,13 +142,13 @@ export default async function TpoByCompanyReportPage({
         ])}
         emptyDescription="No company records are available for the selected reporting scope and filters."
       />
-      <nav aria-label="Company report pages" className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-body">Page {view.page} of {view.totalPages}</span><div className="flex flex-wrap items-center gap-4">{view.page>1?<Link href={href(view.page-1)} className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link md:min-h-9">← Previous</Link>:null}{view.page<view.totalPages?<Link href={href(view.page+1)} className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link md:min-h-9">Next →</Link>:null}</div></nav>
+      <nav aria-label="Company report pages" className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-body">Page {view.page} of {view.totalPages}</span><div className="flex flex-wrap items-center gap-4">{view.page>1?<TextLink href={href(view.page-1)} className="inline-flex min-h-11 items-center md:min-h-9">← Previous</TextLink>:null}{view.page<view.totalPages?<TextLink href={href(view.page+1)} className="inline-flex min-h-11 items-center md:min-h-9">Next →</TextLink>:null}</div></nav>
       <section className="border-t border-border pt-4 sm:pt-6" aria-label="Company report drill-down">
         <Heading level={2} className="text-foreground">Open company records</Heading>
         <p className="mt-1 text-sm text-body">These company pages show your college relationship and full persisted history, not just this report season.</p>
         {companyLinks.rows.length===0?<p className="mt-3 text-sm text-body">No company records in this report scope.</p>:
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">{companyLinks.rows.map(row=><li key={row.id}>
-          <Link href={row.href} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] max-w-full items-center break-words text-sm font-semibold text-link hover:underline lms-inline-link">{row.name} →</Link>
+          <TextLink href={row.href} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] max-w-full items-center break-words text-sm">{row.name} →</TextLink>
         </li>)}</ul>}
         {companyLinks.truncated?<p role="status" className="mt-3 text-xs text-muted-foreground">Only the first {companyLinks.rows.length} of {companyLinks.total} company links on this report page are shown; refine your search to narrow the result.</p>:null}
       </section>

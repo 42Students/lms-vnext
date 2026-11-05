@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Image from "next/image";
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
@@ -82,9 +81,9 @@ export function MarketingLayout({children,path,pageTitle,pageDescription}:{
   <footer className="border-t border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)]">
    <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-10 px-5 py-14 text-sm sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] lg:py-20">
     <div className="space-y-4">
-     <Link href="/" className="inline-flex min-h-11 items-center" aria-label="42 LMS home">
+     <TextLink variant="bare" href="/" className="inline-flex min-h-11 items-center" aria-label="42 LMS home">
       <Image src="/assets/images/legacy-42lms-logo.svg" width={151} height={37} alt="42 LMS" className="h-[36px] w-[152px]"/>
-     </Link>
+     </TextLink>
      <p className="max-w-xs leading-6 text-[var(--lms-body-text)]">Connected learning, projects and placements for universities and enterprises.</p>
      <div className="flex flex-wrap gap-3">
       {([["LinkedIn",process.env["NEXT_PUBLIC_MARKETING_LINKEDIN_URL"]],
@@ -99,15 +98,15 @@ export function MarketingLayout({children,path,pageTitle,pageDescription}:{
     <nav aria-label="Product" className="flex flex-col items-start gap-2">
      <Heading level={2} className="text-[var(--lms-heading)]">Product</Heading>
      {[{label:"Platform",href:"/platform"},{label:"For Universities",href:"/universities"},{label:"For Enterprises",href:"/enterprises"}].map(item=>
-      <Link key={item.href} className="inline-flex min-h-11 items-center text-[var(--lms-body-text)] hover:text-[var(--lms-primary-text)] focus-ring" href={item.href}>{item.label}</Link>)}
+      <TextLink variant="bare" key={item.href} className="inline-flex min-h-11 items-center text-[var(--lms-body-text)] hover:text-[var(--lms-primary-text)] focus-ring" href={item.href}>{item.label}</TextLink>)}
     </nav>
     <nav aria-label="Get started" className="flex flex-col items-start gap-2">
      <Heading level={2} className="text-[var(--lms-heading)]">Get started</Heading>
-     <Link href="/request-demo" className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Request a Demo</Link>
-     <Link href="/login" className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Login</Link>
+     <TextLink variant="bare" href="/request-demo" className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Request a Demo</TextLink>
+     <TextLink variant="bare" href="/login" className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Login</TextLink>
      <TextLink variant="bare" href={MARKETING_DEMO_MAILTO} className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Contact sales</TextLink>
-     <Link href="/privacy-policy" className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Privacy Policy</Link>
-     <Link href="/assets/static/terms-and-conditions-view.html" className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Terms</Link>
+     <TextLink variant="bare" href="/privacy-policy" className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Privacy Policy</TextLink>
+     <TextLink variant="bare" href="/assets/static/terms-and-conditions-view.html" className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Terms</TextLink>
     </nav>
    </div>
    <div className="mx-auto max-w-[1180px] border-t border-[color:var(--lms-border)] px-5 py-5 text-xs text-[var(--lms-body-text)]">© {new Date().getFullYear()} JRSPF Technologies Pvt. Ltd. All rights reserved.</div>
@@ -129,8 +128,8 @@ export function MarketingHero({eyebrow,title,description,showExploreLink=true,su
     <Heading level={1} size="3xl" id="marketing-hero-heading" className="max-w-[760px] break-words md:text-5xl leading-[1] tracking-tight text-[var(--lms-heading)]">{title}</Heading>
     <p className="max-w-[720px] break-words text-base leading-7 text-[var(--lms-body-text)] md:text-lg md:leading-8">{description}</p>
     {!audience?<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-     <Link href="/request-demo" className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--lms-primary)] px-6 font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-primary-hover)] focus-ring">Request a Demo <span aria-hidden="true" className="ml-2">↗</span></Link>
-     {showExploreLink?<Link href="/platform" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--lms-primary)] px-6 font-semibold text-[var(--lms-primary-text)] hover:bg-surface focus-ring">See how it works</Link>:null}
+     <ButtonLink variant="secondary" href="/request-demo">Request a Demo <span aria-hidden="true" className="ml-2">↗</span></ButtonLink>
+     {showExploreLink?<ButtonLink variant="secondary" href="/platform">See how it works</ButtonLink>:null}
     </div>:null}
     {home?<p className="text-sm font-medium text-[var(--lms-body-text)]">One platform for universities and enterprises.</p>:null}
     {subline?<p className="text-sm text-[var(--lms-body-text)]">{subline}</p>:null}
@@ -168,11 +167,11 @@ export function MarketingFeatureGrid({title,items,maxColumns=3}:{title:string;it
 export function MarketingCta({title,subline}:{title:string;subline?:string}){
  return <section aria-labelledby="marketing-cta-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-surface px-5 py-14 md:py-20">
   <div className="mx-auto max-w-[1180px] space-y-6 rounded-[20px] bg-[linear-gradient(125deg,#123d4e_0%,#126e78_100%)] px-6 py-12 text-[color:var(--lms-on-primary)] md:px-14 md:py-16">
-   <Heading level={2} id="marketing-cta-heading" className="text-[clamp(1.625rem,3vw,2.5rem)] leading-tight text-[color:var(--lms-on-primary)]">{title}</Heading>
+   <Heading level={2} id="marketing-cta-heading" className="text-2xl md:text-3xl leading-tight text-[color:var(--lms-on-primary)]">{title}</Heading>
    <p className="text-sm leading-6 text-[color:color-mix(in_srgb,var(--lms-white)_90%,transparent)] md:text-base">{subline??"Explore how 42 LMS can support your learners and teams."}</p>
    <div className="flex flex-col flex-wrap gap-3 sm:flex-row">
-    <Link href="/request-demo" className="inline-flex min-h-11 items-center justify-center rounded-full bg-surface px-6 font-semibold text-[color:var(--lms-button-primary-hover)] hover:bg-[color:var(--lms-primary-subtle)] focus-ring">Request a Demo <span aria-hidden="true" className="ml-2">↗</span></Link>
-    <Link href="/login" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[color:color-mix(in_srgb,var(--lms-white)_75%,transparent)] px-6 font-semibold text-[color:var(--lms-on-primary)] hover:bg-[color:color-mix(in_srgb,var(--lms-white)_10%,transparent)] focus-ring">Login</Link>
+    <ButtonLink variant="secondary" href="/request-demo">Request a Demo <span aria-hidden="true" className="ml-2">↗</span></ButtonLink>
+    <ButtonLink variant="secondary" href="/login">Login</ButtonLink>
    </div>
   </div>
  </section>;

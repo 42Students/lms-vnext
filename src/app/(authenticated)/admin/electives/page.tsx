@@ -4,7 +4,6 @@ import {Input} from "@/components/ui/input";
 import {Alert} from "@/components/ui/alert";
 import {Tabs} from "@/components/ui/tabs";
 import {Table} from "@/components/ui/table";
-import Link from "next/link";
 import {legacyAcademicStatus} from "@/modules/academics/legacy-academic-status";
 import {CollegeSlotManager} from "@/components/electives/college-slot-manager";
 import {CollegeElectiveOfferingManager} from "@/components/electives/college-elective-offering-manager";
@@ -20,6 +19,7 @@ import {listSuperAdminElectives} from "@/modules/electives/admin-directory-servi
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 // Server-side listing defaults to 20 rows per page.
@@ -48,7 +48,7 @@ export default async function SuperAdminElectivesPage({
   <PageHeader title="Electives"/>
   <ErrorState title="Invalid elective filters"
    description="Use an eligible program, semester, search term and page. Remove repeated or unsupported URL filters."
-   action={<Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>}/>
+   action={<TextLink href="/admin/electives" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
@@ -74,7 +74,7 @@ export default async function SuperAdminElectivesPage({
   <PageHeader title="Electives"/>
   {academicTabs}
   <Alert tone="error">Could not load elective slots; use Retry above.</Alert>
-  <Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry slots</Link>
+  <TextLink href="/admin/electives" className="inline-flex min-h-11 items-center md:min-h-9">Retry slots</TextLink>
  </div>;
  const data=dataResult.value;
  if(data.state==="CHOOSE_COLLEGE")return <div className="min-w-0 space-y-4">
@@ -89,7 +89,7 @@ export default async function SuperAdminElectivesPage({
  if(staleProgram)return <div className="min-w-0 space-y-4">
   <PageHeader title="Electives"/>{academicTabs}
   <Alert tone="warning">The previous program filter is not available in this college. Choose a program again.</Alert>
-  <Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear previous college filters</Link>
+  <TextLink href="/admin/electives" className="inline-flex min-h-11 items-center md:min-h-9">Clear previous college filters</TextLink>
  </div>;
  const all=data.items;
  // The directory already applies server-side LIMIT/OFFSET and total count.
@@ -148,7 +148,7 @@ export default async function SuperAdminElectivesPage({
     </Label>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 sm:w-auto">Search</Button>
    </form>
-   <Link href={link(current)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
+   <TextLink href={link(current)} className="inline-flex min-h-11 items-center md:min-h-9">Refresh</TextLink>
   </div>
   <Alert tone="info">
    One elective slot is one choice for an eligible program and semester.
@@ -169,8 +169,7 @@ export default async function SuperAdminElectivesPage({
     </tr></thead>
     <tbody>{shown.map(item=><tr key={item.id}>
      <td className="min-w-40">
-      <Link href={link(current,item.id)} aria-current={selected?.id===item.id?"true":undefined}
-       className="font-semibold text-link underline">{item.name}</Link>
+      <TextLink href={link(current,item.id)} aria-current={selected?.id===item.id?"true":undefined}>{item.name}</TextLink>
       {item.description?<p className="mt-1 max-w-xs text-xs text-muted-foreground">{item.description}</p>:null}
      </td>
      <td>{item.programName}</td><td>{item.semesterNumber}</td>
@@ -180,8 +179,8 @@ export default async function SuperAdminElectivesPage({
      <td className="tabular-nums">{item.students??0}</td>
      <td><StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge></td>
      <td><div className="flex flex-wrap gap-3 text-sm font-semibold">
-      <Link href={link(current,item.id)} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Open</Link>
-      {options?<Link href={link(current,item.id)} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Edit</Link>:null}
+      <TextLink href={link(current,item.id)} className="inline-flex min-h-11 items-center md:min-h-9">Open</TextLink>
+      {options?<TextLink href={link(current,item.id)} className="inline-flex min-h-11 items-center md:min-h-9">Edit</TextLink>:null}
       {options&&item.status==="ACTIVE"?<CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
        status={item.status} version={item.version}/>:null}
      </div></td>
@@ -191,9 +190,9 @@ export default async function SuperAdminElectivesPage({
      "No elective slots yet. Create one per program × semester, e.g. Professional Elective 1.":
      "No elective slots match the selected filters. Try another program, status or search term."}</Alert>}
    {data.total>0?<nav aria-label="Elective slot pages" className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
-    {current>1?<Link href={link(current-1)} className="min-h-11 font-semibold text-link underline md:min-h-9">← Previous</Link>:<span/>}
+    {current>1?<TextLink href={link(current-1)} className="min-h-11 md:min-h-9">← Previous</TextLink>:<span/>}
     <span>Showing {all.length?(current-1)*data.pageSize+1:0}–{Math.min(current*data.pageSize,data.total)} of {data.total} matching slots · Page {current} of {totalPages}</span>
-    {current<totalPages?<Link href={link(current+1)} className="min-h-11 font-semibold text-link underline md:min-h-9">Next →</Link>:<span/>}
+    {current<totalPages?<TextLink href={link(current+1)} className="min-h-11 md:min-h-9">Next →</TextLink>:<span/>}
    </nav>:null}
   </section>
   {selected?<section id="selected-slot" aria-label={"Selected elective slot "+selected.name}
@@ -202,7 +201,7 @@ export default async function SuperAdminElectivesPage({
     <div><Heading level={2} size="lg" className="text-heading">{selected.name}</Heading>
      <p className="text-sm text-body">{selected.programName} · Semester {selected.semesterNumber}</p>
     </div>
-    <Link href={link(current)} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Close details</Link>
+    <TextLink href={link(current)} className="inline-flex min-h-11 items-center md:min-h-9">Close details</TextLink>
    </div>
    <dl className="grid gap-3 border-y border-border py-3 text-sm sm:grid-cols-3">
     <div><dt>Credits</dt><dd className="font-semibold">{selected.credits}</dd></div>
@@ -221,6 +220,6 @@ export default async function SuperAdminElectivesPage({
     {selected.status==="ACTIVE"?<CollegeElectiveOfferingManager slotId={selected.id}/>:null}
    </div>:<Alert tone="warning">Slot editing is not available. Refresh the page and retry.</Alert>}
   </section>:null}
-  <Link href="/admin/academics" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">← Academic overview</Link>
+  <TextLink href="/admin/academics" className="inline-flex min-h-11 items-center md:min-h-9">← Academic overview</TextLink>
  </div>;
 }

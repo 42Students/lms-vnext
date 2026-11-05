@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
-import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -15,6 +14,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoBranchSeasonDashboard } from "@/modules/placements/tpo-branch-season-service";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function TpoBranchSeasonPage({
   searchParams,
@@ -37,7 +37,7 @@ export default async function TpoBranchSeasonPage({
         title="Branch by placement season"
         description="Current college branch attribution and persisted applicant/offer numerators; unknown registration denominators are never treated as zero."
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-          <Link href="/tpo/reports/by-branch" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← By Branch report</Link>
+          <TextLink href="/tpo/reports/by-branch" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">← By Branch report</TextLink>
           {dashboard.season ? (
           <ButtonLink variant="primary"
             href={"/api/placements/tpo/reports/branch-season/export?seasonId=" +

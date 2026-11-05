@@ -4,7 +4,6 @@ import { Tabs } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -17,6 +16,7 @@ import {
 } from "@/modules/projects/mentor-team-history-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Raw = { view?: string | string[]; role?: string | string[]; primary?:string|string[]; order?:string|string[]; page?: string | string[] };
 const formatDate = (value: Date) => new Intl.DateTimeFormat("en-IN", {
@@ -39,7 +39,7 @@ export default async function MentorTeamHistoryPage({
   );
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid team history filters"} />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link">Back to projects</Link>
+    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center">Back to projects</TextLink>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -49,10 +49,10 @@ export default async function MentorTeamHistoryPage({
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Team membership history"
       description={data.enabled?data.title + " · Registered team join/end records":"Projects access is disabled. Team history cannot be displayed."}
-      actions={<Link data-unskin="" href={back}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+      actions={<TextLink data-unskin="" href={back}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Team workspace
-      </Link>} />
+      </TextLink>} />
     {!data.enabled
       ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
           Projects access is disabled. Team history cannot be displayed.
@@ -85,13 +85,13 @@ export default async function MentorTeamHistoryPage({
           <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
             Filter role
           </Button>
-          {filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Clear</Link>:null}
+          {filtered?<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:null}
         </form></FilterBar>
 
         <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} matching membership record{data.total === 1 ? "" : "s"}</p>
         {data.items.length === 0
           ? <EmptyState title="No team membership records"
-              description="No registered membership rows match this project and filter. History from before migration may not be available." action={filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Clear</Link>:<Link href={back} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Team workspace</Link>} />
+              description="No registered membership rows match this project and filter. History from before migration may not be available." action={filtered?<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={back} className="inline-flex min-h-11 items-center md:min-h-9">Team workspace</TextLink>} />
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
               <article key={item.id} className="py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">

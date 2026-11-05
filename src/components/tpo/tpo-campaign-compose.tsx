@@ -8,13 +8,13 @@ import {TPO_CAMPAIGN_COMPOSE_PRESETS,tpoCampaignMergeToken,type TpoCampaignCompo
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import {useEffect,useId,useState} from "react";
 import {useRouter} from "next/navigation";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE,CAMPAIGN_DRAFT_UNAVAILABLE,
   tpoCampaignDraftSchema,previewTpoCampaignText} from "@/modules/messaging/tpo-campaign-draft-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type SelectedAudiencePreview={
  selected:number;eligible:number;leftOut:number;unavailable:number;
  suppressed:{NO_EMAIL:number;UNSUBSCRIBED:number;BOUNCED:number;NOT_NOW:number;DUPLICATE:number};
@@ -177,13 +177,13 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      </Label>
     </div>
    </Disclosure>
-   {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
-    className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
+   {!selectedLeadIds.length?<TextLink href={"/tpo/recruiters/campaigns/preview?segment="+segment}
+    className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
     Preview audience
-   </Link>:<Link href="/tpo/recruiters"
-    className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
+   </TextLink>:<TextLink href="/tpo/recruiters"
+    className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
     Change selected recruiters in Engage
-   </Link>}
+   </TextLink>}
    {!deliveryReady?<Alert tone="warning"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</Alert>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
    <Button variant="primary" type="submit" disabled={busy||(selectedLeadIds.length>0&&(audienceStatus!=="ready"||!audience||audience.unavailable>0||audience.eligible===0))} className="min-h-11 w-full md:min-h-9 sm:w-auto print:hidden">
     {busy?"Saving…":"Save draft"}
@@ -191,12 +191,12 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   </form>
   {done?<div className="space-y-2">
     <InlineNotice tone="success" message={done}/>
-    {savedDraftId?<Link href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(savedDraftId)}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+    {savedDraftId?<TextLink href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(savedDraftId)}
+      className="inline-flex min-h-11 items-center md:min-h-9">
       Step 2 · Review draft and confirm recipients
-    </Link>:<Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+    </TextLink>:<TextLink href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center md:min-h-9">
       Open email campaigns
-    </Link>}
+    </TextLink>}
   </div>:null}
   {error?<div id={formErrorId}><InlineNotice tone="error" message={error}/></div>:null}
   <ConfirmDialog open={pendingPreset!==null} onOpenChange={open=>{if(!open)setPendingPreset(null);}}

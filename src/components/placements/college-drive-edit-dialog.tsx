@@ -1,12 +1,12 @@
 "use client";
 import {useState,type FormEvent} from "react";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type JobView={title:string;description:string;updatedAt:string;status:string};
 function validJob(payload:unknown):JobView|null{
@@ -92,7 +92,7 @@ export function CollegeDriveEditDialog({jobId,title,fullEditorHref}:{
    title="Edit Job" description={title} className="max-w-[800px]"
    dismissible={!saving}
    footer={<>
-    <Link href={fullEditorHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Full job editor</Link>
+    <TextLink href={fullEditorHref} className="inline-flex min-h-11 items-center text-sm">Full job editor</TextLink>
     <Button type="button" variant="secondary" disabled={saving} onClick={requestClose}>Cancel</Button>
     <Button type="submit" form={formId} disabled={saving||loading||!initial||!dirty}>
      {saving?"Saving…":"Update Job"}</Button>

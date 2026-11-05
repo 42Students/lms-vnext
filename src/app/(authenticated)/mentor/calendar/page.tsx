@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import {MentorProjectsUnavailable} from "@/components/projects/mentor-projects-unavailable";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -21,6 +20,8 @@ import {singleValueMentorCalendarFilters} from "@/modules/projects/mentor-filter
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
   from "@/modules/projects/mentor-calendar-filter-model";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 type Search={sprint?:string|string[];join?:string|string[];projectId?:string|string[];attention?:string|string[];status?:string|string[];type?:string|string[];projectState?:string|string[];search?:string|string[];period?:string|string[]};
 export default async function MentorCalendarPage({searchParams}:{
@@ -34,7 +35,7 @@ export default async function MentorCalendarPage({searchParams}:{
   }));
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid meeting filters"} />
-    <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link md:min-h-[var(--lms-control-height)]">Clear filters</Link>
+    <TextLink href="/mentor/calendar" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Clear filters</TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
@@ -174,21 +175,21 @@ export default async function MentorCalendarPage({searchParams}:{
       </Label>
         </div>
       </Disclosure>
-      {activeCount>0?<Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>:null}
+      {activeCount>0?<TextLink href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear</TextLink>:null}
     </form>
     </FilterBar>
      <div className="flex flex-wrap items-center gap-3 text-sm">
-      <Link data-unskin="" href={"/api/mentor/calendar/export?"+new URLSearchParams({
+      <ButtonLink variant="secondary" data-unskin="" href={"/api/mentor/calendar/export?"+new URLSearchParams({
         sprint:parsed.data.sprint,join:parsed.data.join,projectId:parsed.data.projectId??"",attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
         projectState:parsed.data.projectState,
         search:parsed.data.search,period:parsed.data.period,
-      }).toString()} download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-ring motion-reduce:transition-none md:min-h-9 hover:underline">
+      }).toString()} download>
         Export filtered meeting metadata CSV (max 200)
-      </Link>
+      </ButtonLink>
       {displayed.length>200?<span role="status">Export omits {displayed.length-200} meetings.</span>:null}
     </div>
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">    <p className="text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
-      {displayed.length===0 && activeCount>0 ? <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">Clear</Link> : null}
+      {displayed.length===0 && activeCount>0 ? <TextLink href="/mentor/calendar" className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink> : null}
     </div>
     </Disclosure>
   </div>;

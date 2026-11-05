@@ -6,7 +6,6 @@ import {useRouter} from "next/navigation";
 import { learnerProfileCollectionMayEdit } from "@/modules/people/learner-profile-collection-busy-model";
 import { learnerProfileDeletePrompt } from "@/modules/people/learner-profile-delete-confirm-model";
 import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people/learner-profile-refresh-model";
-import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
 import {learnerProfileCareerCoverage,learnerCareerCompletionMessage} from "@/modules/people/learner-profile-career-coverage-model";
 import {learnerProfilePublicationsAwards,newLearnerShowcaseEntry,isLearnerShowcaseKey,type LearnerShowcaseKind,type LearnerShowcaseDetails} from "@/modules/people/learner-profile-publications-awards-model";
@@ -31,6 +30,8 @@ import {formatProfileDateDayFirst,LEARNER_PROFILE_FIELD_LIMITS} from "@/modules/
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type CollectionKey =
   | "experiences"
@@ -585,11 +586,11 @@ export function LearnerProfileWorkspace(props: {
         <Heading level={2} size="sm" className="text-foreground">Quick profile steps</Heading>
         <p className="mt-1 text-xs text-body">Jump to an unfinished saved-profile section. These are suggestions, not verification requirements.</p>
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
-          {mobileQuickLinks.map(item=><Link key={item.section}
+          {mobileQuickLinks.map(item=><ButtonLink variant="secondary" key={item.section}
             href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 md:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
+            className="flex min-w-0">
             {item.label}
-          </Link>)}
+          </ButtonLink>)}
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
       </nav>
       <div className="flex flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
@@ -643,9 +644,9 @@ export function LearnerProfileWorkspace(props: {
           <Heading level={2} size="base" id="learner-profile-checklist-title" className="text-foreground">
             Profile completion checklist
           </Heading>
-          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
+          <TextLink href="/learn/profile/completeness" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
             Review full checklist
-          </Link>
+          </TextLink>
           <div className="flex items-center gap-3">
             <svg viewBox="0 0 64 64" width="64" height="64" role="img" aria-label={percent+"% complete"}>
               <circle cx="32" cy="32" r="26" fill="none" strokeWidth="7"
@@ -670,10 +671,10 @@ export function LearnerProfileWorkspace(props: {
         {coverage.next ? (
           <p role="status" className="mt-3 text-sm text-body">
             Suggested next section:{" "}
-            <Link href={"/learn/profile?section="+encodeURIComponent(coverage.next.section)}
-              className="font-semibold text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center focus-visible:underline">
+            <TextLink href={"/learn/profile?section="+encodeURIComponent(coverage.next.section)}
+              className="max-md:inline-flex max-md:min-h-11 max-md:items-center">
               {coverage.next.label}
-            </Link>. This does not establish identity verification or placement eligibility.
+            </TextLink>. This does not establish identity verification or placement eligibility.
           </p>
         ) : (
           <p role="status" className="mt-3 text-sm text-body">
@@ -684,9 +685,9 @@ export function LearnerProfileWorkspace(props: {
         <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {checklist.items.map(item => (
             <li key={item.section}>
-              <Link
+              <ButtonLink variant="secondary"
                 href={"/learn/profile?section=" + encodeURIComponent(item.section)}
-                className="flex min-h-11 md:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius,9px)] border border-border px-3 py-2 text-sm text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-none focus-visible:focus-outline"
+                className="flex"
                 onClick={() => {
                   if (props.initialSection === item.section) {
                     window.document.getElementById(item.section)?.scrollIntoView({
@@ -702,7 +703,7 @@ export function LearnerProfileWorkspace(props: {
                 {(["personal-details","contacts","education","skills"].includes(item.section))?
                   <Badge tone="warning" className="ml-auto shrink-0">Required</Badge>:null}
                 <span className="sr-only">{item.completed ? "Completed" : "Not filled"}</span>
-              </Link>
+              </ButtonLink>
             </li>
           ))}
         </ul>
@@ -736,7 +737,7 @@ export function LearnerProfileWorkspace(props: {
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
             Turning this off stops matching-job notifications without changing placement eligibility.
-            Application-update alerts have a separate setting in <Link href="/learn/my-placements/notification-preferences" className="font-semibold text-primary-text underline">Placement notification choices</Link>.
+            Application-update alerts have a separate setting in <TextLink href="/learn/my-placements/notification-preferences">Placement notification choices</TextLink>.
           </p>
         </Card>
         <Card id="video-intro" title="Video introduction">
@@ -1065,9 +1066,9 @@ export function LearnerProfileWorkspace(props: {
           <p className="text-xs text-muted-foreground">
             Disabling job notifications also disables matching-job placement alerts.
             Application-update alerts can be managed separately in{" "}
-            <Link href="/learn/my-placements/notification-preferences" className="font-semibold text-primary-text underline">
+            <TextLink href="/learn/my-placements/notification-preferences">
               Placement notification choices
-            </Link>. Academic and security messages are unaffected.
+            </TextLink>. Academic and security messages are unaffected.
           </p>
         </div>
       </Dialog>

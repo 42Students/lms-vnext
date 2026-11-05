@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -14,6 +13,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveEditState} from "@/modules/placements/tpo-drive-edit-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -26,8 +26,8 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
      actions={<PageBackLink href="/tpo/placements" label="Back to drives"/>}/>
    <ErrorState title="Could not load this drive"
      description="Loading the existing drive or its setup data failed. No unsaved changes were applied."
-     action={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/edit"}
-       className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Retry setup data</Link>}/>
+     action={<TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/edit"}
+       className="inline-flex min-h-11 items-center md:min-h-9">Retry setup data</TextLink>}/>
   </div>;
  }
  // Named non-primary packages are editable through the existing authorized
@@ -40,7 +40,7 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
       <StatusBadge tone={job.editable?"info":"neutral"}>{job.status==="DRAFT"?"Draft":job.status==="PUBLISHED"?"Live":job.status}</StatusBadge>
       <PageBackLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)} label="Open drive page"/>
       {job.editable?<ButtonLink variant="primary" href="#drive-save-actions">Save changes</ButtonLink>:null}
-      {job.status==="DRAFT"?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"?publish=1#drive-lifecycle-publish"} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">Review &amp; publish</Link>:null}
+      {job.status==="DRAFT"?<ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"?publish=1#drive-lifecycle-publish"}>Review &amp; publish</ButtonLink>:null}
     </div>}/>
   {job.editable?<TpoDriveEditForm job={job}/>:<section aria-label="Read-only drive history" className="space-y-4">
     <Alert tone="warning" aria-label="Drive edit unavailable">{job.editingBlockedReason??("This drive is "+job.status.toLowerCase()+" and cannot be edited.")} All saved details remain available for reference.</Alert>
@@ -58,7 +58,7 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
          <dd className="mt-1 break-words text-sm text-body">{value}</dd>
         </div>)}
     </dl>
-    <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Create drive</Link>
+    <TextLink href="/tpo/placements/new" className="inline-flex min-h-11 items-center md:min-h-9">Create drive</TextLink>
    </section>}
   {job.status==="DRAFT"&&job.editable?<section aria-label="Named pay packages" className="space-y-3 border-t border-border pt-4">
    <Heading level={2} size="base" className="text-foreground">Pay packages</Heading>
@@ -72,9 +72,9 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
      Core job details are edited above. Additional settings remain in the audited drive workspace; changing them does not silently amend submitted applications.
    </p>
    <nav className="flex flex-wrap gap-3 text-sm font-semibold">
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Company and role</Link>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/rounds"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Selection rounds</Link>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/change-requests"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Changes and approvals</Link>
+    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"} className="inline-flex min-h-11 items-center md:min-h-9">Company and role</TextLink>
+    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/rounds"} className="inline-flex min-h-11 items-center md:min-h-9">Selection rounds</TextLink>
+    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/change-requests"} className="inline-flex min-h-11 items-center md:min-h-9">Changes and approvals</TextLink>
    </nav>
   </section>
  </div>;

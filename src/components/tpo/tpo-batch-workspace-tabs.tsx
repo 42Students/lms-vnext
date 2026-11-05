@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
+import { TextLink } from "@/components/ui/text-link";
 
 const primary = [
  {slug:"students",label:"Students"},{slug:"rules",label:"Rules"},{slug:"history",label:"History"},
@@ -22,12 +22,12 @@ export function TpoBatchWorkspaceTabs({batchId,active,students}:{
     href:prefix+"/"+tab.slug,
    }))}/>
   <nav aria-label="Additional batch workspaces" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 text-xs">
-   {secondary.map(tab=><Link key={tab.slug||"overview"} href={prefix+(tab.slug?"/"+tab.slug:"")}
+   {secondary.map(tab=><TextLink variant="bare" key={tab.slug||"overview"} href={prefix+(tab.slug?"/"+tab.slug:"")}
     aria-current={active===tab.slug?"page":undefined}
     className={"inline-flex min-h-9 items-center font-semibold underline underline-offset-4 "+
      (active===tab.slug?"text-primary-text":"text-muted-foreground hover:text-primary-text")}>
     {tab.label}
-   </Link>)}
+   </TextLink>)}
   </nav>
  </div>;
 }

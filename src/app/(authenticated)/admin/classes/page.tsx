@@ -20,6 +20,8 @@ import { listCollegeSectionOptions } from "@/modules/academics/college-section-m
 import { collegeClassQuerySchema, collegeStructureHref, type CollegeClassQuery } from "@/modules/academics/college-structure-directory-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const statuses = ["ALL", "ACTIVE", "ARCHIVED"] as const;
 const pageUrl = (query: CollegeClassQuery) => collegeStructureHref("CLASSES", query).replace("/college/classes", "/admin/classes");
@@ -57,13 +59,13 @@ export default async function SuperAdminClassesPage({ searchParams }: {
     </Alert>:null}
     {selected&&!filter.success?<Alert tone="error">Invalid class filters. <Link href="/admin/classes">Clear filters</Link></Alert>:null}
     {selected&&loaded?.[0]?.status==="rejected"?<Alert tone="error">Could not load classes.
-      <Link href="/admin/classes" className="ml-2 font-semibold underline">Retry classes</Link>
+      <TextLink href="/admin/classes" className="ml-2">Retry classes</TextLink>
     </Alert>:null}
     {selected&&loaded?.[1]?.status==="rejected"?<Alert tone="warning">Could not load class options.
-      <Link href="/admin/classes" className="ml-2 font-semibold underline">Retry options</Link>
+      <TextLink href="/admin/classes" className="ml-2">Retry options</TextLink>
     </Alert>:null}
     {selected&&loaded?.[2]?.status==="rejected"?<Alert tone="warning">Recurring schedule options could not be loaded.
-      <Link href="/admin/classes" className="ml-2 font-semibold underline">Retry recurring options</Link>
+      <TextLink href="/admin/classes" className="ml-2">Retry recurring options</TextLink>
     </Alert>:null}
     {data ? <>
     <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
@@ -99,16 +101,16 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           </Disclosure>
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>
-          <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>
+          <TextLink href="/admin/classes" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
         </form>
       </section>
       <section aria-label="Manage classes" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
         <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Existing Classes/Sections</Heading>
         <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <Link href={pageUrl(data.query)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
+          <TextLink href={pageUrl(data.query)} className="inline-flex min-h-11 items-center md:min-h-9">Refresh</TextLink>
           {recurring?<CollegeRecurringEntry options={{...recurring,
             classes:recurring.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}}/>:null}
-          {exportHref?<Link href={exportHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Export classes.csv</Link>:null}
+          {exportHref?<TextLink href={exportHref} className="inline-flex min-h-11 items-center md:min-h-9">Export classes.csv</TextLink>:null}
           <span className="text-xs tabular-nums text-muted-foreground">{data.total.toLocaleString("en-IN")} results</span>
         </div>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
@@ -118,8 +120,8 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           columns={[
             {key:"class",header:"Class Name",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
-              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Manage students →</Link>
-              <Link href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="ml-[var(--lms-space-3)] mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Schedule →</Link>
+              <TextLink href={`/admin/academics/sections/${encodeURIComponent(row.id)}`} className="mt-1 inline-flex min-h-11 items-center md:min-h-9">Manage students →</TextLink>
+              <TextLink href={`/admin/academics/sections/${encodeURIComponent(row.id)}#section-schedule`} className="ml-[var(--lms-space-3)] mt-1 inline-flex min-h-11 items-center md:min-h-9">Schedule →</TextLink>
             </div>},
             {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
             {key:"batch",header:"Batch",mobilePriority:"secondary",cell:row=>row.cohortName},
@@ -134,23 +136,23 @@ export default async function SuperAdminClassesPage({ searchParams }: {
                 <CollegeClassRowActions row={row}/>
                 <CollegeSectionLifecycleAction row={{id:row.id,name:row.name,status:row.status,
                   updatedAt:row.updatedAt.toISOString()}}/>
-                <Link href={"/admin/academics/sections/"+encodeURIComponent(row.id)}
-                  className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Open</Link>
-                <Link href={"/admin/academics/sections/"+encodeURIComponent(row.id)+"#section-schedule"}
-                  className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Schedule</Link>
+                <TextLink href={"/admin/academics/sections/"+encodeURIComponent(row.id)}
+                  className="inline-flex min-h-11 items-center md:min-h-9">Open</TextLink>
+                <TextLink href={"/admin/academics/sections/"+encodeURIComponent(row.id)+"#section-schedule"}
+                  className="inline-flex min-h-11 items-center md:min-h-9">Schedule</TextLink>
               </div>},
           ]} />
         </div>
         <nav aria-label="Class pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.items.length} of {data.total.toLocaleString("en-IN")} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
-            {data.query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] text-sm" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
-            {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] text-sm" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
+            {data.query.page>1?<ButtonLink variant="secondary" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</ButtonLink>:null}
+            {data.query.page<data.totalPages?<ButtonLink variant="secondary" href={pageUrl({...data.query,page:data.query.page+1})}>Next</ButtonLink>:null}
           </div>
         </nav>
-        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">
+        <TextLink href="/admin/batch-promotion" className="inline-flex min-h-11 items-center md:min-h-9">
           Batch Promotion →
-        </Link>
+        </TextLink>
       </section>
     </div></div>
     </> : null}

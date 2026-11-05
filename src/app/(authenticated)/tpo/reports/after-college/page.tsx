@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
-import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {Pagination} from "@/components/ui/pagination";
 import {redirect} from "next/navigation";
@@ -19,6 +18,7 @@ import {getTpoAfterCollegeReport} from "@/modules/placements/tpo-after-college-r
 import {AFTER_COLLEGE_LABELS,AFTER_COLLEGE_OUTCOMES} from "@/modules/placements/tpo-after-college-model";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 type Raw=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -29,10 +29,10 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const batches=await listTpoBatches(ctx);
  const batchId=first(raw["batchId"])||undefined,branchId=first(raw["branchId"])||undefined;
  if(batchId&&!batches.batches.some(batch=>batch.id===batchId))
-  return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid batch" description="Choose an available batch for this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
+  return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid batch" description="Choose an available batch for this college." action={<TextLink href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/></div>;
  const data=await getTpoAfterCollegeReport(ctx,{collegeId:ctx.membership.collegeId,...(batchId?{batchId}:{}),...(branchId?{branchId}:{})});
  const branches=new Map(data.branches.map(row=>[row.id,row.name]));
- if(branchId&&!branches.has(branchId))return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid branch" description="Choose a branch in this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
+ if(branchId&&!branches.has(branchId))return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid branch" description="Choose a branch in this college." action={<TextLink href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/></div>;
  const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
  const displayedCount=Math.min(data.rows.length,300);
  const pageCount=Math.max(1,Math.ceil(displayedCount/25));
@@ -42,7 +42,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  return <div data-tpo-presentation-report className="min-w-0 space-y-4">
   <PageHeader title="After college"
    description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."
-   actions={<><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">← All reports</Link>{data.available?<ButtonLink variant="secondary" href={"/api/placements/tpo/reports/after-college?"+query.toString()} className="w-full md:w-auto">Download CSV</ButtonLink>:null}</>}/>
+   actions={<><ButtonLink variant="secondary" href="/tpo/reports" className="w-full md:w-auto">← All reports</ButtonLink>{data.available?<ButtonLink variant="secondary" href={"/api/placements/tpo/reports/after-college?"+query.toString()} className="w-full md:w-auto">Download CSV</ButtonLink>:null}</>}/>
   {!data.available?<Alert tone="warning">After-college outcomes storage is unavailable. This page does not infer destinations.</Alert>:<>
    <form method="get" className="grid min-w-0 gap-3 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] lg:items-end">
     <Label stack className="min-w-0">Batch
@@ -56,7 +56,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
      </Select></Label>
     <Button type="submit" className="min-h-11 w-full sm:w-auto lg:justify-self-start md:min-h-9">Filter</Button>
-    <Link href="/tpo/reports/after-college" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline md:min-h-9 md:w-auto">Clear</Link>
+    <TextLink href="/tpo/reports/after-college" className="inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto">Clear</TextLink>
 
    </form>
    <div className="flex min-w-0 flex-wrap items-center gap-2"><TpoReportPresentation /></div>

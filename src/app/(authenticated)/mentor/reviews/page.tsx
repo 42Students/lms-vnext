@@ -4,7 +4,6 @@ import { Select } from "@/components/ui/select";
 import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -15,6 +14,7 @@ import { mentorPortfolioHref, mentorReviewQuerySchema } from "@/modules/projects
 import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
 import {mentorReviewExportHref} from "@/modules/projects/mentor-review-export-model";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 
@@ -31,21 +31,21 @@ export default async function MentorReviewsPage({
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title="Delivery review queue" description="Invalid review filters" />
-    <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link md:min-h-[var(--lms-control-height)]">Clear filters</Link>
+    <TextLink href="/mentor/reviews" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Clear filters</TextLink>
   </section>;
   const data = await getMentorReviewQueue(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Delivery review queue"
       description="Submitted deliveries awaiting review across your currently assigned mentor projects."
       actions={<div className="flex flex-wrap items-center gap-3">
-        <Link href="/mentor/review-history"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+        <TextLink href="/mentor/review-history"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Review history
-        </Link>
-        <Link href="/mentor/projects"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+        </TextLink>
+        <TextLink href="/mentor/projects"
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Projects
-        </Link>
+        </TextLink>
       </div>} />
     {!data.enabled ? <div role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No project data was loaded.
@@ -96,26 +96,26 @@ export default async function MentorReviewsPage({
           defaultValue={String(data.pageSize)} options={[20,50]} />
           </div>
         </Disclosure>
-        {(Boolean(data.query.search)||Boolean(data.query.projectId)||data.query.assignment!=="ALL"||data.query.projectStatus!=="ALL"||data.query.order!=="NEWEST"||data.query.age!=="ALL"||data.pageSize!==20)?<Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">Clear</Link>:null}
+        {(Boolean(data.query.search)||Boolean(data.query.projectId)||data.query.assignment!=="ALL"||data.query.projectStatus!=="ALL"||data.query.order!=="NEWEST"||data.query.age!=="ALL"||data.pageSize!==20)?<TextLink href="/mentor/reviews" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear</TextLink>:null}
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link data-unskin="" href={mentorReviewExportHref(data.query)} download
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+        <TextLink data-unskin="" href={mentorReviewExportHref(data.query)} download
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Export filtered delivery review metadata CSV (max 200)
-        </Link>
+        </TextLink>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching reviews.</span>:null}
       </div>
       <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} matching review item{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
-        description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Projects</Link>} />
+        description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." action={<TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-9">Projects</TextLink>} />
         : <div className="grid">{data.items.map(item =>
-          <Link key={item.key} href={item.href} className="min-h-11 block border-b border-border py-4 hover:border-primary focus-ring md:min-h-[var(--lms-control-height)]">
+          <TextLink variant="bare" key={item.key} href={item.href} className="min-h-11 block border-b border-border py-4 hover:border-primary focus-ring md:min-h-[var(--lms-control-height)]">
             <p className="min-w-0 break-words font-semibold text-link">{item.description}</p>
             <p className="mt-2 text-xs text-muted-foreground leading-5">Submitted: {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(new Date(item.occurredAt))} IST</p>
             <p className="mt-1 text-xs font-semibold text-link leading-5">Open delivery review →</p>
-          </Link>)}</div>}
+          </TextLink>)}</div>}
       {data.totalPages>1?<Pagination label="Review queue pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>{ const { projectId, ...query } = data.query; return mentorPortfolioHref("reviews", { ...query, ...(projectId === undefined ? {} : { projectId }), page }); }}/>:null}
     </>}
     <p className="text-xs text-muted-foreground leading-5">

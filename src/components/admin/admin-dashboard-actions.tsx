@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   COLLEGE_ADMIN_QUICK_ACTIONS,
   COLLEGE_ADMIN_SETUP_PHASES,
@@ -9,6 +8,7 @@ import {
 } from "@/modules/admin-ui/admin-dashboard-navigation";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Legacy admin dashboard quick actions use this LMS icon/color palette. The
  * small SVGs are local so neither a new dependency nor an icon font is needed. */
@@ -112,7 +112,7 @@ function ActionLink({
       {content}
     </div>;
   }
-  return <Link href={href} className={classes}>{content}</Link>;
+  return <TextLink variant="bare" href={href} className={classes}>{content}</TextLink>;
 }
 
 /** The sidebar's /college landing and the cross-role /dashboard use the same legacy actions. */

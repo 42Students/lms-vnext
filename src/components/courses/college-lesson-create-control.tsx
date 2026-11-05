@@ -8,10 +8,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 
 import {useRouter} from "next/navigation";
-import Link from "next/link";
 import {useState} from "react";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Offering={
  offeringId:string;courseName:string;courseCode:string;cohortName:string;
@@ -94,7 +94,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
   <Heading level={2} size="lg" className="text-foreground">Create New Lesson</Heading>
   {!options.length?<Alert tone="warning">
    No courses in this college yet. Create an active Course Offering first. Lessons belong to a Course and Batch.{" "}
-   <Link href="/college/courses" className="font-semibold underline">Go to Courses</Link>
+   <TextLink href="/college/courses">Go to Courses</TextLink>
   </Alert>:null}
   {options.length?<div className="grid gap-3">
    <Label stack>Course

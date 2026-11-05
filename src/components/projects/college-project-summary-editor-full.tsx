@@ -11,9 +11,9 @@ import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 import { projectSummaryRefreshDecision } from "@/modules/projects/project-summary-refresh-model";
 import {useEffect,useRef,useState} from "react";
 import {usePathname,useRouter} from "next/navigation";
-import Link from "next/link";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 export type SummaryProject={
  id:string;collegeId:string;title:string;summary:string|null;status:string;updatedAt:Date;
  progressPercent:number;phase:string|null;dueLabel:string|null;courseLabel:string|null;sectionId:string|null;
@@ -262,13 +262,13 @@ export function CollegeProjectSummaryEditorFull({
    </p>
    {!hasMentor&&p.status!=="ACTIVE"&&form.status==="ACTIVE"?
     <Banner tone="warning">Assign a mentor before changing the workspace status to Active.
-      <Link href={"/admin/projects/reassign-mentor?fromMentorId=UNASSIGNED"}
-       className="ml-1 font-semibold underline">Assign mentor</Link>
+      <TextLink href={"/admin/projects/reassign-mentor?fromMentorId=UNASSIGNED"}
+       className="ml-1">Assign mentor</TextLink>
     </Banner>:null}
-   {overviewHref!==pathname?<Link href={overviewHref}
-     className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+   {overviewHref!==pathname?<TextLink href={overviewHref}
+     className="inline-flex min-h-11 items-center text-sm md:min-h-9">
      Open Overview
-   </Link>:null}
+   </TextLink>:null}
    {dirty&&form.title.trim().length===0?<p role="alert" className="text-sm text-error">Title is required</p>:null}
    <Button type="button" disabled={busy} onClick={()=>void save()}
     >{busy?"Saving…":"Save changes"}</Button>

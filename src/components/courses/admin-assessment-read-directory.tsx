@@ -1,5 +1,4 @@
 import { FilterBar } from "@/components/ui/filter-bar";
-import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -20,6 +19,7 @@ import { adminAssessmentHref, adminAssessmentStats } from "@/modules/courses/adm
 import type { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 import { Table } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Data = Awaited<ReturnType<typeof listCollegeAssessmentAggregate>>;
 function formatDue(value: Date | null) {
@@ -91,8 +91,8 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
               </td>
               <td className="sticky right-0 z-(--lms-z-raised) border-l border-border bg-surface px-3 py-3 shadow-(--lms-shadow-edge-start)">
                 <div className="flex min-w-[200px] flex-col items-start gap-2">
-                  <Link href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Open offering →</Link>
+                  <TextLink href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                    className="inline-flex min-h-11 items-center md:min-h-9">Open offering →</TextLink>
                   <SuperAdminAssignmentSubmissionsDialog title={item.title} count={item.submittedLearners}>
                     <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
                       specificDeliveryId={item.deliveryId} maxPoints={item.points}
@@ -130,8 +130,8 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
             <td className="whitespace-nowrap px-3 py-3">{formatDue(item.dueAt)}</td>
             <td className="sticky right-0 z-(--lms-z-raised) border-l border-border bg-surface px-3 py-3 shadow-(--lms-shadow-edge-start) group-hover:bg-muted">
               <div className="flex min-w-[216px] flex-col items-start gap-2">
-                <Link href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                  className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Open offering →</Link>
+                <TextLink href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                  className="inline-flex min-h-11 items-center md:min-h-9">Open offering →</TextLink>
                 <CollegeQuizActions quiz={{id:item.id,title:item.title,status:item.status,dueAt:item.dueAt}}/>
                 <div className="flex flex-wrap items-center gap-2">
                   <FacultyItemActions
@@ -174,6 +174,6 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
       confirmation before publishing grades. No answers, submission body, learner contacts
       or stored attachments are fetched by this directory.
     </p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-link hover:text-primary-hover focus-ring md:min-h-9 print:hidden">← Courses</Link>
+    <TextLink href="/admin/courses" className="inline-flex min-h-11 items-center md:min-h-9 print:hidden">← Courses</TextLink>
   </div>;
 }

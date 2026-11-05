@@ -8,7 +8,6 @@ import {Textarea} from "@/components/ui/textarea";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Disclosure } from "@/components/ui/disclosure";
 import {useEffect,useState} from "react";
-import Link from "next/link";
 import {useRouter,useSearchParams} from "next/navigation";
 import {groupLearnerBoardLanes,learnerTaskLane} from "@/modules/projects/learner-board-lanes-model";
 import {nextMentorBoardFocus} from "@/modules/projects/mentor-board-keyboard-focus-model";
@@ -224,8 +223,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const creationDefault=creationSprints.find(item=>item.status==="ACTIVE")??
    creationSprints.find(item=>item.status==="PLANNED");
  return <section className="prototype-mentor-board space-y-4">
-  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
-    className="text-sm font-semibold text-link underline focus-visible:underline focus-ring">Back to project</Link>
+  <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)}
+    className="text-sm">Back to project</TextLink>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <Heading level={2} size="lg" className="m-0 text-[var(--lms-heading)]">Board</Heading>
    <div className="flex flex-wrap items-center gap-2">
@@ -238,9 +237,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        learners={members.filter(member=>member.role==="LEARNER").map(member=>({
          membershipId:member.membershipId,displayName:member.displayName,
        }))}/>:null}
-     <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-       className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:underline">
-      Review submission</Link>
+     <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
+       className="inline-flex min-h-11 items-center text-sm md:min-h-9">
+      Review submission</TextLink>
    </div>
   </div>
   <div className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)] pb-4">

@@ -18,7 +18,6 @@ import { LearnerRoadmapItemDialog } from "./learner-roadmap-item-dialog";
 import { learnerSafeExternalContentHref } from "@/modules/courses/learner-external-content-link-model";
 import {LearnerLiveClassLink} from "./learner-live-class-link";
 import { assignmentFilesRuntimeEnabled,multipartAssignmentRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
-import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -50,6 +49,7 @@ import { legacySyllabusKind,selectedLessonCompletion } from "@/modules/courses/l
 import {learnerRoadmapMobileOutline} from "@/modules/courses/learner-roadmap-mobile-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Workspace = Awaited<
   ReturnType<
@@ -899,7 +899,7 @@ export function LearnerCourseWorkspace({
 
       <nav role="group" aria-label="Learning path content filter"
         className="flex flex-wrap items-center gap-2">
-        {filters.map(item=><Link key={item.key} role="button"
+        {filters.map(item=><TextLink variant="bare" key={item.key} role="button"
           aria-pressed={activeFilter===item.key}
           href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${encodeURIComponent(item.key)}`}
           className={"inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus-ring md:min-h-9 "+
@@ -907,7 +907,7 @@ export function LearnerCourseWorkspace({
               ?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]"
               :"border-border bg-surface text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]")}>
           {item.label}
-        </Link>)}
+        </TextLink>)}
       </nav>
 
       <Disclosure title={"Jump to lesson ("+mobileOutline.length+")"}
@@ -917,12 +917,12 @@ export function LearnerCourseWorkspace({
             <ol className="space-y-1">
               {mobileOutline.map((lesson,index)=>(
                 <li key={lesson.id}>
-                  <Link
+                  <ButtonLink variant="secondary"
                     href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${activeFilter}&lesson=${encodeURIComponent(lesson.id)}#lesson-${encodeURIComponent(lesson.id)}`}
-                    className="flex min-h-11 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+                    className="flex">
                     <span className="min-w-0 break-words">{index+1}. {lesson.name}</span>
                     <span className="shrink-0 text-xs text-muted-foreground">{lesson.count} items</span>
-                  </Link>
+                  </ButtonLink>
                 </li>
               ))}
             </ol>
@@ -1037,11 +1037,11 @@ export function LearnerCourseWorkspace({
               <div className="border-t border-border bg-surface p-4 md:p-5">
                 {lessonCompletion.stateKnown? <div className="mb-4 space-y-2">
                   <ProgressBar value={lessonCompletion.percent} label={lesson.name+" progress"}/>
-                  {lessonCompletion.nextIncomplete?<Link
+                  {lessonCompletion.nextIncomplete?<TextLink
                     href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?lesson="+encodeURIComponent(lesson.id)+"&content="+encodeURIComponent(lessonCompletion.nextIncomplete.id)}
-                    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+                    className="inline-flex min-h-11 items-center text-sm md:min-h-9">
                     Continue: {lessonCompletion.nextIncomplete.title??"Next incomplete item"}
-                  </Link>:null}
+                  </TextLink>:null}
                 </div>:<p role="status" className="mb-4 text-sm text-warning">
                   Lesson completion state could not be fully verified. Retry state before marking this lesson complete.
                 </p>}
@@ -1065,14 +1065,14 @@ export function LearnerCourseWorkspace({
                 </div>
                 {focusLessonId===lesson.id?<nav aria-label="Lesson navigation"
                    className="mb-4 flex flex-wrap items-center gap-3 text-sm">
-                  <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Back to Learning Path</Link>
-                  {workspace.lessons[lessonIndex-1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
+                  <TextLink href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
+                    className="inline-flex min-h-11 items-center md:min-h-9">Back to Learning Path</TextLink>
+                  {workspace.lessons[lessonIndex-1]?<TextLink href={"/learn/courses/"+encodeURIComponent(deliveryId)+
                     "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex-1]!.id)}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Previous lesson</Link>:null}
-                  {workspace.lessons[lessonIndex+1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
+                    className="inline-flex min-h-11 items-center md:min-h-9">Previous lesson</TextLink>:null}
+                  {workspace.lessons[lessonIndex+1]?<TextLink href={"/learn/courses/"+encodeURIComponent(deliveryId)+
                     "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex+1]!.id)}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Next lesson</Link>:null}
+                    className="inline-flex min-h-11 items-center md:min-h-9">Next lesson</TextLink>:null}
                   <span>{lessonCompletion.stateKnown
                     ?lessonCompletion.completed+" of "+lessonCompletion.total+" complete"
                     :"Completion unavailable"}</span>
@@ -1191,22 +1191,22 @@ export function LearnerCourseWorkspace({
                 )}
                 {focusLessonId===lesson.id?<nav aria-label="Lesson navigation (end)"
                   className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4 text-sm">
-                  <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                  <TextLink href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
+                    className="inline-flex min-h-11 items-center md:min-h-9">
                     Back to Learning Path
-                  </Link>
-                  {workspace.lessons[lessonIndex-1]?<Link
+                  </TextLink>
+                  {workspace.lessons[lessonIndex-1]?<TextLink
                     href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?lesson="+
                       encodeURIComponent(workspace.lessons[lessonIndex-1]!.id)}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                    className="inline-flex min-h-11 items-center md:min-h-9">
                     Previous lesson
-                  </Link>:null}
-                  {workspace.lessons[lessonIndex+1]?<Link
+                  </TextLink>:null}
+                  {workspace.lessons[lessonIndex+1]?<TextLink
                     href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?lesson="+
                       encodeURIComponent(workspace.lessons[lessonIndex+1]!.id)}
-                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                    className="inline-flex min-h-11 items-center md:min-h-9">
                     Next lesson
-                  </Link>:null}
+                  </TextLink>:null}
                 </nav>:null}
               </div>
             </Disclosure>
@@ -1222,10 +1222,9 @@ export function LearnerCourseWorkspace({
           title={`No ${filters.find((item) => item.key === activeFilter)?.label ?? "content"} in this course`}
           description="Choose another content filter to continue browsing the learning path."
           action={
-            <Link href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=all`}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+            <ButtonLink variant="secondary" href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=all`}>
               Show all
-            </Link>
+            </ButtonLink>
           }
         />
       ) : null}

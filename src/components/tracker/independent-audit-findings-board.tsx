@@ -1,7 +1,6 @@
 "use client";
 
 import {useEffect,useState} from "react";
-import Link from "next/link";
 import type {db10AuditFindings} from "@/db/schema/db10-audit-findings.draft";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {Drawer} from "@/components/ui/drawer";
@@ -14,6 +13,7 @@ import {IndependentFindingCopyAction} from "@/components/tracker/independent-fin
 import {auditFindingHistoryActionLabel} from "@/modules/bug-tracker/audit-finding-source-event-model";
 import { Heading } from "@/components/ui/heading";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { TextLink } from "@/components/ui/text-link";
 
 type Finding=typeof db10AuditFindings.$inferSelect;
 type FindingEvent={id:string;action:string;toValue:unknown;note:string|null;createdAt:string;fromStatus:string|null;toStatus:string|null};
@@ -126,8 +126,8 @@ export function IndependentAuditFindingsBoard({rows,view}:{
      }} aria-label={"Copy finding ID "+current.externalId}>Copy ID</Button>
      {copiedId===current.externalId?<span role="status" className="text-xs text-muted-foreground">ID copied</span>:null}
      {copiedId==="Unavailable"?<span role="alert" className="text-xs text-error">Copy ID unavailable</span>:null}
-     <Link href={"/tracker/audit-findings/"+encodeURIComponent(current.externalId)}
-      className="text-sm font-semibold text-link underline">Open full page</Link>
+     <TextLink href={"/tracker/audit-findings/"+encodeURIComponent(current.externalId)}
+      className="text-sm">Open full page</TextLink>
     </div>
     <dl className="divide-y divide-[var(--lms-canvas-border)] rounded-lg border border-[var(--lms-canvas-border)] text-sm">
      {fields.map(([label,value])=><div key={label} className="grid min-w-0 gap-2 p-3 sm:grid-cols-[135px_minmax(0,1fr)]">

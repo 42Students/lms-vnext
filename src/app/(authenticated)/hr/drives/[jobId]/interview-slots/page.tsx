@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
 import {PageBackLink} from "@/components/ui/page-back-link";
@@ -13,6 +12,7 @@ import {listHrInterviewSlots} from "@/modules/placements/hr-interview-slot-servi
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 export default async function RecruiterInterviewSlots({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
@@ -38,7 +38,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
    description={workspace.job.title+" · This schedules employer time blocks only. No learner invitation or candidate booking is created here."}/>
   <nav aria-label="Interview coordination destinations" className="flex flex-wrap gap-3">
    <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Drive rounds"/>
-   <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-sm font-medium text-primary-text md:min-h-9 hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Recruiter calendar</Link>
+   <TextLink href="/hr/calendar" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Recruiter calendar</TextLink>
   </nav>
   <Alert tone="info">
     Time blocks proposed here are visible to the placement cell. They are not confirmed interview appointments until the placement cell coordinates the schedule.
@@ -50,8 +50,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
      <div className="mt-3 min-w-0 space-y-3">
     {rounds.length===0?<Alert tone="warning">
      No pending or scheduled interview round is available for this drive.{" "}
-     <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
-      className="font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Review hiring rounds</Link>
+     <TextLink href={"/recruiter/drives/"+jobId+"/rounds/editor"}>Review hiring rounds</TextLink>
      {" "}before proposing a slot.
     </Alert>:null}
     <RecruiterInterviewSlotForm action={action} rounds={rounds.map(row=>({
@@ -81,7 +80,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
      </p>}
     </article>)}
     {!slots.items.length?<EmptyState title="No persisted employer time blocks for this drive."
-      action={<Link href="#propose-time-block" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Propose an interviewer time block</Link>} />:null}
+      action={<TextLink href="#propose-time-block" className="inline-flex min-h-11 items-center md:min-h-9">Propose an interviewer time block</TextLink>} />:null}
    </section>
   </>
  </div>;

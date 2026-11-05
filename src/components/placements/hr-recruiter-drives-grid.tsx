@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import {TpoGrid} from "@/components/tpo/grid/tpo-grid";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import { TextLink } from "@/components/ui/text-link";
 
 /** A page-scoped, employer-authorized projection of the server's drive results.
  * No client-side fetching, mutation, or broadening of the employer/college scope. */
@@ -52,24 +52,24 @@ export function HrRecruiterDrivesGrid({rows,scopeKey}:{
   storageKey={"hr-recruiter-drives:"+scopeKey}
   mobilePrimaryKeys={["drive","jobType","status","deadline"]}
   rowActions={row=><div className="flex flex-wrap items-center gap-2">
-   <Link href={row.applicantsHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">
+   <TextLink href={row.applicantsHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
     {row.sharedApplicants} shared applicants
-   </Link>
-   <Link href={row.offersHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">
+   </TextLink>
+   <TextLink href={row.offersHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
     {row.offers} offers
-   </Link>
-   {row.unansweredRequests>0?<Link href={row.requestsHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-ring">
+   </TextLink>
+   {row.unansweredRequests>0?<TextLink href={row.requestsHref} className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
     Answer {row.unansweredRequests} open {row.unansweredRequests===1?"request":"requests"}
-   </Link>:null}
-   <Link href={row.openHref} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring">
+   </TextLink>:null}
+   <TextLink href={row.openHref} className="inline-flex min-h-11 md:min-h-9 items-center">
     Open hiring flow
-   </Link>
-   <Link href={row.hireAgainHref} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring">
+   </TextLink>
+   <TextLink href={row.hireAgainHref} className="inline-flex min-h-11 md:min-h-9 items-center">
     {row.hireAgainLabel}
-   </Link>
-   <Link href={row.messagesHref} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring">
+   </TextLink>
+   <TextLink href={row.messagesHref} className="inline-flex min-h-11 md:min-h-9 items-center">
     Answer
-   </Link>
+   </TextLink>
   </div>}
  />;
 }

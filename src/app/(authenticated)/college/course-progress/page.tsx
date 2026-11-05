@@ -1,6 +1,5 @@
 import {CollegeProgressCapture} from "@/components/courses/college-progress-last-good";
 import { CollegeCourseMissingScope } from "@/components/courses/college-course-missing-scope";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
 import { CollegeLearnerProgressReport } from "@/components/courses/college-learner-progress-report";
@@ -12,6 +11,8 @@ import { collegeProgressQuerySchema } from "@/modules/courses/college-learning-d
 import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
 import { collegeProgressCsvHref } from "@/modules/courses/college-progress-export-model";
 import {CollegeCourseRetakeAction} from "@/components/college/college-course-retake-action";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -57,7 +58,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       <PageHeader title="Progress" />
       <ErrorState title="Invalid course progress filters"
         description="The search, offering status or page is invalid. No activity was loaded."
-        action={<Link href="/college/course-progress" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>} />
+        action={<TextLink href="/college/course-progress" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>} />
     </div>
   );
   const report=await getCollegeLearnerProgressReport(context,{
@@ -69,13 +70,12 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       description="See measured completion for a class and course, then focus on the students furthest behind."
       actions={
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
-        <Link href="/college/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+        <ButtonLink variant="secondary" href="/college/courses">
           Course offerings
-        </Link>
-        <Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+        </ButtonLink>
+        <ButtonLink variant="secondary" prefetch={false} download href={collegeProgressCsvHref(parsed.data)}>
           Export recorded course activity CSV
-        </Link>
+        </ButtonLink>
       </div>} />
     <Alert tone="info" role="status">
       Measured work only: videos watched to the end, assignments submitted and quizzes attempted.

@@ -4,7 +4,6 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateS
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type MappingRead = {
   terms: readonly { id: string; name: string; termNumber: number; programId: string; programName: string; departmentId: string; isActive: boolean }[];
@@ -298,8 +298,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
     <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
     <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <Heading level={2} size="lg" className="text-foreground">Assign Courses to Semester</Heading>
-    {!data.terms.length?<Alert tone="info">No programs found. <Link href={programsHref}
-      className="font-semibold text-primary-text underline">Go to Programs</Link></Alert>:null}
+    {!data.terms.length?<Alert tone="info">No programs found. <TextLink href={programsHref}>Go to Programs</TextLink></Alert>:null}
     <div className="flex flex-wrap items-center justify-between gap-2">
       <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
 

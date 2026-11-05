@@ -1,11 +1,11 @@
 "use client";
 
 import {useMemo,useState} from "react";
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {isProjectMentorOverloaded} from "@/modules/projects/mentor-overload-model";
 import { Table } from "@/components/ui/table";
+import { TextLink } from "@/components/ui/text-link";
 
 type WorkloadRow={
  mentorMembershipId:string|null;mentorName:string|null;
@@ -66,11 +66,11 @@ export function ProjectMentorWorkloadTable({
        key={row.mentorMembershipId??"UNASSIGNED"}
        className="border-b border-border last:border-b-0">
        <td className="px-3 py-2">
-        <Link href={cellLink(row)} aria-current={
+        <TextLink href={cellLink(row)} aria-current={
            (selectedMentorId??"") ===(row.mentorMembershipId??"UNASSIGNED")?"page":undefined}
-         className="inline-flex min-h-9 items-center font-semibold text-link underline">
+         className="inline-flex min-h-9 items-center">
          {row.mentorName??"Unassigned"}
-        </Link>
+        </TextLink>
        </td>
        <td className="px-3 py-2 tabular-nums">
         {row.activeWorkspaces}

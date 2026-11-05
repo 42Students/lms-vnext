@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseRoster } from "@/components/courses/faculty-course-roster";
@@ -13,6 +12,7 @@ import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function FacultyCourseStudentsPage({
   params,searchParams,
@@ -53,10 +53,9 @@ export default async function FacultyCourseStudentsPage({
       <Heading level={2} size="xl" className="leading-7 text-[var(--lms-heading)]">Class list</Heading>
       <Alert tone="error">
         <strong>We couldn&apos;t load the class roster. Check your connection and try again.</strong>
-        <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/students"}
-          className="lms-inline-link font-semibold underline underline-offset-4">
+        <TextLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/students"}>
           Retry roster
-        </Link>
+        </TextLink>
       </Alert>
     </div>;
   }

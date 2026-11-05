@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import { Tabs } from "@/components/ui/tabs";
 
@@ -21,6 +20,7 @@ import { cloudLogPollConfigured, logAlertsRuntimeEnabled } from "@/modules/log-a
 import { telegramAlertsConfigured } from "@/modules/log-alerts/telegram-notifier";
 import { knownErrorListSchema } from "@/modules/log-alerts/validation";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function LockKeyhole({className = ""}: {className?: string}) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" width={26} height={26}
@@ -64,10 +64,9 @@ export default async function TrackerLogsPage({
       <LockKeyhole className="mx-auto text-muted-foreground" />
       <PageHeader title="Logs access" description="Sign in with an authorized Super Admin account to view backend logs." />
       <p className="text-sm text-muted-foreground">Access is tied to a named account and its current permissions; the old shared password is no longer accepted.</p>
-      <Link href="/login?next=%2Ftracker%2Flogs"
-        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)]">
+      <ButtonLink variant="primary" href="/login?next=%2Ftracker%2Flogs">
         Sign in to view logs
-      </Link>
+      </ButtonLink>
     </section>;
   }
 
@@ -119,7 +118,7 @@ export default async function TrackerLogsPage({
       <div className="min-w-0 space-y-4">
         {header}
         <ErrorState title="Invalid log environment." description="Choose Production, Development or UAT."
-          action={<Link href="/tracker/logs" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Reset filter</Link>} />
+          action={<TextLink href="/tracker/logs" className="inline-flex min-h-11 items-center md:min-h-9">Reset filter</TextLink>} />
       </div>
     );
   }
@@ -171,8 +170,8 @@ export default async function TrackerLogsPage({
            <KnownErrorsWorkspace items={items} lastViewedAt={lastViewedAt} backendStartedAt={backendStartedAt}/>
            {knownPage ? <nav aria-label="Known error history pages" className="flex flex-wrap items-center gap-4 text-sm">
              <span>Showing {knownPage.total === 0 ? 0 : knownPage.offset + 1}–{knownPage.offset + items.length} of {knownPage.total} saved signatures</span>
-             {knownPage.offset > 0 ? <Link className="font-semibold text-primary-text underline" href={`/tracker/logs?environment=${environment}&knownOffset=${Math.max(0,knownPage.offset-40)}`}>Newer signatures</Link> : null}
-             {knownPage.hasMore && knownPage.nextOffset !== null ? <Link className="font-semibold text-primary-text underline" href={`/tracker/logs?environment=${environment}&knownOffset=${knownPage.nextOffset}`}>Older signatures</Link> : null}
+             {knownPage.offset > 0 ? <TextLink href={`/tracker/logs?environment=${environment}&knownOffset=${Math.max(0,knownPage.offset-40)}`}>Newer signatures</TextLink> : null}
+             {knownPage.hasMore && knownPage.nextOffset !== null ? <TextLink href={`/tracker/logs?environment=${environment}&knownOffset=${knownPage.nextOffset}`}>Older signatures</TextLink> : null}
            </nav> : null}
          </> : <Alert tone="warning">Known errors persistence is not enabled or its migration replay has not been verified. This does not mean there are no errors. Live logging above remains available independently.</Alert>}
        </section>

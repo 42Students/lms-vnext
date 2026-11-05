@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
@@ -7,6 +6,7 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {listAdminPlacementApplications} from "@/modules/admin-ui/super-admin-placement-applications-service";
 import {getSuperAdminHiringReportFilters} from "@/modules/admin-ui/super-admin-hiring-report-filters-service";
+import { TextLink } from "@/components/ui/text-link";
 const statuses=["ALL","SUBMITTED","WITHDRAWN"] as const;
 export default async function SuperAdminApplicationsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -32,11 +32,11 @@ export default async function SuperAdminApplicationsPage({searchParams}:{
    .then(value=>value).catch(()=>undefined);
  return <div className="min-w-0 space-y-4">
   <AdminScopedReadPage headerActions={<nav aria-label="Application views" className="flex min-w-0 flex-wrap items-center gap-3 text-sm">
-    <Link href="/admin/placements/applications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring">Refresh applications</Link>
-    {jobId?<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"+
-       (shortlisted?"?shortlisted=true":"")} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring">
+    <TextLink href="/admin/placements/applications" className="inline-flex min-h-11 items-center">Refresh applications</TextLink>
+    {jobId?<TextLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"+
+       (shortlisted?"?shortlisted=true":"")} className="inline-flex min-h-11 items-center">
       Open {shortlisted?"shortlisted":"job"} applications
-    </Link>:null}
+    </TextLink>:null}
     {shortlisted&&!jobId?<span role="status" className="text-muted-foreground">
       Shortlisted view requires a selected drive.
     </span>:null}

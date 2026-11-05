@@ -1,7 +1,6 @@
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import {RecruiterTodayPrototype} from "@/components/hr/recruiter-today-prototype";
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -38,6 +37,8 @@ import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 
@@ -47,7 +48,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const parsed = querySchema.safeParse({collegeId:(await searchParams).collegeId});
   if (!parsed.success) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Today" />
     <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
-      action={<Link href="/hr/home" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Choose again</Link>} /></div>;
+      action={<TextLink href="/hr/home" className="min-h-11 md:min-h-9 inline-flex items-center">Choose again</TextLink>} /></div>;
   const recruiter = context.recruiter;
   const grants = recruiter.grants;
   const selectedId = parsed.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
@@ -56,7 +57,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <PageHeader title="Today" />
       <ErrorState title="College access unavailable"
         description="This college is not part of your active recruiter access. Your invitation may have expired or been revoked. Ask the college placement cell to restore access."
-        action={<Link href="/hr/home" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Choose college</Link>} />
+        action={<TextLink href="/hr/home" className="inline-flex min-h-11 items-center md:min-h-9">Choose college</TextLink>} />
     </div>;
   }
   if (!selectedId) {
@@ -67,7 +68,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         <PageHeader title="Today" />
         <ErrorState title="We couldn't load your account"
           description="We could not verify your college access. No college details are shown until the account lookup succeeds."
-          action={<Link href="/hr/home" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>} />
+          action={<TextLink href="/hr/home" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>} />
       </div>;
     }
     const byId=new Map(access.grants.map(item=>[item.id,item]));
@@ -106,13 +107,12 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             <span>{rich.tpoContact.name}{rich.tpoContact.email?" · "+rich.tpoContact.email:""}</span>:"No TPO contact available"}</p>
         </div>:<Alert tone="warning">College details are temporarily unavailable. Missing information is not zero.</Alert>}
         {rich?.errors.length?<p role="status" className="text-xs text-muted-foreground">Could not load: {rich.errors.join(", ")}. Retry to refresh.</p>:null}
-        <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-ring">
+        <ButtonLink variant="primary" href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}>
           Open recruiter Today
-        </Link>
+        </ButtonLink>
       </article>;
     })}</section>}
-    <Link href="/hr/profile" className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-ring">Your profile</Link>
+    <TextLink href="/hr/profile" className="inline-flex min-h-11 items-center text-sm">Your profile</TextLink>
   </div>;
   }
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
@@ -125,8 +125,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <PageHeader title="Today" />
       <ErrorState title="We could not load what needs you today."
         description="Your verified employer drives could not be loaded. We have not treated missing data as zero tasks."
-        action={<Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
-          className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>} />
+        action={<TextLink href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>} />
     </div>;
   }
   // The 500-job preview is not a historical total.
@@ -199,8 +199,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <PageHeader title="Today" />
       <ErrorState title="We couldn't load your account"
         description="Your recruiter profile could not be verified. Other college records have not been substituted for your account."
-        action={<Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
-          className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>} />
+        action={<TextLink href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>} />
     </div>;
   }
   const greeting = recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length);
@@ -239,8 +239,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         ...(offersResult.status==="rejected"?["Offer actions"]:[]),
         ...(stagedResult.status==="rejected"?["Results awaiting placement-cell review"]:[])].join(", ")}.
       Missing information does not mean there is no work.
-      <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
-        className="ml-2 underline">Retry</Link>
+      <TextLink href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
+        className="ml-2">Retry</TextLink>
     </Alert>:null}
     <RecruiterTodayPrototype greeting={greeting.title} dateLabel={dateLabel}
       collegeName={collegeName}

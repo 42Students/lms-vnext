@@ -2,7 +2,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {TpoSettingsNav} from "@/components/placements/tpo-settings-nav";
@@ -16,6 +15,7 @@ import {getPublicPlacementStatistics} from "@/modules/placements/public-page/rea
 import {readOptionalPublicPlacementData} from "@/modules/placements/public-page/optional-read-model";
 import {publicPlacementSettingState} from "@/modules/placements/public-page/publication-view-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 
 export default async function PublicPlacementSettingsPage({
@@ -51,7 +51,7 @@ export default async function PublicPlacementSettingsPage({
    {value.ready&&!view.canEnable&&!view.enabled?<Alert tone="warning">
      Publication is off until at least five active learners have chosen placements, consented to public reporting, and joined an invited batch.
      This is an intentional vNext privacy gate before publishing; the old LMS permitted publication while suppressing each small metric separately.
-     <Link href="/tpo/batches" className="ml-1 font-semibold text-link underline underline-offset-2">Review batches and invitations</Link>.
+     <TextLink href="/tpo/batches" className="ml-1">Review batches and invitations</TextLink>.
     </Alert>:null}
    <TpoPublicPlacementContentEditor initial={content}/>
    <section aria-label="Numbers to show preview" className="mt-5 min-w-0 space-y-3 border-t border-border pt-4">
@@ -74,9 +74,9 @@ export default async function PublicPlacementSettingsPage({
     </div>
    </section>
    </section>
-   <Link href="/placements" className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-[13px] sm:w-auto sm:justify-start font-semibold text-[var(--lms-link-text)] underline md:min-h-9">
+   <TextLink href="/placements" className="mt-4 inline-flex min-h-11 w-full items-center justify-center text-[13px] sm:w-auto sm:justify-start md:min-h-9">
      Open public placements page
-   </Link>
+   </TextLink>
   </section>
  </div>;
 }

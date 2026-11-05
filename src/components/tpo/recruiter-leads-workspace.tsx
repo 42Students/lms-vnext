@@ -4,7 +4,6 @@ import { Tabs } from "@/components/ui/tabs";
 import { FilterChip } from "@/components/ui/filter-chip";
 import { Dropdown } from "@/components/ui/dropdown";
 
-import Link from "next/link";
 import Image from "next/image";
 import {filterEngageRoster,type EngageRosterFilters} from "@/modules/placements/tpo-engage-filter-model";
 import {recruiterTableExportCsv,recruiterTableExportGrid,recruiterTableExportTsv} from "@/modules/placements/tpo-recruiter-export-model";
@@ -49,6 +48,8 @@ import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Lead = {
   id: string;
@@ -799,8 +800,8 @@ export function RecruiterLeadsWorkspace({
               {!rows.some(row=>dueByEndOfTodayIst(row.nextFollowupAt)||row.chips?.includes("NO_NEXT_STEP")||row.chips?.includes("QUIET"))&&needCounts.unassigned===0?
                 <span className="text-sm text-muted-foreground">Nothing right now.</span>:null}
             </div>
-            <Link className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9"
-              href="/tpo/settings/recruiters">{rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access</Link>
+            <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9"
+              href="/tpo/settings/recruiters">{rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access</TextLink>
             </div>
           </section>
   );
@@ -848,9 +849,9 @@ export function RecruiterLeadsWorkspace({
             </Button>
             <Dropdown mobileSheet align="end" label="More recruiter actions" trigger="More ···">
               <nav aria-label="Recruiter workspace links" className="flex min-w-48 flex-col gap-1">
-                <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>
-                <Link href="/tpo/recruiters/campaigns" className={buttonStyle}>Campaign history</Link>
-                <Link href="/tpo/follow-ups" className={buttonStyle}>Follow-ups Due</Link>
+                <TextLink variant="bare" href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</TextLink>
+                <TextLink variant="bare" href="/tpo/recruiters/campaigns" className={buttonStyle}>Campaign history</TextLink>
+                <TextLink variant="bare" href="/tpo/follow-ups" className={buttonStyle}>Follow-ups Due</TextLink>
               </nav>
             </Dropdown>
           </div>
@@ -1138,9 +1139,9 @@ export function RecruiterLeadsWorkspace({
                         <option value="NOT_INTERESTED">Not interested</option>
                       </Select>
                       {company.people.length?company.people.map(person=>
-                        <Link key={person.id}
-                          className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-ring"
-                          href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>
+                        <TextLink key={person.id}
+                          className="inline-flex min-h-11 items-center break-words"
+                          href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</TextLink>
                       ):<Button variant="secondary" type="button" className="min-h-11"
                         onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</Button>}
                     </div>}
@@ -1277,12 +1278,12 @@ export function RecruiterLeadsWorkspace({
                         onDragStart={event=>{if(lead.manualStage==="NEW"){event.dataTransfer.setData("text/plain",lead.id);event.dataTransfer.effectAllowed="move";setDraggedBoardId(lead.id);}}}
                         onDragEnd={()=>setDraggedBoardId(null)}
                         title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
-                        <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
-                          className="block text-link lms-inline-link underline-offset-2 hover:underline focus-ring">
+                        <TextLink href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
+                          className="block">
                         <span className="block font-medium">{lead.name||"Unnamed contact"}</span>
                          {lead.designation?<span className="block text-xs text-muted-foreground">{lead.designation}</span>:null}
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>
-                        </Link>
+                        </TextLink>
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                            {lead.nextFollowupAt?<span className="text-xs text-muted-foreground">
                              Follow-up {recruiterDate(lead.nextFollowupAt)}
@@ -1300,8 +1301,8 @@ export function RecruiterLeadsWorkspace({
                            <div role="group" aria-label={"Update "+(lead.name||"recruiter")} className="mt-2 min-w-0 space-y-2 break-words [overflow-wrap:anywhere]">
                              <RecruiterInlineStage lead={lead} onUpdated={()=>void load()} />
                              <RecruiterInlineOwner lead={lead} onUpdated={()=>void load()} />
-                             <Link className="inline-flex min-h-11 max-w-full items-center rounded-[var(--lms-control-radius)] px-3 text-[var(--lms-teal-deep)] underline hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-ring"
-                               href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
+                             <ButtonLink variant="secondary" className="max-w-full"
+                               href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</ButtonLink>
                              <Button variant="ghost" type="button" className="min-h-11 w-full justify-center md:min-h-9"
                                onClick={event=>{
                                  const root=event.currentTarget.closest("details");
@@ -1342,7 +1343,7 @@ export function RecruiterLeadsWorkspace({
             <Button variant="secondary" type="button" className={buttonStyle} disabled={checking || !(form.email || form.phone)}
               onClick={() => void checkContact()}>{checking ? "Checking…" : "Check for existing contact"}</Button>
             {duplicate ? <p role="alert" className="text-sm text-foreground leading-[22px]">
-              Contact already exists: <Link className="underline max-md:inline-flex max-md:min-h-11 max-md:items-center md:min-h-[var(--lms-control-height)]" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
+              Contact already exists: <TextLink className="max-md:inline-flex max-md:min-h-11 max-md:items-center md:min-h-[var(--lms-control-height)]" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</TextLink>.
             </p> : null}
             <Label className="block min-w-0">Company *<Input className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
               value={form.companyName} onChange={e => field("companyName", e.target.value)}

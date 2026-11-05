@@ -3,7 +3,6 @@ import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -15,6 +14,7 @@ import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorPortfolioActivityExportHref} from "@/modules/projects/mentor-portfolio-activity-export-model";
 import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityImportanceLabel } from "@/modules/projects/mentor-portfolio-model";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Params = { search?:string|string[];assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 
@@ -29,7 +29,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   }));
   if (!parsed.success) return <section role="alert" className="min-w-0 max-w-full space-y-4">
     <PageHeader title={"Invalid activity filters"} />
-    <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-link underline underline-offset-4 md:min-h-9 focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <TextLink href="/mentor/activity" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
   </section>;
   const data = await getMentorPortfolioActivity(context, parsed.data);
   const hasAdvancedFilters =
@@ -46,7 +46,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Project activity"
       description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
-      actions={<Link data-unskin="" href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">Projects</Link>} />
+      actions={<TextLink data-unskin="" href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Projects</TextLink>} />
     {!data.enabled ? <div role="status" className="min-w-0 border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
@@ -111,16 +111,16 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
           </div>
         </Disclosure>
         {hasActiveFilters ? <div className="flex min-w-0 justify-start">
-          <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring lms-inline-link">Clear</Link>
+          <TextLink href="/mentor/activity" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear</TextLink>
         </div> : null}
       </form>
       <div className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-3 md:flex-row md:items-center md:justify-between">
         <p className="m-0 text-sm text-body">{data.total.toLocaleString("en-IN")} recorded project event{data.total === 1 ? "" : "s"}</p>
         <div className="flex min-w-0 flex-col items-start gap-1 md:items-end">
-          <Link data-unskin="" href={mentorPortfolioActivityExportHref(data.query)} download
-            className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+          <TextLink data-unskin="" href={mentorPortfolioActivityExportHref(data.query)} download
+            className="inline-flex min-h-11 max-w-full items-center break-words text-sm md:min-h-9">
             Export filtered activity CSV (max 200)
-          </Link>
+          </TextLink>
           {data.total>200?<span role="status" className="text-xs text-body">
             Export omits {data.total-200} matching records.
           </span>:null}
@@ -128,10 +128,10 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
       </div>
       {data.items.length === 0 ? <EmptyState title="No recorded activity"
         description="No persisted events match your assigned projects. Missing events do not imply no work occurred."
-        action={<Link href={hasActiveFilters ? "/mentor/activity" : "/mentor/projects"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+        action={<TextLink href={hasActiveFilters ? "/mentor/activity" : "/mentor/projects"}
+          className="inline-flex min-h-11 items-center md:min-h-9">
           {hasActiveFilters ? "Clear" : "Projects"}
-        </Link>} />
+        </TextLink>} />
         : <ol className="divide-y divide-[var(--lms-canvas-border)] border-b border-[var(--lms-canvas-border)]">{data.items.map(event =>
           <li key={event.id} className="py-[var(--lms-space-3)]">
             <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1">
@@ -139,10 +139,10 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
               <span className="shrink-0 text-xs text-muted-foreground">{mentorActivityImportanceLabel(event.importance)}</span>
             </div>
             <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1">
-              <Link href={`/mentor/projects/${encodeURIComponent(event.projectId)}?tab=activity`}
-                className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline-offset-4 hover:underline md:min-h-9 focus-ring">
+              <TextLink href={`/mentor/projects/${encodeURIComponent(event.projectId)}?tab=activity`}
+                className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9">
                 {event.projectTitle} →
-              </Link>
+              </TextLink>
               <time dateTime={event.occurredAt.toISOString()} className="text-xs text-muted-foreground">
                 {new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(event.occurredAt)} IST
               </time>

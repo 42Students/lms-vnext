@@ -6,7 +6,6 @@ import { BoardColumn } from "@/components/ui/board-column";
 import styles from "./legacy-project-board.module.css";
 import {useMemo,useState} from "react";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter,useSearchParams} from "next/navigation";
@@ -18,6 +17,7 @@ import {nextMentorAllocatableSprint} from
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
  updatedAt:Date;status:string;priority:string;estimatePoints:number|null;
  sequence?:number;deletedAt?:Date|null};
@@ -104,8 +104,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
  return <section className="space-y-5">
   {dialog}
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <div><Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
-    className="text-sm font-semibold text-link underline focus-visible:underline">Back to project</Link>
+   <div><TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)}
+    className="text-sm">Back to project</TextLink>
     <PageHeader title="Task Allocation" />
     <p className="mt-1 text-sm text-body leading-[22px]">{unassigned} needs assigning · {filtered.length} matching tasks</p>
     <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Plan the next sprint first; project-wide allocation is under Advanced.</p>

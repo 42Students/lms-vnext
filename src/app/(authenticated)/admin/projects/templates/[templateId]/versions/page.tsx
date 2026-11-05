@@ -1,10 +1,10 @@
-import Link from "next/link";
 import {z} from "zod";
 import {notFound} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {Banner} from "@/components/ui/banner";
 import { SuperAdminTemplateSubviewPage } from "@/components/projects/super-admin-template-subview-page";
 import {canonicalTemplateVersionHistoryPage} from "@/modules/projects/template-version-history-model";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminTemplateVersionsPage({
   params,
@@ -23,9 +23,9 @@ export default async function SuperAdminTemplateVersionsPage({
      This legacy template link uses a numeric ID. Select the corresponding
      template from the current college; version history requires its UUID.
    </Banner>
-   <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-link underline">
+   <TextLink href="/admin/projects/templates" className="inline-flex min-h-11 items-center">
      Browse templates
-   </Link>
+   </TextLink>
   </section>;
   if(!z.uuid().safeParse(templateId).success)notFound();
   const query=await searchParams;
@@ -33,7 +33,7 @@ export default async function SuperAdminTemplateVersionsPage({
   return (
     <div className="min-w-0 space-y-3">
      <nav aria-label="Template history breadcrumbs" className="text-sm">
-      <Link href="/admin/projects/templates" className="font-semibold text-link underline">Project templates</Link>
+      <TextLink href="/admin/projects/templates">Project templates</TextLink>
       <span aria-hidden="true"> / </span><span aria-current="page">Version history</span>
      </nav>
     <SuperAdminTemplateSubviewPage

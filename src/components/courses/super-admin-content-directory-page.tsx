@@ -1,5 +1,4 @@
 import { Banner } from "@/components/ui/banner";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -26,6 +25,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 function publicHttpsHref(value:string|null){
  return safePublicCourseContentUrl(value);
@@ -60,7 +60,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  if(!parsed.success||invalidLessonQuery)return <div className="min-w-0 space-y-4">
   <PageHeader title={title}/>
   <ErrorState title="Invalid content filters" description="Review search, status and page."
-   action={<Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Clear filters</Link>}/>
+   action={<TextLink href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))return <div className="min-w-0 space-y-4">
@@ -75,10 +75,10 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   {kind==="VIDEOS"?<section aria-label="Global video policy" className="space-y-2 border-t border-border pt-4">
    <Heading level={2} size="base">Video watched threshold</Heading>
    <Banner tone="info">The video "watched" threshold is platform-wide (default 90%, valid range 1–100%). It can be edited only in GLOBAL platform settings, without a selected college.</Banner>
-   <Link href="/admin/settings?q=watchedThresholdPercent"
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+   <TextLink href="/admin/settings?q=watchedThresholdPercent"
+    className="inline-flex min-h-11 items-center text-sm md:min-h-9">
     Edit GLOBAL video policy in Tenant Settings →
-   </Link>
+   </TextLink>
   </section>:null}
  </div>;
  // Directory reads must remain available even when an independent
@@ -93,8 +93,8 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <PageHeader title={title}/>
   <ErrorState title="Content directory unavailable"
    description="The selected college content could not be loaded. Your filters are unchanged."
-   action={<Link href={adminContentHref(kind,parsed.data)}
-    className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-ring md:min-h-9">Retry loading content</Link>}/>
+   action={<TextLink href={adminContentHref(kind,parsed.data)}
+    className="inline-flex min-h-11 items-center md:min-h-9">Retry loading content</TextLink>}/>
  </div>;
  const data=dataResult.value;
  const authoringRows=lessonsResult.status==="fulfilled"?lessonsResult.value:[];
@@ -121,12 +121,12 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
       {label:"Resources",href:"/admin/resources"},
       {label:"Live classes",href:"/admin/live-classes"},
       {label:"Class syllabus order",href:"/admin/content-order"},
-    ].map(tab=><Link href={tab.href} key={tab.label}
+    ].map(tab=><TextLink variant="bare" href={tab.href} key={tab.label}
       aria-current={tab.label===title?"page":undefined}
       className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold md:min-h-9 "+
         (tab.label===title?"bg-primary-subtle text-primary-text":"text-body hover:bg-primary-subtle")}>
       {tab.label}
-    </Link>)}
+    </TextLink>)}
   </nav>
   {kind==="VIDEOS"?<section aria-label="Video policy"
     className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
@@ -136,8 +136,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     <Banner tone="info">
       The video &quot;watched&quot; threshold is platform-wide. Clear the selected college
       before editing its GLOBAL setting.{" "}
-      <Link href="/admin/settings?q=watchedThresholdPercent"
-        className="font-semibold text-primary-text underline">Open Tenant Settings</Link>.
+      <TextLink href="/admin/settings?q=watchedThresholdPercent">Open Tenant Settings</TextLink>.
     </Banner>
   </section>:null}
   <div className="grid min-w-0 items-start gap-6 lg:grid-cols-2">
@@ -164,30 +163,25 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   {lessonsResult.status==="fulfilled"
    ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} sections={sections} allowVideoUpload/>
    :<Banner tone="warning">Course and lesson authoring choices could not be loaded.
-    Existing content remains available. <Link href={adminContentHref(kind,parsed.data)}
-      className="font-semibold underline">Retry loading course and lesson choices</Link>
+    Existing content remains available. <TextLink href={adminContentHref(kind,parsed.data)}>Retry loading course and lesson choices</TextLink>
    </Banner>}
   {lessonsResult.status==="fulfilled"?
     <nav aria-label="Authoring lesson pages" className="mt-2 flex items-center justify-between gap-3 text-sm">
-      {lessonPage>1?<Link href={authoringPageHref(lessonPage-1)}
-        className="font-semibold text-primary-text underline">Previous lessons</Link>:<span/>}
+      {lessonPage>1?<TextLink href={authoringPageHref(lessonPage-1)}>Previous lessons</TextLink>:<span/>}
       <span>Lesson page {lessonPage} · Up to 50 lessons per page</span>
-      {hasNextLessons?<Link href={authoringPageHref(lessonPage+1)}
-        className="font-semibold text-primary-text underline">Next lessons</Link>:<span/>}
+      {hasNextLessons?<TextLink href={authoringPageHref(lessonPage+1)}>Next lessons</TextLink>:<span/>}
     </nav>:null}
   {sectionsResult.status==="rejected"?<Banner tone="warning">Classes could not be loaded.
-   Your selected filters still apply. <Link href={adminContentHref(kind,parsed.data)}
-     className="font-semibold underline">Retry loading classes</Link>
+   Your selected filters still apply. <TextLink href={adminContentHref(kind,parsed.data)}>Retry loading classes</TextLink>
   </Banner>:null}
    </section>
    <section aria-label="Existing Content"
     className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
     <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
       <Heading level={2} size="lg" className="text-foreground">Existing Content</Heading>
-      <Link href={adminContentHref(kind,data.query)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+      <ButtonLink variant="secondary" href={adminContentHref(kind,data.query)}>
         ↻ Refresh
-      </Link>
+      </ButtonLink>
     </div>
   <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
    <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
@@ -233,7 +227,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      </Label>
     </div>
    </Disclosure>
-   <Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Clear filters</Link>
+   <TextLink href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear filters</TextLink>
   </form>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
    <p className="m-0 break-words text-sm text-muted-foreground">
@@ -241,8 +235,8 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
       {" "}of {data.total} · Page {data.query.page} of {data.totalPages}
     </p>
    <div className="flex flex-wrap items-center gap-2" aria-label="Existing Content toolbar">
-    <Link href="/admin/content-order" className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Arrange class content</Link>
-    <Link href={adminContentHref(kind,data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Refresh</Link>
+    <ButtonLink variant="secondary" href="/admin/content-order">Arrange class content</ButtonLink>
+    <ButtonLink variant="secondary" href={adminContentHref(kind,data.query)}>Refresh</ButtonLink>
     <ButtonLink variant="secondary" href={"/api/courses/admin-content-export?"+new URLSearchParams({
      kind,q:data.query.q,status:data.query.status,
      ...(data.query.offeringId?{offeringId:data.query.offeringId}:{}),
@@ -315,23 +309,22 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?
       <div className="min-w-0 space-y-1">
        <SuperAdminContentActions item={item}/>
-       {sections.filter(section=>section.offeringId===item.offeringId).slice(0,3).map(section=><Link key={section.id}
+       {sections.filter(section=>section.offeringId===item.offeringId).slice(0,3).map(section=><TextLink key={section.id}
         href={"/admin/content-order?offeringId="+encodeURIComponent(item.offeringId)+"&deliveryId="+encodeURIComponent(section.id)}
-        className="block min-h-9 py-2 text-xs font-semibold text-primary-text underline"
+        className="block min-h-9 py-2 text-xs"
         aria-label={"Arrange "+item.lessonName+" content for "+section.sectionName}>
         Arrange {section.sectionName} syllabus
-       </Link>)}
-       <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-        className="inline-flex min-h-9 items-center text-xs text-primary-text underline">
+       </TextLink>)}
+       <TextLink href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+        className="inline-flex min-h-9 items-center text-xs">
         Open course
-       </Link>
+       </TextLink>
       </div>:<p className="text-xs text-muted-foreground">Unavailable on inactive offerings or lessons.</p>}
     </div>
    </article>)}
   </div>:<div className="border border-border p-5 text-sm text-muted-foreground" role="status">
    {data.query.lessonId?"No content found.":"Select a course and lesson to view content."}{" "}
-   <Link href={adminContentHref(kind,{})}
-     className="font-semibold text-primary-text underline">Clear filters</Link>
+   <TextLink href={adminContentHref(kind,{})}>Clear filters</TextLink>
   </div>}
   <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminContentHref(kind,{...data.query,page})}/>

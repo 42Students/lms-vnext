@@ -2,7 +2,6 @@ import { Input } from "@/components/ui/input";
 import {TpoReportPresentation} from "./tpo-report-presentation";
 import {TpoReportSavedFilters} from "./tpo-report-saved-filters";
 import {ReportInteractiveTable} from "./report-interactive-table";
-import Link from "next/link";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { SummaryStrip } from "@/components/ui/summary-strip";
@@ -313,21 +312,19 @@ export function ReportNavigation({
     {compactNavigation ? <Disclosure title="Other reports" className="min-w-0 print:hidden" contentClassName="pt-[var(--lms-space-2)]">
       <nav aria-label="Reports navigation" className="flex flex-wrap gap-2 print:hidden">
       {links.map((link) => (
-        <Link
+        <ButtonLink variant="secondary"
           key={link.href}
           href={reportHref(link.href, workspace)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:underline"
         >
           {link.label}
-        </Link>
+        </ButtonLink>
       ))}
       </nav>
     </Disclosure> : <nav aria-label="Reports navigation" className="flex flex-wrap gap-2 print:hidden">
       {links.map((link) => (
-        <Link key={link.href} href={reportHref(link.href, workspace)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:underline">
+        <ButtonLink variant="secondary" key={link.href} href={reportHref(link.href, workspace)}>
           {link.label}
-        </Link>
+        </ButtonLink>
       ))}
     </nav>}
    </>);

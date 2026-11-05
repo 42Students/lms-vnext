@@ -1,8 +1,9 @@
-import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type RecruiterJobs = Awaited<
   ReturnType<typeof listOwnRecruiterPlacementJobs>
@@ -60,7 +61,7 @@ export function RecruiterPlacementPortfolio({
       <EmptyState
         title="No employer opportunities yet"
         description="Published or closed opportunities appear here only after a college grants your employer account access to that exact relationship."
-        action={<Link href="/hr/drives/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Request a drive</Link>}
+        action={<TextLink href="/hr/drives/new" className="inline-flex min-h-11 items-center md:min-h-9">Request a drive</TextLink>}
       />
     );
   }
@@ -97,11 +98,11 @@ export function RecruiterPlacementPortfolio({
                 </span>
               </div>
               <Heading level={2} size="base" className="mt-2 break-words text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">
-                <Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+
+                <TextLink href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+
                   (returnTo?"?returnTo="+encodeURIComponent(returnTo):"")}
-                  className="rounded-[var(--lms-control-radius)] after:absolute after:inset-0 hover:text-primary-text focus-ring">
+                  className="rounded-[var(--lms-control-radius)] after:absolute after:inset-0">
                   {item.job.title}
-                </Link>
+                </TextLink>
               </Heading>
               <p className="mt-1 break-words text-sm text-body leading-[22px]">
                 {item.companyName} ·{" "}
@@ -127,47 +128,46 @@ export function RecruiterPlacementPortfolio({
               </p>
               {counts?<nav aria-label={"Drive metrics for "+item.job.title}
                 className="relative z-(--lms-z-raised) mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                <Link
-                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring"
+                <TextLink
+                  className="inline-flex min-h-11 items-center"
                   href={"/recruiter/drives/"+item.job.id+"?tab=applicants"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
                   {counts?.[item.job.id]?.sharedApplicants==null?"Applicants unavailable":`${counts?.[item.job.id]?.sharedApplicants} shared applicants`}
-                </Link>
-                {(counts?.[item.job.id]?.offers??0)>0?<Link
-                  className="font-semibold text-primary-text underline focus-ring max-md:inline-flex max-md:min-h-11 max-md:items-center"
+                </TextLink>
+                {(counts?.[item.job.id]?.offers??0)>0?<TextLink
+                  className="max-md:inline-flex max-md:min-h-11 max-md:items-center"
                   href={"/recruiter/drives/"+item.job.id+"?tab=offers"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
                   {counts?.[item.job.id]?.offers??0} offers
-                </Link>:null}
+                </TextLink>:null}
               </nav>:null}
-              {(unansweredRequests[item.job.id]??0)>0?<Link
+              {(unansweredRequests[item.job.id]??0)>0?<ButtonLink variant="secondary"
                 href={"/recruiter/drives/"+item.job.id+"?tab=requests"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}
-                className="relative z-(--lms-z-raised) mt-2 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-warning bg-[var(--lms-warning-subtle)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-ring">
+                className="relative z-(--lms-z-raised) mt-2">
                 The placement cell asked about {unansweredRequests[item.job.id]===1?"1 thing":`${unansweredRequests[item.job.id]} things`}
-              </Link>:null}
+              </ButtonLink>:null}
               {(unansweredRequests[item.job.id]??0)>0||counts?<p className="mt-2 text-sm text-body leading-[22px]">
                 Next: {recruiterDriveNextStep(item.job.status,
                   unansweredRequests[item.job.id]??0,counts?.[item.job.id]?.sharedApplicants??0,
                   item.job.applicationDeadline,now)}
               </p>:null}
             </div>
-            <Link
+            <ButtonLink variant="secondary"
               href={"/recruiter/drives/" + item.job.id +
                 (returnTo ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
-              className="relative z-(--lms-z-raised) inline-flex min-h-11 w-full shrink-0 items-center justify-center md:min-h-9 md:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-ring"
+              className="relative z-(--lms-z-raised) w-full shrink-0 md:w-auto"
             >
               Open
-            </Link>
+            </ButtonLink>
           </div>
           <nav aria-label={"Actions for "+item.job.title}
             className="relative z-(--lms-z-raised) mt-2 flex min-w-0 flex-wrap items-center gap-x-5 gap-y-1">
-            {["CLOSED","REJECTED","CANCELLED"].includes(item.job.status)?<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
-              className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] focus-ring">
+            {["CLOSED","REJECTED","CANCELLED"].includes(item.job.status)?<TextLink href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
+              className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
               {item.job.status==="CLOSED"?"Hire again":"Hire again with changes"}
-            </Link>:null}
-            {(unansweredRequests[item.job.id]??0)>0?<Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=requests"+
-              (returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring">
+            </TextLink>:null}
+            {(unansweredRequests[item.job.id]??0)>0?<ButtonLink variant="secondary" href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=requests"+
+              (returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
               Answer
-            </Link>:null}
+            </ButtonLink>:null}
           </nav>
         </article>
       ))}

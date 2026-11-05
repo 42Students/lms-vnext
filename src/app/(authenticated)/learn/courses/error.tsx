@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
 import {usePathname} from "next/navigation";
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function LearnerCoursesError({
   reset,
@@ -23,12 +23,12 @@ export default function LearnerCoursesError({
       </Alert>
       <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>{isList?"Try again":"Retry"}</Button>
-        {!isList ? <Link
+        {!isList ? <ButtonLink variant="secondary"
           href="/learn/courses"
-          className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring"
+          className="w-full sm:w-auto"
         >
           {LEARNER_BACK_TO_COURSES}
-        </Link> : null}
+        </ButtonLink> : null}
       </div>
     </div>
   );

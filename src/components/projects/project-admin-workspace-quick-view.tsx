@@ -1,12 +1,12 @@
 "use client";
 
 import {useEffect,useState} from "react";
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Summary = {
  id:string;title:string;summary:string|null;status:string;
@@ -82,9 +82,9 @@ export function ProjectAdminWorkspaceQuickView({item,href}:{
    className="!left-auto !right-0 !top-0 !h-[100dvh] !max-h-[100dvh] !w-[min(520px,100vw)] !max-w-[520px] !translate-x-0 !translate-y-0 !rounded-none"
    footer={<div className="flex flex-wrap gap-2">
     <Button variant="secondary" onClick={()=>setOpen(false)}>Close</Button>
-    <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] md:min-h-9">
+    <ButtonLink variant="primary" href={href}>
       Open full workspace
-    </Link>
+    </ButtonLink>
    </div>}>
    <div className="min-w-0 space-y-4">
     <div>

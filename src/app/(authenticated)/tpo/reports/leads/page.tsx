@@ -9,7 +9,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
-import Link from "next/link";
 import {filterCompanyEngagement,companyEngagementHref} from "@/modules/placements/tpo-company-engagement-filter-model";
 import {getTpoRecordedRanDrives} from "@/modules/placements/tpo-engagement-ran-drives-service";
 import {joinTpoCompanyEngagementWithPlacement} from "@/modules/placements/tpo-company-engagement-model";
@@ -30,6 +29,7 @@ import { getPlacementReportWorkspace } from "@/modules/placements/report-service
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -123,8 +123,8 @@ export default async function TpoLeadsReportPage({
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <ReportNavigation workspace={workspace} />
       <Banner tone="info" action={<div className="flex min-w-0 flex-wrap items-center gap-2">
-        <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">Open Engage →</Link>
-        <Link href="/tpo/companies" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">Company memory →</Link>
+        <ButtonLink variant="secondary" href="/tpo/recruiters">Open Engage →</ButtonLink>
+        <ButtonLink variant="secondary" href="/tpo/companies">Company memory →</ButtonLink>
       </div>}>
         This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.
       </Banner>
@@ -175,8 +175,8 @@ export default async function TpoLeadsReportPage({
          </Select>
         </Label>
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
-        {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
-         className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Clear company</Link>:null}
+        {selectedCompanyId?<TextLink href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
+         className="inline-flex min-h-11 md:min-h-9 items-center text-sm">Clear company</TextLink>:null}
        </form>
        <p className="text-xs text-muted-foreground">The company filter applies to this company table and its CSV only. Headline recruiter lead metrics, stage summaries and acquisition source totals remain college-wide.</p>
        {!companyFilter.valid?<Banner tone="error">This company is not in the authorized college report. Clear the company filter.</Banner>:null}

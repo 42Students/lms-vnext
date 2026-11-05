@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState,type KeyboardEvent} from "react";
 import {Dialog} from "@/components/ui/dialog";
@@ -11,6 +10,7 @@ import {isTpoFindShortcut} from "@/modules/placements/tpo-find-shortcut-model";
 import {safeTpoFindResult, type TpoFindResult} from "@/components/shell/topbar/tpo-find-model";
 import {Input} from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Match=TpoFindResult;
 
@@ -104,8 +104,8 @@ export function TpoFindShortcut(){
    </PopoverListbox>
    <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
     <span className="min-w-0 break-words">↑ ↓ Navigate · Enter Open · Esc Close</span>
-    <Link href={"/tpo/find"+(query.trim()?"?q="+encodeURIComponent(query.trim()):"")}
-      className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline focus-ring sm:w-auto md:min-h-9" onClick={()=>setOpen(false)}>Open full search</Link>
+    <TextLink href={"/tpo/find"+(query.trim()?"?q="+encodeURIComponent(query.trim()):"")}
+      className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9" onClick={()=>setOpen(false)}>Open full search</TextLink>
    </div>
   </Dialog>
  </>;

@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import { Disclosure } from "@/components/ui/disclosure";
 import {ErrorState} from "@/components/ui/error-state";
@@ -17,6 +16,7 @@ import {
 import { getFacultyAttendanceWorkspace } from "@/modules/attendance/faculty-service";
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import { resolveFacultyAttendanceDeepLink } from "@/modules/attendance/faculty-attendance-edit-state";
+import { TextLink } from "@/components/ui/text-link";
 
 function AttendanceDetailLoading() {
  return <section className="flex min-h-48 items-center justify-center" aria-busy="true" aria-label="Loading attendance">
@@ -70,10 +70,10 @@ async function FacultyCourseAttendanceContent({
     return <div className="min-w-0 space-y-4">
       <ErrorState title="Class schedules unavailable"
         description="Could not load class schedules or the student roster. Your existing marks have not been changed."
-        action={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail"}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
-      <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/home"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">← Course workspace</Link>
+        action={<TextLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail"}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
+      <TextLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/home"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">← Course workspace</TextLink>
     </div>;
   }
 
@@ -123,17 +123,17 @@ async function FacultyCourseAttendanceContent({
           }))}/>:null}
       <p className="text-sm text-body">See your attendance record and class-wise status in one place.</p>
       <nav aria-label="Course attendance shortcuts" className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
-      <Link
+      <TextLink
         href={`/teacher/courses/${deliveryId}/home`}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] focus-ring"
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-sm md:min-h-[var(--lms-control-height)]"
       >
         ← Course workspace
-      </Link>
+      </TextLink>
 
-      <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/session-coverage"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)] focus-ring">
+      <TextLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/session-coverage"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-[var(--lms-control-height)]">
         Review session coverage →
-      </Link>
+      </TextLink>
       </nav>
       <FacultyPrototypeAttendance workspace={workspace} deliveryId={deliveryId} selectedSessionId={initialSessionId}/>
       <Disclosure title="Mark attendance and advanced session reports" defaultOpen={initialSessionId!==null||query.advanced==="1"} id="faculty-attendance-editor">

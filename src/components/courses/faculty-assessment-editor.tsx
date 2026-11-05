@@ -1,6 +1,5 @@
 "use client";
 import { Banner } from "@/components/ui/banner";
-import Link from "next/link";
 import {facultyCourseTabHref} from "@/modules/courses/faculty-course-navigation";
 import {ASSIGNMENT_METHOD_LABELS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 
@@ -22,6 +21,7 @@ import { courseApiError } from "./learner-course-api";
 import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch, facultyAssessmentCanArchive, facultyAssessmentEditReceiptMatches, facultyAssessmentArchiveReceiptMatches } from "@/modules/courses/faculty-assessment-editor-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Kind = "ASSIGNMENT" | "QUIZ";
 
@@ -402,8 +402,7 @@ export function FacultyAssessmentEditor({
            </fieldset>:null}
           {assessment.kind==="ASSIGNMENT"&&assessment.deliveryId?
            <p className="text-sm leading-6">Files and lesson resources are managed separately in the
-            {" "}<Link href={facultyCourseTabHref(assessment.deliveryId,"blueprint")}
-             className="font-semibold text-primary-text underline">Course blueprint</Link>.
+            {" "}<TextLink href={facultyCourseTabHref(assessment.deliveryId,"blueprint")}>Course blueprint</TextLink>.
             Saved submissions remain protected during resource edits.</p>:null}
           {error ? <Alert tone="error">{error}</Alert> : null}
         </form>

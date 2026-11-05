@@ -1,6 +1,5 @@
 import {CollegeDriveApplicationsSizeControl} from "@/components/placements/college-drive-applications-size-control";
 import {LastKnownGoodApplications} from "@/components/placements/last-known-good-applications";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getPlacementJobLegacyDetail } from "@/modules/placements/job-service";
@@ -24,6 +23,8 @@ import { SuperAdminDriveApplicationsCsvControl } from "@/components/admin/super-
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function adminHref(...args: Parameters<typeof driveApplicationsHref>) {
  return driveApplicationsHref(...args).replace("/college/placements/","/admin/placements/");
@@ -38,7 +39,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <Banner tone="warning" role="alert">
       <strong>Select a college to continue.</strong> Applications is college-scoped.
       Pick an Organization + College in the header above.{" "}
-      <Link href="/admin/placements" className="font-semibold underline">Go to Superadmin</Link>
+      <TextLink href="/admin/placements">Go to Superadmin</TextLink>
     </Banner>
   </div>;
   requireSuperAdminSelectedCollege(context,"placements.manage");
@@ -66,7 +67,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
    return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications"/>
     <ErrorState title="Invalid job ID" description="Choose a valid drive from your selected college."
-     action={<Link href="/admin/placements/drives" className="font-semibold text-primary-text underline">Back to drives</Link>}/>
+     action={<TextLink href="/admin/placements/drives">Back to drives</TextLink>}/>
    </div>;
   // The legacy initial Super Admin Applications view opens Assessment.
   // Explicit scoped searches/bookmarks remain unchanged.
@@ -79,8 +80,8 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <PageHeader title="Applications" description="Review candidates in this drive and manage hiring stages."/>
     <ErrorState title="Invalid applicant filters"
       description="The requested search, status, screening or page is invalid."
-      action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}/>
+      action={<TextLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto">Clear filters</TextLink>}/>
   </div>;
   const [pipelineResult,filterResult,jobResult]=await Promise.allSettled([
     getCollegeApplicationPipeline(context,jobId,query),
@@ -97,8 +98,8 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <ErrorState title="Failed to load data"
      description="Failed to load job and applications. Please try again. The selected college's application rows could not be verified."
      action={<div className="flex flex-wrap gap-3">
-      <Link href={retryHref} className="font-semibold text-primary-text underline">Retry applications</Link>
-      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} className="font-semibold text-primary-text underline">Drive overview</Link>
+      <TextLink href={retryHref}>Retry applications</TextLink>
+      <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)}>Drive overview</TextLink>
      </div>}/>
    </div></LastKnownGoodApplications>;
   }
@@ -119,26 +120,26 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <PageHeader title={"Applications ("+data.total.toLocaleString("en-IN")+")"}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<div className="flex flex-wrap gap-2">
-        <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to Jobs</Link>
-        <Link href={retryHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">↻ Refresh</Link>
+        <TextLink href="/admin/placements" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Back to Jobs</TextLink>
+        <ButtonLink variant="secondary" href={retryHref}>↻ Refresh</ButtonLink>
       </div>} />
     <nav aria-label="Drive breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      <Link href={returnTo} className="font-semibold text-primary-text hover:underline">
+      <TextLink href={returnTo}>
         Drives
-      </Link><span aria-hidden="true">›</span>
-      <Link href={root+preserved} className="font-semibold text-primary-text hover:underline">
+      </TextLink><span aria-hidden="true">›</span>
+      <TextLink href={root+preserved}>
         {job?.title||data.drive.title||"Drive #"+jobId.slice(0,8)}
-      </Link>
+      </TextLink>
     </nav>
     <CollegeDriveApplicationsSizeControl
       action={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
       query={query}/>
     <nav aria-label="Drive workspace" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-2">
-      {navItems.map(item=><Link key={item.label} href={item.href} aria-current={item.label==="Applications"?"page":undefined}
+      {navItems.map(item=><TextLink variant="bare" key={item.label} href={item.href} aria-current={item.label==="Applications"?"page":undefined}
         className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold md:min-h-9 "+
           (item.label==="Applications"?"border-b-2 border-[var(--lms-primary)] bg-primary-subtle text-primary-text":"text-body hover:bg-primary-subtle hover:text-primary-text")}>
         {item.label}
-      </Link>)}
+      </TextLink>)}
     </nav>
     <section aria-label="Drive details" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -171,11 +172,11 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
        :query.attention==="INTERVIEW_UNSCHEDULED"
         ?"the interview stage without a booked slot"
         :"applications still awaiting review after one week"}.
-      {" "}<Link href={resetHref+preserved} className="font-semibold underline">
+      {" "}<TextLink href={resetHref+preserved}>
         Clear attention filter
-      </Link>
+      </TextLink>
     </Banner>:null}
-    {filters===null?<Banner tone="warning" action={<Link href={retryHref} className="font-semibold underline">Retry filter choices</Link>}>
+    {filters===null?<Banner tone="warning" action={<TextLink href={retryHref}>Retry filter choices</TextLink>}>
       Department, program and batch options could not be loaded. The current applications remain visible; academic filter choices are unavailable.
     </Banner>:null}
     <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-4" aria-label="Filter job applications">
@@ -257,12 +258,11 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       </p>
         </div>
       </Disclosure>
-      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+      <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
     </form>
     <nav className="flex min-w-0 flex-wrap items-center gap-3 text-sm" aria-label="Application views">
-      <Link href={resetHref} className="font-semibold text-primary-text underline">All applications</Link>
-      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/shortlisted"}
-       className="font-semibold text-primary-text underline">Manage Shortlisted · Assessment</Link>
+      <TextLink href={resetHref}>All applications</TextLink>
+      <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/shortlisted"}>Manage Shortlisted · Assessment</TextLink>
     </nav>
     <div className="min-w-0">
     <Tabs ariaLabel="Application pipeline stages" value={query.stage} renderPanel={false}

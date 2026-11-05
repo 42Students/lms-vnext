@@ -1,6 +1,5 @@
 import { Pagination } from "@/components/ui/pagination";
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {FacultyLiveClassEditor} from "@/components/courses/faculty-live-class-editor";
@@ -12,6 +11,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Params={view?:string|string[];deliveryId?:string|string[];page?:string|string[]};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function Page({searchParams}:{searchParams:Promise<Params>}){
@@ -21,7 +21,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   page:first(raw.page)??undefined,
  });
  if(!parsed.success)return <section role="alert" className="space-y-3">
-  <PageHeader title={"Invalid live-class filters"} /><Link href="/teacher/live-classes" className="underline inline-flex min-h-11 items-center md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+  <PageHeader title={"Invalid live-class filters"} /><TextLink href="/teacher/live-classes" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
  </section>;
  const data=await getFacultyLiveClasses(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
@@ -57,7 +57,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      </option>)}
     </Select></Label>
    <Button type="submit" className="w-full lg:w-auto">Filter</Button>
-   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center justify-center p-2 text-sm text-[var(--lms-link-text)] focus-ring md:min-h-[var(--lms-control-height)]">Clear</Link>
+   <TextLink href="/teacher/live-classes" className="inline-flex min-h-11 items-center justify-center p-2 text-sm md:min-h-[var(--lms-control-height)]">Clear</TextLink>
   </form>
   <p className="text-sm leading-[1.6] text-body" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"
@@ -74,8 +74,8 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
     {s.joinUrl?<ThirdPartyLink href={s.joinUrl} label="Open secure meeting link" />:<p className="text-xs text-muted-foreground leading-5">
      Secure meeting link unavailable. Only HTTPS links are exposed.
     </p>}
-    <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
-     className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 text-sm text-[var(--lms-link-text)] hover:underline focus-ring">Open course</Link>
+    <TextLink href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
+     className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 text-sm">Open course</TextLink>
    </li>)}</ul>}
   {data.totalPages > 1 ? <Pagination label="Live-class pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyLiveClassesHref({...data.query,page})}/> : null}
   <p className="max-w-prose text-xs leading-5 text-muted-foreground">

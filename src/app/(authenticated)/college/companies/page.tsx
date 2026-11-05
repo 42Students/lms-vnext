@@ -10,7 +10,6 @@ import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
-import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { PlacementEmployerRelationships } from "@/components/placements/placement-employer-relationships";
 import { CollegeCompanyCreate } from "@/components/placements/college-company-create";
@@ -41,7 +40,7 @@ export default async function CollegeCompaniesPage({
   const parsed=parseCollegeCompaniesQuery(await searchParams);
   if(!parsed.success) return <div className="min-w-0 max-w-full overflow-x-clip space-y-4"><PageHeader title="Companies"/>
     <ErrorState title="Invalid company search" description="Check search text or page."
-      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Clear company filters</Link>}/>
+      action={<TextLink href="/college/companies" className="inline-flex min-h-11 items-center md:min-h-9">Clear company filters</TextLink>}/>
   </div>;
   const query=parsed.data;
   // A failed company read must never look like an empty company directory.
@@ -58,8 +57,8 @@ export default async function CollegeCompaniesPage({
       <PageHeader title="Companies"/>
       <ErrorState title="Failed to load companies"
         description="Couldn't refresh companies. Check your connection and retry."
-        action={<Link href={collegeCompaniesHref(query)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+        action={<TextLink href={collegeCompaniesHref(query)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
     </div>;
   const data=dataResult.value,owners=ownersResult.value;
   const activeCount=activeResult.status==="fulfilled"?activeResult.value.total:null;
@@ -74,9 +73,9 @@ export default async function CollegeCompaniesPage({
   const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
   return <div className="min-w-0 max-w-full overflow-x-clip space-y-[var(--lms-space-4)]">
     <nav aria-label="Placements sections" className="flex min-w-0 flex-wrap gap-5 border-b border-border text-sm font-semibold">
-      <Link href="/college/placements" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-body hover:text-primary-text">Placements</Link>
-      <Link href="/college/companies" aria-current="page" className="inline-flex min-h-11 items-center border-b-2 border-[var(--lms-primary)] text-primary-text">Companies</Link>
-      <Link href="/college/placements/analytics" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-body hover:text-primary-text">Analytics</Link>
+      <TextLink href="/college/placements" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-body">Placements</TextLink>
+      <TextLink href="/college/companies" aria-current="page" className="inline-flex min-h-11 items-center border-b-2 border-[var(--lms-primary)]">Companies</TextLink>
+      <TextLink href="/college/placements/analytics" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-body">Analytics</TextLink>
     </nav>
     <PageHeader title="Companies" description="Maintain each recruiting company once and reuse it across drives. Deleted records stay recoverable without cluttering the default working list."
       actions={data.total>0?<TextLink href={"/api/college/companies/export?"+exportParams.toString()}
@@ -95,8 +94,8 @@ export default async function CollegeCompaniesPage({
         Company
         <Input name="q" type="search" form="college-company-filters" maxLength={100}
           placeholder="Search by name or industry" defaultValue={query.q} className="min-h-11 w-full min-w-0 md:min-h-9 md:w-[260px]" />
-        {query.q?<Link href={collegeCompaniesHref({...query,q:"",page:1})}
-          className="text-xs font-semibold text-link underline">Clear search</Link>:null}
+        {query.q?<TextLink href={collegeCompaniesHref({...query,q:"",page:1})}
+          className="text-xs">Clear search</TextLink>:null}
       </Label>}
       action={<Button variant="primary" type="submit" form="college-company-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
       <form id="college-company-filters" method="get" className="grid min-w-0 gap-[8px] md:grid-cols-2 xl:grid-cols-4" aria-label="Filter companies">
@@ -124,15 +123,15 @@ export default async function CollegeCompaniesPage({
     <nav aria-label="Sort companies" className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-muted-foreground">
       <span>Sort by:</span>
       {([["LAST_ACTIVE","Last active"],["COMPANY","Company"],["DRIVES","Drives"]] as const).map(([value,label])=>
-        <Link key={value} href={collegeCompaniesHref({...query,sort:value,page:1})}
+        <TextLink variant="bare" key={value} href={collegeCompaniesHref({...query,sort:value,page:1})}
           aria-current={query.sort===value?"true":undefined}
           className={"inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 font-semibold hover:bg-primary-subtle focus-ring "+
             (query.sort===value?"border-[var(--lms-primary)] bg-primary-subtle text-primary-text":"border-border text-body")}>
           {label}{query.sort===value?" ↓":""}
-        </Link>)}
-      <Link href={collegeCompaniesHref(query)} className="ml-auto inline-flex min-h-9 items-center font-semibold text-link underline">
+        </TextLink>)}
+      <TextLink href={collegeCompaniesHref(query)} className="ml-auto inline-flex min-h-9 items-center">
         Refresh companies
-      </Link>
+      </TextLink>
     </nav>
     <p role="status" className="text-sm leading-[22px] text-[var(--lms-muted-text)]">Showing {data.items.length} of {data.total} companies {query.showDeleted==="1"?"(including deleted)":""}, searching name &amp; industry only.</p>
     <PlacementEmployerRelationships key={[query.q,query.status,query.page,query.pageSize,query.sort,query.showDeleted].join(":")}

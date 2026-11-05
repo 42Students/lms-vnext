@@ -3,7 +3,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -15,6 +14,8 @@ import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-
 import {facultyFollowUpCsvHref} from "@/modules/courses/faculty-followup-export";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Params = Record<string,string|string[]|undefined>;
 
@@ -25,7 +26,7 @@ export default async function FacultyResponseFollowUpsPage({
   const parsed = parseFacultyFollowUpSearchParams(raw);
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid follow-up filters"} />
-    <Link href="/teacher/response-followups" className="text-[var(--lms-link-text)] underline inline-flex min-h-11 md:min-h-9 items-center focus-ring hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <TextLink href="/teacher/response-followups" className="inline-flex min-h-11 md:min-h-9 items-center">Clear filters</TextLink>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -34,10 +35,10 @@ export default async function FacultyResponseFollowUpsPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Faculty · Assessments" title="Response follow-ups"
       description="Published assessments past their due date with missing responses from learners in your current teaching Sections."
-      actions={<Link href="/teacher/results"
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:underline">
+      actions={<ButtonLink variant="secondary" href="/teacher/results"
+        className="w-full sm:w-auto">
         Results overview
-      </Link>} />
+      </ButtonLink>} />
     <form action="/teacher/response-followups" method="get"
       className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
       <Label stack>Search
@@ -81,20 +82,20 @@ export default async function FacultyResponseFollowUpsPage({
       <Button type="submit" variant="primary" className="w-full sm:w-auto">
         Filter
       </Button>
-      <Link href="/teacher/response-followups"
-        className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)]">Clear</Link>
+      <TextLink href="/teacher/response-followups"
+        className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm sm:w-auto md:min-h-9">Clear</TextLink>
     </form>
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[22px]">
         {data.total.toLocaleString("en-IN")} matching past-due published assessment{data.total === 1 ? "" : "s"}
       </p>
-      <Link href={facultyFollowUpCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 py-2 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-ring hover:text-[var(--lms-primary-text)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:underline">
+      <ButtonLink variant="secondary" href={facultyFollowUpCsvHref({...data.query,page:data.page})}
+       className="w-full sm:w-auto">
         Export this page counts (no learner details)
-      </Link>
+      </ButtonLink>
     </div>
     {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
-      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/response-followups" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-ring hover:text-[var(--lms-primary-text)]">Clear follow-up filters</Link> : null}</div>
+      description={emptyState.description} />{emptyState.clearFilters ? <TextLink href="/teacher/response-followups" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">Clear follow-up filters</TextLink> : null}</div>
     : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
       <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
         className="min-w-0 space-y-3 bg-transparent py-4 focus-within:focus-outline">
@@ -119,10 +120,10 @@ export default async function FacultyResponseFollowUpsPage({
             {item.hiddenCount} additional learners; open the Section report for the complete list.
           </p> : null}
         </Disclosure>}
-        <Link href={item.reportHref}
-          className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline sm:w-auto md:min-h-9 hover:underline focus-ring">
+        <TextLink href={item.reportHref}
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">
           Open authorized Section report →
-        </Link>
+        </TextLink>
       </article>)}</div>}
     {data.totalPages > 1 ? <Pagination label="Assessment follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyResponseFollowUpHref({...data.query,page})} /> : null}
     <p className="max-w-prose text-xs leading-5 text-muted-foreground">

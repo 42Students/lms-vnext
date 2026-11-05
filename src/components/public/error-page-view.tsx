@@ -14,10 +14,10 @@ export function ErrorPageView({ code, title, message, retry }: {
   return (
     <main className={styles["page"]}>
       <header className={styles["header"]}>
-        <Link href="/" className={styles["brand"]} aria-label="42LMS home">
+        <TextLink variant="bare" href="/" className={styles["brand"]} aria-label="42LMS home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <Img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles["legacyLogo"]} />
-        </Link>
+        </TextLink>
       </header>
       <div className={styles["center"]}>
         <section className={styles["card"]} aria-labelledby="error-page-title">

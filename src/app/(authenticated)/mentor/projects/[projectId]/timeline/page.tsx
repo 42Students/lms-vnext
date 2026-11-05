@@ -4,7 +4,6 @@ import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Timeline, TimelineEntry } from "@/components/ui/timeline";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
@@ -13,6 +12,7 @@ import {mentorTimelineHref,mentorTimelineQuerySchema}
 import {getMentorProjectTimeline} from "@/modules/projects/mentor-project-timeline-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 type Search={releaseStatus?:string|string[];sprintStatus?:string|string[];page?:string|string[]};
 export default async function MentorProjectTimelinePage({
   params,searchParams,
@@ -27,7 +27,7 @@ export default async function MentorProjectTimelinePage({
   if(!parsed.success)return <div className="min-w-0 space-y-4">
     <PageHeader title="Release & Sprint timeline"/>
     <ErrorState title="Invalid timeline selector" description="Choose valid release, sprint and page filters."
-      action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Projects</Link>}/>
+      action={<TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-9">Projects</TextLink>}/>
   </div>;
   const data=await getMentorProjectTimeline(
     await getCurrentRequestContext(),parsed.data,
@@ -36,10 +36,10 @@ export default async function MentorProjectTimelinePage({
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Release & Sprint timeline"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}
-      actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+      actions={<TextLink href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Sprint workspace
-      </Link>} />
+      </TextLink>} />
     {!data.enabled?<section role="status"
       className="border-b border-border pb-4">
       Projects access is disabled; no timeline was loaded.
@@ -60,7 +60,7 @@ export default async function MentorProjectTimelinePage({
         {data.total.toLocaleString("en-IN")} registered release{data.total===1?"":"s"} match.
       </p>
       {data.items.length===0?<EmptyState title="No matching registered releases"
-        description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed." action={filtered?<Link href={mentorTimelineHref({...data.query,releaseStatus:"ALL",sprintStatus:"ALL",page:1})} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Clear</Link>:<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Sprint workspace</Link>}/>
+        description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed." action={filtered?<TextLink href={mentorTimelineHref({...data.query,releaseStatus:"ALL",sprintStatus:"ALL",page:1})} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"} className="inline-flex min-h-11 items-center md:min-h-9">Sprint workspace</TextLink>}/>
       :<Timeline aria-label="Registered releases">
         {data.items.map(release=><TimelineEntry key={release.id}>
           <div className="flex flex-wrap items-center justify-between gap-2">

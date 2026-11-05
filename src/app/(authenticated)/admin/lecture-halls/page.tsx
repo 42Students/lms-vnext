@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { LectureHallManager } from "@/components/admin/lecture-hall-manager";
@@ -21,6 +20,7 @@ import {
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 /** SA-academics-people-26/27: all operations scoped to the selected active college. */
 export default async function SuperAdminLectureHallsPage({
@@ -85,11 +85,9 @@ export default async function SuperAdminLectureHallsPage({
         {" "}{organizationDirectory.items.length} on page {page}
       </p>
       <nav aria-label="Organization room pages" className="flex gap-3">
-        {page>1?<Link href={"/admin/lecture-halls?"+new URLSearchParams({q,page:String(page-1)})}
-           className="underline">Previous</Link>:null}
-        {page*20<organizationDirectory.total?<Link
-           href={"/admin/lecture-halls?"+new URLSearchParams({q,page:String(page+1)})}
-           className="underline">Next</Link>:null}
+        {page>1?<TextLink href={"/admin/lecture-halls?"+new URLSearchParams({q,page:String(page-1)})}>Previous</TextLink>:null}
+        {page*20<organizationDirectory.total?<TextLink
+           href={"/admin/lecture-halls?"+new URLSearchParams({q,page:String(page+1)})}>Next</TextLink>:null}
       </nav>
     </>:<Alert tone="warning" title="Select a college to continue">
       Choose a college in the header above to see its lecture halls.
@@ -103,7 +101,7 @@ export default async function SuperAdminLectureHallsPage({
     <PageHeader  title="Lecture Halls" />
     <ErrorState title="Invalid lecture hall filters"
       description="Search, status, capacity or page selection is invalid. No records were loaded."
-      action={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<TextLink href="/admin/lecture-halls" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>} />
   </div>;
 
   // Departments are optional filter metadata: their failure must not hide
@@ -128,10 +126,10 @@ export default async function SuperAdminLectureHallsPage({
     <PageHeader title="Lecture Halls" description="Create and maintain lecture halls in the selected college."/>
     <ErrorState title="Could not load lecture halls"
       description="The existing lecture hall list could not be loaded. Creation is still available; no unverified rooms are displayed."
-      action={<Link href={superAdminLectureHallHref(query)} className="font-semibold text-primary-text underline">Retry halls</Link>}/>
+      action={<TextLink href={superAdminLectureHallHref(query)}>Retry halls</TextLink>}/>
     {departmentResult.status==="rejected"?<p role="alert" className="text-sm text-warning">
       Departments could not be loaded.{" "}
-      <Link href={superAdminLectureHallHref(query)} className="font-semibold underline">Retry departments</Link>.
+      <TextLink href={superAdminLectureHallHref(query)}>Retry departments</TextLink>.
     </p>:null}
     <LectureHallManager key={collegeId} collegeId={collegeId}
       availabilityBase="/admin/lecture-halls" halls={[]} departments={departments.map(d=>({id:d.id,name:d.name}))}
@@ -206,7 +204,7 @@ export default async function SuperAdminLectureHallsPage({
         </Disclosure>
       </form>
       <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-2)]">
-        <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Clear</Link>
+        <ButtonLink variant="secondary" href="/admin/lecture-halls">Clear</ButtonLink>
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
           <ButtonLink variant="secondary" href={csvHref} download>Export all matching CSV</ButtonLink>
           <form action="/admin/lecture-halls" method="get" aria-label="Refresh Lecture Halls 2">
@@ -231,7 +229,7 @@ export default async function SuperAdminLectureHallsPage({
     <section aria-label="Lecture hall results" className="min-w-0 space-y-[var(--lms-space-3)]">
       {departmentResult.status==="rejected"?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">
         Departments could not be loaded. Rooms remain visible. Department filter choices are unavailable.{" "}
-        <Link href={superAdminLectureHallHref(query)} className="font-semibold text-primary-text underline">Retry departments</Link>.
+        <TextLink href={superAdminLectureHallHref(query)}>Retry departments</TextLink>.
       </p>:null}
       <p role="status" className="text-sm text-muted-foreground">Showing {first}–{last} of {total} {total===1?"hall":"halls"} · {query.pageSize} per page</p>
 

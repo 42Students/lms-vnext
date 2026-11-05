@@ -1,8 +1,8 @@
-import Link from "next/link";
 import type {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
 import type {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import type {CourseDisplayContentView} from "@/modules/courses/course-display-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Signals=Awaited<ReturnType<typeof getFacultyCourseHomeSignals>>|null;
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
@@ -93,8 +93,8 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
      <Heading level={3} size="sm" className="leading-5 text-[color:var(--lms-heading)]">{item.title}</Heading>
      <p className="faculty-proto-subtitle">{item.detail}</p>
     </div>
-    <Link className={(item.urgent||item.id==="attendance"?"faculty-proto-action":"faculty-proto-secondary")+" shrink-0"}
-     href={item.href}>{item.action}</Link>
+    <TextLink variant="bare" className={(item.urgent||item.id==="attendance"?"faculty-proto-action":"faculty-proto-secondary")+" shrink-0"}
+     href={item.href}>{item.action}</TextLink>
    </article>)}
    {!signals?<p role="status" className="px-5 py-3 text-xs text-[color:var(--lms-text-muted)]">
     The latest class indicators are unavailable. Open the relevant section tool to retry.
@@ -104,8 +104,8 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
    <section className="rounded-xl border border-[color:var(--lms-border)] p-5">
     <div className="flex items-center justify-between gap-2">
      <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">About this course</Heading>
-     <Link href={base+"/home?advanced=1#course-details"}
-      className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 text-xs">Details</Link>
+     <TextLink variant="bare" href={base+"/home?advanced=1#course-details"}
+      className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 text-xs">Details</TextLink>
     </div>
     <Heading level={3} size="sm" className="mt-3 text-[color:var(--lms-heading)]">{course.courseName}</Heading>
     <p className="faculty-proto-subtitle line-clamp-3">{description??"No course description has been provided."}</p>
@@ -116,8 +116,8 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
     <dl className="mt-2 divide-y divide-[color:var(--lms-neutral-100)]">
      {rows.map(row=><div key={row.label} className="flex items-center justify-between gap-3 py-3 text-sm">
       <dt className="min-w-0 text-[color:var(--lms-heading)]">{row.label}</dt>
-      <dd><Link className="font-bold text-[color:var(--lms-text-body)] hover:text-[color:var(--lms-button-primary)] hover:underline"
-       href={row.href}>{row.value}</Link></dd>
+      <dd><TextLink className="text-[color:var(--lms-text-body)]"
+       href={row.href}>{row.value}</TextLink></dd>
      </div>)}
     </dl>
     <p className="mt-2 text-xs leading-5 text-[color:var(--lms-text-muted)]">

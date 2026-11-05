@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
@@ -20,6 +19,8 @@ import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { parseTrackerIssuesPageParams } from "@/modules/bug-tracker/issues-query-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const metadata={title:"Issues · 42 Tracker"};
@@ -42,7 +43,7 @@ export default async function TrackerIssuesPage({
           title="Issues"
           description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
-        <div className="flex min-h-11 items-center"><Link href="/tracker/issues/public" className="text-sm font-semibold text-primary-text underline focus-ring">View public issue summaries</Link></div>
+        <div className="flex min-h-11 items-center"><TextLink href="/tracker/issues/public" className="text-sm">View public issue summaries</TextLink></div>
   <TrackerAdminNav />
         <Banner tone="warning">
           <strong>Tracker database is not enabled.</strong>
@@ -58,9 +59,9 @@ export default async function TrackerIssuesPage({
         <PageHeader title="Issues" description="Review and triage reported LMS issues." />
         <TrackerAdminNav />
         <ErrorState title="Invalid issue filter." description="Review and triage reported LMS issues."
-          action={<Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline" href="/tracker/issues">
+          action={<TextLink className="inline-flex min-h-11 md:min-h-9 items-center" href="/tracker/issues">
             Reset filters
-          </Link>}/>
+          </TextLink>}/>
       </div>
     );
   }
@@ -102,8 +103,8 @@ export default async function TrackerIssuesPage({
       <TrackerAdminNav />
       <ErrorState title="Issues could not be loaded."
         description="Your filters have been preserved. Try loading the issues again."
-        action={<Link href={"/tracker/issues" + (retry.toString() ? "?" + retry.toString() : "")}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+        action={<TextLink href={"/tracker/issues" + (retry.toString() ? "?" + retry.toString() : "")}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
     </div>;
   }
   const current = parsed.display;
@@ -131,10 +132,9 @@ export default async function TrackerIssuesPage({
         description={"Showing " + page.items.length + (page.nextCursor ? "+" : "") + " " +
           (page.items.length === 1 && !page.nextCursor ? "issue" : "issues") +
           " in this view. Search what has already been reported before adding another."}
-        actions={<Link href="/tracker"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">
+        actions={<ButtonLink variant="primary" href="/tracker">
           Report issue
-        </Link>}
+        </ButtonLink>}
       />
       <TrackerAdminNav />
       <TrackerIssueSavedViews filters={new URLSearchParams({
@@ -158,13 +158,13 @@ export default async function TrackerIssuesPage({
 
       {page.items.length === 0 ? (
         <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
-          action={<Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link">Reset</Link>}/>
+          action={<ButtonLink variant="secondary" href="/tracker/issues">Reset</ButtonLink>}/>
       ) : (
         <div className="grid min-w-0 gap-3" role="list" aria-label="Reported issues">
           {page.items.map(issue=>(
             <article key={issue.id} role="listitem" className="min-w-0">
-              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)}
-                className="block min-w-0 rounded-[10px] border border-border bg-surface p-4 no-underline hover:border-[var(--lms-primary)] hover:shadow-sm focus-ring">
+              <TextLink href={"/tracker/issues/"+encodeURIComponent(issue.publicId)}
+                className="block min-w-0 rounded-[10px] border border-border bg-surface p-4">
                 <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
                   <Heading level={2} size="sm" className="m-0 break-words text-link">
                     {issue.publicId} · {[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")||issue.issueType}
@@ -188,7 +188,7 @@ export default async function TrackerIssuesPage({
                   <div><dt className="font-semibold">Reported</dt>
                     <dd>{issue.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</dd></div>
                 </dl>
-              </Link>
+              </TextLink>
             </article>
           ))}
         </div>
@@ -199,12 +199,11 @@ export default async function TrackerIssuesPage({
       }))} />
       {page.nextCursor ? (
         <div className="flex justify-center">
-          <Link
+          <ButtonLink variant="secondary"
             href={"/tracker/issues?" + next.toString()}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-ring"
           >
             {current.sort === "newest" ? "Older issues" : "Newer issues"}
-          </Link>
+          </ButtonLink>
         </div>
       ) : null}
     </div>

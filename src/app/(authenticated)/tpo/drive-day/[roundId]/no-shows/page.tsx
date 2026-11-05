@@ -1,5 +1,4 @@
 import {DataTable} from "@/components/ui/data-table";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -15,6 +14,7 @@ import { placementRoundIdSchema } from "@/modules/placements/validation";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function TpoNoShowReportPage({
   params,
@@ -75,10 +75,10 @@ export default async function TpoNoShowReportPage({
                 </ButtonLink>
               </div>
             </Disclosure>
-            <Link href={roundHref}
-              className="lms-inline-link inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-link underline-offset-4 hover:underline focus-ring md:min-h-9">
+            <TextLink href={roundHref}
+              className="inline-flex min-h-11 items-center justify-center px-2 text-sm md:min-h-9">
               ← Back to round overview
-            </Link>
+            </TextLink>
           </div>
         }
       />
@@ -123,7 +123,7 @@ export default async function TpoNoShowReportPage({
           rows={report.explicitAbsences}
           getRowKey={(item) => item.applicationId}
           empty={<EmptyState title="No learner is currently marked ABSENT in this round." description="This does not mean all learners attended; check the waiting/unmarked count above."
-            action={<Link href={roundHref} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">← Back to round overview</Link>} />}
+            action={<TextLink href={roundHref} className="inline-flex min-h-11 items-center md:min-h-9">← Back to round overview</TextLink>} />}
           columns={[
             {key:"learner",header:"Learner",mobileLabel:"Learner",mobilePriority:"primary",cell:(item)=>item.displayName},
             {key:"roll",header:"Roll number",mobileLabel:"Roll number",mobilePriority:"secondary",cell:(item)=>item.rollNumber??"Not recorded"},

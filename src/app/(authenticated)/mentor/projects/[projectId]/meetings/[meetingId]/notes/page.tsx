@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -6,6 +5,7 @@ import {MentorMeetingNotesEditor} from "@/components/projects/mentor-meeting-not
 import {getMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-service";
 import {meetingNotesEditable} from "@/modules/projects/mentor-meeting-notes-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export default async function MentorMeetingNotesPage({params}:{
   params:Promise<{projectId:string;meetingId:string}>;
 }){
@@ -16,9 +16,9 @@ export default async function MentorMeetingNotesPage({params}:{
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project meeting" title={m.title}
       description={data.projectTitle+" · "+m.status}
-      actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(path.projectId)+"/team-meetings"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
-        Meeting history</Link>}/>
+      actions={<TextLink data-unskin="" href={"/mentor/projects/"+encodeURIComponent(path.projectId)+"/team-meetings"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
+        Meeting history</TextLink>}/>
     <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <Heading level={2} size="base" className="m-0 leading-6">Persisted meeting outcome</Heading>
       <p className="mt-2 text-sm text-body">

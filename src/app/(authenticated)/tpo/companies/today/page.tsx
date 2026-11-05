@@ -13,7 +13,7 @@ import {TpoTodayAlternateViews} from "@/components/tpo/tpo-today-alternate-views
 import {Alert} from "@/components/ui/alert";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
-import Link from "next/link";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 
 /** Real, per-college Companies/Today focus. Email replies and CRM follow-ups
@@ -27,7 +27,7 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
  if(!ready)return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader title="Companies · Today"/>
   <Alert tone="warning">Recruiter CRM is unavailable until its registered database migration is verified. No follow-ups have been treated as zero.</Alert>
-  <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Open recruiter contacts</Link>
+  <TextLink href="/tpo/recruiters" className="inline-flex min-h-11 items-center md:min-h-9">Open recruiter contacts</TextLink>
  </div>;
  const params=await searchParams;
  const scope=tpoCompaniesTodayScope(params.scope);
@@ -41,7 +41,7 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   (params.lead!==undefined&&view!=="focus"))return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader title="Companies · Today"/>
   <ErrorState title="Invalid view parameters" description="Invalid Today view, ownership or follow-up selection. Nothing was loaded."
-   action={<Link href="/tpo/companies/today" className="font-semibold text-link underline">Open My Work</Link>}/>
+   action={<TextLink href="/tpo/companies/today">Open My Work</TextLink>}/>
  </div>;
  const now=new Date();
  const [due,next,unread,replyResult,leadsResult,verificationResult]=await Promise.allSettled([
@@ -56,7 +56,7 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   <PageHeader title="Companies · Today"/>
   <ErrorState title="Could not load follow-up queue" description="Could not load the follow-up queue. Existing records are unchanged. Refresh to retry."
    retryHref="/tpo/companies/today"
-   action={<Link href="/tpo/follow-ups" className="font-semibold text-link underline">Open the full follow-up queue</Link>}/>
+   action={<TextLink href="/tpo/follow-ups">Open the full follow-up queue</TextLink>}/>
  </div>;
  const rows=rankTpoCompaniesToday(due.value.rows,next.value.rows);
  // This feed is persisted recruiter-to-placement-cell conversation activity.
@@ -76,8 +76,8 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
    <PageHeader title="Companies · Today"/>
    <ErrorState title="Follow-up not available" description="That follow-up is not available in the current Today preview. It may have changed or be outside the loaded queue. No other recruiter was selected."
     action={<div className="flex flex-wrap gap-3">
-     <Link href="/tpo/follow-ups" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Open all follow-ups</Link>
-     <Link href="/tpo/companies/today" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Return to Today</Link>
+     <TextLink href="/tpo/follow-ups" className="inline-flex min-h-11 items-center md:min-h-9">Open all follow-ups</TextLink>
+     <TextLink href="/tpo/companies/today" className="inline-flex min-h-11 items-center md:min-h-9">Return to Today</TextLink>
     </div>}/>
   </div>;
  const notContacted=leadsResult.status==="fulfilled"&&leadsResult.value!==null?

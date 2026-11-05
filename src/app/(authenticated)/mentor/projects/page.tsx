@@ -15,7 +15,6 @@ import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query
 import { compareMentorProjects, compareMentorProjectsByMostProgress, compareMentorProjectsByOpenTasks, compareMentorProjectsByTeamSize, compareMentorProjectsByProgress } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
 import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { MentorProjectsUnavailable } from "@/components/projects/mentor-projects-unavailable";
@@ -38,6 +37,7 @@ import {listPagedMentorProjects} from "@/modules/projects/mentor-paged-project-l
 import {canPageMentorProjectList} from "@/modules/projects/mentor-paged-project-list-model";
 import {MENTOR_PORTFOLIO_SEGMENTS,matchesMentorPortfolioSegment,mentorPortfolioSegmentHref}
   from "@/modules/projects/mentor-portfolio-segment-model";
+import { TextLink } from "@/components/ui/text-link";
 
 function MentorProjectsLoading() {
   return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Checking Projects access">
@@ -128,10 +128,10 @@ export async function MentorProjectsContent({
     <PageHeader title="Projects" description="Choose a project to open its workspace."/>
     <ErrorState title={loaded.failure}
       description="Check your connection, then try again. Your project data has not been changed."
-      action={<Link href={"/mentor/projects?"+new URLSearchParams(
+      action={<TextLink href={"/mentor/projects?"+new URLSearchParams(
         Object.entries(params).filter((item):item is [string,string]=>
           typeof item[1]==="string"&&item[1].length<=120)
-      ).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+      ).toString()} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
   </div>;
   const {paged,allRows,attentionRows,workCounts,teamSizes,learnerSizes,sprintSummaries,studentWatch,lastActivity,weekMeetingsRead,learnerCounts}=loaded;
   const initialLater=await listOwnMentorAttentionLater(context,attentionRows);
@@ -357,14 +357,14 @@ export async function MentorProjectsContent({
           ...MENTOR_PORTFOLIO_SEGMENTS.map(id=>({id,label:{
             CURRENT:"Current",NEEDS_YOU:"Need you",AT_RISK:"At risk or blocked",
             FINAL_SUBMISSION:"Final submission stage",ARCHIVED:"Archived",
-          }[id]}))]).map(segment=><Link key={segment.id??"all"}
+          }[id]}))]).map(segment=><TextLink variant="bare" key={segment.id??"all"}
           href={mentorPortfolioSegmentHref(segment.id,query)}
           aria-current={query.segment===segment.id?"page":undefined}
           className={"inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm font-semibold "+
             (query.segment===segment.id?"border-primary bg-primary-subtle text-primary-text":
               "border-border text-body hover:bg-muted")}>
           {segment.label}
-        </Link>)}
+        </TextLink>)}
       </nav>
       {query.segment==="FINAL_SUBMISSION"?<p className="text-xs text-muted-foreground">
         Based on recorded final-delivery drafts/reviews or a fully signed-off and shipped plan.
@@ -472,38 +472,38 @@ export async function MentorProjectsContent({
       />
       <Disclosure title="More project links" className="min-w-0 border-b border-border" contentClassName="min-w-0 py-3">
         <div className="grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
-            <Link href="/mentor/reviews"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+            <TextLink href="/mentor/reviews"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm md:min-h-9">
               Review queue
-            </Link>
-            <Link href="/mentor/sprint-progress"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+            </TextLink>
+            <TextLink href="/mentor/sprint-progress"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm md:min-h-9">
               Sprint progress
-            </Link>
-            <Link href="/mentor/task-reviews"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+            </TextLink>
+            <TextLink href="/mentor/task-reviews"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm md:min-h-9">
               Task reviews
-            </Link>
-            <Link href="/mentor/reports"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+            </TextLink>
+            <TextLink href="/mentor/reports"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm md:min-h-9">
               Reports
-            </Link>
-            <Link href="/mentor/activity"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+            </TextLink>
+            <TextLink href="/mentor/activity"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm md:min-h-9">
               Activity
-            </Link>
-            <Link
+            </TextLink>
+            <TextLink
               href="/mentor/calendar"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm md:min-h-9"
             >
               Meetings
-            </Link>
-            <Link
+            </TextLink>
+            <TextLink
               href="/mentor/notifications"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm md:min-h-9"
             >
               Notifications
-            </Link>
+            </TextLink>
           </div>
       </Disclosure>
 

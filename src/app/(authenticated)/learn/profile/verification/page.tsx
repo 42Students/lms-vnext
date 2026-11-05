@@ -1,7 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Banner} from "@/components/ui/banner";
-import Link from "next/link";
 import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verification-live-refresh";
 import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verification-notice-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -13,6 +12,7 @@ import {LearnerVerificationWithdraw} from "@/components/profile/learner-verifica
 import {learnerVerificationDateLabel,learnerVerificationSubmissionDateFallback} from "@/modules/placements/learner-verification-date-model";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 const details = [
   { key: "education", section:"EDUCATION", heading: "Education", edit: "/learn/profile?section=education" },
@@ -37,7 +37,7 @@ export default async function LearnerVerificationPage() {
     SENT_BACK: "Needs a change", VERIFIED: "Verified", UPDATE_PENDING: "Verified · update waiting",
   } as const;
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link hover:underline focus-ring">← Profile</Link>
+    <TextLink href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">← Profile</TextLink>
     <LearnerVerificationLiveRefresh />
     <PageHeader title="Profile verification"
       description="Your own Education and Identity review status. A saved detail does not mean it is verified." />
@@ -117,9 +117,9 @@ export default async function LearnerVerificationPage() {
                 entry.maxGrade&&"Maximum "+entry.maxGrade].filter(Boolean).join(" · ")}</p>
               <p className="text-xs text-muted-foreground">Private marksheet availability is checked separately from these editable details.</p>
             </li>)}</ul>}
-          <Link href="/learn/profile?section=education" className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline">
+          <TextLink href="/learn/profile?section=education" className="mt-2 inline-flex min-h-9 items-center">
             Review or edit my education details
-          </Link>
+          </TextLink>
         </section>:null}
         {item.section==="EDUCATION"&&row.verifiedEducation.length>0?<Disclosure title="Last verified education snapshot" className="mt-3">
           <ul className="mt-2 list-disc pl-5 text-sm text-body">{row.verifiedEducation.map((entry,index)=><li key={index}>
@@ -128,10 +128,10 @@ export default async function LearnerVerificationPage() {
         </Disclosure>:null}
         {row.decidedByName?<p className="mt-2 text-xs text-muted-foreground">Reviewed by: {row.decidedByName}</p>:null}
         {row.verifiedAt?<p className="mt-1 text-xs text-muted-foreground">Verified at: {learnerVerificationDateLabel(row.verifiedAt)}</p>:null}
-        {item.section==="IDENTITY"?<Link href="/learn/profile?section=identity"
-          className="mt-3 inline-flex min-h-9 items-center font-semibold text-link underline">
+        {item.section==="IDENTITY"?<TextLink href="/learn/profile?section=identity"
+          className="mt-3 inline-flex min-h-9 items-center">
           Review my saved identity details privately
-        </Link>:null}
+        </TextLink>:null}
         {row.status === "SENT_BACK" ? <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
@@ -150,7 +150,7 @@ export default async function LearnerVerificationPage() {
           key={item.section+":"+row.version} section={item.section}
           expectedVersion={row.version}/> : null}
         {row.canResubmit ? <LearnerVerificationSubmit key={item.section+":"+row.version} section={item.section as "EDUCATION"|"IDENTITY"} expectedVersion={row.version} status={row.status} /> : null}
-        <Link href={item.edit} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-ring">Review {item.heading.toLowerCase()} details</Link>
+        <TextLink href={item.edit} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">Review {item.heading.toLowerCase()} details</TextLink>
       </section>;
     })}</div>
   </div>;

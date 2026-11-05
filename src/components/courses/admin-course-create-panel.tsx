@@ -10,7 +10,6 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -485,7 +484,7 @@ export function AdminCourseCreatePanel({
         <Heading level={2} size="base" className="m-0 leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{COLLEGE_COURSES_COPY.createTitle}</Heading>
         {departments.length===0?<p role="status" className="mt-3 text-sm text-body leading-[22px]">
           No departments in this college yet. Create a department before adding a course.{" "}
-          <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
+          <TextLink className="inline-flex min-h-11 items-center md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</TextLink>
         </p>:null}
         {copy?<div role="status" aria-live="polite" className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}” — review the copy before creating it.</strong>
@@ -615,8 +614,8 @@ export function AdminCourseCreatePanel({
                 onClick={()=>{setImageBusy(true);void finishCourseImage(createdImageCourseId,imageReceipt)
                   .catch(cause=>setImageError(cause instanceof Error?cause.message:"Verification failed."))
                   .finally(()=>setImageBusy(false));}}>Check verification</Button>:null}
-              <Link href={courseBasePath+"/"+createdImageCourseId}
-                className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open saved course</Link>
+              <TextLink href={courseBasePath+"/"+createdImageCourseId}
+                className="inline-flex min-h-9 items-center text-sm">Open saved course</TextLink>
             </div>:null}
           </div>
           <div className="md:col-span-2">

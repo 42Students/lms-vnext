@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import { TextLink } from "@/components/ui/text-link";
 
 export function ProjectSoftDeleteControl({ projectId, projectTitle, expectedUpdatedAt, deleted }: {
   projectId: string;
@@ -75,10 +75,10 @@ export function ProjectSoftDeleteControl({ projectId, projectTitle, expectedUpda
             ? "Members, tasks, sprints, resources and meetings are retained. The workspace remains archived until you restore it separately."
             : "The workspace will be soft-deleted and removed from ordinary project lists. Content is retained for authorized recovery."}
         </p>
-        <Link href={deletedListHref}
-          className="inline-flex min-h-9 items-center font-semibold text-link underline">
+        <TextLink href={deletedListHref}
+          className="inline-flex min-h-9 items-center">
           View Deleted workspaces
-        </Link>
+        </TextLink>
       </div>
     </Dialog>
   </>;

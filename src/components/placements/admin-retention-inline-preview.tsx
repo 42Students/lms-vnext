@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {Button} from "@/components/ui/button";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { TextLink } from "@/components/ui/text-link";
 
 type RetentionRow = {
   id: string;
@@ -98,8 +98,8 @@ export function AdminRetentionInlinePreview({ collegeId }: { collegeId: string }
         {sample.truncated ? <p className="text-xs text-muted-foreground">
           Showing first 200 — sample truncated. Open the full report to review the records.
         </p> : null}
-        <Link href="/admin/placements/retention?details=1"
-          className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open full retention report →</Link>
+        <TextLink href="/admin/placements/retention?details=1"
+          className="inline-flex min-h-9 items-center text-sm">Open full retention report →</TextLink>
       </> : null}
     </div> : null}
   </section>;

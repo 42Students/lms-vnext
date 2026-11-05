@@ -1,5 +1,4 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
-import Link from "next/link";
 import { Banner } from "@/components/ui/banner";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAcademicDirectory } from "@/components/academics/college-academic-directory";
@@ -11,6 +10,8 @@ import {
 } from "@/modules/academics/college-academic-directory-model";
 import { listCollegeSemesters } from "@/modules/academics/college-academic-directory-service";
 import { academicExportHref , ACADEMIC_EXPORT_CAP } from "@/modules/academics/college-academic-export-model";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeSemestersPage({
   searchParams,
@@ -32,7 +33,7 @@ export default async function CollegeSemestersPage({
       <PageHeader title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
-        action={<Link href="/college/semesters" className="lms-inline-link inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Clear filters</Link>} />
+        action={<TextLink href="/college/semesters" className="inline-flex min-h-11 items-center text-[13px] md:min-h-9">Clear filters</TextLink>} />
     </div>;
   }
   const { programId, termNumber, minimumCredits, maximumCredits, creditState, programStatus, mappingState, ...requiredFilters } = parsed.data;
@@ -63,21 +64,19 @@ export default async function CollegeSemestersPage({
     <ErrorState title="Unable to load semesters"
       description="Semester and program choices share one college-scoped read. Retry with the same filters rather than treating an unavailable program list as empty."
       action={<div className="flex flex-wrap items-center gap-4">
-        <Link href={refreshHref} prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry semesters</Link>
-        <Link href={refreshHref} prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry programs</Link>
+        <TextLink href={refreshHref} prefetch={false} className="inline-flex min-h-11 items-center md:min-h-9">Retry semesters</TextLink>
+        <TextLink href={refreshHref} prefetch={false} className="inline-flex min-h-11 items-center md:min-h-9">Retry programs</TextLink>
       </div>}/>
   </div>;
   return <div className="min-w-0 space-y-4">
     <CollegeAcademicDirectory
       data={directory.data}
       actions={<div className="flex flex-wrap items-center gap-2">
-       <Link href={refreshHref} prefetch={false}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">
-        Refresh</Link>
-       <Link prefetch={false} download href={academicExportHref("SEMESTERS",filters)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-[14px] font-semibold text-[var(--lms-link-text)] md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+       <ButtonLink variant="secondary" href={refreshHref} prefetch={false}>
+        Refresh</ButtonLink>
+       <ButtonLink variant="secondary" prefetch={false} download href={academicExportHref("SEMESTERS",filters)}>
         Export CSV
-      </Link></div>}
+      </ButtonLink></div>}
     />
     <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching semesters; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
   </div>;

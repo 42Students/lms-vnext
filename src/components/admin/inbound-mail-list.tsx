@@ -1,6 +1,5 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Drawer} from "@/components/ui/drawer";
 import {Button} from "@/components/ui/button";
@@ -11,6 +10,7 @@ import {safeInboundPreview,inboundMailRoutingStatusLabels,type InboundMailRoutin
 import {createInboundMailTriageGate} from "@/modules/inbound-mail/triage-submit-model";
 import {inboundMailStatusActions,type InboundMailStatus} from "@/modules/inbound-mail/triage-transition-model";
 import { Table } from "@/components/ui/table";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** Inbox list data is a preview, never a full-message permission grant.
  * The full plain-text body is fetched only after opening the global-SA drawer. */
@@ -133,9 +133,9 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
     <p role="status" className="text-sm text-body">
      {emptyMode==="NEW"?"Nothing waiting to be read":"No emails"}
     </p>
-    <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-link underline md:min-h-9">
+    <ButtonLink variant="secondary" href="/admin/inbound-mail?status=NEW">
      Clear
-    </Link>
+    </ButtonLink>
    </div>:<div className="min-w-0 overflow-x-auto border-y border-border">
     <Table className="min-w-[680px]">
      <caption className="sr-only">Inbound messages; select a row to read the full email</caption>

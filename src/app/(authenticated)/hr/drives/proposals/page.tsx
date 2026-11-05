@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -15,6 +14,8 @@ import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-histo
 import {hrSentProposalHistoryHref,hrSentProposalExportHref} from "@/modules/placements/hr-drive-proposal-history-links";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function RecruiterDriveProposalHistory({
  searchParams,
@@ -34,7 +35,7 @@ export default async function RecruiterDriveProposalHistory({
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
   <nav aria-label="Proposal actions" className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center">
    <PageBackLink href="/hr/drives" label="Back to Drives"/>
-   <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-ring md:min-h-9">Draft another proposal</Link>
+   <TextLink href="/hr/drives/new" className="inline-flex min-h-11 items-center md:min-h-9">Draft another proposal</TextLink>
   </nav>
   {data.status==="CHOOSE_COLLEGE"?<section className="space-y-3">
    <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Choose a college</Heading>
@@ -57,12 +58,12 @@ export default async function RecruiterDriveProposalHistory({
     </Label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
-   {data.items.length?<Link
+   {data.items.length?<TextLink
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
       page:data.page,sort:input.data.sort})}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 focus-ring">
+     className="inline-flex min-h-11 items-center md:min-h-9">
      Export this page (summary CSV)
-    </Link>:null}
+    </TextLink>:null}
    <p role="status" className="max-w-2xl text-sm text-body leading-[1.6]">
     {data.total.toLocaleString("en-IN")} recorded discussion proposals · Page {data.page} of {data.pages}.
     These are not submitted approval requests.
@@ -83,8 +84,8 @@ export default async function RecruiterDriveProposalHistory({
     <ol className="divide-y divide-border border-y border-border md:hidden">
     {data.items.map(row=><li key={row.id}
      className="min-w-0 py-3">
-     <Link href={"/hr/conversations/"+row.threadId}
-      className="block break-words font-semibold text-primary-text min-h-11 md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">{row.title}</Link>
+     <TextLink href={"/hr/conversations/"+row.threadId}
+      className="block break-words min-h-11 md:min-h-9">{row.title}</TextLink>
      <p className="mt-2 text-xs text-muted-foreground leading-5">
       Proposal reference: {row.referenceId}
      </p>
@@ -96,12 +97,10 @@ export default async function RecruiterDriveProposalHistory({
      <p className="mt-2 text-xs text-[var(--lms-muted-text)] leading-5">No approval or drive publication is implied.</p>
     </li>)}
    </ol></>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."
-    action={<Link href="/hr/drives/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Draft another proposal</Link>} />}
+    action={<TextLink href="/hr/drives/new" className="inline-flex min-h-11 items-center md:min-h-9">Draft another proposal</TextLink>} />}
    {data.pages>1 ? <nav aria-label="Sent proposal pages" className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
-    {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring">Newer proposals</Link>:null}
-    {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring">Older proposals</Link>:null}
+    {data.page>1?<ButtonLink variant="secondary" href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}>Newer proposals</ButtonLink>:null}
+    {data.page<data.pages?<ButtonLink variant="secondary" href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}>Older proposals</ButtonLink>:null}
    </nav> : null}
   </>}
  </div>;

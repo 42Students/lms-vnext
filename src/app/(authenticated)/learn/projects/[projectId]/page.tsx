@@ -22,7 +22,6 @@ import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals
 import { LearnerBoardTaskDetailDialog } from "@/components/projects/learner-board-task-detail-dialog";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { learnerBoardTaskSelectionNotice } from "@/modules/projects/learner-board-selection-notice-model";
-import Link from "next/link";
 import {ErrorState} from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
@@ -30,6 +29,8 @@ import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-deta
 import { filterLearnerBoardTasks, learnerBoardSearchSchema, learnerBoardPrioritySchema, learnerBoardStatusSchema, learnerBoardSprintSchema, learnerBoardReleaseSchema } from "@/modules/projects/learner-project-board-model";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function LearnerProjectPage({
   params,
@@ -116,8 +117,8 @@ export default async function LearnerProjectPage({
         beforeTimeInput={activityBeforeTime} beforeIdInput={activityBeforeId}/>:
        <ErrorState title="Invalid activity filters"
         description="Clear the selected activity filter or page cursor to continue."
-        action={<Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
-         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear activity filters</Link>}/>}
+        action={<TextLink href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
+         className="inline-flex min-h-11 items-center md:min-h-9">Clear activity filters</TextLink>}/>}
     </div>;
   }
 
@@ -139,10 +140,10 @@ export default async function LearnerProjectPage({
       <LearnerProjectTabs projectId={projectId}/>
       <ErrorState title="Invalid Board filters"
         description="One or more Board filters are no longer valid. Clear filters to see current tasks."
-        action={<Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=board"}
-          className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text">
+        action={<TextLink href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=board"}
+          className="inline-flex min-h-11 md:min-h-9 items-center">
           Clear filters
-        </Link>}/>
+        </TextLink>}/>
     </div>;
   }
 
@@ -185,10 +186,10 @@ export default async function LearnerProjectPage({
     <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
       <div className="flex min-w-0 flex-col gap-3 border-b border-[var(--lms-canvas-border)] pb-2 sm:flex-row sm:items-center sm:justify-between">
        <LearnerProjectTabs projectId={projectId} />
-       {activeSection==="overview"?<Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">
+       {activeSection==="overview"?<ButtonLink variant="secondary" href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
+        className="shrink-0">
          Final delivery
-       </Link>:null}
+       </ButtonLink>:null}
       </div>
 
       {activeSection === "tasks" ? (
@@ -200,10 +201,9 @@ export default async function LearnerProjectPage({
       ) : null}
       {activeSection === "tasks" ? <section className="flex flex-wrap items-center gap-3">
         {workspace.readiness.finalSubmission.canSubmitDraft?
-          <Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-primary-text">
+          <ButtonLink variant="secondary" href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}>
             Submit final work
-          </Link>:
+          </ButtonLink>:
           <p className="text-xs text-[var(--lms-muted-text)] leading-5">Submission available after completion</p>}
       </section>:null}
       {activeSection === "tasks" ? (
@@ -215,8 +215,8 @@ export default async function LearnerProjectPage({
       {selectionNotice ? (
         <Banner tone="info">
           <span>{selectionNotice}</span>
-          <Link href={learnerBoardTaskHref(projectId, boardFilters)}
-            className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline focus-ring">Return to Board</Link>
+          <TextLink href={learnerBoardTaskHref(projectId, boardFilters)}
+            className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">Return to Board</TextLink>
         </Banner>
       ) : null}
       {selectedTask ? (

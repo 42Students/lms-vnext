@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { Dropdown } from "@/components/ui/dropdown";
 import { Menu, MenuItem } from "@/components/ui/menu";
@@ -18,6 +17,7 @@ import { useToast } from "@/components/ui/toast";
 import { hasUnsavedCollegeProgramEdit, updateCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 let programArchiveInFlight = false;
 
@@ -843,12 +843,11 @@ export function SectionActions({
     <>
       {compactActions ? (
         <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:flex-nowrap sm:justify-end">
-        <Link
+        <ButtonLink variant="secondary"
           href={operationsHref}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
         >
           Open
-        </Link>
+        </ButtonLink>
           <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
             <Menu>
               <MenuItem disabled={pending} onClick={openEdit}>Edit</MenuItem>
@@ -858,12 +857,11 @@ export function SectionActions({
         </div>
       ) : (
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
-        <Link
+        <ButtonLink variant="secondary"
           href={operationsHref}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9"
         >
           Open
-        </Link>
+        </ButtonLink>
         <AcademicActionMenu>
           <MenuItem onClick={openEdit}>Edit</MenuItem>
           <MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem>

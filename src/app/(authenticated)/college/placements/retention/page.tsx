@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {z} from "zod";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -11,6 +10,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {getCollegeApplicationRetentionReport} from "@/modules/placements/college-retention-report-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
 type Filters=Record<string,string|string[]|undefined>;
 const retentionFilters=z.strictObject({
@@ -22,7 +22,7 @@ export default async function CollegeRetentionPage({searchParams}:{searchParams:
  if(!parsed.success)return <div className="min-w-0 space-y-4">
    <PageHeader title="Data retention report"/>
    <ErrorState title="Invalid retention filters" description="Choose a threshold between 1 and 3650 days and a valid page."
-     action={<Link href="/college/placements/retention" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>}/>
+     action={<TextLink href="/college/placements/retention" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>
  </div>;
  const {olderThanDays,page}=parsed.data;
  const data=await getCollegeApplicationRetentionReport(await getCurrentRequestContext(),{olderThanDays,page});
@@ -36,7 +36,7 @@ export default async function CollegeRetentionPage({searchParams}:{searchParams:
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader title="Data retention report"
    description={`Rejected or withdrawn applications idle for ${data.days}+ days. Legacy default: 365 days.`}
-   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 inline-flex items-center lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto justify-center">Analytics</Link>}/>
+   actions={<TextLink href="/college/hiring-dashboard" className="min-h-11 inline-flex items-center md:min-h-9 w-full md:w-auto justify-center">Analytics</TextLink>}/>
   <p role="status" className="text-sm text-muted-foreground">Data retention report retrieved · Threshold: {data.days} days.</p>
   <form method="get" className="flex flex-wrap items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    <Label stack className="min-w-0">Older than (days)
@@ -53,8 +53,8 @@ export default async function CollegeRetentionPage({searchParams}:{searchParams:
    <nav aria-label="Retention report pages" className="mt-[var(--lms-space-3)] flex flex-wrap items-center justify-between gap-3 text-sm">
      <span>Page {data.page.toLocaleString("en-IN")} of {data.pageCount.toLocaleString("en-IN")} · {data.total.toLocaleString("en-IN")} records</span>
      <span className="flex items-center gap-3">
-       {data.page>1?<Link href={`/college/placements/retention?olderThanDays=${data.days}&page=${data.page-1}`} className="font-semibold text-link underline">Previous</Link>:null}
-       {data.truncated?<Link href={`/college/placements/retention?olderThanDays=${data.days}&page=${data.page+1}`} className="font-semibold text-link underline">Next</Link>:null}
+       {data.page>1?<TextLink href={`/college/placements/retention?olderThanDays=${data.days}&page=${data.page-1}`}>Previous</TextLink>:null}
+       {data.truncated?<TextLink href={`/college/placements/retention?olderThanDays=${data.days}&page=${data.page+1}`}>Next</TextLink>:null}
      </span>
    </nav>
   </section>

@@ -6,11 +6,12 @@ import { ErrorState } from "@/components/ui/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
 import { Drawer } from "@/components/ui/drawer";
-import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {recruiterBellAriaLabel,recruiterBellPreview,createRecruiterBellRequestGate,type RecruiterBellItem}
  from "@/modules/placements/recruiter-bell-model";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 type DrawerResponse={status:string;unread:number;collegeId?:string;
  rows?:Array<RecruiterBellItem>;choices?:Array<{collegeId:string;collegeName:string}>};
 export function RecruiterNotificationBell(){
@@ -58,8 +59,8 @@ export function RecruiterNotificationBell(){
       {data.unread>99?"99+":data.unread}</Badge>:null}
   </Button>
   <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications"
-   footer={<Link href={href} onClick={()=>setIsOpen(false)}
-     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline focus-ring md:min-h-9 md:w-auto">See all notifications</Link>}>
+   footer={<TextLink href={href} onClick={()=>setIsOpen(false)}
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-9 md:w-auto">See all notifications</TextLink>}>
    {!data&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:null}
    {error?<ErrorState title="Notifications unavailable" description={error} action={<Button type="button" onClick={()=>void load()} variant="secondary" className="min-h-11 md:min-h-9">Retry</Button>}/>:null}
    {data?.status==="CHOOSE_COLLEGE"?
@@ -74,11 +75,11 @@ export function RecruiterNotificationBell(){
    {data?.status==="READY"&&data.rows?.length?
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3 min-w-0" viewportClassName="max-h-[50vh]"><ul className="min-w-0 divide-y divide-border">
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
-      <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
+      <ButtonLink variant="secondary" href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 min-w-0 break-words border-b border-transparent px-2 py-3 text-sm font-semibold leading-[1.4] text-foreground transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-neutral-50)] active:bg-muted focus-ring motion-reduce:transition-none md:min-h-9 rounded-[var(--lms-control-radius)]">
+       className="block min-w-0">
        {item.label} · {item.title}{item.unread?" · New":""}
-      </Link></li>)}
+      </ButtonLink></li>)}
     </ul></ScrollCue>:null}
   </Drawer>
  </div>;

@@ -1,6 +1,5 @@
 import { EmptyState } from "@/components/ui/empty-state";
 import { ScrollCue } from "@/components/ui/scroll-cue";
-import Link from "next/link";
 import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
 import {RecruiterConversationReadControl} from "@/components/hr/recruiter-conversation-read-control";
 import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
@@ -19,6 +18,8 @@ import {readRecruiterThreadMessages,TpoMessagingError} from "@/modules/placement
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
 import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
 const idSchema=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(10000);
@@ -41,7 +42,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Messages"/>
     <ErrorState title="No access to this college"
      description="Your access to this college has ended or was removed. Ask the placement cell to give it again."
-     action={<Link href="/hr/home" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Return to Today</Link>}/>
+     action={<TextLink href="/hr/home" className="inline-flex min-h-11 md:min-h-9 items-center">Return to Today</TextLink>}/>
    </div>;
   }
   if(error instanceof TpoMessagingError&&error.code==="TPO_MESSAGE_THREAD_NOT_FOUND")notFound();
@@ -49,8 +50,8 @@ export default async function RecruiterConversationDetail({params,searchParams}:
    <PageHeader title="Messages"/>
    <ErrorState title="Could not load this conversation"
     description="The conversation history could not be verified. Your messages were not assumed deleted."
-    action={<Link href={"/hr/conversations/"+encodeURIComponent(threadId)}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry conversation</Link>}/>
+    action={<TextLink href={"/hr/conversations/"+encodeURIComponent(threadId)}
+     className="inline-flex min-h-11 items-center md:min-h-9">Retry conversation</TextLink>}/>
   </div>;
  }
  // A drive-directory outage is ancillary to a thread already authorized by
@@ -84,12 +85,12 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   {driveLookupResult && !driveLookupResult.ok?
     <Alert tone="warning">Hiring drive details are temporarily unavailable. You can still read and reply to this authorized conversation.</Alert>:null}
   <div className="flex min-w-0 flex-wrap items-center gap-3">
-  {matchingDrive?<Link href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
-   className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+  {matchingDrive?<TextLink href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
+   className="inline-flex min-h-11 md:min-h-9 items-center">
    Open drive: {matchingDrive.job.title}
-  </Link>:null}
-  <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
-   className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Back to conversations</Link>
+  </TextLink>:null}
+  <TextLink href={"/hr/conversations?collegeId="+result.thread.collegeId}
+   className="inline-flex min-h-11 md:min-h-9 items-center">Back to conversations</TextLink>
   </div>
   <p className="text-sm text-body">{result.total.toLocaleString("en-IN")} messages · {result.unread.toLocaleString("en-IN")} unread placement cell messages · Page {result.page} of {result.pages}</p>
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
@@ -116,10 +117,10 @@ export default async function RecruiterConversationDetail({params,searchParams}:
           </p>
         </li>)}
       </ol></ScrollCue>
-      <Link href={"/recruiter/drives/"+encodeURIComponent(result.thread.jobId!)+"?tab=requests"}
-        className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+      <TextLink href={"/recruiter/drives/"+encodeURIComponent(result.thread.jobId!)+"?tab=requests"}
+        className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm">
         Review requests, answers and decisions
-      </Link>
+      </TextLink>
     </Disclosure>:null}
   <ol aria-label="Employer and placement cell messages" className="min-w-0 max-w-3xl divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {messages.map(message=><li key={message.id}
@@ -130,24 +131,20 @@ export default async function RecruiterConversationDetail({params,searchParams}:
       <p>Role: {message.proposal.title}</p>
       <p>Proposal reference: {message.proposal.referenceId}</p>
       <p>Not a submitted approval request or a published drive.</p>
-      <Link href={hrSentProposalsHref(result.thread.collegeId)}
-       className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">
+      <TextLink href={hrSentProposalsHref(result.thread.collegeId)}
+       className="mt-2 inline-flex min-h-11 md:min-h-9 items-center">
        View sent proposal history
-      </Link>
+      </TextLink>
      </div>:null}
     <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{message.body}</p>
    </li>)}
   </ol>
-  {!result.messages.length?<EmptyState title="No messages on this page" action={<Link href={"/hr/conversations?collegeId="+encodeURIComponent(result.thread.collegeId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Back to conversations</Link>}/>:null}
+  {!result.messages.length?<EmptyState title="No messages on this page" action={<TextLink href={"/hr/conversations?collegeId="+encodeURIComponent(result.thread.collegeId)} className="inline-flex min-h-11 items-center md:min-h-9">Back to conversations</TextLink>}/>:null}
   <nav aria-label="Conversation history" className="flex min-w-0 flex-wrap items-center gap-3">
-   {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring">Newest messages</Link>:null}
-   {result.page<result.pages&&result.pages>2?<Link href={hrConversationDetailHref(threadId,result.pages)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Oldest messages</Link>:null}
-   {result.page<result.pages?<Link href={hrConversationDetailHref(threadId,result.page+1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Older</Link>:null}
-   {result.page>1?<Link href={hrConversationDetailHref(threadId,result.page-1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring">Newer</Link>:null}
+   {result.page>1?<ButtonLink variant="secondary" href={hrConversationDetailHref(threadId,1)}>Newest messages</ButtonLink>:null}
+   {result.page<result.pages&&result.pages>2?<ButtonLink variant="secondary" href={hrConversationDetailHref(threadId,result.pages)}>Oldest messages</ButtonLink>:null}
+   {result.page<result.pages?<ButtonLink variant="secondary" href={hrConversationDetailHref(threadId,result.page+1)}>Older</ButtonLink>:null}
+   {result.page>1?<ButtonLink variant="secondary" href={hrConversationDetailHref(threadId,result.page-1)}>Newer</ButtonLink>:null}
   </nav>
   <div className="min-w-0 max-w-3xl">
    <RecruiterConversationReplyForm threadId={result.thread.id}/>

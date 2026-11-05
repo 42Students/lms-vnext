@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
@@ -19,6 +18,8 @@ import {CollegeApplicationDetailDrawer,type CollegeApplicationDetail} from "./co
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 type Row={id:string;name:string|null;email:string|null;collegeName:string;ageDays:number;
  source:string;submittedAt:Date|string;rollNumber:string|null;roleTitle:string;
  status:string;screening:string|null;screeningScore?:number|null;partialScore?:number|null;
@@ -284,9 +285,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      className="min-h-11 text-xs md:min-h-9">View Details</Button>
     {legacyShortlisted&&row.stage==="ASSESSMENT"&&
       (row.allowedNextStages??transitions[row.stage]??[]).includes("INTERVIEW")?
-      <Link href={basePath+"/jobs/"+encodeURIComponent(jobId)+"/interviews?applicationId="+encodeURIComponent(row.id)}
-       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text underline md:min-h-9">
-       Mark Passed · Schedule Interview</Link>:null}
+      <ButtonLink variant="secondary" href={basePath+"/jobs/"+encodeURIComponent(jobId)+"/interviews?applicationId="+encodeURIComponent(row.id)}>
+       Mark Passed · Schedule Interview</ButtonLink>:null}
     {legacyShortlisted&&row.stage==="INTERVIEW"&&
       (row.allowedNextStages??transitions[row.stage]??[]).includes("OFFERED")?
       <Button type="button" variant="secondary" disabled={busy} onClick={()=>selectRow(row,"OFFERED")}
@@ -296,9 +296,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       <Button type="button" variant="secondary" disabled={busy} onClick={()=>selectRow(row,"HIRED")}
        className="min-h-11 text-xs md:min-h-9">Mark Hired</Button>:null}
     {row.stage==="INTERVIEW"&&basePath==="/college/placements"?
-     <Link href={basePath+"/jobs/"+encodeURIComponent(jobId)+"/interviews?applicationId="+encodeURIComponent(row.id)}
-      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text underline md:min-h-9">
-      Schedule Interview</Link>:null}
+     <ButtonLink variant="secondary" href={basePath+"/jobs/"+encodeURIComponent(jobId)+"/interviews?applicationId="+encodeURIComponent(row.id)}>
+      Schedule Interview</ButtonLink>:null}
     {transitionWarning?.id===row.id?<span role="alert" className="text-xs text-warning-text">{transitionWarning.message}</span>:null}
     {row.stage==="REJECTED"?
      <Button type="button" disabled={busy||row.status!=="SUBMITTED"}
@@ -397,7 +396,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    caption="Applications pipeline" mobileMode="scroll" sortHref={sortHref}
    empty={<EmptyState title={filtered?"No applications match these filters.":"No applications yet."}
     description={filtered?"Try another search or clear the filters.":"Applicants will appear here when students apply for this drive."}
-    action={filtered?<Link href={clearHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>:undefined}/>}/>
+    action={filtered?<TextLink href={clearHref} className="inline-flex min-h-11 items-center">Clear filters</TextLink>:undefined}/>}/>
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
     applicationId={detailId} {...(detailPayload !== null ? {initialDetail:detailPayload} : {})} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}

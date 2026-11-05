@@ -1,7 +1,8 @@
-import Link from "next/link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {TpoRequestDecisionControl} from "@/components/placements/tpo-request-decision-control";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export type TpoPrototypeRequestRow={
  id:string;studentName:string;rollNumber:string|null;branchName:string|null;
@@ -38,14 +39,14 @@ export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total,pen
      {total} matching requests across pages · {pending} waiting on the current page
     </p>
     <nav className="mt-3 flex flex-wrap gap-2" aria-label="Request queue filters">
-     <Link href="/tpo/requests?status=PENDING" className="rounded-full border border-primary px-3 py-2 text-xs font-semibold text-primary-text">Waiting · {pendingTotal}</Link>
-     <Link href="/tpo/requests?status=ALL&age=LAST_30_DAYS" className="rounded-full border border-border px-3 py-2 text-xs font-semibold text-body">Last 30 days</Link>
-     <Link href="/tpo/requests?status=ALL" className="rounded-full border border-border px-3 py-2 text-xs font-semibold text-body">All history</Link>
+     <ButtonLink variant="secondary" href="/tpo/requests?status=PENDING">Waiting · {pendingTotal}</ButtonLink>
+     <ButtonLink variant="secondary" href="/tpo/requests?status=ALL&age=LAST_30_DAYS">Last 30 days</ButtonLink>
+     <ButtonLink variant="secondary" href="/tpo/requests?status=ALL">All history</ButtonLink>
     </nav>
    </div>
    <ul className="divide-y divide-border">
     {rows.map(row=><li key={row.id}>
-     <Link href={href(row.id)} aria-current={selected?.id===row.id?"page":undefined}
+     <TextLink variant="bare" href={href(row.id)} aria-current={selected?.id===row.id?"page":undefined}
       className={"block min-h-11 px-4 py-3 hover:bg-primary-subtle "+(selected?.id===row.id?
        "border-l-2 border-primary bg-primary-subtle":"")}>
       <span className="flex items-start justify-between gap-2">
@@ -61,7 +62,7 @@ export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total,pen
        {row.status!=="PENDING"?<StatusBadge tone={row.status==="APPROVED"?"success":row.status==="REJECTED"?"error":"neutral"}>
         {row.status.replaceAll("_"," ").toLowerCase()}</StatusBadge>:null}
       </div>
-     </Link>
+     </TextLink>
     </li>)}
    </ul>
    {!rows.length?<p className="p-4 text-sm text-body">No requests on this page.</p>:null}
@@ -70,9 +71,9 @@ export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total,pen
    {!selected?<div role="status" className="space-y-2 p-5">
     <Heading level={2} className="text-foreground">{selectedId?"This request is not on the authorized current page.":"No request selected."}</Heading>
     <p className="text-sm text-body">No other student's request has been substituted.</p>
-    <Link href={baseHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">
+    <TextLink href={baseHref} className="inline-flex min-h-11 items-center">
      {selectedId?"Clear request selection":"Return to requests"}
-    </Link>
+    </TextLink>
    </div>:<>
     <header className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-5 py-4">
      <div>
@@ -100,9 +101,9 @@ export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total,pen
       <Heading level={3} size="xs" className="uppercase tracking-wide text-muted-foreground">Their record</Heading>
       <p className="text-sm text-body">{selected.companyName||"No company recorded"}</p>
       <p className="text-sm font-semibold text-foreground">{selected.jobTitle||"No specific drive"}</p>
-      <Link href={selected.contextHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">
+      <TextLink href={selected.contextHref} className="inline-flex min-h-11 items-center text-sm">
        {selected.contextLabel}
-      </Link>
+      </TextLink>
       {selected.status==="PENDING"?<div className="border-t border-border pt-4">
        <Heading level={3} size="xs" className="mb-3 uppercase tracking-wide text-muted-foreground">Decision</Heading>
        <p className="mb-3 text-xs text-muted-foreground">Approve or reject only after reviewing the request and current drive evidence. Server-side checks still apply.</p>
@@ -117,7 +118,7 @@ export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total,pen
     </div>
     <footer className="flex flex-wrap justify-between gap-3 border-t border-border p-4">
      <p className="text-xs text-muted-foreground">Selection and decisions use the authorized request record; times are shown in IST.</p>
-     <Link href={baseHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Back to queue</Link>
+     <TextLink href={baseHref} className="inline-flex min-h-11 items-center text-sm">Back to queue</TextLink>
     </footer>
    </>}
   </section>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /**
  * Downloads are regenerated at GET time from the current server-verified
@@ -8,13 +8,12 @@ export function FacultyReportCsvDownload({
   href,notice,
 }: {href:string;notice?:string}) {
   return <div className="flex flex-wrap items-center gap-3 print:hidden">
-    <Link
+    <ButtonLink variant="secondary"
       href={href}
       aria-label="Download current faculty report as CSV"
-      className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:underline focus-ring"
     >
       Download CSV
-    </Link>
+    </ButtonLink>
     {notice?<p className="text-xs text-muted-foreground">{notice}</p>:null}
   </div>;
 }

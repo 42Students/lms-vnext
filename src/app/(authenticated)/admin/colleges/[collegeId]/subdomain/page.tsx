@@ -4,7 +4,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { Banner } from "@/components/ui/banner";
-import Link from "next/link";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TenantDomainManager, type TenantDomainClientRow } from "@/components/admin/tenant-domain-manager";
@@ -17,6 +16,7 @@ import {getManagedCollegeSubdomain} from "@/modules/tenant-domains/managed-subdo
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function CollegeWebAddressLoading() {
  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading web address">
@@ -66,13 +66,12 @@ export async function CollegeWebAddressContent({ params }: {
    <section aria-label="Web address" className="min-w-0 rounded-lg border border-border bg-surface p-4">
      <div className="flex flex-wrap items-center justify-between gap-3">
        <Heading level={2} size="base" className="text-[var(--lms-heading)]">Web address</Heading>
-       <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain?reload=1"}
-         className="inline-flex min-h-11 md:min-h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+       <ButtonLink variant="secondary" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain?reload=1"}>
          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
            <path d="M20 11a8 8 0 1 0-2.2 5.5"/><path d="M20 4v7h-7"/>
          </svg>
          Reload
-       </Link>
+       </ButtonLink>
      </div>
      <p className="my-3 max-w-3xl text-sm text-body">
        The address students and staff open to sign in.
@@ -89,15 +88,13 @@ export async function CollegeWebAddressContent({ params }: {
      {managedResult.status==="fulfilled"&&managedResult.value ? <ManagedCollegeSubdomain collegeId={college.id} initial={managedResult.value}/> :
        <ErrorState title="Couldn't load the web address"
          description="The managed college subdomain could not be loaded. Existing custom addresses remain available."
-         action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain?reload=1"}
-           className="font-semibold text-primary-text underline">Retry web address</Link>}/>}
+         action={<TextLink href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain?reload=1"}>Retry web address</TextLink>}/>}
    </section>
    <Disclosure ariaLabel="Verified custom addresses" title="Verified custom addresses" className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
      {rowsResult.status==="fulfilled" ? <TenantDomainManager collegeId={college.id} domains={domains}/> :
        <ErrorState title="Couldn't load the web address."
          description="Custom-domain settings could not be loaded. No address changes were made."
-         action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain"}
-           className="font-semibold text-primary-text underline">Retry custom addresses</Link>}/>}
+         action={<TextLink href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain"}>Retry custom addresses</TextLink>}/>}
 
    </Disclosure>
    <p className="text-xs text-muted-foreground">Moving an address between colleges is not supported by this manager. Remove it from the previous college after confirming the migration plan; do not bypass host ownership checks.</p>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useTransition, type ReactNode } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import type { getCollegeDashboardAttendance } from "@/modules/admin-ui/college-dashboard-attendance-service";
@@ -11,6 +10,7 @@ import type { getCollegeDashboardUnstaffedCourses } from "@/modules/admin-ui/col
 import type { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboard-setup-gaps-service";
 import type { getCollegeClosingQuizzes } from "@/modules/admin-ui/college-dashboard-quizzes-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Attendance = Awaited<ReturnType<typeof getCollegeDashboardAttendance>>;
 type Risk = Awaited<ReturnType<typeof getCollegeDashboardLowAttendance>>;
@@ -46,16 +46,16 @@ function AttentionCard({title,icon,count,href,empty,children,shown,pending}:Atte
         ? <p role="alert" className="text-warning-text">Couldn't load this. Refresh to try again.</p>
         : count === 0
           ? <p role="status" className="flex gap-2 text-[var(--lms-success)]"><span aria-hidden="true">✓</span>{empty}</p>
-          : <>{children}{count > shown ? <Link href={href}
-              className="mt-3 block font-semibold text-[var(--lms-primary-text)] underline">
+          : <>{children}{count > shown ? <TextLink href={href}
+              className="mt-3 block">
               and {count - shown} more
-            </Link> : null}</>}
+            </TextLink> : null}</>}
       {pending ? <p role="status" className="mt-2 text-xs text-muted-foreground">Refreshing… showing last available results.</p> : null}
     </div>
     <footer className="border-t border-[var(--lms-canvas-border)] px-4 py-3">
-      <Link href={href} className="inline-flex min-h-9 items-center text-[13px] font-semibold text-[var(--lms-primary-text)] hover:underline">
+      <TextLink href={href} className="inline-flex min-h-9 items-center text-[13px]">
         View all <span aria-hidden="true" className="ml-1">→</span>
-      </Link>
+      </TextLink>
     </footer>
   </article>;
 }

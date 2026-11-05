@@ -8,7 +8,6 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {RECOVERY_ENTITY_TYPES,isRecoveryEntityType} from "@/modules/admin-ui/recovery-type-registry";
 import {ErrorState} from "@/components/ui/error-state";
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   listDepartments,
@@ -17,6 +16,7 @@ import {
 import type { DepartmentDirectoryRow } from "@/modules/admin-ui/department-directory";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminDepartmentsPage({
   searchParams,
@@ -43,10 +43,10 @@ export default async function SuperAdminDepartmentsPage({
     <p className="text-xs text-muted-foreground">
       Recoveries require the selected tenant safety scope. Restoring a parent does not restore its children.
     </p>
-    {recoveryType.platformLevel?<Link href={"/admin/organizations?type="+selectedType}
-      className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
+    {recoveryType.platformLevel?<TextLink href={"/admin/organizations?type="+selectedType}
+      className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
       Open platform Deleted Items
-    </Link>:collegeId?<Alert tone="info">
+    </TextLink>:collegeId?<Alert tone="info">
       {recoveryType.label} recovery must be performed within this selected college.
       {recoveryType.implemented?" Use the authorized restore action shown here.":" The restore operation is not yet available; no archived records have been changed."}
     </Alert>:<Alert tone="warning" title="College scope required">
@@ -62,7 +62,7 @@ export default async function SuperAdminDepartmentsPage({
           description="Department administration requires a college safety scope."
         />
         <AcademicSetupSteps step={1}/>
-        <Link href="/admin/departments/all" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View departments across colleges</Link>
+        <TextLink href="/admin/departments/all" className="inline-flex min-h-11 items-center md:min-h-9">View departments across colleges</TextLink>
         {recoveryChooser}
         <Alert tone="warning">
           <div className="flex items-start gap-3">
@@ -85,7 +85,7 @@ export default async function SuperAdminDepartmentsPage({
     <AcademicSetupSteps step={1}/>
     <ErrorState title="Couldn't refresh departments"
       description="The selected college's departments could not be loaded. No rows from another college are shown."
-      action={<Link href="/admin/departments" className="font-semibold text-link underline">Retry</Link>}/>
+      action={<TextLink href="/admin/departments">Retry</TextLink>}/>
   </div>;
   // Keep tenant-scoped count queries bounded: never issue 3N reads in one burst.
   const usageResults:PromiseSettledResult<Awaited<ReturnType<typeof resolveDepartmentUsage>>>[]=[];
@@ -109,14 +109,14 @@ export default async function SuperAdminDepartmentsPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader title="Departments" actions={<Link href="/admin/academics"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Academic overview</Link>}/>
+      <PageHeader title="Departments" actions={<TextLink href="/admin/academics"
+        className="inline-flex min-h-11 items-center md:min-h-9">Academic overview</TextLink>}/>
       <AcademicSetupSteps step={1} />
-      <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9">Academic overview</Link>
+      <TextLink href="/admin/academics" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Academic overview</TextLink>
       {incompleteUsage>0?<Alert tone="warning">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span>Could not load dependency counts for {incompleteUsage} department(s). Their usage remains unknown; no archive decision should rely on a missing count.</span>
-          <Link href="/admin/departments" className="font-semibold text-primary-text underline">Retry counts</Link>
+          <TextLink href="/admin/departments">Retry counts</TextLink>
         </div>
       </Alert>:null}
       {recoveryChooser}

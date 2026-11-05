@@ -7,7 +7,6 @@ import calendarStyles from "@/components/placements/legacy-calendar-theme.module
 import monthStyles from "@/components/academics/legacy-class-month-grid.module.css";
 import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -22,6 +21,8 @@ import {
 import { getOwnLearnerAttendanceCalendar } from "@/modules/attendance/learner-attendance-calendar-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 type Params = {month?:string|string[];deliveryId?:string|string[];status?:string|string[]};
@@ -48,7 +49,7 @@ export default async function LearnerAttendanceCalendarPage({
   if(!parsed.success) return <section className="min-w-0 space-y-4">
     <PageHeader title="Attendance calendar" />
     <ErrorState title="Invalid attendance calendar filters" description="Check the month, course and status filters or clear them to continue."
-      action={<Link href="/learn/attendance/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-ring">Clear filters</Link>}/>
+      action={<TextLink href="/learn/attendance/calendar" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear filters</TextLink>}/>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getOwnLearnerAttendanceCalendar(context,parsed.data);
@@ -75,9 +76,9 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+      actions={<ButtonLink variant="secondary" href={sourceLink}>
         Attendance detail
-      </Link>} />
+      </ButtonLink>} />
     <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
       className="grid min-w-0 gap-3 pb-4 md:grid-cols-3">
       <Label stack>Month
@@ -106,8 +107,8 @@ export default async function LearnerAttendanceCalendarPage({
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
           Apply filters
         </Button>
-        <Link href="/learn/attendance/calendar"
-          className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-ring">Clear</Link>
+        <TextLink href="/learn/attendance/calendar"
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">Clear</TextLink>
       </div>
     </form></FilterBar>
     <Disclosure title="Filtered attendance totals" className="border-b border-border" contentClassName="min-w-0 space-y-3 pb-4">
@@ -125,11 +126,11 @@ export default async function LearnerAttendanceCalendarPage({
     </Disclosure>
     <section aria-label={monthLabel+" attendance calendar"} className={monthStyles["calendarCard"]}>
       <div className={monthStyles["toolbar"]}>
-        <Link href={previous} aria-label="Previous month"
-          className={monthStyles["navLink"]}>← Previous</Link>
+        <TextLink variant="bare" href={previous} aria-label="Previous month"
+          className={monthStyles["navLink"]}>← Previous</TextLink>
         <Heading level={2} className={monthStyles["period"]}>{monthLabel}</Heading>
-        <Link href={next} aria-label="Next month"
-          className={monthStyles["navLink"]}>Next →</Link>
+        <TextLink variant="bare" href={next} aria-label="Next month"
+          className={monthStyles["navLink"]}>Next →</TextLink>
       </div>
       <CalendarGrid className={monthStyles["mobileGrid"]+" p-1 sm:p-3 md:p-6"}>
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>
@@ -176,12 +177,12 @@ export default async function LearnerAttendanceCalendarPage({
                 dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
               }).format(row.startsAt)} IST
             </p>
-            <Link href={"/learn/attendance?"+new URLSearchParams({
+            <TextLink href={"/learn/attendance?"+new URLSearchParams({
               month:data.query.month,deliveryId:row.deliveryId,
             }).toString()}
-              className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto hover:text-[var(--lms-primary-text)] hover:underline md:min-h-9 active:text-[var(--lms-primary-hover)] focus-ring">
+              className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">
               View Course attendance →
-            </Link>
+            </TextLink>
           </li>)}
         </ol>}
     </section>

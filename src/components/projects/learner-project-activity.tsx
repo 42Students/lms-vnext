@@ -9,7 +9,6 @@ import {filterLearnerProjectActivityText} from "@/modules/projects/learner-proje
 import { learnerProjectActivityPageSummary } from "@/modules/projects/learner-project-activity-page-summary-model";
 import { learnerProjectActivityEmptyMessage } from "@/modules/projects/learner-project-activity-empty-model";
 import { learnerProjectActivityLastFetched } from "@/modules/projects/learner-project-activity-cursor-model";
-import Link from "next/link";
 import { learnerProjectActivityCsv } from "@/modules/projects/learner-project-activity-csv-model";
 import { filterLearnerProjectActivity, learnerProjectActivityCategories,
   learnerProjectActivityPageHref, parseLearnerProjectActivityFilters, learnerProjectActivityCategorySchema } from "@/modules/projects/learner-project-activity-filter-model";
@@ -59,7 +58,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
           className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9" />
       </Label>
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Apply</Button>
-      <Link data-unskin="" href={route + "?tab=activity"} className="inline-flex min-h-11 md:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:underline">Clear</Link>
+      <ButtonLink variant="secondary" data-unskin="" href={route + "?tab=activity"} className="self-end">Clear</ButtonLink>
     </form>
     </Disclosure>
     {parsed.success && pageRows.length > 0 ? (
@@ -101,10 +100,8 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <p className="mt-2 break-words text-xs text-muted-foreground leading-[20px]">{event.actorDisplayName ?? "System"} · <time dateTime={event.occurredAt.toISOString()}>{formatter.format(event.occurredAt)} IST</time></p>
     </li>)}</ol>}
     {parsed.success ? <nav aria-label="Activity pages" className="flex flex-wrap gap-3">
-      {parsed.data.beforeTime ? <Link data-unskin="" href={learnerProjectActivityPageHref(projectId, parsed.data)}
-        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:underline">Newest activity page</Link> : null}
-      {hasMore && lastEvent ? <Link data-unskin="" href={learnerProjectActivityPageHref(projectId, parsed.data, { time: lastEvent.cursorOccurredAt, id: lastEvent.id })}
-        className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:underline">Older activity page →</Link> : null}
+      {parsed.data.beforeTime ? <ButtonLink variant="secondary" data-unskin="" href={learnerProjectActivityPageHref(projectId, parsed.data)}>Newest activity page</ButtonLink> : null}
+      {hasMore && lastEvent ? <ButtonLink variant="secondary" data-unskin="" href={learnerProjectActivityPageHref(projectId, parsed.data, { time: lastEvent.cursorOccurredAt, id: lastEvent.id })}>Older activity page →</ButtonLink> : null}
     </nav> : null}
     <p className="text-xs text-muted-foreground leading-[20px]">Category and IST dates are applied to authorized Project history. Text search only filters the current page of up to 100 fetched events; Older activity pages use the original page cursor to avoid skipping history. CSV downloads include only the currently displayed matches.</p>
   </section>;

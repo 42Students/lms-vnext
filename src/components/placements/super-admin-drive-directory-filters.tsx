@@ -1,12 +1,12 @@
 "use client";
 
 import {useCallback,useEffect,useState} from "react";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type DriveStatusFilter="ALL"|"DRAFT"|"ACTIVE"|"CLOSED";
 
@@ -61,9 +61,9 @@ export function SuperAdminDriveDirectoryFilters({q:initialQ,status:initialStatus
      </Select>
    </Label>
    <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
-   <Link href="/admin/placements/drives"
-     className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+   <TextLink href="/admin/placements/drives"
+     className="inline-flex min-h-11 items-center md:min-h-9">
      Clear filters
-   </Link>
+   </TextLink>
  </form>;
 }

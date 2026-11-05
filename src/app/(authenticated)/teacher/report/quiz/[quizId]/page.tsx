@@ -2,7 +2,6 @@ import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "@/components/courses/faculty-report-legacy-charts.module.css";
 import { Disclosure } from "@/components/ui/disclosure";
 import {FacultyReportBackButton} from "@/components/courses/faculty-report-back-button";
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import { ErrorState } from "@/components/ui/error-state";
 import { Banner } from "@/components/ui/banner";
@@ -24,6 +23,7 @@ import {CoursesServiceError} from "@/modules/courses/errors";
 import { facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function FacultyQuizReportPage({
   params,
@@ -38,7 +38,7 @@ export default async function FacultyQuizReportPage({
   if(!parsed) return <section className="min-w-0 space-y-4">
     <PageHeader title="Quiz report" />
     <ErrorState title="Report not found." description="This quiz report link is no longer valid."
-      action={<Link href="/teacher/allQuizzes" className="font-semibold text-primary-text underline">Back to quizzes</Link>} />
+      action={<TextLink href="/teacher/allQuizzes">Back to quizzes</TextLink>} />
   </section>;
   let report:Awaited<ReturnType<typeof getFacultyQuizReport>>;
   try {
@@ -56,10 +56,10 @@ export default async function FacultyQuizReportPage({
         <p className="text-sm text-body">This quiz is shared by more than one Section. Select the Section whose results you want to review.</p>
         <ul className="space-y-2">{options.map(option=>
           <li key={option.deliveryId}>
-            <Link href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+"?deliveryId="+encodeURIComponent(option.deliveryId)}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
+            <TextLink href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+"?deliveryId="+encodeURIComponent(option.deliveryId)}
+              className="inline-flex min-h-11 items-center">
               {option.courseName} · {option.lessonName} · {option.deliveryId.slice(0,8)}
-            </Link>
+            </TextLink>
           </li>)}</ul>
       </section>;
     }
@@ -115,10 +115,10 @@ export default async function FacultyQuizReportPage({
           { title: "Not attempted", rows: notAttemptedLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
       />
-          <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto md:min-h-9">
+          <ButtonLink variant="primary" href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
+            className="w-full sm:w-auto">
             Individual attempts &amp; question accuracy →
-          </Link>
+          </ButtonLink>
         </div>} />
       {report.rosterUnavailable ? <Banner tone="warning" role="status">
         Couldn't load the student roster. Scores from authorized attempts remain visible, but the not-attempted list is unavailable.
@@ -140,23 +140,20 @@ export default async function FacultyQuizReportPage({
       </dl>
             <Disclosure title="Export options" className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-4 px-2 py-3">
       <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
-        <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
-          deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+        <ButtonLink variant="secondary" href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
+          deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}>
           Export attempted only
-        </Link>
-        <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
-          deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
+          deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}>
           Export not attempted only
-        </Link>
+        </ButtonLink>
       </nav>
       <div className="flex flex-wrap items-center gap-3">
-        <Link href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
-          "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+        <ButtonLink variant="secondary" href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
+          "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}>
           Download question accuracy CSV
-        </Link>
+        </ButtonLink>
         <p className="text-xs text-muted-foreground leading-5">Question export includes aggregate accuracy only, capped at 500 questions.</p>
       </div>
       <FacultyReportCsvDownload

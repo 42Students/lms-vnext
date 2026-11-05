@@ -1,9 +1,10 @@
 "use client";
 import {useState} from "react";
-import Link from "next/link";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 type OfferRow={
  id:string;name:string;membershipId:string;rollNumber:string|null;branch:string|null;
  role:string;status:string;statusLabel:string;kind:string;issued:string;
@@ -50,10 +51,9 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
        "Selection readiness could not be verified. No student has been assumed clear to release."}
      </p>
     </div>
-    <Link href={root+"/selections"}
-     className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-link md:min-h-9">
+    <ButtonLink variant="secondary" href={root+"/selections"}>
      Review selections and import list
-    </Link>
+    </ButtonLink>
    </div>
    {queueAvailable&&toCheck.length?<ul className="divide-y divide-border">
     {needsReview.slice(0,5).map(row=><li key={row.id}
@@ -61,9 +61,9 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
       <span className="min-w-0 text-sm"><strong>{row.name}</strong> · {row.roleTitle}
        <span className="block text-xs text-[color:var(--lms-warning-strong)]">Needs eligibility review · not cleared for release</span>
       </span>
-      <Link href={root+"/selections"} className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
+      <TextLink href={root+"/selections"} className="inline-flex min-h-9 items-center text-xs">
        Review in selections
-      </Link>
+      </TextLink>
      </li>)}
     {ready.length?<li className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
       <strong className="text-[color:var(--lms-success)]">✓ {ready.length} preliminarily eligible</strong>
@@ -73,10 +73,9 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
     No unissued selections are awaiting review. Existing issued offers remain in the register below.
    </p>:null}
    <div className="flex flex-wrap items-center gap-3 border-t border-border pt-3">
-    <Link href={root+"/selections#selections-release-actions"}
-      className="inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">
+    <ButtonLink variant="primary" href={root+"/selections#selections-release-actions"}>
       Review and confirm release
-    </Link>
+    </ButtonLink>
     <p className="text-xs text-muted-foreground">
      Nothing is sent from this preview. The release workflow confirms each candidate and records partial failures.
     </p>
@@ -145,14 +144,14 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
        {selected.ruleCheck}. The timeline is persisted evidence, not a delivery or student-open event.
       </p>
       <div className="space-y-2 border-t border-border pt-3">
-       <Link href={root+"/offers/"+encodeURIComponent(selected.id)}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+       <TextLink href={root+"/offers/"+encodeURIComponent(selected.id)}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Full offer evidence and history
-       </Link>
-       <div><Link href={"/tpo/students/"+encodeURIComponent(selected.membershipId)+"/history"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+       </TextLink>
+       <div><TextLink href={"/tpo/students/"+encodeURIComponent(selected.membershipId)+"/history"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Student placement history
-       </Link></div>
+       </TextLink></div>
       </div>
      </div>}
    </aside>

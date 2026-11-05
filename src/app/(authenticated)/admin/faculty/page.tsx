@@ -3,7 +3,6 @@ import {ScopedMembershipLifecycleActions} from "@/components/admin/scoped-member
 import {CollegePersonEditAction} from "@/components/college/college-person-edit-action";
 import {CollegePersonAuditModal} from "@/components/college/college-person-audit-modal";
 import {CollegePersonProfileOverviewModal} from "@/components/college/college-person-profile-overview-modal";
-import Link from "next/link";
 import {Alert} from "@/components/ui/alert";
 import {PageHeader} from "@/components/ui/page-header";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -15,6 +14,7 @@ import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {listAdminScopedPeople} from "@/modules/admin-ui/super-admin-scoped-people-service";
 import {getSuperAdminPeopleFilterOptions} from "@/modules/admin-ui/super-admin-people-filter-options";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 const statuses=["ALL","ACTIVE","SUSPENDED","ENDED"] as const;
 export default async function SuperAdminFacultyPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -32,11 +32,11 @@ export default async function SuperAdminFacultyPage({searchParams}:{
    actions={context.adminScope?.collegeId&&peopleFilters?<PersonOnboardDialog collegeId={context.adminScope.collegeId} forcedRole="FACULTY" departments={peopleFilters.departments}/>:undefined}/>
   {filtersResult.status==="rejected"?<Alert tone="warning" title="Faculty filter options are unavailable">
    The faculty roster remains available. Registration and department filters need verified choices.
-   {" "}<Link href="/admin/faculty" className="font-semibold underline">Retry options</Link>.
+   {" "}<TextLink href="/admin/faculty">Retry options</TextLink>.
   </Alert>:null}
   {pickerResult.status==="rejected"?<Alert tone="warning" title="Faculty reassignment options are unavailable">
    The faculty roster remains available. Schedule reassignments require refreshed faculty choices.
-   {" "}<Link href="/admin/faculty" className="font-semibold underline">Retry options</Link>.
+   {" "}<TextLink href="/admin/faculty">Retry options</TextLink>.
   </Alert>:null}
   <AdminScopedReadPage
     headingMode="section"
@@ -59,12 +59,12 @@ export default async function SuperAdminFacultyPage({searchParams}:{
        </div>
       </Disclosure>
       <div className="flex min-w-0 flex-wrap gap-x-4 gap-y-2">
-       <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-ring md:min-h-9" href="/admin/people">
+       <TextLink className="inline-flex min-h-11 items-center md:min-h-9" href="/admin/people">
         Manage memberships, profiles and account status →
-       </Link>
-       <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9" href="/admin/faculty-assignment">
+       </TextLink>
+       <TextLink className="inline-flex min-h-11 items-center md:min-h-9" href="/admin/faculty-assignment">
         Faculty Assignment →
-       </Link>
+       </TextLink>
       </div>
     </section>:null}
     {...(peopleFilters ? { peopleFilters: { ...peopleFilters, kind: "FACULTY" as const } } : {})} title="Registered Faculty" path="/admin/faculty" statuses={statuses}

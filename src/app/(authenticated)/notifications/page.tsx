@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { NotificationList, type NotificationListItem } from "@/components/activity/notification-list";
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
@@ -17,6 +16,8 @@ import {
 import { parseNotificationCursor } from "@/modules/activity/notification-cursor";
 import { notificationContextPresentation,notificationFeedFailure } from "@/modules/activity/notification-context-model";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Params={
  view?:string;category?:string;beforeCreatedAt?:string;beforeId?:string;
@@ -132,28 +133,27 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
      placeholder="Search title or message" className="mt-1 w-full"/>
    </Label>
    <Button type="submit">Search</Button>
-   {query?<Link href={inbox+"?view="+view} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Clear</Link>:null}
+   {query?<TextLink href={inbox+"?view="+view} className="inline-flex min-h-11 items-center text-sm">Clear</TextLink>:null}
   </form>
   {invalid?<Alert tone="error">
    The notification filters or page link are invalid.{" "}
-   <Link href={inbox+"?view="+view} className="font-semibold text-primary-text underline">
+   <TextLink href={inbox+"?view="+view}>
     Return to the newest notifications
-   </Link>
+   </TextLink>
   </Alert>:null}
   {partialFailure?<Alert tone={failedNotifications?"error":"warning"}>
    <strong>{failedNotifications?"Couldn't load notifications":"Couldn't refresh notifications"}</strong>
    {" "}{failureMessage??"The available notification sources remain visible."}{" "}
-   <Link href={retryHref} className="font-semibold text-primary-text underline">Retry</Link>
+   <TextLink href={retryHref}>Retry</TextLink>
   </Alert>:null}
   {!invalid&&(!failedNotifications||items.length>0)?<>
    <NotificationList items={items} emptyText={emptyText}
-    emptyAction={items.length===0&&category?<Link href={inbox+"?view=all"}
-      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">All</Link>
-     :view==="unread"?<Link href={inbox+"?view=all"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">All</Link>:null}/>
-   {nextHref?<div className="flex justify-center"><Link href={nextHref}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+    emptyAction={items.length===0&&category?<TextLink href={inbox+"?view=all"}
+      className="inline-flex min-h-11 items-center">All</TextLink>
+     :view==="unread"?<TextLink href={inbox+"?view=all"} className="inline-flex min-h-11 items-center">All</TextLink>:null}/>
+   {nextHref?<div className="flex justify-center"><ButtonLink variant="secondary" href={nextHref}>
     Older notifications
-   </Link></div>:null}
+   </ButtonLink></div>:null}
   </>:null}
  </div>;
 }

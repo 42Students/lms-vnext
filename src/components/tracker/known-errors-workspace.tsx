@@ -13,10 +13,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import type { listKnownErrorsForAdmin } from "@/modules/log-alerts/admin-service";
-import Link from "next/link";
 import {knownErrorSafeSummary,knownErrorSafeSql} from "@/modules/log-alerts/known-error-safe-summary";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type KnownError = Awaited<ReturnType<typeof listKnownErrorsForAdmin>>[number];
 
@@ -90,15 +90,15 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         </p>
       ) : null}
       <div className="flex min-w-0 flex-col gap-2 md:flex-row">
-        <Link href={"/tracker?context="+encodeURIComponent(knownErrorSafeSummary({
+        <ButtonLink variant="secondary" href={"/tracker?context="+encodeURIComponent(knownErrorSafeSummary({
           signatureHash:item.signatureHash,environment:item.environment,fixStatus:item.fixStatus,
           occurrences:item.occurrenceCount,affectedAccounts:item.affectedAccounts,
           firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
           issuePublicId:item.issuePublicId,
         }).slice(0,450))+"&knownErrorId="+encodeURIComponent(item.id)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:w-auto md:min-h-9">
+          className="w-full md:w-auto">
           Create tracker issue
-        </Link>
+        </ButtonLink>
       </div>
       <Disclosure title="Triage and diagnostic actions" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
       <div className="grid min-w-0 gap-3 md:grid-cols-3">

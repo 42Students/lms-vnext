@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect,useState,type ReactNode} from "react";
-import Link from "next/link";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Preserve a successful, user/college/filter-bound recruiter inbox if its
  * server refresh fails. No conversation data is stored outside React memory.
@@ -27,7 +27,7 @@ export function TpoInboxRefreshBoundary({
   return <section aria-label="Last loaded recruiter inbox" className="min-w-0 space-y-3">
     <p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm text-warning-text">
       This refresh failed. Your last loaded conversations remain visible, but may be out of date.{" "}
-      <Link href={retryHref} className="font-semibold text-link underline">Retry</Link>
+      <TextLink href={retryHref}>Retry</TextLink>
     </p>
     {snapshot}
   </section>;

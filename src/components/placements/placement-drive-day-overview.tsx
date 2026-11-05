@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {DataTable} from "@/components/ui/data-table";
 import type { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type DriveDay = Awaited<ReturnType<typeof getPlacementDriveDay>>;
 function tone(status: string): "neutral" | "info" | "success" | "warning" | "error" {
@@ -34,8 +34,8 @@ export function PlacementDriveDayOverview({ driveDay, embedded = false }: { driv
       {driveDay.rounds.length === 0 ? <div role="status" className="border-b border-border py-6 text-sm text-muted-foreground">{embedded ? "No rounds planned for this drive day yet." : "Evaluation rounds are not configured yet."}</div> :
         driveDay.rounds.map(round => <article key={round.id} id={`round-${round.id}`} className="scroll-mt-24 border-b border-border py-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between"><div><p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">Round {round.sequence} · {round.kind}</p><Heading level={3} size="lg" className="mt-1 text-foreground">{round.name}</Heading><p className="mt-1 text-sm text-body">{formatWhen(round.scheduledAt, round.timezone)}{round.venue ? " · "+round.venue : ""}</p></div><StatusBadge tone={tone(round.status)}>{round.status}</StatusBadge></div>
-          <Link href={"/tpo/placements/jobs/"+encodeURIComponent(driveDay.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">See attendance and results</Link>
+          <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(driveDay.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
+            className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">See attendance and results</TextLink>
           <div className="mt-3 grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border xl:grid-cols-5">{[["Participants",round.participantCount],["Staged",round.stagedResultCount],["Applied",round.appliedResultCount],["Missing",round.missingResultCount],["Passed",round.outcomes.pass]].map(([label,value]) => <div key={String(label)} className="min-w-0 border-b border-r border-border p-3 last:border-r-0 [&:nth-child(even)]:border-r-0 xl:border-b-0 xl:[&:nth-child(even)]:border-r xl:last:border-r-0"><p className="m-0 text-xs text-muted-foreground">{label}</p><p className="mt-1 font-semibold text-foreground">{value}</p></div>)}</div>
           {round.participants.length > 0 ?
            <div className="mt-4">

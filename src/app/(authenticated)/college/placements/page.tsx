@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {CollegeRetentionInlinePreview} from "@/components/placements/college-retention-inline-preview";
 import { redirect } from "next/navigation";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -19,6 +18,8 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeDrives } from "@/modules/placements/college-drive-read-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegePlacementsPage({searchParams}:{
   searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -38,10 +39,10 @@ export default async function CollegePlacementsPage({searchParams}:{
         while Placements is disabled for your college. Existing records remain
         unchanged. Ask your Super Admin to enable Placements.
       </Alert>
-      <Link href="/college/module-access"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">
+      <TextLink href="/college/module-access"
+        className="inline-flex min-h-11 items-center md:min-h-9">
         View college module access
-      </Link>
+      </TextLink>
     </section>
   );
   const incoming=await searchParams;
@@ -49,8 +50,7 @@ export default async function CollegePlacementsPage({searchParams}:{
   if(Array.isArray(rawSearch)||(typeof rawSearch==="string"&&rawSearch.length>100))
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Placement Drives"/>
-      <Alert tone="warning">Invalid search. <Link href="/college/placements"
-        className="font-semibold text-link underline">Clear search</Link></Alert>
+      <Alert tone="warning">Invalid search. <TextLink href="/college/placements">Clear search</TextLink></Alert>
     </div>;
   const q=typeof rawSearch==="string"?rawSearch.trim():"";
   const rawReturnTo=incoming["returnTo"];
@@ -86,20 +86,19 @@ export default async function CollegePlacementsPage({searchParams}:{
         description="Run active hiring drives from one operational view. Attention items surface decisions that need action; closed and draft drives remain available in the full archive."
         actions={
           <div className="flex flex-wrap items-center gap-2">
-           <Link
+           <ButtonLink variant="primary"
             href="/college/placements/new"
-            className="inline-flex min-h-11 w-full items-center justify-center md:min-h-[var(--lms-control-height)] md:w-auto rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-semibold text-on-primary motion-safe:transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-ring"
+            className="w-full md:w-auto"
           >
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
              fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
              <path d="M12 5v14M5 12h14"/>
             </svg>
             <span className="ml-1">New drive</span>
-           </Link>
-           <Link href="/college/placements/drives"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9">
+           </ButtonLink>
+           <ButtonLink variant="secondary" href="/college/placements/drives">
             All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)
-           </Link>
+           </ButtonLink>
           </div>
         }
       />
@@ -111,12 +110,12 @@ export default async function CollegePlacementsPage({searchParams}:{
       </section>
       {!filtered?<Alert tone="warning">
         Couldn&apos;t load drives. Check your connection and retry.
-        <Link href="/college/placements" className="ml-2 font-semibold text-link underline">Retry</Link>
+        <TextLink href="/college/placements" className="ml-2">Retry</TextLink>
       </Alert>:null}
 
       {!attention?<Alert tone="warning">
         Couldn&apos;t check for anything that needs attention.
-        <Link href="/college/placements" className="ml-2 font-semibold text-link underline">Retry</Link>
+        <TextLink href="/college/placements" className="ml-2">Retry</TextLink>
       </Alert>:null}
       <section aria-label="Needs attention" className="min-w-0 space-y-2">
        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Needs attention</Heading>
@@ -135,47 +134,45 @@ export default async function CollegePlacementsPage({searchParams}:{
           </Label>
           {returnTo?<input type="hidden" name="returnTo" value={returnTo}/>:null}
           <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
-          {q?<Link href={"/college/placements"+(returnTo?"?returnTo="+encodeURIComponent(returnTo):"")}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear</Link>:null}
-          <Link href="/college/placements/new"
-           className="ml-auto inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-semibold text-on-primary md:min-h-9">
+          {q?<TextLink href={"/college/placements"+(returnTo?"?returnTo="+encodeURIComponent(returnTo):"")}
+            className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:null}
+          <ButtonLink variant="primary" href="/college/placements/new"
+           className="ml-auto">
            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M12 5v14M5 12h14"/>
            </svg><span className="ml-1">New Drive</span>
-          </Link>
+          </ButtonLink>
         </form>
         {filtered?<DataTable caption="Active college drives" rows={activeRows} getRowKey={row=>row.id}
           empty={<EmptyState title="No active drives" description="No published drives match your search."
-            action={<Link href={filteredHref} className="font-semibold text-link underline">View all drives</Link>}/>}
+            action={<TextLink href={filteredHref}>View all drives</TextLink>}/>}
           columns={[
             {key:"title",header:"Drive",mobilePriority:"primary",cell:row=>
-              <Link href={"/college/placements/jobs/"+encodeURIComponent(row.id)+"/overview"}
-                className="font-semibold text-link underline">{row.title}</Link>},
+              <TextLink href={"/college/placements/jobs/"+encodeURIComponent(row.id)+"/overview"}>{row.title}</TextLink>},
             {key:"company",header:"Company",cell:row=>row.companyName},
             {key:"status",header:"Status",cell:row=>
               <StatusBadge tone={row.status==="PUBLISHED"?"success":"neutral"}>
                 {row.status==="PUBLISHED"?"Active":row.status}</StatusBadge>},
             {key:"actions",header:"Actions",cell:row=>
-              <Link href={"/college/placements/jobs/"+encodeURIComponent(row.id)+"/applications"}
-                className="font-semibold text-link underline">Applications</Link>},
+              <TextLink href={"/college/placements/jobs/"+encodeURIComponent(row.id)+"/applications"}>Applications</TextLink>},
           ]}/>:null}
         {filtered?<p className="text-xs text-muted-foreground">
           Showing up to {activeRows.length} of {filtered.total} matching active drives.
-          <Link href={filteredHref}
-            className="ml-2 font-semibold text-link underline">View all</Link>
+          <TextLink href={filteredHref}
+            className="ml-2">View all</TextLink>
         </p>:null}
       </section>
       <nav aria-label="Placement workspaces" className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
-      <Link href="/college/placements/interviews" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] active:text-[var(--lms-primary-text)] focus-ring">Interviews</Link>
-      <Link href="/college/placements/drives" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] active:text-[var(--lms-primary-text)] focus-ring">All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)</Link>
+      <ButtonLink variant="secondary" href="/college/placements/interviews" className="w-full sm:w-auto">Interviews</ButtonLink>
+      <ButtonLink variant="secondary" href="/college/placements/drives" className="w-full sm:w-auto">All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)</ButtonLink>
       </nav>
 
       <CollegeRetentionInlinePreview/>
       <p className="border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
-        <Link href="/college/placements/student-lookup" className="font-semibold text-link underline">Student placement lookup</Link>
+        <TextLink href="/college/placements/student-lookup">Student placement lookup</TextLink>
         <span className="ml-2 text-xs text-muted-foreground">Search a student by name, roll number or email to see recorded applications, offers and joining outcomes.</span>
-        <Link href="/college/students" className="ml-3 font-semibold text-link underline">Student directory</Link>
+        <TextLink href="/college/students" className="ml-3">Student directory</TextLink>
       </p>
       <PlacementOperationsWorkspace
         context={context}

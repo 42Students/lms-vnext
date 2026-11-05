@@ -2,7 +2,6 @@ import { Select } from "@/components/ui/select";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
@@ -43,6 +42,8 @@ import { collegeRoleDirectoryExportHref } from "@/modules/people/college-role-di
 import {collegeLearnerVerificationHref} from "@/modules/verification/admin-links";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -67,7 +68,7 @@ export async function CollegeRoleDirectoryWorkspace({
     <PageHeader title={title} />
     <ErrorState title="Admin not assigned to a college"
       description="You are not assigned to a college. Contact your administrator to restore access to the roster."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+      action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>}/>
   </div>;
 
   let filter: ReturnType<typeof parseCollegeRoleDirectorySearchParams>;
@@ -85,7 +86,7 @@ export async function CollegeRoleDirectoryWorkspace({
         <ErrorState
           title="Invalid directory filters"
           description={collegeRoleDirectoryFilterMessage(error)}
-          action={<Link href={path} className="font-semibold text-link hover:underline focus-ring">Clear directory filters</Link>}
+          action={<TextLink href={path}>Clear directory filters</TextLink>}
         />
       </div>
     );
@@ -102,8 +103,8 @@ export async function CollegeRoleDirectoryWorkspace({
       <PageHeader title={title}/>
       <ErrorState title={"Could not load "+title.toLowerCase()}
         description={"The "+title.toLowerCase()+" directory is temporarily unavailable. No changes were made."}
-        action={<Link href={collegeRoleDirectoryHref(kind,filter)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>} />
+        action={<TextLink href={collegeRoleDirectoryHref(kind,filter)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>} />
     </div>;
   }
   const canonical = canonicalCollegeRoleDirectoryHref(kind, result.filter, result.totalPages);
@@ -126,16 +127,16 @@ export async function CollegeRoleDirectoryWorkspace({
     {kind==="LEARNER" && item.membershipStatus==="ACTIVE"&&
       item.userStatus==="ACTIVE"&&item.cohort!==null
       ? <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/> : null}
-    <Link href="/college/otp-lockout"
-      className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9"
+    <TextLink href="/college/otp-lockout"
+      className="inline-flex min-h-11 items-center text-xs md:min-h-9"
       aria-label={"Open authorized OTP recovery for "+item.name}>
       Clear OTP lockout
-    </Link>
-    <Link href={(kind==="LEARNER"?"/college/students/":"/college/faculty/")+item.membershipId}
-      className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9"
+    </TextLink>
+    <TextLink href={(kind==="LEARNER"?"/college/students/":"/college/faculty/")+item.membershipId}
+      className="inline-flex min-h-11 items-center text-xs md:min-h-9"
       aria-label={"Open full "+(kind==="LEARNER"?"student":"faculty")+" profile for "+item.name}>
       Full profile
-    </Link>
+    </TextLink>
   </div>;
   // Legacy student order: Name, Roll No., Mobile, Email, Class, Gender,
   // Status, Actions. Sensitive contact/gender and roll are not present in the
@@ -143,16 +144,13 @@ export async function CollegeRoleDirectoryWorkspace({
   // inventing PII or querying another tenant's identity.
   const studentColumns: DataTableColumn<Row>[] = [
     {key:"name",header:"Name",mobilePriority:"primary",cell:item=>
-      <Link href={"/college/students/"+item.membershipId}
-        className="font-semibold text-link underline underline-offset-4">{item.name}</Link>},
-    {key:"roll",header:<Link href={collegeRoleDirectoryHref(kind,{
-        ...result.filter,sort:result.filter.sort==="ROLL"?"ROLL_DESC":"ROLL",page:1})}
-        className="text-link underline" aria-label="Sort by roll number">
-        Roll No. {result.filter.sort==="ROLL"?"↑":result.filter.sort==="ROLL_DESC"?"↓":"↕"}</Link>,cell:item=>
+      <TextLink href={"/college/students/"+item.membershipId}>{item.name}</TextLink>},
+    {key:"roll",header:<TextLink href={collegeRoleDirectoryHref(kind,{
+        ...result.filter,sort:result.filter.sort==="ROLL"?"ROLL_DESC":"ROLL",page:1})} aria-label="Sort by roll number">
+        Roll No. {result.filter.sort==="ROLL"?"↑":result.filter.sort==="ROLL_DESC"?"↓":"↕"}</TextLink>,cell:item=>
       item.rollNumber ? <span title={item.rollNumber} className="max-w-32 truncate font-mono text-sm">{item.rollNumber}</span> : "—"},
     {key:"mobile",header:"Mobile",cell:item=>
-      <Link href={collegeRoleContactHref(item.membershipId)}
-        className="text-link underline">View contact card</Link>},
+      <TextLink href={collegeRoleContactHref(item.membershipId)}>View contact card</TextLink>},
     {key:"email",header:"Email",cell:item=>item.email?
       <span title={item.email} className="block max-w-52 truncate">{item.email}</span>:"—"},
     {key:"class",header:"Class",cell:item=>item.sections.length?
@@ -167,16 +165,13 @@ export async function CollegeRoleDirectoryWorkspace({
     {key:"actions",header:"Actions",className:"text-right",cell:actions},
   ];
   const facultyColumns: DataTableColumn<Row>[] = [
-    {key:"name",header:<Link href={collegeRoleDirectoryHref(kind,{
-      ...result.filter,sort:result.filter.sort==="NAME"?"NAME_DESC":"NAME",page:1})}
-      className="text-link underline" aria-label="Sort by faculty name">
-      Name {result.filter.sort==="NAME_DESC"?"↓":"↑"}</Link>,mobilePriority:"primary",cell:item=>
-      <Link href={"/college/faculty/"+item.membershipId}
-        className="font-semibold text-link underline underline-offset-4">{item.name||"—"}</Link>},
+    {key:"name",header:<TextLink href={collegeRoleDirectoryHref(kind,{
+      ...result.filter,sort:result.filter.sort==="NAME"?"NAME_DESC":"NAME",page:1})} aria-label="Sort by faculty name">
+      Name {result.filter.sort==="NAME_DESC"?"↓":"↑"}</TextLink>,mobilePriority:"primary",cell:item=>
+      <TextLink href={"/college/faculty/"+item.membershipId}>{item.name||"—"}</TextLink>},
     {key:"department",header:"Department",cell:item=>item.department||"—"},
     {key:"mobile",header:"Mobile",cell:item=>
-      <Link href={collegeRoleContactHref(item.membershipId)}
-        className="font-semibold text-link underline" aria-label={"View permitted mobile contact for "+item.name}>View contact</Link>},
+      <TextLink href={collegeRoleContactHref(item.membershipId)} aria-label={"View permitted mobile contact for "+item.name}>View contact</TextLink>},
     {key:"email",header:"Email",cell:item=>item.email?
       <span title={item.email} className="block max-w-52 truncate">{item.email}</span>:"—"},
     {key:"type",header:"Type",cell:item=>item.employmentType?
@@ -202,10 +197,9 @@ export async function CollegeRoleDirectoryWorkspace({
             <PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />
           </div>
         ) : (
-          <Link href="/college/students/register"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-primary-hover)] focus-ring md:min-h-9">
+          <ButtonLink variant="secondary" href="/college/students/register">
             Register students
-          </Link>
+          </ButtonLink>
         )}
       />
 
@@ -213,12 +207,12 @@ export async function CollegeRoleDirectoryWorkspace({
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Registered Students</Heading>
         <Disclosure title="Register students" className="min-w-0">
           <div className="flex flex-wrap items-center gap-4 py-2 text-sm">
-            <Link href="/college/students/register" className="font-semibold text-link underline">
+            <TextLink href="/college/students/register">
               Single student registration form
-            </Link>
-            <Link href="/college/students/import" className="font-semibold text-link underline">
+            </TextLink>
+            <TextLink href="/college/students/import">
               Bulk Register Students (CSV)
-            </Link>
+            </TextLink>
             <span className="text-muted-foreground">Registration is scoped to your current college and its active batch.</span>
           </div>
         </Disclosure>
@@ -230,25 +224,25 @@ export async function CollegeRoleDirectoryWorkspace({
         }))} /> : null}
       {kind === "LEARNER" ? <nav aria-label="Student directory tools"
         className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
-        <Link href="/college/students/import"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Bulk Register Students</Link>
+        <TextLink href="/college/students/import"
+          className="inline-flex min-h-11 items-center md:min-h-9">Bulk Register Students</TextLink>
         <CollegeStudentImportHistory />
         <Disclosure title="CSV exports" className="min-w-0">
           <div className="flex min-w-0 flex-col gap-2 border-t border-border py-2">
-            <Link href={"/api/college/roles/export-visible?kind="+kind+"&"+
+            <TextLink href={"/api/college/roles/export-visible?kind="+kind+"&"+
               new URL(collegeRoleDirectoryExportHref(kind,result.filter),"https://lms.invalid").searchParams.toString()}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Export visible students.csv</Link>
-            <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Export Learner CSV (max 1,000)</Link>
+              className="inline-flex min-h-11 items-center md:min-h-9">Export visible students.csv</TextLink>
+            <TextLink href={collegeRoleDirectoryExportHref(kind,result.filter)}
+              className="inline-flex min-h-11 items-center md:min-h-9">Export Learner CSV (max 1,000)</TextLink>
           </div>
         </Disclosure>
-        <Link href="/college/people"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">People Directory</Link>
+        <TextLink href="/college/people"
+          className="inline-flex min-h-11 items-center md:min-h-9">People Directory</TextLink>
       </nav> : null}
       {kind === "FACULTY" ? <div className="space-y-2">
         <Heading level={2} className="text-[var(--lms-font-lg)] text-[var(--lms-heading)]">Registered Faculty</Heading>
-        <Link href="/college/faculty-assignment"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Faculty Assignment →</Link>
+        <TextLink href="/college/faculty-assignment"
+          className="inline-flex min-h-11 items-center md:min-h-9">Faculty Assignment →</TextLink>
       </div> : null}
       <p className="text-xs leading-5 text-muted-foreground" role="note">
         Legacy permanent deletion is replaced by reversible, college-scoped membership
@@ -259,19 +253,19 @@ export async function CollegeRoleDirectoryWorkspace({
         before suspension.
       </p>
       {kind === "FACULTY" ? <nav aria-label="Faculty directory tools" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
-        <Link href="/college/faculty/import" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Import faculty CSV</Link>
-        <Link href={collegeRoleDirectoryHref(kind,result.filter)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
+        <TextLink href="/college/faculty/import" className="inline-flex min-h-11 items-center md:min-h-9">Import faculty CSV</TextLink>
+        <TextLink href={collegeRoleDirectoryHref(kind,result.filter)}
+          className="inline-flex min-h-11 items-center md:min-h-9">Refresh</TextLink>
         <Disclosure title="Export Faculty CSV (max 1,000)" className="min-w-0">
           <div className="flex min-w-0 flex-col gap-2 border-t border-border py-2">
-            <Link href={"/api/college/roles/export-visible?kind="+kind+"&"+
+            <TextLink href={"/api/college/roles/export-visible?kind="+kind+"&"+
               new URL(collegeRoleDirectoryExportHref(kind,result.filter),"https://lms.invalid").searchParams.toString()}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Export visible faculty.csv</Link>
-            <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">Export Faculty CSV (max 1,000)</Link>
+              className="inline-flex min-h-11 items-center md:min-h-9">Export visible faculty.csv</TextLink>
+            <TextLink href={collegeRoleDirectoryExportHref(kind,result.filter)}
+              className="inline-flex min-h-11 items-center md:min-h-9">Export Faculty CSV (max 1,000)</TextLink>
           </div>
         </Disclosure>
-        <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">People Directory</Link>
+        <TextLink href="/college/people" className="inline-flex min-h-11 items-center md:min-h-9">People Directory</TextLink>
       </nav> : null}
       <section aria-label={title+" directory summary"} className="grid min-w-0 grid-cols-2 gap-3 border-y border-border py-3 md:grid-cols-4">
         {[
@@ -493,9 +487,9 @@ export async function CollegeRoleDirectoryWorkspace({
           <Button variant="primary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
             Apply
           </Button>
-          <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">
+          <TextLink href={path} className="inline-flex min-h-11 items-center md:min-h-9">
             Clear
-          </Link>
+          </TextLink>
         </form>
       </section>
 
@@ -510,19 +504,19 @@ export async function CollegeRoleDirectoryWorkspace({
                 kind==="FACULTY"?"No faculty found. Register faculty members to get started.":"No students found. Register students to get started."
               : "There are no records on this page. Select an earlier page."}
             action={collegeRoleDirectoryHasActiveFilters(kind,result.filter)?
-              <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear roster filters</Link>:
-              kind==="LEARNER"?<Link href="/college/students/register"
-                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+              <TextLink href={path} className="inline-flex min-h-11 items-center md:min-h-9">Clear roster filters</TextLink>:
+              kind==="LEARNER"?<TextLink href="/college/students/register"
+                className="inline-flex min-h-11 items-center md:min-h-9">
                 Register students
-              </Link>:<PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />}/>
+              </TextLink>:<PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />}/>
         ) : (
           <>
           <ul aria-label={title + " mobile records"} className="space-y-2 md:hidden">
             {result.items.map(item=>(
               <li key={item.membershipId} className="min-w-0 space-y-2 border-b border-border py-3">
                 <div className="min-w-0">
-                  <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
-                    className="break-words font-semibold text-link underline focus-ring">{item.name}</Link>
+                  <TextLink href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
+                    className="break-words">{item.name}</TextLink>
                   <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">
                     {item.email??"—"}
                   </p>
@@ -541,10 +535,10 @@ export async function CollegeRoleDirectoryWorkspace({
                 <p className="break-words text-sm text-body leading-[22px]">{describeCollegeDirectoryContext(kind,item)}</p>
                 <p className="text-xs text-muted-foreground leading-[20px]">Joined {joinedLabel(item.joinedAt)} IST</p>
                 <div className="flex flex-wrap gap-3 text-sm">
-                  <Link href={collegeRoleContactHref(item.membershipId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">View contact card</Link>
-                  {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">Profile verification</Link>:null}
+                  <TextLink href={collegeRoleContactHref(item.membershipId)}
+                    className="inline-flex min-h-11 items-center">View contact card</TextLink>
+                  {kind==="LEARNER"?<TextLink href={collegeLearnerVerificationHref(item.membershipId)}
+                    className="inline-flex min-h-11 items-center">Profile verification</TextLink>:null}
                 </div>
                 {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
@@ -580,20 +574,20 @@ export async function CollegeRoleDirectoryWorkspace({
         </p>
         <div className="flex gap-2">
           {result.filter.page > 1 ? (
-            <Link
+            <ButtonLink variant="secondary"
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page - 1 })}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[44px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
+              className="min-w-11 md:min-w-9"
             >
               Previous
-            </Link>
+            </ButtonLink>
           ) : null}
           {result.filter.page < result.totalPages ? (
-            <Link
+            <ButtonLink variant="secondary"
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page + 1 })}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[44px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
+              className="min-w-11 md:min-w-9"
             >
               Next
-            </Link>
+            </ButtonLink>
           ) : null}
         </div>
       </nav>

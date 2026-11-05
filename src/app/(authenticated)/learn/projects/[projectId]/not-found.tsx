@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { ButtonLink } from "@/components/ui/button-link";
 export default function LearnerProjectUnavailable() {
   return (
     <section className="min-w-0 space-y-4 border-b border-border py-6">
@@ -7,9 +7,9 @@ export default function LearnerProjectUnavailable() {
       <p className="mt-2 max-w-lg break-words text-sm text-body">
         This Project isn&apos;t available to your current learner account.
       </p>
-      <Link href="/learn/projects" className="mt-4 inline-flex min-h-11 w-full sm:w-auto sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground">
+      <ButtonLink variant="primary" href="/learn/projects" className="mt-4 w-full sm:w-auto">
         Back to my Projects
-      </Link>
+      </ButtonLink>
     </section>
   );
 }

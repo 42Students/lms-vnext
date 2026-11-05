@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { Table } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyContactRoleLabel } from "@/modules/courses/faculty-contact-detail-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export type FacultyContactRow={
   membershipId:string;displayName:string|null;
@@ -36,8 +36,8 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
         return <article key={item.membershipId} className="min-w-0 rounded border-b border-border bg-surface px-3 py-4">
           <div className="flex min-w-0 items-start gap-3">{avatar(item,name)}<div className="min-w-0 flex-1">
           <Heading level={2} size="sm" className="text-foreground">
-            {href?<Link href={href}
-              className="inline-flex min-h-11 max-w-full items-center break-words text-primary-text hover:underline focus-ring">{name}</Link>:name}
+            {href?<TextLink href={href}
+              className="inline-flex min-h-11 max-w-full items-center break-words">{name}</TextLink>:name}
           </Heading>
           <p className="mt-1 text-sm leading-5 text-body">Email: Private</p>
           <p className="mt-1 text-sm leading-5 text-body">Contact: Private</p>
@@ -58,7 +58,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
         const href=contactHref(item.membershipId);
         return <tr key={item.membershipId}>
           <td className="min-w-40 font-semibold">
-            <div className="flex min-w-0 items-center gap-2">{avatar(item,name)}<div className="min-w-0">{href?<Link href={href} className="inline-flex min-h-9 items-center break-words text-primary-text hover:underline focus-ring">{name}</Link>:name}
+            <div className="flex min-w-0 items-center gap-2">{avatar(item,name)}<div className="min-w-0">{href?<TextLink href={href} className="inline-flex min-h-9 items-center break-words">{name}</TextLink>:name}
               <span className="block text-xs font-normal text-muted-foreground">Department: {item.departmentName??"Not recorded"}</span>
             </div></div>
           </td>

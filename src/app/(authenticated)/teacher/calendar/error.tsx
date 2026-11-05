@@ -2,8 +2,8 @@
 
 import { PageHeader } from "@/components/ui/page-header";
 import {Alert} from "@/components/ui/alert";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function FacultyClassScheduleError({ reset }: {
   error: Error & { digest?: string };
@@ -17,9 +17,9 @@ export default function FacultyClassScheduleError({ reset }: {
       </Alert>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         <Button onClick={reset}>Retry class schedule</Button>
-        <Link href="/teacher/courses" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring md:min-h-9">
+        <ButtonLink variant="secondary" href="/teacher/courses">
           Back to courses
-        </Link>
+        </ButtonLink>
       </div>
     </section>
   );

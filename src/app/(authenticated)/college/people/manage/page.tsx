@@ -6,7 +6,6 @@ import { Alert } from "@/components/ui/alert";
 import { getDb } from "@/db/client";
 import { countDistinct, eq, and } from "drizzle-orm";
 import { departments,programs,sections,cohorts,collegeMemberships,membershipRoles } from "@/db/schema";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -26,6 +25,7 @@ import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 type Search = Record<string, string | string[] | undefined>;
 function collegePeopleManageHref(filter: CollegePeopleDirectoryFilter) {
@@ -76,7 +76,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory} />
       <ErrorState title="Invalid directory filters"
         description="Check the search, role, status or page. No people were loaded."
-        action={<Link href="/college/people/manage" className="md:min-h-9 font-semibold text-link min-h-11 inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>} />
+        action={<TextLink href="/college/people/manage" className="md:min-h-9 min-h-11 inline-flex items-center">Clear filters</TextLink>} />
     </div>;
   }
   const people = await listCollegePeopleWithRuntime(context, {
@@ -131,8 +131,8 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       actions={<PersonOnboardDialog collegeId={membership.collegeId} />} />
     <Disclosure title="Other people actions" className="min-w-0">
       <nav aria-label="People directory tools" className="flex min-w-0 flex-wrap items-center gap-3 pt-2">
-        {process.env["COLLEGE_STUDY_GROUPS_RELEASED"] === "true" ? <Link href="/college/groups"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Student groups</Link> : null}<Link href="/college/contacts" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Export filtered CSV</Link>
+        {process.env["COLLEGE_STUDY_GROUPS_RELEASED"] === "true" ? <TextLink href="/college/groups"
+        className="inline-flex min-h-11 items-center md:min-h-9">Student groups</TextLink> : null}<TextLink href="/college/contacts" className="inline-flex min-h-11 items-center md:min-h-9">Browse contacts</TextLink><TextLink href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center md:min-h-9">Export filtered CSV</TextLink>
       </nav>
     </Disclosure>
     <section className="min-w-0" aria-label="People filters">
@@ -162,7 +162,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
           </Select>
         </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply</Button>
-        <Link href="/college/people/manage" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear</Link>
+        <TextLink href="/college/people/manage" className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>
       </form>
     </section>
     {showLearnerSearch?<section aria-label="Learner search" className="min-w-0 space-y-3">
@@ -185,11 +185,11 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
        {suggestions.map(person=><li key={person.membership.id}
         className="flex min-w-0 flex-wrap items-center justify-between gap-2 py-2">
         <span className="min-w-0 break-words text-sm">{personLabel(person)}</span>
-        <Link href={collegePeopleManageHref({...filter,q:person.user.displayName?.trim()||
+        <TextLink href={collegePeopleManageHref({...filter,q:person.user.displayName?.trim()||
          person.user.email||person.user.phoneE164||"",page:1})}
-         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+         className="inline-flex min-h-11 items-center md:min-h-9">
          Select
-        </Link>
+        </TextLink>
        </li>)}
       </ul>:<p className="mt-2 text-sm text-muted-foreground">No learners found.</p>}
      </div>
@@ -203,18 +203,18 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
           description={collegePeopleHasFilters(filter)
             ? "No memberships match the selected People filters."
             : "No memberships are recorded in this college yet."}
-          action={collegePeopleHasFilters(filter)?<Link href="/college/people/manage"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear People filters</Link>:undefined}/>} />
+          action={collegePeopleHasFilters(filter)?<TextLink href="/college/people/manage"
+            className="inline-flex min-h-11 items-center md:min-h-9">Clear People filters</TextLink>:undefined}/>} />
     </section>
     <nav aria-label="People directory pages" className="flex min-w-0 flex-col items-stretch gap-3 text-sm md:flex-row md:items-center md:justify-between">
       <span className="text-muted-foreground">
         Page {pagination.page} of {pagination.pages} · {pagination.first}–{pagination.last} of {pagination.total}
       </span>
       <div className="flex flex-wrap gap-3">
-        {pagination.hasPrevious ? <Link href={collegePeopleManageHref({ ...filter, page: filter.page - 1 })}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Previous</Link> : null}
-        {pagination.hasNext ? <Link href={collegePeopleManageHref({ ...filter, page: filter.page + 1 })}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Next</Link> : null}
+        {pagination.hasPrevious ? <TextLink href={collegePeopleManageHref({ ...filter, page: filter.page - 1 })}
+          className="inline-flex min-h-11 items-center md:min-h-9">Previous</TextLink> : null}
+        {pagination.hasNext ? <TextLink href={collegePeopleManageHref({ ...filter, page: filter.page + 1 })}
+          className="inline-flex min-h-11 items-center md:min-h-9">Next</TextLink> : null}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">The CSV includes at most 1,000 matching memberships and visibly discloses truncation. Roles are membership grants, not separate people. A multi-role person may appear under multiple role filters. Profile and lifecycle actions are governed by existing permissions.</p>

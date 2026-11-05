@@ -1,7 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {PageBackLink} from "@/components/ui/page-back-link";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -10,6 +9,8 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { listTpoCalendarRoundChoices } from "@/modules/placements/tpo-round-calendar-service";
 import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-service";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function TpoRoundCalendarPage({searchParams}:{
  searchParams:Promise<{page?:string|string[];q?:string|string[]}>;
 }) {
@@ -32,7 +33,7 @@ export default async function TpoRoundCalendarPage({searchParams}:{
        placeholder="Company, drive or round name" />
      </Label>
      <Button type="submit" variant="primary" className="min-h-11 w-full px-4 md:w-auto md:min-h-9">Find</Button>
-     <Link href="/tpo/calendar/rounds" className="lms-inline-link inline-flex min-h-11 items-center justify-center text-[14px] font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>
+     <TextLink href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center justify-center text-[14px] md:min-h-9">Clear</TextLink>
     </form>
     <p role="status" className="text-[13px] text-[var(--lms-muted-text)]">Page {result.page}: {result.rows.length} rounds{result.limited?" · more available":""}</p>
     <TpoRoundCalendarControl blockedDates={blockedDates.ready?blockedDates.rows.map(row=>row.day):[]} blockedDatesAvailable={blockedDates.ready}
@@ -41,8 +42,8 @@ export default async function TpoRoundCalendarPage({searchParams}:{
       scheduledAt: row.scheduledAt?.toISOString() ?? null,
     }))} />
     {(result.page>1||result.limited)?<nav aria-label="Round pages" className="flex min-w-0 flex-wrap items-center gap-3">
-     {result.page>1?<Link href={link(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Previous 200</Link>:null}
-     {result.limited?<Link href={link(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[14px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)]">Next 200</Link>:null}
+     {result.page>1?<ButtonLink variant="secondary" href={link(result.page-1)}>Previous 200</ButtonLink>:null}
+     {result.limited?<ButtonLink variant="secondary" href={link(result.page+1)}>Next 200</ButtonLink>:null}
     </nav>:null}
     <p className="text-sm text-body leading-[22px]">Venue checks use persisted on-campus bookings.
       Unknown duration is a blocker, not an assumed clear venue.

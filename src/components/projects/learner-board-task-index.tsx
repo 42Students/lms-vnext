@@ -2,11 +2,11 @@ import { Badge } from "@/components/ui/badge";
 import styles from "./legacy-project-board.module.css";
 import { BoardColumn } from "@/components/ui/board-column";
 import { EmptyState } from "@/components/ui/empty-state";
-import Link from "next/link";
 import {learnerBoardCardMetadata} from "@/modules/projects/learner-board-card-model";
 import { learnerBoardTaskHref, type LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
  projectId:string;
@@ -28,11 +28,11 @@ export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
        {lane.tasks.map(task=>{
         const info=learnerBoardCardMetadata(task,sprints);
         return <li key={task.id}>
-         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
+         <TextLink variant="bare" href={learnerBoardTaskHref(projectId,filters,task.id)}
           className={styles["card"]+" block rounded-[var(--lms-radius-card)] border border-border bg-surface p-3 text-sm text-primary-text hover:bg-muted focus-ring"}>
           <span className="block break-words font-semibold">{task.title}</span>
           <span className="mt-2 block break-words text-xs text-muted-foreground">{info.priority} · {info.sprintTitle}</span>
-         </Link>
+         </TextLink>
         </li>;
        })}
        {lane.tasks.length===0?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}

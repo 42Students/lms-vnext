@@ -25,9 +25,9 @@ import {formatUnplacedPercentage} from "@/modules/placements/tpo-unplaced-academ
 import {getTpoUnplacedLastApplications} from "@/modules/placements/tpo-unplaced-activity-read-service";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
-import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -107,11 +107,11 @@ export default async function TpoUnplacedReportPage({
   })();
   if (!report) return <div className="min-w-0 space-y-4">
     <PageHeader title="Unplaced students" description="Students looking for a job with no offer that counts as placed"/>
-    <Link href="/tpo/reports" className="text-sm font-semibold text-link underline">All reports</Link>
+    <TextLink href="/tpo/reports" className="text-sm">All reports</TextLink>
     <Alert tone="error">
      <strong>Could not load the report</strong>
      <p className="mt-2 text-sm">The previous report data has not been replaced with a false zero or an empty result.</p>
-     <Link href="/tpo/reports/unplaced" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>
+     <TextLink href="/tpo/reports/unplaced" className="mt-2 inline-flex min-h-11 items-center">Retry</TextLink>
     </Alert>
    </div>;
   const {workspace,batches,batchesUnavailable,batchId,branchId,permittedBatch,permittedBranch,
@@ -123,8 +123,8 @@ export default async function TpoUnplacedReportPage({
         description="Students looking for a job with no offer that counts as placed: their marks, resume, applications and whether they are still in a drive"
         actions={<div className="flex flex-wrap items-center gap-2 print:hidden">
           <TpoReportPresentation/>
-          <Link href="/tpo/reports" className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">All reports</Link>
-          <Link href={tpoUnplacedStudentsHref({...(batchId ? {batchId} : {}),...(branchId ? {branchId} : {})})} className="inline-flex min-h-11 items-center rounded border border-primary px-3 text-sm font-semibold text-link md:min-h-9">Act on them on Students</Link>
+          <ButtonLink variant="secondary" href="/tpo/reports">All reports</ButtonLink>
+          <ButtonLink variant="secondary" href={tpoUnplacedStudentsHref({...(batchId ? {batchId} : {}),...(branchId ? {branchId} : {})})}>Act on them on Students</ButtonLink>
           {permittedBatch&&permittedBranch?<ButtonLink variant="secondary" href={filteredExportHref}>Download filtered CSV</ButtonLink>:null}
         </div>}
       />
@@ -144,15 +144,15 @@ export default async function TpoUnplacedReportPage({
         </Select></Label>
        <Button type="submit" className="min-h-11 w-full md:min-h-[var(--lms-control-height)] md:w-auto">Filter</Button>
       </form>
-      {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link md:min-h-[var(--lms-control-height)]">Clear batch and branch</Link>:null}
+      {(batchId||branchId)?<TextLink href="/tpo/reports/unplaced" className="inline-flex min-h-11 items-center text-sm md:min-h-[var(--lms-control-height)]">Clear batch and branch</TextLink>:null}
       {batchesUnavailable?<Alert tone="warning">
         Could not load batches. The report remains available without batch-specific filtering.
-        <Link href="/tpo/reports/unplaced" className="ml-2 text-link underline">Retry batches</Link>
+        <TextLink href="/tpo/reports/unplaced" className="ml-2">Retry batches</TextLink>
       </Alert>:null}
       {!permittedBatch?<Alert tone="error">{batchesUnavailable
        ?"Selected batch could not be verified; no batch-specific student records were loaded."
        :"The selected batch does not belong to this college."}</Alert>:null}
-      {!permittedBranch?<Alert tone="error">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-link underline lms-inline-link">Clear filters</Link></Alert>:null}
+      {!permittedBranch?<Alert tone="error">The selected branch does not belong to this college or batch. <TextLink href="/tpo/reports/unplaced">Clear filters</TextLink></Alert>:null}
       <SummaryStrip label="Unplaced learner report summary" steps={[
         {label:"Unplaced in selected scope",value:reportNumber(unplaced.length)},
         {label:"Ready, unplaced",value:reportNumber(readyUnplaced.length),

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ProjectAdminNav} from "@/components/projects/project-admin-nav";
@@ -13,6 +12,8 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 import {listPaginatedDeletedProjectWorkspaces} from "@/modules/projects/project-soft-delete-service";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Query={page?:string|string[];pageSize?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
@@ -39,10 +40,10 @@ export default async function DeletedCollegeProjectsPage({
  const collegeId=getProjectAdminCollegeId(context);
  const query=await searchParams;
  const parsed=parseQuery(query);
- const back=<Link href="/college/projects"
-  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+ const back=<ButtonLink variant="secondary" href="/college/projects"
+  className="min-w-0">
   Back to workspaces
- </Link>;
+ </ButtonLink>;
  const header=<PageHeader title="Deleted workspaces"
   description="Deleted workspaces you can still restore." actions={back}/>;
  if(!collegeId)return <div className="min-w-0 space-y-4">
@@ -57,7 +58,7 @@ export default async function DeletedCollegeProjectsPage({
   {header}
   <ErrorState title="Invalid deleted workspace filters"
    description="Choose a page and 10, 20, 50 or 100 rows per page."
-   action={<Link href="/college/projects/deleted" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+   action={<TextLink href="/college/projects/deleted">Clear filters</TextLink>}/>
  </div>;
  const result=await listPaginatedDeletedProjectWorkspaces(context,collegeId,parsed)
   .then(value=>({ok:true as const,value}))
@@ -72,8 +73,8 @@ export default async function DeletedCollegeProjectsPage({
    <Heading level={2} className="mb-3 text-[var(--lms-heading)]">Deleted workspaces</Heading>
    <Alert tone="error" title="Deleted workspaces could not be loaded">
     Could not load deleted workspaces. The selected college and filters have not changed.
-    <Link href={deletedHref(parsed.page,parsed.pageSize)}
-     className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>
+    <TextLink href={deletedHref(parsed.page,parsed.pageSize)}
+     className="mt-2 inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
    </Alert>
   </section>
  </div>;

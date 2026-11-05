@@ -1,7 +1,6 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -15,6 +14,8 @@ import {getFacultyPublishedGradebook} from "@/modules/courses/faculty-gradebook-
 import {CoursesServiceError} from "@/modules/courses/errors";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams={search?:string|string[];page?:string|string[]};
 
@@ -34,11 +35,11 @@ export default async function FacultyGradebookPage({
   );
   if(!parsed.success||!view.success)return <section role="alert" className="min-w-0 space-y-3">
     <PageHeader title="Published gradebook" description="Invalid gradebook link or filters" />
-    <Link href={parsed.success?
+    <TextLink href={parsed.success?
       facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1}):
-      "/teacher/courses"} className="text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-ring hover:text-[var(--lms-primary-text)]">
+      "/teacher/courses"} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">
       Return to the gradebook
-    </Link>
+    </TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   let data:Awaited<ReturnType<typeof getFacultyPublishedGradebook>>;
@@ -53,10 +54,10 @@ export default async function FacultyGradebookPage({
           This section has more than 100 published assessments. Contact your college
           administrator to request a gradebook report. No grades have been changed.
         </p>
-        <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline focus-ring hover:text-[var(--lms-primary-text)]">
+        <TextLink href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)}
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">
           Return to your course
-        </Link>
+        </TextLink>
       </section>;
     }
     throw error;
@@ -66,10 +67,10 @@ export default async function FacultyGradebookPage({
   const csv="/api/courses/faculty/gradebook/"+encodeURIComponent(parsed.data.deliveryId)+"/csv";
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Published gradebook"
-      actions={<Link href={csv}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-[var(--lms-control-height)]">
+      actions={<ButtonLink variant="secondary" href={csv}
+        className="w-full sm:w-auto">
         Download full section CSV
-      </Link>} />
+      </ButtonLink>} />
     <p className="text-sm text-body leading-[22px]">
       {data.rosterSize} current eligible learners · {data.publishedAssessments}
       {" "}assessments with published result records
@@ -90,10 +91,10 @@ export default async function FacultyGradebookPage({
       <Button type="submit" variant="primary" className="w-full sm:w-auto">
         Search
       </Button>
-      <Link href={facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1})}
-        className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-primary-text focus-ring hover:text-[var(--lms-primary-text)]">
+      <TextLink href={facultyGradebookViewHref(parsed.data.deliveryId,{search:"",page:1})}
+        className="inline-flex min-h-11 items-center justify-center px-2 text-sm">
         Clear
-      </Link>
+      </TextLink>
     </form>
     <p aria-live="polite" className="text-sm text-muted-foreground leading-[22px]">
       Showing {filtered.matching} of {filtered.total} authorized learners · Page {filtered.page} of {filtered.totalPages}.
@@ -112,11 +113,11 @@ export default async function FacultyGradebookPage({
           {row.rollNumber?"Roll "+row.rollNumber+" · ":""}
           {row.email??"No email on record"}
         </p>
-        <Link href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)+
+        <TextLink href={"/teacher/courses/"+encodeURIComponent(parsed.data.deliveryId)+
           "/gradebook/"+encodeURIComponent(row.membershipId)}
-          className="mt-2 inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-ring hover:text-[var(--lms-primary-text)]">
+          className="mt-2 inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm">
           View published score breakdown →
-        </Link>
+        </TextLink>
         <div className="mt-3 grid min-w-0 grid-cols-2 gap-2 md:grid-cols-3">
           <p className="text-sm text-body leading-[22px]">Published scores: {row.gradedCount}/{row.publishedAssessments}</p>
           <p className="text-sm text-body leading-[22px]">Recorded points: {
@@ -138,14 +139,14 @@ export default async function FacultyGradebookPage({
         Page {filtered.page} of {filtered.totalPages}
       </span>
       <div className="flex gap-3">
-        {filtered.page>1&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page-1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-ring hover:text-[var(--lms-primary-text)]">
+        {filtered.page>1&&<TextLink href={facultyGradebookViewHref(parsed.data.deliveryId,{
+          ...base,page:filtered.page-1})} className="text-sm inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">
           Previous
-        </Link>}
-        {filtered.page<filtered.totalPages&&<Link href={facultyGradebookViewHref(parsed.data.deliveryId,{
-          ...base,page:filtered.page+1})} className="text-sm font-semibold text-primary-text inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-ring hover:text-[var(--lms-primary-text)]">
+        </TextLink>}
+        {filtered.page<filtered.totalPages&&<TextLink href={facultyGradebookViewHref(parsed.data.deliveryId,{
+          ...base,page:filtered.page+1})} className="text-sm inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">
           Next
-        </Link>}
+        </TextLink>}
       </div>
     </nav>}
     <Disclosure title="About published grades and CSV scope" className="border-t border-border">

@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import {getProjectReadiness} from "@/modules/projects/readiness-service";
 import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import {AdminReadinessWorkspacePicker} from "./admin-readiness-workspace-picker";
-import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
 import {listCollegeReadinessWorkspaceChoicePage,listCollegeReadinessReleases,
  resolveCollegeReadinessWorkspaceId} from "@/modules/projects/college-readiness-releases-service";
@@ -31,6 +30,7 @@ import {
 } from "@/modules/projects/admin-insights-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 function one(
   value: string | string[] | undefined,
@@ -87,7 +87,7 @@ export async function ProjectAdminReadinessPage({
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <ErrorState title="Invalid readiness filters"
       description="Review the workspace status, page or rows filters. No workspace records were loaded."
-      action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Clear filters</Link>}/>
+      action={<TextLink href={basePath+"/readiness"} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>
   </div>;
   const searchQuery = one(searchParams["q"]);
   const selectedStatus = one(searchParams["status"]) as ProjectAdminCollectionQuery["status"];
@@ -111,7 +111,7 @@ export async function ProjectAdminReadinessPage({
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <ErrorState title="Submission readiness unavailable"
       description="Couldn't load workspaces. Check the selected college and retry."
-      action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center text-primary-text underline focus-ring md:min-h-9">Retry readiness</Link>} />
+      action={<TextLink href={basePath+"/readiness"} className="inline-flex min-h-11 items-center md:min-h-9">Retry readiness</TextLink>} />
   </div>;
   const result=snapshotsResult.value;
   const overridesFailed=overridesResult.status!=="fulfilled";
@@ -189,16 +189,16 @@ export async function ProjectAdminReadinessPage({
             {key:"at",header:"At",mobilePriority:"secondary",cell:row=>new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(row.at)},
-            {key:"action",header:"Action",mobilePriority:"action",cell:row=><Link
-              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
-              href={readinessPath+"?projectId="+encodeURIComponent(row.projectId)+"#manual-override"}>Manage</Link>},
+            {key:"action",header:"Action",mobilePriority:"action",cell:row=><TextLink
+              className="inline-flex min-h-11 items-center"
+              href={readinessPath+"?projectId="+encodeURIComponent(row.projectId)+"#manual-override"}>Manage</TextLink>},
           ]}
           empty={<EmptyState title="No matching overrides" description="No workspace overrides match these filters." />}
         />}
         {matchingOverrides.length>25?<nav aria-label="Active override pages" className="mt-3 flex items-center justify-between gap-2 text-sm">
           <span>Page {currentOverridePage} of {overrideTotalPages}</span>
-          <div className="flex gap-3">{currentOverridePage>1?<Link href={overridePageHref(currentOverridePage-1)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Previous</Link>:null}
-            {currentOverridePage<overrideTotalPages?<Link href={overridePageHref(currentOverridePage+1)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Next</Link>:null}</div>
+          <div className="flex gap-3">{currentOverridePage>1?<TextLink href={overridePageHref(currentOverridePage-1)} className="inline-flex min-h-11 items-center md:min-h-9">Previous</TextLink>:null}
+            {currentOverridePage<overrideTotalPages?<TextLink href={overridePageHref(currentOverridePage+1)} className="inline-flex min-h-11 items-center md:min-h-9">Next</TextLink>:null}</div>
         </nav>:null}
       </Disclosure>
       <div className="flex min-w-0 flex-wrap items-center justify-end">
@@ -225,9 +225,9 @@ export async function ProjectAdminReadinessPage({
           items={pickerChoices} selected={selected} action={readinessPath}
           collegeId={collegeId} initialTotal={workspaceChoices.total}/>:null}
         {selected ? <>
-          <Link href={readinessPath+"?projectId="+encodeURIComponent(selected)+"#manual-override"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-ring md:min-h-9">
+          <TextLink href={readinessPath+"?projectId="+encodeURIComponent(selected)+"#manual-override"} className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             Manage override
-          </Link>
+          </TextLink>
           <section aria-label="Current readiness" className="space-y-3 border-y border-border py-4">
             <Heading level={3} size="base">Current readiness</Heading>
             {selectedReadiness?<>
@@ -287,8 +287,7 @@ export async function ProjectAdminReadinessPage({
               </p>
             </>:<ErrorState title="Readiness could not be loaded"
               description="The selected workspace's readiness could not be loaded. Retry the workspace; previous readiness values are not shown."
-              action={<Link href={readinessPath+"?projectId="+encodeURIComponent(selected)}
-                className="text-link underline">Retry readiness</Link>}/>}
+              action={<TextLink href={readinessPath+"?projectId="+encodeURIComponent(selected)}>Retry readiness</TextLink>}/>}
           </section>
           <Heading level={3} size="sm">Releases</Heading>
           {releaseUnavailable?<Banner tone="warning" role="alert">Couldn't load releases. Retry this page to review release readiness.</Banner>:
@@ -322,7 +321,7 @@ export async function ProjectAdminReadinessPage({
 
       {!result.items.length ? (
         <EmptyState title="No matching project workspaces" description="No project workspaces match these filters."
-          action={<Link href={readinessPath} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Clear filters</Link>}/>
+          action={<TextLink href={readinessPath} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>
       ) : (
         <div className="min-w-0 space-y-2">
           {result.items.map((project) => (
@@ -332,17 +331,17 @@ export async function ProjectAdminReadinessPage({
             >
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <Link
+                  <TextLink
                     href={
                       basePath +
                       "/" +
                       project.id +
                       "/readiness"
                     }
-                    className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-foreground hover:text-primary-text focus-ring md:min-h-9"
+                    className="inline-flex min-h-11 max-w-full items-center break-words text-base text-foreground md:min-h-9"
                   >
                     {project.title}
-                  </Link>
+                  </TextLink>
 
                   <p className="mt-1 text-xs text-muted-foreground">
                     {project.mentorName

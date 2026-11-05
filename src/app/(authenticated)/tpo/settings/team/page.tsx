@@ -9,7 +9,6 @@ import { TpoSettingsTeamManage, TpoSettingsTeamRemove } from "@/components/tpo/t
 import { listTpoTeamAssignableStaff } from "@/modules/placements/tpo-settings-team-actions-service";
 import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
 import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-people-sort-model";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -28,6 +27,8 @@ import {
   getTpoPlacementTeam,
 } from "@/modules/placements/tpo-settings-people-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function dutyDate(value: string) {
   // PostgreSQL DATE is rendered without constructing a client clock.
@@ -60,7 +61,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
       <TpoSettingsNav active="team" compact/>
       <ErrorState title="Could not verify your placement team access"
        description="Your college team records are temporarily unavailable. No changes have been made."
-       action={<Link href="/tpo/settings/team" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Retry</Link>}/>
+       action={<TextLink href="/tpo/settings/team" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
     </div>;
   }
 
@@ -89,12 +90,11 @@ export default async function TpoPlacementTeamPage({searchParams}: {
         title="Placement team"
         description="Who is on your team, who owns what, and who is away. Manage faculty coordinators and Drive Day student duties for your college."
         actions={
-          <Link
+          <ButtonLink variant="secondary"
             href="/tpo/settings/trusted"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-ring"
           >
             Trusted Companies
-          </Link>
+          </ButtonLink>
         }
       />
       <TpoSettingsNav active="team" compact />
@@ -211,9 +211,8 @@ export default async function TpoPlacementTeamPage({searchParams}: {
 
         <nav aria-label="Team workload sort" className="mb-4 flex min-w-0 flex-wrap gap-2">
           {([{key:"WORK",label:"Most work first"},{key:"OVERDUE",label:"Overdue first"},{key:"NAME",label:"Name"}] as const).map(option=>(
-            <Link key={option.key} href={"/tpo/settings/team?sort="+option.key}
-              aria-current={sort===option.key?"page":undefined}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-ring md:min-h-9">{option.label}</Link>
+            <ButtonLink variant="secondary" key={option.key} href={"/tpo/settings/team?sort="+option.key}
+              aria-current={sort===option.key?"page":undefined}>{option.label}</ButtonLink>
           ))}
         </nav>
         {!workload.ready?<Alert tone="warning">Ask workload is not available yet. Drive Day duties remain visible; no zero workload is assumed.</Alert>:null}
@@ -259,10 +258,9 @@ export default async function TpoPlacementTeamPage({searchParams}: {
                   </p>
                   <Disclosure title="View duty dates" className="min-w-0" contentClassName="pt-2">
                   {member.studentDuties.map(duty=><p key={duty.jobId+":"+duty.onDate} className="text-xs text-body">
-                    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(duty.jobId)}
-                      className="font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-ring">
+                    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(duty.jobId)}>
                       {duty.jobTitle}
-                    </Link>
+                    </TextLink>
                     {" · "}{dutyDate(duty.onDate)}
                   </p>)}
                   </Disclosure>

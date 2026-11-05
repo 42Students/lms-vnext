@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 
 import { useEffect, useState, useTransition, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { Alert } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/toast";
@@ -21,6 +20,8 @@ import {
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Option = { id: string; name: string; code: string; startDate?:string; endDate?:string };
 type Batch = {
@@ -173,11 +174,10 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
     {programs.length === 0 || periods.length === 0
       ? <p role="status" className="mt-2 text-sm text-muted-foreground leading-[22px]">
         {programs.length === 0 ? <>
-          No programs in this college yet. <Link href={programsHref}
-            className="font-semibold text-[var(--lms-link-text)] underline">Go to Programs</Link>
+          No programs in this college yet. <TextLink href={programsHref}>Go to Programs</TextLink>
         </> : <>
           Create a usable academic period before adding batches.{" "}
-          <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Set up academic periods</Link>
+          <TextLink href={academicSetupHref} className="inline-flex min-h-11 items-center md:min-h-9">Set up academic periods</TextLink>
         </>}
       </p>
       : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] lg:grid-cols-2">
@@ -403,9 +403,9 @@ export function CollegeCohortRowActions({ row, periods }: {
       >
       <span aria-hidden="true">✎</span> Edit
     </Button>
-    <Link href={studentsHref} aria-label={"Manage students in " + row.name} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] focus-ring md:min-h-9">
+    <ButtonLink variant="secondary" href={studentsHref} aria-label={"Manage students in " + row.name}>
       <span aria-hidden="true">♙</span> Students
-    </Link>
+    </ButtonLink>
     <Button variant="secondary" type="button" disabled={pending || row.status !== "PLANNED" ||
       row.activeSections > 0 || row.activeEnrolledLearners > 0}
       aria-label={"Archive batch " + row.name}

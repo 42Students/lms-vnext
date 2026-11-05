@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type {RequestContext} from "@/modules/identity/context";
 import {listSuperAdminGlobalCompanyCatalogue} from "@/modules/placements/admin-company-directory-service";
 import type {z} from "zod";
@@ -18,6 +17,7 @@ import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
 import { Img } from "@/components/ui/img";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Filters=z.infer<typeof adminCompaniesQuerySchema>;
 
@@ -52,7 +52,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
   <PageHeader title="Companies" description="42's curated company list"/>
   {tabs}
   <ErrorState title="Couldn't load companies" description="The global company catalogue could not be read. No stale results or private company relationships are shown."
-   action={<Link href="/admin/companies?view=GLOBAL" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
+   action={<TextLink href="/admin/companies?view=GLOBAL" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
  </div>;
  const data=load.value;
  // Legacy global curation columns: Company, Domains, Added by, Colleges,
@@ -107,10 +107,10 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
   <DataTable caption="42's curated company list" rows={data.rows} columns={columns}
    getRowKey={row=>row.companyId} empty={<EmptyState title="No companies" description="No global company identities match your search."/>}/>
   <nav aria-label="Company catalogue pages" className="flex min-w-0 flex-wrap gap-4 text-sm font-semibold">
-   {data.query.page>1?<Link href={pageUrl(data.query.page-1)} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Previous</Link>:null}
-   {data.query.page<data.totalPages?<Link href={pageUrl(data.query.page+1)} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Next</Link>:null}
+   {data.query.page>1?<TextLink href={pageUrl(data.query.page-1)} className="inline-flex min-h-11 items-center md:min-h-9">Previous</TextLink>:null}
+   {data.query.page<data.totalPages?<TextLink href={pageUrl(data.query.page+1)} className="inline-flex min-h-11 items-center md:min-h-9">Next</TextLink>:null}
   </nav>
   <p className="text-xs text-muted-foreground">Only this page of up to {data.cap} authorized global companies is exported. Select a college scope before reviewing a merge; private college CRM details are not included.</p>
-  <Link href="/admin/placements" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">← Placement operations</Link>
+  <TextLink href="/admin/placements" className="inline-flex min-h-11 items-center md:min-h-9">← Placement operations</TextLink>
  </div>;
 }

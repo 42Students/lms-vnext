@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -7,6 +6,7 @@ import {TpoDriveClosePreviewForm} from "@/components/placements/tpo-drive-close-
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveClosePreview} from "@/modules/placements/tpo-drive-close-preview-service";
+import { TextLink } from "@/components/ui/text-link";
 export default async function TpoDriveClosePreviewPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -19,7 +19,7 @@ export default async function TpoDriveClosePreviewPage({params}:{params:Promise<
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="TPO · Drive lifecycle" title={preview.title+" · Close preview"}
    description="Review persisted application, round and offer counts before an audited closure."
-   actions={<Link href={"/tpo/placements/jobs/"+preview.id} className="inline-flex min-h-11 items-center w-full justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring md:min-h-9 md:w-auto">← Drive workspace</Link>}/>
+   actions={<TextLink href={"/tpo/placements/jobs/"+preview.id} className="inline-flex min-h-11 items-center w-full justify-center text-sm md:min-h-9 md:w-auto">← Drive workspace</TextLink>}/>
   {preview.canClose?<TpoDriveClosePreviewForm preview={preview}/>:
    <Alert tone="warning">
     {preview.pendingPromotions>0?

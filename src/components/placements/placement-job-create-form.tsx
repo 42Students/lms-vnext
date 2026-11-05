@@ -8,7 +8,6 @@ import {
   type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -1135,7 +1134,7 @@ export function PlacementJobCreateForm({
       </div>:null}
       {existingDrive?<div role="alert" className="flex flex-wrap items-center gap-2 rounded-lg border border-warning p-3 text-sm">
         <span>A drive for {selectedEmployer?.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).</span>
-        <Link href={basePath+"/jobs/"+encodeURIComponent(existingDrive.jobId)} className="font-semibold text-primary-text underline">Open it</Link>
+        <TextLink href={basePath+"/jobs/"+encodeURIComponent(existingDrive.jobId)}>Open it</TextLink>
       </div>:null}
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
       <fieldset disabled={pending||loadingCopy} aria-label="Drive configuration" className="min-w-0 space-y-4">
@@ -1302,7 +1301,7 @@ export function PlacementJobCreateForm({
                 {existingDrive?
                   <p role="alert" className="mt-2 font-semibold text-[var(--lms-gold-accent)]">
                     A drive for {selectedEmployer.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).{" "}
-                    <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline max-md:inline-flex max-md:min-h-11 max-md:items-center">Open it</Link> before creating another.
+                    <TextLink href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="max-md:inline-flex max-md:min-h-11 max-md:items-center">Open it</TextLink> before creating another.
                   </p>:null}
               </aside></Disclosure>:null}
             </div>
@@ -1527,7 +1526,7 @@ export function PlacementJobCreateForm({
             <span className="mt-1 block text-xs text-muted-foreground">Hybrid accepts LMS or employer applications. Employer-form-only applications are completed outside LMS; on-campus slot scheduling is not set up by this selection.</span>
           </Label>
           {applicationMode!=="INTERNAL"||driveMode==="OFF_CAMPUS"?<Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Company application link
             </span>
             <Input
@@ -2220,7 +2219,7 @@ export function PlacementJobCreateForm({
         </div>
       </section>
       {uncertainCreate?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
-        The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline max-md:inline-flex max-md:min-h-11 max-md:items-center focus-visible:underline">Review Drives</Link> before retrying.
+        The previous create request may have succeeded. <TextLink href={basePath} className="max-md:inline-flex max-md:min-h-11 max-md:items-center">Review Drives</TextLink> before retrying.
         <Button variant="secondary" type="button" className="mt-[var(--lms-space-2)] min-h-11 w-full font-semibold text-primary-text underline sm:ml-[var(--lms-space-3)] sm:mt-0 sm:w-auto md:min-h-9"
           onClick={()=>{try{localStorage.removeItem(uncertainKey);}catch{}setUncertainCreate(false);}}>
           I checked Drives — allow another attempt

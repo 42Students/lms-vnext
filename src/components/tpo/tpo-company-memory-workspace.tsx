@@ -8,12 +8,13 @@ import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 import {MetricBar} from "@/components/ui/metric-bar";
 import chartStyles from "./legacy-company-bar.module.css";
 
-import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
 import {TpoPublicJoinLinkCard} from "./tpo-public-join-link-card";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -221,7 +222,7 @@ export function TpoCompanyMemoryWorkspace({
             description={error}
             action={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row">
               <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={retry}>Retry</Button>
-              <Link className={buttonStyle} href="/tpo/recruiters?view=companies">Back to companies</Link>
+              <TextLink variant="bare" className={buttonStyle} href="/tpo/recruiters?view=companies">Back to companies</TextLink>
             </div>}
           />
         )}
@@ -241,12 +242,11 @@ export function TpoCompanyMemoryWorkspace({
         actions={
         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           <PageBackLink href="/tpo/recruiters?view=companies" label="Companies" />
-          <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-            className={buttonStyle}>Create drive</Link>
-          <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">
+          <TextLink variant="bare" href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
+            className={buttonStyle}>Create drive</TextLink>
+          <ButtonLink variant="primary" href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}>
             Add contact
-          </Link>
+          </ButtonLink>
         </div>
         }
       />
@@ -300,10 +300,10 @@ export function TpoCompanyMemoryWorkspace({
                     <div className="flex min-w-0 items-center gap-3">
 
                       <div className="min-w-0">
-                      <Link className="lms-inline-link inline-flex min-h-11 items-center break-words font-medium text-link underline hover:underline focus-ring"
+                      <TextLink className="inline-flex min-h-11 items-center break-words"
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
-                      </Link>
+                      </TextLink>
                       <p className="break-words text-sm text-muted-foreground">
                         {person.designation||person.email||"—"}
                       </p>
@@ -349,16 +349,16 @@ export function TpoCompanyMemoryWorkspace({
           companyId={company.canonicalCompanyId} companyName={company.name}
           initial={{ready:false,domain:null,link:null}}/>
         <p className="mt-2 text-xs text-muted-foreground">Company trust and drive-review policy are controlled through the linked college company record.</p>
-        <Link className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
+        <TextLink className="inline-flex min-h-11 items-center md:min-h-9"
           href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)}>
           Trust and review settings
-        </Link>
+        </TextLink>
       </section>:(
         <section aria-label="Company link unavailable" className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-(--lms-elevation-3)">
           <Heading level={2} className="text-foreground">Company link and trust</Heading>
           <p className="mt-2 text-sm text-body">No verified college company is linked to this name yet. Link it before editing the domain, trust or recruiter join link.</p>
-          <Link className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
-            href="/tpo/companies">Find a college company</Link>
+          <TextLink className="inline-flex min-h-11 items-center md:min-h-9"
+            href="/tpo/companies">Find a college company</TextLink>
         </section>
       )}
           <section className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-(--lms-elevation-3)">
@@ -372,8 +372,8 @@ export function TpoCompanyMemoryWorkspace({
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
                   <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<renderedAt?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
-                  <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-ring"
-                    href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
+                  <TextLink className="inline-flex min-h-11 items-center text-sm"
+                    href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</TextLink>
                 </li>)}
               </ul>}
           </section>
@@ -396,7 +396,7 @@ export function TpoCompanyMemoryWorkspace({
             <section aria-label="Company Team conversation" className="border-b border-border py-4">
               <Heading level={2} className="text-foreground">Team conversation</Heading>
               <p className="mt-2 text-sm text-body">Link this company to a verified college employer before starting a private Team conversation.</p>
-              <Link href="/tpo/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Find company</Link>
+              <TextLink href="/tpo/companies" className="inline-flex min-h-11 items-center md:min-h-9">Find company</TextLink>
             </section>}
           <section className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-(--lms-elevation-3)">
             <Heading level={2} className="text-foreground">Timeline</Heading>

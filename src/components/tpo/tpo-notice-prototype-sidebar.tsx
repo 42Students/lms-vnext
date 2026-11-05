@@ -1,9 +1,10 @@
 "use client";
-import Link from "next/link";
 import {useState} from "react";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export type TpoNoticePrototypeListRow={
  id:string;title:string;senderName:string|null;createdAt:string;
@@ -39,10 +40,10 @@ export function TpoNoticePrototypeSidebar({rows,activeId,tab,mine,page,nowIso}:{
  return <aside className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface"
   aria-label="Announcement list" data-testid="tpo.announcements.prototype-list">
   <div className="space-y-3 border-b border-border p-4">
-   {tab==="yours"?<Link href="/tpo/announcements?tab=yours&compose=1"
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary">
+   {tab==="yours"?<ButtonLink variant="primary" href="/tpo/announcements?tab=yours&compose=1"
+    className="w-full">
     + New announcement
-   </Link>:null}
+   </ButtonLink>:null}
    <Label className="sr-only" htmlFor="tpo-notice-search">Search loaded announcements</Label>
    <Input id="tpo-notice-search" type="search" value={q} onChange={event=>setQ(event.target.value)}
     placeholder="Search announcements on this page"
@@ -54,7 +55,7 @@ export function TpoNoticePrototypeSidebar({rows,activeId,tab,mine,page,nowIso}:{
     return matches.length?<section key={group} aria-label={group}>
      <Heading level={2} size="xs" className="bg-surface-secondary px-4 py-2 tracking-wide text-muted-foreground">{group}</Heading>
      <ul className="divide-y divide-border">{matches.map(row=><li key={row.id}>
-      <Link href={href(row.id)} aria-current={activeId===row.id?"page":undefined}
+      <TextLink variant="bare" href={href(row.id)} aria-current={activeId===row.id?"page":undefined}
        className={"block min-h-11 px-4 py-3 hover:bg-primary-subtle "+(activeId===row.id?
         "border-l-2 border-primary bg-primary-subtle":"")}>
        <p className="flex items-start justify-between gap-2">
@@ -63,7 +64,7 @@ export function TpoNoticePrototypeSidebar({rows,activeId,tab,mine,page,nowIso}:{
        </p>
        <p className="mt-1 text-xs text-body">{row.audienceKind?.replaceAll("_"," ").toLowerCase()??"College"}
         {" · "}{row.senderName??"Placement team"}</p>
-      </Link>
+      </TextLink>
      </li>)}</ul>
     </section>:null;
    })}

@@ -8,7 +8,6 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import type { ProjectTemplateBlueprint } from "@/modules/projects/validation";
@@ -21,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { projectMutation } from "./project-api";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Props = {
   templateId: string;
@@ -326,8 +326,8 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
       </> : <>
         {!draft.sprints.length ? <Banner tone="info">
           Tasks without a sprint stay in the backlog until assigned to a sprint.{" "}
-          <Link className="font-semibold text-primary-text hover:underline focus-visible:underline"
-            href={"/admin/projects/templates/" + encodeURIComponent(props.templateId) + "/sprints"}>Add sprints</Link>.
+          <TextLink
+            href={"/admin/projects/templates/" + encodeURIComponent(props.templateId) + "/sprints"}>Add sprints</TextLink>.
         </Banner> : null}
         {draft.tasks.length>12?<Label className={label}>Find a task
           <Input className={field} value={taskSearch} type="search"

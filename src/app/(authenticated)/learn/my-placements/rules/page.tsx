@@ -2,13 +2,13 @@ import { Badge } from "@/components/ui/badge";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerPlacementRulesView } from "@/modules/placements/learner-placement-rules-service";
 import { learnerPlacementRulesQuerySchema } from "@/modules/placements/learner-placement-rules-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function LearnerPlacementRulesPage({
   searchParams,
@@ -32,8 +32,8 @@ export default async function LearnerPlacementRulesPage({
       <PageHeader title="Placement rules" />
       <ErrorState title="Could not load placement rules"
         description="Your college's saved placement policy could not be read. No eligibility decision is assumed."
-        action={<Link href="/learn/my-placements/rules?from=cell"
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry placement rules</Link>} />
+        action={<TextLink href="/learn/my-placements/rules?from=cell"
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry placement rules</TextLink>} />
     </div>;
   }
   const { evidence, preferences, preparation, back, ruleApplicability, policyView,
@@ -42,10 +42,10 @@ export default async function LearnerPlacementRulesPage({
     <div className="min-w-0 space-y-6">
       <PageHeader title="Placement rules"
         description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
-      <Link href={back.href}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-ring md:min-h-9">
+      <TextLink href={back.href}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         ← {back.label}
-      </Link>
+      </TextLink>
 
       {!parsed.success ? <Banner tone="warning" role="status">
         The original navigation filter was invalid and has been reset to this college's saved rules.
@@ -113,27 +113,27 @@ export default async function LearnerPlacementRulesPage({
           ))}
         </ul>
         <div className="mt-3 flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-          <Link href="/learn/my-placements#placement-academic-evidence"
-            className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-link underline-offset-2 hover:underline focus-ring md:min-h-9">
+          <TextLink href="/learn/my-placements#placement-academic-evidence"
+            className="inline-flex min-h-11 items-center break-words text-sm md:min-h-9">
             Review academic evidence →
-          </Link>
-          <Link href="/learn/my-placements/jobs"
-            className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-link underline-offset-2 hover:underline focus-ring md:min-h-9">
+          </TextLink>
+          <TextLink href="/learn/my-placements/jobs"
+            className="inline-flex min-h-11 items-center break-words text-sm md:min-h-9">
             Check published drive eligibility →
-          </Link>
-          <Link href="/learn/profile/verification"
-            className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-link underline-offset-2 hover:underline focus-ring md:min-h-9">
+          </TextLink>
+          <TextLink href="/learn/profile/verification"
+            className="inline-flex min-h-11 items-center break-words text-sm md:min-h-9">
             View my college verification status →
-          </Link>
+          </TextLink>
         </div>
       </section>
       <section aria-labelledby="placement-eligibility-views" className="min-w-0 border-b border-border py-4">
         <Heading level={2} id="placement-eligibility-views" className="text-[var(--lms-heading)]">Eligibility and preview views</Heading>
         <p className="mt-2 text-sm text-body">Legacy eligibility, apply-check and bulk apply-check endpoints are now accessed through the authenticated learner drive list, drive detail and application flows. A missing preview or calendar extra is not an approval to apply.</p>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-body">
-          <li><Link href="/learn/my-placements/jobs" className="text-primary-text underline">Drive list and eligibility checks</Link> — learner- and college-scoped checks before applying.</li>
-          <li><Link href="/learn/my-placements/placement#rules" className="text-primary-text underline">Placement rules</Link> — recorded college rules and current registration.</li>
-          <li><Link href="/learn/my-placements/calendar" className="text-primary-text underline">Placement calendar</Link> — published events; unavailable extras cannot be assumed.</li>
+          <li><TextLink href="/learn/my-placements/jobs">Drive list and eligibility checks</TextLink> — learner- and college-scoped checks before applying.</li>
+          <li><TextLink href="/learn/my-placements/placement#rules">Placement rules</TextLink> — recorded college rules and current registration.</li>
+          <li><TextLink href="/learn/my-placements/calendar">Placement calendar</TextLink> — published events; unavailable extras cannot be assumed.</li>
           <li>Single-drive eligibility and apply-check: the authenticated drive detail and application action enforce your current membership and college scope.</li>
           <li>Bulk apply-checks: each published drive is evaluated for the signed-in learner; the list is a preview, not permission to bypass a final application check.</li>
           <li>Placement rules: this page reads the selected college's effective rules and any saved active-cohort override.</li>
@@ -144,7 +144,7 @@ export default async function LearnerPlacementRulesPage({
       <section aria-labelledby="placement-how-eligibility-works" className="min-w-0 border-b border-border py-4">
         <Heading level={2} size="base" id="placement-how-eligibility-works" className="m-0 text-[var(--lms-heading)]">How eligibility works</Heading>
         <p className="mt-2 text-sm leading-6 text-body">Each published drive carries its own eligibility configuration. Your verified academic evidence is evaluated against that drive when you open or apply to it. A drive can therefore be available, eligible, or blocked with an explainable reason.</p>
-        <Link href="/learn/my-placements/jobs" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Check current drives →</Link>
+        <TextLink href="/learn/my-placements/jobs" className="mt-3 inline-flex min-h-11 items-center text-sm md:min-h-9">Check current drives →</TextLink>
       </section>
       <section aria-labelledby="rule-applicability-heading"
         className="min-w-0 border-b border-border py-4">
@@ -156,10 +156,10 @@ export default async function LearnerPlacementRulesPage({
           {policyView?"College placement rules are saved; the exact effective date of a change is not inferred.":"A college placement policy is not configured for your membership."}
           No retroactive eligibility decision is inferred.
         </p>
-        <Link href="/learn/my-placements/applications"
-          className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+        <TextLink href="/learn/my-placements/applications"
+          className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
           Review my saved applications →
-        </Link>
+        </TextLink>
       </section>
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">
         <section className="min-w-0 border-b border-border py-4">
@@ -170,13 +170,13 @@ export default async function LearnerPlacementRulesPage({
             <div><dt className="text-muted-foreground">Gap years</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.gapYears ?? "Not recorded"}</dd></div>
             <div><dt className="text-muted-foreground">Source</dt><dd className="mt-1 font-semibold text-foreground">{evidence?.source ?? "Not recorded"}</dd></div>
           </dl>
-          <Link href="/learn/my-placements#placement-academic-evidence" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Open academic record →</Link>
+          <TextLink href="/learn/my-placements#placement-academic-evidence" className="mt-4 inline-flex min-h-11 items-center text-sm md:min-h-9">Open academic record →</TextLink>
         </section>
         <section className="min-w-0 border-b border-border py-4">
           <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">Your job preferences</Heading>
           <p className="mt-3 text-sm leading-6 text-body">{preferences.preferredRoleTitles.length ? preferences.preferredRoleTitles.join(", ") : "No preferred roles recorded."}</p>
           <p className="mt-2 text-sm leading-6 text-body">{preferences.preferredLocations.length ? preferences.preferredLocations.join(", ") : "No preferred locations recorded."}</p>
-          <Link href="/learn/my-placements#placement-job-preferences" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Edit job preferences →</Link>
+          <TextLink href="/learn/my-placements#placement-job-preferences" className="mt-4 inline-flex min-h-11 items-center text-sm md:min-h-9">Edit job preferences →</TextLink>
         </section>
       </div>
 

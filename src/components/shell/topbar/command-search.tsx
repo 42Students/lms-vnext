@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {PopoverListbox} from "@/components/ui/popover";
@@ -23,6 +22,7 @@ import {FacultyFindSuggestions} from "./faculty-find-suggestions";
 import { RecruiterFindSuggestions } from "./recruiter-find-suggestions";
 import style from "./topbar.module.css";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] }) {
   const pathname = usePathname() ?? "/";
@@ -264,13 +264,13 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
     closeSearch();
   }
   function courseResult(course:LearnerCourse){
-    return <Link key={course.deliveryId} role="option" aria-selected={false}
+    return <TextLink variant="bare" key={course.deliveryId} role="option" aria-selected={false}
       href={"/learn/courses/"+encodeURIComponent(course.deliveryId)+"/home"} className={style["suggestion"]}
       onClick={()=>{rememberCourse(course.deliveryId);setQuery("");closeSearch();}}>
       <SearchIcon/> <span className="min-w-0"><span className="block truncate">{course.shortTitle||course.courseName}</span>
         <span className="block truncate text-[length:var(--lms-topbar-caption-size,11px)] text-muted-foreground">{course.departmentName||course.sectionName} · {course.courseCode}</span>
       </span>
-    </Link>;
+    </TextLink>;
   }
 
   return <div ref={root}
@@ -411,7 +411,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
               {kind==="Student"?"Students":kind==="Task"?"Tasks":
                 kind==="Project"?"Go to projects":"Resources"}
             </p>
-            {group.map(result=><Link key={result.key} role="option"
+            {group.map(result=><TextLink variant="bare" key={result.key} role="option"
               aria-selected={false} href={result.href} className={style["suggestion"]}
               onClick={()=>{setQuery("");closeSearch();}}>
               <SearchIcon/><span className="min-w-0">
@@ -420,22 +420,22 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
                   {result.context}
                 </span>
               </span>
-            </Link>)}
+            </TextLink>)}
           </div>;
         })}
         {destinations.length > 0 ? <p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-wide text-muted-foreground">Search within</p> : null}
-        {destinations.map(destination => <Link key={destination.href}
+        {destinations.map(destination => <TextLink variant="bare" key={destination.href}
           role="option" aria-selected={false} href={destination.href}
           className={style["suggestion"]}
           onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
           <SearchIcon/> {destination.label}
-        </Link>)}
+        </TextLink>)}
         {matches.length > 0 ? <p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-[.08em] text-muted-foreground">Go to</p> : null}
-        {matches.map(command => <Link role="option" aria-selected={false}
+        {matches.map(command => <TextLink variant="bare" role="option" aria-selected={false}
           key={command.href} href={command.href} className={style["suggestion"]}
           onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
           <SearchIcon /> {command.label}
-        </Link>)}
+        </TextLink>)}
         {matches.length === 0 && destinations.length === 0 && courseMatches.length === 0 && !courseMode &&
           !(config.portal === "tpo" && query.trim().length >= 2) &&
           !(config.portal === "teacher" && query.trim().length >= 2) && !courseLoading ? <p role="status" className="min-w-0 break-words p-2 text-xs text-muted-foreground leading-[20px]">

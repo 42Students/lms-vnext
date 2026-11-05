@@ -11,7 +11,6 @@ import { StatusBadge } from "@/components/ui/status-badge";
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 import {tpoFollowupContactLinks} from "@/modules/placements/tpo-followup-queue-model";
@@ -146,7 +145,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         {data.leads.length === 0 ? (
           <p className="mt-3 text-sm text-body">
             There are no eligible recruiter leads to schedule. Add a recruiter lead first.
-            {" "}<Link href="/tpo/recruiters" className="font-semibold text-link underline max-md:inline-flex max-md:min-h-11 max-md:items-center focus-visible:underline">Open recruiter leads</Link>
+            {" "}<TextLink href="/tpo/recruiters" className="max-md:inline-flex max-md:min-h-11 max-md:items-center">Open recruiter leads</TextLink>
           </p>
         ) : (
           <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
@@ -196,8 +195,8 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
               <article key={row.id} className="min-w-0 space-y-3 py-4">
                 <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9 focus-visible:underline"
-                      href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</Link>
+                    <TextLink className="inline-flex min-h-11 items-center md:min-h-9"
+                      href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</TextLink>
                     {row.companyName ? <p className="text-sm text-body">{row.companyName}</p> : null}
                     <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                       Due {displayDate(row.dueAt)} {row.overdue?<StatusBadge tone="warning">Overdue</StatusBadge>:null}

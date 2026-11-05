@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -16,10 +15,10 @@ export default async function SuperAdminLayout({
     <PageHeader title="Access denied"/>
     <ErrorState title="Access denied. You are not authorized to access Superadmin."
       description="Your current account session is unchanged."
-      action={<Link href="/dashboard"
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+      action={<TextLink href="/dashboard"
+        className="inline-flex min-h-11 items-center md:min-h-9">
         Return to dashboard
-      </Link>}/>
+      </TextLink>}/>
   </div>;
   return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)] print:space-y-0">
     <TextLink href="#super-admin-main" className="sr-only">

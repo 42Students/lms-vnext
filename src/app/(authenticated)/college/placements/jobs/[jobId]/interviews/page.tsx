@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -19,6 +18,7 @@ import {collegeInterviewConflictIds} from "@/modules/placements/college-intervie
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {CollegeInterviewsCapture,CollegeInterviewsStaleFallback} from "@/components/placements/college-interviews-last-good";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   params:Promise<{jobId:string}>;
@@ -29,7 +29,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     <PageHeader title="Interviews"/>
     <ErrorState title="Admin not assigned to a college"
       description="Contact your administrator for a College Admin assignment before opening a placement drive."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+      action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>}/>
   </div>;
   const access=await resolveOptionalModuleAccess(context);
   if(!access.placements.enabled)return <section role="status" className="min-w-0 space-y-4">
@@ -39,17 +39,17 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       Placements module is disabled. Existing records are retained. Ask a
       Super Admin to enable the module, then revisit this page.
     </Alert>
-    <Link href="/college/module-access"
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+    <TextLink href="/college/module-access"
+      className="inline-flex min-h-11 items-center md:min-h-9">
       View college module access
-    </Link>
+    </TextLink>
   </section>;
   const {jobId}=await params;
   const rawFilters=await searchParams;
   const conflictOnly=rawFilters["conflicts"]==="1";
   const query=driveInterviewsParams(rawFilters);
   if(!query) return <ErrorState title="Invalid interview filters"
-    description={driveInterviewFilterError(await searchParams)} action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/interviews`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>;
+    description={driveInterviewFilterError(await searchParams)} action={<TextLink href={`/college/placements/jobs/${encodeURIComponent(jobId)}/interviews`} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>;
   const results=await Promise.allSettled([
     listCollegeDriveInterviews(context,jobId,query),
     getCollegeRoundSlotAppointments(context,jobId,{
@@ -109,10 +109,10 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     <nav aria-label="Drive sections" className="flex min-w-0 flex-wrap border-b border-[var(--lms-canvas-border)] text-sm font-semibold">
       {([{name:"Overview",suffix:"overview"},{name:"Applications",suffix:"applications"},
         {name:"Schedule",suffix:"interviews"},{name:"Settings",suffix:"settings"}] as const).map(tab=>
-        <Link key={tab.suffix} href={base+"/"+tab.suffix} aria-current={tab.suffix==="interviews"?"page":undefined}
+        <TextLink variant="bare" key={tab.suffix} href={base+"/"+tab.suffix} aria-current={tab.suffix==="interviews"?"page":undefined}
           className={"inline-flex min-h-11 items-center border-b-2 px-4 md:min-h-9 "+
             (tab.suffix==="interviews"?"border-[var(--lms-teal-deep)] text-[var(--lms-teal-deep)]":
-            "border-transparent text-body hover:text-link hover:border-border")}>{tab.name}</Link>)}
+            "border-transparent text-body hover:text-link hover:border-border")}>{tab.name}</TextLink>)}
     </nav>
     <PageHeader title="Interviews"
       description="Review the interview schedule, conflicts and candidate context without leaving the placements workspace."
@@ -121,7 +121,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
         <span className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-semibold"
          style={{backgroundColor:"hsl("+companyHue+" 70% 94%)"}}><span aria-hidden="true" className="size-2 rounded-full"
          style={{backgroundColor:"hsl("+companyHue+" 52% 40%)"}}/>{driveTitle}</span>
-        <Link href={driveInterviewsHref(jobId,query)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
+        <TextLink href={driveInterviewsHref(jobId,query)} className="inline-flex min-h-11 items-center md:min-h-9">Refresh</TextLink>
       </div>}/>
     <div className="grid min-w-0 grid-cols-2 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 text-sm sm:grid-cols-4"
       aria-label="Interview schedule summary">
@@ -134,11 +134,11 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
         </div>)}
     </div>
     <div className="flex flex-wrap items-center gap-3">
-      <Link href={toggleConflictHref} role="button" aria-pressed={conflictOnly}
+      <TextLink variant="bare" href={toggleConflictHref} role="button" aria-pressed={conflictOnly}
         className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold focus-ring md:min-h-9 "+
           (conflictOnly?"border-[var(--lms-error)] bg-[color:var(--lms-error-surface)] text-[var(--lms-error)]":"border-[var(--lms-error)] text-[var(--lms-error)] hover:bg-[color:var(--lms-error-surface)]")}>
         {conflictOnly?"Show all interviews":"Conflicts ("+conflicts+")"}
-      </Link>
+      </TextLink>
       {conflictOnly?<span role="status" className="text-sm text-[var(--lms-error)]">Showing {visibleAppointments.length} conflicting appointments on this page.</span>:null}
     </div>
     <form method="get" role="search" aria-label="Interview round filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
@@ -160,7 +160,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
         </Select>
       </Label>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center"><Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
-      {(query.kind!=="ALL" || query.status!=="ALL") ? <Link href={driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1})} className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : null}</div>
+      {(query.kind!=="ALL" || query.status!=="ALL") ? <TextLink href={driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1})} className="inline-flex min-h-11 items-center justify-center md:min-h-9">Clear filters</TextLink> : null}</div>
     </form>
     <form method="get" role="search" aria-label="Candidate interview appointment filters"
       className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -200,9 +200,9 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       </Label>
       <div className="flex flex-wrap items-end gap-3">
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter interviews</Button>
-        <Link href={driveInterviewsHref(jobId,{...query,appointmentStatus:"ALL",
+        <TextLink href={driveInterviewsHref(jobId,{...query,appointmentStatus:"ALL",
           appointmentMode:"ALL",appointmentSearch:undefined,appointmentPage:1})}
-          className="inline-flex min-h-9 items-center font-semibold text-link underline">Clear filters</Link>
+          className="inline-flex min-h-9 items-center">Clear filters</TextLink>
       </div>
     </form>
     {visibleAppointments.length===0?<p className="text-sm text-muted-foreground" role="status">
@@ -216,10 +216,10 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates (page {appointments.candidatePage} of {appointments.candidatePages}). Open a candidate from their application details to include that specific learner.
     </p>:null}
     <nav aria-label="Eligible candidate picker pages" className="flex flex-wrap items-center gap-3 text-sm">
-      {appointments.candidatePage>1?<Link href={driveInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1})}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline">Previous candidates</Link>:null}
-      {appointments.candidatePage<appointments.candidatePages?<Link href={driveInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1})}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline">Next candidates</Link>:null}
+      {appointments.candidatePage>1?<TextLink href={driveInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1})}
+        className="inline-flex min-h-11 items-center">Previous candidates</TextLink>:null}
+      {appointments.candidatePage<appointments.candidatePages?<TextLink href={driveInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1})}
+        className="inline-flex min-h-11 items-center">Next candidates</TextLink>:null}
     </nav>
     {query.applicationId&&appointments.candidateConflicts.length>0?
       <aside role="alert" className="rounded-md border border-[var(--lms-warning-border)] p-3 text-sm">
@@ -237,10 +237,10 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       candidates={appointments.candidates} appointments={visibleAppointments}
       {...(query.applicationId!==undefined?{preferredApplicationId:query.applicationId}:{})}/>
     <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-b border-border pb-4 text-sm">
-      {appointments.appointmentPage>1?<Link href={driveInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1})}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}
-      {appointments.appointmentPage<appointments.appointmentPages?<Link href={driveInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1})}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next appointments</Link>:null}
+      {appointments.appointmentPage>1?<TextLink href={driveInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1})}
+        className="inline-flex min-h-11 items-center md:min-h-9">Previous appointments</TextLink>:null}
+      {appointments.appointmentPage<appointments.appointmentPages?<TextLink href={driveInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1})}
+        className="inline-flex min-h-11 items-center md:min-h-9">Next appointments</TextLink>:null}
     </nav>
     <section aria-label="Persisted interview rounds" className="space-y-2">
       <p role="status" className="text-sm text-body leading-[22px]">{data.total} interview/GD rounds in this view</p>
@@ -256,12 +256,12 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
           </span>)}
       </div>
       <DataTable caption="Persisted interview rounds" columns={columns} rows={data.items}
-        getRowKey={item=>item.id} empty={<EmptyState title="No matching interview rounds" description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."} action={<Link href={data.total===0?driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1}):driveInterviewsHref(jobId,{...query,page:Math.max(1,query.page-1)})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">{data.total===0?"Clear filters":"Previous page"}</Link>}/>} />
+        getRowKey={item=>item.id} empty={<EmptyState title="No matching interview rounds" description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."} action={<TextLink href={data.total===0?driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1}):driveInterviewsHref(jobId,{...query,page:Math.max(1,query.page-1)})} className="inline-flex min-h-11 items-center md:min-h-9">{data.total===0?"Clear filters":"Previous page"}</TextLink>}/>} />
     </section>
     <nav aria-label="Interview round pages" className="flex min-w-0 flex-col items-stretch justify-between gap-3 border-t border-border pt-[var(--lms-space-3)] text-sm text-body sm:flex-row sm:items-center">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex min-w-0 flex-wrap gap-3 max-md:[&_a]:flex-1 max-md:[&_a]:justify-center">
-        {query.page>1?<Link href={driveInterviewsHref(jobId,{...query,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring">Previous</Link>:null}
-        {query.page<data.totalPages?<Link href={driveInterviewsHref(jobId,{...query,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring">Next</Link>:null}
+        {query.page>1?<TextLink href={driveInterviewsHref(jobId,{...query,page:query.page-1})} className="inline-flex min-h-11 items-center md:min-h-9">Previous</TextLink>:null}
+        {query.page<data.totalPages?<TextLink href={driveInterviewsHref(jobId,{...query,page:query.page+1})} className="inline-flex min-h-11 items-center md:min-h-9">Next</TextLink>:null}
       </div>
     </nav>
     <p className="text-xs text-muted-foreground leading-5">

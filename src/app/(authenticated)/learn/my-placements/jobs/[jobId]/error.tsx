@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Route-local fail-closed recovery: unknown application status must never
  * be presented as an unsubmitted application or an enabled Apply action.
@@ -19,8 +19,8 @@ export default function LearnerJobDetailError({
    Please check status again before applying. Do not submit a second application until it is confirmed.</p>
   <div className="mt-4 flex flex-wrap items-center gap-3">
    <Button type="button" onClick={reset}>Check status again</Button>
-   <Link href="/learn/my-placements/jobs" className="text-sm font-semibold text-primary-text underline">Browse drives</Link>
-   <Link href="/learn/my-placements/applications" className="text-sm font-semibold text-primary-text underline">My applications</Link>
+   <TextLink href="/learn/my-placements/jobs" className="text-sm">Browse drives</TextLink>
+   <TextLink href="/learn/my-placements/applications" className="text-sm">My applications</TextLink>
   </div>
  </section>;
 }

@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {applicantStage} from "@/modules/placements/tpo-applicant-pipeline-model";
 import {tpoGridTimeLabel} from "@/modules/placements/tpo-grid-time-label";
@@ -8,6 +7,7 @@ import dynamic from "next/dynamic";
 import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {GridWorkspace} from "./grid/grid-workspace";
 import type {TpoFilterField} from "./tpo-grid-filter-panel";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Row={
  id:string;student:string|null;role:string;rollNumber:string|null;email:string|null;phone:string|null;batchName:string|null;branchName:string|null;cgpaHundredths:number|null;activeBacklogs:number|null;pastBacklogs:number|null;tenthPctBasisPoints:number|null;twelfthPctBasisPoints:number|null;lastRound:string|null;lastResult:string|null;applicationStatus:string;screeningStatus:string|null;
@@ -70,7 +70,7 @@ export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly
     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
       {...(previousId!==undefined?{previousId}:{})}
       {...(nextId!==undefined?{nextId}:{})}/>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.id)} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring sm:w-auto md:min-h-9">Open applicant</Link>
+    <ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.id)} className="w-full sm:w-auto">Open applicant</ButtonLink>
    </div>;}}/>
  </GridWorkspace>;
 }

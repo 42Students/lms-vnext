@@ -8,7 +8,6 @@ import {listAdminTenantSettings} from "@/modules/platform-settings/admin-editor-
 import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platform-settings/admin-inventory-filter";
 import {ErrorState} from "@/components/ui/error-state";
 import {EmptyState} from "@/components/ui/empty-state";
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Banner } from "@/components/ui/banner";
@@ -29,6 +28,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +48,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   if(!parsed) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Tenant Settings"/>
     <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
-      action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Clear filters</Link>}/>
+      action={<TextLink href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 w-full md:w-auto">Clear filters</TextLink>}/>
   </div>;
   const requestedScope=typeof raw["scope"]==="string"?raw["scope"]:null;
   const viewScope=requestedScope??(context.adminScope?.collegeId?"COLLEGE":
@@ -66,7 +66,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings unavailable"
         description="The settings inventory could not be loaded. Your filters have not changed."
-        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry loading settings</Link>}/>
+        action={<TextLink href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex items-center min-h-11 md:min-h-9 w-full md:w-auto">Retry loading settings</TextLink>}/>
     </div>;
   const {selectedCollegeName,sections:allSections}=platform.value;
   const sections=filterPlatformInventory(allSections,parsed);
@@ -103,8 +103,8 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <PageHeader
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
-        actions={<Link href="/admin/settings/auth"
-          className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">Authentication and privileged access checklist →</Link>}
+        actions={<ButtonLink variant="primary" href="/admin/settings/auth"
+          className="w-full md:w-auto">Authentication and privileged access checklist →</ButtonLink>}
       />
 
       <section aria-label="Tenant Settings overview" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
@@ -123,7 +123,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <Banner tone="info" role="status">
         <p className="font-semibold">Each setting applies at one level only</p>
         <p className="mt-2">A setting is either platform-wide or per college, never both: a college does not fall back to the platform value, it falls back to the built-in default. Each setting below is listed only at the level where it takes effect.</p>
-        <p className="mt-2 text-xs">This screen is configuration values only. For organization or college setup, web addresses and branding, use <Link href="/admin/tenants" className="font-semibold underline">Tenant Setup</Link>.</p>
+        <p className="mt-2 text-xs">This screen is configuration values only. For organization or college setup, web addresses and branding, use <TextLink href="/admin/tenants">Tenant Setup</TextLink>.</p>
       </Banner>
       <section
         role="status"
@@ -153,13 +153,13 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
             if(parsed.q)params.set("q",parsed.q);
             if(parsed.section!=="ALL")params.set("section",parsed.section);
             params.set("scope",mode);
-            return <Link key={mode} href={"/admin/settings?"+params}
+            return <TextLink variant="bare" key={mode} href={"/admin/settings?"+params}
               aria-current={viewScope===mode?"page":undefined}
               className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold md:min-h-9 "+
                 (viewScope===mode?"border-primary bg-primary-subtle text-primary-text":
                 "border-border text-body hover:border-primary hover:text-primary-text")}>
                {mode==="GLOBAL"?"Global":mode==="ORG"?"Organization":"College"}
-              </Link>;
+              </TextLink>;
           })}
         </nav>
         {organizationOnly?<Banner tone="warning" role="status" className="mt-3">
@@ -172,8 +172,8 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         <div className="mt-3 flex flex-wrap items-center gap-3 border-y border-border py-3">
           <span className="text-sm font-semibold">Editing scope:</span>
           <span className="rounded-md border border-border px-3 py-2 text-sm">{organizationOnly?"Organization — unused":editorScope==="COLLEGE"?"College settings":"Platform-wide settings"}</span>
-          <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Choose another scope</Link>
-          <Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Refresh</Link>
+          <TextLink href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm">Choose another scope</TextLink>
+          <ButtonLink variant="secondary" href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")}>Refresh</ButtonLink>
         </div>
       </section>
       {viewScope==="ORG"&&organizationHistory?.ok?
@@ -196,11 +196,11 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           :organizationOnly
           ?"No setting applies at organization level."
           :"Clear the Super Admin safety scope to access global setting overrides, or select an individual college to edit its scoped settings."}
-        {editorResult&&!editorResult.ok ? <Link
+        {editorResult&&!editorResult.ok ? <TextLink
           href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")}
-          className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          className="ml-2 inline-flex min-h-9 items-center">
           Retry
-        </Link> : null}
+        </TextLink> : null}
        </Banner>)}
       {attendanceResult&&!attendanceResult.ok?
         <Banner tone="warning">
@@ -221,10 +221,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           </Select>
         </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-        <Link href="/admin/settings" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring">Clear</Link>
+        <TextLink href="/admin/settings" className="inline-flex min-h-11 w-full items-center justify-center transition-colors duration-[var(--lms-motion-fast)]">Clear</TextLink>
       </form>
       {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."
-        action={<Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring w-full md:w-auto md:min-h-9">Clear filters</Link>}/> : null}
+        action={<TextLink href="/admin/settings" className="inline-flex min-h-11 items-center w-full md:w-auto md:min-h-9">Clear filters</TextLink>}/> : null}
       {sections.length ? <nav
         aria-label="Settings sections"
         className="flex min-w-0 gap-[var(--lms-tab-gap)] xl:gap-[40px] overflow-x-auto border-b border-[var(--lms-canvas-border)] pb-0"
@@ -280,10 +280,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
             <p className="text-sm leading-6 text-body">
               These are source templates, not evidence that an SMS was sent,
               accepted by a provider or delivered. Provider attempt statuses remain unavailable here.
-              <Link href="/admin/sms-log"
-                className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+              <TextLink href="/admin/sms-log"
+                className="ml-2 inline-flex min-h-9 items-center">
                 SMS delivery attempts
-              </Link>
+              </TextLink>
             </p>
             <DataTable<NonNullable<typeof section.smsTemplates>[number]>
               caption="SMS source templates"

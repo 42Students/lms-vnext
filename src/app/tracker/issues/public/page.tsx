@@ -1,8 +1,8 @@
-import Link from "next/link";
 import {and,desc,eq,isNotNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10BugReports} from "@/db/schema/db10-bug-tracker";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic="force-dynamic";
 export const metadata={title:"Public issue updates · 42 Tracker"};
@@ -30,7 +30,7 @@ export default async function PublicIssuesPage(){
    <header className="border-b border-border pb-4">
     <Heading level={1} size="2xl" className="text-[var(--lms-heading)]">42 Tracker · Issues</Heading>
     <p className="mt-2 text-sm text-body">Public issue summaries are published only after verification and an explicit review. Reporter details and private issue reports are never public.</p>
-    <Link href="/tracker" className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring">Report issue (sign-in required)</Link>
+    <ButtonLink variant="primary" href="/tracker" className="mt-3">Report issue (sign-in required)</ButtonLink>
    </header>
    {!result.ok?<p role="status" className="text-sm text-body">Public issue updates are temporarily unavailable. Try again later; individual reports stay private.</p>:
     result.items.length===0?<p role="status" className="text-sm text-body">There are no approved public issue summaries.</p>:

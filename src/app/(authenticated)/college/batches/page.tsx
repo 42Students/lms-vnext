@@ -1,5 +1,4 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
-import Link from "next/link";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAcademicDirectory } from "@/components/academics/college-academic-directory";
@@ -15,6 +14,8 @@ import {
 } from "@/modules/academics/college-academic-directory-model";
 import { listCollegeBatches } from "@/modules/academics/college-academic-directory-service";
 import { academicExportHref, ACADEMIC_EXPORT_CAP } from "@/modules/academics/college-academic-export-model";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeBatchesPage({
   searchParams,
@@ -28,7 +29,7 @@ export default async function CollegeBatchesPage({
       description={isSuperAdmin(context)?
         "Select a college in the college and role switcher before viewing batches.":
         "Contact your administrator to assign a college before managing batches."}
-      action={<Link href="/dashboard" className="font-semibold text-link underline">Back to dashboard</Link>}/>
+      action={<TextLink href="/dashboard">Back to dashboard</TextLink>}/>
   </section>;
   const params = academicDirectorySearchParams(await searchParams);
   const parsed = collegeBatchDirectorySchema.safeParse(params);
@@ -37,7 +38,7 @@ export default async function CollegeBatchesPage({
       <PageHeader title="Batches" />
       <ErrorState title="Invalid batch filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
-        action={<Link href="/college/batches" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>} />
+        action={<TextLink href="/college/batches" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>} />
     </div>;
   }
   const [directoryRead,periodRead]=await Promise.allSettled([
@@ -47,7 +48,7 @@ export default async function CollegeBatchesPage({
     <PageHeader title="Batches"/>
     <Banner tone="error">Couldn't refresh batches. Previous results have not been replaced with an empty list.</Banner>
     <ErrorState title="Could not load batches" description="The college batch directory is temporarily unavailable."
-      action={<Link href="/college/batches" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry batches</Link>}/>
+      action={<TextLink href="/college/batches" className="inline-flex min-h-11 items-center md:min-h-9">Retry batches</TextLink>}/>
   </section>;
   const directory=directoryRead.value;
   const periods=periodRead.status==="fulfilled"?periodRead.value:[];
@@ -65,13 +66,13 @@ export default async function CollegeBatchesPage({
       ]}/>
     {periodRead.status==="rejected"?<Banner tone="warning">
       Academic periods could not be loaded. Batch creation requiring a period is unavailable.
-      <Link href="/college/batches" className="ml-2 font-semibold text-link underline">Retry periods</Link>
+      <TextLink href="/college/batches" className="ml-2">Retry periods</TextLink>
     </Banner>:null}
     <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices}
-    actions={<Link prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
-      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-4 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+    actions={<ButtonLink variant="secondary" prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
+      className="w-full md:w-auto">
       Export CSV
-    </Link>}
+    </ButtonLink>}
     prepend={<CollegeCohortCreateForm programs={directory.programs.filter(p => p.status === "ACTIVE")} periods={periodChoices} />} />
     <p className="max-w-[80ch] text-xs leading-5 text-muted-foreground">Export includes matching records beyond the current 10-row screen, not only visible rows. Exports up to {ACADEMIC_EXPORT_CAP} matching batches; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
   </div>;

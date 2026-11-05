@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {ProjectsServiceError} from "@/modules/projects/errors";
@@ -16,6 +15,7 @@ import { ProjectActivityFilteredList } from "@/components/projects/project-activ
 import { ErrorState } from "@/components/ui/error-state";
 import { Tabs } from "@/components/ui/tabs";
 import {ProjectAdminNav} from "./project-admin-nav";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Keep workspace navigation available while a scoped section is recovering.
  * Every tab still passes through the same college and permission checks. */
@@ -28,9 +28,9 @@ function WorkspaceContextTabs({
  return <div className="min-w-0 space-y-3">
   <nav aria-label="Project workspace breadcrumbs"
    className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
-   <Link href={basePath} className="font-semibold text-link underline">Projects</Link>
+   <TextLink href={basePath}>Projects</TextLink>
    <span aria-hidden="true">/</span>
-   <Link href={prefix+"/summary"} className="font-semibold text-link underline">Workspace</Link>
+   <TextLink href={prefix+"/summary"}>Workspace</TextLink>
    <span aria-hidden="true">/</span>
    <span aria-current="page">{isProjectWorkspaceSection(section)?
     PROJECT_WORKSPACE_SECTION_LABELS[section]:section}</span>
@@ -57,12 +57,12 @@ function workspaceRecoveryPanel({
   <WorkspaceContextTabs projectId={projectId} section={section} basePath={basePath}/>
   <ErrorState title={title} description={description}
     action={<div className="flex flex-wrap gap-3">
-      <Link href={retry} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      <TextLink href={retry} className="inline-flex min-h-11 items-center md:min-h-9">
         Retry workspace
-      </Link>
-      <Link href={basePath} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      </TextLink>
+      <TextLink href={basePath} className="inline-flex min-h-11 items-center md:min-h-9">
         Back to workspaces
-      </Link>
+      </TextLink>
     </div>}/>
  </section>;
 }
@@ -147,10 +147,10 @@ export async function AdminProjectSectionPage({
         <p className="mt-1 text-body">
           The workspace summary is unavailable, but the project audit can still be reviewed.
         </p>
-        <Link href={basePath + "/" + encodeURIComponent(projectId) + "/audit?retry=1"}
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        <TextLink href={basePath + "/" + encodeURIComponent(projectId) + "/audit?retry=1"}
+          className="mt-2 inline-flex min-h-11 items-center md:min-h-9">
           Retry workspace
-        </Link>
+        </TextLink>
       </div>
       {activityUnavailable ? <ErrorState title="Project activity could not be loaded"
         description="Retry the workspace to load its audit events."/> :

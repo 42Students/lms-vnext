@@ -13,7 +13,6 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
 import {TpoSelectedReviewQueue} from "@/components/tpo/tpo-selected-review-queue";
@@ -27,6 +26,7 @@ import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSele
   type TpoBulkUiRow,matchTpoBulkRollNumbers} from "@/modules/placements/tpo-bulk-ui-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Action="ELIGIBLE"|"INELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE"|"SEND_MESSAGE"|"MOVE_TEST"|"MOVE_INTERVIEW";
 type PreviewPlan={
@@ -337,9 +337,9 @@ export function TpoBulkActionPanel({bulkTarget:target,jobId,rows,allRows,viewCou
      {safeSelected.length>1?<Disclosure title={`Review selected applicants individually (${safeSelected.length})`} className="text-sm">
        <ScrollCue axis="y" label="Selected applicant review links" viewportClassName="max-h-40"><ol className="mt-2 space-y-2">
          {safeSelected.map((id,index)=><li key={id}>
-           <Link href={tpoReviewOneByOneHref(jobId,id)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9 focus-visible:underline">
+           <TextLink href={tpoReviewOneByOneHref(jobId,id)} className="inline-flex min-h-11 items-center md:min-h-9">
              Applicant {index+1}
-           </Link>
+           </TextLink>
          </li>)}
        </ol></ScrollCue>
      </Disclosure>:null}

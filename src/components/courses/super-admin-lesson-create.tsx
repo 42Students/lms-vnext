@@ -1,6 +1,5 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 
 import {useRef,useState} from "react";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -12,6 +11,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Path={id:string;courseName:string;cohortName:string;periodName:string};
  export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
@@ -65,7 +65,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
   <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Create New Lesson</Heading>
   <Alert tone="warning" title="No courses in this college yet">
     Create a Course and an active Offering before adding its first Lesson.
-    <Link href="/admin/courses" className="ml-2 font-semibold text-link underline">Go to Courses</Link>
+    <TextLink href="/admin/courses" className="ml-2">Go to Courses</TextLink>
   </Alert>
  </section>;
  return <section aria-label="Create New Lesson" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
@@ -111,7 +111,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
   {notice?<Alert tone="success" role="status">{notice}
     {createdLessonId?<p className="mt-2 text-sm">Content is saved separately. Add resources,
      assignments, videos or quizzes to the new lesson using the course content directory.
-     <Link href="/admin/resources" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring">Add lesson content →</Link>
+     <TextLink href="/admin/resources" className="ml-2 inline-flex min-h-11 items-center">Add lesson content →</TextLink>
     </p>:null}
    </Alert>:null}
   <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!pathId||!name.trim()}>

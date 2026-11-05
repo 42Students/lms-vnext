@@ -1,6 +1,5 @@
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
 import { TrackerReportForm } from "@/components/tracker/tracker-report-form";
@@ -8,6 +7,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** SA-placements-projects-100: authenticated reporter intake until OD-27 is resolved. */
 export const metadata={title:"Report Issue · 42 Tracker"};
@@ -26,13 +27,13 @@ export default async function TrackerReportPage({
     <PageHeader title="42 Tracker · Report Issue"/>
     <ErrorState title="Sign in to report an issue"
       description="The old LMS allowed anonymous reports. This workspace requires a signed-in reporter so only you can access your submitted reports. Your report has not been submitted."
-      action={<Link href="/login?returnTo=%2Ftracker" className="font-semibold text-link underline">Sign in and return to Report Issue</Link>}/>
+      action={<TextLink href="/login?returnTo=%2Ftracker">Sign in and return to Report Issue</TextLink>}/>
   </section>;
   const ready = trackerAdminRuntimeEnabled();
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="42 Tracker" title="What went wrong?"
       description="Report an LMS issue · Pick the context, describe the problem, and submit. Sign-in is required to keep reports linked to your account."
-      actions={!isSuperAdmin(context)?<Link href="/tracker/mine" className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-[14px] font-semibold text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring motion-reduce:transition-none">My reports</Link>:undefined}/>
+      actions={!isSuperAdmin(context)?<ButtonLink variant="secondary" href="/tracker/mine">My reports</ButtonLink>:undefined}/>
     {isSuperAdmin(context)?<TrackerAdminNav />:<Tabs renderPanel={false} value="report" ariaLabel="42 Tracker"
       items={[{value:"report",label:"Report Issue",href:"/tracker"},{value:"mine",label:"My reports",href:"/tracker/mine"}]}/>}
     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Report an LMS issue</p>

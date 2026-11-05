@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {availableSuperAdminProgramCode,validLegacyProgramYears} from "@/modules/admin-ui/super-admin-program-input";
 import { ProgramActions } from "@/components/academics/academics-actions";
@@ -24,6 +23,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 const PROGRAM_SIZE_KEY = "admin-programs-page-size";
 const FALLBACK_PROGRAM_SIZE_KEY = "42lms-program-page-size";
@@ -219,7 +219,7 @@ export function AdminProgramDirectory({
         </p>
         {departments.length === 0 ? (
           <Alert tone="warning" className="mt-3">
-            <strong>No departments in this college yet</strong> · Create a department before adding a program. <Link href={departmentHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Go to Departments</Link>
+            <strong>No departments in this college yet</strong> · Create a department before adding a program. <TextLink href={departmentHref} className="inline-flex min-h-11 items-center md:min-h-9">Go to Departments</TextLink>
           </Alert>
         ) : null}
         <div className="mt-4 grid min-w-0 grid-cols-1 gap-4">

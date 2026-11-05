@@ -1,6 +1,5 @@
 "use client";
 import {useState} from "react";
-import Link from "next/link";
 import {
  type TpoPrototypeTeamPerson,summarizeTpoPrototypePerson,
 } from "@/modules/placements/tpo-team-people-prototype-model";
@@ -67,7 +66,7 @@ export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
       <div className={styles.actions}>
        {selected.membershipId===selfMembershipId?
          <TextLink variant="bare" href="#tpo-team-availability" className={styles.action}>Set away…</TextLink>:null}
-       <Link href="/tpo/messages?tab=team" className={styles.action}>Message</Link>
+       <TextLink variant="bare" href="/tpo/messages?tab=team" className={styles.action}>Message</TextLink>
       </div>
       <div className={styles.management}>
        <strong>Manage team access</strong>

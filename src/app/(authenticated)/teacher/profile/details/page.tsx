@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Banner } from "@/components/ui/banner";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -10,6 +9,8 @@ import { facultyProfileDocumentStorageReady } from "@/modules/people/faculty-pro
 import { loadOwnFacultyProfileDocumentStaged } from "@/modules/people/faculty-profile-self.staged";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function FacultyProfileDetailsPage({searchParams}:{
  searchParams:Promise<{section?:string|string[]}>
@@ -39,15 +40,15 @@ export default async function FacultyProfileDetailsPage({searchParams}:{
   <Breadcrumbs items={[{label:"Profile",href:"/teacher/profile"},{label:"About & details"}]}/>
   <PageHeader title="About & details"
    description="Your self-managed profile sections, separate from college-managed employment information."
-   actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring sm:w-auto md:min-h-9">← Profile</Link>} />
+   actions={<ButtonLink variant="secondary" href="/teacher/profile" className="w-full sm:w-auto">← Profile</ButtonLink>} />
   {!ready?<section role="status" className="min-w-0 border-y border-[var(--lms-canvas-border)] py-5">
    <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Profile editing unavailable</Heading>
    <p className="mt-2 max-w-prose text-sm leading-[22px] text-body">Private Faculty profile storage awaits an approved database migration. No edits will be sent or saved until it is ready.</p>
   </section>:result.failed||!profile?<Banner tone="error" role="alert">
    We couldn't load your profile. Please try again.
-   <Link href="/teacher/profile/details" className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+   <TextLink href="/teacher/profile/details" className="ml-2 inline-flex min-h-9 items-center">
     Retry
-   </Link>
+   </TextLink>
   </Banner>:<div className="min-w-0 space-y-5">
     {profile.version===0 ? <Banner tone="info">
       No record selected. Your profile sections are empty; choose Edit or Add below to create the first saved record.
@@ -86,8 +87,7 @@ export default async function FacultyProfileDetailsPage({searchParams}:{
     </Disclosure>
     <p className="text-xs text-muted-foreground">Profile saves show a section-specific status and
       an error with a reload option when the saved version changes.
-      You can also manage these sections on the <Link href="/teacher/profile"
-        className="font-semibold text-link underline">Profile overview</Link>.</p>
+      You can also manage these sections on the <TextLink href="/teacher/profile">Profile overview</TextLink>.</p>
   </div>}
  </div>;
 }

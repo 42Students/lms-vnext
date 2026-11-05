@@ -1,5 +1,4 @@
 "use server";
-import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { and, asc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
 import { z } from "zod";
@@ -22,6 +21,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {ElectiveEligibleSelection} from "@/components/academics/elective-eligible-selection";
 import {ErrorState} from "@/components/ui/error-state";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 const uuid = z.string().uuid();
 const fieldStyle = "min-h-11 min-w-0 md:min-h-9";
@@ -96,7 +96,7 @@ export default async function CollegeElectiveAllocatePage({
       <PageHeader title="Allocate elective students" />
       <ErrorState title="Admin not assigned to an active college"
         description="College Admin access is required to allocate learners. Contact your administrator to restore or select an active college membership."
-        action={<Link href="/college/electives" className="font-semibold text-link underline underline-offset-4">Back to electives</Link>} />
+        action={<TextLink href="/college/electives">Back to electives</TextLink>} />
     </div>;
   }
   const { slot } = await scopedSlot(slotId);
@@ -223,7 +223,7 @@ export default async function CollegeElectiveAllocatePage({
   return <div className="max-w-full min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
     <PageHeader title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
-      actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring">Back to Electives</Link>} />
+      actions={<TextLink href="/college/electives" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Back to Electives</TextLink>} />
     {input.failed !== undefined && <Alert tone={Number(input.failed ?? 0)>0?"warning":"success"}>
       Added {input.added ?? "0"} learner(s); {input.waitlisted ?? "0"} waitlisted;
       {" "}{input.skipped ?? "0"} already assigned/skipped; {input.failed ?? "0"} failed.

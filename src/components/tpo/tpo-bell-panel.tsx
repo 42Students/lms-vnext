@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import {Drawer} from "@/components/ui/drawer";
 import { PopoverPanel } from "@/components/ui/popover";
 import style from "@/components/shell/topbar/topbar.module.css";
@@ -11,6 +10,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-model";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
 export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{initialUnread:number;items:readonly BellItem[];revision?:number;compact?:boolean}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
@@ -115,7 +115,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
  }
 
  const panelFooter = <div role="group" aria-label="Notification inbox actions" className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-center text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:order-last sm:w-auto" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
+   <ButtonLink variant="primary" className="w-full sm:order-last sm:w-auto" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</ButtonLink>
    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
     {unread>0?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto" onClick={()=>void markAll()} disabled={pending} loading={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}
     <Button variant="ghost" type="button" disabled={refreshing||pending} loading={refreshing} onClick={()=>void refresh()} className="min-h-11 w-full sm:w-auto">Refresh</Button>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -351,10 +350,10 @@ export default async function ActivityPage({
             className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm md:min-h-9 md:w-auto">
             Refresh
           </TextLink>
-          {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
-            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]">
+          {isSuperAdmin(context) ? <TextLink href="/tracker/audit-findings"
+            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm md:min-h-9">
             Open audit findings board →
-          </Link> : null}
+          </TextLink> : null}
           </div>
         ) : undefined}
       />
@@ -381,11 +380,11 @@ export default async function ActivityPage({
       {isSuperAdmin(context)?<nav aria-label="Activity Log filters" className="space-y-2">
         <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
           <div role="group" aria-label="Activity category" className="inline-flex max-w-full flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1">
-            {presetLinks.map(link=><Link key={link.id} href={link.href}
+            {presetLinks.map(link=><TextLink variant="bare" key={link.id} href={link.href}
               aria-current={selectedPreset===link.id?"page":undefined}
               className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-xs font-semibold focus-ring md:min-h-9 "+
                 (selectedPreset===link.id?"bg-surface text-primary-text shadow-sm":"text-body hover:bg-surface")}>
-              {link.name}</Link>)}
+              {link.name}</TextLink>)}
           </div>
           <div role="group" aria-label="Activity date range" className="inline-flex flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1">
             {([
@@ -393,20 +392,20 @@ export default async function ActivityPage({
               {key:"7d",label:"7 days",href:quick(ago(7),today,selectedPreset,"7d")},
               {key:"30d",label:"30 days",href:quick(ago(30),today,selectedPreset,"30d")},
               {key:"all",label:"All time",href:quick(undefined,undefined,selectedPreset,"ALL")},
-            ] as const).map(item=><Link key={item.key} href={item.href}
+            ] as const).map(item=><TextLink variant="bare" key={item.key} href={item.href}
               aria-current={selectedRange===item.key?"page":undefined}
               className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-xs font-semibold focus-ring md:min-h-9 "+
-                (selectedRange===item.key?"bg-surface text-primary-text shadow-sm":"text-body hover:bg-surface")}>{item.label}</Link>)}
+                (selectedRange===item.key?"bg-surface text-primary-text shadow-sm":"text-body hover:bg-surface")}>{item.label}</TextLink>)}
           </div>
-          <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
+          <TextLink href={retryHref} className="inline-flex min-h-11 items-center md:min-h-9">Refresh</TextLink>
           <span role="status" className="text-xs tabular-nums text-muted-foreground">{result.items.length} raw events loaded</span>
         </div>
         {selectedPreset==="important"?<p className="text-xs text-muted-foreground">Deletions and restores, promotions, suspensions, impersonation, module access and feature changes, and identity views.</p>:null}
         <div role="group" aria-label="Activity display" className="flex flex-wrap gap-3 text-sm">
-          <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"grouped"}).toString()}
-            aria-current={!rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Activity feed</Link>
-          <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"raw"}).toString()}
-            aria-current={rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Raw Audit Logs</Link>
+          <TextLink href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"grouped"}).toString()}
+            aria-current={!rawMode?"page":undefined} className="inline-flex min-h-11 items-center md:min-h-9">Activity feed</TextLink>
+          <TextLink href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"raw"}).toString()}
+            aria-current={rawMode?"page":undefined} className="inline-flex min-h-11 items-center md:min-h-9">Raw Audit Logs</TextLink>
         </div>
       </nav>:null}
       <Disclosure title={<>
@@ -564,12 +563,12 @@ export default async function ActivityPage({
         </Disclosure>
         <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] md:col-span-2 xl:col-span-4">
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
-          <Link
+          <TextLink
             href="/activity?view=important"
-            className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text underline underline-offset-4 md:w-auto focus-ring hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm md:w-auto md:min-h-9"
           >
             Reset
-          </Link>
+          </TextLink>
         </div>
       </form>
       </Disclosure>
@@ -610,10 +609,10 @@ export default async function ActivityPage({
               </tbody>
             </Table>
           </div>
-          {result.nextCursor ? <Link href={"/activity?"+nextParams.toString()}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">
+          {result.nextCursor ? <TextLink href={"/activity?"+nextParams.toString()}
+            className="inline-flex min-h-11 items-center md:min-h-9">
             Load older events ({result.remainingCount} remaining)
-          </Link> : null}
+          </TextLink> : null}
         </section>
       ) : <ActivityCenter
         nextRemaining={result.remainingCount}

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SuperAdminPeopleCsvControl } from "@/components/admin/super-admin-people-csv-control";
 import { superAdminPeopleExportHref } from "@/modules/people/admin-users-export-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -22,6 +21,8 @@ import { adminUsersQuerySchema, adminUsersHref, adminPeopleSearchState } from "@
 import { listSuperAdminUsers } from "@/modules/people/admin-user-directory-service";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function SuperAdminUserDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
@@ -46,7 +47,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  }:{invalid:true});
  if(!query?.success) return <div className="space-y-4"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
-   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-ring hover:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">Clear filters</Link>}/>
+   action={<TextLink href="/admin/people/directory" className="w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">Clear filters</TextLink>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
   <PageHeader title="People Directory"
@@ -63,10 +64,10 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    description={loaded.denied
     ?"Your account can no longer view these membership records."
     : "Something went wrong on our end. Please try again. Your filters were preserved."}
-   action={<Link href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
-    className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">
+   action={<TextLink href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
+    className="w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">
     {loaded.denied?"Back to dashboard":"Retry loading users"}
-   </Link>}/>
+   </TextLink>}/>
  </div>;
  const data=loaded.value;
  // Backend pages remain 30 rows. Stitch at most three already-authorized
@@ -98,7 +99,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    eyebrow="People"
    description="A read-only contact lookup for the selected college. Use the management pages for registration, profile changes, access, suspension or teaching allocation."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-start">
-    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)]">← Membership management</Link>
+    <TextLink href="/admin/people" className="inline-flex min-h-11 items-center justify-center md:min-h-9">← Membership management</TextLink>
     <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />
    </div>}/>
   <Tabs ariaLabel="People directory tabs" value={data.query.tab} renderPanel={false}
@@ -115,8 +116,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     {href:"/admin/students",label:"Student accounts"},
     {href:"/admin/faculty",label:"Faculty accounts"},
     {href:"/admin/faculty-assignment",label:"Teaching assignments"},
-   ].map(item=><Link key={item.href} href={item.href}
-     className="inline-flex min-h-11 items-center justify-center rounded border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary md:min-h-9">{item.label}</Link>)}
+   ].map(item=><ButtonLink variant="secondary" key={item.href} href={item.href}>{item.label}</ButtonLink>)}
   </nav>
   {college?<p className="text-xs text-body">Selected college: {college.name}
    {college.city?", "+college.city:""}{college.state?", "+college.state:""}</p>:null}
@@ -154,7 +154,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      </Label>
     </div>
    </Disclosure>
-   <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+   <TextLink href="/admin/people/directory" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
   </form>
   <div className="flex flex-wrap items-end justify-between gap-3">
    <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
@@ -190,8 +190,8 @@ export default async function SuperAdminUserDirectory({searchParams}:{
       <span aria-hidden="true" className={"inline-flex size-9 shrink-0 items-center justify-center rounded-full font-semibold "+palette[ix]}>{initials}</span>
       <div className="min-w-0"><p className="break-words font-semibold text-heading">{label}</p>
        <p className="text-xs text-muted-foreground">{row.collegeName}</p>
-       <Link href={"/admin/people/directory/"+encodeURIComponent(row.membershipId)}
-        className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">View membership</Link>
+       <TextLink href={"/admin/people/directory/"+encodeURIComponent(row.membershipId)}
+        className="inline-flex min-h-9 items-center text-xs">View membership</TextLink>
       </div></div>;
     }},
     {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>

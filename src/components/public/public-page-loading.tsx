@@ -12,10 +12,10 @@ export function PublicPageLoading({ label = "Loading your page..." }: { label?: 
   return (
     <main className={`${styles.page} min-w-0`}>
       <header className={`${styles.header} min-w-0`}>
-        <Link href="/" className={styles.brand} aria-label="42LMS home">
+        <TextLink variant="bare" href="/" className={styles.brand} aria-label="42LMS home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <Img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
-        </Link>
+        </TextLink>
       </header>
       <div className={`${styles.center} min-w-0`}>
         <section className={`${styles.card} min-w-0`} aria-label={label}>

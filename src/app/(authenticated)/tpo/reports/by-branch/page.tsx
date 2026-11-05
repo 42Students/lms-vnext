@@ -3,7 +3,6 @@ import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invali
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {LEGACY_TPO_BRANCH_COLUMNS,legacyTpoBranchReportRow} from "@/modules/placements/tpo-branch-report-view-model";
 import {TpoByBranchPrototypeChart} from "@/components/tpo/tpo-by-branch-prototype-chart";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -18,6 +17,7 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -54,7 +54,7 @@ export default async function TpoByBranchReportPage({
         title="By branch"
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/by-branch"]?.description ?? "By branch"}
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-          <Link href="/tpo/reports/branch-season" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">View applicant and accepted-offer evidence by season →</Link>
+          <TextLink href="/tpo/reports/branch-season" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">View applicant and accepted-offer evidence by season →</TextLink>
           <ReportCsvLink workspace={workspace} kind="by-branch" />
         </div>}
       />

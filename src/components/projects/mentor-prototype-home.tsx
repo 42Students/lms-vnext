@@ -12,6 +12,7 @@ import {selectMentorHomeWeekMeetings,mentorHomeMeetingDisplayTitle} from "@/modu
 import {mentorHomeGreeting} from "@/modules/projects/mentor-home-greeting-model";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type FocusItem = MentorProjectAttention;
 
@@ -113,8 +114,8 @@ export function MentorPrototypeHome({
               (courseLabels.length>4?" · +"+(courseLabels.length-4)+" more":""):
             "No course labels are recorded for your current project assignments."}
         </p>
-        <Link className="inline-flex min-h-11 items-center text-sm text-link underline"
-          href="/mentor/projects?status=ARCHIVED">Browse archived teams →</Link>
+        <TextLink className="inline-flex min-h-11 items-center text-sm"
+          href="/mentor/projects?status=ARCHIVED">Browse archived teams →</TextLink>
         <p className="mt-1 text-xs text-muted-foreground">
           Student team leads are shown only when a learner's saved project
           responsibility explicitly identifies them as a lead. A primary
@@ -155,14 +156,14 @@ export function MentorPrototypeHome({
           {weekMeetingsLoadFailed?<p role="alert" className="prototype-mentor-small-empty">
             Meetings could not be loaded. <Link href="/mentor/calendar">Open calendar</Link>
           </p>:meetings.length?<>
-            {meetings.slice(0,4).map(item=><Link
+            {meetings.slice(0,4).map(item=><TextLink variant="bare"
               href={"/mentor/calendar?projectId="+encodeURIComponent(item.projectId)}
               className="prototype-mentor-small-row" key={item.id}>
               <span>{new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",
                 weekday:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"})
                 .format(new Date(item.startsAt))}</span>
               <strong>{mentorHomeMeetingDisplayTitle(item)}</strong>
-            </Link>)}
+            </TextLink>)}
             {meetings.length>4?<Link href="/mentor/calendar">
               {meetings.length-4} more this week →</Link>:null}
           </>:<p className="prototype-mentor-small-empty">No more meetings this week.
@@ -172,7 +173,7 @@ export function MentorPrototypeHome({
           <div className="prototype-mentor-small-title"><strong>Students to watch</strong>
             <Link href="/mentor/projects">Your teams ›</Link>
           </div>
-          {studentWatch.length?studentWatch.slice(0,5).map(item=><Link
+          {studentWatch.length?studentWatch.slice(0,5).map(item=><TextLink variant="bare"
             href={"/mentor/projects/"+encodeURIComponent(item.projectId)+"?tab=performance"}
             className="prototype-mentor-student-watch-row" key={item.projectId+item.id}>
             <span className="prototype-mentor-student-avatar" aria-hidden="true">
@@ -185,7 +186,7 @@ export function MentorPrototypeHome({
                 ...item.signals,
               ].filter(Boolean).join(" · ")}</small>
             </span>
-          </Link>):<p className="prototype-mentor-small-empty">No student has blocked or review-pending tasks in the visible teams.</p>}
+          </TextLink>):<p className="prototype-mentor-small-empty">No student has blocked or review-pending tasks in the visible teams.</p>}
           <p className="prototype-mentor-watch-note">Based on assigned open-task changes,
             blocked/review states and current workload concentration. Task changes may be
             made by any authorized team member; these are not login, attendance or

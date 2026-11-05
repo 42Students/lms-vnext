@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import {TpoGrid} from "@/components/tpo/grid/tpo-grid";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import { TextLink } from "@/components/ui/text-link";
 
 /** A read-only view of only the authenticated recruiter's server-authorized proposals. */
 export type HrProposalHistorySheetRow={
@@ -31,9 +31,9 @@ export function HrProposalHistoryGrid({rows,scopeKey}:{
   rows={rows} columns={columns} rowKey={row=>row.id}
   mobilePrimaryKeys={["title","reference","status"]}
   storageKey={"hr-proposals:"+scopeKey}
-  rowActions={row=><Link href={row.threadHref}
-   className="inline-flex min-h-11 md:min-h-9 items-center text-[13px] font-semibold text-link underline underline-offset-2 focus-ring md:min-h-9">
+  rowActions={row=><TextLink href={row.threadHref}
+   className="inline-flex min-h-11 md:min-h-9 items-center text-[13px] md:min-h-9">
     Open discussion
-   </Link>}
+   </TextLink>}
  />;
 }

@@ -6,10 +6,10 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { useRef, useState } from "react";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {isConfirmedRecruiterLeaveResponse} from "@/modules/placements/recruiter-profile-access-model";
-import Link from "next/link";
 import {hrRecruiterGrantLinks} from "@/modules/placements/hr-recruiter-grant-navigation-model";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 type Grant = {
   id: string;
@@ -82,10 +82,10 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
                 <nav aria-label={"Open "+grant.collegeName+" recruiter pages"}
                   className="mt-2 flex min-w-0 flex-wrap gap-x-4 gap-y-1 text-sm">
                   {hrRecruiterGrantLinks(grant.collegeId).map(link=>(
-                    <Link key={link.label} href={link.href}
-                      className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-ring">
+                    <TextLink key={link.label} href={link.href}
+                      className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
                       {link.label}
-                    </Link>
+                    </TextLink>
                   ))}
                 </nav>
               </div>

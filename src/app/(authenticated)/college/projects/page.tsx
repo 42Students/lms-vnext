@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
@@ -21,6 +20,8 @@ import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeProjectsPage({
   searchParams,
@@ -40,7 +41,7 @@ export default async function CollegeProjectsPage({
       <PageHeader title="Project workspaces" description="Select a college to continue."/>
       <ErrorState title="No college selected" role="alert"
         description="Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page."
-        action={<Link href="/dashboard" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Back to dashboard</Link>}/>
+        action={<TextLink href="/dashboard" className="inline-flex min-h-11 md:min-h-9 items-center">Back to dashboard</TextLink>}/>
     </div>;
   }
 
@@ -51,7 +52,7 @@ export default async function CollegeProjectsPage({
       <PageHeader title="Project workspaces" description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
-        action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>}
+        action={<TextLink href="/college/projects" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}
       />
     </div>;
   }
@@ -102,8 +103,8 @@ export default async function CollegeProjectsPage({
         description="Live projects, each run by a mentor with a team of students."/>
       <ErrorState title="Workspaces could not be loaded"
         description="Failed to load project workspaces. Your search and filters were not changed."
-        action={<Link href={"/college/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Retry</Link>}/>
+        action={<TextLink href={"/college/projects"+(suffix?"?"+suffix:"")}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
     </div>;
   }
   const result=snapshotsResult.value;
@@ -127,9 +128,9 @@ export default async function CollegeProjectsPage({
         title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
-          <Link href="/college/projects/create" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">Create workspace</Link>
-          <Link href="/college/projects/reassign-mentor" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Bulk reassign mentor</Link>
-          <Link href="/college/projects/deleted" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Deleted workspaces</Link>
+          <ButtonLink variant="primary" href="/college/projects/create">Create workspace</ButtonLink>
+          <TextLink href="/college/projects/reassign-mentor" className="inline-flex min-h-11 items-center md:min-h-9">Bulk reassign mentor</TextLink>
+          <TextLink href="/college/projects/deleted" className="inline-flex min-h-11 items-center md:min-h-9">Deleted workspaces</TextLink>
         </div>}
       />
       <ProjectAdminNav basePath="/college/projects" active="workspaces" />
@@ -141,7 +142,7 @@ export default async function CollegeProjectsPage({
        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Project workspaces</Heading>
         <div className="flex min-w-0 items-center gap-3 text-sm">
-         <Link href="/college/projects/at-risk" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Needs attention</Link>
+         <TextLink href="/college/projects/at-risk" className="inline-flex min-h-11 items-center md:min-h-9">Needs attention</TextLink>
          <Tabs ariaLabel="Workspace display mode" renderPanel={false}
            value={query.view??"table"}
            items={[

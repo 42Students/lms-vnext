@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 import { useState } from "react";
-import Link from "next/link";
 import {
   learnerPlacementChoices, LEARNER_REGISTRATION_COPY,
   type LearnerPlacementChoice,
 } from "@/modules/placements/learner-registration-view-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Props = {
   registration: {
     stage: "NOT_INVITED" | "FINISHED" | "OPEN" | "CLOSED";
@@ -92,9 +92,9 @@ export function LearnerPlacementRegistration({registration}:Props) {
       </Button>
     </>:<p className="text-sm leading-[22px]" role="status">{registration.stage==="NOT_INVITED"?
       LEARNER_REGISTRATION_COPY.notInvited:LEARNER_REGISTRATION_COPY.closed}
-      <Link href="/learn/my-placements/placement#requests" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      <TextLink href="/learn/my-placements/placement#requests" className="ml-2 inline-flex min-h-11 items-center md:min-h-9">
         Contact the placement cell
-      </Link></p>}
+      </TextLink></p>}
     {registration.choice?<p className="text-sm leading-[22px]" role="status">
       You are registered for {learnerPlacementChoices.find(item=>item.value===registration.choice)?.label??"your selected option"}.
     </p>:<p className="text-sm leading-[22px] text-muted-foreground">Choose an option to register. Eligibility is checked for each published drive.</p>}

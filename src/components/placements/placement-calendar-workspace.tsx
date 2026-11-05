@@ -1,6 +1,5 @@
 import {TpoWeekHourCalendar} from "@/components/placements/tpo-week-hour-calendar";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
-import Link from "next/link";
 
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
@@ -51,6 +50,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
@@ -512,9 +512,9 @@ function CalendarEventCard({
         </div>
       </div>
       {href ? (
-        <Link
+        <TextLink
           href={href}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-ring"
+          className="mt-3 inline-flex min-h-11 items-center text-sm"
         >
           {event.leadId
             ? "Open recruiter lead"
@@ -522,7 +522,7 @@ function CalendarEventCard({
               ? "Open round in job"
               : "Open placement job"}{" "}
           →
-        </Link>
+        </TextLink>
       ) : null}
       {ics?<ButtonLink variant="secondary" download={"interview-"+event.id+".ics"}
         href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(ics)}
@@ -752,7 +752,7 @@ export async function PlacementCalendarWorkspace({
             aria-label="Calendar view"
           >
             {VIEWS.map((view) => (
-              <Link
+              <TextLink variant="bare"
                 key={view}
                 href={calendarHref(
                   basePath,
@@ -772,17 +772,16 @@ export async function PlacementCalendarWorkspace({
                 }
               >
                 {view}
-              </Link>
+              </TextLink>
             ))}
           </div>
 
             {audience === "COLLEGE_ADMIN" ? (
-              <Link href="/college/placements/interviews"
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-link-text)]">
+              <ButtonLink variant="secondary" href="/college/placements/interviews">
                 View interviews
-              </Link>
+              </ButtonLink>
             ) : null}
-            <Link
+            <ButtonLink variant="secondary"
               href={
                 isTpo
                   ? "/tpo/placements"
@@ -790,15 +789,14 @@ export async function PlacementCalendarWorkspace({
                     ? "/admin/placements"
                     : "/college/placements"
               }
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-link-text)]"
             >
               Placement operations →
-            </Link>
+            </ButtonLink>
           </div>
         }
       />
 
-      {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text">Retry summary</Link>}>
+      {partialCalendar?<Banner tone="warning" role="alert" action={<ButtonLink variant="secondary" href={calendarHref(basePath,audience,state,{})}>Retry summary</ButtonLink>}>
         <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {needsSnapshot.stale ? "Showing the last successful follow-up summary (up to 15 minutes old)." : loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
       </Banner>:null}
 
@@ -808,8 +806,7 @@ export async function PlacementCalendarWorkspace({
         </div>
       ) : isTpo ? (
         <Banner tone="warning" role="alert"
-          action={<Link href={calendarHref(basePath,audience,state,{})}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text">Retry</Link>}>
+          action={<ButtonLink variant="secondary" href={calendarHref(basePath,audience,state,{})}>Retry</ButtonLink>}>
           Follow-up editing is unavailable because DB09 recruiter CRM storage could not be verified.
           Ask your administrator to apply the DB09 CRM migration. Existing calendar events are read-only.
         </Banner>
@@ -821,13 +818,13 @@ export async function PlacementCalendarWorkspace({
          .format(new Date(today+"T12:00:00Z"))}
        </p>
        {needsKnown?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
-         {eventHref(event,audience)?<Link href={eventHref(event,audience)!}
+         {eventHref(event,audience)?<TextLink href={eventHref(event,audience)!}
           aria-label={"Open "+event.title+", "+eventTime(event.startsAt)+" IST"}
-          className="inline-flex min-h-11 max-w-full flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] font-semibold text-link hover:underline focus-ring">
+          className="inline-flex min-h-11 max-w-full flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)]">
            <span>{eventTime(event.startsAt)}</span><span>· {event.kind==="APPLICATION_DEADLINE"?"Today: ":""}{event.title}</span>
            {event.status==="DONE"||event.startsAt.getTime()<now.getTime()?
             <span className="font-normal text-muted-foreground">· done</span>:null}
-         </Link>:<>
+         </TextLink>:<>
            <span className="font-semibold">{eventTime(event.startsAt)}</span>
            {" · "}{event.title}{event.status==="DONE"||event.startsAt.getTime()<now.getTime()?" · done":""}
          </>}
@@ -847,24 +844,24 @@ export async function PlacementCalendarWorkspace({
           {focus:"OVERDUE" as const,label:"Follow-ups overdue",value:needsKnown?overdue.length:null},
           {focus:"BLOCKED" as const,label:"Rounds on a blocked date",value:needsKnown&&blockedDays?.ready?blockedRounds.length:null},
           {focus:"BUSY" as const,label:"Busy days (3 or more)",value:needsKnown?busyDays.length:null},
-        ]).map(item=><Link key={item.focus}
+        ]).map(item=><TextLink key={item.focus}
           href={calendarHref(basePath,audience,state,{focus:state.focus===item.focus?null:item.focus})}
           aria-current={state.focus===item.focus?"true":undefined}
           title={item.focus==="OVERDUE"?"Last 90 days":item.label}
-          className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] hover:bg-primary-subtle focus-ring">
+          className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm">
           <strong className="block text-lg">{item.value===null?"Unavailable":item.value}</strong>
           {item.label}{state.focus===item.focus?" · Selected":""}
-        </Link>)}
+        </TextLink>)}
        </div>
        {state.focus ? <div role="region" className="border-b border-border py-3" aria-label="Needs doing details">
          <div className="flex flex-wrap items-center justify-between gap-2">
           <Heading level={3} size="sm">
            {state.focus==="OVERDUE"?"Overdue follow-ups":state.focus==="BLOCKED"?"Rounds on blocked dates":"Busy day events"}
           </Heading>
-          <Link href={calendarHref(basePath,audience,state,{focus:null})}
-           className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">
+          <TextLink href={calendarHref(basePath,audience,state,{focus:null})}
+           className="inline-flex min-h-11 items-center text-sm">
            Close
-          </Link>
+          </TextLink>
          </div>
          {!needsKnown || (state.focus==="BLOCKED"&&!blockedDays?.ready)
           ? <p role="status" className="mt-2 text-sm text-warning-text">This list is unavailable. Retry the calendar summary.</p>
@@ -916,8 +913,7 @@ export async function PlacementCalendarWorkspace({
       {/* Preserve the legacy interviews-first entry point. The graphical
           calendar remains an optional companion below the appointment list. */}
       {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
-        {bookings?.failed ? <Banner tone="error" action={<Link href={calendarHref(basePath,audience,state,{})}
-           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text focus-ring">Retry interviews</Link>}>
+        {bookings?.failed ? <Banner tone="error" action={<ButtonLink variant="secondary" href={calendarHref(basePath,audience,state,{})}>Retry interviews</ButtonLink>}>
           {bookings.stale?"Could not refresh interviews. Displaying the last verified appointments for this account and college; refresh to check current changes.":"Could not load candidate interviews right now. The calendar is still available."}
         </Banner>:null}
         {(!bookings?.failed||bookings.stale)?<SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false}/>:null}
@@ -941,7 +937,7 @@ export async function PlacementCalendarWorkspace({
         </div>
 
         <div className={"mt-4 grid min-w-0 grid-cols-3 items-center gap-2 sm:flex sm:flex-wrap "+(isTpo?calendarStyles["tpoNavigationRow"]:"")}>
-          <Link
+          <ButtonLink variant="secondary"
             href={calendarHref(
               basePath,
               audience,
@@ -949,22 +945,22 @@ export async function PlacementCalendarWorkspace({
               { anchor: previous },
             )}
             aria-label="Previous calendar period"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:w-auto md:px-4"
+            className="w-full md:w-auto"
           >
             Previous
-          </Link>
-          <Link
+          </ButtonLink>
+          <ButtonLink variant="secondary"
             href={calendarHref(
               basePath,
               audience,
               state,
               { anchor: today },
             )}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:w-auto md:px-4"
+            className="w-full md:w-auto"
           >
             Today
-          </Link>
-          <Link
+          </ButtonLink>
+          <ButtonLink variant="secondary"
             href={calendarHref(
               basePath,
               audience,
@@ -972,10 +968,10 @@ export async function PlacementCalendarWorkspace({
               { anchor: next },
             )}
             aria-label="Next calendar period"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:w-auto md:px-4"
+            className="w-full md:w-auto"
           >
             Next
-          </Link>
+          </ButtonLink>
           <span className="order-first col-span-3 min-w-0 break-words text-sm font-semibold text-foreground sm:order-none sm:ml-2">
             {state.view === "week"
               ? `${dateLabel(window.from)} – ${dateLabel(window.to)}`
@@ -1028,8 +1024,8 @@ export async function PlacementCalendarWorkspace({
       <FilterChipLink key={name} href={calendarHref(basePath,audience,state,{company:name})}
         selected={state.company===name} className="max-w-52 truncate"
         title={name}>{name}</FilterChipLink>)}
-    {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
-       className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
+    {state.company?<TextLink href={calendarHref(basePath,audience,state,{company:""})}
+       className="inline-flex min-h-11 items-center text-xs">All companies</TextLink>:null}
    </div></Disclosure>:null}
    {isTpo&&countSourceEvents.length>200?<p className="text-xs text-muted-foreground sm:col-span-2">
      Company choices reflect this visible period; the source may have additional matches outside it.
@@ -1087,20 +1083,20 @@ export async function PlacementCalendarWorkspace({
             </Button>
           </div>
           {!isTpo && (state.company || state.job || state.jobId || (state.roundKind && state.roundKind !== "INTERVIEW")) ? (
-            <Link href={basePath + "?" + new URLSearchParams({date:state.anchor,view:state.view}).toString()}
-              className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring sm:w-auto">
+            <TextLink href={basePath + "?" + new URLSearchParams({date:state.anchor,view:state.view}).toString()}
+              className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto">
               Clear filters
-            </Link>
+            </TextLink>
           ) : null}
         </form>
         {!isTpo && state.jobId?<p role="status" className="mt-2 text-sm text-body">
           Job filter: <span className="font-semibold">{response.events.find(event => event.jobId === state.jobId)?.jobTitle || state.jobId}</span>{" "}
-          <Link href={calendarHref(basePath,audience,state,{jobId:""})}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline">Remove job filter</Link>
+          <TextLink href={calendarHref(basePath,audience,state,{jobId:""})}
+            className="inline-flex min-h-11 items-center">Remove job filter</TextLink>
         </p>:null}
         {isTpo && (state.company || state.kind || state.kinds.length) ? (
-          <Link href={calendarHref(basePath,audience,state,{company:"",kind:undefined,kinds:[],focus:null})}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Show everything</Link>
+          <TextLink href={calendarHref(basePath,audience,state,{company:"",kind:undefined,kinds:[],focus:null})}
+          className="mt-3 inline-flex min-h-11 items-center text-sm">Show everything</TextLink>
         ) : null}
         <div className="mt-4 border-t border-border pt-3">
       {isTpo?<nav aria-label="Filter calendar by event type" className="flex min-w-0 flex-wrap gap-2">
@@ -1159,15 +1155,15 @@ export async function PlacementCalendarWorkspace({
           </div>
           {summary.next &&
           eventHref(summary.next, audience) ? (
-            <Link
+            <ButtonLink variant="secondary"
               href={eventHref(
                 summary.next,
                 audience,
               )!}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline sm:w-auto"
+              className="w-full sm:w-auto"
             >
               Open event →
-            </Link>
+            </ButtonLink>
           ) : null}
         </div>
         </div>
@@ -1268,9 +1264,9 @@ export async function PlacementCalendarWorkspace({
                         <p className="break-words">{event.companyName} · {eventDateTime(event.startsAt)} IST</p>
                         {event.venue?<p className="break-words">Venue: {event.venue}</p>:null}
                         {event.note?<p className="whitespace-pre-wrap break-words">Notes: {event.note}</p>:null}
-                        {href?<Link href={href} className="inline-flex min-h-11 items-center font-semibold text-link underline">
+                        {href?<TextLink href={href} className="inline-flex min-h-11 items-center">
                           Open event →
-                        </Link>:null}
+                        </TextLink>:null}
                        </div>
                       </Disclosure>;
                     })}

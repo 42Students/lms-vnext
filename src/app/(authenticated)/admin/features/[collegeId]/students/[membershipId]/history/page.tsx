@@ -1,7 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -11,6 +10,8 @@ import {listSuperAdminStudentRuleHistory} from "@/modules/module-access/admin-st
 import {studentRuleHistoryCursorSchema,studentRuleHistoryHref,studentRuleHistoryExportHref} from "@/modules/module-access/admin-student-rule-history-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 export default async function StudentModuleRuleHistory({params,searchParams}:{params:Promise<{collegeId:string;membershipId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {collegeId,membershipId}=await params;
@@ -42,13 +43,13 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
    </Label>
    </Disclosure>
    <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">Filter history</Button>
-   <Link href={studentRuleHistoryHref(collegeId,membershipId,null)} className="inline-flex min-h-11 items-center text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-ring underline-offset-4">Clear</Link>
+   <TextLink href={studentRuleHistoryHref(collegeId,membershipId,null)} className="inline-flex min-h-11 items-center">Clear</TextLink>
   </form>
   <div className="flex min-w-0 flex-col items-stretch gap-1 sm:items-end">
-  <Link href={studentRuleHistoryExportHref(collegeId,membershipId,
+  <ButtonLink variant="secondary" href={studentRuleHistoryExportHref(collegeId,membershipId,
    cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null,
    cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)}
-   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9">Export this history page (CSV)</Link>
+   className="w-full sm:w-auto">Export this history page (CSV)</ButtonLink>
   <p className="max-w-prose text-xs text-muted-foreground">Export contains at most 40 authorized changes from this page, not an unrestricted audit archive.</p>
   </div>
   {result.items.length===0?<p className="border-b border-border py-6 text-sm text-body">No module override changes have been recorded for this membership.</p>:
@@ -60,8 +61,8 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
     <p className="mt-2 break-words text-sm text-body">{item.change}</p>
     <p className="mt-2 break-words text-xs text-muted-foreground">{item.actorName}</p>
    </li>)}</ol>}
-  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9">Older changes →</Link>:null}
-  <Link href={"/admin/audit?collegeId="+encodeURIComponent(collegeId)+"&subjectType=MEMBERSHIP&subjectId="+encodeURIComponent(membershipId)}
-   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Open scoped Activity Log →</Link>
+  {result.nextCursor?<ButtonLink variant="secondary" href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="w-full sm:w-auto">Older changes →</ButtonLink>:null}
+  <TextLink href={"/admin/audit?collegeId="+encodeURIComponent(collegeId)+"&subjectType=MEMBERSHIP&subjectId="+encodeURIComponent(membershipId)}
+   className="inline-flex min-h-11 items-center md:min-h-9">Open scoped Activity Log →</TextLink>
  </div>;
 }

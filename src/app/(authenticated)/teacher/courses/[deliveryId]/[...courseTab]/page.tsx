@@ -1,7 +1,6 @@
 import { redirect,notFound } from "next/navigation";
 import {z} from "zod";
 import {Banner} from "@/components/ui/banner";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseWorkspace } from "@/components/courses/faculty-course-workspace";
 import { getFacultyCourseWorkspace, resolveFacultyCourseDeliveryForLink } from "@/modules/courses/faculty-course-service";
@@ -9,6 +8,7 @@ import { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-ho
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 import {facultyBlueprintCreateMode} from "@/modules/courses/faculty-blueprint-add-target";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function FacultyCourseTabPage({
   params,searchParams,
@@ -98,10 +98,10 @@ export default async function FacultyCourseTabPage({
     <div className="min-w-0 space-y-4">
       {displayResult.failed ? <Banner tone="warning" role="alert">
         Failed to load course details.
-        <Link href={facultyCourseTabHref(deliveryId,courseTab[0] as "home"|"blueprint")}
-          className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+        <TextLink href={facultyCourseTabHref(deliveryId,courseTab[0] as "home"|"blueprint")}
+          className="ml-2 inline-flex min-h-9 items-center">
           Try again
-        </Link>
+        </TextLink>
       </Banner> : null}
       {requestedContent ? <Banner tone="info" role="status">
         Showing the selected lesson item in Blueprint. Use its View action for details.

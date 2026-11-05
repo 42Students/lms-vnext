@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -11,6 +10,7 @@ import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form
 import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
 import {listTpoOutsideDriveRecords} from "@/modules/placements/recorded-outside-participation-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export default async function TpoRecordedOutsidePage({searchParams}:{searchParams:Promise<{saved?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(
@@ -35,7 +35,7 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
   {saved?<Banner tone="success">
    External drive record saved. It was not published as a job.
   </Banner>:null}
-  {!result.choices.length?<Banner tone="warning">No authorized company is available for this record. <Link href="/tpo/companies" className="font-semibold underline">Companies</Link></Banner>:null}
+  {!result.choices.length?<Banner tone="warning">No authorized company is available for this record. <TextLink href="/tpo/companies">Companies</TextLink></Banner>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
   <section aria-label="Recorded outside drives" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
    <Heading level={2} size="base" className="leading-6 md:text-lg md:leading-7 lg:text-xl">Recorded outside drives</Heading>
@@ -43,9 +43,9 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
    {recorded.length?<ul className="divide-y divide-border">
     {recorded.map(item=><li key={item.id} className="flex min-w-0 flex-col items-stretch gap-2 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
      <span className="min-w-0 break-words">{item.company} · {item.title} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.occurredAt)} · Recorded outside LMS</span>
-     <Link href={"/tpo/placements/recorded-outside/"+item.id} className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">
+     <TextLink href={"/tpo/placements/recorded-outside/"+item.id} className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9">
       Add students and results
-     </Link>
+     </TextLink>
     </li>)}
    </ul>:<EmptyState title="No outside-platform drives have been recorded yet."/>}
   </section>

@@ -1,11 +1,11 @@
 "use client";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
-import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Filter={q:string;status:string;environment:string;reporter:string;severity:string;sort:string};
 const reporters=["Akhila","Himaja","Mounika","Sadwik","Phanindra"];
@@ -79,7 +79,7 @@ export function TrackerIssuesFilterBar({initial,statuses,environments,severities
    </Label>
    <div className="flex min-w-0 items-center gap-2 xl:pb-0">
     <Button type="submit" className="min-h-11 md:min-h-9">Apply</Button>
-    <Link href="/tracker/issues" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Reset</Link>
+    <TextLink href="/tracker/issues" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Reset</TextLink>
    </div>
   </form>;
 }

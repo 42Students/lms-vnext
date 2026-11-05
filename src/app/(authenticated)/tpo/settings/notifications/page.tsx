@@ -1,6 +1,5 @@
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -26,6 +25,7 @@ import {
 } from "@/modules/placements/tpo-my-notifications-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   view?: string | string[];
@@ -72,12 +72,11 @@ export default async function TpoMyNotificationsPage({
           title="Invalid notification filters"
           description="Check the selected read status, page and page size. No notification data was loaded."
           action={
-            <Link
+            <ButtonLink variant="secondary"
               href="/tpo/settings/notifications"
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-ring"
             >
               Clear filters
-            </Link>
+            </ButtonLink>
           }
         />
       </div>
@@ -235,12 +234,11 @@ export default async function TpoMyNotificationsPage({
             Apply
           </Button>
 
-          <Link
+          <ButtonLink variant="secondary"
             href="/tpo/settings/notifications"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-ring"
           >
             Clear filters
-          </Link>
+          </ButtonLink>
         </form>
       </section>
 
@@ -313,29 +311,27 @@ export default async function TpoMyNotificationsPage({
 
           <div className="flex gap-2">
             {page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={tpoMyNotificationsHref({
                   view: query.view,
                   pageSize,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-ring"
               >
                 Previous
-              </Link>
+              </ButtonLink>
             ) : null}
 
             {page < totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={tpoMyNotificationsHref({
                   view: query.view,
                   pageSize,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-ring"
               >
                 Next
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         </nav>

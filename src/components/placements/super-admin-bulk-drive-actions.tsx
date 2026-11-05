@@ -1,6 +1,5 @@
 "use client";
 import { useRef, useState } from "react";
-import Link from "next/link";
 import {useToast} from "@/components/ui/toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { apiFetch } from "@/lib/api-fetch";
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 type Drive = {id: string; title: string; status: string; companyName: string};
 type Preview = {eligible: number; ignored: number; excluded: number; pendingLettersWithdrawn: number;
  recordedApplications?:number;recordedInterviews?:number;actionDescription?:string};
@@ -112,10 +112,10 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
             {d.companyName} · {d.status}</span></span>
         </Label>
         <div className="flex flex-wrap items-center gap-3 pl-6 text-xs">
-          <Link href={"/admin/placements/jobs/"+encodeURIComponent(d.id)+"/settings"}
-            className="min-h-9 py-2 font-semibold text-link underline">Edit drive</Link>
-          <Link href={"/admin/placements/jobs/"+encodeURIComponent(d.id)+"/applications"}
-            className="min-h-9 py-2 font-semibold text-link underline">View applications</Link>
+          <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(d.id)+"/settings"}
+            className="min-h-9 py-2">Edit drive</TextLink>
+          <TextLink href={"/admin/placements/jobs/"+encodeURIComponent(d.id)+"/applications"}
+            className="min-h-9 py-2">View applications</TextLink>
           <Button type="button" size="sm" variant="link" disabled={busy}
             onClick={()=>{setSelected([d.id]);setPreview(null);setResult(null);}}>
             Select only this drive

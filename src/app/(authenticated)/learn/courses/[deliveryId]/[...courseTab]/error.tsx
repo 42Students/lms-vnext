@@ -1,10 +1,10 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Recover a transient course read without exposing inaccessible course data. */
 export default function CourseError({ reset }: {
@@ -23,9 +23,9 @@ export default function CourseError({ reset }: {
         <Button type="button" variant="secondary" onClick={reset}>
           {attendance || syllabus ? "Retry" : "Try again"}
         </Button>
-        <Link href="/learn/courses" className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
+        <TextLink href="/learn/courses" className="inline-flex min-h-9 items-center text-sm">
           Back to courses
-        </Link>
+        </TextLink>
       </div>
     </Alert>
   </section>;

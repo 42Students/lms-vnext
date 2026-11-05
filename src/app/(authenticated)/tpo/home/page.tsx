@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import {TpoHomeReturnRefresh} from "@/components/tpo/tpo-home-return-refresh";
 import {TpoHomePrototypeFocus} from "@/components/tpo/tpo-home-prototype-focus";
 import {eq} from "drizzle-orm";
@@ -31,6 +30,8 @@ import {placementCalendarDayKey} from "@/modules/placements/placement-calendar-m
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 function TpoHomeRowIcon({kind}:{kind:TpoHomeLegacyRow["key"]}) {
  const common={stroke:"currentColor",fill:"none",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const};
  return <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" className="shrink-0 text-[var(--lms-muted-text)]" {...common}>
@@ -55,7 +56,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
  if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
   <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-   {([["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]] as const).map(([label,href])=><li key={href} className="p-4"><Link href={href} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring md:min-h-9">{label}</Link></li>)}
+   {([["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]] as const).map(([label,href])=><li key={href} className="p-4"><TextLink href={href} className="inline-flex min-h-11 items-center text-[14px] md:min-h-9">{label}</TextLink></li>)}
   </ul>
  </div>;
  const moduleAccess=await resolveOptionalModuleAccess(ctx);
@@ -90,8 +91,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
    <PageHeader title="Home"/>
    <ErrorState title="Could not load Home"
     description="Placement batches or operations could not be loaded. Counts and actions have been withheld rather than shown as zero."
-    action={<Link href="/tpo/home?retry=1"
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9">Retry</Link>}/>
+    action={<ButtonLink variant="secondary" href="/tpo/home?retry=1">Retry</ButtonLink>}/>
   </div>;
  }
  const batches=batchResult;
@@ -224,11 +224,11 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
    <p className="font-semibold">Some Home indicators could not be loaded.</p>
    <p>This is a partial view, not a saved snapshot. Unavailable counts are shown as unknown, not zero. Other placement information is available.</p>
    <p className="text-xs">Unable to refresh: {unavailableSources.join(", ")}.</p>
-   <Link href="/tpo/home?retry=1" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry missing Home indicators</Link>
+   <TextLink href="/tpo/home?retry=1" className="inline-flex min-h-11 items-center md:min-h-9">Retry missing Home indicators</TextLink>
   </div>:null}
  {requestedSeason?<div role="note" className="flex flex-wrap items-center gap-2 text-sm text-body">
    <span>Season-specific Home links now open the college&apos;s placement season selector.</span>
-   <Link className="font-semibold text-link underline" href={"/tpo/placements?seasonId="+encodeURIComponent(requestedSeason)}>Open selected season</Link>
+   <TextLink href={"/tpo/placements?seasonId="+encodeURIComponent(requestedSeason)}>Open selected season</TextLink>
   </div>:null}
  {teamFilter==="false"?<div role="note" className="text-sm text-muted-foreground">Team summary was hidden in the legacy link. The separate Team workspace remains available from the placement work list.</div>:null}
  <p aria-live="polite" data-testid="home.need-line" className="text-sm leading-[22px] text-[var(--lms-body-text)]">{tpoHomeNeedsLine(Array.from({length:Math.max(homeNeeds.length,
@@ -247,7 +247,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
    <p className="text-sm text-muted-foreground">{next.text}</p>
-   <Link href={next.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-semibold text-[var(--lms-on-primary)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9 md:w-auto motion-reduce:transition-none">{next.action}</Link>
+   <ButtonLink variant="primary" href={next.href} className="w-full md:w-auto">{next.action}</ButtonLink>
   </div>:<div className="mt-3 space-y-1">
    <p className="font-semibold text-[var(--lms-heading)]">Nothing is waiting on you.</p>
    <p className="text-sm leading-6 text-muted-foreground">New requests, results and replies show up here first.</p>
@@ -255,14 +255,14 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
  </section>
  <section className="min-w-0 space-y-2" aria-label="Your placement work">
   <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">{rows.map(row=><li key={row.key}>
-    <Link href={row.href} data-testid={"home.row."+row.key}
+    <TextLink variant="bare" href={row.href} data-testid={"home.row."+row.key}
      className="flex min-h-[68px] min-w-0 items-center gap-3 px-4 py-3 text-body hover:bg-primary-subtle focus-ring">
      <span className="flex h-9 w-9 shrink-0 items-center justify-center" aria-hidden="true"><TpoHomeRowIcon kind={row.key}/></span>
      <span className="min-w-0 flex-1"><strong className="block break-words text-sm text-foreground">{row.title}</strong>
       <span className="mt-1 block break-words text-xs text-muted-foreground">{row.status}</span></span>
      {row.needsAttention?<Badge aria-label="Needs you"  tone="warning" className="shrink-0">Needs you</Badge>:null}
      <TpoHomeChevronRight/>
-    </Link>
+    </TextLink>
    </li>)}</ul>
  </section>
  </div>
@@ -276,7 +276,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
     {label:rows[4]?.title ?? "Inbox",value:pendingRequestCount!==null&&unreadMessages!==null?pendingRequestCount+unreadMessages:"—",detail:rows[4]?.status,href:rows[4]?.href},
     {label:rows[5]?.title ?? "Team",value:teamThreads?.status==="READY"?
       teamThreads.items.reduce((total,item)=>total+item.unreadCount,0):"—",detail:rows[5]?.status,href:rows[5]?.href},
-  ].map((tile,index)=><Link key={tile.label} href={tile.href??"/tpo/home"}
+  ].map((tile,index)=><TextLink variant="bare" key={tile.label} href={tile.href??"/tpo/home"}
     className={"lms-inline-link flex min-w-0 flex-col gap-1 p-3 text-body hover:bg-primary-subtle focus-ring-inset sm:p-4 " +
       (index<2?"border-b border-border lg:border-b-0 ":"")+
       (index%2===0?"border-r border-border ":"")+
@@ -284,7 +284,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
     <span className="text-xs font-semibold leading-5 text-muted-foreground">{tile.label}</span>
     <strong className="break-words text-2xl font-semibold leading-8 tabular-nums text-[var(--lms-heading)]">{tile.value}</strong>
     {tile.detail?<span className="min-w-0 break-words text-xs leading-5 text-muted-foreground">{tile.detail}</span>:null}
-  </Link>)}
+  </TextLink>)}
  </div>
   </div>
  </Disclosure>

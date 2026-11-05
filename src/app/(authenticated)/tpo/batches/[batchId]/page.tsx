@@ -1,6 +1,5 @@
 import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
 import batchStyles from "@/components/tpo/legacy-batch-eligibility.module.css";
-import Link from "next/link";
 import {tpoBatchReturnHref} from "@/modules/placements/tpo-batch-return-model";
 import { redirect, notFound } from "next/navigation";
 import { z } from "zod";
@@ -24,6 +23,8 @@ import {projectTpoBatchNextStep} from "@/modules/placements/tpo-batch-next-step-
 import {getTpoBatchOwnDecisionSummary} from "@/modules/placements/tpo-batch-own-decision-service";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {batchId}=await params;
@@ -63,38 +64,38 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
     registrationsRead.status!=="fulfilled"||inviteRead.status!=="fulfilled"){
   const retryHref="/tpo/batches/"+encodeURIComponent(batchId);
   return <div className="min-w-0 space-y-4">
-   <Link href={backHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">
+   <TextLink href={backHref} className="inline-flex min-h-11 items-center">
     Placement eligibility
-   </Link>
+   </TextLink>
    <PageHeader title={batch.name} description={batch.program+" · "+batch.department}/>
    {!ready?<Banner role="alert" tone="warning">Batch details may be stale. The lifecycle status could not be verified.</Banner>:null}
    {eligibilityRead.status==="rejected"?<Banner role="alert" tone="warning">
     Batch roster or eligibility counts could not be loaded. Do not rely on an earlier snapshot.
-    <Link href={retryHref+"/students"} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+    <TextLink href={retryHref+"/students"} className="ml-2 inline-flex min-h-11 items-center">
      Retry roster
-    </Link>
+    </TextLink>
    </Banner>:null}
    {registrationsRead.status==="rejected"?<Banner role="alert" tone="warning">
     Student registration profiles are unavailable. No students have been assumed registered or opted out.
-    <Link href={retryHref+"/registrations"} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+    <TextLink href={retryHref+"/registrations"} className="ml-2 inline-flex min-h-11 items-center">
      Retry profiles
-    </Link>
+    </TextLink>
    </Banner>:null}
    {historyRead.status==="rejected"?<Banner role="alert" tone="warning">
     Decision history is unavailable. Undo actions cannot be safely offered.
-    <Link href={retryHref+"/history"} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+    <TextLink href={retryHref+"/history"} className="ml-2 inline-flex min-h-11 items-center">
      Retry history
-    </Link>
+    </TextLink>
    </Banner>:null}
    {inviteRead.status==="rejected"?<Banner role="alert" tone="warning">
     Invitation readiness could not be checked. Invitation actions are temporarily unavailable.
-    <Link href={retryHref} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+    <TextLink href={retryHref} className="ml-2 inline-flex min-h-11 items-center">
      Retry invitation readiness
-    </Link>
+    </TextLink>
    </Banner>:null}
-   <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">
+   <TextLink href={retryHref} className="inline-flex min-h-11 items-center">
     Retry batch details
-   </Link>
+   </TextLink>
   </div>;
  }
  const eligibility=eligibilityRead.value;
@@ -111,31 +112,31 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  return <div className="min-w-0 space-y-4">
   {!ready?<Banner tone="warning" role="alert">
     Batch details may be stale. The current batch state could not be verified.
-    <Link href={"/tpo/batches/"+encodeURIComponent(batchId)}
-      className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+    <TextLink href={"/tpo/batches/"+encodeURIComponent(batchId)}
+      className="ml-2 inline-flex min-h-11 items-center">
       Retry batch details
-    </Link>
+    </TextLink>
   </Banner>:null}
   {!summary.complete?<Banner tone="warning" role="alert">
     Batch roster may be incomplete. The eligibility snapshot covers only {eligibility.limit} learners;
     do not use the displayed counts as the whole-batch decision totals.
-    <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"}
-      className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+    <TextLink href={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"}
+      className="ml-2 inline-flex min-h-11 items-center">
       Retry roster
-    </Link>
+    </TextLink>
   </Banner>:null}
   {!registrations.available?<Banner tone="warning" role="alert">
     Learner registration profiles are incomplete or unavailable. No missing registration is assumed
     to be a student opting out.
-    <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations"}
-      className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+    <TextLink href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations"}
+      className="ml-2 inline-flex min-h-11 items-center">
       Retry profiles
-    </Link>
+    </TextLink>
   </Banner>:null}
-  <Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center gap-2 justify-start text-sm font-semibold text-link underline focus-ring md:min-h-9">
+  <TextLink href={backHref} className="inline-flex min-h-11 items-center gap-2 justify-start text-sm md:min-h-9">
    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" className="size-4"><path d="M13 8H3m5-5L3 8l5 5" strokeLinecap="round" strokeLinejoin="round"/></svg>
    Placement eligibility
-  </Link>
+  </TextLink>
   <PageHeader title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
   <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
    <Badge tone={Boolean(lifecycle?.finishedAt)?"neutral":summary.complete&&summary.eligible>0?"success":"info"} role="status">
@@ -171,14 +172,13 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{next.title}</Heading>
   <p className="text-sm text-body leading-[22px]">{next.detail}</p>
   <div className="flex flex-wrap gap-3">
-   <Link href={"/tpo/batches/"+batchId+next.href}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-ring md:min-h-9">
+   <ButtonLink variant="secondary" href={"/tpo/batches/"+batchId+next.href}>
     {next.button} →
-   </Link>
-   {registrations.available&&(registrations.registered??0)>0?<Link href={"/tpo/batches/"+batchId+"/students"}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-link lms-inline-link hover:underline focus-ring md:min-h-9">
+   </ButtonLink>
+   {registrations.available&&(registrations.registered??0)>0?<TextLink href={"/tpo/batches/"+batchId+"/students"}
+    className="inline-flex min-h-11 items-center text-sm md:min-h-9">
     {registrations.registered} students registered: continue on Students →
-   </Link>:null}
+   </TextLink>:null}
   </div>
  </section>
  <section aria-label="Batch eligibility snapshot" className="min-w-0 space-y-3 border-b border-border py-4">
@@ -203,35 +203,34 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="text-sm leading-[22px]">Next step: {eligibility.nextAction==="REVIEW"?"Review incomplete or ambiguous decisions":
     eligibility.nextAction==="DECIDE"?"Decide undecided learners":
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>
-  <Link href={"/tpo/batches/"+batchId+"/students"} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring md:min-h-9">Open Students</Link>
+  <ButtonLink variant="secondary" href={"/tpo/batches/"+batchId+"/students"}>Open Students</ButtonLink>
  </section>
   </div>
   <TpoBatchWorkspaceTabs batchId={batchId} active="" students={registrations.activeLearners} />
 
  {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
-  Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
-   className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9" data-testid="batch.suggest-do">Do it</Link>
+  Suggested: make them eligible <TextLink href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
+   className="ml-2 inline-flex min-h-11 items-center md:min-h-9" data-testid="batch.suggest-do">Do it</TextLink>
   </p>:ready&&!lifecycle?.invitedAt&&invitePreview.invitable>0?<p data-testid="batch.suggest"
    className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
-   Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
-    className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
+   Suggested: invite the batch (Next step, above) <TextLink href="#batch-next-step"
+    className="ml-2 inline-flex min-h-11 items-center md:min-h-9" data-testid="batch.suggest-do">Show me</TextLink>
   </p>:ready&&next.button==="Remind or move deadline"?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
-   Suggested: remind them to register <Link href="#batch-reminder" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9" data-testid="batch.suggest-do">Show me</Link>
+   Suggested: remind them to register <TextLink href="#batch-reminder" className="ml-2 inline-flex min-h-11 items-center md:min-h-9" data-testid="batch.suggest-do">Show me</TextLink>
   </p>:null}
- {own?<Link data-testid="batch.act" href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-ring md:min-h-9">
+ {own?<ButtonLink variant="secondary" data-testid="batch.act" href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}>
    {own.total} {own.total===1?"student is":"students are"} decided individually
    {own.uncertain>0?", "+own.uncertain+" need class review":own.different===0?", all the same as their class or batch":", "+own.different+" differ from their class or batch"} →
-  </Link>:<p role="status" className="text-sm text-body leading-[22px]">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
+  </ButtonLink>:<p role="status" className="text-sm text-body leading-[22px]">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
  <section aria-label="Whole batch eligibility decision" className="space-y-2 border-b border-border py-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
     <div><Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Whole batch</Heading>
       <p className="text-sm text-body leading-[22px]">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
       {decision.reason?<p className="text-xs text-muted-foreground leading-5">Reason: {decision.reason}</p>:null}
     </div>
-    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-ring md:min-h-9">
+    <ButtonLink variant="secondary" href={"/tpo/batches/"+batchId+"/rules"}>
       {lifecycle?.finishedAt?"Review batch decision":"Set batch decision"} →
-    </Link>
+    </ButtonLink>
   </div>
   {decision.status==="INELIGIBLE"?<p className="text-sm text-warning leading-[22px]">The batch is ineligible: {decision.reason??"No reason recorded"}. Classes or students set to Eligible are still in placements.</p>:null}
  </section>

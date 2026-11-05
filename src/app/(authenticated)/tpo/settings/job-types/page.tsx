@@ -3,13 +3,13 @@ import { Alert } from "@/components/ui/alert";
 import { ErrorState } from "@/components/ui/error-state";
 import { Disclosure } from "@/components/ui/disclosure";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import Link from "next/link";
 import { TpoUnifiedJobTypesEditor } from "@/components/tpo/tpo-unified-job-types-editor";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { getTpoJobTypes, listPlacementJobTypeChoices } from "@/modules/placements/tpo-configuration-read-service";
 import { TPO_BUILTIN_JOB_TYPES, isTpoBuiltinJobType } from "@/modules/placements/tpo-builtin-job-types";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic = "force-dynamic";
 export default async function JobTypesSettings() {
@@ -57,7 +57,7 @@ export default async function JobTypesSettings() {
           The job types drives can have, and whether an offer of each counts as placed. Add your own; switch off the ones you never use.
         </p>
         {!ready ? <Alert tone="warning">Could not load job types. The job type storage is unavailable.
-          <Link href="/tpo/settings/job-types?retry=1" className="ml-2 font-semibold text-link underline">Retry</Link>
+          <TextLink href="/tpo/settings/job-types?retry=1" className="ml-2">Retry</TextLink>
         </Alert> :
           <div className="space-y-4">
             <TpoUnifiedJobTypesEditor types={[...builtin,...custom]}/>
@@ -66,7 +66,7 @@ export default async function JobTypesSettings() {
               <Heading level={3} className="sr-only">Visible choices for drives</Heading>
               <p className="text-xs text-muted-foreground">The same authorized read-only selection is available at /api/placements/job-types. Disabled choices remain on existing drives but are not offered for new ones.</p>
               {choices===null?<p role="alert" className="text-sm text-warning">Could not load the current drive choices.
-                <Link href="/tpo/settings/job-types?retry=1" className="ml-2 font-semibold text-link underline">Retry</Link>
+                <TextLink href="/tpo/settings/job-types?retry=1" className="ml-2">Retry</TextLink>
               </p>:choices.length?<ul className="mt-2 flex flex-wrap gap-2">{choices.map(item=>
                 <li key={item.label} className="rounded border border-border px-2 py-1 text-sm">{item.label}</li>
               )}</ul>:<p className="text-sm text-muted-foreground">No active job types.</p>}

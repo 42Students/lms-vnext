@@ -1,6 +1,5 @@
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
-import Link from "next/link";
 import {parseSuperAdminReadinessParams,visibleReadinessChecks} from "@/modules/colleges/admin-readiness-filter";
 import {ErrorState} from "@/components/ui/error-state";
 import { notFound } from "next/navigation";
@@ -28,6 +27,8 @@ import type {
 } from "@/modules/colleges/readiness-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function checkTone(
   status: CollegeReadinessStatus,
@@ -96,7 +97,7 @@ export default async function CollegeReadinessPage({
       actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
     <ErrorState title="Invalid readiness filter"
       description="Choose a supported check status."
-      action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/readiness"} className="hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-ring underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">Clear</Link>}/>
+      action={<TextLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/readiness"} className="w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">Clear</TextLink>}/>
   </div>;
 
 
@@ -147,12 +148,11 @@ export default async function CollegeReadinessPage({
       />
 
       <div className="flex flex-wrap items-center gap-3">
-        <Link
+        <ButtonLink variant="secondary"
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]"
         >
           Recheck persisted readiness →
-        </Link>
+        </ButtonLink>
         <p className="text-xs text-muted-foreground">
           Reopening the page recalculates the current database checklist. It cannot verify live DNS propagation, login delivery, or end-to-end teaching and placement workflows.
         </p>
@@ -218,8 +218,8 @@ export default async function CollegeReadinessPage({
             {mustFix.map(check=><li key={check.id}>
               <span className="font-semibold">{check.label} — {check.status==="FAIL"?"Not ready":"Unverified"}</span>
               <p className="mt-1">{check.remediation}</p>
-              <Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring underline-offset-4"
-               href={readinessRemediationLink(check.id,college.id)}>Fix or verify this requirement →</Link>
+              <TextLink className="inline-flex min-h-11 md:min-h-9 items-center"
+               href={readinessRemediationLink(check.id,college.id)}>Fix or verify this requirement →</TextLink>
             </li>)}
           </ul>}
       </section>
@@ -257,7 +257,7 @@ export default async function CollegeReadinessPage({
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </Select>
           </Label><Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-          <Link className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-ring underline-offset-4" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
+          <TextLink className="inline-flex min-h-11 md:min-h-9 items-center" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</TextLink>
         </form>
         <p className="mt-2 text-xs text-muted-foreground">Showing {shownChecks.length} of {evaluation.checks.length} required checks; the overall verdict always uses all ten.</p>
         <p className="mt-2 text-sm leading-6 text-body">
@@ -302,7 +302,7 @@ export default async function CollegeReadinessPage({
                 {check.status !== "PASS" ? (
                   <p className="mb-0 mt-3 text-xs leading-5 text-muted-foreground">
                     Next step: {check.remediation}
-                    <Link href={readinessRemediationLink(check.id,college.id)} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring underline-offset-4">Open related setup →</Link>
+                    <TextLink href={readinessRemediationLink(check.id,college.id)} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center">Open related setup →</TextLink>
                   </p>
                 ) : null}
               </li>
@@ -405,7 +405,7 @@ export default async function CollegeReadinessPage({
         </p>
       </Disclosure>
       <div className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Export all persisted readiness checks (CSV) →</Link>
+      <ButtonLink variant="secondary" href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"}>Export all persisted readiness checks (CSV) →</ButtonLink>
       <p className="text-xs text-muted-foreground">Export includes all ten persisted checks even when the page filter hides some; runtime verification is not certified.</p>
       </div>
     </div>

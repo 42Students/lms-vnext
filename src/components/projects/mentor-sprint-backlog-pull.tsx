@@ -1,7 +1,6 @@
 "use client";
 
 import {useState} from "react";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -10,6 +9,7 @@ import {mentorPullEligible,mentorPullSelectedPoints} from "@/modules/projects/me
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export type MentorSprintBacklogChoice={
  id:string;title:string;status:string;updatedAt:string;estimatePoints:number|null;
@@ -109,7 +109,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
      confirmDisabled={selectedRows.length===0||!canPull} pending={busy}
      onConfirm={()=>void pull()}/>
    {notice?<p role="status">{notice}</p>:null}
-   <Link className="inline-flex min-h-11 items-center text-link underline"
-     href={base}>Open full product backlog on the Board →</Link>
+   <TextLink className="inline-flex min-h-11 items-center"
+     href={base}>Open full product backlog on the Board →</TextLink>
  </section>;
 }

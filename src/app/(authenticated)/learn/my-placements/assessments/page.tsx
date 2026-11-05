@@ -1,7 +1,6 @@
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import Link from "next/link";
 import { notFound,redirect } from "next/navigation";
 import { resolveOwnAssessmentDeepLink } from "@/modules/placements/learner-assessment-deeplink-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -12,6 +11,7 @@ import { learnerRoundSearchQuerySchema } from "@/modules/placements/learner-roun
 import {learnerAssessmentDueBucketSchema} from "@/modules/placements/learner-assessment-due-buckets";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function LearnerPlacementAssessmentsPage({searchParams}: {
   searchParams:Promise<{applicationId?:string|string[];roundId?:string|string[];q?:string|string[];due?:string|string[]}>;
@@ -40,8 +40,8 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
       <PageHeader title="Assessments" />
       <ErrorState title="Could not load assessments"
         description="Assessment appointments are temporarily unavailable; this is not an empty schedule."
-        action={<Link href={"/learn/my-placements/assessments"+(retry.size?"?"+retry.toString():"")}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry assessments</Link>} />
+        action={<TextLink href={"/learn/my-placements/assessments"+(retry.size?"?"+retry.toString():"")}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry assessments</TextLink>} />
     </div>;
   }
   const link=resolveOwnAssessmentDeepLink(workspace.rounds,{
@@ -68,10 +68,10 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
         title="Assessments"
         description="Scheduled placement tests and assessments for your shortlisted applications."
         actions={
-          <Link href="/learn/my-placements/assessments/results"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+          <TextLink href="/learn/my-placements/assessments/results"
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             View official assessment results →
-          </Link>
+          </TextLink>
         }
       />
       <Disclosure title="Assessment submission guidance">

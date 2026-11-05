@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { and, countDistinct, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -27,6 +26,8 @@ import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-driv
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {listRecruiterCollegeBranches} from "@/modules/placements/recruiter-college-branch-service";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 function DriveSourceUnavailable({ collegeId }: { collegeId?: string | null }) {
   const backHref=collegeId
@@ -35,7 +36,7 @@ function DriveSourceUnavailable({ collegeId }: { collegeId?: string | null }) {
     <PageHeader title="Request a drive" />
     <ErrorState title="We couldn't load that drive"
       description="The original request or job may have been removed, changed, or is no longer available to this recruiter. No draft was modified."
-      action={<Link href={backHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">All drives</Link>} />
+      action={<ButtonLink variant="secondary" href={backHref}>All drives</ButtonLink>} />
   </div>;
 }
 
@@ -56,7 +57,7 @@ export default async function RecruiterRequestDrivePage({
    <PageHeader title="Request a drive"/>
    <ErrorState title="We couldn't load your account"
     description="Your recruiter session could not be loaded. Try again without losing a saved draft on this device."
-    action={<Link href="/hr/drives/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
+    action={<TextLink href="/hr/drives/new" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
   </div>;
   const context=account.value;
   if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) redirect("/dashboard");
@@ -84,8 +85,8 @@ export default async function RecruiterRequestDrivePage({
        <PageHeader title="Request a drive"/>
        <ErrorState title="We couldn't load that drive"
         description="The source drive could not be loaded. Your unsent draft was not changed."
-        action={<Link href={"/hr/drives/new?from="+encodeURIComponent(query.from)}
-         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
+        action={<TextLink href={"/hr/drives/new?from="+encodeURIComponent(query.from)}
+         className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
       </div>;
     }
     if (query.collegeId && fromJob.college.id !== query.collegeId)
@@ -105,7 +106,7 @@ export default async function RecruiterRequestDrivePage({
       {grants.length === 0 ? (
         <EmptyState title="No college selected"
           description="Ask the placement cell to grant recruiter access before preparing a drive."
-          action={<Link href="/hr/drives" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">All drives</Link>}/>
+          action={<TextLink href="/hr/drives" className="inline-flex min-h-11 items-center md:min-h-9">All drives</TextLink>}/>
       ) : (
         <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant=>({
           key:grant.collegeId,label:grant.collegeName,
@@ -136,11 +137,11 @@ export default async function RecruiterRequestDrivePage({
   const requestResult=requestId?await listOwnRecruiterDriveRequests(context,collegeId)
    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})):null;
   if(requestResult&&!requestResult.ok)return <div className="min-w-0 space-y-4">
-    <PageHeader title="Request a drive" actions={<Link href="/hr/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9">All drives</Link>}/>
+    <PageHeader title="Request a drive" actions={<TextLink href="/hr/drives" className="inline-flex min-h-11 items-center md:min-h-9">All drives</TextLink>}/>
     <ErrorState title="Couldn't load your requests"
      description="Your existing request is temporarily unavailable. Your unsent draft has not changed."
-     action={<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)+"&"+(query.fix?"fix":query.edit?"edit":"copy")+"="+encodeURIComponent(requestId!)}
-      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
+     action={<TextLink href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)+"&"+(query.fix?"fix":query.edit?"edit":"copy")+"="+encodeURIComponent(requestId!)}
+      className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
   </div>;
   const request=requestResult?.ok?requestResult.value.find(item=>item.id===requestId):null;
   if(requestId && (!request ||
@@ -158,8 +159,8 @@ export default async function RecruiterRequestDrivePage({
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : query.copy ? "Hire again with changes" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName}
-      actions={<Link href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
-       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">All drives</Link>} />
+      actions={<TextLink href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
+       className="inline-flex min-h-11 items-center md:min-h-9">All drives</TextLink>} />
     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
       <StatusBadge tone={request?.status==="DRAFT"?"success":request?.status==="SENT_BACK"?"warning":"info"}>
        {request?.status==="DRAFT"?"Approved awaiting publication":
@@ -172,14 +173,14 @@ export default async function RecruiterRequestDrivePage({
     <nav className="min-w-0 space-y-2" aria-label="Recruiter drive links">
     <Disclosure title="More drive destinations" className="min-w-0">
       <div className="flex min-w-0 flex-col items-start gap-2 pb-2 md:flex-row md:flex-wrap">
-    <Link href={hrSentProposalsHref(collegeId)}
-      className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 md:w-auto active:text-[var(--lms-primary-hover)] focus-ring">
+    <TextLink href={hrSentProposalsHref(collegeId)}
+      className="inline-flex min-h-11 w-full items-center text-sm md:min-h-9 md:w-auto">
       View previously sent discussion proposals
-    </Link>
-    <Link href={"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(collegeId)}
-      className="inline-flex min-h-11 w-full items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-ring">
+    </TextLink>
+    <TextLink href={"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(collegeId)}
+      className="inline-flex min-h-11 w-full items-center text-sm md:min-h-9 md:w-auto">
       Record an outside-platform drive
-    </Link>
+    </TextLink>
 
       </div>
     </Disclosure>

@@ -6,11 +6,12 @@ import { ErrorState } from "@/components/ui/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShellNavGlyph } from "@/components/shell/shell-nav-icons";
 import { Drawer } from "@/components/ui/drawer";
-import Link from "next/link";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {createRecruiterBellRequestGate} from "@/modules/placements/recruiter-bell-model";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,createHrBellMutationGate,parseHrBellResponse,type HrBellResponse} from "@/modules/placements/hr-recruiter-bell-model";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 function isHrBellReadReceipt(value:unknown):value is {marked:number}{
  if(!value||typeof value!=="object"||!("marked" in value))return false;
  const count=(value as {marked:unknown}).marked;
@@ -107,7 +108,7 @@ export function HrRecruiterBell(){
 
  const unread=badgeUnread??state?.unread??0;
  const panelFooter=<><div role="group" aria-label="Recruiter notification actions" className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-    <Link href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] focus-ring">See all notifications</Link>
+    <TextLink href="/hr/notifications" onClick={()=>setOpen(false)} className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto">See all notifications</TextLink>
     {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
       variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
@@ -129,13 +130,13 @@ export function HrRecruiterBell(){
     state?.status!=="READY"?<p className="mt-3 text-sm text-body leading-[22px]">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
     state.items.length===0?<EmptyState title={HR_BELL_EMPTY} description={HR_BELL_EMPTY_HELP}/>:
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3 min-w-0" viewportClassName="max-h-80"><ul role="list" data-testid="recruiter.bell.list" aria-label="Recent recruiter notifications" className="min-w-0 space-y-[6px] px-3">{state.items.map(item=><li key={item.id}>
-     <Link href={item.href} onClick={()=>setOpen(false)} className="grid min-h-11 min-w-0 grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 gap-y-1 rounded-[var(--lms-radius-shell-control)] sm:flex sm:gap-2 border border-[color-mix(in_srgb,var(--lms-border)_60%,transparent)] bg-surface px-4 py-3 text-sm text-body transition-[background-color,border-color,box-shadow] duration-[var(--lms-motion-fast)] hover:border-[var(--lms-neutral-200)] hover:bg-[var(--lms-neutral-50)] hover:shadow-(--lms-shadow-sm) active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] active:shadow-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-neutral-500)] motion-reduce:transition-none md:min-h-9">
+     <ButtonLink variant="secondary" href={item.href} onClick={()=>setOpen(false)} className="min-w-0 sm:flex">
       <span aria-hidden="true" className={item.unread?"mt-1.5 h-2 w-2 shrink-0 rounded-[var(--lms-radius-pill)] bg-[var(--lms-notification-unread,var(--lms-error))]":"mt-1.5 h-2 w-2 shrink-0 rounded-[var(--lms-radius-pill)] bg-muted"}/>
       <span className="min-w-0 break-words text-sm font-semibold leading-[1.4] sm:flex-1">
        {item.unread?<span className="sr-only">New notification. </span>:null}{item.label}
        {item.title?<span className="mt-1 block break-words text-xs font-normal text-muted-foreground">{item.title}</span>:null}
       </span><time dateTime={item.at} className="col-start-2 break-words text-xs text-muted-foreground sm:col-auto sm:shrink-0">{relativeHrBellTime(item.at,now)}</time>
-     </Link></li>)}</ul></ScrollCue>}
+     </ButtonLink></li>)}</ul></ScrollCue>}
 
 </>;
  return <div className="relative">

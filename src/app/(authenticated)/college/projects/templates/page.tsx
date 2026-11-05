@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -15,6 +14,7 @@ import {ProjectTemplateCatalogueSearch} from "@/components/projects/project-temp
 import {ProjectTemplateCatalogueExport} from "@/components/projects/project-template-catalogue-export";
 import {projectTemplateSectionCounts} from "@/modules/projects/project-template-catalogue-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 const basePath="/college/projects/templates";
 const pageSize=10;
@@ -63,10 +63,10 @@ export default async function CollegeProjectTemplatesPage({
    description="Pick a template to start a new project workspace."/>
   <ErrorState title="Templates could not be loaded"
    description="The assigned template catalogue could not be loaded. Your search was not changed."
-   action={<Link href={pageHref(q,1,preservedFrom)}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
+   action={<TextLink href={pageHref(q,1,preservedFrom)}
+    className="inline-flex min-h-11 items-center md:min-h-9">
     Retry loading templates
-   </Link>}/>
+   </TextLink>}/>
  </div>;
  const templates=read.value;
  const rawPage=one(params["page"])??"1";
@@ -123,31 +123,31 @@ export default async function CollegeProjectTemplatesPage({
             </div>;
           }},
         {key:"action",header:"Action",mobileLabel:"Action",mobilePriority:"action",
-          cell:template=><Link href={basePath+"/"+encodeURIComponent(template.templateId)}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
+          cell:template=><TextLink href={basePath+"/"+encodeURIComponent(template.templateId)}
+            className="inline-flex min-h-11 items-center md:min-h-9">
             View &amp; use
-          </Link>},
+          </TextLink>},
       ]}
     />:<EmptyState
     title={q?"No project templates match this search.":"No templates are available to this college yet"}
     description={q?"No templates match this search. Try another title or slug.":
      "No templates are available to this college yet. Ask a Super Admin to publish and assign one."}
-    action={q?<Link href={basePath}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
+    action={q?<TextLink href={basePath}
+     className="inline-flex min-h-11 items-center md:min-h-9">
      Clear search
-    </Link>:undefined}/>}
+    </TextLink>:undefined}/>}
    <nav aria-label="Template catalogue pages"
     className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3 text-sm text-body">
     <p role="status">Showing {templates.length?start+1:0}–{Math.min(start+pageSize,templates.length)}
      {" of "}{templates.length} templates</p>
     {totalPages>1?<div className="flex flex-wrap items-center gap-3">
-     {page>1?<Link href={pageHref(q,page-1,preservedFrom)}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
-      Previous</Link>:<span aria-disabled="true" className="opacity-50">Previous</span>}
+     {page>1?<TextLink href={pageHref(q,page-1,preservedFrom)}
+      className="inline-flex min-h-11 items-center md:min-h-9">
+      Previous</TextLink>:<span aria-disabled="true" className="opacity-50">Previous</span>}
      <span className="tabular-nums">Page {page} of {totalPages}</span>
-     {page<totalPages?<Link href={pageHref(q,page+1,preservedFrom)}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">
-      Next</Link>:<span aria-disabled="true" className="opacity-50">Next</span>}
+     {page<totalPages?<TextLink href={pageHref(q,page+1,preservedFrom)}
+      className="inline-flex min-h-11 items-center md:min-h-9">
+      Next</TextLink>:<span aria-disabled="true" className="opacity-50">Next</span>}
     </div>:null}
    </nav>
   </section>

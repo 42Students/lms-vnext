@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -11,6 +10,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeStudentDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
@@ -56,8 +56,8 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
       </form>
       <p className="mt-2 text-xs text-muted-foreground leading-5">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
       {data.enrollments.length === 0 ? <EmptyState title="No matching enrollments" description="No program enrollment matches the selected lifecycle status."
-          action={data.filter.status !== "ALL" ? <Link href={"/college/students/" + encodeURIComponent(membershipId)}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-ring">All enrollments</Link> : undefined} /> :
+          action={data.filter.status !== "ALL" ? <TextLink href={"/college/students/" + encodeURIComponent(membershipId)}
+            className="inline-flex min-h-11 items-center md:min-h-9">All enrollments</TextLink> : undefined} /> :
         <ul className="mt-3 divide-y divide-border border-y border-border">{data.enrollments.map(row =>
           <li key={row.id} className="min-w-0 break-words py-3 text-sm text-body">
             {row.programName} ({row.programCode}) · {row.cohortName} ({row.cohortCode}) · {row.status}

@@ -4,7 +4,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {tpoStudentMarksVerificationLabel} from "@/modules/placements/tpo-student-marks-label";
-import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useId,useState} from "react";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
@@ -28,6 +27,7 @@ import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Spreadsheet viewport is browser-only; authorization and export remain with the page. */
 const TpoGrid = dynamic<TpoSpreadsheetGridProps<TpoStudentRow>>(
@@ -297,10 +297,10 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     <TpoAfterCollegeEditor membershipId={row.membershipId} learnerName={row.displayName}
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none",outcomeLabel:null,outcomeDetail:null}}
       available={afterCollegeAvailable} labels={afterCollegeLabels} />
-    <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
-      aria-label={"Placement history for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline">Placement history</Link>
-    <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-      aria-label={"Change participation for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline">Change participation</Link>
+    <TextLink href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
+      aria-label={"Placement history for "+row.displayName} className="inline-flex min-h-11 items-center">Placement history</TextLink>
+    <TextLink href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
+      aria-label={"Change participation for "+row.displayName} className="inline-flex min-h-11 items-center">Change participation</TextLink>
    </div>}/>
   </GridWorkspace>
   {preview&&!inspectorClosed?<TpoStudentRosterInspector student={preview}

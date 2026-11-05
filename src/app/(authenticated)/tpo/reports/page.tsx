@@ -3,7 +3,6 @@ import { tpoReportHasAmbiguousFilters } from "@/modules/placements/tpo-report-ur
 import { TpoReportInvalidFilters } from "@/components/placements/tpo-report-invalid-filters";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import {legacyTpoReportCard,TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} from "@/modules/placements/tpo-legacy-report-copy";
 import {tpoPrototypeReportRoute} from "@/modules/placements/tpo-report-prototype-routes";
@@ -23,6 +22,8 @@ import { getPlacementReportWorkspace } from "@/modules/placements/report-service
 import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards} from "@/modules/placements/tpo-report-gallery-filter-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -54,9 +55,9 @@ export default async function TpoReportsPage({
     <PageHeader title="Invalid report search" />
     <Alert tone="error">
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
-    <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-link underline lms-inline-link">
+    <TextLink href="/tpo/reports" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center">
       Clear search
-    </Link>
+    </TextLink>
     </Alert>
   </section>;
   const groups = [
@@ -216,17 +217,17 @@ export default async function TpoReportsPage({
       <Alert tone="error">
         <Heading level={2} size="base">The headline numbers could not be loaded.</Heading>
         <p className="mt-2 text-sm text-body">Previously loaded figures cannot be verified in this request. The report links remain available.</p>
-        <Link href={retryHref} className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry headline numbers</Link>
+        <TextLink href={retryHref} className="mt-3 inline-flex min-h-11 items-center md:min-h-9">Retry headline numbers</TextLink>
       </Alert>
       {visibleGroups.length === 0 ? <EmptyState title="No matching reports" description="Clear filters to see the full report directory." /> : null}
       {visibleGroups.map(group => <section key={group.heading} className="space-y-3 border-b border-border pb-4">
         <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{group.eyebrow}</p><Heading level={2} size="lg">{group.heading}</Heading>
         <p className="text-sm text-body">{group.description}</p>
         <div className="grid gap-3 sm:grid-cols-2">
-          {group.cards.map(card => <Link key={card.path} href={card.path} className="group block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-ring">
+          {group.cards.map(card => <TextLink variant="bare" key={card.path} href={card.path} className="group block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-ring">
             <div className="flex items-start justify-between gap-3"><Heading level={3} className="text-link">{card.title}</Heading><span aria-hidden="true" className="text-link transition-transform group-hover:translate-x-1">→</span></div>
             <p className="mt-2 text-sm text-body">{card.description}</p>
-          </Link>)}
+          </TextLink>)}
         </div>
       </section>)}
     </div>;
@@ -242,12 +243,12 @@ export default async function TpoReportsPage({
         title="Reports"
         description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION}
         actions={
-          <Link
+          <ButtonLink variant="primary"
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-ring"
+            className="w-full sm:w-auto"
           >
             Open management view
-          </Link>
+          </ButtonLink>
         }
       />
 
@@ -255,8 +256,7 @@ export default async function TpoReportsPage({
        <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-body">
         <p>For <strong className="text-[var(--lms-primary-text)]">{workspace.seasons.find(item=>item.id===workspace.selectedSeasonId)?.name??"All placement seasons"}</strong>
          {workspace.selectedJobId?" · Selected drive":" · All drives"} · Your college</p>
-        <Link href={reportHref("/tpo/reports/accreditation",workspace)}
-         className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 font-semibold text-heading">Export for accreditation</Link>
+        <ButtonLink variant="secondary" href={reportHref("/tpo/reports/accreditation",workspace)}>Export for accreditation</ButtonLink>
        </div>
        <div className="grid overflow-hidden rounded-xl border border-border bg-surface sm:grid-cols-2 xl:grid-cols-4">
         {([
@@ -265,12 +265,12 @@ export default async function TpoReportsPage({
          {label:"Average package",value:workspace.report.metrics.averagePackageInr!==null?
            (workspace.report.metrics.averagePackageInr/100000).toFixed(1)+" LPA":"—",detail:"Accepted full-time packages only",href:"/tpo/reports/ctc"},
          {label:"Not placed yet",value:Math.max(0,looking-placed).toLocaleString("en-IN"),detail:"Of the registered placement pool",href:"/tpo/reports/unplaced"},
-        ] as const).map(card=><Link key={card.label} href={reportHref(card.href,workspace)}
+        ] as const).map(card=><TextLink variant="bare" key={card.label} href={reportHref(card.href,workspace)}
          className="min-w-0 border-b border-border p-4 last:border-0 hover:bg-[color:var(--lms-primary-subtle)] sm:odd:border-r xl:border-b-0 xl:border-r xl:last:border-r-0">
          <strong className="block text-2xl font-bold tabular-nums text-heading">{card.value}</strong>
          <span className="mt-1 block text-sm font-semibold text-heading">{card.label}</span>
          <span className="mt-1 block text-xs text-body">{card.detail}</span>
-        </Link>)}
+        </TextLink>)}
        </div>
        <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {([
@@ -295,11 +295,11 @@ export default async function TpoReportsPage({
         ] as const).map(group=><section key={group.heading} className="min-w-0 rounded-xl border border-border bg-surface px-4 py-4">
          <Heading level={2} size="xs" className="mb-2 tracking-[.08em] text-body">{group.heading}</Heading>
          <ul className="divide-y divide-[color:var(--lms-neutral-100)]">{group.links.map(([label,path,detail])=>
-          <li key={path+label}><Link href={reportHref(path,workspace)}
+          <li key={path+label}><TextLink variant="bare" href={reportHref(path,workspace)}
            className="flex min-h-11 min-w-0 items-center justify-between gap-3 py-2 hover:text-[var(--lms-primary-text)]">
            <span className="text-sm font-medium text-heading">{label}</span>
            <span className="text-right text-xs text-body">{detail}</span>
-          </Link></li>)}</ul>
+          </TextLink></li>)}</ul>
         </section>)}
        </div>
       </section>
@@ -310,40 +310,40 @@ export default async function TpoReportsPage({
        <p className="text-sm text-body">The college&apos;s placement journey: {workspace.report.metrics.offers} {workspace.report.metrics.offers===1?"offer":"offers"} made. Click any number for its report.</p>
        <ol className="grid min-w-0 items-center gap-2 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]" role="group" aria-label="Placement journey steps and gaps">
         <li className="min-w-0">
-         <Link href={reportHref("/tpo/reports/by-branch",workspace)} aria-label={"Looking for a job: "+looking}
+         <TextLink variant="bare" href={reportHref("/tpo/reports/by-branch",workspace)} aria-label={"Looking for a job: "+looking}
           className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="block text-sm text-body">Looking for a job</span>
           <strong className="mt-1 block text-2xl tabular-nums text-link">{looking.toLocaleString("en-IN")}</strong>
           <span className="text-xs text-muted-foreground">100% baseline</span>
-         </Link>
+         </TextLink>
         </li>
         <li className="min-w-0">
-         <Link href={reportHref("/tpo/reports/unplaced",workspace)}
-          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs font-semibold text-link sm:max-w-[144px] md:min-h-9">
+         <TextLink href={reportHref("/tpo/reports/unplaced",workspace)}
+          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs sm:max-w-[144px] md:min-h-9">
           <span>Unplaced</span><strong className="tabular-nums">{Math.max(0,looking-placed).toLocaleString("en-IN")}</strong><span aria-hidden="true">→</span>
-         </Link>
+         </TextLink>
         </li>
         <li className="min-w-0">
-         <Link href={reportHref("/tpo/reports/placement-summary",workspace)} aria-label={"Placed: "+placed+"; "+percent(placed)+" percent"}
+         <TextLink variant="bare" href={reportHref("/tpo/reports/placement-summary",workspace)} aria-label={"Placed: "+placed+"; "+percent(placed)+" percent"}
           className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="block text-sm text-body">Placed</span>
           <strong className="mt-1 block text-2xl tabular-nums text-link">{placed.toLocaleString("en-IN")}</strong>
           <span className="text-xs text-muted-foreground">{percent(placed)}% of looking</span>
-         </Link>
+         </TextLink>
         </li>
         <li className="min-w-0">
-         <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)}
-          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs font-semibold text-link sm:max-w-[144px] md:min-h-9">
+         <TextLink href={reportHref("/tpo/reports/offers-acceptance",workspace)}
+          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs sm:max-w-[144px] md:min-h-9">
           <span>Not accepted yet</span><strong className="tabular-nums">{Math.max(0,placed-accepted).toLocaleString("en-IN")}</strong><span aria-hidden="true">→</span>
-         </Link>
+         </TextLink>
         </li>
         <li className="min-w-0">
-         <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} aria-label={"Accepted: "+accepted+"; "+percent(accepted)+" percent"}
+         <TextLink variant="bare" href={reportHref("/tpo/reports/offers-acceptance",workspace)} aria-label={"Accepted: "+accepted+"; "+percent(accepted)+" percent"}
           className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-ring">
           <span className="block text-sm text-body">Accepted</span>
           <strong className="mt-1 block text-2xl tabular-nums text-link">{accepted.toLocaleString("en-IN")}</strong>
           <span className="text-xs text-muted-foreground">{percent(accepted)}% of looking</span>
-         </Link>
+         </TextLink>
         </li>
        </ol>
        <p className="text-xs text-muted-foreground">Each stage counts unique students; the number of offers made is shown separately. A stage gap is not a verified historical transition.</p>
@@ -370,10 +370,10 @@ export default async function TpoReportsPage({
           </Select>
         </Label>
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Search</Button>
-        <Link href={reportHref("/tpo/reports",workspace)}
-          className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
+        <TextLink href={reportHref("/tpo/reports",workspace)}
+          className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
           Clear
-        </Link>
+        </TextLink>
       </form>
 
 
@@ -403,7 +403,7 @@ export default async function TpoReportsPage({
           {group.cards.length > 0 ? (
             <div className="grid gap-3 md:grid-cols-2">
               {group.cards.map((card) => (
-                <Link key={card.path} href={reportHref(card.path,workspace)}
+                <TextLink variant="bare" key={card.path} href={reportHref(card.path,workspace)}
                   className={"group block min-w-0 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-ring "+(card.path==="/tpo/reports/placement-summary"?"border-primary ring-1 focus-outline":"border-border")}>
                   {card.path==="/tpo/reports/placement-summary"?
                    <p className="mb-1 text-xs font-bold uppercase tracking-wide text-link">Start here</p>:null}
@@ -416,7 +416,7 @@ export default async function TpoReportsPage({
                   </div>
                   <p className="mt-2 text-sm leading-6 text-body">{card.description}</p>
                   {!legacyPaths.has(card.path)?<p className="mt-2 text-xs font-semibold text-muted-foreground">Additional report</p>:null}
-                </Link>
+                </TextLink>
               ))}
             </div>
           ) : (

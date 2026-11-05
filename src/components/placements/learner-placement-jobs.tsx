@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -457,10 +456,10 @@ function JobActions({
             <p className="mt-1 text-body">Resume: Attachment status is verified when you select Preview resume.</p>
             <p className="mt-1 text-xs text-muted-foreground">An attached resume is private and available only through a fresh authorized read grant. Applying does not automatically share your contact details or profile documents.</p>
             <OwnResumePreview applicationId={receipt.id} />
-            <Link href="/learn/my-placements/applications"
-              className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+            <TextLink href="/learn/my-placements/applications"
+              className="mt-2 inline-flex min-h-9 items-center">
               View applications →
-            </Link>
+            </TextLink>
           </div>
           {application?.status==="SUBMITTED"?<Button className="min-h-11 w-full sm:w-auto md:min-h-9"
             size="sm"
@@ -526,9 +525,9 @@ function JobActions({
     <p className="font-semibold text-foreground">Application status unavailable</p>
     <p className="mt-2 text-body">A persisted application record has status {humanize(confirmedReceipt.status)}.
      Review your application before submitting another.</p>
-    <Link href="/learn/my-placements/applications" className="mt-2 inline-flex min-h-9 items-center text-primary-text underline">
+    <TextLink href="/learn/my-placements/applications" className="mt-2 inline-flex min-h-9 items-center">
      View my applications
-    </Link>
+    </TextLink>
    </div>;
   }
   if (receipt?.status === "WITHDRAWN") {
@@ -537,10 +536,10 @@ function JobActions({
         <StatusBadge tone="neutral">Withdrawn</StatusBadge>
         <p className="text-body">{withdrawnPlacementReapplyGuidance}</p>
         <div className="flex flex-wrap gap-3">
-          <Link href="/learn/my-placements/applications"
-            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Review application history</Link>
-          <Link href="/learn/my-placements/placement#requests"
-            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Contact placement team</Link>
+          <TextLink href="/learn/my-placements/applications"
+            className="inline-flex min-h-9 items-center">Review application history</TextLink>
+          <TextLink href="/learn/my-placements/placement#requests"
+            className="inline-flex min-h-9 items-center">Contact placement team</TextLink>
         </div>
       </div>
     );
@@ -565,8 +564,8 @@ function JobActions({
       {missing.length>0?<p className="text-xs text-body">Missing: {missing.map(row=>row.criterion).join(", ")}</p>:null}
       {failed.length>0?<p className="text-xs text-body">Not met: {failed.map(row=>row.criterion).join(", ")}</p>:null}
       <div className="flex flex-wrap gap-3">
-        <Link href="/learn/my-placements#registration" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">Check registration</Link>
-        <Link href="/learn/my-placements#placement-academic-evidence" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">Review academic evidence</Link>
+        <TextLink href="/learn/my-placements#registration" className="inline-flex min-h-11 items-center md:min-h-9">Check registration</TextLink>
+        <TextLink href="/learn/my-placements#placement-academic-evidence" className="inline-flex min-h-11 items-center md:min-h-9">Review academic evidence</TextLink>
       </div>
     </div>;
   }
@@ -625,9 +624,9 @@ function JobActions({
               disabled={pendingAction!==null} onClick={()=>void checkStatusAgain()}>
               {pendingAction==="VERIFY"?"Checking…":"Check status again"}
             </Button>
-            <Link href="/learn/my-placements/applications" className="inline-flex min-h-9 items-center text-primary-text underline">
+            <TextLink href="/learn/my-placements/applications" className="inline-flex min-h-9 items-center">
               My applications
-            </Link>
+            </TextLink>
             {applyResolution==="FAILED"?<Button variant="bare" type="button" className="min-h-9 text-muted-foreground underline"
               onClick={()=>{setApplyError("");setApplyResolution("NONE");}}>Dismiss</Button>:null}
           </div>
@@ -798,11 +797,10 @@ export function LearnerPlacementJobs({
                   {item.deadlinePassed?<StatusBadge tone="neutral">Applications closed</StatusBadge>:null}
                 </div>
                 <Heading level={2} size="lg" className="m-0 break-words leading-[1.4] text-foreground">
-                  <Link href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery)??"/learn/my-placements/jobs"}
-                    aria-label={"View "+item.roleOption.title+" at "+item.company.name}
-                    className="text-link underline-offset-2 hover:underline focus-visible:underline">
+                  <TextLink href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery)??"/learn/my-placements/jobs"}
+                    aria-label={"View "+item.roleOption.title+" at "+item.company.name}>
                     {item.roleOption.title}
-                  </Link>
+                  </TextLink>
                 </Heading>
                 <p className="m-0 break-words text-sm text-body">
                   {item.company.name}

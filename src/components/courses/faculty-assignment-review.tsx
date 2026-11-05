@@ -1,7 +1,6 @@
 "use client";
 
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import { facultySubmissionContentView } from "@/modules/courses/faculty-submission-content-model";
 import { useRouter } from "next/navigation";
 import {
@@ -31,6 +30,7 @@ import {
 } from "./faculty-assessment-operation-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Submission = FacultySubmissionReviewRow;
 const SUBMISSION_FILTERS = ["ALL","UNGRADED","GRADED","LATE"] as const;
@@ -416,10 +416,10 @@ export function SubmissionGradeCard({
         ) : content.kind === "TEXT" ? (
           <div><p className="mb-2 text-xs font-semibold text-body">Written Response</p><p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{legacySubmissionText(content.text)}</p></div>
         ) : content.kind === "FILE" || content.kind === "LINK" ? (
-          <Link href={content.href} rel="noopener noreferrer" prefetch={false}
-            className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">
+          <TextLink href={content.href} rel="noopener noreferrer" prefetch={false}
+            className="inline-flex min-h-11 items-center break-words text-sm md:min-h-9">
             {content.label}
-          </Link>
+          </TextLink>
         ) : <p role="status" className="text-sm text-muted-foreground">{content.message}</p>}
       </div>:null}
 

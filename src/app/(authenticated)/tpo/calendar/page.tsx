@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import {headers} from "next/headers";
 
@@ -10,6 +9,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import {initialTpoCalendarView,parseTpoCalendarUrl} from "@/modules/placements/tpo-calendar-url-model";
 import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 import { TpoCalendarViewportDefault } from "./tpo-calendar-viewport-default";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   date?: string | string[];
@@ -54,7 +54,7 @@ export default async function TpoCalendarPage({
     <Alert tone="error">
       Enter a valid day, calendar view, event kind and company filter. No events were queried.
     </Alert>
-    <Link href="/tpo/calendar" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-link underline lms-inline-link">Reset calendar filters</Link>
+    <TextLink href="/tpo/calendar" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">Reset calendar filters</TextLink>
   </div>;
   return (
     <div className="min-w-0 space-y-4">

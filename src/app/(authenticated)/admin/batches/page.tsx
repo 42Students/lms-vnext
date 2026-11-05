@@ -2,7 +2,6 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
-import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {DataTable} from "@/components/ui/data-table";
 import {Tabs} from "@/components/ui/tabs";
@@ -19,6 +18,8 @@ import { listAcademicPeriods } from "@/modules/academics/period-service";
 import { collegeBatchDirectorySchema, academicDirectoryHref } from "@/modules/academics/college-academic-directory-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const statuses = ["ALL", "ACTIVE", "INACTIVE", "COMPLETED", "PLANNED", "ARCHIVED"] as const;
 const pageUrl = (query: Parameters<typeof academicDirectoryHref>[1]) => academicDirectoryHref("BATCHES", query).replace("/college/batches", "/admin/batches");
@@ -51,8 +52,8 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
     <PageHeader title="Batches" description="Manage cohorts, their academic year and current semester before creating sections or promoting students."/>
       {data ? <AcademicSetupSteps step={5} /> : null}
     {!selected ? <Alert tone="warning"><span className="font-semibold">Select a college to manage Batches</span><p>Batches belong to a specific college. Choose one in the header.</p></Alert> : null}
-    {selected&&!controls.success?<ErrorState title="Invalid batch filters" description="Choose a valid program, status, page and page size." action={<Link href="/admin/batches" className="font-semibold text-link underline">Clear filters</Link>}/>:null}
-    {selected&&controls.success&&!data?<ErrorState title="Could not load batches" description="The batch directory could not refresh. No records were changed." action={<Link href="/admin/batches" className="font-semibold text-link underline">Retry</Link>}/>:null}
+    {selected&&!controls.success?<ErrorState title="Invalid batch filters" description="Choose a valid program, status, page and page size." action={<TextLink href="/admin/batches">Clear filters</TextLink>}/>:null}
+    {selected&&controls.success&&!data?<ErrorState title="Could not load batches" description="The batch directory could not refresh. No records were changed." action={<TextLink href="/admin/batches">Retry</TextLink>}/>:null}
     {data ? <>
       <Tabs ariaLabel="Batch lifecycle views" value={data.query.status} renderPanel={false} items={([
         ["ALL","All batches"],["ACTIVE","Active batches"],["INACTIVE","Show inactive"],["COMPLETED","Show completed"],
@@ -95,17 +96,16 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           </Disclosure>
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>
-          {data.query.q||data.query.programId||data.query.status!=="ALL"||data.query.pageSize!==25?<Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>:null}
+          {data.query.q||data.query.programId||data.query.status!=="ALL"||data.query.pageSize!==25?<TextLink href="/admin/batches" className="inline-flex min-h-11 items-center justify-center md:min-h-9">Clear filters</TextLink>:null}
         </form>
       </section>
 
       <section aria-label="Manage batches" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
           <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Existing Batches</Heading>
-          <Link href={exportHref}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+          <ButtonLink variant="secondary" href={exportHref}>
             Export batches.csv
-          </Link>
+          </ButtonLink>
         </div>
         <p className="text-xs text-muted-foreground">
           Exports matching selected-college batches across pages, up to 1,000 rows.
@@ -117,7 +117,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           columns={[
             {key:"batch",header:"Batch",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
-              <Link href={`/admin/batches/${encodeURIComponent(row.id)}/students`} aria-label={`Manage students in ${row.name}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring">Manage students →</Link>
+              <TextLink href={`/admin/batches/${encodeURIComponent(row.id)}/students`} aria-label={`Manage students in ${row.name}`} className="mt-1 inline-flex min-h-11 items-center md:min-h-9">Manage students →</TextLink>
             </div>},
             {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
             {key:"years",header:"Years",mobilePriority:"secondary",cell:row=>row.startDate||row.endDate?`${row.startDate?.slice(0,4)??"?"} – ${row.endDate?.slice(0,4)??"?"}`:"—"},
@@ -134,13 +134,13 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
         <nav aria-label="Batch pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.total===0?0:(data.query.page-1)*data.query.pageSize+1}-{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total.toLocaleString("en-IN")} · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
-            {data.query.page>1?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring text-sm" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
-            {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring text-sm" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
+            {data.query.page>1?<ButtonLink variant="secondary" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</ButtonLink>:null}
+            {data.query.page<data.totalPages?<ButtonLink variant="secondary" href={pageUrl({...data.query,page:data.query.page+1})}>Next</ButtonLink>:null}
           </div>
         </nav>
-        <Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-ring">
+        <TextLink href="/admin/batch-promotion" className="inline-flex min-h-11 items-center md:min-h-9">
           Batch Promotion →
-        </Link>
+        </TextLink>
       </section>
        </div>
       </div>

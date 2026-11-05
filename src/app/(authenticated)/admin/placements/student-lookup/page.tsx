@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -112,8 +111,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
       </p> : null}
       {lookup && !lookup.ok ? <ErrorState title="Student search failed"
         description="Search failed — try again."
-        action={<Link href={`/admin/placements/student-lookup?q=${encodeURIComponent(q)}`}
-          className="text-link underline">Retry student search</Link>} /> : null}
+        action={<TextLink href={`/admin/placements/student-lookup?q=${encodeURIComponent(q)}`}>Retry student search</TextLink>} /> : null}
       {requestedStudent && !selectedStudent ? <p role="alert" className="mt-2 text-sm text-error">
         Student not found in this college’s current search results. Choose a matching student.
       </p> : null}
@@ -158,10 +156,10 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
       </div>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
         <Heading level={2} size="sm" className="m-0 text-[var(--lms-heading)]">Placement history</Heading>
-        <Link href={`/admin/placements/student-lookup?${new URLSearchParams({q, student: selectedStudent.membershipId, refresh: "1"})}`}
-          className="inline-flex min-h-9 items-center font-semibold text-sm text-link underline">
+        <TextLink href={`/admin/placements/student-lookup?${new URLSearchParams({q, student: selectedStudent.membershipId, refresh: "1"})}`}
+          className="inline-flex min-h-9 items-center text-sm">
           Refresh placement history
-        </Link>
+        </TextLink>
       </div>
       {!history?<p role="alert" className="text-sm text-error">
         The selected student's placement history is unavailable. Retry before assuming there are no applications.
@@ -203,15 +201,15 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
           {" "}of {history.total} applications · Page {history.page}
         </span>
         <div className="flex flex-wrap gap-3">
-          {history.page>1?<Link href={historyHref(history.page-1)}
-            className="inline-flex min-h-9 items-center font-semibold text-link underline">Previous</Link>:null}
-          {history.hasMore?<Link href={historyHref(history.page+1)}
-            className="inline-flex min-h-9 items-center font-semibold text-link underline">Load more / Next 25</Link>:null}
+          {history.page>1?<TextLink href={historyHref(history.page-1)}
+            className="inline-flex min-h-9 items-center">Previous</TextLink>:null}
+          {history.hasMore?<TextLink href={historyHref(history.page+1)}
+            className="inline-flex min-h-9 items-center">Load more / Next 25</TextLink>:null}
         </div>
       </nav>:null}
     </section> : null}
     <div className="flex justify-end">
-      <Link href="/admin/placements/analytics" className="text-sm font-semibold text-link underline">Analytics</Link>
+      <TextLink href="/admin/placements/analytics" className="text-sm">Analytics</TextLink>
     </div>
   </div>;
 }

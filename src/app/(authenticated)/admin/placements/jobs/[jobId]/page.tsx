@@ -1,5 +1,4 @@
 import { EmptyState } from "@/components/ui/empty-state";
-import Link from "next/link";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -14,6 +13,7 @@ import { PlacementDriveWorkspace } from "@/components/placements/placement-drive
 import { getSuperAdminDrivePipeline } from "@/modules/placements/super-admin-drive-pipeline-service";
 import { SuperAdminDrivePipeline } from "@/components/placements/super-admin-drive-pipeline";
 import {getSuperAdminDriveAttention} from "@/modules/placements/super-admin-drive-attention-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function AdminPlacementDrivePage({
   params, searchParams,
@@ -42,7 +42,7 @@ export default async function AdminPlacementDrivePage({
     <PageHeader title="Placement Drives" actions={<PageBackLink href={backHref} label="Drives"/>}/>
     <ErrorState title="Could not load this drive."
       description="The drive ID is invalid. Return to the placement list and select a drive."
-      action={<Link href={backHref} className="font-semibold text-primary-text underline">Back to Drives</Link>}/>
+      action={<TextLink href={backHref}>Back to Drives</TextLink>}/>
   </div>;
   // Attention is informational: its failure never hides the drive, actions
   // or pipeline, and no counts are invented when that read is unavailable.
@@ -57,8 +57,7 @@ export default async function AdminPlacementDrivePage({
       <PageHeader title="Placement Drives" actions={<PageBackLink href={backHref} label="Drives"/>}/>
       <ErrorState title="Could not load this drive."
         description="The selected drive could not be loaded. No changes were made."
-        action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)}
-          className="font-semibold text-primary-text underline">Retry drive</Link>}/>
+        action={<TextLink href={"/admin/placements/jobs/"+encodeURIComponent(jobId)}>Retry drive</TextLink>}/>
       <PageBackLink href={backHref} label="Back to Drives"/>
     </div>;
   }
@@ -83,8 +82,7 @@ export default async function AdminPlacementDrivePage({
       <PageHeader title="Placement Drives" actions={<PageBackLink href={backHref} label="Drives"/>}/>
       <ErrorState title="Could not load this drive."
         description="Drive details could not be refreshed. No changes were made."
-        action={<Link href={root+preserved} prefetch={false}
-          className="font-semibold text-link underline">Retry drive</Link>}/>
+        action={<TextLink href={root+preserved} prefetch={false}>Retry drive</TextLink>}/>
     </div>;
   }
   const navItems=[
@@ -96,7 +94,7 @@ export default async function AdminPlacementDrivePage({
   return (
    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
     <nav aria-label="Drive breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      <Link href={backHref} className="font-semibold text-primary-text hover:underline">Drives</Link>
+      <TextLink href={backHref}>Drives</TextLink>
       <span aria-hidden="true">›</span><span className="truncate">{job.title}</span>
     </nav>
     <Tabs ariaLabel="Drive workspace" value="Overview" renderPanel={false}

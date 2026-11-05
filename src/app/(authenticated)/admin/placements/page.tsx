@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { listPlatformPlacementPolicy } from "@/modules/placements/platform-placement-policy-service";
 import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-hiring-report-service";
 import { SuperAdminPlatformPlacementPolicy } from "@/components/placements/super-admin-platform-placement-policy";
@@ -18,6 +17,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { AdminRetentionInlinePreview } from "@/components/placements/admin-retention-inline-preview";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const secondaryActionClass =
   "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[var(--lms-on-primary)] focus-ring md:min-h-9";
@@ -40,18 +41,18 @@ export default async function AdminPlacementsPage({ searchParams }: {
 
   const directoryActions = (
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
-      <Link href="/admin/placements/student-lookup" className={secondaryActionClass}>
+      <TextLink variant="bare" href="/admin/placements/student-lookup" className={secondaryActionClass}>
         Look up a student&apos;s placement status →
-      </Link>
-      <Link href="/admin/companies" className={secondaryActionClass}>
+      </TextLink>
+      <TextLink variant="bare" href="/admin/companies" className={secondaryActionClass}>
         Companies directory →
-      </Link>
-      <Link href="/admin/placements/organization-jobs" className={secondaryActionClass}>
+      </TextLink>
+      <TextLink variant="bare" href="/admin/placements/organization-jobs" className={secondaryActionClass}>
         Search organization jobs →
-      </Link>
-      <Link href="/admin/placements/retention" className={secondaryActionClass}>
+      </TextLink>
+      <TextLink variant="bare" href="/admin/placements/retention" className={secondaryActionClass}>
         Data retention report →
-      </Link>
+      </TextLink>
     </div>
   );
 
@@ -63,9 +64,9 @@ export default async function AdminPlacementsPage({ searchParams }: {
         <PageHeader
           title="Placement Drives"
           description="Placement administration requires a college safety scope."
-          actions={<Link href="/admin/placements/drives" className={secondaryActionClass}>
+          actions={<TextLink variant="bare" href="/admin/placements/drives" className={secondaryActionClass}>
             Open All drives table →
-          </Link>}
+          </TextLink>}
         />
         <SuperAdminPlacementOversightNav />
         <SuperAdminPlatformPlacementPolicy initial={policy} />
@@ -98,9 +99,9 @@ export default async function AdminPlacementsPage({ searchParams }: {
         </Alert>:null}
         <Alert tone="warning" title="Select a college to continue">
           Choose a college in the header to manage its drives. Platform-wide policy is shown above.
-          <Link href="/admin/colleges" className="ml-2 font-semibold text-link underline">
+          <TextLink href="/admin/colleges" className="ml-2">
             Choose a college
-          </Link>
+          </TextLink>
         </Alert>
         <Disclosure title="Related directories" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
           {directoryActions}
@@ -117,13 +118,12 @@ export default async function AdminPlacementsPage({ searchParams }: {
         title="Placement Drives"
         description="Run active hiring drives from one operational view. Attention items surface decisions that need action; closed and draft drives remain available in the full archive."
         actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
-          <Link
+          <ButtonLink variant="primary"
             href="/admin/placements/new"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary motion-safe:transition-colors motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-ring"
           >
             New drive
-          </Link>
-          <Link href="/admin/placements/drives" className={secondaryActionClass}>All drives</Link>
+          </ButtonLink>
+          <TextLink variant="bare" href="/admin/placements/drives" className={secondaryActionClass}>All drives</TextLink>
         </div>}
       />
       <SuperAdminPlacementOversightNav />
@@ -174,9 +174,9 @@ export default async function AdminPlacementsPage({ searchParams }: {
                   <StatusBadge tone={job.status === "PUBLISHED" ? "success" : job.status === "DRAFT" ? "warning" : "neutral"}>{job.status}</StatusBadge>
                 </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 flex-wrap items-center justify-between gap-[var(--lms-space-2)] md:min-h-9">
                 <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)]">
-                  <Link href={"/admin/placements/jobs/" + encodeURIComponent(job.id)} className={secondaryActionClass}>
+                  <TextLink variant="bare" href={"/admin/placements/jobs/" + encodeURIComponent(job.id)} className={secondaryActionClass}>
                     Open drive →
-                  </Link>
+                  </TextLink>
                   <SuperAdminDriveDuplicate jobId={job.id} title={job.title} />
                   {job.status === "PUBLISHED" ? (
                     <SuperAdminDriveDeadline jobId={job.id} deadline={job.applicationDeadline?.toISOString() ?? null} />
@@ -185,7 +185,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
               </Disclosure>
             ))}
             {actionRows.length > 20 ? (
-              <Link href="/admin/placements/drives" className={secondaryActionClass}>View all {actionRows.length} drives →</Link>
+              <TextLink variant="bare" href="/admin/placements/drives" className={secondaryActionClass}>View all {actionRows.length} drives →</TextLink>
             ) : null}
           </div>
         )}

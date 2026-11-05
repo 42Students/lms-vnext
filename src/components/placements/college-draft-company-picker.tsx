@@ -1,12 +1,12 @@
 "use client";
 import {useState} from "react";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type CompanyChoice={relationshipId:string;name:string};
 export function CollegeDraftCompanyPicker({
@@ -65,9 +65,9 @@ export function CollegeDraftCompanyPicker({
   <div className="flex flex-wrap items-center gap-3">
    <Button type="button" disabled={!linked||!changed||busy} onClick={()=>void save()}
     className="min-h-11">{busy?"Saving…":"Save company"}</Button>
-   <Link href="/college/companies" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">
+   <TextLink href="/college/companies" className="inline-flex min-h-11 items-center text-sm">
     Browse company directory
-   </Link>
+   </TextLink>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {saved?<p role="status" className="text-sm text-success">Company updated. Refreshing drive details.</p>:null}

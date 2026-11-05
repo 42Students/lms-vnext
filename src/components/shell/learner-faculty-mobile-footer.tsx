@@ -1,13 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import type { ShellNavItem } from "./shell-model";
 import { legacySidebarItemActive } from "./legacy-sidebar-active-model";
 import "./legacy-mobile-footer.css";
+import { TextLink } from "@/components/ui/text-link";
 
 type FooterLink = {
   href: string;
@@ -119,7 +119,7 @@ export function LearnerFacultyMobileFooter({items}:{items:readonly ShellNavItem[
           const current=legacySidebarItemActive(pathname,item,null,null);
           const alerts=item.href==="/learn/notifications"&&unread!==null;
           return <li key={item.href} className={current?"active min-w-0 flex-1":"min-w-0 flex-1"}>
-            <Link href={item.href} aria-current={current?"page":undefined}
+            <TextLink variant="bare" href={item.href} aria-current={current?"page":undefined}
               aria-label={alerts?item.label+", "+unread+" unread":item.label}
               className="lms-legacy-mobile-footer-link">
               <span className="lms-legacy-mobile-footer-icon-wrap">
@@ -130,7 +130,7 @@ export function LearnerFacultyMobileFooter({items}:{items:readonly ShellNavItem[
                 </span>:null}
               </span>
               <span className="lms-legacy-mobile-footer-label">{item.visibleLabel??item.label}</span>
-            </Link>
+            </TextLink>
           </li>;
         })}
       </ul>

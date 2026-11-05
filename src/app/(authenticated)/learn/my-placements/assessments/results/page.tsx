@@ -4,7 +4,6 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -17,6 +16,7 @@ import {
 import { getOwnLearnerAssessmentResults } from "@/modules/placements/learner-assessment-results-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 const views: readonly { id: LearnerAssessmentResultsView; label: string }[] = [
   { id: "all", label: "All results" },
@@ -55,8 +55,8 @@ export default async function LearnerAssessmentResultsPage({
       <PageHeader title="Official assessment results" />
       <ErrorState title="Could not load assessment results"
         description="Published outcomes could not be loaded. No result has been treated as missing or not passed."
-        action={<Link href={"/learn/my-placements/assessments/results"+(retry.size?"?"+retry.toString():"")}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry official results</Link>} />
+        action={<TextLink href={"/learn/my-placements/assessments/results"+(retry.size?"?"+retry.toString():"")}
+          className="inline-flex min-h-11 items-center md:min-h-9">Retry official results</TextLink>} />
     </div>;
   }
   const paged=pageLearnerAssessmentResults(results.items,parsed.data);
@@ -75,10 +75,10 @@ export default async function LearnerAssessmentResultsPage({
         title="Official assessment results"
         description="Only placement-team-applied test outcomes from your own applications. A scheduled or submitted assessment is not a published result."
       />
-      <Link href="/learn/my-placements/assessments"
-        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
+      <TextLink href="/learn/my-placements/assessments"
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm">
         ← Assessment schedule
-      </Link>
+      </TextLink>
 
       <Tabs ariaLabel="Filter published assessment results" renderPanel={false} value={view} items={views.map(option=>({value:option.id,label:option.label,count:results.counts[option.id],href:href(option.id)}))}/>
       <form method="get" role="search" aria-label="Placement assessment results filters" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:items-end sm:gap-[8px]">
@@ -92,8 +92,8 @@ export default async function LearnerAssessmentResultsPage({
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]">
           Search
         </Button>
-        {q?<Link href={href(view,1,"")}
-          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
+        {q?<TextLink href={href(view,1,"")}
+          className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm">Clear search</TextLink>:null}
       </form>
       <p role="status" className="text-sm text-body">
         Showing {paged.items.length} of {paged.total.toLocaleString("en-IN")} matching published assessment outcomes.
@@ -109,10 +109,10 @@ export default async function LearnerAssessmentResultsPage({
               : "Your published test outcomes do not match the selected category."}
           </p>
           {results.counts.all > 0 ? (
-            <Link href="/learn/my-placements/assessments/results"
-              className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
+            <TextLink href="/learn/my-placements/assessments/results"
+              className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm">
               View all official results →
-            </Link>
+            </TextLink>
           ) : null}
         </section>
       ) : (
@@ -155,11 +155,11 @@ export default async function LearnerAssessmentResultsPage({
                 </section>
               ) : null}
               <div className="mt-4 flex flex-wrap gap-4">
-                <Link href={"/learn/my-placements/applications?applicationId=" +
+                <TextLink href={"/learn/my-placements/applications?applicationId=" +
                   encodeURIComponent(item.applicationId)}
-                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm">
                   View application →
-                </Link>
+                </TextLink>
               </div>
             </article>
           ))}

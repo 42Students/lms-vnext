@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {ErrorState} from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -12,6 +11,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getOwnFacultyProfileWithRuntime } from "@/modules/people/runtime";
 import {facultyProfileCompleteness} from "@/modules/people/faculty-profile-completeness-model";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic = "force-dynamic";
 
@@ -85,7 +86,7 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title="Profile" actions={<div className="flex flex-wrap items-center gap-3">
         <FacultyProfileRefresh/>
-        <Link href="#faculty-profile-sections" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring">Edit About &amp; profile sections →</Link>
+        <ButtonLink variant="primary" href="#faculty-profile-sections">Edit About &amp; profile sections →</ButtonLink>
       </div>} />
       <section id="faculty-header" aria-label="Faculty profile identity" aria-busy={false} className="flex min-w-0 flex-wrap items-center gap-5 border-b border-[var(--lms-canvas-border)] pb-5">
         <FacultyAvatarUpload initialVersion={selfDocument?.version??0} initials={initials || "F"}/>
@@ -94,7 +95,7 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
           <p className="break-all text-sm text-body">{person.user.email || "No email recorded"}</p>
           <p className="text-sm text-muted-foreground">{profile?.academicTitle || "Faculty"} · {profile?.employmentType || "Faculty type not specified"} · College-managed identity</p>
           {document?.about.description?<p className="max-w-2xl whitespace-pre-wrap text-sm text-body">{document.about.description}</p>:null}
-          <Link href="/teacher/profile/contacts" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Update contacts</Link>
+          <TextLink href="/teacher/profile/contacts" className="inline-flex min-h-11 items-center text-sm">Update contacts</TextLink>
         </div>
       </section>
       <section aria-label="Profile completeness" className="space-y-2 border-b border-border pb-5">
@@ -103,17 +104,17 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
           <span className="text-sm font-semibold tabular-nums">{completenessScore===null?"Not available":completenessScore+"%"}</span>
         </div>
         <progress aria-label="Profile completeness" max={100} value={completenessScore??0} className="h-2 w-full accent-[var(--lms-primary)]"/>
-        <Link href="#faculty-profile-sections" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Complete your profile</Link>
+        <TextLink href="#faculty-profile-sections" className="inline-flex min-h-11 items-center text-sm">Complete your profile</TextLink>
       </section>
       <nav aria-label="Profile shortcuts" className="flex min-w-0 flex-col items-stretch gap-1 border-b border-[var(--lms-canvas-border)] pb-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-        <Link href="/teacher/profile/teaching"
-        className="inline-flex min-h-11 min-w-0 items-center justify-center px-2 text-sm font-semibold text-primary-text hover:underline focus-ring sm:justify-start md:min-h-9">
+        <TextLink href="/teacher/profile/teaching"
+        className="inline-flex min-h-11 min-w-0 items-center justify-center px-2 text-sm sm:justify-start md:min-h-9">
         Current teaching assignments →
-        </Link>
-        <Link href="/teacher/profile/contacts"
-        className="inline-flex min-h-11 min-w-0 items-center justify-center px-2 text-sm font-semibold text-primary-text hover:underline focus-ring sm:justify-start md:min-h-9">
+        </TextLink>
+        <TextLink href="/teacher/profile/contacts"
+        className="inline-flex min-h-11 min-w-0 items-center justify-center px-2 text-sm sm:justify-start md:min-h-9">
         Contact details and editing availability
-        </Link>
+        </TextLink>
       </nav>
       <section id="contacts" aria-label="Faculty profile details" className="min-w-0 space-y-3 scroll-mt-24 py-4">
         <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">About</Heading>

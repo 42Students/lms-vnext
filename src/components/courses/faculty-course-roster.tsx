@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {ActionPagination} from "@/components/ui/action-pagination";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -163,9 +162,9 @@ export function FacultyCourseRoster({
         <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
             <p className="text-sm font-semibold text-body">Class list</p>
-            <Link href="/teacher/courses" className="inline-flex min-h-9 items-center font-semibold text-link underline">
+            <TextLink href="/teacher/courses" className="inline-flex min-h-9 items-center">
               Change class
-            </Link>
+            </TextLink>
           </div>
           <div className="grid w-full min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end lg:max-w-[42rem]">
           <Label className="block w-full min-w-0 print:hidden">
@@ -228,11 +227,11 @@ export function FacultyCourseRoster({
                     <StatusBadge tone={learner.rollNumber?"info":"warning"}>
                       {learner.rollNumber?`Roll ${learner.rollNumber}`:"Roll not assigned"}
                     </StatusBadge>
-                    {deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
+                    {deliveryId?<TextLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
                       "/students/"+encodeURIComponent(learner.membershipId)}
-                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-[var(--lms-link-text)] hover:underline md:min-h-9">
+                      className="mt-1 inline-flex min-h-11 items-center text-xs md:min-h-9">
                       View student details →
-                    </Link>:null}
+                    </TextLink>:null}
                   </div>
                 </div>},
               {key:"phone",header:"Phone",mobilePriority:"secondary" as const,
@@ -260,11 +259,11 @@ export function FacultyCourseRoster({
                   <strong className="block break-words text-sm text-foreground">{nameOf(learner)}</strong>
                   <p className="text-xs text-muted-foreground">Roll No: {learner.rollNumber||"Roll not assigned"}</p>
                   <p className="text-xs text-body">Contact: {phoneLabel(learner.phoneE164)}</p>
-                  {deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
+                  {deliveryId?<TextLink href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
                     "/students/"+encodeURIComponent(learner.membershipId)}
-                    className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9">
+                    className="inline-flex min-h-11 items-center text-xs md:min-h-9">
                     View student details
-                  </Link>:null}
+                  </TextLink>:null}
                 </div>
               </div>
             </li>)}

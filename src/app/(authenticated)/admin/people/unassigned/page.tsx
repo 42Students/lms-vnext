@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { redirect } from "next/navigation";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -15,6 +14,7 @@ import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { adminUnassignedUsersHref, adminUnassignedUsersQuerySchema, unassignedIdentityScopeAllowed } from "@/modules/people/admin-unassigned-user-model";
 import { listSuperAdminUnassignedUsers } from "@/modules/people/admin-unassigned-user-service";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 export default async function UnassignedIdentityDirectory({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
@@ -23,7 +23,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   if (!unassignedIdentityScopeAllowed(context.adminScope)) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Users without college memberships" />
     <EmptyState title="Clear the admin scope" description="These users have no college membership. Clear the organization and college selection in the header to inspect global identities." />
-    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring hover:text-[var(--lms-primary)] underline-offset-4">← Users & Roles</Link>
+    <TextLink href="/admin/people/directory" className="inline-flex min-h-11 items-center">← Users & Roles</TextLink>
   </div>;
   const raw = await searchParams;
   const validKeys=new Set(["q","platformStatus","role","page"]);
@@ -35,7 +35,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   if (!parsed.success) return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Users without college memberships" />
     <ErrorState title="Invalid user filters" description="Review search, status, role and page."
-    action={<Link href="/admin/people/unassigned" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+    action={<TextLink href="/admin/people/unassigned" className="inline-flex min-h-11 md:min-h-9 items-center w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</TextLink>} />
   </div>;
   const loaded = await listSuperAdminUnassignedUsers(context, parsed.data)
     .then(value => ({ok:true as const,value}))
@@ -47,10 +47,10 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
       description={loaded.denied
         ? "Your account can no longer view global identities."
         : "These users could not be loaded. Your validated filters were preserved."}
-      action={<Link href={loaded.denied ? "/dashboard" : adminUnassignedUsersHref(parsed.data)}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 focus-ring w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">
+      action={<TextLink href={loaded.denied ? "/dashboard" : adminUnassignedUsersHref(parsed.data)}
+        className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">
         {loaded.denied ? "Back to dashboard" : "Retry loading users"}
-      </Link>}
+      </TextLink>}
     />
   </div>;
   const data = loaded.value;
@@ -71,7 +71,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   ];
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Users without college memberships"
-      description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." actions={<Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)]">← Users & Roles</Link>} />
+      description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." actions={<TextLink href="/admin/people/directory" className="inline-flex min-h-11 items-center md:min-h-9">← Users & Roles</TextLink>} />
 
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_minmax(0,13rem)_auto]">
       <Label stack className="min-w-0">Name<Input type="search" name="q" maxLength={100}

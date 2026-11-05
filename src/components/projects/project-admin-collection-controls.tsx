@@ -1,12 +1,13 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Pagination } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export type ProjectAdminCollectionQuery = {
   view?:"cards"|"table";
@@ -166,8 +167,8 @@ export function ProjectAdminFilters({
       </Label>
       {legacyWorkspaces?<p className="text-xs text-muted-foreground">
         Ready and Blocked use saved workspace phase and blocker signals.
-        <Link href={atRiskHref} className="ml-1 font-semibold text-primary-text underline">
-          View all risk signals</Link>
+        <TextLink href={atRiskHref} className="ml-1">
+          View all risk signals</TextLink>
       </p>:null}
       {filterView?<input type="hidden" name="view" value={filterView}/>:query.view?<input type="hidden" name="view" value={query.view}/>:null}
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
@@ -228,12 +229,12 @@ export function ProjectAdminFilters({
       >
         Apply
       </Button>
-      <Link
+      <ButtonLink variant="secondary"
         href={clearHref}
-        className="inline-flex min-h-11 w-auto items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9"
+        className="w-auto"
       >
         Clear
-      </Link>
+      </ButtonLink>
     </form>
   );
 }

@@ -1,6 +1,5 @@
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { parseFacultyContactsQuery } from "@/modules/courses/faculty-contacts-filter-model";
 import { facultyContactDirectoryQuery } from "@/modules/courses/faculty-contact-detail-model";
@@ -19,6 +18,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { listFacultyContacts } from "@/modules/courses/faculty-contacts-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 const tabs = {
   allContacts: {
@@ -58,12 +58,12 @@ export default async function FacultyContactsPage({
     return (
       <section role="alert" className="min-w-0 space-y-3">
         <PageHeader title="Invalid directory filters" />
-        <Link
+        <TextLink
           href={`/teacher/contacts/${contactsTab}`}
-          className="inline-flex min-h-11 items-center text-primary-text underline focus-ring md:min-h-9"
+          className="inline-flex min-h-11 items-center md:min-h-9"
         >
           Return to Contacts
-        </Link>
+        </TextLink>
       </section>
     );
   }
@@ -100,9 +100,9 @@ export default async function FacultyContactsPage({
             ? "You no longer have access to these contacts."
             : "Something went wrong on our end. Please try again."}
           action={loaded.denied
-            ? <Link href={retryHref} className="font-semibold text-primary-text underline focus-ring">
+            ? <TextLink href={retryHref}>
                 Back to teaching
-              </Link>
+              </TextLink>
             : <FacultyContactsRetry />}
         />
       </section>

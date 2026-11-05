@@ -8,12 +8,13 @@ import { ReportFilters, ReportMetrics, ReportScopeNote } from "@/components/plac
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
 import { collegeHiringAnalyticsQuery } from "@/modules/placements/college-hiring-analytics-model";
 import { ErrorState } from "@/components/ui/error-state";
-import Link from "next/link";
 import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import {CollegeHiringFunnel} from "@/components/placements/college-hiring-funnel";
 import {CollegeReportNavigation} from "@/components/placements/college-report-navigation";
 import {CollegeHiringDateFilters} from "@/components/placements/college-hiring-date-filters";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 const LEGACY_ANALYTICS_DESCRIPTION="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below.";
 
 /** Dedicated legacy Analytics surface: tenant-owned observed placement metrics. */
@@ -26,19 +27,18 @@ export default async function CollegeHiringDashboardPage({
       <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}/>
       <ErrorState title="Admin not assigned to a college"
         description="Contact your administrator for a College Admin membership before viewing hiring reports."
-        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+        action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>}/>
     </div>;
   }
   const query = collegeHiringAnalyticsQuery(await searchParams);
   if (!query.success) {
     return <div className="min-w-0 overflow-x-clip space-y-4">
       <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}
-      actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+      actions={<ButtonLink variant="secondary" href="/college/placements/readiness-by-department">
         Placement Evidence by Department
-      </Link>} />
+      </ButtonLink>} />
       <ErrorState title="Invalid report search" description="No placement metrics were loaded."
-        action={<Link href="/college/hiring-dashboard" className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto md:min-h-9">Clear filters</Link>} />
+        action={<TextLink href="/college/hiring-dashboard" className="inline-flex min-h-11 items-center w-full md:w-auto md:min-h-9">Clear filters</TextLink>} />
     </div>;
   }
   const workspaceRequest=getPlacementReportWorkspace(context,{
@@ -87,18 +87,17 @@ export default async function CollegeHiringDashboardPage({
       {([{label:"Drives",href:"/college/placements/drives"},
         {label:"Companies",href:"/college/placements/companies"},
         {label:"Analytics",href:"/college/hiring-dashboard"}] as const).map(tab=>
-        <Link key={tab.href} href={tab.href} aria-current={tab.label==="Analytics"?"page":undefined}
+        <TextLink variant="bare" key={tab.href} href={tab.href} aria-current={tab.label==="Analytics"?"page":undefined}
          className={"inline-flex min-h-11 items-center border-b-2 px-4 md:min-h-9 "+
           (tab.label==="Analytics"?"border-[var(--lms-teal-deep)] text-[var(--lms-teal-deep)]":
             "border-transparent text-body hover:border-border hover:text-link")}>
          {tab.label}
-        </Link>)}
+        </TextLink>)}
     </nav>
     <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}
-      actions={<Link href="/college/placements/readiness-by-department"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+      actions={<ButtonLink variant="secondary" href="/college/placements/readiness-by-department">
         Placement Evidence by Department
-      </Link>} />
+      </ButtonLink>} />
     <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
       <CollegeReportNavigation/>
     </div>
@@ -106,7 +105,7 @@ export default async function CollegeHiringDashboardPage({
     {workspace?<ReportFilters workspace={workspace} userId={context.user.id} path="/college/hiring-dashboard" />:null}
     {!workspace?<Alert tone="warning">
       Could not load hiring metrics. The college report is unavailable.
-      <Link href="/college/hiring-dashboard" className="ml-2 font-semibold text-link underline">Retry</Link>
+      <TextLink href="/college/hiring-dashboard" className="ml-2">Retry</TextLink>
     </Alert>:null}
     {workspace?<section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
       aria-label="Headline placement metrics">
@@ -114,7 +113,7 @@ export default async function CollegeHiringDashboardPage({
     </section>:null}
     {!funnel?<Alert tone="warning">
       Could not load hiring funnel. Other report sections remain available.
-      <Link href="/college/hiring-dashboard" className="ml-2 font-semibold text-link underline">Retry</Link>
+      <TextLink href="/college/hiring-dashboard" className="ml-2">Retry</TextLink>
     </Alert>:null}
     {funnel?<section aria-label="Hiring funnel and company performance" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <CollegeHiringFunnel data={funnel}

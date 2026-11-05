@@ -1,5 +1,4 @@
 import { TpoTeamMessagesDirectory } from "@/components/tpo/tpo-team-messages-directory";
-import Link from "next/link";
 import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
 import {getTpoRecruiterThreadDetail} from "@/modules/placements/tpo-recruiter-thread-detail-service";
 import bubbleStyles from "@/components/tpo/tpo-conversation-bubble.module.css";
@@ -30,6 +29,8 @@ import {
 } from "@/modules/placements/tpo-messages-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   tab?: string | string[];
@@ -80,7 +81,7 @@ export default async function TpoMessagesPage({
     <PageHeader title="Messages" description="Your placement team's own conversations: who does what, and what you decided. Recruiters and students never see these."/>
     <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 md:p-6">
       <TpoMessagesTabs selected="team"/>
-      {companySearch?<p role="status" className="text-sm text-body">Team conversations about {companySearch} · <Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Clear topic</Link></p>:null}
+      {companySearch?<p role="status" className="text-sm text-body">Team conversations about {companySearch} · <TextLink href="/tpo/messages?tab=team">Clear topic</TextLink></p>:null}
       <section id="tpo-messages-panel-team" role="tabpanel" aria-labelledby="tpo-messages-tab-team">
         <TpoTeamMessagesDirectory context={context} query={companySearch||(first(raw.q)??"")}
           {...(first(raw.c) !== undefined ? { selectedId: first(raw.c) } : {})} {...(first(raw.m) !== undefined ? { messageId: first(raw.m) } : {})} {...(first(raw.ask) !== undefined ? { askId: first(raw.ask) } : {})} {...(first(raw.filter) !== undefined ? { filter: first(raw.filter) } : {})}
@@ -91,7 +92,7 @@ export default async function TpoMessagesPage({
   if(selectedTab!=="recruiters")return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages"/>
     <ErrorState title="Invalid Messages tab" description="Choose Recruiters or Team."
-      action={<Link href="/tpo/messages" className="font-semibold text-link underline">Recruiters</Link>}/>
+      action={<TextLink href="/tpo/messages">Recruiters</TextLink>}/>
   </div>;
 
   const parsed = tpoMessagesQuerySchema.safeParse({
@@ -115,12 +116,12 @@ export default async function TpoMessagesPage({
           title="Invalid message filters"
           description="Check status, date range, search and pagination values. No communication data was loaded."
           action={
-            <Link
+            <ButtonLink variant="secondary"
               href="/tpo/messages"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text md:min-h-9 md:w-auto"
+              className="w-full md:w-auto"
             >
               Clear filters
-            </Link>
+            </ButtonLink>
           }
         />
       </div>
@@ -143,7 +144,7 @@ export default async function TpoMessagesPage({
     <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
     <TpoMessagesTabs selected="recruiters"/>
     <ErrorState title="Could not load conversations" description="This refresh failed. The recruiter inbox could not be verified; no existing messages have been changed."
-      action={<Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+      action={<TextLink href={retryHref} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
     </div>
   </TpoInboxRefreshBoundary>;
 
@@ -176,8 +177,8 @@ export default async function TpoMessagesPage({
    <ErrorState title="Could not load conversations"
     description="Recruiter conversations are unavailable. Placement notifications remain separate and this does not mean your conversations were deleted."
     action={<div className="flex flex-wrap gap-3">
-      <Link href="/tpo/messages" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
-      <Link href="/tpo/notifications" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Open notifications</Link>
+      <TextLink href="/tpo/messages" className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
+      <TextLink href="/tpo/notifications" className="inline-flex min-h-11 items-center md:min-h-9">Open notifications</TextLink>
     </div>}/>
   </div>;
 
@@ -223,7 +224,7 @@ export default async function TpoMessagesPage({
     <section className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
       <TpoMessagesTabs selected="recruiters"/>
       <TpoLiveRefresh intervalMs={4000} pulseHref="/api/placements/tpo/messages/pulse"/>
-      {recipientsUnavailable?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm">The recruiter directory could not refresh. Existing conversations remain available; starting a new conversation is temporarily unavailable. <Link href="/tpo/messages" className="font-semibold text-link underline">Retry</Link></p>:null}
+      {recipientsUnavailable?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm">The recruiter directory could not refresh. Existing conversations remain available; starting a new conversation is temporarily unavailable. <TextLink href="/tpo/messages">Retry</TextLink></p>:null}
       <div role="tabpanel" id="tpo-messages-panel-recruiters" aria-labelledby="tpo-messages-tab-recruiters" aria-label="Recruiter conversations"
         className="mt-4 grid min-w-0 overflow-hidden rounded-lg border border-border lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)]">
         <aside aria-label="Recruiter inbox" className="min-w-0 border-b border-border lg:border-b-0 lg:border-r">
@@ -234,13 +235,13 @@ export default async function TpoMessagesPage({
             </div>
             <nav aria-label="Recruiter inbox filters" className="flex flex-wrap gap-2">
               {([["ALL","All",summary.total],["REPLY","Reply",summary.reply],["UNREAD","Unread",summary.unread]] as const)
-                .map(([status,label,count])=><Link key={status}
+                .map(([status,label,count])=><TextLink variant="bare" key={status}
                   href={tpoMessagesHref({...commonFilters,status,page:1})}
                   aria-current={query.status===status?"page":undefined}
                   className={"inline-flex min-h-11 md:min-h-9 items-center rounded-lg border px-3 text-sm font-semibold "+
                     (query.status===status?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:bg-primary-subtle")}>
                   {label} ({count})
-                </Link>)}
+                </TextLink>)}
             </nav>
             <div className="space-y-1">
               <Label>Search recruiter or drive</Label>
@@ -248,17 +249,17 @@ export default async function TpoMessagesPage({
             </div>
             <p className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
               <span>{summary.unread} unread · {total} conversations</span>
-              {narrowing?<Link href="/tpo/messages" className="font-semibold text-link underline">Clear filters</Link>:null}
+              {narrowing?<TextLink href="/tpo/messages">Clear filters</TextLink>:null}
             </p>
           </div>
           {items.length===0?<div className="p-4">
             <EmptyState title={total>0?"No conversations on this page":searching?"No conversations match this search":narrowing?"No conversations match these filters":"No conversations yet"}
               description={total>0?"Return to the first page or adjust your filters.":narrowing?"Try a different search or choose All.":"Start a new message to a recruiter."}
-              action={total>0?<Link href={tpoMessagesHref({...commonFilters,page:1})}
-                className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">First page</Link>:undefined}/>
+              action={total>0?<TextLink href={tpoMessagesHref({...commonFilters,page:1})}
+                className="inline-flex min-h-11 md:min-h-9 items-center">First page</TextLink>:undefined}/>
           </div>:<ul className="max-h-[65vh] divide-y divide-border overflow-y-auto lg:max-h-[680px]">
             {items.map(item=><li key={item.id}>
-              <Link href={threadHref(item.id)}
+              <TextLink variant="bare" href={threadHref(item.id)}
                 aria-label={item.participantName+" — "+item.subject}
                 aria-current={active?.id===item.id?"page":undefined}
                 className={"flex min-h-16 gap-3 px-4 py-3 hover:bg-primary-subtle focus-ring "+
@@ -281,32 +282,32 @@ export default async function TpoMessagesPage({
                     {item.accessEnded?<StatusBadge tone="neutral">Access ended</StatusBadge>:null}
                   </span>
                 </span>
-              </Link>
+              </TextLink>
             </li>)}
           </ul>}
           {totalPages>1?<nav aria-label="Messages pagination" className="flex items-center justify-between gap-2 border-t border-border p-3 text-sm">
-            {page>1?<Link href={tpoMessagesHref({...commonFilters,page:page-1})} className="font-semibold text-link underline">Previous</Link>:<span/>}
+            {page>1?<TextLink href={tpoMessagesHref({...commonFilters,page:page-1})}>Previous</TextLink>:<span/>}
             <span>Page {page} of {totalPages}</span>
-            {page<totalPages?<Link href={tpoMessagesHref({...commonFilters,page:page+1})} className="font-semibold text-link underline">Next</Link>:<span/>}
+            {page<totalPages?<TextLink href={tpoMessagesHref({...commonFilters,page:page+1})}>Next</TextLink>:<span/>}
           </nav>:null}
         </aside>
         <section aria-label="Conversation" className="min-w-0 p-4 md:p-5">
           {!active?<EmptyState title={requested?"Conversation not on this page":"No conversations yet"}
             description={requested?"Clear the thread selection or change filters to find this conversation.":"Select a conversation or start a new message."}
-            action={requested?<Link href={tpoMessagesHref({...commonFilters,page})}
-              className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Clear thread selection</Link>:undefined}/>:
+            action={requested?<TextLink href={tpoMessagesHref({...commonFilters,page})}
+              className="inline-flex min-h-11 md:min-h-9 items-center">Clear thread selection</TextLink>:undefined}/>:
             !detail?<ErrorState title="Could not load this conversation"
               description="This refresh failed. Retry. No messages were acknowledged."
-              action={<Link href={threadHref(active.id)} className="font-semibold text-link underline">Retry</Link>}/>:
+              action={<TextLink href={threadHref(active.id)}>Retry</TextLink>}/>:
             <>
               <div className="flex flex-wrap items-start justify-between gap-2 border-b border-border pb-3">
                 <div>
                   <Heading level={2} size="lg" className="text-foreground">{active.participantName}</Heading>
                   <p className="text-sm text-muted-foreground">{active.companyName??"Recruiter"} · {active.subject}</p>
                 </div>
-                <Link href={"/tpo/messages/"+encodeURIComponent(active.id)} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">
+                <TextLink href={"/tpo/messages/"+encodeURIComponent(active.id)} className="inline-flex min-h-11 md:min-h-9 items-center">
                   Open full conversation
-                </Link>
+                </TextLink>
               </div>
               <div role="log" aria-live="polite" aria-label="Conversation messages" className="max-h-[480px] space-y-3 overflow-y-auto py-4">
                 {detail.messages.length===0?<EmptyState title="No messages yet."/>:

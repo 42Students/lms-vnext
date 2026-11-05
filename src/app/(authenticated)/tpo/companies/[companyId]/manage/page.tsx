@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -6,6 +5,7 @@ import { TpoCompanyLifecycleEditor } from "@/components/placements/tpo-company-l
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoCompanyLifecycle } from "@/modules/placements/tpo-company-lifecycle-service";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function TpoManageCompanyPage({
   params,
@@ -19,10 +19,10 @@ export default async function TpoManageCompanyPage({
   const company = await getTpoCompanyLifecycle(context, companyId);
   if (!company) notFound();
   return <div className="min-w-0 space-y-4">
-    <PageHeader actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-      className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline hover:underline focus-ring md:min-h-9">
+    <PageHeader actions={<TextLink href={"/tpo/companies/" + encodeURIComponent(companyId)}
+      className="inline-flex min-h-11 items-center justify-center md:min-h-9">
       ← Company details
-    </Link>} title={company.name + " · Relationship settings"}
+    </TextLink>} title={company.name + " · Relationship settings"}
       description="Change this college's trusted state or archive/restore its employer relationship with audit history." />
     <TpoCompanyLifecycleEditor company={{
       companyId, name: company.name, status: company.status,

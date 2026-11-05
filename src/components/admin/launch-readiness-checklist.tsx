@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type {CollegeReadinessEvaluation} from "@/modules/colleges/readiness-model";
 import {readinessRemediationLink} from "@/modules/colleges/readiness-remediation-links";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Advisory={id:string;title:string;reason:string;fix:string;href:string};
 type ReadinessInput={collegeId:string;collegeName:string;
@@ -26,8 +26,8 @@ function ReadinessRow({item,blocking}:{item:Advisory;blocking:boolean}){
    <p className="mt-1 text-sm text-body">{item.reason}</p>
    <p className="mt-1 text-sm text-body"><strong>What to do:</strong> {item.fix}</p>
   </div>
-  <Link href={item.href} className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-link underline focus-ring md:min-h-9">
-   Fix →</Link>
+  <TextLink href={item.href} className="inline-flex min-h-11 shrink-0 items-center text-sm md:min-h-9">
+   Fix →</TextLink>
  </li>;
 }
 /** Compact legacy Launch checklist inside Launch setup. Checks are read from
@@ -55,15 +55,15 @@ export function LaunchReadinessChecklist({collegeId,collegeName,readiness,loadFa
     </p>
     <p className="mt-1 text-xs text-muted-foreground">Selected college: {collegeName}</p>
    </div>
-   <Link href={recheck} className="inline-flex min-h-11 items-center gap-1 font-semibold text-link underline md:min-h-9">
+   <TextLink href={recheck} className="inline-flex min-h-11 items-center gap-1 md:min-h-9">
     <span aria-hidden="true">↻</span> Recheck
-   </Link>
+   </TextLink>
   </div>
   {loadFailed||!readiness?
    <div className="mt-3 border border-border p-3" role="alert">
     <p className="font-semibold">Launch checklist could not be loaded</p>
     <p className="mt-1 text-sm text-body">We could not verify college readiness. Nothing has been approved for launch.</p>
-    <Link href={recheck} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+    <TextLink href={recheck} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
    </div>:
    <>
     <div role="status" aria-live="polite" className={"mt-4 rounded-lg px-3 py-4 text-sm font-semibold "+(
@@ -92,8 +92,8 @@ export function LaunchReadinessChecklist({collegeId,collegeName,readiness,loadFa
    </>
   }
   <div className="mt-4 border-t border-border pt-3">
-   <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/readiness"}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Full readiness details →</Link>
+   <TextLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/readiness"}
+     className="inline-flex min-h-11 items-center md:min-h-9">Full readiness details →</TextLink>
   </div>
  </section>;
 }

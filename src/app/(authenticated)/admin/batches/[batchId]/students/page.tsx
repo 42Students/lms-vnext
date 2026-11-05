@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {Breadcrumbs} from "@/components/ui/breadcrumbs";
 import {DataTable} from "@/components/ui/data-table";
@@ -10,6 +9,7 @@ import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getSuperAdminBatchRosterOverview} from "@/modules/admin-ui/super-admin-batch-roster-service";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminBatchStudentsPage({params}:{
  params:Promise<{batchId:string}>;
@@ -35,11 +35,11 @@ export default async function SuperAdminBatchStudentsPage({params}:{
         {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>},
         {key:"students",header:"Students",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.learnerCount}</span>},
         {key:"capacity",header:"Capacity",mobilePriority:"secondary",cell:row=><span className="tabular-nums">{row.capacity??"—"}</span>},
-        {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]" href={"/admin/academics/sections/"+encodeURIComponent(row.id)}>Manage roster and schedule →</Link>},
+        {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><TextLink className="inline-flex min-h-11 items-center md:min-h-9" href={"/admin/academics/sections/"+encodeURIComponent(row.id)}>Manage roster and schedule →</TextLink>},
       ]}/>
     </Disclosure>
   </section>
 
-  <Link href={"/admin/classes?cohortCode="+encodeURIComponent(data.batch.code)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Manage batch classes →</Link>
+  <TextLink href={"/admin/classes?cohortCode="+encodeURIComponent(data.batch.code)} className="inline-flex min-h-11 items-center md:min-h-9">Manage batch classes →</TextLink>
  </div>;
 }

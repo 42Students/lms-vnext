@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 /**
  * Retired public E2E login deep link. Do not accept a phone number here or
@@ -40,17 +40,17 @@ export default async function LegacySuperAdminE2ELoginPage({
       {devVerifiedSuperAdmin ? <p className="rounded-md border border-border p-3">
         A signed-in, active global Super Admin was verified in development.
         The legacy phone link did not grant this access.
-        <Link href="/dashboard" className="ml-2 font-semibold text-link underline underline-offset-4">
+        <TextLink href="/dashboard" className="ml-2">
           Open authorized dashboard
-        </Link>
+        </TextLink>
       </p> : null}
       <p>Test fixtures must be provisioned through an authenticated development
         setup, not a public login bypass. If fixture setup or sign-in fails, review
         the development configuration and try the secure login below.
         This page never creates a test account or grants access.</p>
-      <Link href="/login" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4">
+      <TextLink href="/login" className="inline-flex min-h-11 items-center">
         Continue to secure sign-in
-      </Link>
+      </TextLink>
     </section>
   </main>;
 }

@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {TpoVerificationPanel} from "@/components/verification/TpoVerificationPanel";
@@ -14,6 +13,7 @@ import {Select} from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 
@@ -23,7 +23,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  if(!parsed)return <div className="min-w-0 space-y-3">
   <PageHeader title="Invalid verification filters" />
   <Alert tone="error">No verification records were loaded. Choose a supported status or reset the filters.</Alert>
-  <Link href="/tpo/verification" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>
+  <TextLink href="/tpo/verification" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear filters</TextLink>
  </div>;
  const query=parsed;
  const context=await getCurrentRequestContext();
@@ -42,7 +42,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
   return <section className="min-w-0 space-y-3">
    <PageHeader title="Verification" />
    <Alert tone="error" role="alert">Could not check your verification access</Alert>
-   <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>
+   <TextLink href={retryHref} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
   </section>;
  }
  // A batch-directory failure must not erase a successfully loaded queue.
@@ -53,11 +53,11 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
   <PageHeader title="Verification" description="Check students' education and identity against their documents. Verified marks are what eligibility uses." />
   {queue.available&&queue.enabled&&queue.permitted?<nav aria-label="Verification status" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3">
     {([["WAITING","Waiting"],["SENT_BACK","Sent back"],["VERIFIED","Verified"]] as const).map(([tab,label])=>
-      <Link key={tab} href={tpoVerificationHref({...query,tab,page:1})} aria-current={query.tab===tab?"page":undefined}
+      <TextLink variant="bare" key={tab} href={tpoVerificationHref({...query,tab,page:1})} aria-current={query.tab===tab?"page":undefined}
         className={"inline-flex min-h-11 items-center rounded-[8px] border px-4 text-sm font-semibold md:min-h-9 "+
           (query.tab===tab?"border-primary bg-primary text-on-primary":"border-border text-body hover:bg-primary-subtle")}>
         {label} ({queue.counts?.[tab]??0})
-      </Link>)}
+      </TextLink>)}
    </nav>:null}
   <nav className="min-w-0" aria-label="Verification exports">
    <Disclosure title="Export verification records">
@@ -127,7 +127,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     </div>
    </Disclosure>
    <Button type="submit" className="min-h-11 w-full md:min-h-9">Apply filters</Button>
-   <Link href="/tpo/verification" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline md:min-h-9">Reset filters</Link>
+   <TextLink href="/tpo/verification" className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">Reset filters</TextLink>
     </div>
    </Disclosure>
   </form>
@@ -142,7 +142,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     <Alert tone="warning" role="alert">Showing the first 1,000 students in this view. Search, filters and counts below cover only these. Verify these first and the next students appear; older submissions are listed first.</Alert>:null}
   {!queue.available?<section className="space-y-3">
    <Alert tone="warning" role="alert">Could not load the queue. Please try again or contact your college admin.</Alert>
-   <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>
+   <TextLink href={retryHref} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
   </section>:!queue.enabled||!queue.permitted?<section className="space-y-3">
    <Heading level={2} size="base" className="text-[var(--lms-heading)]">You cannot verify profiles here</Heading>
    <Alert tone="warning">{!queue.enabled
@@ -150,9 +150,9 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
      :"Your verification access has been removed. Ask your college admin."}</Alert>
   </section>:<><TpoVerificationPanel rows={queue.rows} {...(queue.counts !== undefined ? {counts:queue.counts} : {})} serverTab={query.tab} serverKind={query.kind}/>
   <nav aria-label="Verification pages" className="flex min-w-0 flex-wrap items-center gap-3 text-sm">
-   {query.page>1?<Link href={tpoVerificationHref({...query,page:query.page-1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Previous page</Link>:null}
+   {query.page>1?<TextLink href={tpoVerificationHref({...query,page:query.page-1})} className="inline-flex min-h-11 items-center md:min-h-9">Previous page</TextLink>:null}
    <span>Page {query.page}; up to {query.pageSize} records per page.</span>
-   {queue.hasMore?<Link href={tpoVerificationHref({...query,page:query.page+1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Next page</Link>:null}
+   {queue.hasMore?<TextLink href={tpoVerificationHref({...query,page:query.page+1})} className="inline-flex min-h-11 items-center md:min-h-9">Next page</TextLink>:null}
   </nav></>}
  </div>;
 }

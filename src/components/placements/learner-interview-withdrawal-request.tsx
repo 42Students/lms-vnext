@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
@@ -7,6 +6,7 @@ import {learnerInterviewWithdrawalInputSchema,type LearnerInterviewWithdrawalTar
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 export function LearnerInterviewWithdrawalRequest({withdrawalRequest:target}:{withdrawalRequest:LearnerInterviewWithdrawalTarget}){
   const router=useRouter();
   const [review,setReview]=useState(false),[reason,setReason]=useState("");
@@ -36,7 +36,7 @@ export function LearnerInterviewWithdrawalRequest({withdrawalRequest:target}:{wi
     <Heading level={3} size="sm" id="learner-interview-withdrawal-title" className="text-[var(--lms-heading)]">Ask the placement team to withdraw</Heading>
     <p className="text-sm leading-[22px] text-body">This requests withdrawal of the whole application, including its interview rounds. Your application and interview remain active until the placement team approves.</p>
     {target.pending||submitted ? <p role="status" className="text-sm text-body leading-[22px]">
-      Withdrawal requested; awaiting the placement team&apos;s decision. <Link className="font-semibold text-primary-text underline focus-visible:underline" href="/learn/my-placements/support?status=PENDING&type=APPLICATION_WITHDRAWAL">Review request</Link>
+      Withdrawal requested; awaiting the placement team&apos;s decision. <TextLink href="/learn/my-placements/support?status=PENDING&type=APPLICATION_WITHDRAWAL">Review request</TextLink>
     </p> : review ? <div className="space-y-3">
       <Label className="block">Reason for requesting withdrawal
         <Textarea value={reason} maxLength={2000} minLength={3} required rows={3} disabled={pending} aria-invalid={Boolean(error)} aria-describedby={error?"learner-interview-withdrawal-error":undefined} onChange={event=>setReason(event.target.value)}

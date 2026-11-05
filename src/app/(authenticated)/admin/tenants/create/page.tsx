@@ -1,5 +1,4 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {can} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
@@ -11,6 +10,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {Banner} from "@/components/ui/banner";
 import {preferredNewTenantOrganization} from "@/modules/colleges/admin-tenant-organization-step";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function SuperAdminTenantCreateStage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
@@ -29,7 +29,7 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
    <PageHeader title="Create the customer, then make one college launch-ready" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
    <ErrorState title="Organization directory unavailable"
     description="Organization choices could not be verified. College creation remains unavailable until your authorized organizations can be loaded."
-    action={<Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto">Retry organization directory</Link>}/>
+    action={<TextLink href="/admin/tenants/create" className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto">Retry organization directory</TextLink>}/>
   </div>;
  }
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
@@ -48,19 +48,19 @@ export default async function SuperAdminTenantCreateStage({searchParams}:{search
    </p>
    {orgCreate?<OrganizationCreateForm advanceToCollege/>:
     <Banner tone="warning">Organization creation is unavailable in your selected administrative scope.</Banner>}
-   <Link href="/admin/organizations" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review organizations</Link>
+   <TextLink href="/admin/organizations" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">Review organizations</TextLink>
   </section>
   <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Create college">
    <Heading level={2} size="lg" className="m-0 break-words leading-7 text-[var(--lms-heading)]">2. College</Heading>
    {preferredId?<Banner tone="info" role="status">Organization chosen for the next step. The college form has this verified, authorized organization preselected; your current safety scope is unchanged.</Banner>:null}
    {creatable.length?<CollegeCreateForm {...(preferredId !== null && preferredId !== undefined ? {preferredOrganizationId:preferredId} : {})} advanceToSetup organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>: 
     <Banner tone="warning">No organization in the current safety scope can receive a college. Create or select an authorized organization first.</Banner>}
-   <Link href="/admin/colleges" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Review colleges</Link>
+   <TextLink href="/admin/colleges" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">Review colleges</TextLink>
   </section>
   <section className="min-w-0 space-y-2 pt-1">
    <Heading level={2} size="lg" id="launch-setup-heading" tabIndex={-1} className="m-0 break-words leading-7 text-[var(--lms-heading)] focus:outline-none">Get this college ready to go live</Heading>
    <p className="text-sm text-body">After creating a college, the workflow verifies its identity, selects it in the safety-scope switcher and opens Launch setup. If automatic scope selection fails, choose the created college in the header before continuing. Creation and scope selection are separate audited actions.</p>
-   <Link href="/admin/tenants/setup" aria-describedby="launch-setup-heading" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Continue to setup →</Link>
+   <TextLink href="/admin/tenants/setup" aria-describedby="launch-setup-heading" className="inline-flex min-h-11 md:min-h-9 items-center text-sm">Continue to setup →</TextLink>
   </section>
  </div>;
 }

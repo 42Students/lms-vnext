@@ -1,6 +1,5 @@
 import { Dropdown } from "@/components/ui/dropdown";
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { PageHeader } from "@/components/ui/page-header";
@@ -55,6 +54,7 @@ import {
 } from "./placement-drive-controls";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function formatDriveIst(date:Date|null){
  return date?new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",
@@ -106,7 +106,7 @@ export async function PlacementDriveWorkspace({
    <PageHeader title={job.title} description="The placement drive is available, but the current schedule could not be loaded."/>
    <ErrorState title="Couldn't refresh this drive"
     description="Showing the last drive data we loaded is unavailable in this request. Retry to load the current schedule; no empty state or zero count has been inferred."
-    action={<Link href={driveHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+    action={<TextLink href={driveHref} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>}/>
   </div>;
 
   const jobTypes=job.status==="DRAFT"?await listPlacementJobTypeChoices(context,job.collegeId).catch(()=>null):[];
@@ -304,124 +304,110 @@ export async function PlacementDriveWorkspace({
         description={job.companyName+" · "+headerFacts.status+(job.applicationDeadline?" · Deadline "+formatDriveIst(job.applicationDeadline):"")}
         actions={
           <div className="flex min-w-0 w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
-          {isSuperAdminDrive?<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/settings"+(applicationsHref?.includes("?returnTo=")?"?"+applicationsHref.split("?")[1]:"")}
-             className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">
+          {isSuperAdminDrive?<ButtonLink variant="secondary" href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/settings"+(applicationsHref?.includes("?returnTo=")?"?"+applicationsHref.split("?")[1]:"")}
+             className="w-full sm:w-auto">
              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 20h9"/><path d="m16.5 3.5 4 4L9 19l-5 1 1-5L16.5 3.5Z"/>
-             </svg>Edit drive</Link>:null}
-          {!isTpo ? <Link href={applicationsHref ?? "/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"}
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto md:min-h-9">
+             </svg>Edit drive</ButtonLink>:null}
+          {!isTpo ? <ButtonLink variant="primary" href={applicationsHref ?? "/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"}
+            className="w-full sm:w-auto">
             {isSuperAdminDrive?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
              <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>:null}{isSuperAdminDrive?"View applications":"Applications"}</Link> : null}
-          {isTpo&&nextStep?<Link href={nextStep.primary.href}
-             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">{nextStep.primary.label}</Link>:null}
-          {isTpo?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
-             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Discussion</Link>:null}
+            </svg>:null}{isSuperAdminDrive?"View applications":"Applications"}</ButtonLink> : null}
+          {isTpo&&nextStep?<ButtonLink variant="primary" href={nextStep.primary.href}
+             className="w-full sm:w-auto">{nextStep.primary.label}</ButtonLink>:null}
+          {isTpo?<ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
+             className="w-full sm:w-auto">Discussion</ButtonLink>:null}
           <Dropdown mobileSheet align="end" label="Drive actions" trigger={isTpo?"More":"Actions"} className="w-full sm:w-auto">
             <p id="drive-actions-scroll-hint" className="hidden text-xs text-muted-foreground group-open:block md:!hidden leading-[20px]">Scroll for more drive actions ↓</p>
             <div role="group" aria-label="Drive action choices" aria-describedby="drive-actions-scroll-hint" tabIndex={0}
               className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)] md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
             {nextStep&&!isTpo ? (
-              <Link href={nextStep.primary.href}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:focus-outline md:min-h-[var(--lms-control-height)]">
+              <ButtonLink variant="primary" href={nextStep.primary.href}>
                 {nextStep.primary.label}
-              </Link>
+              </ButtonLink>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
-              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applicants-pipeline"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
+              <ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applicants-pipeline"}>
                 Applicants
-              </Link>
+              </ButtonLink>
             ) : null}
             {isTpo && job.status === "DRAFT" ? (
-              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
+              <ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}>
                 Edit draft
-              </Link>
+              </ButtonLink>
             ) : null}
             {isTpo ? <div role="group" aria-label="More drive actions">
               <div className="grid min-w-[min(14rem,calc(100vw_-_5rem))] max-w-full gap-2">
-                <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
-                  className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-ring transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
+                <ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}>
                   Export applicants
-                </Link>
-                <Link
-                  href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
-                  className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-ring transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
+                </ButtonLink>
+                <ButtonLink variant="secondary"
+                  href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}>
                   Share with company
-                </Link>
+                </ButtonLink>
                 {["CLOSED","CANCELLED","REJECTED"].includes(job.status)
                   ? <TpoDriveCloneAction jobId={jobId} label="Run it again" /> : null}
               </div>
             </div>:null}
             {isTpo && job.status === "PUBLISHED" ? (
-              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/close-preview"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
+              <ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/close-preview"}>
                 Close drive
-              </Link>
+              </ButtonLink>
             ) : null}
             {isTpo && (job.status === "DRAFT" || job.status === "PUBLISHED") ? (
-              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/cancel-preview"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
+              <ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/cancel-preview"}>
                 Cancel drive
-              </Link>
+              </ButtonLink>
             ) : null}
             {isTpo && job.status === "PUBLISHED" && job.applicationDeadline ? (
-              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/extend-deadline"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
+              <ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/extend-deadline"}>
                 Extend deadline
-              </Link>
+              </ButtonLink>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Current shortlist &amp; CSV
-              </Link>
+              </ButtonLink>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/letters"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Offer letter evidence
-              </Link>
+              </ButtonLink>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/closeout"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Drive close-out report
-              </Link>
+              </ButtonLink>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/candidate-schedule"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Candidate round schedule
-              </Link>
+              </ButtonLink>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/joining"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]"
               >
                 Manage joining outcomes
-              </Link>
+              </ButtonLink>
             ) : null}
-            <Link
+            <ButtonLink variant="primary"
               href={isTpo
                 ? "/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applications-export"
                 : "/api/placements/jobs/" + encodeURIComponent(jobId) + "/applicants/export"}
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[color:var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:focus-outline md:min-h-[var(--lms-control-height)]"
             >
               {isTpo ? "Review and export applicants" : "Export applicants (CSV)"}
-            </Link>
+            </ButtonLink>
             </div>
           </Dropdown>
           </div>
@@ -430,7 +416,7 @@ export async function PlacementDriveWorkspace({
       {failedSections.length?<Alert tone="warning">
        Couldn't refresh this drive. Unable to load: {failedSections.join(", ")}.
        Other verified sections remain available; unavailable counts are not zero.
-       <Link href={driveHref} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+       <TextLink href={driveHref} className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
       </Alert>:null}
       {nextStep ? (
         <section aria-label="Next step" className="rounded-[var(--lms-canvas-radius)] border border-primary bg-primary-subtle p-4" data-testid="drive.next-step">
@@ -440,18 +426,18 @@ export async function PlacementDriveWorkspace({
           {applicationRate!==null?<p className="mt-2 text-xs text-muted-foreground">
             Application rate {applicationRate}% · {appliedCount} applied · {notAppliedCount} registered not applied
           </p>:null}
-          <Link href={nextStep.primary.href}
-            className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">
+          <ButtonLink variant="primary" href={nextStep.primary.href}
+            className="mt-3 w-full sm:w-auto">
             {nextStep.primary.label}
-          </Link>
+          </ButtonLink>
           {nextStep.more.length > 0 ? (
             <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
               <span className="font-semibold text-body">Also waiting:</span>
               {nextStep.more.slice(0,3).map(step => (
-                <Link key={step.href} href={step.href} title={step.description}
-                  className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                <TextLink key={step.href} href={step.href} title={step.description}
+                  className="inline-flex min-h-11 items-center md:min-h-9">
                   {step.label} →
-                </Link>
+                </TextLink>
               ))}
             </div>
           ) : null}
@@ -464,8 +450,8 @@ export async function PlacementDriveWorkspace({
             item.offer?.status==="ACCEPTED").length} : {}),
         }).filter(tab=>tab.label!=="Drive day"||driveDay.rounds.some(round=>
           round.mode===null||round.mode==="ON_CAMPUS"
-        )).map(tab=><Link key={tab.href} href={tab.href}
-          className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle md:min-h-9">{tab.label}</Link>)}
+        )).map(tab=><TextLink key={tab.href} href={tab.href}
+          className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 md:min-h-9">{tab.label}</TextLink>)}
       </nav>:null}
       {isTpo?<TpoDriveRefreshControl/>:null}
       {isTpo&&job.status==="DRAFT"?
@@ -554,11 +540,11 @@ export async function PlacementDriveWorkspace({
         <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Journey</Heading>
         <p className="mt-1 text-xs text-body leading-[20px]">{journey.definition}</p>
         <div className="mt-4 grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3 xl:grid-cols-6">
-          {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
+          {journey.stages.map(stage=><TextLink variant="bare" key={stage.name} href={stage.href}
             className="min-w-0 border-b border-r border-border p-3 text-foreground hover:bg-primary-subtle focus-ring-inset even:border-r-0 md:even:border-r md:[&:nth-child(3n)]:border-r-0 xl:[&:nth-child(3n)]:border-r xl:border-b-0 xl:last:border-r-0">
             <span className="block text-xs text-body">{stage.name}</span>
             <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
-          </Link>)}
+          </TextLink>)}
         </div>
         <p className="mt-3 text-xs text-body leading-[20px]">{journey.excluded} registered learners excluded or not notified from {journey.considered} considered.
           {applicationRate!==null?" · Application rate: "+applicationRate+"%.":""}</p>
@@ -593,8 +579,8 @@ export async function PlacementDriveWorkspace({
                     <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
                     <div><dt className="font-semibold">Results</dt><dd>{round.status==="COMPLETED"?"Results applied · ":""}{applied} applied · {staged} awaiting apply · {Math.max(0,round.participants.length-applied-staged)} not recorded</dd></div>
                     <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests===null?"Unable to load":rescheduleRequests}
-                      {rescheduleRequests!==null&&rescheduleRequests>0?<Link href="#drive-request-actions"
-                        className="ml-2 font-semibold text-[var(--lms-link-text)] underline max-md:inline-flex max-md:min-h-11 max-md:items-center">Review pending →</Link>:null}
+                      {rescheduleRequests!==null&&rescheduleRequests>0?<TextLink href="#drive-request-actions"
+                        className="ml-2 max-md:inline-flex max-md:min-h-11 max-md:items-center">Review pending →</TextLink>:null}
                     </dd></div>
                     <div><dt className="font-semibold">Results expected</dt><dd>{round.resultsDueAt
                       ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.resultsDueAt)+" IST"
@@ -605,14 +591,14 @@ export async function PlacementDriveWorkspace({
                   {round.testUrl&&/^https:\/\//i.test(round.testUrl)?<ThirdPartyLink href={round.testUrl} label="Open test instructions →"/>:null}
                   {round.whatToBring ? <p className="mt-1 text-sm text-body leading-[22px]">Bring: {round.whatToBring}</p> : null}
                   <div className="mt-3 flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
-                    <Link href={(round.mode===null||round.mode==="ON_CAMPUS")
+                    <ButtonLink variant="secondary" href={(round.mode===null||round.mode==="ON_CAMPUS")
                       ?"/tpo/drive-day/"+encodeURIComponent(round.id)
                       :"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}
-                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">{round.mode===null||round.mode==="ON_CAMPUS"
+                      className="w-full sm:w-auto">{round.mode===null||round.mode==="ON_CAMPUS"
                         ?round.status==="COMPLETED"?"See attendance →":"Open drive day →"
-                        :"See who reached this round →"}</Link>
-                    {round.kind !== "TALK" ? <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
-                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">Enter results →</Link> : null}
+                        :"See who reached this round →"}</ButtonLink>
+                    {round.kind !== "TALK" ? <ButtonLink variant="secondary" href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
+                      className="w-full sm:w-auto">Enter results →</ButtonLink> : null}
                   </div>
                 </article>
               );
@@ -624,11 +610,11 @@ export async function PlacementDriveWorkspace({
         <Disclosure title={<>Enter round results <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center justify-between gap-2">
           <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
             {driveDay.rounds.filter(round=>round.kind!=="TALK").map(round=>
-              <Link key={round.id}
+              <ButtonLink variant="secondary" key={round.id}
                 href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] focus-ring md:min-h-[var(--lms-control-height)]">
+                className="w-full sm:w-auto">
                 {round.name}
-              </Link>)}
+              </ButtonLink>)}
           </div>
         </Disclosure>
       ) : null}
@@ -647,12 +633,12 @@ export async function PlacementDriveWorkspace({
               : "Current shortlist could not be loaded. No count is inferred."}
           </p>
           <div className="mt-3 flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
-            <Link
+            <TextLink
               href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist"}
-              className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] hover:underline sm:w-auto md:min-h-9"
+              className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9"
             >
               View persisted shortlist →
-            </Link>
+            </TextLink>
             <TextLink
               href={"/api/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist/export"}
               className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9"
@@ -764,7 +750,7 @@ export async function PlacementDriveWorkspace({
         /></div>
       ) : job.status==="DRAFT"?<Alert tone="warning">
        Draft fields or academic eligibility options couldn't be refreshed. Editing and publishing are unavailable until they reload.
-       <Link href={driveHref} className="ml-2 font-semibold text-link underline">Retry</Link>
+       <TextLink href={driveHref} className="ml-2">Retry</TextLink>
       </Alert>:null}
       {roleOptions?<PlacementRoleOptions
         jobId={jobId}

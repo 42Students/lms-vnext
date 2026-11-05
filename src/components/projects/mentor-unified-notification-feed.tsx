@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useState,type MouseEvent} from "react";
 import {Button} from "@/components/ui/button";
@@ -10,6 +9,7 @@ import {mentorUnifiedNotificationGroups,mentorUnifiedOpenReadRequest,mergeMentor
   "@/modules/projects/mentor-unified-notification-model";
 import {MentorSourceNotificationRead} from "./mentor-source-notification-read";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function MentorPersonalRead({id}:{id:string}){
  const router=useRouter();
@@ -159,12 +159,11 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,pers
             })} IST
           </time>
           <div className="flex flex-wrap items-center gap-2">
-            {href?<Link href={href}
+            {href?<ButtonLink variant="secondary" href={href}
               aria-disabled={opening===item.source+":"+item.id}
-              onClick={event=>openNotification(event,item,href)}
-              className="inline-flex min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-link">
+              onClick={event=>openNotification(event,item,href)}>
               {opening===item.source+":"+item.id?"Marking read…":"Open →"}
-            </Link>:null}
+            </ButtonLink>:null}
             {item.read===false&&item.source==="PERSONAL"?
               <MentorPersonalRead id={item.id}/>:null}
             {item.source!=="PERSONAL"&&item.read!==null&&item.receiptKey?

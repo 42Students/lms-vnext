@@ -3,10 +3,10 @@ import { Dropdown } from "@/components/ui/dropdown";
 import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
 
-import Link from "next/link";
 import { usePathname,useRouter } from "next/navigation";
 import { tpoDriveTabs,tpoDriveMoreTabs } from "@/modules/placements/tpo-drive-tab-model";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Keep the same drive navigation and active state on every nested workflow. */
 export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
@@ -44,11 +44,11 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
         {...(moreActive ? {triggerClassName:"!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-[var(--lms-primary-text)]"} : {})}>
         <div className="grid min-w-52 gap-1">
           {moreTabs.map(tab=>(
-            <Link key={tab.href} href={tab.href}
+            <TextLink variant="bare" key={tab.href} href={tab.href}
               aria-current={selected===tab.href?"page":undefined}
               className={`flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] px-3 py-2 text-sm font-semibold leading-5 text-primary-text break-words [overflow-wrap:anywhere] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-ring motion-reduce:transition-none ${selected===tab.href?"bg-[var(--lms-primary-subtle)]":""}`}>
               {tab.label}
-            </Link>
+            </TextLink>
           ))}
         </div>
       </Dropdown>

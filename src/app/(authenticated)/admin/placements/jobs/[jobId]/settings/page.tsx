@@ -6,7 +6,6 @@ import {PlacementDraftEditForm} from "@/components/placements/placement-draft-ed
 import {listPrograms} from "@/modules/academics/program-service";
 import {listCohorts} from "@/modules/academics/cohort-service";
 import {listSections} from "@/modules/academics/section-service";
-import Link from "next/link";
 import {SuperAdminDriveStatusControl} from "@/components/admin/super-admin-drive-status-control";
 import {Banner} from "@/components/ui/banner";
 import {ErrorState} from "@/components/ui/error-state";
@@ -22,6 +21,7 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 export default async function DriveSettingsPage({params}:{params:Promise<{jobId:string}>}){
  const {jobId}=await params;
  const context=await getCurrentRequestContext();
@@ -47,7 +47,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    <ErrorState title="Failed to load drive settings"
     description="The selected college's job details could not be verified. No changes have been made."
     action={<div className="flex flex-wrap gap-3">
-     <Link href={base+"/settings"} className="font-semibold text-primary-text underline">Retry settings</Link>
+     <TextLink href={base+"/settings"}>Retry settings</TextLink>
      <PageBackLink href="/admin/placements/drives" label="Back to drives"/>
     </div>}/>
   </div>;
@@ -143,7 +143,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     </section>:job.status==="DRAFT"?<ErrorState
      title="Draft editor is unavailable"
      description="One or more academic or eligibility options could not be verified. The form is disabled to prevent a partial edit."
-     action={<Link href={base+"/settings"} className="font-semibold text-link underline">Retry settings</Link>}
+     action={<TextLink href={base+"/settings"}>Retry settings</TextLink>}
     />:null}
    {job.status!=="DRAFT"&&employmentType&&workMode?
     <SuperAdminPublishedDriveEdit
@@ -216,7 +216,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
        <dd className="mt-1 text-foreground">{String(value)}</dd>
       </div>)}
     </dl>:<ErrorState title="Eligibility unavailable" description="Eligibility policy could not be loaded. Refresh before making changes."
-       action={<Link href={base+"/settings"} className="font-semibold text-link underline">Retry</Link>}/>}
+       action={<TextLink href={base+"/settings"}>Retry</TextLink>}/>}
    </div>
    {job.status!=="PUBLISHED"?<Banner tone="info">
     This drive is {job.status.toLowerCase()}. Changes to historic records require an explicit reason and preserve existing applications, eligibility and offers. Review the effects before confirming.
@@ -260,8 +260,8 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    <SuperAdminDriveArchive jobId={jobId} title={job.title}/>
   </section>:null}
   <div className="flex flex-wrap gap-4">
-   <Link href="/admin/placements/organization-applications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Search organization applications →</Link>
-   <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring">Platform placement policy →</Link>
+   <TextLink href="/admin/placements/organization-applications" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Search organization applications →</TextLink>
+   <TextLink href="/admin/placements" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Platform placement policy →</TextLink>
   </div>
  </div>;
 }

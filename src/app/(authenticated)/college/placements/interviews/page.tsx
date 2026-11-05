@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {reportPageReadFailure} from "@/observability/page-read-failure";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -36,7 +35,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   companyId:first(raw.companyId)||undefined,departmentId:first(raw.departmentId)||undefined,
   sort:first(raw.sort)??"EARLIEST",page:first(raw.page)??"1",pageSize:first(raw.pageSize)??"20"};
  const valid=collegeInterviewFilters.safeParse(input);
- if(!valid.success)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>}/></div>;
+ if(!valid.success)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<TextLink href="/college/placements/interviews" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data).catch(error=>{
   reportPageReadFailure({
     event:"college.interview_directory_failed",
@@ -47,7 +46,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  });
  if(!data)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/>
   <ErrorState title="Couldn\'t load interviews" description="The interview calendar could not be refreshed. Retry the same college view."
-   action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>
+   action={<TextLink href="/college/placements/interviews" className="inline-flex min-h-11 items-center">Retry</TextLink>}/>
  </div>;
  const build=(page:number,format:"html"|"ics"|"csv"="html")=>{
   const query=new URLSearchParams({q:valid.data.q,status:valid.data.status,
@@ -66,7 +65,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  const hasActiveFilters=Boolean(valid.data.q||valid.data.status!=="ALL"||valid.data.mode!=="ALL"||valid.data.type!=="ALL"||valid.data.companyId||valid.data.departmentId);
  const columns:DataTableColumn<(typeof data.rows)[number]>[]=[
   {key:"job",header:"Job",mobilePriority:"primary",cell:row=><div className="min-w-0">
-    <Link href={applicantHref(row)} className="break-words font-semibold text-primary-text hover:underline">{row.job}</Link>
+    <TextLink href={applicantHref(row)} className="break-words">{row.job}</TextLink>
     <span className="mt-1 block w-fit rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">{row.company}</span>
   </div>},
   {key:"candidate",header:"Candidate",mobilePriority:"secondary",cell:row=><div className="min-w-0">
@@ -91,8 +90,8 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   </span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="min-w-0 space-y-2">
     <div className="flex min-w-0 flex-wrap items-center gap-3">
-      <Link href={applicantHref(row)} aria-label={"View "+row.student+" for "+row.job}
-        className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">View</Link>
+      <TextLink href={applicantHref(row)} aria-label={"View "+row.student+" for "+row.job}
+        className="inline-flex min-h-9 items-center">View</TextLink>
       <TextLink href={singleIcsHref(row)} download={"interview-"+row.id+".ics"}
         aria-label={"Download interview calendar for "+row.student+" and "+row.job}
         className="inline-flex min-h-9 items-center">ICS ↓</TextLink>
@@ -106,7 +105,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   <PageHeader title="Interviews"
    description="Review the interview schedule, conflicts and candidate context without leaving the placements workspace." actions={<div className="flex flex-wrap gap-2">
      <CollegeInterviewRefresh/>
-     <Link href="/college/placements/calendar" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">Calendar view</Link>
+     <ButtonLink variant="secondary" href="/college/placements/calendar">Calendar view</ButtonLink>
      <Disclosure title="Exports" className="w-full min-w-0 md:w-auto"><div className="flex min-w-0 flex-col items-stretch gap-2 py-2 sm:flex-row sm:items-center"><ButtonLink variant="secondary" href={build(1,"ics")} className="w-full md:w-auto">Download .ics</ButtonLink><ButtonLink variant="secondary" href={build(1,"csv")} className="w-full md:w-auto">Export CSV</ButtonLink></div></Disclosure></div>}/>
   <p className="text-xs text-muted-foreground" aria-label="Interview company scope">{valid.data.companyId?data.companies.find(item=>item.id===valid.data.companyId)?.name??"Selected company":"All companies"}</p>
   {!data.ready?<Banner tone="warning">
@@ -120,7 +119,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     </Label>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
       <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Apply filters</Button>
-      <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center justify-center text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>
+      <TextLink href="/college/placements/interviews" className="inline-flex min-h-11 items-center justify-center md:min-h-9">Clear filters</TextLink>
     </div>
     <Disclosure title="Advanced filters"
       defaultOpen={Boolean(valid.data.companyId || valid.data.departmentId || valid.data.status!=="ALL" || valid.data.mode!=="ALL" || valid.data.type!=="ALL" || valid.data.sort!=="UPCOMING")}
@@ -200,7 +199,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       ↓ Export CSV
     </ButtonLink>
     {data.summary.conflicts>0?<StatusBadge tone="error">{data.summary.conflicts} {data.summary.conflicts===1?"conflict":"conflicts"}</StatusBadge>:null}
-    {hasActiveFilters?<Link href="/college/placements/interviews" className="inline-flex min-h-9 items-center text-primary-text underline">Clear filters</Link>:null}
+    {hasActiveFilters?<TextLink href="/college/placements/interviews" className="inline-flex min-h-9 items-center">Clear filters</TextLink>:null}
    </div>
    {data.limited?<CollegeInterviewNotice message="Export includes at most the first 10,000 matching records; the full matching count is displayed. Narrow filters for a complete view."/>:null}
    {data.conflictsIncomplete?<CollegeInterviewNotice message="More than 10,000 overlapping bookings exist in this period. Conflict flags may be incomplete; narrow the time range before scheduling."/>:null}
@@ -210,8 +209,8 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="min-w-0"><strong className="block break-words">{row.job}</strong>
             <span className="mt-1 block text-xs text-muted-foreground">{row.company}</span></div>
-          <Link href={applicantHref(row)} aria-label={"View "+row.student+" for "+row.job}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">View</Link>
+          <TextLink href={applicantHref(row)} aria-label={"View "+row.student+" for "+row.job}
+            className="inline-flex min-h-11 items-center">View</TextLink>
         </div>
         <p className="text-sm">{row.student} <span className="text-muted-foreground">· {row.department??"—"}</span></p>
         <p className="text-sm">{row.typeLabel} · {row.statusLabel} · {formatter.format(row.start)} IST</p>
@@ -232,13 +231,13 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
         rows={data.rows} rowHref={applicantHref} getRowKey={row=>row.id}
         empty={<EmptyState title={hasActiveFilters?"No matching interviews":"No interviews scheduled yet."}
           description={hasActiveFilters?"No interviews match your filters. Try adjusting filters or schedule interviews from the Jobs module.":undefined}
-          action={hasActiveFilters?<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>:undefined}/>} />
+          action={hasActiveFilters?<TextLink href="/college/placements/interviews" className="inline-flex min-h-11 items-center">Clear filters</TextLink>:undefined}/>} />
     </div>
    </section>
    <nav aria-label="Interview result pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm">
-    {valid.data.page>1?<Link href={build(valid.data.page-1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Previous</Link>:null}
+    {valid.data.page>1?<TextLink href={build(valid.data.page-1)} className="min-h-11 md:min-h-9 inline-flex items-center">Previous</TextLink>:null}
     <span>Page {valid.data.page} of {data.pageCount}</span>
-    {valid.data.page<data.pageCount?<Link href={build(valid.data.page+1)} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Next</Link>:null}
+    {valid.data.page<data.pageCount?<TextLink href={build(valid.data.page+1)} className="min-h-11 md:min-h-9 inline-flex items-center">Next</TextLink>:null}
    </nav>
   </>}
  </div>;

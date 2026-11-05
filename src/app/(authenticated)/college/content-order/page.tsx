@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Banner} from "@/components/ui/banner";
@@ -8,6 +7,7 @@ import {
  listCollegeSectionSyllabusChoices,listCollegeSectionSyllabus,
 } from "@/modules/courses/college-section-syllabus-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeContentOrderPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -34,16 +34,16 @@ export default async function CollegeContentOrderPage({searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Class syllabus order"
    description="Arrange Videos, YouTube, Resources and Live Classes together in their complete Lesson sequence for a selected Section."/>
-  <Link href="/college/videos" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to Courses &amp; Content</Link>
+  <TextLink href="/college/videos" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Back to Courses &amp; Content</TextLink>
   <p className="text-sm font-semibold text-body">Choose an active Course and Section:</p>
   {choices.length?<nav aria-label="Choose a class" className="flex max-h-48 flex-wrap gap-2 overflow-y-auto">
-   {choices.map(item=><Link key={item.id}
+   {choices.map(item=><TextLink variant="bare" key={item.id}
     href={"/college/content-order?offeringId="+encodeURIComponent(item.offeringId)+"&deliveryId="+encodeURIComponent(item.id)}
     aria-current={selected?.id===item.id?"page":undefined}
     className={"inline-flex min-h-11 items-center rounded border px-3 text-xs font-semibold md:min-h-9 "+
      (selected?.id===item.id?"border-primary text-primary-text":"border-border text-body hover:border-primary")}>
     {item.courseCode} · {item.sectionName}
-   </Link>)}
+   </TextLink>)}
   </nav>:<Banner tone="info">No active Sections are available for content ordering in this college.</Banner>}
   {invalid?<ErrorState title="Class not found"
    description="Choose an active Course and Section in your selected college. Previous-college IDs are not reusable."/>:null}

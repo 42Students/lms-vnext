@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import {useEffect,useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
@@ -29,6 +28,7 @@ import {tpoDriveDayRoundLinks} from "@/modules/placements/tpo-drive-day-navigati
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type RoundData = Awaited<
   ReturnType<typeof getTpoRoundDriveDay>
@@ -330,15 +330,14 @@ export function TpoRoundDriveDayReadOnly({
           " · Round-focused operational overview"
         }
         actions={
-          <Link
+          <ButtonLink variant="secondary"
             href={
               "/tpo/placements/jobs/" +
               encodeURIComponent(data.job.id)
             }
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:bg-muted"
           >
             ← Back to job Drive Day
-          </Link>
+          </ButtonLink>
         }
       />
 
@@ -473,9 +472,9 @@ export function TpoRoundDriveDayReadOnly({
         <Heading level={2} size="sm" className="uppercase tracking-wide text-muted-foreground">
          Not here yet · {data.counts.waiting}
         </Heading>
-        <Link href={destinations.noShows} className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+        <TextLink href={destinations.noShows} className="inline-flex min-h-9 items-center text-sm">
          Review explicit absences
-        </Link>
+        </TextLink>
        </div>
        {data.counts.waiting>0?<ul className="divide-y divide-border">
         {data.rows.filter(row=>row.attendance==="WAITING").slice(0,8).map(student=>
@@ -502,7 +501,7 @@ export function TpoRoundDriveDayReadOnly({
       </section>
       <p className="text-xs leading-5 text-muted-foreground">
        Results entered here are staged; learners are told only after a confirmed apply action in the
-       <Link href={destinations.results} className="ml-1 font-semibold text-link underline">round results workspace</Link>.
+       <TextLink href={destinations.results} className="ml-1">round results workspace</TextLink>.
        Absent notifications are only confirmed when the attendance action reports successful delivery.
       </p>
       <section aria-label="Round progress">
@@ -555,9 +554,9 @@ export function TpoRoundDriveDayReadOnly({
       </section>
 
       <nav aria-label="Round operational actions" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-center">
-        <Link href={destinations.results} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-ring md:min-h-9">Review round results →</Link>
-        <Link href={destinations.schedule} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-ring md:min-h-9">Candidate schedule →</Link>
-        <Link href={destinations.noShows} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-ring md:min-h-9">Review explicit no-shows →</Link>
+        <ButtonLink variant="primary" href={destinations.results}>Review round results →</ButtonLink>
+        <ButtonLink variant="secondary" href={destinations.schedule}>Candidate schedule →</ButtonLink>
+        <ButtonLink variant="secondary" href={destinations.noShows}>Review explicit no-shows →</ButtonLink>
         <ButtonLink variant="secondary" href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}>
           Export round attendance (CSV)
         </ButtonLink>
@@ -660,7 +659,7 @@ export function TpoRoundDriveDayReadOnly({
           rows={shownRows}
           getRowKey={student=>student.applicationId}
           empty={<EmptyState title="No eligible applicants currently appear in this round’s roster."
-            action={<Link href={destinations.schedule} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Candidate schedule →</Link>} />}
+            action={<TextLink href={destinations.schedule} className="inline-flex min-h-11 items-center md:min-h-9">Candidate schedule →</TextLink>} />}
           columns={[
             {key:"student",header:"Student",mobilePriority:"primary" as const,
               cell:(student:(typeof data.rows)[number])=>student.displayName},

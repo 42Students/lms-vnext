@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function LearnerNotificationsError({ reset }: {
   error: Error & { digest?: string };
@@ -15,7 +15,7 @@ export default function LearnerNotificationsError({ reset }: {
       <p>Your notifications could not be loaded. Try again, or return to your dashboard.</p>
       <div className="flex w-full flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" variant="secondary" onClick={reset}>Retry</Button>
-        <Link href="/learn" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle md:min-h-9 hover:underline">Learner Home</Link>
+        <ButtonLink variant="secondary" href="/learn" className="w-full">Learner Home</ButtonLink>
       </div>
     </Alert>
   </section>;

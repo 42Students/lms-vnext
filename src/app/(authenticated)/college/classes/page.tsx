@@ -1,5 +1,4 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
 import { CollegeClassCreate } from "@/components/academics/college-section-management";
@@ -16,6 +15,7 @@ import { classesExportHref } from "@/modules/academics/college-classes-export-mo
 import { listCollegeSectionOptions } from "@/modules/academics/college-section-mutation-service";
 import { listRecurringPreviewOptions } from "@/modules/academics/college-recurring-preview-service";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeClassesPage({
   searchParams,
@@ -25,7 +25,7 @@ export default async function CollegeClassesPage({
     <PageHeader title="Classes & Sections" description="Create teaching sections within a batch, manage capacity and schedule recurring sessions from the same roster." />
     <div role="status" className="rounded-lg border border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] p-4 text-sm">
       Admin not assigned to a college. Contact your administrator to be assigned to a college.{" "}
-      <Link href="/dashboard" className="font-semibold text-primary-text underline">Choose a college workspace</Link>
+      <TextLink href="/dashboard">Choose a college workspace</TextLink>
     </div>
   </div>;
   const raw = readCollegeStructureParams(await searchParams);
@@ -34,7 +34,7 @@ export default async function CollegeClassesPage({
     <PageHeader title="Classes & Sections" />
     <ErrorState title="Invalid class filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
-      action={<Link href="/college/classes" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>} />
+      action={<TextLink href="/college/classes" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>} />
   </div>;
   const [classes, optionResult, recurringResult] = await Promise.all([
     listCollegeClasses(context, parsed.data),
@@ -45,10 +45,10 @@ export default async function CollegeClassesPage({
   const options = optionResult.options;
   return <CollegeStructureDirectory data={classes} {...(optionResult.error ? {} : { classOptions: options })} prepend={
     <div className="min-w-0 space-y-[var(--lms-space-3)]">
-      {optionResult.error ? <div role="alert" className="flex flex-wrap items-center gap-2 border border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] p-3 text-sm">Some setup options failed to load. <Link href="/college/classes" className="font-semibold underline">Retry options</Link></div> :
+      {optionResult.error ? <div role="alert" className="flex flex-wrap items-center gap-2 border border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] p-3 text-sm">Some setup options failed to load. <TextLink href="/college/classes">Retry options</TextLink></div> :
         <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />}
       <div className="flex min-w-0 flex-wrap items-center gap-2">
-        <Link href="/college/classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] md:min-h-9">Refresh</Link>
+        <ButtonLink variant="secondary" href="/college/classes">Refresh</ButtonLink>
         {recurringResult ? <CollegeRecurringEntry options={{...recurringResult,
           classes: recurringResult.classes.map(row => ({...row, updatedAt: row.updatedAt.toISOString()}))}} /> : null}
         <ButtonLink variant="secondary" href={classesExportHref(classes.query)} download="classes.csv">
@@ -60,10 +60,10 @@ export default async function CollegeClassesPage({
           the legacy overloaded /getClass method is intentionally not exposed. */}
       <Disclosure title="More class tools" contentClassName="pt-[var(--lms-space-3)]">
         <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
-          <Link href="/college/classes/recurring-preview"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-4)] text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring sm:w-auto md:min-h-9">
+          <ButtonLink variant="secondary" href="/college/classes/recurring-preview"
+            className="w-full sm:w-auto">
             Preview recurring class schedule
-          </Link>
+          </ButtonLink>
         </div>
         <p className="mt-[var(--lms-space-3)] max-w-[70ch] text-xs leading-5 text-muted-foreground">
           Export includes every class/section matching the current filters.

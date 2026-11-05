@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { Alert } from "@/components/ui/alert";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -15,6 +14,8 @@ import {CollegeDriveDuplicateAction} from "@/components/placements/college-drive
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeDriveOverviewPage({ params }: {
   params: Promise<{ jobId: string }>;
@@ -24,7 +25,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
     <PageHeader title="Drive overview"/>
     <ErrorState title="Admin not assigned to a college"
       description="Contact your administrator for a College Admin assignment before opening a placement drive."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+      action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>}/>
   </div>;
   // A direct/bookmarked URL must honor the same optional-module switch as
   // navigation. Do not fetch job, applicant or pipeline data when disabled.
@@ -32,7 +33,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
   if (!access.placements.enabled) return <div className="min-w-0 space-y-4">
     <PageHeader title="Drive overview"/>
     <Alert tone="warning">Placements is disabled for this college. Contact your administrator to enable the Placements module.</Alert>
-    <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to Drives</Link>
+    <TextLink href="/college/placements/drives" className="inline-flex min-h-11 items-center md:min-h-9">Back to Drives</TextLink>
   </div>;
   const {jobId}=await params;
   const [jobResult,overviewResult,funnelResult,attentionResult]=await Promise.allSettled([
@@ -48,7 +49,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
     <PageHeader title="Drive overview"/>
     <ErrorState title="Could not load this drive."
       description="Drive information could not be verified. No actions were applied."
-      action={<div className="flex flex-wrap gap-3"><Link href={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link><Link href="/college/placements/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to Drives</Link></div>}/>
+      action={<div className="flex flex-wrap gap-3"><TextLink href={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"} className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink><TextLink href="/college/placements/drives" className="inline-flex min-h-11 items-center md:min-h-9">Back to Drives</TextLink></div>}/>
   </div>;
   const job=jobResult.value;
   const overview=overviewResult.status==="fulfilled"?overviewResult.value:null;
@@ -78,7 +79,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
   const pipelineStages=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED","HIRED"] as const;
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <nav aria-label="Drive breadcrumb" className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Drives</Link>
+      <TextLink href="/college/placements/drives" className="inline-flex min-h-11 items-center md:min-h-9">Drives</TextLink>
       <span aria-hidden="true">/</span><span aria-current="page">Overview</span>
     </nav>
     <PageHeader title="Drive overview" description={drive.companyName+" · "+drive.seasonName}/>
@@ -99,20 +100,17 @@ export default async function CollegeDriveOverviewPage({ params }: {
           </div>
         </div>
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/settings`}
-           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-heading)] hover:bg-surface-subtle focus-ring md:min-h-9">
+          <ButtonLink variant="secondary" href={`/college/placements/jobs/${encodeURIComponent(jobId)}/settings`}>
            <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 3 5 5-10 10-5 1 1-5L16 3Z"/></svg>
            Edit drive
-          </Link>
-          <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications`}
-           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring md:min-h-9">
+          </ButtonLink>
+          <ButtonLink variant="primary" href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications`}>
            <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 5h18M3 12h18M3 19h18"/><path d="m16 8 4 4-4 4"/></svg>
            View applications
-          </Link>
-          <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications?stage=HIRED`}
-           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-[var(--lms-heading)] hover:bg-surface-subtle focus-ring md:min-h-9">
+          </ButtonLink>
+          <ButtonLink variant="secondary" href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications?stage=HIRED`}>
            View hired candidates
-          </Link>
+          </ButtonLink>
         </div>
       </div>
       {drive.description?.trim()?<Disclosure title={<>
@@ -123,13 +121,13 @@ export default async function CollegeDriveOverviewPage({ params }: {
       </Disclosure>:null}
       <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-border pt-3 text-xs">
         <CollegeDriveDuplicateAction jobId={jobId}/>
-        <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/settings`} className="inline-flex min-h-9 items-center font-semibold text-link underline">More drive actions</Link>
+        <TextLink href={`/college/placements/jobs/${encodeURIComponent(jobId)}/settings`} className="inline-flex min-h-9 items-center">More drive actions</TextLink>
       </div>
     </section>
     <section aria-label="Drive pipeline" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Pipeline</Heading>
       {!overview||!funnel?<Alert tone="warning">Could not load pipeline metrics. The drive header remains available, but application and funnel counts could not be verified. Missing counts have not been treated as zero.
-        <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/overview`} className="ml-2 font-semibold text-link underline">Retry</Link>
+        <TextLink href={`/college/placements/jobs/${encodeURIComponent(jobId)}/overview`} className="ml-2">Retry</TextLink>
       </Alert>:null}
       <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] sm:grid-cols-3 xl:grid-cols-6">
         {pipelineStages.map((stage,index)=>{

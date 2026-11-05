@@ -1,5 +1,4 @@
 import { Pagination } from "@/components/ui/pagination";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -21,6 +20,7 @@ import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; sharePage?:string|string[]; q?:string|string[] };
 const first = (value: string | string[] | undefined) =>
@@ -40,8 +40,8 @@ export default async function TpoShortlistSharePreviewPage({
   if(Object.values(search).some(Array.isArray))return <div className="min-w-0 space-y-3">
     <PageHeader title="Recruiter-visible shortlist preview"/>
     <Alert tone="error">Duplicate share-preview filters were received. Clear filters before previewing or creating a company share.</Alert>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
+     className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
   </div>;
   const parsed = tpoShareableShortlistQuerySchema.safeParse({
     jobId, ...(first(search.page) ? { page: first(search.page) } : {}),
@@ -68,8 +68,8 @@ export default async function TpoShortlistSharePreviewPage({
       title={data.job.title + " · Recruiter-visible shortlist preview"}
       description="Read-only, current submitted/shortlisted candidates. This is a TPO report, not a sent share or authorization for an external recipient."
       actions={<>
-        <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring sm:w-auto md:min-h-9">← Current internal shortlist</Link>
+        <ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
+          className="w-full sm:w-auto">← Current internal shortlist</ButtonLink>
         <ButtonLink variant="secondary" href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
           className="w-full sm:w-auto">Export capped CSV</ButtonLink>
       </>}
@@ -84,7 +84,7 @@ export default async function TpoShortlistSharePreviewPage({
       <Button type="submit" className="min-h-11 w-full px-6 sm:w-auto md:min-h-9">
         Search
       </Button>
-      <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link sm:w-auto underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>
+      <TextLink href={path} className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">Clear</TextLink>
     </form>
     <p className="text-sm text-body">
       {data.total} currently shortlisted application(s) in this drive.
@@ -103,18 +103,18 @@ export default async function TpoShortlistSharePreviewPage({
         {key:"email",header:"Email",mobilePriority:"secondary",cell:item=><span className="break-all">{item.email??"Not recorded"}</span>},
       ]}/>
     </section>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(data.job.id)+"/share-audit"}
-     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] sm:w-auto focus-ring md:min-h-9">
+    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(data.job.id)+"/share-audit"}
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">
      View company-share access history
-    </Link>
+    </TextLink>
     <nav aria-label="Company-share link status filters"
       className="flex min-w-0 gap-2 overflow-x-auto pb-1 text-sm">
-      {companyShareStatusSchema.options.map(status=><Link key={status}
+      {companyShareStatusSchema.options.map(status=><ButtonLink variant="secondary" key={status}
        aria-current={shareStatus===status?"page":undefined}
-       className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)]"
+       className="shrink-0"
        href={companyShareLinksHref(data.job.id,status,1,parsed.data.q,data.page)}>
        {companyShareStatusLabel(status)}
-      </Link>)}
+      </ButtonLink>)}
     </nav>
     {(linkPage.wasInvalid||!parsedStatus.success)?<Alert tone="warning">
       An invalid company-share status or page was reset to the default view.

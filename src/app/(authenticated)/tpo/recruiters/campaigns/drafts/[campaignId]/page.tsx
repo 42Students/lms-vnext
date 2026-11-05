@@ -4,7 +4,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StatTile } from "@/components/ui/stat-tile";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
-import Link from "next/link";
 import {Pagination} from "@/components/ui/pagination";
 import {Disclosure} from "@/components/ui/disclosure";
 import {notFound,redirect} from "next/navigation";
@@ -17,6 +16,7 @@ import {TpoCampaignSendControl} from "@/components/tpo/tpo-campaign-send-control
 import {TpoCampaignPrototypeSidebar} from "@/components/tpo/tpo-campaign-prototype-sidebar";
 import {TpoCampaignSentStory} from "@/components/tpo/tpo-campaign-sent-story";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 /** The persisted provider receipt state determines the old LMS status-pill tone. */
 function receiptTone(status:string):"neutral"|"info"|"success"|"warning"|"error" {
  if(status==="SENT")return "success";
@@ -48,10 +48,10 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
  return <div className="min-w-0 space-y-4">
   <PageHeader title={draft?.title??"Campaign draft"}
     {...(draft?{description:draft.sender_name+" · "+draft.status+" · "+draft.total_recipients+" potential recipients · "+draft.segment.replaceAll("_"," ")}:{})}
-    actions={<Link href="/tpo/recruiters/campaigns"
-      className="inline-flex min-h-11 w-full min-w-0 items-center justify-center text-sm sm:w-auto md:min-h-9 font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring">
+    actions={<TextLink href="/tpo/recruiters/campaigns"
+      className="inline-flex min-h-11 w-full min-w-0 items-center justify-center text-sm sm:w-auto md:min-h-9">
       ← Campaign history
-    </Link>}/>
+    </TextLink>}/>
   <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(250px,320px)_minmax(0,1fr)]">
    <TpoCampaignPrototypeSidebar rows={campaigns?.rows??[]}
     ready={campaigns?.ready===true} actorUserId={context.user.id} activeId={campaignId}/>
@@ -93,8 +93,8 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
      <p className="text-xs text-muted-foreground leading-5">Names and recorded provider outcomes only. Sent means the email provider accepted the request, not that the recruiter read it.</p>
      {recipients.rows.length?<ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {recipients.rows.slice((page-1)*25,page*25).map(row=><li key={row.id} className="flex min-w-0 flex-col items-start gap-2 py-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">
-       <Link href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
-        className="inline-flex min-h-11 md:min-h-9 min-w-0 items-center break-words font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring">{row.name}</Link>
+       <TextLink href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
+        className="inline-flex min-h-11 md:min-h-9 min-w-0 items-center break-words">{row.name}</TextLink>
        <StatusBadge tone={receiptTone(row.status)}>
         {({PENDING:"Not sent",QUEUED:"Queued · delivery not confirmed",SENT:"Provider accepted",FAILED:"Failed",
           SKIPPED_NO_EMAIL:"Skipped · no email",SKIPPED_UNSUBSCRIBED:"Skipped · opted out",

@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { z } from "zod";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import Link from "next/link";
 import {learnerAttendanceIstMonth,learnerAttendanceMonthSchema} from "@/modules/attendance/learner-attendance-filter-model";
 import {learnerAttendanceMonthWindow} from "@/modules/attendance/learner-attendance-calendar-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -14,6 +13,8 @@ import { Alert } from "@/components/ui/alert";
 import {
   getLearnerAttendanceWorkspace,
 } from "@/modules/attendance/learner-service";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type AttendanceParams={month?:string|string[];deliveryId?:string|string[]};
 function AttendanceLoading() {
@@ -44,8 +45,8 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
       <PageHeader title="Attendance" />
       <ErrorState title="Invalid course attendance link"
         description="Select a course from your own attendance list; a repeated or malformed course selector was not used."
-        action={<Link href="/learn/attendance"
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">View my attendance</Link>} />
+        action={<TextLink href="/learn/attendance"
+          className="inline-flex min-h-11 items-center md:min-h-9">View my attendance</TextLink>} />
     </div>;
   }
   // Course attendance deep links remain scoped by the learner enrollment
@@ -63,10 +64,9 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
     <Alert tone="error" role="alert">
       <strong>Failed to load attendance.</strong>
       Something went wrong loading attendance for this month. No attendance records were changed.
-      <Link href={"/learn/attendance?"+new URLSearchParams({month:selected,...(deliveryId?{deliveryId}:{})}).toString()}
-        className="lms-inline-link font-semibold underline underline-offset-4">
+      <TextLink href={"/learn/attendance?"+new URLSearchParams({month:selected,...(deliveryId?{deliveryId}:{})}).toString()}>
         Retry attendance
-      </Link>
+      </TextLink>
     </Alert>
   </div>;
   const workspace=loaded.workspace;
@@ -81,14 +81,13 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
         <span className="inline-flex min-h-9 items-center rounded-lg border border-border px-3 text-sm font-semibold">
           {workspace.records.length} {workspace.records.length===1?"Session":"Sessions"}
         </span>
-        <Link href={"/learn/attendance/calendar?"+new URLSearchParams({month:selected,...(deliveryId?{deliveryId}:{})}).toString()}
-          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] focus-ring">
+        <ButtonLink variant="secondary" href={"/learn/attendance/calendar?"+new URLSearchParams({month:selected,...(deliveryId?{deliveryId}:{})}).toString()}>
           Monthly attendance calendar →
-        </Link></div>
+        </ButtonLink></div>
       )} />
       {raw.month!==undefined&&!learnerAttendanceMonthSchema.safeParse(raw.month).success ? <Alert tone="warning" role="status">
         The requested month filter was invalid. Showing the current month instead.
-        <Link href="/learn/attendance" className="ml-2 font-semibold underline">Clear month filter</Link>
+        <TextLink href="/learn/attendance" className="ml-2">Clear month filter</TextLink>
       </Alert> : null}
       <LearnerAttendanceWorkspace
         defaultMonth={defaultMonth}

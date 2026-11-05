@@ -1,5 +1,4 @@
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -11,6 +10,7 @@ import { getActivityEventDetail } from "@/modules/activity/service";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
@@ -110,11 +110,10 @@ export default async function ActivityDetailPage({
       </section>
 
       <div className="flex flex-wrap gap-3 border-b border-border pb-4">
-        <Link href={(isSuperAdmin(context)?"/admin/audit":"/activity")+"?view=all&range=ALL&subjectType="+
-          encodeURIComponent(event.subjectType)+"&subjectId="+encodeURIComponent(event.subjectId)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        <ButtonLink variant="secondary" href={(isSuperAdmin(context)?"/admin/audit":"/activity")+"?view=all&range=ALL&subjectType="+
+          encodeURIComponent(event.subjectType)+"&subjectId="+encodeURIComponent(event.subjectId)}>
           View history for this record
-        </Link>
+        </ButtonLink>
       </div>
 
       <section className="space-y-3">

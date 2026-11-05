@@ -1,7 +1,6 @@
 "use client";
 
 import { Disclosure } from "@/components/ui/disclosure";
-import Link from "next/link";
 import {learnerAttendanceTimeLabel as timeLabel} from "@/modules/attendance/learner-attendance-display-date-model";
 import {learnerAttendanceUrlRecoveryNotice} from "@/modules/attendance/learner-attendance-url-recovery-model";
 import {monthKey,parseMonth,shiftMonth} from "@/modules/attendance/learner-attendance-month-navigation-model";
@@ -369,10 +368,9 @@ export function LearnerAttendanceWorkspace({
               {course.sectionName} ·{" "}{course.academicPeriodName}
             </p>
             {learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month) ? (
-              <Link href={learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month)!}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring md:min-h-9">
+              <ButtonLink variant="secondary" href={learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month)!}>
                 Full course attendance history →
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         ) : null}

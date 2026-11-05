@@ -11,7 +11,6 @@ import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {StudentClassMoveAction} from "@/components/college/student-class-move-action";
 import {SuperAdminStudentBulkAccess} from "@/components/admin/super-admin-student-bulk-access";
-import Link from "next/link";
 import {CollegeStudentRegisterForm} from "@/components/college/college-student-register-form";
 import {CollegeStudentCsvImport} from "@/components/college/college-student-csv-import";
 import {SuperAdminStudentImportHistory} from "@/components/admin/super-admin-student-import-history";
@@ -24,6 +23,7 @@ import {getSuperAdminPeopleFilterOptions} from "@/modules/admin-ui/super-admin-p
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 const statuses=["ALL","ACTIVE","SUSPENDED","ENDED"] as const;
 export default async function SuperAdminStudentsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -67,19 +67,19 @@ export default async function SuperAdminStudentsPage({searchParams}:{
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
     {choices?<ButtonLink variant="primary" href="#register-student-heading"><span aria-hidden="true">＋</span>Register students</ButtonLink>:null}
-    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-on-primary active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-on-primary focus-ring">
+    <ButtonLink variant="secondary" href="/admin/people">
       Manage memberships, profiles and account status →
-    </Link>
+    </ButtonLink>
    </div>:undefined}/>
   <section aria-label="Student support and retention policy" className="min-w-0 border-b border-border pb-3 text-sm text-body">
    <Heading level={2} className="text-foreground">Account access and support</Heading>
    <p className="mt-1">The legacy Impersonate action is retired. This membership-based workspace does not exchange Super Admin tokens for a learner session or replace active session credentials. Use the student row's audited profile, history and membership controls for support.</p>
    <p className="mt-1">The legacy permanent Delete action is retired for learners with attendance, submissions, placement or audit records. Suspend or end college access instead; historical records remain available under their original identity.</p>
-   <Link href="/admin/people" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Open audited membership controls</Link>
+   <TextLink href="/admin/people" className="inline-flex min-h-11 items-center md:min-h-9">Open audited membership controls</TextLink>
   </section>
-  {filtersUnavailable?<Alert tone="warning">Academic filter choices could not be loaded. Student directory rows remain available; edit and class-move actions are temporarily disabled. <Link href="/admin/students" className="font-semibold underline">Retry academic filters</Link></Alert>:null}
-  {choicesUnavailable?<Alert tone="warning">Registration and bulk-import academic choices could not be loaded. Those actions are disabled until the selected college's options can be verified. <Link href="/admin/students" className="font-semibold underline">Retry registration options</Link></Alert>:null}
-  {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <Link href="/admin/students" className="font-semibold underline">Retry import history</Link></Alert>:null}
+  {filtersUnavailable?<Alert tone="warning">Academic filter choices could not be loaded. Student directory rows remain available; edit and class-move actions are temporarily disabled. <TextLink href="/admin/students">Retry academic filters</TextLink></Alert>:null}
+  {choicesUnavailable?<Alert tone="warning">Registration and bulk-import academic choices could not be loaded. Those actions are disabled until the selected college's options can be verified. <TextLink href="/admin/students">Retry registration options</TextLink></Alert>:null}
+  {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <TextLink href="/admin/students">Retry import history</TextLink></Alert>:null}
   <AdminScopedReadPage headingMode="section" intro={choices?
    <Disclosure title={<>
      <span aria-hidden="true" className="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-border text-lg leading-none">＋</span>
@@ -117,13 +117,12 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     {row.details.some(detail=>detail.startsWith("Mobile: ")&&
        detail.slice("Mobile: ".length).trim()!=="—"&&
        detail.slice("Mobile: ".length).trim().length>0)?
-      <Link href="/admin/otp-lockout"
-       aria-label={"Clear OTP lockout for "+row.title+" using verified mobile number"}
-       className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline md:min-h-9">
+      <ButtonLink variant="secondary" href="/admin/otp-lockout"
+       aria-label={"Clear OTP lockout for "+row.title+" using verified mobile number"}>
        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
         <rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>
        </svg>
        Clear OTP lockout
-      </Link>:null}
+      </ButtonLink>:null}
    </div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
 }

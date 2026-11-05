@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {Disclosure} from "@/components/ui/disclosure";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -28,6 +27,7 @@ import { Pagination } from "@/components/ui/pagination";
 import {LearnerSaveDriveButton} from "./learner-save-drive-button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 const PAGE_SIZE = 20;
 
@@ -345,10 +345,10 @@ export function LearnerJobsBrowse({
             <EmptyState title="No open jobs right now"
               description="New opportunities are added regularly. Check back soon or contact your placement cell."/>
           </div>
-          <Link href="/learn/my-placements"
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
+          <TextLink href="/learn/my-placements"
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
             Review placement dashboard →
-          </Link>
+          </TextLink>
           <Button type="button" variant="secondary" onClick={()=>router.refresh()}
             className="min-h-11 w-full sm:w-auto md:min-h-9">
             Retry loading drives

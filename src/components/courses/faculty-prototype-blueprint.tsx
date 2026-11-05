@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {FacultyPrototypeLessonItems,type FacultyBlueprintItem} from "./faculty-prototype-lesson-items";
 import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
 import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submission-methods";
@@ -9,6 +8,7 @@ import type {FacultyBlueprintLessonEngagement} from "@/modules/courses/faculty-b
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
 const istDate=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
@@ -103,15 +103,15 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
      const active=lesson.id===current?.id;
      const live=lesson.visibleToStudents&&workspace.learningPath?.status==="PUBLISHED";
      return <li key={lesson.id} className={active?"border-l-2 border-l-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border-l-2 border-l-transparent"}>
-      <Link href={lessonUrl(lesson.id)} aria-current={active?"page":undefined}
-       className="flex min-h-[64px] items-center gap-4 px-4 py-3 no-underline hover:bg-[color:var(--lms-neutral-50)]">
+      <TextLink href={lessonUrl(lesson.id)} aria-current={active?"page":undefined}
+       className="flex min-h-[64px] items-center gap-4 px-4 py-3">
        <span className="w-4 shrink-0 text-sm text-[color:var(--lms-text-muted)]">{index+1}</span>
        <span className="min-w-0 flex-1"><strong className="block text-sm text-[color:var(--lms-heading)]">{lesson.name}</strong>
         <span className="faculty-proto-subtitle">{count===0?"Empty":count+" items"}</span></span>
        <span className={"rounded-full px-2 py-0.5 text-xs font-bold "+
          (count===0?"bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-text-muted)]":live?"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success-strong)]":"bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]")}>
         {count===0?"Empty":live?"Live":"Draft"}</span>
-      </Link>
+      </TextLink>
      </li>;
     })}
    </ol>
@@ -128,12 +128,12 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
       className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs disabled:cursor-not-allowed disabled:opacity-60">Rename</Button>
      <Disclosure title="+ Add content ▾" className="relative">
       <div className="absolute right-0 z-(--lms-z-sticky-inline) mt-2 min-w-52 overflow-hidden rounded-lg border border-[color:var(--lms-border)] bg-surface py-1 shadow-lg">
-       {FACULTY_BLUEPRINT_ADD_KINDS.map(label=><Link
+       {FACULTY_BLUEPRINT_ADD_KINDS.map(label=><TextLink variant="bare"
         key={label}
         className="block px-4 py-2 text-sm text-[color:var(--lms-text-body)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:bg-[color:var(--lms-primary-subtle)]"
         href={facultyBlueprintAddTarget(course.deliveryId,current.id,label)}>
         {label}
-       </Link>)}
+       </TextLink>)}
        <p className="border-t border-[color:var(--lms-border)] px-4 py-2 text-xs text-[color:var(--lms-text-muted)]">Uses Section-scoped video upload, content authoring or full assessment builder.</p>
       </div>
      </Disclosure>
@@ -159,8 +159,8 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
          selectedEngagement?.rosterTotal===0?"No enrolled learners in this class.":
          "No measurable video or assessment activity in this lesson."}
        </p>}
-       <Link className="mt-2 inline-flex font-semibold text-[color:var(--lms-button-primary)] hover:underline"
-        href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}>View students</Link>
+       <TextLink className="mt-2 inline-flex text-[color:var(--lms-button-primary)]"
+        href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}>View students</TextLink>
     </footer>:null}
   </section>
  </section>;

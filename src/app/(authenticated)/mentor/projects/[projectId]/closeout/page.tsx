@@ -1,10 +1,10 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {MentorProjectCloseoutControl} from "@/components/projects/mentor-project-closeout-control";
 import {getMentorProjectCloseout} from "@/modules/projects/mentor-closeout-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function MentorProjectCloseoutPage({
   params,
@@ -21,10 +21,10 @@ export default async function MentorProjectCloseoutPage({
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Project closeout"
       description={data.title+" · Current state "+data.status}
-      actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+      actions={<TextLink data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Delivery workspace
-      </Link>} />
+      </TextLink>} />
     <section className="min-w-0 border-b border-border pb-4 md:pb-6">
       <Heading level={2} size="base" className="m-0 leading-6 text-foreground">Persisted completion checklist</Heading>
       <ul className="mt-3 grid min-w-0 gap-0 divide-y divide-border">{items.map(([label,passed])=>

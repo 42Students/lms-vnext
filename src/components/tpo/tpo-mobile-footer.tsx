@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import "@/components/shell/legacy-mobile-footer.css";
 import { usePathname } from "next/navigation";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Legacy phone footer destinations. More opens the actual /tpo/more page
  * instead of an overlay that hides the page navigation. */
@@ -31,13 +31,13 @@ export function TpoMobileFooter() {
         const active = link.label === "More" ? moreActive :
           pathname === link.href || pathname.startsWith(link.href + "/") ||
           (link.label === "Engage" && pathname.startsWith("/tpo/companies"));
-        return <Link key={link.label} href={link.href} title={link.label}
+        return <TextLink variant="bare" key={link.label} href={link.href} title={link.label}
           aria-current={active ? "page" : undefined}
           className={"lms-tpo-mobile-footer-item flex h-full min-h-16 min-w-0 flex-col items-center justify-center px-1 py-1 text-center focus-ring-inset " + (active ? "active" : "")}>
           <Image src={link.icon} alt="" width={24} height={24}
             className="lms-tpo-mobile-footer-icon"/>
           <span className="lms-tpo-mobile-footer-label">{link.label}</span>
-        </Link>;
+        </TextLink>;
       })}
     </nav>
   );

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {TpoBatchWorkspaceTabs} from "@/components/tpo/tpo-batch-workspace-tabs";
 import {TpoBatchClassDecision} from "@/components/tpo/tpo-batch-class-decision";
@@ -7,6 +6,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 export const dynamic="force-dynamic";
 export default async function TpoBatchClassesPage({params}:{params:Promise<{batchId:string}>}){
  const {batchId}=await params;
@@ -14,7 +14,7 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
  return <div className="min-w-0 space-y-4">
   <PageHeader title={"Classes · "+data.batch.name}
    description="Class decisions are inherited by students without a direct eligibility override."
-   actions={<Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline focus-ring md:min-h-9">← All batches</Link>}/>
+   actions={<TextLink href="/tpo/batches" className="inline-flex min-h-11 items-center justify-center md:min-h-9">← All batches</TextLink>}/>
   <TpoBatchWorkspaceTabs batchId={batchId} active="classes"/>
   {!data.ready?<Alert tone="warning">Batch lifecycle storage is unavailable. Decisions cannot be saved.</Alert>:null}
   {data.finished?<Alert tone="warning">This batch is finished. Eligibility decisions are read-only.</Alert>:null}
@@ -23,8 +23,8 @@ export default async function TpoBatchClassesPage({params}:{params:Promise<{batc
    {data.classes.map(row=><section key={row.id} className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] py-5 first:pt-0">
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
       <div><Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{row.name}</Heading><p className="text-xs text-muted-foreground leading-5">{row.code} · {row.students} student{row.students===1?"":"s"}</p></div>
-      <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/students?classId="+encodeURIComponent(row.id)}
-        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">View students →</Link>
+      <TextLink href={"/tpo/batches/"+encodeURIComponent(batchId)+"/students?classId="+encodeURIComponent(row.id)}
+        className="inline-flex min-h-11 items-center md:min-h-9">View students →</TextLink>
     </div>
     <p className="text-sm leading-[22px]">Effective: <strong>{row.effectiveDecision.replaceAll("_"," ")}</strong>
      {row.decision==="NOT_DECIDED"?" · Follows the batch":" · Class override"}</p>

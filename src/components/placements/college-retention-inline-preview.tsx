@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useState} from "react";
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 
 type Row={id:string;jobTitle:string;applicationStatus:string;lastUpdated:string};
 type Preview={rows:Row[];totalStaleCount:number;truncated:boolean;cutoff:string};
@@ -61,10 +61,10 @@ export function CollegeRetentionInlinePreview(){
      {data.truncated?<p role="status" className="text-xs text-muted-foreground">
       Showing first {data.rows.length} of {data.totalStaleCount} records. Open the full report to review other matches.
      </p>:null}
-     <Link href="/college/placements/retention?olderThanDays=180"
-      className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">
+     <TextLink href="/college/placements/retention?olderThanDays=180"
+      className="inline-flex min-h-11 items-center">
       Open full retention report →
-     </Link>
+     </TextLink>
     </div>:null}
   </div>:null}
  </section>;

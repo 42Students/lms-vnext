@@ -4,8 +4,8 @@ import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import {useEffect,useState} from "react";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
-import Link from "next/link";
 import {restoreHrUnsentDraft,clearHrUnsentDraftStores} from "@/modules/placements/hr-unsent-draft-storage-model";
+import { ButtonLink } from "@/components/ui/button-link";
 /** REC-home-drives-17: only a scoped, saved, validated draft can be continued. */
 export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;collegeId:string}){
  const [hasDraft,setHasDraft]=useState(false);
@@ -44,10 +44,10 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
      clearing the old browser data.
    </p>:null}
    <div className="mt-3 flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
-   <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto hover:border-primary hover:bg-primary-subtle focus-ring">
+   <ButtonLink variant="secondary" href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
+    className="w-full md:w-auto">
     Continue
-   </Link>
+   </ButtonLink>
    {hasDraft?<Button variant="ghost" type="button"
     className="min-h-11 w-full text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto"
     onClick={()=>{setError("");setConfirmDiscard(true);}}>Discard saved draft</Button>:null}

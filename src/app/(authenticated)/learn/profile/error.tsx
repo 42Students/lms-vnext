@@ -1,8 +1,8 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function LearnerProfileError({
   reset,
@@ -18,7 +18,7 @@ export default function LearnerProfileError({
       </p>
       <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
         <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
-        <Link href="/learn/courses" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline">Courses</Link>
+        <ButtonLink variant="secondary" href="/learn/courses" className="w-full sm:w-auto">Courses</ButtonLink>
       </div>
     </section>
   );

@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Delivery = { id: string; courseId: string; course: string; code: string; section: string };
 type Group = { id: string; name: string; capacity: number | null };
@@ -178,11 +178,10 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
                 offering.facultyCount!==undefined?`${offering.facultyCount} assigned`:"View faculty"}
             </div>
             <div role="cell" className="flex min-w-0 flex-wrap items-center gap-2">
-              <Link href={"/college/electives/"+encodeURIComponent(slotId)+"/offerings/"+
-                encodeURIComponent(offering.offeringId)+"/roster"}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary focus-ring md:min-h-9">
+              <ButtonLink variant="secondary" href={"/college/electives/"+encodeURIComponent(slotId)+"/offerings/"+
+                encodeURIComponent(offering.offeringId)+"/roster"}>
                 Roster & faculty
-              </Link>
+              </ButtonLink>
               {offering.status==="ACTIVE"?<>
                 <Button type="button" variant="secondary" onClick={()=>startEdit(offering)}>Edit</Button>
                 <Button type="button" variant="danger" disabled={busy} onClick={()=>void archive(offering)}>Archive</Button>

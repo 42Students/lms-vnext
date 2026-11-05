@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { ButtonLink } from "@/components/ui/button-link";
 
 /** The existing authenticated shell supplies the single legacy page canvas. */
 export default function NotFound() {
@@ -10,10 +10,10 @@ export default function NotFound() {
         <p className="m-0 max-w-prose break-words text-[13px] leading-5 text-body">
           This Super Admin page may have moved or is no longer available. Return to Tenant Setup, the verified Super Admin landing destination.
         </p>
-        <Link href="/admin/tenants"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-semibold leading-5 text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto md:min-h-[var(--lms-control-height)]">
+        <ButtonLink variant="primary" href="/admin/tenants"
+          className="w-full sm:w-auto">
           Go to Tenant Setup
-        </Link>
+        </ButtonLink>
       </div>
     </section>
   );

@@ -2,7 +2,6 @@ import {Button} from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import Link from "next/link";
 import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -27,6 +26,8 @@ import { placementFeatureEffects } from "@/modules/platform-settings/placement-f
 import {adminControlScopeTag} from "@/modules/module-access/admin-control-overview-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = Record<
   string,
@@ -86,12 +87,12 @@ export default async function SuperAdminFeaturesPage({
           title="Invalid feature filters"
           description="The search or page number is invalid. No college module settings were loaded."
           action={
-            <Link
+            <ButtonLink variant="secondary"
               href="/admin/features"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] w-full md:w-auto justify-center"
+              className="w-full md:w-auto"
             >
               Clear filters
-            </Link>
+            </ButtonLink>
           }
         />
       </div>
@@ -206,12 +207,11 @@ export default async function SuperAdminFeaturesPage({
           >
             Search
           </Button>
-          <Link
+          <ButtonLink variant="secondary"
             href="/admin/features"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]"
           >
             Clear
-          </Link>
+          </ButtonLink>
         </form>
       </section>
 
@@ -220,13 +220,13 @@ export default async function SuperAdminFeaturesPage({
           <Heading level={2} size="lg" className="m-0 text-foreground">
             College module matrix
           </Heading>
-          <Link href={adminFeatureExportHref({
+          <ButtonLink variant="secondary" href={adminFeatureExportHref({
             q:result.q,page:result.page,pageSize:result.pageSize,sort:result.sort,...(result.moduleFilter !== null && result.moduleFilter !== undefined ? {module: result.moduleFilter} : {}),
             storedState:result.stateFilter,locks:result.lockFilter,presence:result.presenceFilter,
             recent:result.recentFilter,searchField:result.searchField,
-          })} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">
+          })}>
             Export current page (CSV)
-          </Link>
+          </ButtonLink>
           <p className="m-0 text-sm text-muted-foreground">
             {result.total === 0
               ? "No matching active colleges"
@@ -272,10 +272,10 @@ export default async function SuperAdminFeaturesPage({
               },
             })),
             {key:"moduleAccess",header:"Module Access",mobilePriority:"action",cell:college=>
-              <Link href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
-                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">
+              <TextLink href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
+                className="inline-flex min-h-11 items-center md:min-h-9">
                 View access hierarchy →
-              </Link>},
+              </TextLink>},
           ]}/>
 
         <nav
@@ -287,7 +287,7 @@ export default async function SuperAdminFeaturesPage({
           </p>
           <div className="flex flex-wrap gap-2">
             {result.page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={adminFeaturesHref({
                   q: result.q,
                   sort: result.sort,
@@ -300,13 +300,12 @@ export default async function SuperAdminFeaturesPage({
                   page: result.page - 1,
                   pageSize:result.pageSize,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 ← Previous
-              </Link>
+              </ButtonLink>
             ) : null}
             {result.page < result.totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={adminFeaturesHref({
                   q: result.q,
                   sort: result.sort,
@@ -319,10 +318,9 @@ export default async function SuperAdminFeaturesPage({
                   page: result.page + 1,
                   pageSize:result.pageSize,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
                 Next →
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         </nav>

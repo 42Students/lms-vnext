@@ -1,9 +1,9 @@
 "use client";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {useEffect,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {safeTpoShellCounters,shellUnreadBadge} from "./shell-counts-model";
+import { ButtonLink } from "@/components/ui/button-link";
 /** Never infer zero from a failed request: omit badge until the server confirms a count. */
 export function TpoTopbarMessages(){
  const [count,setCount]=useState<number|null>(null);
@@ -21,9 +21,9 @@ export function TpoTopbarMessages(){
   document.addEventListener("visibilitychange",refresh);
   return ()=>{active=false;window.clearInterval(timer);document.removeEventListener("visibilitychange",refresh);};
  },[]);
- return <Link href="/tpo/messages" aria-label={"Messages"+(count!==null?", "+count+" unread":"")}
-  className="inline-flex min-h-11 max-w-full min-w-0 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] focus-ring md:min-h-9">
+ return <ButtonLink variant="secondary" href="/tpo/messages" aria-label={"Messages"+(count!==null?", "+count+" unread":"")}
+  className="max-w-full min-w-0">
   <span className="min-w-0 truncate">Messages</span>
   {shellUnreadBadge(count)?<Badge tone="error" className="shrink-0 whitespace-nowrap px-2 py-0.5 tabular-nums">{shellUnreadBadge(count)}</Badge>:null}
- </Link>;
+ </ButtonLink>;
 }

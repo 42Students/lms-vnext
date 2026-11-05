@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import type {MouseEvent} from "react";
 
 import { TpoGrid } from "@/components/tpo/grid/tpo-grid";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { TpoGridColumn } from "@/modules/placements/tpo-grid-model";
+import { TextLink } from "@/components/ui/text-link";
 
 /** Read-only, server-authorized and pagination-scoped company hiring totals. */
 export type HrCompanyReportSheetRow = {
@@ -31,56 +31,56 @@ const driveHref=(row:HrCompanyReportSheetRow)=>"/hr/placements/jobs/"+encodeURIC
 const columns: readonly TpoGridColumn<HrCompanyReportSheetRow>[] = [
   {key:"drive",label:"Drive",read:row=>row.title+" · "+row.status,
     render:row=><div className="min-w-0 space-y-1">
-      <Link href={driveHref(row)} className="inline-flex min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-ring"
-        aria-label={`Open drive ${row.title}`}>{row.title}</Link>
+      <TextLink href={driveHref(row)} className="inline-flex min-h-9 items-center"
+        aria-label={`Open drive ${row.title}`}>{row.title}</TextLink>
       <StatusBadge className="ml-2" tone="neutral">{row.status}</StatusBadge>
       <span className="block text-xs text-muted-foreground">{row.employmentType.replaceAll("_"," ")}</span>
     </div>},
   {key:"status",label:"Status",read:row=>row.status,
-    render:row=><Link href={driveHref(row)} aria-label={`Open drive ${row.title} status`}
-      className="block w-full min-h-9 py-2 text-body hover:text-link">{row.status}</Link>},
+    render:row=><TextLink href={driveHref(row)} aria-label={`Open drive ${row.title} status`}
+      className="block w-full min-h-9 py-2 text-body">{row.status}</TextLink>},
   {key:"published",label:"Published",read:row=>row.published,
-    render:row=><Link href={driveHref(row)} aria-label={`Open drive ${row.title} published date`}
-      className="block w-full min-h-9 py-2 text-body hover:text-link">{row.published}</Link>},
+    render:row=><TextLink href={driveHref(row)} aria-label={`Open drive ${row.title} published date`}
+      className="block w-full min-h-9 py-2 text-body">{row.published}</TextLink>},
   {key:"applied",label:"Applied",read:row=>row.applications,
-    render:row=><Link href={driveHref(row)} aria-label={`Open drive ${row.title} applications`}
-      className="block w-full min-h-9 py-2 text-body hover:text-link">{row.applications}</Link>,
+    render:row=><TextLink href={driveHref(row)} aria-label={`Open drive ${row.title} applications`}
+      className="block w-full min-h-9 py-2 text-body">{row.applications}</TextLink>,
     sortKind:"number",sortValue:row=>row.applications},
   {key:"submitted",label:"Submitted",read:row=>row.submittedApplications,
-    render:row=><Link href={driveHref(row)}
+    render:row=><TextLink href={driveHref(row)}
       aria-label={"Open drive "+row.title+" submitted report"}
-      className="block min-h-9 w-full py-2 text-body hover:text-link">
-      {row.submittedApplications}</Link>,
+      className="block min-h-9 w-full py-2 text-body">
+      {row.submittedApplications}</TextLink>,
     sortKind:"number",sortValue:row=>row.submittedApplications},
   {key:"withdrawn",label:"Withdrawn",read:row=>row.withdrawnApplications,
-    render:row=><Link href={driveHref(row)}
+    render:row=><TextLink href={driveHref(row)}
       aria-label={"Open drive "+row.title+" withdrawn report"}
-      className="block min-h-9 w-full py-2 text-body hover:text-link">
-      {row.withdrawnApplications}</Link>,
+      className="block min-h-9 w-full py-2 text-body">
+      {row.withdrawnApplications}</TextLink>,
     sortKind:"number",sortValue:row=>row.withdrawnApplications},
   {key:"offered",label:"Offered",read:row=>reportValue(offeredCount(row),row.reportUnavailable),
-    render:row=><Link href={driveHref(row)}
+    render:row=><TextLink href={driveHref(row)}
       aria-label={"Open drive "+row.title+" offered report"}
-      className="block min-h-9 w-full py-2 text-body hover:text-link">
-      {reportValue(offeredCount(row),row.reportUnavailable)}</Link>,
+      className="block min-h-9 w-full py-2 text-body">
+      {reportValue(offeredCount(row),row.reportUnavailable)}</TextLink>,
     sortKind:"number",sortValue:row=>offeredCount(row)},
   {key:"accepted",label:"Accepted",read:row=>reportValue(row.acceptedOffers,row.reportUnavailable),
-    render:row=><Link href={driveHref(row)}
+    render:row=><TextLink href={driveHref(row)}
       aria-label={"Open drive "+row.title+" accepted report"}
-      className="block min-h-9 w-full py-2 text-body hover:text-link">
-      {reportValue(row.acceptedOffers,row.reportUnavailable)}</Link>,
+      className="block min-h-9 w-full py-2 text-body">
+      {reportValue(row.acceptedOffers,row.reportUnavailable)}</TextLink>,
     sortKind:"number",sortValue:row=>row.reportUnavailable?null:row.acceptedOffers},
   {key:"declined",label:"Declined",read:row=>reportValue(row.declinedOffers,row.reportUnavailable),
-    render:row=><Link href={driveHref(row)}
+    render:row=><TextLink href={driveHref(row)}
       aria-label={"Open drive "+row.title+" declined report"}
-      className="block min-h-9 w-full py-2 text-body hover:text-link">
-      {reportValue(row.declinedOffers,row.reportUnavailable)}</Link>,
+      className="block min-h-9 w-full py-2 text-body">
+      {reportValue(row.declinedOffers,row.reportUnavailable)}</TextLink>,
     sortKind:"number",sortValue:row=>row.reportUnavailable?null:row.declinedOffers},
   {key:"joined",label:"Joined",read:row=>reportValue(row.joinedOffers,row.reportUnavailable),
-    render:row=><Link href={driveHref(row)}
+    render:row=><TextLink href={driveHref(row)}
       aria-label={"Open drive "+row.title+" joined report"}
-      className="block min-h-9 w-full py-2 text-body hover:text-link">
-      {reportValue(row.joinedOffers,row.reportUnavailable)}</Link>,
+      className="block min-h-9 w-full py-2 text-body">
+      {reportValue(row.joinedOffers,row.reportUnavailable)}</TextLink>,
     sortKind:"number",sortValue:row=>row.reportUnavailable?null:row.joinedOffers},
 ];
 
@@ -108,10 +108,10 @@ export function HrCompanyReportsGrid({rows,scopeKey}:{
     defaultVisibleKeys={["drive","applied","offered","accepted","declined","joined"]}
     mobilePrimaryKeys={["drive","applied","offered","accepted","declined","joined"]}
     rowActions={row=><div className="flex flex-wrap items-center gap-2">
-      <Link href={driveHref(row)}
-        className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-ring">
+      <TextLink href={driveHref(row)}
+        className="inline-flex min-h-11 md:min-h-9 items-center">
         Open drive
-      </Link>
+      </TextLink>
     </div>}/>
   </div>;
 }

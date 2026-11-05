@@ -5,8 +5,8 @@ import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import { useId, useRef, useState, useTransition } from "react";
-import Link from "next/link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
   membershipId: string; name: string; status: "ACTIVE" | "SUSPENDED" | "ENDED";
@@ -82,7 +82,7 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
             aria-describedby={reasonId+"-hint"} value={reason} disabled={pending} onChange={event=>setReason(event.target.value)}/>
           <span id={reasonId+"-hint"} className="text-xs font-normal text-muted-foreground">At least 3 characters, up to 500.</span>
         </Label>:<p className="max-w-prose break-words text-sm leading-5 text-body">Restore access for this student membership?</p>}
-        {error?<Alert tone="error">{error} {error.includes("Sign in again")?<Link href="/login" className="font-semibold underline">Sign in</Link>:null}</Alert>:null}
+        {error?<Alert tone="error">{error} {error.includes("Sign in again")?<TextLink href="/login">Sign in</TextLink>:null}</Alert>:null}
       </div>
     </ConfirmDialog>
   </div>;

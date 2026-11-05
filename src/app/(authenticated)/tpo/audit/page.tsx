@@ -9,7 +9,6 @@ import {Input} from "@/components/ui/input";
 import {TpoAuditSavedViews} from "@/components/tpo/tpo-audit-saved-views";
 import {tpoIndiaCalendarDay} from "@/modules/placements/tpo-local-date-model";
 import {TpoAuditGrid} from "@/components/tpo/tpo-audit-grid";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -36,6 +35,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 
 type SearchParams = {
@@ -109,12 +109,11 @@ export default async function TpoAuditPage({
           title="Invalid audit filters"
           description="Check the selected category, date range, search text and page number. No audit data was loaded."
           action={
-            <Link
+            <ButtonLink variant="secondary"
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
             >
               Clear filters
-            </Link>
+            </ButtonLink>
           }
         />
       </div>
@@ -225,9 +224,9 @@ export default async function TpoAuditPage({
         title="Audit log"
         description="A traceable history of placement decisions, changes, sharing and access across the workspace."
         actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <Link href="/tpo/audit/actors" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-ring">
+          <ButtonLink variant="primary" href="/tpo/audit/actors" className="w-full sm:w-auto">
             Actor / entity filters and CSV →
-          </Link>
+          </ButtonLink>
 
         <Disclosure title="Exports" className="min-w-0 border-0" summaryClassName="border border-[var(--lms-canvas-border)] px-3" contentClassName="pt-2">
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -255,10 +254,10 @@ export default async function TpoAuditPage({
         {entityMix.map(([key,n])=>{
           const selected=query.f_about.length===1&&query.f_about[0]===key;
           const label=TPO_AUDIT_ABOUT_CATEGORIES.find(item=>item.value===key)?.label??key;
-          return <Link key={key} href={entityHref(selected?null:key)} role="button" aria-pressed={selected}
+          return <TextLink variant="bare" key={key} href={entityHref(selected?null:key)} role="button" aria-pressed={selected}
             data-testid={"audit.quick."+key} className={"inline-flex min-h-9 items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-semibold "+(selected?"border-primary bg-primary text-on-primary":"border-border bg-surface text-body hover:bg-primary-subtle")}>
             {label} · <strong>{n}</strong>
-          </Link>;
+          </TextLink>;
         })}
       </div>
       <section
@@ -394,12 +393,11 @@ export default async function TpoAuditPage({
             >
               Apply filters
             </Button>
-            <Link
+            <ButtonLink variant="secondary"
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
             >
               Clear filters
-            </Link>
+            </ButtonLink>
           </div>
         </form>
       </section>
@@ -444,8 +442,8 @@ export default async function TpoAuditPage({
                 ? "Every drive, decision and setting change your team makes shows up here."
                 : "This page number is outside the available result range. Return to the first page or adjust the filters."
             }
-            action={<Link href={summary.total===0?"/tpo/audit":tpoAuditHref({...paginationFilters,page:1})}
-              className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">{summary.total===0?"Clear filters":"First page"}</Link>}
+            action={<TextLink href={summary.total===0?"/tpo/audit":tpoAuditHref({...paginationFilters,page:1})}
+              className="md:min-h-9 inline-flex min-h-11 items-center">{summary.total===0?"Clear filters":"First page"}</TextLink>}
           />
         ) : (
           <TpoAuditGrid key={context.membership.id+":"+gridRefreshQuery.toString()}
@@ -462,39 +460,36 @@ export default async function TpoAuditPage({
 
           <div className="flex flex-wrap gap-2">
             {page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={tpoAuditHref({
                   ...paginationFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
               >
                 ← Previous
-              </Link>
+              </ButtonLink>
             ) : null}
 
             {page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={tpoAuditHref({
                   ...paginationFilters,
                   page: 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
               >
                 First page
-              </Link>
+              </ButtonLink>
             ) : null}
 
             {page < totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={tpoAuditHref({
                   ...paginationFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-ring"
               >
                 Next →
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         </nav>:null}

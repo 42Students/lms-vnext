@@ -2,9 +2,9 @@
 import { Button } from "@/components/ui/button";
 
 import {useState} from "react";
-import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Item={id:string;time:string;event:string;message:string;path:string;requestId:string|null};
 type LogPage={configured:boolean;items:Item[];nextPageToken:string|null;anchorAt?:string};
@@ -62,14 +62,14 @@ export function TrackerIssueLogsPanel({publicId}:{publicId:string}){
           {entry.message.slice(0,200)}{entry.message.length>200?"…":""}
         </p>
         <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">{entry.path}</p>
-        <Link className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-ring"
+        <TextLink className="mt-2 inline-flex min-h-11 items-center md:min-h-9"
           href={"/tracker/logs?query="+encodeURIComponent(entry.requestId??entry.event)}>
           Open in Logs
-        </Link>
+        </TextLink>
       </li>)}</ul>:null}
     {(overflow>0||morePages)?<p role="status" className="text-sm text-body">
       {overflow>0?overflow+" more matching logs"+(morePages?" (and additional pages)":""):"More matching logs available"}.
-      {" "}<Link href="/tracker/logs" className="font-semibold text-primary-text underline">View all logs</Link>
+      {" "}<TextLink href="/tracker/logs">View all logs</TextLink>
     </p>:null}
   </section>;
 }

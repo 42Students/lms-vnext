@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -10,6 +9,7 @@ import {
 } from "@/modules/courses/super-admin-content-directory-service";
 import { SuperAdminSectionSyllabusOrder } from "@/components/courses/super-admin-section-syllabus-order";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function AdminSectionSyllabusOrderPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -46,18 +46,18 @@ export default async function AdminSectionSyllabusOrderPage({searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Class syllabus order"
    description="View and arrange videos, resources, YouTube and live classes in one sequence per lesson and class."/>
-  <Link href="/admin/resources" className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
+  <TextLink href="/admin/resources" className="inline-flex min-h-9 items-center text-sm">
     Back to Courses &amp; Content
-  </Link>
+  </TextLink>
   <p className="text-sm font-semibold text-body">Choose an active class and course:</p>
   <nav aria-label="Choose class syllabus" className="flex max-h-36 flex-wrap gap-2 overflow-auto">
-   {choices.map(choice=><Link key={choice.id}
+   {choices.map(choice=><TextLink variant="bare" key={choice.id}
     href={"/admin/content-order?offeringId="+encodeURIComponent(choice.offeringId)+"&deliveryId="+encodeURIComponent(choice.id)}
     aria-current={choice.id===selected?.id?"page":undefined}
     className={"inline-flex min-h-9 items-center border px-2 text-xs font-semibold "+
      (choice.id===selected?.id?"border-primary text-primary-text":"border-border text-body")}>
      {choice.courseCode} · {choice.sectionName}
-   </Link>)}
+   </TextLink>)}
   </nav>
   {choices.length===0?<Banner tone="info">No active college classes are available for ordering.</Banner>:null}
   {selectionInvalid?<ErrorState title="Class not found"

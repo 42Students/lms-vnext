@@ -1,6 +1,5 @@
 import "server-only";
 
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
@@ -13,6 +12,7 @@ import {
 } from "@/modules/bug-tracker/reporter-service";
 import type {RequestContext} from "@/modules/identity/context";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 function localDate(value:Date){
   return new Intl.DateTimeFormat("en-IN",{
@@ -35,7 +35,7 @@ export async function TrackerReporterIssueDetail({
     <PageHeader title={publicId} description="Issue could not be loaded."/>
     <ErrorState title="Issue could not be loaded."
       description="Your issue details are temporarily unavailable. Retry this report."
-      action={<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="font-semibold text-link underline underline-offset-4">Retry issue</Link>}/>
+      action={<TextLink href={"/tracker/issues/"+encodeURIComponent(publicId)}>Retry issue</TextLink>}/>
   </div>;
   const [historyResult,screenshotsResult]=await Promise.allSettled([
     listMyTrackerReportHistory(context,publicId),
@@ -46,7 +46,7 @@ export async function TrackerReporterIssueDetail({
   return <article className="min-w-0 space-y-4">
     <PageHeader title={report.publicId}
       description={report.issueType+" · "+report.page}
-      actions={<Link href="/tracker/mine" className="font-semibold text-link underline underline-offset-4">← All my reports</Link>}/>
+      actions={<TextLink href="/tracker/mine">← All my reports</TextLink>}/>
     <section className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-4" aria-label="Your reported issue">
       <div className="flex flex-wrap gap-2">
         <StatusBadge tone={report.status==="CLOSED"?"success":"info"}>{report.status}</StatusBadge>
@@ -64,7 +64,7 @@ export async function TrackerReporterIssueDetail({
     </section>
     {historyResult.status==="rejected"? <Alert tone="warning" title="Activity could not be loaded">
       Your status history is temporarily unavailable.
-      {" "}<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="underline">Retry activity</Link>
+      {" "}<TextLink href={"/tracker/issues/"+encodeURIComponent(publicId)}>Retry activity</TextLink>
     </Alert> : null}
     {historyResult.status==="fulfilled" && activities.length>0 ? <section aria-label="Issue status history" className="space-y-3">
       <Heading level={2}>Activity</Heading>
@@ -80,7 +80,7 @@ export async function TrackerReporterIssueDetail({
     </section>:null}
     {screenshotsResult.status==="rejected"?<Alert tone="warning" title="Screenshots could not be loaded right now.">
       Attached screenshot metadata is temporarily unavailable.
-      {" "}<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="underline">Retry screenshots</Link>
+      {" "}<TextLink href={"/tracker/issues/"+encodeURIComponent(publicId)}>Retry screenshots</TextLink>
     </Alert>:null}
     {screenshotsResult.status==="fulfilled" && screenshots.length>0 ?
       <section aria-label="Your issue screenshots" className="space-y-2">

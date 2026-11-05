@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -7,6 +6,7 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { contactRecordLinks } from "@/modules/people/college-contacts-links";
 import { getCollegeContactById } from "@/modules/people/college-contacts-service";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeContactDetail({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
@@ -33,7 +33,7 @@ export default async function CollegeContactDetail({params}:{params:Promise<{mem
     <dd className="m-0 min-w-0 text-body">{date} IST</dd>
    </dl>
    {links.length > 0 ? <nav aria-label="Related role records" className="mt-[var(--lms-space-4)] flex min-w-0 flex-col gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] sm:flex-row sm:flex-wrap">
-    {links.map(link=><Link key={link.href} href={link.href} className="inline-flex min-h-11 min-w-0 items-center justify-center break-words rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:text-primary-text md:min-h-9 active:text-[var(--lms-primary-text)] focus-ring sm:justify-start">{link.label}</Link>)}
+    {links.map(link=><ButtonLink variant="secondary" key={link.href} href={link.href} className="min-w-0">{link.label}</ButtonLink>)}
    </nav> : null}
   </section>
  </div>;

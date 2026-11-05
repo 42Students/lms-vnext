@@ -248,16 +248,16 @@ export function TpoCompaniesToday({
      </div>}
     <div className="flex flex-col gap-1 border-t border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-4 py-3 text-[13px]">
      {notContacted===null?<span role="status" className="text-[color:var(--lms-text-muted)]">Not-contacted recruiter count unavailable.</span>:
-      <Link href="/tpo/recruiters?stage=NEW" className="font-bold text-[color:var(--lms-button-primary)]">
+      <TextLink variant="bare" href="/tpo/recruiters?stage=NEW" className="font-bold text-[color:var(--lms-button-primary)]">
        {notContacted.count} not contacted yet · start with them
-      </Link>}
+      </TextLink>}
      {outsideWeek?<span className="text-[color:var(--lms-button-primary)]">
       <Link href="/tpo/recruiters?nextFollowup=NONE">{outsideWeek.withoutDate} with no date</Link>
       {" · "}
       <Link href="/tpo/recruiters?nextFollowup=LATER">{outsideWeek.laterThanWeek} later than this week</Link>
       {" · "}
       <Link href="/tpo/follow-ups">Re-plan your week</Link>
-     </span>:<Link href="/tpo/follow-ups" className="text-[color:var(--lms-button-primary)]">Re-plan your week</Link>}
+     </span>:<TextLink variant="bare" href="/tpo/follow-ups" className="text-[color:var(--lms-button-primary)]">Re-plan your week</TextLink>}
     </div>
     <footer className={styles.foot}>J / K to move · T tomorrow and Enter to review Done for follow-ups · {focusItems.length} shown
      {attentionIncomplete?" · more may exist":""}</footer>
@@ -271,8 +271,8 @@ export function TpoCompaniesToday({
         <p className={styles.sub}>{selectedCompany.companyName} · Recruiter account linked</p></div>
       </div>
       <div className={styles.personActions}>
-       <Link href={"/tpo/recruiters/"+encodeURIComponent(selectedCompany.recruiterId)} className={styles.secondary}>Open recruiter</Link>
-       <Link href={"/tpo/companies/"+encodeURIComponent(selectedCompany.companyId)} className={styles.secondary}>Open company</Link>
+       <TextLink variant="bare" href={"/tpo/recruiters/"+encodeURIComponent(selectedCompany.recruiterId)} className={styles.secondary}>Open recruiter</TextLink>
+       <TextLink variant="bare" href={"/tpo/companies/"+encodeURIComponent(selectedCompany.companyId)} className={styles.secondary}>Open company</TextLink>
       </div>
      </div>
      <div className={styles.context}>
@@ -285,7 +285,7 @@ export function TpoCompaniesToday({
       <div><span className={styles.eyebrow}>COLLEGE TRUST</span><p>College trust: {selectedCompany.collegeTrusted?"Trusted":"Not trusted"}</p></div>
      </div>
      <div className={styles.actions}>
-      <Link href={"/tpo/companies/"+encodeURIComponent(selectedCompany.companyId)} className={styles.primary}>Review company trust on its record</Link>
+      <TextLink variant="bare" href={"/tpo/companies/"+encodeURIComponent(selectedCompany.companyId)} className={styles.primary}>Review company trust on its record</TextLink>
       <Button variant="secondary" type="button" onClick={laterAndNext}>Later &amp; next</Button>
      </div>
      <p className={styles.helper}>Reviewing this company does not automatically verify it or change recruiter access. Later &amp; next changes selection only.</p>
@@ -300,8 +300,8 @@ export function TpoCompaniesToday({
       <p className={styles.sub}>Open the conversation to read the complete message.</p>}
      {selectedReply.accessEnded?<p className={styles.warning} role="status">Recruiter access to this conversation has ended. Open history before taking any action.</p>:null}
      <div className={styles.actions}>
-      <Link href={"/tpo/messages?tab=recruiters&status=REPLY&thread="+encodeURIComponent(selectedReply.id)}
-       className={styles.primary}>{selectedReply.accessEnded?"Open history":"Answer in Messages"}</Link>
+      <TextLink variant="bare" href={"/tpo/messages?tab=recruiters&status=REPLY&thread="+encodeURIComponent(selectedReply.id)}
+       className={styles.primary}>{selectedReply.accessEnded?"Open history":"Answer in Messages"}</TextLink>
       <Button variant="secondary" type="button" onClick={laterAndNext}>Later &amp; next</Button>
      </div>
      <p className={styles.helper}>Open Messages to reply. Merely selecting this item never sends email or marks a message handled.</p>
@@ -313,7 +313,7 @@ export function TpoCompaniesToday({
       <div className={styles.personActions}>
        {contact?<TextLink variant="bare" href={contact} className={styles.secondary}>Call</TextLink>:null}
        {emailHref?<TextLink variant="bare" href={emailHref} className={styles.secondary}>Email</TextLink>:null}
-       <Link href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)} className={styles.secondary}>Open page</Link>
+       <TextLink variant="bare" href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)} className={styles.secondary}>Open page</TextLink>
       </div>
      </div>
      <div className={styles.context}><span className={styles.eyebrow}>{leadInfo?.stage?"RECRUITER · "+leadInfo.stage.replaceAll("_"," "):"RECORDED FOLLOW-UP"}</span>
@@ -360,9 +360,9 @@ export function TpoCompaniesToday({
       {contact?<TextLink variant="bare" href={contact} className={styles.secondary}>Call recruiter ↗</TextLink>:null}
      </div>
      </Disclosure>
-     <Link className={styles.link} href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)}>
+     <TextLink variant="bare" className={styles.link} href={"/tpo/recruiters/"+encodeURIComponent(current.leadId)}>
        Open full recruiter history ›
-     </Link>
+     </TextLink>
     </>:!selected?<div className={styles.empty}>No recorded work is selected.
       <Link href="/tpo/recruiters">Browse recruiters ›</Link>
      </div>:null}
@@ -380,8 +380,8 @@ export function TpoCompaniesToday({
        <small>{item.company??"Recruiter"} · {item.subject} · {when(item.receivedAt)}</small>
       </span>
       {item.preview?<span className={styles.replyPreview}>{item.preview}</span>:null}
-      <Link href={"/tpo/messages?tab=recruiters&status=REPLY&thread="+encodeURIComponent(item.id)}
-        className={styles.replyAction}>{item.accessEnded?"Open history":"Answer"}</Link>
+      <TextLink variant="bare" href={"/tpo/messages?tab=recruiters&status=REPLY&thread="+encodeURIComponent(item.id)}
+        className={styles.replyAction}>{item.accessEnded?"Open history":"Answer"}</TextLink>
      </article>)}
     </div>
     {replyTotal>replies.length?<p className={styles.sub}>Showing the newest {replies.length} recruiter conversations. Open Messages for the rest.</p>:null}

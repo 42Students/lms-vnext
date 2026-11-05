@@ -1,13 +1,13 @@
 "use client";
 import { Banner } from "@/components/ui/banner";
 import { Dialog } from "@/components/ui/dialog";
-import Link from "next/link";
 import {ProjectTaskComments} from "./project-task-comments";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 type Task={
  id:string;title:string;status:string;description:string|null;approach:string|null;acceptanceCriteria:string|null;
  priority:string;createdAt?:Date;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
@@ -65,8 +65,8 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
       <TextLink href={safeProjectExternalHref(row.submissionUrl)!} rel="noopener noreferrer"
        className="inline-flex min-h-11 max-w-full items-center break-words sm:ml-[var(--lms-space-2)]">Open submitted evidence</TextLink>:null}
     </li>)}</ul>:<p className="text-xs text-muted-foreground">No submissions yet</p>}
-   <Link href={"/mentor/projects/"+projectId+"?tab=delivery"}
-    className="mt-[var(--lms-space-3)] inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-center text-[14px] font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto">Open delivery review</Link>
+   <ButtonLink variant="primary" href={"/mentor/projects/"+projectId+"?tab=delivery"}
+    className="mt-[var(--lms-space-3)] w-full sm:w-auto">Open delivery review</ButtonLink>
   </section>
   <section className="mt-[var(--lms-space-5)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]"><Disclosure title="Activity" className="min-w-0">
    {recent.length?<ol className="mt-2 space-y-2">{recent.slice(0,20).map(item=>

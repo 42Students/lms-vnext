@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   AnnouncementAdminWorkspace,
@@ -18,6 +17,7 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { getCollegeNoticeInbox } from "@/modules/announcements/college-notice-inbox-service";
 import { collegeNoticeUnreadLabel } from "@/modules/announcements/college-notice-inbox-model";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function AnnouncementsPage({
   searchParams,
@@ -46,9 +46,9 @@ export default async function AnnouncementsPage({
             <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Your college notifications</Heading>
             <p className="mt-1 text-sm text-muted-foreground">{collegeNoticeUnreadLabel(ownInbox.unreadCount)}</p>
           </div>
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
+          <TextLink href={unreadHref} className="inline-flex min-h-11 items-center md:min-h-9">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
-          </Link>
+          </TextLink>
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
         {ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
@@ -56,9 +56,9 @@ export default async function AnnouncementsPage({
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
-            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Open related page</Link> : null}
+            {item.actionHref ? <TextLink href={item.actionHref} className="inline-flex min-h-11 items-center md:min-h-9">Open related page</TextLink> : null}
           </li>)}</ul>}
-        <Link href="/notifications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+        <TextLink href="/notifications" className="inline-flex min-h-11 items-center md:min-h-9">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</TextLink>
       </section>
         <Alert tone="warning" title="College-wide announcements are unavailable">
           You can still view your personal college notifications above. Creating and managing college-wide announcements is currently unavailable.
@@ -95,8 +95,8 @@ export default async function AnnouncementsPage({
       <Alert tone="error" title="Could not load announcements">
         The announcements database could not be refreshed. This is not an empty announcement list.
       </Alert>
-      <Link href={"/college/announcements"+(retry.size?"?"+retry.toString():"")}
-        prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry announcements</Link>
+      <TextLink href={"/college/announcements"+(retry.size?"?"+retry.toString():"")}
+        prefetch={false} className="inline-flex min-h-11 items-center md:min-h-9">Retry announcements</TextLink>
     </div>;
   }
   const [page,targetGroups]=loaded.value;
@@ -156,30 +156,30 @@ export default async function AnnouncementsPage({
         title="Announcements"
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
         actions={
-          <Link
+          <TextLink
             href={includeDeleted ? "/college/announcements" : "/college/announcements?deleted=1"}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring"
+            className="inline-flex min-h-11 items-center md:min-h-9"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
-          </Link>
+          </TextLink>
         }
       />
 
       <AnnouncementAdminWorkspace items={items} targets={targets} />
       {next ? (
         <div className="flex justify-center">
-          <Link href={next} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
+          <TextLink href={next} className="inline-flex min-h-11 items-center md:min-h-9">
             Older announcements
-          </Link>
+          </TextLink>
         </div>
       ) : null}
       <Disclosure title="Your college notifications" className="min-w-0" contentClassName="min-w-0 pb-[var(--lms-space-4)]">
       <section aria-label="Personal college notifications" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
         <div className="flex flex-wrap items-center justify-between gap-3">
           
-          <Link href={unreadHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
+          <TextLink href={unreadHref} className="inline-flex min-h-11 items-center md:min-h-9">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
-          </Link>
+          </TextLink>
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
         {ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
@@ -187,9 +187,9 @@ export default async function AnnouncementsPage({
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
-            {item.actionHref ? <Link href={item.actionHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Open related page</Link> : null}
+            {item.actionHref ? <TextLink href={item.actionHref} className="inline-flex min-h-11 items-center md:min-h-9">Open related page</TextLink> : null}
           </li>)}</ul>}
-        <Link href="/notifications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
+        <TextLink href="/notifications" className="inline-flex min-h-11 items-center md:min-h-9">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</TextLink>
       </section>
       </Disclosure>
 

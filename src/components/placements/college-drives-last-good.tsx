@@ -1,6 +1,6 @@
 "use client";
 import {createContext,useCallback,useContext,useEffect,useState,type ReactNode} from "react";
-import Link from "next/link";
+import { TextLink } from "@/components/ui/text-link";
 
 type Previous={query:string;content:ReactNode};
 type Memory={previous:Previous|null;save:(query:string,content:ReactNode)=>void};
@@ -27,8 +27,8 @@ export function CollegeDrivesStaleFallback({retryHref}:{retryHref:string}){
     <strong>Couldn't refresh drives.</strong> {sameFilters?
       "Showing the last successful list for this college and these filters; it may be out of date.":
       "The drive list could not be loaded. No unverified or other-college rows are shown."}
-    {" "}<Link href={retryHref} prefetch={false}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+    {" "}<TextLink href={retryHref} prefetch={false}
+      className="inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
   </div>
   {sameFilters?<section aria-label="Previously loaded drives">{previous.content}</section>:null}
  </div>;

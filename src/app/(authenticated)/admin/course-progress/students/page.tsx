@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {EmptyState} from "@/components/ui/empty-state";
 import {redirect} from "next/navigation";
@@ -19,6 +18,7 @@ import {AdminProgressRetakeAction} from "@/components/courses/admin-progress-ret
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function SuperAdminStudentCourseProgressPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>
@@ -38,7 +38,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const requestedPage=typeof raw["page"]==="string"&&/^[1-9][0-9]{0,6}$/.test(raw["page"])
   ?Number(raw["page"]):1;
  const sort=raw["sort"]==="percent-desc"?"percent-desc":"percent-asc";
- const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9">Back to Course Progress</Link>;
+ const back=<TextLink href="/admin/course-progress" className="inline-flex min-h-11 items-center md:min-h-9">Back to Course Progress</TextLink>;
  if(!offeringId||invalidDelivery)return <div className="space-y-6">
   <PageHeader title="Course Progress"/>
   <ErrorState title="Choose a course offering" description="Course and class are required. Select a valid class and its taught course from Course Progress first; this page uses their authorized course offering, not separate legacy numeric IDs." action={back}/>
@@ -65,9 +65,9 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
   <PageHeader title="Course Progress"/>
   <ErrorState title="Could not load course progress" description={detail+" Check your selected college, class and taught course, then retry."} action={
     <div className="flex flex-wrap gap-3">
-      <Link href={"/admin/course-progress/students?"+new URLSearchParams({offeringId,
+      <TextLink href={"/admin/course-progress/students?"+new URLSearchParams({offeringId,
        ...(requestedDelivery?{deliveryId:requestedDelivery}:{})}).toString()}
-       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry course progress</Link>
+       className="inline-flex min-h-11 items-center md:min-h-9">Retry course progress</TextLink>
       {back}
     </div>
   }/>
@@ -144,12 +144,12 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
         <p className="mt-1 text-xs text-muted-foreground">This report uses the authorized course offering selected on the Course Progress page.</p>
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <Link href="/admin/course-progress" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+        <ButtonLink variant="secondary" href="/admin/course-progress">
           Change class or course
-        </Link>
-        <Link href={reportHref(page)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+        </ButtonLink>
+        <ButtonLink variant="secondary" href={reportHref(page)}>
           Refresh
-        </Link>
+        </ButtonLink>
         {report.totalRows>0?<ButtonLink variant="secondary" href={"/api/admin/course-progress/students/export?"+new URLSearchParams({
           offeringId:report.offeringId,...(requestedDelivery?{deliveryId:requestedDelivery}:{})
         }).toString()}>Export CSV</ButtonLink>:
@@ -252,9 +252,9 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     </div>}
   </section>
   <nav aria-label="Student course progress pages" className="flex flex-wrap items-center justify-between gap-3">
-    {page>1?<Link href={reportHref(page-1)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">← Previous</Link>:<span/>}
+    {page>1?<TextLink href={reportHref(page-1)} className="inline-flex min-h-11 items-center md:min-h-9">← Previous</TextLink>:<span/>}
     <span className="text-sm text-body">Page {page} of {totalPages}</span>
-    {page<totalPages?<Link href={reportHref(page+1)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Next →</Link>:<span/>}
+    {page<totalPages?<TextLink href={reportHref(page+1)} className="inline-flex min-h-11 items-center md:min-h-9">Next →</TextLink>:<span/>}
   </nav>
 
  </div>;

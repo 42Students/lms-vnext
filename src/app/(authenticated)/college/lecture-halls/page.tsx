@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LectureHallManager } from "@/components/admin/lecture-hall-manager";
@@ -19,6 +18,8 @@ import { listDepartments } from "@/modules/departments/service";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { lectureHallsCsvHref } from "@/modules/academics/college-lecture-halls-export-model";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -43,9 +44,9 @@ export default async function CollegeLectureHallsPage({
     <Alert tone="warning" title="Admin not assigned to a college">
       You must be assigned to a college to view and manage lecture halls. Contact your administrator.
     </Alert>
-    <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+    <TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">
       Choose a college in your account switcher →
-    </Link>
+    </TextLink>
   </div>;
 
   // This dedicated management surface must not become available through the
@@ -66,9 +67,9 @@ export default async function CollegeLectureHallsPage({
           title="Invalid lecture hall filters"
           description="The room search, status, type, department or page is invalid. No records were loaded."
           action={
-            <Link href="/college/lecture-halls" className="font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
+            <TextLink href="/college/lecture-halls">
               Clear filters
-            </Link>
+            </TextLink>
           }
         />
       </div>
@@ -128,7 +129,7 @@ export default async function CollegeLectureHallsPage({
 
       {departmentsResult.status==="rejected" ? <Alert tone="warning" title="Departments could not be loaded">
         The lecture hall register is available. Department is optional when adding a room; leave it blank until the department list is restored.
-        {" "}<Link href={collegeLectureHallHref(query)} className="font-semibold text-link underline underline-offset-4">Retry departments</Link>.
+        {" "}<TextLink href={collegeLectureHallHref(query)}>Retry departments</TextLink>.
         An existing hall's recorded department remains intact when edited.
       </Alert> : null}
       <section aria-label="Lecture hall results" className="min-w-0 space-y-3">
@@ -229,15 +230,15 @@ export default async function CollegeLectureHallsPage({
               className="min-h-11 w-full px-4 md:min-h-9 md:w-auto">
               Filter
             </Button>
-            <Link href="/college/lecture-halls"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">
+            <ButtonLink variant="secondary" href="/college/lecture-halls"
+              className="w-full md:w-auto">
               Clear
-            </Link>
+            </ButtonLink>
           </div>
-          <Link href={lectureHallsCsvHref(query)} download prefetch={false}
-            className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+          <TextLink href={lectureHallsCsvHref(query)} download prefetch={false}
+            className="mt-2 inline-flex min-h-11 items-center text-sm md:min-h-9">
             Export all matching halls (CSV)
-          </Link>
+          </TextLink>
         </form>
       </section>
       </Disclosure>

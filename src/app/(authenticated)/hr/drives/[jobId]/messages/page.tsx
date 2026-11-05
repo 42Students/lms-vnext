@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { EmptyState } from "@/components/ui/empty-state";
-import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -14,6 +13,7 @@ import {TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
 export default async function DriveConversationsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
@@ -29,15 +29,15 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Messages"
    description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}
-   actions={<Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-ring">Back to drive overview</Link>}/>
+   actions={<TextLink href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center md:min-h-9">Back to drive overview</TextLink>}/>
   <section aria-label="Drive conversation" className="min-w-0 space-y-3 border-b border-border pb-4">
    <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Drive conversation</Heading>
    <p className="max-w-2xl text-sm text-body leading-[22px]">Open or resume the conversation tied to this authorized employer drive.</p>
    {result.threads.length ? <>
     <ol className="divide-y divide-border border-y border-border">
      {result.threads.map(thread=><li key={thread.id} className="flex min-h-11 min-w-0 items-center py-3">
-      <Link href={"/hr/conversations/"+thread.id}
-       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-ring">Continue discussion</Link>
+      <TextLink href={"/hr/conversations/"+thread.id}
+       className="inline-flex min-h-11 items-center md:min-h-9">Continue discussion</TextLink>
      </li>)}
     </ol>
     <Disclosure title="Open drive discussion" className="min-w-0">

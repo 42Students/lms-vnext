@@ -1,6 +1,5 @@
 "use client";
 import {useState} from "react";
-import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
@@ -10,6 +9,8 @@ import {CollegeDriveDuplicateAction} from "./college-drive-duplicate-action";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const labels={
@@ -81,16 +82,16 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
          {row.examples.length>0?<ul className="mt-2 space-y-1"
            aria-label={"Affected learners for "+row.title}>
            {row.examples.map(example=><li key={example.id} className="text-xs">
-            <Link href={example.href} className="font-semibold text-link underline">
+            <TextLink href={example.href}>
              {example.name} <span aria-hidden="true">›</span>
-            </Link>
+            </TextLink>
             <span className="ml-2 text-muted-foreground">{example.detail}</span>
            </li>)}
          </ul>:null}
         </div>
-        <Link href={row.href} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link md:min-h-9">
+        <ButtonLink variant="secondary" href={row.href}>
          Review applications
-        </Link>
+        </ButtonLink>
        </li>)}
       </ul>
       {rows.length>3?<Button variant="link" size="inline" type="button" aria-expanded={Boolean(expanded[category])}
@@ -116,15 +117,14 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
           value={search} maxLength={100} onChange={event=>setSearch(event.target.value)}
           placeholder="Search drives…" className="min-h-11 w-full md:min-h-9"/>
       </Label>
-      <Link href="/college/placements/new"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover md:min-h-9">
+      <ButtonLink variant="primary" href="/college/placements/new">
         New Drive
-      </Link>
+      </ButtonLink>
     </div>
    </div>
    {data.jobs.length>=60?<p role="status" className="text-xs text-muted-foreground">
     Search here filters the 60 newest active drives only.
-    <Link href="/college/placements/drives" className="ml-1 font-semibold text-link underline">Search all drives</Link>.
+    <TextLink href="/college/placements/drives" className="ml-1">Search all drives</TextLink>.
    </p>:null}
    {visibleJobs.length?<div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     {visibleJobs.map(job=>{
@@ -132,7 +132,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
         "/overview?returnTo=%2Fcollege%2Fplacements";
       return <article key={job.id}
         className="group relative min-h-[152px] min-w-0 rounded-[12px] border border-[color:var(--lms-border)] bg-surface p-4 transition-[border-color,box-shadow,transform] duration-[var(--lms-motion-fast)] hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md focus-within:border-primary focus-within:shadow-md">
-        <Link href={href} aria-label={"Open drive overview: "+job.title}
+        <TextLink variant="bare" href={href} aria-label={"Open drive overview: "+job.title}
           className="absolute inset-0 rounded-[12px] focus-ring"/>
         <div className="pointer-events-none relative flex min-w-0 gap-3">
           <span aria-label={job.companyName+" avatar"}
@@ -161,10 +161,10 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
             More <span aria-hidden="true">⋯</span>
           </>} className="relative z-(--lms-z-raised) mt-4 min-w-0" preserveSummary summaryClassName="inline-flex min-h-11 items-center gap-1 md:min-h-9">
           <div className="mt-2 flex min-w-0 flex-col gap-2 border-t border-border bg-surface pt-3">
-            <Link href={"/college/placements/jobs/"+encodeURIComponent(job.id)+"/applications"}
-              className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9">
+            <TextLink href={"/college/placements/jobs/"+encodeURIComponent(job.id)+"/applications"}
+              className="inline-flex min-h-11 items-center text-xs md:min-h-9">
               Applications
-            </Link>
+            </TextLink>
             <CollegeDriveDuplicateAction jobId={job.id}/>
             <CollegeDriveDeadlineAction jobId={job.id} title={job.title}
               currentDeadline={job.deadline?.toISOString()??null}/>
@@ -177,17 +177,16 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
     <Button type="button" variant="secondary" onClick={()=>setSearch("")}>Clear search</Button>
    </div>:<div role="status" className="space-y-2">
     <p className="font-semibold text-body">No active drives yet</p>
-    <Link href="/college/placements/new"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">
+    <ButtonLink variant="primary" href="/college/placements/new">
       Create your first drive
-    </Link>
+    </ButtonLink>
    </div>}
    <p className="flex justify-center pt-2">
-    <Link href="/college/placements/drives?status=ALL"
-      className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-link underline md:min-h-9">
+    <TextLink href="/college/placements/drives?status=ALL"
+      className="inline-flex min-h-11 items-center gap-2 text-sm md:min-h-9">
       All drives (including {data.inactiveDriveCount} closed/draft)
       <span aria-hidden="true">›</span>
-    </Link>
+    </TextLink>
    </p>
   </section>
  </div>;

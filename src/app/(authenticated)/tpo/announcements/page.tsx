@@ -169,14 +169,14 @@ export default async function TpoAnnouncements({searchParams}:Props){
   }))}/>
   {tab.data!=="from-42"?<nav aria-label="Announcement author scope"
     className="flex min-w-0 flex-wrap items-center gap-2 md:justify-end">
-    <Link href={"/tpo/announcements?tab="+tab.data} aria-current={!showTeam?"page":undefined}
+    <TextLink variant="bare" href={"/tpo/announcements?tab="+tab.data} aria-current={!showTeam?"page":undefined}
       className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-3 text-[13px] font-semibold md:min-h-[var(--lms-control-height)] "+(!showTeam?
         "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]":
-        "border-[var(--lms-canvas-border)] bg-surface text-[var(--lms-body-text)] hover:border-[var(--lms-primary)]")}>Your notices</Link>
-    <Link href={"/tpo/announcements?tab="+tab.data+"&mine=0"} aria-current={showTeam?"page":undefined}
+        "border-[var(--lms-canvas-border)] bg-surface text-[var(--lms-body-text)] hover:border-[var(--lms-primary)]")}>Your notices</TextLink>
+    <TextLink variant="bare" href={"/tpo/announcements?tab="+tab.data+"&mine=0"} aria-current={showTeam?"page":undefined}
       className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-3 text-[13px] font-semibold md:min-h-[var(--lms-control-height)] "+(showTeam?
         "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]":
-        "border-[var(--lms-canvas-border)] bg-surface text-[var(--lms-body-text)] hover:border-[var(--lms-primary)]")}>All team notices</Link>
+        "border-[var(--lms-canvas-border)] bg-surface text-[var(--lms-body-text)] hover:border-[var(--lms-primary)]")}>All team notices</TextLink>
    </nav>:null}
   {result.status==="FAILED"?<Alert tone="error">
    <Heading level={2} className="text-foreground">Couldn't load announcements</Heading>
@@ -318,17 +318,17 @@ export default async function TpoAnnouncements({searchParams}:Props){
       status={row.scheduledAt&&new Date(row.scheduledAt)>new Date()?"SCHEDULED":
        row.expiresAt&&new Date(row.expiresAt)<=new Date()?"ENDED":"SENT"}/>:null}
    </li>)}
-  </ol>:<Alert tone="warning">The selected announcement is not on this page. No other notice was opened. <Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+(page>1?"&page="+page:"")} className="font-semibold text-link underline">Clear selection</Link></Alert>}
+  </ol>:<Alert tone="warning">The selected announcement is not on this page. No other notice was opened. <TextLink href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+(page>1?"&page="+page:"")}>Clear selection</TextLink></Alert>}
     </section>
    </div>:<EmptyState title={tab.data==="from-42"?"Nothing from 42 yet.":tab.data==="yours"?"Nothing yet. Tell students about a talk, a deadline or a change; pick who it is for, and see who has read it.":"No recently removed announcements."}/>}
   {result.status==="READY"&&(result.page>1||result.hasMore)?<nav aria-label="Announcement pages"
     className="flex min-w-0 flex-col items-stretch gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
    <div className="flex w-full flex-wrap gap-2 sm:w-auto">
-    {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page-1)}
-      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-ring hover:underline">Previous</Link>:null}
-    {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page+1)}
-      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-ring hover:underline">Show older</Link>:null}
+    {result.page>1?<ButtonLink variant="secondary" href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page-1)}
+      className="flex-1 sm:flex-none">Previous</ButtonLink>:null}
+    {result.hasMore?<ButtonLink variant="secondary" href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page+1)}
+      className="flex-1 sm:flex-none">Show older</ButtonLink>:null}
    </div>
   </nav>:null}
  </div>;

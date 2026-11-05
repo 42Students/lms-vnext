@@ -1,6 +1,5 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
-import Link from "next/link";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -9,6 +8,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Choices={notifyMatchingJobs:boolean;notifyApplicationUpdates:boolean};
 
@@ -63,8 +63,8 @@ export function LearnerPlacementNotificationSettings({initial}:{
       updates. Essential college, academic and security messages are not controlled here.
     </p>
     <nav aria-label="Notification preference destinations" className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-     <Link href="/learn/profile" className="font-semibold text-link underline">Your learner profile</Link>
-     <Link href="/learn/notifications" className="font-semibold text-link underline">All notifications</Link>
+     <TextLink href="/learn/profile">Your learner profile</TextLink>
+     <TextLink href="/learn/notifications">All notifications</TextLink>
     </nav>
     <p className="mt-3 text-xs text-body">Legacy placement alerts are split into matching opportunities and application updates. Application updates include submitted, shortlisted, selected, rejected, waitlisted, offer issued and joining-status changes; academic and security notices remain independently enabled.</p>
     <div className="mt-4 divide-y divide-border border-t border-border">

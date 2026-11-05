@@ -1,5 +1,4 @@
 import { PageHeader } from "@/components/ui/page-header";
-import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { Banner } from "@/components/ui/banner";
 import { Alert } from "@/components/ui/alert";
@@ -15,6 +14,8 @@ import {
   getTpoCandidateScheduleReadiness,
 } from "@/modules/placements/tpo-candidate-schedule-service";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 const dateFormat = new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
@@ -43,9 +44,9 @@ export default async function TpoCandidateSchedulePage({
   return <div className="min-w-0 space-y-6">
     <PageHeader title={drive.job.title+" · Candidate round schedule"}
       description="Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes."
-      actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
-        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-ring md:min-h-9 md:w-auto">← Back to drive</Link>} />
-    <Banner tone={slotsReady ? "info" : "warning"} action={<Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-current bg-surface px-3 text-sm font-semibold hover:bg-primary-subtle focus-ring md:min-h-9">Edit existing shared round schedules →</Link>}>
+      actions={<TextLink href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-9 md:w-auto">← Back to drive</TextLink>} />
+    <Banner tone={slotsReady ? "info" : "warning"} action={<ButtonLink variant="secondary" href="/tpo/calendar/rounds">Edit existing shared round schedules →</ButtonLink>}>
       {slotsReady ? "Candidate-specific slot booking is available from each interview round. Room-time conflicts are checked at assignment." :
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
     </Banner>
@@ -66,17 +67,17 @@ export default async function TpoCandidateSchedulePage({
     </Disclosure>
     <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0">
       {drive.rounds.filter(round=>round.kind==="INTERVIEW").map(round=>
-        <Link key={round.id} href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
-          className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle hover:border-primary focus-ring md:min-h-9">
+        <ButtonLink variant="secondary" key={round.id} href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
+          className="shrink-0">
           Slots and rooms · {round.name}
-        </Link>)}
+        </ButtonLink>)}
     </div>
     {roundId ? (
       <div className="flex flex-wrap items-center gap-3 text-sm">
         {selectedRound ? <p className="font-semibold text-foreground">Round: {selectedRound.name}</p>
           : <Alert tone="error">That round is not part of this drive.</Alert>}
-        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/candidate-schedule"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline focus-ring">Show all rounds</Link>
+        <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/candidate-schedule"}
+          className="inline-flex min-h-11 items-center">Show all rounds</TextLink>
       </div>
     ) : null}
     {drive.rounds.length === 0 ?

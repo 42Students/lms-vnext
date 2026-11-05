@@ -1,8 +1,8 @@
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listOwnQuizAttemptHistoryIndex} from "@/modules/courses/quiz-attempt-service";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
+import { TextLink } from "@/components/ui/text-link";
 export default async function OwnQuizHistoryPage(){
  const history=await listOwnQuizAttemptHistoryIndex(await getCurrentRequestContext());
  return <div className="min-w-0 space-y-4">
@@ -14,10 +14,10 @@ export default async function OwnQuizHistoryPage(){
      <p className="font-semibold text-foreground">{item.title}</p>
      <p className="text-xs text-muted-foreground">Attempt {item.attemptNumber} · {item.submittedAt?"Submitted":"In progress"}</p>
     </div>
-    <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9"
+    <TextLink className="inline-flex min-h-11 items-center md:min-h-9"
      href={"/quiz?"+new URLSearchParams({quizId:item.quizId,deliveryId:item.deliveryId}).toString()}>
       Open quiz
-    </Link>
+    </TextLink>
    </li>)}
   </ul>:<EmptyState title="No quiz attempts yet" description="Your submitted and in-progress quiz attempts will appear here."/>}
   {history.hasMore?<p className="text-xs text-muted-foreground">Only the newest 200 attempts are displayed.</p>:null}

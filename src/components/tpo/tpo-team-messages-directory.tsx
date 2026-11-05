@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
 import {readTpoInternalConversation,tpoThreadIdSchema} from "@/modules/placements/tpo-team-conversation-service";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
@@ -65,7 +64,7 @@ export async function TpoTeamMessagesDirectory({
   safeQuery.length>=2?"all":view).catch(()=>null);
  if(!data||data.status!=="READY")return <ErrorState title="Could not load conversations"
   description="Team conversations are temporarily unavailable. The Recruiters tab remains accessible."
-  action={<Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Retry</Link>}/>;
+  action={<TextLink href="/tpo/messages?tab=team">Retry</TextLink>}/>;
  // The scoped reader applies the filter in SQL before LIMIT/OFFSET.
  // Do not re-filter the 100-row page: this hides matches on later pages.
  const visible=data.items;
@@ -104,32 +103,31 @@ export async function TpoTeamMessagesDirectory({
      </div>
      <TpoTeamSearch value={safeQuery}/>
      <nav aria-label="Show team conversations" className="flex flex-wrap gap-1.5">
-      {FILTERS.map(([key,label])=><Link key={key} href={href(undefined,key)}
+      {FILTERS.map(([key,label])=><TextLink variant="bare" key={key} href={href(undefined,key)}
        aria-current={view===key?"page":undefined}
        className={"inline-flex min-h-9 items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold "+
         (view===key?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:bg-primary-subtle")}>
        {label}
-      </Link>)}
-      {hasMembershipRole(context,"TPO")?<Link href="/tpo/requests"
-        className="inline-flex min-h-9 items-center rounded-full border border-border px-3 py-1 text-xs font-semibold text-body hover:bg-primary-subtle">
+      </TextLink>)}
+      {hasMembershipRole(context,"TPO")?<ButtonLink variant="secondary" href="/tpo/requests">
         Students
-      </Link>:null}
+      </ButtonLink>:null}
      </nav>
      <p className="text-xs text-muted-foreground">{visible.length} of {displayedCount} {displayedCount===1?"conversation":"conversations"}{data.hasMore?" · More results available":""}</p>
     </div>
-    {safeQuery.length<2?<Link href={href("everyone")} aria-current={showEveryone?"page":undefined}
+    {safeQuery.length<2?<TextLink variant="bare" href={href("everyone")} aria-current={showEveryone?"page":undefined}
      className={"flex min-h-16 items-center gap-3 border-b border-border px-3 py-3 hover:bg-primary-subtle "+
       (showEveryone?"bg-primary-subtle":"")}>
      <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface-secondary text-lg">↗</span>
      <span className="flex-1"><strong className="block text-sm text-foreground">Everyone</strong>
       <span className="block text-xs text-muted-foreground">The placement team channel</span></span>
-    </Link>:null}
+    </TextLink>:null}
     {visible.length===0?<div className="p-4"><EmptyState
       title={safeQuery.length>=2?"Nothing matches. Try other words.":view==="following"?"You follow nothing else yet. All shows every conversation.":"Nothing here. Try All."}
       description={view==="following"?"Choose All to see your other conversations.":"Try a different filter or search."}/></div>:
     <ul className="max-h-[65vh] divide-y divide-border overflow-y-auto">
      {visible.map(item=><li key={item.id}>
-      <Link href={href(item.id)} aria-current={pickedId===item.id?"page":undefined}
+      <TextLink variant="bare" href={href(item.id)} aria-current={pickedId===item.id?"page":undefined}
        className={"flex min-h-16 gap-2 px-3 py-3 focus-ring hover:bg-primary-subtle "+
         (pickedId===item.id?"bg-primary-subtle":"")}>
        <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface-secondary text-xs font-semibold">
@@ -146,13 +144,13 @@ export async function TpoTeamMessagesDirectory({
          {item.asksForMe>0?<StatusBadge tone="warning">@ Me · {item.asksForMe}</StatusBadge>:null}
         </span>
        </span>
-      </Link>
+      </TextLink>
      </li>)}
     </ul>}
     {data.hasMore||safePage>1?<nav aria-label="Team conversation pages" className="flex items-center justify-between border-t border-border p-3 text-xs font-semibold">
-     {safePage>1?<Link href={href(undefined,view,safePage-1)} className="text-link underline">Previous</Link>:<span/>}
+     {safePage>1?<TextLink href={href(undefined,view,safePage-1)}>Previous</TextLink>:<span/>}
      <span>Page {safePage}</span>
-     {data.hasMore?<Link href={href(undefined,view,safePage+1)} className="text-link underline">Next</Link>:<span/>}
+     {data.hasMore?<TextLink href={href(undefined,view,safePage+1)}>Next</TextLink>:<span/>}
     </nav>:null}
     <Disclosure title="+ New conversation" id="new-team-conversation">
      {colleagues.length>0?<TpoTeamThreadCreate members={colleagues} actorUserId={context.user.id}/>:
@@ -161,10 +159,10 @@ export async function TpoTeamMessagesDirectory({
    </aside>
    <section aria-label="Selected team conversation"
     className={(explicit?"block ":"hidden lg:block ")+"min-w-0 px-4 py-4 md:px-5"}>
-    {explicit?<Link href={href()} className="mb-3 inline-flex min-h-9 items-center text-sm font-semibold text-link lg:hidden">← All conversations</Link>:null}
+    {explicit?<TextLink href={href()} className="mb-3 inline-flex min-h-9 items-center text-sm lg:hidden">← All conversations</TextLink>:null}
     {showEveryone?
      !everyone?<ErrorState title="Could not load Everyone" description="The placement team channel could not be loaded."
-      action={<Link href={href("everyone")} className="font-semibold text-link underline">Retry</Link>}/>:
+      action={<TextLink href={href("everyone")}>Retry</TextLink>}/>:
      everyone.status!=="READY"?<EmptyState title="Everyone is unavailable" description="The placement team channel needs its registered storage."/>:
      <>
       <header className="mb-3 border-b border-border pb-3">
@@ -180,21 +178,21 @@ export async function TpoTeamMessagesDirectory({
          </div>
         </li>)}
        </ol>}
-      {everyone.pages>1?<Link href="/tpo/team/everyone" className="my-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">View older Everyone messages</Link>:null}
+      {everyone.pages>1?<TextLink href="/tpo/team/everyone" className="my-2 inline-flex min-h-9 items-center text-sm">View older Everyone messages</TextLink>:null}
       <TpoEveryoneControls muted={everyone.muted} actorUserId={context.user.id}/>
      </>:
      !pickedId?<EmptyState title="Pick a conversation, or start one with +."/>:
      !conversation?<ErrorState title="Could not load this conversation" description="This refresh failed. No messages have been marked read."
-      action={<Link href={href(pickedId)} className="font-semibold text-link underline">Retry</Link>}/>:
+      action={<TextLink href={href(pickedId)}>Retry</TextLink>}/>:
      !active?<ErrorState title="Conversation unavailable" description="This conversation is no longer accessible in the current college or role."
-      action={<Link href={href()} className="font-semibold text-link underline">All conversations</Link>}/>:
+      action={<TextLink href={href()}>All conversations</TextLink>}/>:
      <>
       <TpoTeamOpenRead threadId={active.thread.id}/>
       <header className="mb-3 border-b border-border pb-3">
        <Heading level={3} size="lg" className="text-foreground">{active.thread.topic}</Heading>
        <p className="text-xs text-muted-foreground">With {active.thread.counterpartName} · Private placement-team conversation</p>
-       <Link href={"/tpo/team/"+active.thread.id+(askId?"?ask="+encodeURIComponent(askId):"")}
-        className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open full conversation and asks</Link>
+       <TextLink href={"/tpo/team/"+active.thread.id+(askId?"?ask="+encodeURIComponent(askId):"")}
+        className="mt-2 inline-flex min-h-9 items-center text-sm">Open full conversation and asks</TextLink>
       </header>
       {active.messages.length===0?<EmptyState title="No messages in this conversation yet."/>:
        <ol role="log" aria-label="Team messages" aria-live="polite" className="max-h-[55vh] space-y-3 overflow-y-auto py-2">
@@ -218,7 +216,7 @@ export async function TpoTeamMessagesDirectory({
      <Heading level={3} className="text-foreground">About Everyone</Heading>
      <p>Everyone in this college's active placement team can read the channel.</p>
      <p>Recruiters and students never see these conversations.</p>
-     <Link href="/tpo/team/everyone" className="inline-flex min-h-9 items-center font-semibold text-link underline">Channel history and settings</Link>
+     <TextLink href="/tpo/team/everyone" className="inline-flex min-h-9 items-center">Channel history and settings</TextLink>
     </div>:active?<div className="space-y-3 text-sm">
      <Heading level={3} className="text-foreground">About this conversation</Heading>
      <dl className="space-y-3">
@@ -235,11 +233,11 @@ export async function TpoTeamMessagesDirectory({
      {asks?.status==="READY"&&asks.items.some(ask=>ask.status==="OPEN")?<div>
       <Heading level={4} size="xs" className="mb-2 text-muted-foreground">Open asks</Heading>
       {asks.items.filter(ask=>ask.status==="OPEN").slice(0,5).map(ask=>
-       <Link key={ask.id} href={"/tpo/team/"+active.thread.id+"?ask="+encodeURIComponent(ask.id)}
-        className="my-1 block break-words text-sm text-link underline">{ask.title}</Link>)}
+       <TextLink key={ask.id} href={"/tpo/team/"+active.thread.id+"?ask="+encodeURIComponent(ask.id)}
+        className="my-1 block break-words text-sm">{ask.title}</TextLink>)}
      </div>:asks?.status==="NOT_REGISTERED"?
       <p className="text-xs text-muted-foreground">Team asks are unavailable until the database is registered.</p>:null}
-     <Link href={"/tpo/team/"+active.thread.id} className="inline-flex min-h-9 items-center font-semibold text-link underline">Details, people and asks</Link>
+     <TextLink href={"/tpo/team/"+active.thread.id} className="inline-flex min-h-9 items-center">Details, people and asks</TextLink>
     </div>:<p className="text-sm text-muted-foreground">Choose a conversation to see its context.</p>}
    </aside>
   </div>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
 import {Tabs} from "@/components/ui/tabs";
 import {Alert} from "@/components/ui/alert";
@@ -14,6 +13,7 @@ import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
 import {CollegeAdminLifecycleAction} from "@/components/admin/college-admin-lifecycle-action";
 import {listCollegeAdminSessionTargetsPage} from "@/modules/colleges/admin-session-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
 export default async function CollegeAdministratorsPage({params,searchParams}:{
@@ -30,16 +30,16 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
  if(raw['role']!==undefined&&raw['role']!=="COLLEGE_ADMIN"&&raw['role']!=="TPO"&&raw['role']!=="ALL")
   return <div className="min-w-0 space-y-4"><PageHeader title="College administrators"/>
    <ErrorState title="Invalid administrator role" description="Choose Admin or TPO."
-    action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} className="text-link underline">Clear filters</Link>}/>
+    action={<TextLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"}>Clear filters</TextLink>}/>
   </div>;
  if(!validPage)return <div className="min-w-0 space-y-[var(--lms-space-4)]">
    <PageHeader title="College administrators"/>
    <ErrorState title="Invalid administrator page"
      description="Choose a valid administrator page number."
-     action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"}
-       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+     action={<TextLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"}
+       className="inline-flex min-h-11 items-center md:min-h-9">
        Clear page filter
-     </Link>}/>
+     </TextLink>}/>
  </div>;
  const page=typeof rawPage==="string"?Number(rawPage):1;
  const result=await listCollegeAdminSessionTargetsPage(context,collegeId,page,role).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
@@ -47,7 +47,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
   <PageHeader title="College Admin and TPO accounts"/>
   <ErrorState title="Could not load administrator accounts"
    description="The selected college's roster could not be loaded. An unavailable list does not mean no accounts exist."
-   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>}/>
+   action={<TextLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} className="inline-flex min-h-11 items-center">Retry</TextLink>}/>
  </div>;
  const data=result.value;
  const pageCount=data.pageCount;
@@ -75,7 +75,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
    {value:"TPO",label:"TPO",href:baseHref+"?role=TPO"},
   ]}/>
   <div className="flex justify-end">
-   <Link href={baseHref+(role==="ALL"?"":"?role="+role)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">↻ Reload administrators</Link>
+   <TextLink href={baseHref+(role==="ALL"?"":"?role="+role)} className="inline-flex min-h-11 items-center md:min-h-9">↻ Reload administrators</TextLink>
   </div>
   <section aria-label="College administrator directory" className="min-w-0 border-t border-border pt-[var(--lms-space-4)]">
    <Heading level={2} className="mb-3">College Admin and TPO accounts</Heading>
@@ -97,17 +97,17 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
       {key:"college",header:"College",cell:()=>data.college.name},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="ACTIVE"?"success":"warning"}>{item.status==="ACTIVE"?"Enabled":"Suspended"}</StatusBadge>},
       {key:"access",header:"Access",mobilePriority:"action",cell:item=><Disclosure title="Access" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]"><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")} {...(item.name==null?{}:{displayName:item.name})}/></Disclosure>},
-      {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link title="View active devices"
+      {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><TextLink title="View active devices"
         href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)}
-        className="inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9">
+        className="inline-flex min-h-11 items-center md:min-h-9">
         Sessions
-      </Link>},
+      </TextLink>},
       {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
-        <Link title="View administrator history"
+        <TextLink title="View administrator history"
           href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)+"/history"}
-          className="inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9">
+          className="inline-flex min-h-11 items-center md:min-h-9">
           History
-        </Link>
+        </TextLink>
         <span className="text-xs text-muted-foreground">
           {item.status==="SUSPENDED"
             ?"Use Access → End membership to revoke this membership while retaining its audit history."
@@ -123,7 +123,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
   {data.total===0?<Alert tone="info">No {role==="ALL"?"College Admin or TPO":role==="TPO"?"TPO":"Admin"} accounts recorded for this college.</Alert>:null}
   {page>pageCount?<p role="alert" className="text-sm text-warning">
     Page outside the available results. Return to the first page; no other administrator data was loaded.
-    <Link href={baseHref} className="ml-2 font-semibold text-primary-text underline">First page</Link>
+    <TextLink href={baseHref} className="ml-2">First page</TextLink>
   </p>:null}
  </div>;
 }

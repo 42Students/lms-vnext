@@ -39,7 +39,7 @@
   .lms-college-portal :is(a, button)[class~="bg-primary"] {
     min-height: 44px;
   }
-  .lms-college-portal h1 { font-size: clamp(24px, 6vw, 30px); }
+  .lms-college-portal h1 { font-size: var(--lms-font-2xl); }
 }
 
 /* College/Tenant control rhythm: the shared UI kit provides the skin; this

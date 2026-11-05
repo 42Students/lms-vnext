@@ -7,7 +7,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { DataTable } from "@/components/ui/data-table";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
@@ -529,7 +528,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   {!lessons.length&&<div role="status" className="space-y-2 text-sm leading-[22px]">
     <p>Create a course offering, learning path and lesson before adding content.</p>
     <p>Start from Course, then choose an active Offering and add a Lesson. The content editor becomes available as soon as a lesson exists.</p>
-    <Link href="/college/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Go to Courses</Link>
+    <TextLink href="/college/courses" className="inline-flex min-h-11 items-center md:min-h-9">Go to Courses</TextLink>
     <Button variant="link" size="inline" type="button" onClick={()=>router.refresh()} className="ml-3">Retry course and lesson options</Button>
   </div>}
   {open&&(kind!=="YOUTUBE"||videoMode==="YOUTUBE") ? kind==="RESOURCE"?
@@ -567,9 +566,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    confirmLabel={kind==="RESOURCE"?"Discard changes":"Discard edits"}
    cancelLabel={kind==="RESOURCE"?"Keep editing":"Keep editing"}
    onConfirm={()=>{setDiscardOpen(false);setOpen(false);}}/>
-  <Link href="/college/content-order" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+  <TextLink href="/college/content-order" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
    Arrange Section syllabus across all content types →
-  </Link>
+  </TextLink>
   {kind==="YOUTUBE"&&lessons.length>0?<section aria-label="Video content type" className="min-w-0 space-y-3 border-b border-border pb-4">
    <fieldset className="flex flex-wrap items-center gap-4 border-0 p-0" aria-label="Video type">
     <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
@@ -689,11 +688,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       {key:"order",header:"Order",cell:item=>
        <div className="flex items-center gap-2">
         <span className="text-sm tabular-nums">{item.sequence+1}</span>
-        <Link className="text-xs font-semibold text-primary-text underline"
+        <TextLink className="text-xs"
          href={"/college/content-order"+(listSectionId?
           "?offeringId="+encodeURIComponent(item.offeringId)+"&deliveryId="+encodeURIComponent(listSectionId):"")}>
          Arrange Section
-        </Link>
+        </TextLink>
        </div>},
       {key:"students",header:"Students",cell:item=>item.visibleToStudents?"Visible":"Hidden"},
       {key:"content",header:"Content",cell:item=>item.externalUrl?

@@ -1,9 +1,9 @@
-import Link from "next/link";
 import type { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
 import {learnerAlertsHistoryHref} from "@/modules/placements/learner-alerts-history-navigation-model";
 import {learnerAlertSafeDate,learnerAlertRelativeDay} from "@/modules/placements/learner-alert-safe-date-model";
 import {LearnerPlacementAlertAction} from "./learner-placement-alert-action";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
 type RestrictionNotice={active:true;untilDate:string|null;remainingDrives:number|null;reasons?:readonly string[]};
@@ -18,10 +18,10 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
         <Heading level={2} size="base" id="learner-placement-alerts" className="min-w-0 break-words text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">
           Your placement alerts
         </Heading>
-        <Link href={learnerAlertsHistoryHref(unreadOnly)}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-ring md:min-h-9">
+        <TextLink href={learnerAlertsHistoryHref(unreadOnly)}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Personal notification history →
-        </Link>
+        </TextLink>
       </div>
       <p className="mt-2 text-sm text-body leading-[22px]">
         Your most recent persisted placement-related personal notifications.

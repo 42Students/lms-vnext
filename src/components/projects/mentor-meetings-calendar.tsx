@@ -181,27 +181,27 @@ function MeetingRow({
           <Button type="button" variant="secondary" size="sm"
             onClick={()=>downloadMeetingCalendar(meeting)}>Add to my calendar (.ics)</Button>
         ) : null}
-        <Link className={styles.action}
+        <TextLink variant="bare" className={styles.action}
           href={"/mentor/projects/" + encodeURIComponent(meeting.projectId) +
             "?tab=team#meeting-"+encodeURIComponent(meeting.id)}>
           {editable?
             "Edit attendance, notes & action items":"View meeting record"}
-        </Link>
+        </TextLink>
         {safeProjectExternalHref(href) ? <TextLink variant="bare" className={styles.action} href={safeProjectExternalHref(href)!}
           >Join link</TextLink> : null}
-        {meeting.status==="COMPLETED"?<Link className={styles.action}
+        {meeting.status==="COMPLETED"?<TextLink variant="bare" className={styles.action}
           href={"/mentor/projects/"+encodeURIComponent(meeting.projectId)+
             "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}>
           Meeting notes and outcome
-        </Link>:null}
-        {meeting.status==="REQUESTED"?<Link className={styles.action}
+        </TextLink>:null}
+        {meeting.status==="REQUESTED"?<TextLink variant="bare" className={styles.action}
           href={"/mentor/projects/"+encodeURIComponent(meeting.projectId)+"/team-meetings"}>
           Answer meeting request
-        </Link>:null}
-        <Link className={styles.action}
+        </TextLink>:null}
+        <TextLink variant="bare" className={styles.action}
           href={"/mentor/projects/"+encodeURIComponent(meeting.projectId)+"/team-meetings"}>
           Meeting history and actions
-        </Link>
+        </TextLink>
       </div>
     </article>
   );

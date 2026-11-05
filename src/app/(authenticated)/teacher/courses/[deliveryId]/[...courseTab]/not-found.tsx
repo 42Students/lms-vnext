@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function NotFound() {
   return <section className="min-w-0 space-y-4">
@@ -7,8 +7,8 @@ export default function NotFound() {
     <p className="max-w-xl text-sm leading-6 text-body">
       This lesson or course content is not available in your current teaching Section.
     </p>
-    <Link href="/teacher/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-ring sm:w-auto md:min-h-9">
+    <ButtonLink variant="secondary" href="/teacher/courses" className="w-full sm:w-auto">
       Back to courses
-    </Link>
+    </ButtonLink>
   </section>;
 }

@@ -3,7 +3,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorRiskReadiness} from "@/modules/projects/mentor-risk-readiness-service";
@@ -11,6 +10,7 @@ import {mentorRiskReadinessHref,mentorRiskReadinessQuerySchema}
   from "@/modules/projects/mentor-risk-readiness-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 type Search={focus?:string|string[];taskPriority?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -28,7 +28,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   );
   if(!parsed.success)return <section role="alert">
     <PageHeader title={"Invalid risk/readiness filters"} />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
+    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center">Projects</TextLink>
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -43,10 +43,10 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="At-risk & readiness drill-in"
       description={data.enabled?data.projectTitle+" · "+data.projectStatus:"Projects are disabled. No private task, meeting or delivery evidence was loaded."}
-      actions={<Link data-unskin="" href={base}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">
+      actions={<TextLink data-unskin="" href={base}
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Full project workspace
-      </Link>}/>
+      </TextLink>}/>
     {!data.enabled?<section role="status" className="border-b border-border pb-4">
       Projects are disabled. No private task, meeting or delivery evidence was loaded.
     </section>:<>
@@ -84,11 +84,11 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">
           Filter
         </Button>
-        {filtered?<Link href={base+"/risk-readiness"}
-          className="inline-flex min-h-11 items-center text-sm text-link underline focus-ring hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+        {filtered?<TextLink href={base+"/risk-readiness"}
+          className="inline-flex min-h-11 items-center text-sm">Clear</TextLink>:null}
       </form></FilterBar>
       {data.items.length===0?<EmptyState title="No recorded items for this filter"
-        description="No matching stored signals were found. This is not a certificate of project safety or completeness." action={filtered?<Link href={base+"/risk-readiness"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Clear</Link>:<Link href={base} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-ring">Full project workspace</Link>}/>:
+        description="No matching stored signals were found. This is not a certificate of project safety or completeness." action={filtered?<TextLink href={base+"/risk-readiness"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={base} className="inline-flex min-h-11 items-center md:min-h-9">Full project workspace</TextLink>}/>:
       <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
         <li key={row.key} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
@@ -98,10 +98,10 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
             </span>
           </div>
           <p className="mt-2 break-words text-sm text-body leading-[22px]">{row.detail}</p>
-          <Link href={row.href}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring hover:text-[var(--lms-primary-text)]">
+          <TextLink href={row.href}
+            className="mt-3 inline-flex min-h-11 items-center text-sm">
             Open exact project workspace →
-          </Link>
+          </TextLink>
         </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Risk and readiness pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorRiskReadinessHref({...data.query,page})}/>:null}
     </>}

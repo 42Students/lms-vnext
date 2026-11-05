@@ -1,10 +1,10 @@
 "use client";
 import {useState} from "react";
-import Link from "next/link";
 import {filterMentorSprintTimeline,type MentorSprintSearchItem}
   from "@/modules/projects/mentor-sprint-timeline-search-model";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 
 export function MentorSprintTimelineSearch({items}:{items:readonly MentorSprintSearchItem[]}){
  const [query,setQuery]=useState("");
@@ -23,11 +23,11 @@ export function MentorSprintTimelineSearch({items}:{items:readonly MentorSprintS
        {results.length===30?" (first 30)":""}</p>
      {results.length?<ul className="space-y-2">
        {results.map(item=><li key={item.kind+":"+item.id}>
-         <Link href={item.href} className="text-link underline">
+         <TextLink href={item.href}>
            <strong>{item.title}</strong>
            <span> · {item.context}</span>
            <small> · {item.kind.toLocaleLowerCase("en-IN")}</small>
-         </Link>
+         </TextLink>
        </li>)}
      </ul>:<p>No matching recorded sprint, release or task.</p>}
    </div>:null}

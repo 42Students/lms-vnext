@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {Alert} from "@/components/ui/alert";
@@ -10,6 +9,8 @@ import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-r
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function TpoDriveDiscussion({params,searchParams}:{
  params:Promise<{jobId:string}>;
@@ -34,19 +35,19 @@ export default async function TpoDriveDiscussion({params,searchParams}:{
  return <div className="min-w-0 space-y-4">
   <PageHeader title={data.job.title+" · Discussion"}
     description="Conversations with recruiters attached to this drive. Private team notes are not shared with recruiters."
-    actions={<Link href={root} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] focus-ring md:min-h-9">← Back to drive</Link>}/>
+    actions={<ButtonLink variant="secondary" href={root}>← Back to drive</ButtonLink>}/>
   {requestId?<div role="status" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm">
     <p className="font-semibold">{request?"Discuss change request · "+request.fieldLabel:"Change request unavailable"}</p>
     {request?<p className="mt-1 break-words whitespace-pre-wrap text-body">{request.proposedValue}</p>:null}
-    <Link href={root+"/change-requests#change-request-"+encodeURIComponent(requestId)}
-      className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View change request</Link>
+    <TextLink href={root+"/change-requests#change-request-"+encodeURIComponent(requestId)}
+      className="mt-2 inline-flex min-h-11 items-center md:min-h-9">View change request</TextLink>
     {request?<p className="mt-1 text-xs text-muted-foreground">Choose a recruiter conversation below, then select Quote change request to include its context.</p>:null}
    </div>:null}
   {!data.available?<Alert tone="warning">
     Recruiter conversation records are unavailable right now. Other drive work is still available. Try again later.
    </Alert>:data.threads.length===0?<EmptyState title="No recruiter conversation is attached to this drive yet."
     description="Use Recruiter Messages to begin or find a recruiter conversation."
-    action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-ring md:min-h-9">Open Recruiter Messages</Link>}/>:<section aria-label="Recruiter conversations" className="min-w-0">
+    action={<ButtonLink variant="secondary" href="/tpo/messages">Open Recruiter Messages</ButtonLink>}/>:<section aria-label="Recruiter conversations" className="min-w-0">
    <p role="status" className="mb-2 text-sm text-body leading-[1.6]">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
    <ul className="min-w-0 divide-y divide-border border-y border-border">{data.threads.map(thread=><li key={thread.id} className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
     <div className="min-w-0 flex-1 space-y-1">
@@ -69,8 +70,8 @@ export default async function TpoDriveDiscussion({params,searchParams}:{
       new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(thread.latestAt)+" IST":
       "No messages yet"}</p>
     </div>
-    <Link href={"/tpo/messages/"+encodeURIComponent(thread.id)}
-      className="inline-flex min-h-11 w-full shrink-0 items-center justify-center self-start rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-ring sm:w-auto md:min-h-9">Open conversation</Link>
+    <ButtonLink variant="secondary" href={"/tpo/messages/"+encodeURIComponent(thread.id)}
+      className="w-full shrink-0 self-start sm:w-auto">Open conversation</ButtonLink>
     <div className="w-full sm:basis-full">
       <Disclosure title="Reply in this drive discussion">
         <TpoRecruiterMessageReply threadId={thread.id} actorUserId={context.user.id} unread={thread.unread>0} {...(quote===undefined?{}:{quote})}/>
@@ -82,7 +83,7 @@ export default async function TpoDriveDiscussion({params,searchParams}:{
   <p className="text-xs text-muted-foreground leading-5">Recruiter messages and internal team notes are separate. Only recorded messages appear here.</p>
   <p className="text-sm leading-6 text-body">
    Each drive also has an internal team discussion in Team conversations.{" "}
-   <Link href="/tpo/team?filter=drives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Open drive team conversations</Link>
+   <TextLink href="/tpo/team?filter=drives" className="inline-flex min-h-11 items-center md:min-h-9">Open drive team conversations</TextLink>
   </p>
  </div>;
 }

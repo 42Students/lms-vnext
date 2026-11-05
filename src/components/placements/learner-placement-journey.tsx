@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {ownApplicationJobHref} from "@/modules/placements/learner-application-job-link-model";
@@ -249,14 +248,14 @@ export function LearnerPlacementJourney({
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">The placement cell applied on your behalf. The 48-hour opt-out window starts when the application was recorded. Outside that window, contact the placement team about withdrawal.</p>
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
-                  {item.mayStaffOptOut?<Link href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(item.applicationId)}
-                    className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline">
+                  {item.mayStaffOptOut?<TextLink href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(item.applicationId)}
+                    className="inline-flex min-h-11 md:min-h-9 items-center">
                     Opt out or ask to withdraw
-                  </Link>:null}
-                  <Link href="/learn/my-placements/placement#requests"
-                    className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline">
+                  </TextLink>:null}
+                  <TextLink href="/learn/my-placements/placement#requests"
+                    className="inline-flex min-h-11 md:min-h-9 items-center">
                     Contact the placement cell
-                  </Link>
+                  </TextLink>
                 </div>
               </aside>
             ) : null}
@@ -264,7 +263,7 @@ export function LearnerPlacementJourney({
               <aside role="alert" className="mt-4 rounded-lg border border-warning bg-surface p-4">
                 <p className="font-semibold text-foreground">This drive was cancelled</p>
                 <p className="mt-1 text-sm text-body">The placement cell has cancelled this drive. Any published reason will appear in its college notice. Your application history remains available.</p>
-                <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline">Check placement cell notices</Link>
+                <TextLink href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center">Check placement cell notices</TextLink>
               </aside>
             ) : item.driveStatus === "CLOSED" ? (
               <p role="status" className="mt-4 rounded-lg border border-border p-3 text-sm text-body">This drive has closed. Your recorded application and round results remain available.</p>
@@ -303,7 +302,7 @@ export function LearnerPlacementJourney({
                     </li>
                   ))}
                 </ol>
-                <Link href="/learn/my-placements/schedule" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">View schedule</Link>
+                <TextLink href="/learn/my-placements/schedule" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm">View schedule</TextLink>
               </section>
             ) : null}
 
@@ -355,14 +354,14 @@ export function LearnerPlacementJourney({
                           {roundOutcomeLabel(result.outcome)}
                         </StatusBadge>
                         {result.outcome==="ABSENT"&&result.appliedAt&&result.roundId ? (
-                          <Link
+                          <TextLink
                             href={"/learn/my-placements/placement?"+new URLSearchParams({
                               request:"absence-dispute",applicationId:item.applicationId,
                               roundId:result.roundId,
                             }).toString()+"#requests"}
-                            className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-[var(--lms-link-text)] underline">
+                            className="inline-flex min-h-11 md:min-h-9 items-center">
                             Wrong? Tell the placement cell
-                          </Link>
+                          </TextLink>
                         ) : null}
                       </div>
                     </div>
@@ -387,23 +386,23 @@ export function LearnerPlacementJourney({
                 Last recorded activity · {formatWhen(learnerApplicationCardActivity(item).at)}
               </p>
               {learnerApplicationCardActivity(item).historyHref ? (
-                <Link href={learnerApplicationCardActivity(item).historyHref!}
-                  className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4">
+                <TextLink href={learnerApplicationCardActivity(item).historyHref!}
+                  className="inline-flex min-h-11 md:min-h-9 items-center text-sm">
                   Saved status history →
-                </Link>
+                </TextLink>
               ):null}
             </div>
-            {ownApplicationJobHref(item.jobId) ? <Link
+            {ownApplicationJobHref(item.jobId) ? <TextLink
               href={ownApplicationJobHref(item.jobId)!}
-              className="mt-4 mr-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline">
+              className="mt-4 mr-4 inline-flex min-h-11 md:min-h-9 items-center text-sm">
               View published job and role options →
-            </Link> : null}
-            <Link
+            </TextLink> : null}
+            <TextLink
               href={`/learn/my-placements/applications?applicationId=${encodeURIComponent(item.applicationId)}`}
-              className="mt-4 inline-flex min-h-11 md:min-h-9 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline md:w-auto md:justify-start"
+              className="mt-4 inline-flex min-h-11 md:min-h-9 w-full items-center justify-center text-sm md:w-auto md:justify-start"
             >
               View application details →
-            </Link>
+            </TextLink>
           </article>
         ))}
       </div>

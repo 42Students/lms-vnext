@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import {
   useEffect,
@@ -21,6 +20,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function safeCourseCoverHref(input:string):string|null {
   if(!input.trim())return null;
@@ -273,11 +273,10 @@ export function CourseActions({
         <Button size="sm" variant="secondary" disabled={pending||imageBusy}
           onClick={()=>{setImageError("");setImageVerification("");setImageOpen(true);}}
           aria-label={"Change course image for "+course.name}>Image</Button>
-        {duplicateHref?<Link href={duplicateHref} aria-label={"Duplicate course "+course.name}
-          title={"Duplicate "+course.name}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-ring md:min-h-9">
+        {duplicateHref?<ButtonLink variant="secondary" href={duplicateHref} aria-label={"Duplicate course "+course.name}
+          title={"Duplicate "+course.name}>
           <CourseActionIcon kind="duplicate"/> Duplicate
-        </Link>:null}
+        </ButtonLink>:null}
         <Button size="sm" className="min-h-11 gap-1.5 md:min-h-9"
           variant="danger" disabled={pending} aria-label={"Archive course "+course.name}
           title={"Archive "+course.name+" (historical records retained)"}

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import { HrRecruiterBell } from "@/components/hr/hr-recruiter-bell";
@@ -11,6 +10,7 @@ import {MentorNotificationBellPreview} from "./mentor-notification-bell-preview"
 import type { TopbarConfig } from "./portal-config";
 import { BellIcon, MessageIcon } from "./icons";
 import style from "./topbar.module.css";
+import { TextLink } from "@/components/ui/text-link";
 
 function CountBadge({ count }: { count: number | null }) {
   const label = shellUnreadBadge(count);
@@ -20,14 +20,14 @@ function IconLink({
   href, label, count, message = false, countPartial=false,
 }: { href: string; label: string; count: number | null; message?: boolean;
   countPartial?:boolean }) {
-  return <Link href={href} className={style["iconButton"]+" shrink-0"}
+  return <TextLink variant="bare" href={href} className={style["iconButton"]+" shrink-0"}
     aria-label={label + (count !== null ? countPartial||count>=40 ?
       ", at least " + count + " unread in loaded sources" :
       ", " + count + " unread" : "")}
     title={label}>
     {message ? <MessageIcon /> : <BellIcon />}
     <CountBadge count={count}/>
-  </Link>;
+  </TextLink>;
 }
 
 /** The existing notification drawers remain authoritative for recruiter and

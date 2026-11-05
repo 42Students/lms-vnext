@@ -1,7 +1,6 @@
 import { Alert } from "@/components/ui/alert";
 import { ErrorState } from "@/components/ui/error-state";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import Link from "next/link";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminProgramDirectory } from "@/components/admin/admin-program-directory";
@@ -13,6 +12,8 @@ import { listPrograms } from "@/modules/academics/program-service";
 import { listProgramContents } from "@/modules/admin-ui/program-contents-service";
 import { listArchivedCollegePrograms } from "@/modules/academics/college-program-mutation-service";
 import { listDepartments } from "@/modules/departments/service";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeProgramsPage() {
   const context = await getCurrentRequestContext();
@@ -38,7 +39,7 @@ export default async function CollegeProgramsPage() {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Programs" description="Create, find and manage the programs in your college."/>
       <ErrorState title="Could not load programs" description="Your college programs could not be refreshed. No records were changed."
-        action={<Link href="/college/programs" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>
+        action={<TextLink href="/college/programs" className="inline-flex min-h-11 items-center">Retry</TextLink>}/>
     </div>;
   }
   // Auxiliary counts/archive listings must not cause a false empty active
@@ -70,7 +71,7 @@ export default async function CollegeProgramsPage() {
           ["/college/classes","Classes"],
         ] as const).map(([href,label])=>({value:label,label,href}))}/>
       {partial?<Banner tone="warning" action={
-        <Link href="/college/programs" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Retry</Link>
+        <ButtonLink variant="secondary" href="/college/programs">Retry</ButtonLink>
       }>
         Some linked program details could not be loaded. Active programs remain available; refresh to retrieve the missing records.
       </Banner>:null}

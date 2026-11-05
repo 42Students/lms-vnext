@@ -1,6 +1,5 @@
 import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
@@ -26,6 +25,8 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {CollegeDrivesCapture,CollegeDrivesStaleFallback} from "@/components/placements/college-drives-last-good";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -35,15 +36,15 @@ export default async function CollegeDrivesPage({ searchParams }: {
     <PageHeader title="Jobs"/>
     <ErrorState title="Admin not assigned to a college"
       description="Contact your administrator to assign a college before managing placement jobs."
-      action={<Link href="/dashboard"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>} />
+      action={<TextLink href="/dashboard"
+        className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>} />
   </div>;
   const moduleAccess = await resolveOptionalModuleAccess(context);
   if (!moduleAccess.placements.enabled) return <div className="min-w-0 space-y-4">
     <PageHeader title="Jobs"/>
     <ErrorState title="Placements unavailable"
       description="Placements is turned off for this college. Ask a Super Admin to enable Placements in Module Access before managing placement jobs."
-      action={<Link href="/college/module-access" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View college module access</Link>} />
+      action={<TextLink href="/college/module-access" className="inline-flex min-h-11 items-center md:min-h-9">View college module access</TextLink>} />
   </div>;
   const params = await searchParams;
   const query = driveQueryFromSearch({
@@ -53,7 +54,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   if (!query) return <div className="space-y-4">
     <PageHeader title="Jobs" />
     <ErrorState title="Invalid drive filters" description="Search, status, season, company or page is invalid."
-      action={<Link href="/college/placements/drives" className="inline-flex min-h-11 md:min-h-9 items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>} />
+      action={<TextLink href="/college/placements/drives" className="inline-flex min-h-11 md:min-h-9 items-center">Clear filters</TextLink>} />
   </div>;
   let data: Awaited<ReturnType<typeof listCollegeDrives>>;
   try {
@@ -85,10 +86,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
     {key:"drive",header:"Job Title",mobilePriority:"primary",className:"min-w-[240px] md:sticky md:left-0 md:z-(--lms-z-raised) md:bg-surface",cell:item=>
      <div className="min-w-0 space-y-1">
       <div>{jobStatus(item)}</div>
-      <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/overview?returnTo="+encodeURIComponent(driveListHref(query))}
-        className="inline-flex min-h-11 items-center break-words font-semibold text-link underline-offset-2 hover:underline md:min-h-9">
+      <TextLink href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/overview?returnTo="+encodeURIComponent(driveListHref(query))}
+        className="inline-flex min-h-11 items-center break-words md:min-h-9">
         {item.title}
-      </Link>
+      </TextLink>
       <p className="min-w-0 break-words text-xs text-muted-foreground">{item.companyName||"—"}</p>
      </div>},
     {key:"type",header:"Type",className:"min-w-[100px]",cell:item=><StatusBadge tone="neutral">{item.type.replaceAll("_"," ")}</StatusBadge>},
@@ -102,12 +103,12 @@ export default async function CollegeDrivesPage({ searchParams }: {
     {key:"posted",header:"Posted",className:"min-w-[132px]",cell:item=>formatter.format(item.publishedAt??item.createdAt)},
     {key:"applicants",header:"Applicants",className:"min-w-[92px]",cell:item=>item.applicants},
     {key:"actions",header:"Actions",mobilePriority:"action",className:"min-w-[260px] md:sticky md:right-0 md:z-(--lms-z-raised) md:bg-surface",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
-      <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/applications?returnTo="+encodeURIComponent(driveListHref(query))} aria-label={"View Applications for "+item.title}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">View Applications</Link>
+      <TextLink href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/applications?returnTo="+encodeURIComponent(driveListHref(query))} aria-label={"View Applications for "+item.title}
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">View Applications</TextLink>
       {item.status==="DRAFT"
         ?<CollegeDriveEditDialog jobId={item.id} title={item.title} fullEditorHref={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}/>
-        :<Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
-          aria-label={"Edit "+item.title} className="inline-flex min-h-11 items-center font-semibold text-link underline">Edit</Link>}
+        :<TextLink href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
+          aria-label={"Edit "+item.title} className="inline-flex min-h-11 items-center">Edit</TextLink>}
       <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
       {item.status!=="ARCHIVED"?<Disclosure title="Delete / archive drive" className="min-w-0 w-full">
         <div className="mt-2 max-w-md">
@@ -124,22 +125,20 @@ export default async function CollegeDrivesPage({ searchParams }: {
       description="College-owned placement jobs. Filter, review applications or edit a job without leaving the college's placements workspace."
       actions={<div className="flex flex-wrap items-center gap-3">
         <CollegeDrivesRefreshButton/>
-        <Link href="/college/placements/student-lookup"
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline-offset-4 hover:border-primary hover:underline focus-ring md:min-h-9">
+        <ButtonLink variant="secondary" href="/college/placements/student-lookup">
           Look up a student&apos;s placement status →
-        </Link>
+        </ButtonLink>
         {hasMembershipRole(context,"COLLEGE_ADMIN")?<CollegeDriveCreateDialog>
           <PlacementJobCreateWorkspace context={context}
             collegeId={context.membership.collegeId} basePath="/college/placements"/>
         </CollegeDriveCreateDialog>:null}
-        <Link href="/college/placements/new"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)]">
+        <ButtonLink variant="primary" href="/college/placements/new">
           Create Job
-        </Link>
-        <Link href="/college/placements"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        </ButtonLink>
+        <TextLink href="/college/placements"
+          className="inline-flex min-h-11 items-center md:min-h-9">
           All drives / Placements
-        </Link>
+        </TextLink>
       </div>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-md:grid-cols-1">
       <CollegeDrivesQuickFilters q={query.q} status={query.status}/>
@@ -187,7 +186,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
         </div>
       </Disclosure>
       <Button type="submit" className="w-full self-end md:w-auto">Filter</Button>
-      <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-link underline md:min-h-9">Clear filters</Link>
+      <TextLink href="/college/placements/drives" className="inline-flex min-h-11 items-center justify-center px-3 text-sm md:min-h-9">Clear filters</TextLink>
     </form>
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">
@@ -200,15 +199,15 @@ export default async function CollegeDrivesPage({ searchParams }: {
           {data.total===0 && query.status==="ALL" && !query.q &&
             !query.seasonId && !query.relationshipId?
             <p>Create the first job for this college.</p>:null}
-          {data.total===0?<Link href="/college/placements/new"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Create Job</Link>:null}
-          <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+          {data.total===0?<TextLink href="/college/placements/new"
+            className="inline-flex min-h-11 items-center md:min-h-9">Create Job</TextLink>:null}
+          <TextLink href="/college/placements/drives" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
         </div>} /></div>
       <div className="grid min-w-0 gap-3 md:hidden" aria-label="College placement jobs mobile cards">
        {data.items.map(item=><article key={item.id} className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-         <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/overview?returnTo="+encodeURIComponent(driveListHref(query))}
-          className="min-w-0 flex-1 break-words font-semibold text-link underline-offset-2 hover:underline">{item.title}</Link>
+         <TextLink href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/overview?returnTo="+encodeURIComponent(driveListHref(query))}
+          className="min-w-0 flex-1 break-words">{item.title}</TextLink>
          {jobStatus(item)}
         </div>
         <p className="break-words text-sm text-muted-foreground">{item.companyName||"—"}</p>
@@ -219,12 +218,12 @@ export default async function CollegeDrivesPage({ searchParams }: {
          <div><dt className="text-xs text-muted-foreground">Applicants</dt><dd>{item.applicants}</dd></div>
         </dl>
         <div className="flex flex-wrap items-center gap-3 border-t border-[var(--lms-canvas-border)] pt-3">
-         <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/applications?returnTo="+encodeURIComponent(driveListHref(query))}
-          aria-label={"View Applications for "+item.title} className="min-h-11 text-sm font-semibold text-link underline">View Applications</Link>
+         <TextLink href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/applications?returnTo="+encodeURIComponent(driveListHref(query))}
+          aria-label={"View Applications for "+item.title} className="min-h-11 text-sm">View Applications</TextLink>
          {item.status==="DRAFT"
           ?<CollegeDriveEditDialog jobId={item.id} title={item.title} fullEditorHref={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}/>
-          :<Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
-            aria-label={"Edit "+item.title} className="min-h-11 text-sm font-semibold text-link underline">Edit</Link>}
+          :<TextLink href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
+            aria-label={"Edit "+item.title} className="min-h-11 text-sm">Edit</TextLink>}
          <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
          {item.status!=="ARCHIVED"?<Disclosure title="Delete / archive drive" className="min-w-0 w-full">
           <CollegeDriveArchiveAction jobId={item.id}/>
@@ -235,14 +234,14 @@ export default async function CollegeDrivesPage({ searchParams }: {
        </article>)}
        {data.items.length===0?<p role="status" className="p-4 text-sm text-body">
         {data.total===0&&query.status==="ALL"&&!query.q?"No drives yet":"No drives match these filters"}
-        {" "}<Link href="/college/placements/new" className="font-semibold text-link underline">Create Job</Link>
+        {" "}<TextLink href="/college/placements/new">Create Job</TextLink>
        </p>:null}
       </div>
     </section>
     <nav aria-label="Drive pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
       <span>Page {data.query.page} of {data.totalPages} · {data.total===0?"0 jobs":((data.query.page-1)*data.query.pageSize+1)+"–"+Math.min(data.query.page*data.query.pageSize,data.total)+" of "+data.total+" jobs"}</span><div className="flex flex-wrap gap-3">
-        {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
-        {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-ring" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
+        {query.page>1?<ButtonLink variant="secondary" href={driveListHref({...query,page:query.page-1})}>Previous</ButtonLink>:null}
+        {query.page<data.totalPages?<ButtonLink variant="secondary" href={driveListHref({...query,page:query.page+1})}>Next</ButtonLink>:null}
       </div>
     </nav>
   </div></CollegeDrivesCapture>;

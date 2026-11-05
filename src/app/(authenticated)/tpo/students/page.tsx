@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Dropdown } from "@/components/ui/dropdown";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
-import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
@@ -55,6 +54,8 @@ import {Select} from "@/components/ui/select";
 import {Table} from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type SearchParams = {
   journeyState?: string | string[];
@@ -279,12 +280,12 @@ export default async function TpoStudentsPage({
           <p className="mt-2 text-sm text-body">
             {urlError ?? tpoStudentFilterMessage(raw)}
           </p>
-          <Link
+          <TextLink
             href="/tpo/students"
-            className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9"
+            className="mt-4 inline-flex min-h-11 items-center md:min-h-9"
           >
             Clear filters
-          </Link>
+          </TextLink>
         </Alert>
       </div>
     );
@@ -430,25 +431,23 @@ export default async function TpoStudentsPage({
         aria-label="Students workspace tabs"
         className="flex flex-wrap gap-2 border-b border-border pb-3"
       >
-        <Link
+        <ButtonLink variant="secondary"
           href="/tpo/students"
           aria-current="page"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary-subtle px-4 py-2 text-sm font-semibold text-link focus-ring md:min-h-9"
         >
           Students roster
-        </Link>
-        <Link
+        </ButtonLink>
+        <ButtonLink variant="secondary"
           href="/tpo/students/requests"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 py-2 text-sm font-semibold text-body hover:bg-muted focus-ring md:min-h-9"
         >
           Requests
-        </Link>
+        </ButtonLink>
       </nav>
 
       <Dropdown mobileSheet align="start" label="Student roster tools" trigger="More student tools">
         <nav aria-label="Student roster tools" className="flex min-w-52 flex-col gap-2">
-        <Link href="/tpo/students/requests" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-ring md:min-h-9">Student Requests</Link>
-        <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-ring md:min-h-9">Preparation support</Link>
+        <ButtonLink variant="secondary" href="/tpo/students/requests">Student Requests</ButtonLink>
+        <ButtonLink variant="secondary" href="/tpo/students/preparation-prep">Preparation support</ButtonLink>
         <TpoSafeCsvDownload href={exportHref} filename="students.csv" label="Export filtered CSV" />
        </nav>
       </Dropdown>
@@ -637,11 +636,11 @@ export default async function TpoStudentsPage({
 
       {query.profileStatus&&!data.definitions.verificationAvailable?<Alert tone="warning">
         Profile-verification records are unavailable. A missing source must not be mistaken for Not verified.
-        <Link href="/tpo/students" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9">Clear profile filter</Link>
+        <TextLink href="/tpo/students" className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Clear profile filter</TextLink>
       </Alert>:null}
       {query.afterCollege&&!data.definitions.afterCollegeAvailable?<Alert tone="warning">
         Saved after-college outcome records are unavailable. The selected outcome cannot be filtered until its registered table is available.
-        <Link href="/tpo/students" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-ring md:min-h-9">Clear outcome filter</Link>
+        <TextLink href="/tpo/students" className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Clear outcome filter</TextLink>
       </Alert>:null}
       {!data.definitions.externalOffersAvailable ? (
         <Alert tone="warning">
@@ -652,7 +651,7 @@ export default async function TpoStudentsPage({
       {!data.debarmentAvailable?<InlineNotice tone="info" message="Timed debarment records are not available right now. Debarment filters and counts may be incomplete."/>:null}
       {(data.uninvitedCount??0)>0?<Alert tone="warning">
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
-        <Link href="/tpo/batches" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">Open Placement eligibility</Link>
+        <TextLink href="/tpo/batches" className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Open Placement eligibility</TextLink>
       </Alert>:null}
       <section aria-label="Student cohort and journey" className="space-y-4 rounded-[12px] border border-border bg-surface px-3 py-4 md:px-4">
         <form aria-label="Student cohort selectors" method="get" action="/tpo/students"
@@ -695,12 +694,12 @@ export default async function TpoStudentsPage({
               scopedHref({...currentFilters,legacyStage:step.key,journeyState:undefined,page:1}):
               scopedHref({...currentFilters,legacyStage:undefined,
                 journeyState:step.key==="APPLYING"||step.key==="PLACED"?step.key:undefined,page:1});
-            return <Link role="button" aria-pressed={selected} key={step.key} href={href}
+            return <TextLink variant="bare" role="button" aria-pressed={selected} key={step.key} href={href}
               className={"relative flex min-h-24 min-w-0 flex-col justify-center rounded-[8px] border px-3 py-3 "+(selected?"border-primary bg-primary-subtle":"border-border bg-surface hover:bg-primary-subtle")}>
               <span className="text-xs font-semibold text-muted-foreground">{step.label}{index<4?" →":""}</span>
               <strong className="mt-1 text-xl tabular-nums">{step.count??"—"}</strong>
               <span className="text-xs text-muted-foreground">{step.percent===null?"Verification total unavailable":step.percent+"% of all students"}</span>
-            </Link>;
+            </TextLink>;
           })}
         </div>
         <div role="group" aria-label="Journey attention filters" className="flex flex-wrap gap-2">
@@ -727,8 +726,8 @@ export default async function TpoStudentsPage({
         </div>
         {query.journeyState?<p className="border-t border-border pt-3 text-sm">
           Suggested: review the students in this journey gap.
-          <Link href={scopedHref({...currentFilters,journeyState:query.journeyState,page:1})}
-            className="ml-2 inline-flex min-h-9 items-center font-semibold text-link underline">Do it</Link>
+          <TextLink href={scopedHref({...currentFilters,journeyState:query.journeyState,page:1})}
+            className="ml-2 inline-flex min-h-9 items-center">Do it</TextLink>
         </p>:null}
       </section>
       <section className="min-w-0 space-y-4">
@@ -741,12 +740,12 @@ export default async function TpoStudentsPage({
               {roster.total} students in this view · showing {firstItem}–{lastItem}
             </p>
           </div>
-          <Link
+          <TextLink
             href={tpoStudentRosterClearHref(query.pageSize,first(raw.columns))}
-            className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-ring md:min-h-9"
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9"
           >
             Clear filters
-          </Link>
+          </TextLink>
         </div>
 
         <form role="search" aria-label="tpo students filters"
@@ -832,15 +831,15 @@ export default async function TpoStudentsPage({
                 : "Nobody is in placements yet."}
             {roster.total===0&&!(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!==""))?<p className="mt-2">Decide who is in on Placement eligibility; they show up here.</p>:null}
             <div className="mt-3">
-              <Link
+              <TextLink
                 href={roster.total>0?scopedHref({
                   ...currentFilters,
                   page: 1,
                 }):(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"/tpo/students":"/tpo/batches")}
-                className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9"
+                className="inline-flex min-h-11 items-center md:min-h-9"
               >
                 {roster.total>0?"First matching page":(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"Clear search and filters":"Open Placement eligibility")}
-              </Link>
+              </TextLink>
             </div>
           </div>
         ) : null}
@@ -924,27 +923,25 @@ export default async function TpoStudentsPage({
             className="flex flex-wrap items-center gap-2"
           >
             {roster.page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={scopedHref({
                   ...currentFilters,
                   page: roster.page - 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-ring md:min-h-9"
               >
                 Previous
-              </Link>
+              </ButtonLink>
             ) : null}
 
             {roster.page < roster.totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={scopedHref({
                   ...currentFilters,
                   page: roster.page + 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-ring md:min-h-9"
               >
                 Next
-              </Link>
+              </ButtonLink>
             ) : null}
           </nav>
         </div>
@@ -994,7 +991,7 @@ export default async function TpoStudentsPage({
             const selected = query.journeyState === state;
 
             return (
-              <Link
+              <TextLink variant="bare"
                 key={state}
                 href={scopedHref(tpoJourneyDrillFilters({
                   ...(query.branchId!==undefined?{branchId:query.branchId}:{}),
@@ -1021,7 +1018,7 @@ export default async function TpoStudentsPage({
                     View roster
                   </StatusBadge>
                 </div>
-              </Link>
+              </TextLink>
             );
           })}
         </div>
@@ -1100,17 +1097,17 @@ export default async function TpoStudentsPage({
                     className="border-t border-border"
                   >
                     <td className="px-4 py-3">
-                      <Link
+                      <TextLink
                         href={scopedHref(tpoBranchDrillFilters({
                           ...(query.journeyState!==undefined?{journeyState:query.journeyState}:{}),
                            ...(query.search!==undefined?{search:query.search}:{}),
                            ...(first(raw.columns)!==undefined?{columns:first(raw.columns)?.slice(0,800)}:{}),
                           pageSize:query.pageSize,
                         },branch.branchId))}
-                        className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-ring md:min-h-9"
+                        className="inline-flex min-h-11 items-center md:min-h-9"
                       >
                         {branch.branchName}
-                      </Link>
+                      </TextLink>
                     </td>
                     <td className="px-4 py-3 tabular-nums">
                       {branch.activeLearners}
@@ -1139,11 +1136,11 @@ export default async function TpoStudentsPage({
 
         {data.branches.length ? <ul className="space-y-3 px-4 pt-4 md:hidden" aria-label="Branch intelligence">
           {data.branches.map(branch => <li key={branch.branchId} className="min-w-0 border-b border-border py-4">
-            <Link href={scopedHref(tpoBranchDrillFilters({
+            <TextLink href={scopedHref(tpoBranchDrillFilters({
               ...(query.journeyState!==undefined?{journeyState:query.journeyState}:{}),
                            ...(query.search!==undefined?{search:query.search}:{}),
                            ...(first(raw.columns)!==undefined?{columns:first(raw.columns)?.slice(0,800)}:{}), pageSize:query.pageSize,
-            },branch.branchId))} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-ring md:min-h-9">{branch.branchName}</Link>
+            },branch.branchId))} className="inline-flex min-h-11 items-center md:min-h-9">{branch.branchName}</TextLink>
             <dl className="grid grid-cols-2 gap-3 text-sm">
               <div><dt className="text-body">Learners</dt><dd className="font-semibold tabular-nums">{branch.activeLearners}</dd></div>
               <div><dt className="text-body">Registered</dt><dd className="font-semibold tabular-nums">{branch.placementPool}</dd></div>

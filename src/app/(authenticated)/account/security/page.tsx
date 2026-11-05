@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentDeviceSession } from "@/auth/current-session";
 import { DeviceList } from "@/components/auth/device-list";
@@ -7,6 +6,8 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { describeDevice, deviceTimestampIso } from "@/modules/auth/device-label";
 import { listActiveSessions } from "@/modules/auth/session-service";
+import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 export default async function AccountSecurityPage() {
   let session: Awaited<ReturnType<typeof getCurrentDeviceSession>>;
@@ -27,13 +28,13 @@ export default async function AccountSecurityPage() {
       />
       {rows === null ? (
         <ErrorState description="Your current session could not be listed."
-          action={<Link href="/account/security"
-            className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:w-auto focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Try again</Link>}/>
+          action={<ButtonLink variant="secondary" href="/account/security"
+            className="min-w-0 w-full md:w-auto">Try again</ButtonLink>}/>
       ) : rows.length === 0 ? (
         <EmptyState
           title="No active devices"
           description="Your current session could not be listed."
-          action={<Link href="/account/security" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 hover:text-[var(--lms-primary-text)]">Try again</Link>}
+          action={<TextLink href="/account/security" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Try again</TextLink>}
         />
       ) : (
         <DeviceList

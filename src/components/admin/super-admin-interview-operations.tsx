@@ -2,7 +2,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import {SuperAdminInterviewEdit} from "@/components/admin/super-admin-interview-edit";
 import {useMemo,useState,useTransition} from "react";
-import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {Input} from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
@@ -138,9 +137,9 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
         className="inline-flex min-h-11 items-center">Join online interview</TextLink>:null}
       <div className="flex flex-wrap gap-4">
        {row.jobId&&row.status==="SCHEDULED"?<SuperAdminInterviewEdit jobId={row.jobId} appointmentId={row.id} interviewers={interviewerChoices}/>:null}
-       {row.jobId?<Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}
+       {row.jobId?<TextLink href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}
         aria-label={"View interview for "+(row.candidateName??"candidate")+" · "+(row.jobTitle??row.title)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline">View</Link>:null}
+        className="inline-flex min-h-11 items-center">View</TextLink>:null}
        <TextLink download={"interview-"+row.id+".ics"} href={icsHref(row)}
         aria-label={"Download calendar invitation for "+(row.candidateName??"candidate")+" · "+(row.jobTitle??row.title)}
         className="inline-flex min-h-11 items-center">.ics</TextLink>
@@ -165,8 +164,8 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
      {key:"venue",header:"Venue",mobilePriority:"secondary",cell:row=>row.venue??"Not recorded"},
      {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex min-w-0 flex-wrap gap-[var(--lms-space-2)]">
       {row.jobId&&row.status==="SCHEDULED"?<SuperAdminInterviewEdit jobId={row.jobId} appointmentId={row.id} interviewers={interviewerChoices}/>:null}
-      {row.jobId?<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 print:hidden"
-       href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}>Open schedule</Link>:null}
+      {row.jobId?<TextLink className="inline-flex min-h-11 items-center md:min-h-9 print:hidden"
+       href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}>Open schedule</TextLink>:null}
       <TextLink className="inline-flex min-h-11 items-center md:min-h-9 print:hidden"
        download={"interview-"+row.id+".ics"}
        href={icsHref(row)}>.ics</TextLink>

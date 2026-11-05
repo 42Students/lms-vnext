@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export type RoundPreview={
  id:string;sequence:number;name:string;kind:string;status:string;mode:string|null;
@@ -49,7 +50,7 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
       const applied=round.participants.filter(p=>p.result?.status==="APPLIED").length;
       const staged=round.participants.filter(p=>p.result?.status==="STAGED").length;
       return <li key={round.id}>
-       <Link aria-current={selected?.id===round.id?"page":undefined} href={roundLink(round.id)}
+       <TextLink variant="bare" aria-current={selected?.id===round.id?"page":undefined} href={roundLink(round.id)}
         className={"flex min-h-20 gap-3 px-4 py-3 hover:bg-primary-subtle "+
          (selected?.id===round.id?"border-l-2 border-primary bg-primary-subtle":"")}>
         <span aria-hidden="true" className={"mt-1 flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold "+
@@ -64,20 +65,20 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
           {staged?" · "+staged+" staged":""}
          </span>
         </span>
-       </Link>
+       </TextLink>
       </li>;
      })}
     </ol>
     {!rounds.length?<p role="status" className="p-4 text-sm text-body">No rounds are recorded for this drive.</p>:null}
-    <Link href={root+"#drive-round-actions"} className="inline-flex min-h-11 w-full items-center justify-center border-t border-border px-4 text-sm font-semibold text-link underline">
+    <TextLink href={root+"#drive-round-actions"} className="inline-flex min-h-11 w-full items-center justify-center border-t border-border px-4 text-sm">
      Manage or add a round
-    </Link>
+    </TextLink>
    </aside>
    <article aria-label="Selected round" className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-5">
     {!selected?<div role="status" className="space-y-3">
      <Heading level={2}>{selectedId?"That round is not in this authorized drive.":"No round selected."}</Heading>
      <p className="text-sm text-body">No other round has been substituted.</p>
-     <Link className="inline-flex min-h-11 items-center text-link underline" href={root+"/rounds"}>Reset round selection</Link>
+     <TextLink className="inline-flex min-h-11 items-center" href={root+"/rounds"}>Reset round selection</TextLink>
     </div>:<div className="space-y-5">
      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
       <div>
@@ -87,12 +88,9 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
        </p>
       </div>
       <nav aria-label="Selected round actions" className="flex flex-wrap gap-2 text-sm">
-       {selected.kind==="INTERVIEW"?<Link href={root+"/rounds/"+encodeURIComponent(selected.id)+"/slots"}
-         className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-link md:min-h-9">Slots</Link>:null}
-       <Link href={root+"/rounds/"+encodeURIComponent(selected.id)+"/results"}
-        className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-link md:min-h-9">Results</Link>
-       <Link href={root+"#drive-round-actions"}
-        className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-link md:min-h-9">Edit</Link>
+       {selected.kind==="INTERVIEW"?<ButtonLink variant="secondary" href={root+"/rounds/"+encodeURIComponent(selected.id)+"/slots"}>Slots</ButtonLink>:null}
+       <ButtonLink variant="secondary" href={root+"/rounds/"+encodeURIComponent(selected.id)+"/results"}>Results</ButtonLink>
+       <ButtonLink variant="secondary" href={root+"#drive-round-actions"}>Edit</ButtonLink>
       </nav>
      </header>
      {selected.kind==="INTERVIEW"?<section aria-label="Interview slot attention" className="space-y-3">
@@ -110,10 +108,9 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
         {slots.reschedules.slice(0,6).map(item=><div key={item.id}
            className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-border bg-warning-subtle px-3 py-2">
           <p className="min-w-0 break-words text-sm"><strong>{item.name?.trim()||"Candidate name unavailable"}</strong> · {item.reason??"No reason recorded"}</p>
-          <Link href={root+"/rounds/"+encodeURIComponent(selected.id)+"/slots"}
-           className="inline-flex min-h-9 items-center rounded-lg border border-border bg-surface px-3 text-xs font-semibold text-link">
+          <ButtonLink variant="secondary" href={root+"/rounds/"+encodeURIComponent(selected.id)+"/slots"}>
            Review change
-          </Link>
+          </ButtonLink>
          </div>)}
         {slots.reschedules.length>6?<p className="text-xs text-body">Showing six of {slots.reschedules.length} pending requests. Open Slots for the rest.</p>:null}
        </div>:null}
@@ -123,8 +120,8 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
           {selected.scheduledAt&&dateKey(selected.scheduledAt)===dateKey(now)?"Today":selected.scheduledAt&&dateKey(selected.scheduledAt)===dateKey(new Date(now.getTime()+86400000))?"Tomorrow":"Current booked slots"}
           {" · "}{selected.durationMinutes?selected.durationMinutes+" min planned round":"Interview round"}
          </Heading>
-         <Link href={root+"/rounds/"+encodeURIComponent(selected.id)+"/slots"}
-          className="text-xs font-semibold text-link underline">Change the plan</Link>
+         <TextLink href={root+"/rounds/"+encodeURIComponent(selected.id)+"/slots"}
+          className="text-xs">Change the plan</TextLink>
         </div>
         {preview.length?<div className="min-w-0 overflow-x-auto" role="region" aria-label="Recorded interview timetable">
          <Table className="min-w-[420px]">
@@ -150,10 +147,10 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
       <p className="mt-1 text-sm text-muted-foreground">For non-interview rounds, use the results workspace to enter and apply the official company outcome.</p>
      </section>}
      <div className="flex flex-wrap gap-3 border-t border-border pt-4 text-sm">
-      <Link href={root+"/rounds/"+encodeURIComponent(selected.id)+"/results"}
-       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Review candidate results</Link>
-      <Link href={root+"/candidate-schedule"}
-       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Review schedule collisions</Link>
+      <TextLink href={root+"/rounds/"+encodeURIComponent(selected.id)+"/results"}
+       className="inline-flex min-h-11 items-center md:min-h-9">Review candidate results</TextLink>
+      <TextLink href={root+"/candidate-schedule"}
+       className="inline-flex min-h-11 items-center md:min-h-9">Review schedule collisions</TextLink>
      </div>
     </div>}
    </article>

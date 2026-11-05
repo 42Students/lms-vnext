@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Badge } from "@/components/ui/badge";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -7,6 +6,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {getFacultyDiscussionParticipation}
   from "@/modules/courses/faculty-discussion-participation-service";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 export default async function FacultyDiscussionParticipationPage({
   params,
 }:{params:Promise<{deliveryId:string}>}){
@@ -17,7 +17,7 @@ export default async function FacultyDiscussionParticipationPage({
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Faculty · Section" title="Discussion participation"
       description={data.delivery.courseName+" · "+data.delivery.sectionName}
-      actions={<Link href={base+"/discussions"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">← Discussions</Link>} />
+      actions={<ButtonLink variant="secondary" href={base+"/discussions"} className="w-full sm:w-auto">← Discussions</ButtonLink>} />
     <section aria-label="Recorded participation" className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-2 border-b border-border pb-4 lg:grid-cols-4">
       {([["Messages",data.counts.total],["Faculty messages",data.counts.faculty],
         ["Learner messages",data.counts.learner],["Pinned messages",data.counts.pinned]] as const)

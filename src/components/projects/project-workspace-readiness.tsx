@@ -14,9 +14,10 @@ import {ProjectAdminNav} from "./project-admin-nav";
 import { Tabs } from "@/components/ui/tabs";
 import { Disclosure } from "@/components/ui/disclosure";
 import { StatusBadge } from "@/components/ui/status-badge";
-import Link from "next/link";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:string;basePath:string}){
   // A forged project UUID, expired role or interrupted DB read must never
   // produce a raw server error or expose another college's readiness values.
@@ -38,8 +39,8 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       <ErrorState title="Workspace could not be loaded"
         description="The workspace may be unavailable or your access may have changed."
         action={<div className="flex flex-wrap gap-4">
-          <Link href={basePath+"/"+encodeURIComponent(projectId)+"/readiness"}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>
+          <TextLink href={basePath+"/"+encodeURIComponent(projectId)+"/readiness"}
+            className="inline-flex min-h-11 items-center">Retry</TextLink>
           <PageBackLink href={basePath} label="Back to workspaces" />
         </div>}/>
     </div>;
@@ -67,10 +68,9 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         description="Releases are informational. Task and sprint completion and the audited manual override determine submission readiness."
         actions={<div className="flex flex-wrap items-center gap-2">
           <StatusBadge tone={isReady?"success":"error"}>{isReady?"Ready":"Not ready"}{override.state?" (override)":""}</StatusBadge>
-          <Link href="#manage-readiness-override"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-primary md:min-h-9">
+          <ButtonLink variant="secondary" href="#manage-readiness-override">
             Manage override
-          </Link>
+          </ButtonLink>
         </div>} />
     </div>
     <Tabs ariaLabel="Workspace sections" renderPanel={false} value="readiness"

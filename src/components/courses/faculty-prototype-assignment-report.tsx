@@ -1,7 +1,7 @@
-import Link from "next/link";
 import {facultyReportCsvHref} from "@/modules/courses/faculty-report-csv-request";
 import type {getFacultyAssignmentReport} from "@/modules/courses/faculty-assessment-report-service";
 import { Heading } from "@/components/ui/heading";
+import { TextLink } from "@/components/ui/text-link";
 
 type Report=Awaited<ReturnType<typeof getFacultyAssignmentReport>>;
 const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
@@ -44,7 +44,7 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
   {label:"Not handed in",value:metrics.missing??"—"},
  ];
  return <section aria-label="Faculty prototype assignment report" className="space-y-4">
-  <Link className="faculty-proto-link" href="/teacher/assessments">‹ Assignments &amp; quizzes</Link>
+  <TextLink variant="bare" className="faculty-proto-link" href="/teacher/assessments">‹ Assignments &amp; quizzes</TextLink>
   <header className="flex flex-wrap items-end justify-between gap-3">
    <div><Heading level={1} className="faculty-proto-heading">{assignment.title?.trim()||"Untitled assignment"}</Heading>
     <p className="faculty-proto-subtitle mt-1">{assignment.courseCode} · {assignment.sectionName} · {assignment.dueAt?
@@ -53,7 +53,7 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
    <nav aria-label="Assessment report type" className="flex flex-wrap gap-2">
     <span className="faculty-proto-pill !border-[color:var(--lms-button-primary)] !bg-[color:var(--lms-primary-subtle)] !text-[color:var(--lms-button-primary)]" aria-current="page">
       Assignment report</span>
-    <Link className="faculty-proto-pill no-underline" href="/teacher/allQuizzes">Quiz report</Link>
+    <TextLink className="faculty-proto-pill" href="/teacher/allQuizzes">Quiz report</TextLink>
    </nav>
   </header>
   <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{values.map(item=><div key={item.label}
@@ -89,8 +89,8 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
   <section className="overflow-hidden rounded-xl border border-[color:var(--lms-border)]">
    <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--lms-border)] px-[20px] py-4">
     <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">Student scores</Heading>
-    <Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
-     href={csvHref}>Download as spreadsheet</Link>
+    <TextLink variant="bare" className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
+     href={csvHref}>Download as spreadsheet</TextLink>
    </header>
    <div className="faculty-proto-table-wrap">
     <table className="faculty-proto-table !rounded-none !border-0">
@@ -104,17 +104,17 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
         {item.pointsAwarded} / {assignment.maxPoints}</span>:
         <span className="rounded-full bg-[color:var(--lms-error-surface)] px-2 py-1 text-xs font-bold text-[color:var(--lms-error-text)]">To grade</span>}</td>
        <td>{dayLabel(item.submittedAt)}</td>
-       <td className="text-right"><Link className={(graded?"faculty-proto-secondary":"faculty-proto-action")+
-        " !min-h-9 !px-3 !py-1.5 !text-xs"} href={href}>{graded?"Open":"Grade"}</Link></td>
+       <td className="text-right"><TextLink variant="bare" className={(graded?"faculty-proto-secondary":"faculty-proto-action")+
+        " !min-h-9 !px-3 !py-1.5 !text-xs"} href={href}>{graded?"Open":"Grade"}</TextLink></td>
       </tr>;
      })}
      {!report.rosterUnavailable?missingLearners.map(student=><tr key={"missing-"+student.membershipId}>
       <td>{student.displayName?.trim()||"Student"}</td>
       <td><span className="rounded-full bg-[color:var(--lms-neutral-100)] px-2 py-1 text-xs font-bold text-[color:var(--lms-text-muted)]">Missing</span></td>
       <td>—</td>
-      <td className="text-right"><Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
+      <td className="text-right"><TextLink variant="bare" className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
        href={"/teacher/courses/"+encodeURIComponent(assignment.deliveryId)+"/students/"+
-        encodeURIComponent(student.membershipId)}>View student</Link></td>
+        encodeURIComponent(student.membershipId)}>View student</TextLink></td>
      </tr>):null}
      </tbody>
     </table>

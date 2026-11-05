@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -15,6 +14,7 @@ import { PlacementRecruiterAccess } from "./placement-recruiter-access";
 import { PlacementOperationsSnapshot } from "./placement-operations-snapshot";
 import { AdminRetentionInlinePreview } from "./admin-retention-inline-preview";
 import { PlacementSeasonManager } from "./placement-season-manager";
+import { TextLink } from "@/components/ui/text-link";
 
 export async function PlacementOperationsWorkspace({
   context,
@@ -73,9 +73,9 @@ export async function PlacementOperationsWorkspace({
   const recruiterGrants = recruiterGrantsResult.status === "fulfilled" ? recruiterGrantsResult.value : null;
   const seasons = seasonsResult.status === "fulfilled" ? seasonsResult.value : null;
   const retry = (
-    <Link href={basePath} className="ml-2 font-semibold text-link underline underline-offset-2">
+    <TextLink href={basePath} className="ml-2">
       Retry
-    </Link>
+    </TextLink>
   );
 
   return (
@@ -89,18 +89,18 @@ export async function PlacementOperationsWorkspace({
             Review rejected or withdrawn applications with no activity in the
             past 180 days. This report is read-only and never deletes data.
           </p>
-          <Link href={basePath+"/retention"} className="font-semibold text-link underline underline-offset-2">
+          <TextLink href={basePath+"/retention"}>
             Open data retention report
-          </Link>
+          </TextLink>
         </Disclosure>}
 
       <Disclosure title="Student placement lookup" className="border-b border-[var(--lms-canvas-border)]">
         <p className="pb-3 text-sm text-body">
           Search student registration, applications and outcomes in this college.
         </p>
-        <Link href={basePath+"/student-lookup"} className="font-semibold text-link underline underline-offset-2">
+        <TextLink href={basePath+"/student-lookup"}>
           Open student placement lookup
-        </Link>
+        </TextLink>
       </Disclosure>
       {seasons ? <Disclosure title="Placement season" defaultOpen={!seasons.some(season=>season.status==="ACTIVE")} className="border-b border-[var(--lms-canvas-border)]">
       <PlacementSeasonManager

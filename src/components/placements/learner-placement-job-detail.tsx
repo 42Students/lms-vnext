@@ -2,7 +2,6 @@ import type {ReactNode} from "react";
 import {learnerDriveDeadlineUrgency} from "@/modules/placements/learner-drive-deadline-urgency-model";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { PageHeader } from "@/components/ui/page-header";
-import Link from "next/link";
 import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
 import {LearnerSaveDriveButton} from "./learner-save-drive-button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -16,6 +15,7 @@ import {learnerJobDeadlineLabel} from "@/modules/placements/learner-job-deadline
 import {learnerDrivePayFacts} from "@/modules/placements/learner-drive-pay-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 function relativePostedDate(value:string|null|undefined){
  if(!value||!Number.isFinite(Date.parse(value)))return "Not specified";
@@ -70,12 +70,12 @@ export function LearnerPlacementJobDetail({
       No application was submitted or changed.
     </p>
     <div className="flex flex-wrap gap-4">
-      <Link href={returnHref} className="min-h-11 inline-flex items-center font-semibold text-primary-text underline">
+      <TextLink href={returnHref} className="min-h-11 inline-flex items-center">
         Browse current drives
-      </Link>
-      <Link href="/learn/my-placements/applications" className="min-h-11 inline-flex items-center font-semibold text-primary-text underline">
+      </TextLink>
+      <TextLink href="/learn/my-placements/applications" className="min-h-11 inline-flex items-center">
         View my applications
-      </Link>
+      </TextLink>
     </div>
   </section>;
   const item = items[0]!;
@@ -181,16 +181,15 @@ export function LearnerPlacementJobDetail({
             </li>)}
           </ul>
           <div className="mt-4 flex flex-wrap gap-3">
-            <Link href="/learn/my-placements/applications"
-              className="inline-flex min-h-11 items-center rounded-md bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[color:var(--lms-on-primary)]">
+            <ButtonLink variant="primary" href="/learn/my-placements/applications">
               View applications
-            </Link>
-            <Link href={returnHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            </ButtonLink>
+            <ButtonLink variant="secondary" href={returnHref}>
               Browse drives
-            </Link>
-            <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            </ButtonLink>
+            <TextLink href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center text-sm">
               Check official offers
-            </Link>
+            </TextLink>
           </div>
         </section>
       ):null}
@@ -201,9 +200,9 @@ export function LearnerPlacementJobDetail({
           <p className="mt-1 text-sm">Role-specific evidence is not available here right now.
             Review your profile and placement rules. No application has been changed.</p>
           <div className="mt-3 flex flex-wrap gap-3">
-            <Link href="/learn/profile" className="min-h-11 inline-flex items-center text-sm font-semibold text-primary-text underline">Review profile</Link>
-            <Link href="/learn/my-placements/rules" className="min-h-11 inline-flex items-center text-sm font-semibold text-primary-text underline">Review rules</Link>
-            <Link href={returnHref} className="min-h-11 inline-flex items-center text-sm font-semibold text-primary-text underline">Browse drives</Link>
+            <TextLink href="/learn/profile" className="min-h-11 inline-flex items-center text-sm">Review profile</TextLink>
+            <TextLink href="/learn/my-placements/rules" className="min-h-11 inline-flex items-center text-sm">Review rules</TextLink>
+            <TextLink href={returnHref} className="min-h-11 inline-flex items-center text-sm">Browse drives</TextLink>
           </div>
         </section>
       ):null}
@@ -217,10 +216,10 @@ export function LearnerPlacementJobDetail({
             ? <p role="alert" className="mt-2 text-sm text-body leading-[22px]">{primaryDenial}</p>
             : <p className="mt-2 text-sm text-body leading-[22px]">{availability.detail}</p>}
           {availability.kind!=="OPEN" && denialAction ? (
-            <Link href={denialAction==="REGISTER"?"/learn/my-placements#registration":"/learn/my-placements/rules"}
-              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            <TextLink href={denialAction==="REGISTER"?"/learn/my-placements#registration":"/learn/my-placements/rules"}
+              className="mt-2 inline-flex min-h-11 items-center text-sm">
               {denialAction==="REGISTER"?"Register for placements":"Review placement rules"} →
-            </Link>
+            </TextLink>
           ) : null}
           {availability.kind!=="OPEN" && availability.kind!=="APPLIED" ? (
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-body" aria-label="Application blockers">
@@ -230,19 +229,19 @@ export function LearnerPlacementJobDetail({
           ) : null}
           {availability.kind!=="OPEN" ? (
             <div className="mt-3 flex flex-wrap gap-4">
-              <Link href="/learn/my-placements/applications"
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
+              <TextLink href="/learn/my-placements/applications"
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
                 Check my applications →
-              </Link>
-              <Link href="/learn/profile"
-                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
+              </TextLink>
+              <TextLink href="/learn/profile"
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
                 Review my profile →
-              </Link>
+              </TextLink>
               {(availability.kind==="NOT_OPEN" || availability.kind==="EVIDENCE") ? (
-                <Link href="/learn/my-placements#registration"
-                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
+                <TextLink href="/learn/my-placements#registration"
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
                   Register for placements →
-                </Link>
+                </TextLink>
               ) : null}
             </div>
           ) : null}
@@ -272,22 +271,22 @@ export function LearnerPlacementJobDetail({
           ))}
         </ul>
         <div className="mt-4 flex flex-wrap gap-4">
-          <Link href="/learn/my-placements/rules"
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+          <TextLink href="/learn/my-placements/rules"
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
             Review placement rules →
-          </Link>
-          <Link href="/learn/profile"
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+          </TextLink>
+          <TextLink href="/learn/profile"
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
             Review profile evidence →
-          </Link>
-          <Link href="/learn/my-placements#registration"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+          </TextLink>
+          <TextLink href="/learn/my-placements#registration"
+            className="inline-flex min-h-11 items-center text-sm">
             Registration →
-          </Link>
-          <Link href="/learn/my-placements/schedule?view=calendar"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+          </TextLink>
+          <TextLink href="/learn/my-placements/schedule?view=calendar"
+            className="inline-flex min-h-11 items-center text-sm">
             Calendar →
-          </Link>
+          </TextLink>
         </div>
       </section>
 
@@ -443,10 +442,10 @@ export function LearnerPlacementJobDetail({
               Your current application is authoritative. A withdrawn, closed or ineligible role cannot be submitted here.
             </p>
           </div>
-          <Link href="/learn/my-placements/applications"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
+          <TextLink href="/learn/my-placements/applications"
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">
             My applications →
-          </Link>
+          </TextLink>
         </div>
         <LearnerPlacementJobs items={items} savedJobIds={initialSaved?[item.job.id]:[]}
           bookmarkActionsEnabled={bookmarkActionsEnabled} />

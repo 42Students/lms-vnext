@@ -3,7 +3,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import {useEffect,useMemo,useRef,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 import dynamic from "next/dynamic";
@@ -13,6 +12,7 @@ import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "@/modules/placements/tpo-audit-model";
 import type {TpoAuditRow} from "@/modules/placements/tpo-audit-service";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 /** Quartz receives only scoped audit rows already supplied to this view. */
 const TpoAuditQuartz=dynamic<TpoSpreadsheetGridProps<TpoAuditRow>>(
  ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<TpoAuditRow>),
@@ -237,10 +237,10 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
    mobilePrimaryKeys={["event","when"]}
    selection={{selected,onChange:setSelected,allIds:visible.map(row=>row.kind+":"+row.id)}}
    rowActions={row=>row.entityHref?
-    <Link href={scopedAuditHref(row.entityHref)}
-      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring">Open item →</Link>:
-    row.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)}
-      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-ring">Open job →</Link>:
+    <TextLink href={scopedAuditHref(row.entityHref)}
+      className="inline-flex min-h-11 items-center">Open item →</TextLink>:
+    row.jobId?<TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)}
+      className="inline-flex min-h-11 items-center">Open job →</TextLink>:
      <span aria-label="No linked item" className="text-xs text-muted-foreground">—</span>}
   />
   {notice?<p role="status" className="text-xs text-muted-foreground">{notice}</p>:null}

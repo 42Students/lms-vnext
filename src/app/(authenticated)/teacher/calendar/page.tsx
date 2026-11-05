@@ -5,7 +5,6 @@ import {Button} from "@/components/ui/button";
 import {Disclosure} from "@/components/ui/disclosure";
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
 import { Alert } from "@/components/ui/alert";
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ScrollCue } from "@/components/ui/scroll-cue";
@@ -20,6 +19,8 @@ import {
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type Params=Record<string,string|string[]|undefined>;
 
@@ -41,9 +42,9 @@ export default async function FacultyCalendarPage({
       raw.startDate>raw.endDate;
     return <section role="alert" className="space-y-3">
     <PageHeader title={reversed?"startDate must be before or equal to endDate":invalidDate} />
-    <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-ring md:min-h-9">
+    <TextLink href="/teacher/calendar" className="inline-flex min-h-11 items-center md:min-h-9">
       Clear filters
-    </Link>
+    </TextLink>
   </section>;
   }
   const context=await getCurrentRequestContext();
@@ -75,10 +76,10 @@ export default async function FacultyCalendarPage({
   const todayIst = istDateKey(new Date());
   const selected=grid.query.deliveryId;
   return <div className="min-w-0 max-w-full space-y-4">
-    <PageHeader title="Class Schedule" actions={<Link href="/teacher/live-classes"
-      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring sm:w-auto md:min-h-9">
+    <PageHeader title="Class Schedule" actions={<ButtonLink variant="secondary" href="/teacher/live-classes"
+      className="w-full sm:w-auto">
       View live classes
-    </Link>} />
+    </ButtonLink>} />
     {prototypeRead.available?<FacultyPrototypeSchedule
       nowIso={new Date().toISOString()}
       minDate={new Date(Date.now()-7*86400000).toISOString().slice(0,10)}
@@ -99,7 +100,7 @@ export default async function FacultyCalendarPage({
      {!upcomingRead.available?<Disclosure title="Failed to load course data" defaultOpen className="min-w-0">
        <Alert tone="warning" className="mt-2">
          Calendar events may be incomplete. Your loaded class schedule remains available below.
-         <Link href={facultyMonthHref(grid.query)} className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-ring md:min-h-9">Retry class schedule</Link>
+         <TextLink href={facultyMonthHref(grid.query)} className="mt-2 inline-flex min-h-11 items-center md:min-h-9">Retry class schedule</TextLink>
        </Alert>
      </Disclosure>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
        <ol className="divide-y divide-border border-y border-border">{nextClasses.map(item=><li key={item.id}
@@ -110,8 +111,8 @@ export default async function FacultyCalendarPage({
              timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
            }).format(item.startsAt)} IST · {item.sectionName}</p>
           </div>
-          {item.deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-ring md:min-h-9">Open course →</Link>:
+          {item.deliveryId?<TextLink href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}
+            className="inline-flex min-h-11 items-center text-sm md:min-h-9">Open course →</TextLink>:
            <span className="text-xs text-muted-foreground">Section-wide class</span>}
          </li>)}</ol>}
     </section>
@@ -128,12 +129,12 @@ export default async function FacultyCalendarPage({
             .format(new Date(grid.query.month+"-01T12:00:00.000Z"))} · IST
         </Heading>
         <div className={monthStyles.nav}>
-          <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
-            className={monthStyles.navLink} aria-label="Previous month">←</Link>
-          <Link href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
-            className={monthStyles.navLink} aria-label="Today">Today</Link>
-          <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
-            className={monthStyles.navLink} aria-label="Next month">→</Link>
+          <TextLink variant="bare" href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
+            className={monthStyles.navLink} aria-label="Previous month">←</TextLink>
+          <TextLink variant="bare" href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
+            className={monthStyles.navLink} aria-label="Today">Today</TextLink>
+          <TextLink variant="bare" href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
+            className={monthStyles.navLink} aria-label="Next month">→</TextLink>
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_auto] lg:items-end">
@@ -176,9 +177,9 @@ export default async function FacultyCalendarPage({
                     timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
                   }).format(event.startsAt)} IST
                 </p>
-                {event.deliveryId?<Link
+                {event.deliveryId?<TextLink
                   href={"/teacher/courses/"+encodeURIComponent(event.deliveryId)+"/home"}
-                  className="text-xs font-semibold text-primary-text hover:underline inline-flex min-h-11 items-center focus-ring md:min-h-9">Course Section</Link>
+                  className="text-xs inline-flex min-h-11 items-center md:min-h-9">Course Section</TextLink>
                 :<span className="text-xs text-muted-foreground">Section-wide session</span>}
               </article>)}
             </div>

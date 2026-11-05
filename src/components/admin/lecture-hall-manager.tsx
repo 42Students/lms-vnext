@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -16,6 +15,7 @@ import { useToast } from "@/components/ui/toast";
 import { LECTURE_HALL_COPY, ROOM_TYPE_LABELS } from "@/modules/academics/lecture-hall-copy";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { ButtonLink } from "@/components/ui/button-link";
 
 function HallPlusIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>;}
 function HallEditIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16 4a2.8 2.8 0 0 1 4 4L9 19l-5 1 1-5L16 4Z"/></svg>;}
@@ -346,10 +346,9 @@ export function LectureHallManager({
               className: "w-[120px] text-right md:sticky md:right-0 md:bg-surface",
               cell: (hall) => (
                 <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden md:justify-end">
-                  <Link href={`${availabilityBase}/${hall.id}`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">
+                  <ButtonLink variant="secondary" href={`${availabilityBase}/${hall.id}`}>
                     Availability
-                  </Link>
+                  </ButtonLink>
                   <Button type="button" variant="ghost" size="sm" disabled={pending}
                     aria-label={"Edit lecture hall "+hall.name} title={"Edit "+hall.name}
                     onClick={()=>open(hall)} className="min-h-11 md:min-h-9"><HallEditIcon /></Button>

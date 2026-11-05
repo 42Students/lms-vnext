@@ -2,7 +2,6 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { Alert } from "@/components/ui/alert";
 import {TpoRecruiterApprovalEditor,TpoRecruiterDurationEditor} from "@/components/tpo/tpo-communication-settings-editors";
@@ -87,12 +86,11 @@ export default async function TpoRecruiterAccessPage({
           title="Invalid recruiter access filters"
           description="The grant status or requested page is invalid. No recruiter access records were loaded."
           action={
-            <Link
+            <ButtonLink variant="secondary"
               href="/tpo/settings/recruiters"
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link"
             >
               Clear filters
-            </Link>
+            </ButtonLink>
           }
         />
       </div>
@@ -183,10 +181,10 @@ export default async function TpoRecruiterAccessPage({
           Recruiters with access to your college
         </Heading>
 
-        <Link href="/tpo/recruiters?stage=INVITED"
-         className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+        <TextLink href="/tpo/recruiters?stage=INVITED"
+         className="mt-1 inline-flex min-h-11 items-center text-sm md:min-h-9">
          Invites not yet accepted
-        </Link>
+        </TextLink>
         <p className="mt-1 text-sm leading-6 text-body">
           Each row represents one persisted
           recruiter-to-college-company grant.
@@ -237,12 +235,12 @@ export default async function TpoRecruiterAccessPage({
             Apply
           </Button>
 
-          <Link
+          <ButtonLink variant="secondary"
             href="/tpo/settings/recruiters"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link sm:w-auto"
+            className="w-full sm:w-auto"
           >
             Clear
-          </Link>
+          </ButtonLink>
         </form>
       </section>
 
@@ -343,25 +341,23 @@ export default async function TpoRecruiterAccessPage({
 
           <div className="flex gap-2">
             {page > 1 ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={tpoRecruiterAccessHref({
                   status: query.status,
                   q:query.q,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
               >
                 ← Previous
-              </Link>
+              </ButtonLink>
             ) : null}
 
             {page < totalPages ? (
-              <Link
+              <ButtonLink variant="secondary"
                 href={nextTpoRecruiterGrantPage(query,page)}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle"
               >
                 Next →
-              </Link>
+              </ButtonLink>
             ) : null}
           </div>
         </nav>

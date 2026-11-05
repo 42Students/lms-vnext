@@ -1,5 +1,4 @@
 import { Pagination } from "@/components/ui/pagination";
-import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
@@ -12,6 +11,7 @@ import { tpoShortlistQuerySchema } from "@/modules/placements/tpo-shortlist-mode
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = { page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -33,8 +33,8 @@ export default async function TpoDriveShortlistPage({
   if(Array.isArray(query.page))return <section className="min-w-0 space-y-3">
     <PageHeader title="Current shortlist"/>
     <Alert tone="error">Only one shortlist page number can be selected.</Alert>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/shortlist"}
-     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+    <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/shortlist"}
+     className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
   </section>;
   const validated = tpoShortlistQuerySchema.safeParse({
     jobId,
@@ -59,18 +59,18 @@ export default async function TpoDriveShortlistPage({
         title={data.job.title + " · Current shortlist"}
         description="Current SHORTLISTED screening decisions for submitted applications belonging to active college learners."
         actions={<>
-          <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-ring sm:w-auto md:min-h-9">← Drive workspace</Link>
+          <ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id)}
+            className="w-full sm:w-auto">← Drive workspace</ButtonLink>
           <ButtonLink variant="secondary" href={"/api/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist/export"}
             className="w-full sm:w-auto">Export shortlist CSV</ButtonLink>
         </>}
       />
-      <Link
+      <ButtonLink variant="secondary"
         href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview"}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto hover:underline hover:bg-primary-subtle focus-ring md:min-h-9"
+        className="w-full sm:w-auto"
       >
         Recruiter-visible shortlist report →
-      </Link>
+      </ButtonLink>
       <p className="text-sm leading-[22px] text-body">
         {data.total} shortlisted application(s). This is an application-level count:
         one learner may have multiple role-option applications. Withdrawn or

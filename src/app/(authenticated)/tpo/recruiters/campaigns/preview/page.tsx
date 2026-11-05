@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -9,6 +8,7 @@ import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.modul
 import {hasMembershipRole} from "@/modules/identity/context";
 import {engageAudienceQuerySchema} from "@/modules/messaging/engage-audience-model";
 import {previewEngageCampaignAudience} from "@/modules/messaging/engage-audience-service";
+import { TextLink } from "@/components/ui/text-link";
 type PageProps={searchParams:Promise<{segment?:string|string[]}>};
 export default async function PreviewCampaign({searchParams}:PageProps){
  const context=await getCurrentRequestContext();
@@ -16,12 +16,12 @@ export default async function PreviewCampaign({searchParams}:PageProps){
  const raw=await searchParams;
  const segment=Array.isArray(raw.segment)?raw.segment[0]:raw.segment;
  const query=engageAudienceQuerySchema.safeParse({segment});
- if(!query.success)return <div className="min-w-0 space-y-4"><PageHeader title="Audience preview"/><Alert tone="error">Invalid audience. <Link href="/tpo/recruiters/campaigns/preview" className="text-link underline">Reset</Link></Alert></div>;
+ if(!query.success)return <div className="min-w-0 space-y-4"><PageHeader title="Audience preview"/><Alert tone="error">Invalid audience. <TextLink href="/tpo/recruiters/campaigns/preview">Reset</TextLink></Alert></div>;
  const preview=await previewEngageCampaignAudience(context,query.data);
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Audience preview"
     description="Read-only counts from current recruiter contacts. No messages will be sent from this page."
-    actions={<Link href="/tpo/recruiters" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">Back to Engage</Link>} />
+    actions={<TextLink href="/tpo/recruiters" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">Back to Engage</TextLink>} />
   <Tabs ariaLabel="Audience segments" renderPanel={false} value={query.data.segment}
    items={(["ALL_ELIGIBLE","NEW","UNASSIGNED"] as const).map(item=>({
     value:item,label:item.replaceAll("_"," "),href:"/tpo/recruiters/campaigns/preview?segment="+item,

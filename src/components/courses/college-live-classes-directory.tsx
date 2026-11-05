@@ -3,7 +3,6 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { DateInput } from "@/components/ui/date-input";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {Pagination} from "@/components/ui/pagination";
 import {CollegeContentCsvExport} from "./college-content-csv-export";
@@ -15,6 +14,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ButtonLink } from "@/components/ui/button-link";
 type Data=Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 /** Authorized source must provide this URL; never reconstruct it from IDs.
  * Treat invalid or credentialed URLs as unavailable.
@@ -92,7 +92,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       </div>
     </Disclosure>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-    <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] transition-colors hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9">Clear</Link>
+    <ButtonLink variant="secondary" href="/college/live-classes">Clear</ButtonLink>
   </form>
   <section aria-label="Persisted live classes" className="border-y border-border">
     <p className="border-b border-border p-4 text-sm text-muted-foreground">{data.total} matching live classes</p>
@@ -116,10 +116,10 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
               Meeting link is available only in an authorized course workspace.</p>}
         <p className="text-xs text-muted-foreground">{item.deliveryId?"Section-specific session":"Shared offering session"}</p>
         <p className="break-words text-sm text-body">Lesson: {item.lessonName} · {item.cohortName} · {item.periodName}</p>
-        <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-          className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text hover:text-primary-hover hover:underline focus-ring md:min-h-9">
+        <TextLink href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
+          className="inline-flex min-h-11 max-w-full items-center break-words text-sm md:min-h-9">
           {item.courseName} ({item.courseCode})
-        </Link>
+        </TextLink>
       </article>)}</div>}
   </section>
   <Pagination page={data.query.page} pageCount={data.totalPages}
