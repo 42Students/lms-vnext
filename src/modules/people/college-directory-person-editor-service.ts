@@ -2,11 +2,13 @@ import "server-only";
 import {and,eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,departments,facultyProfiles,learnerProfiles,membershipRoles,users} from "@/db/schema";
+import {collegeMemberships,colleges,departments,facultyProfiles,learnerProfiles,membershipRoles,organizations,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
+import {AuthorizationError} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission,type PermissionTransaction} from "@/modules/permissions/persisted-actor";
 import {facultyContactEditSchema,facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {learnerProfileDocumentSchema} from "./profile-validation";
 
@@ -38,6 +40,26 @@ async function scope(context:RequestContext){
   // acting-college resolver; never invent a College Admin membership.
   return resolveActingCollege(context,"people.manage");
 }
+/** Keep the selected college and its parent organization active until this
+ * private profile read or write commits. Request-time scope is not enough:
+ * a tenant may be archived by another transaction after it was resolved. */
+async function assertLiveProfileTenant(
+  tx:PermissionTransaction,
+  tenant:{collegeId:string;organizationId:string},
+){
+  const [active]=await tx.select({collegeId:colleges.id})
+    .from(colleges)
+    .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+    .where(and(
+      eq(colleges.id,tenant.collegeId),
+      eq(colleges.organizationId,tenant.organizationId),
+      eq(colleges.status,"ACTIVE"),
+      eq(organizations.status,"ACTIVE"),
+    ))
+    .for("share")
+    .limit(1);
+  if(!active)throw new AuthorizationError("people.manage");
+}
 /** Deprecated numeric facultyId is a lookup alias ONLY, never the mutation
  * identity: all current routes and optimistic updates use membership UUIDs. */
 export async function findCollegeFacultyLegacyDeepLink(context:RequestContext,rawId:unknown){
@@ -55,7 +77,12 @@ export async function findCollegeFacultyLegacyDeepLink(context:RequestContext,ra
 
 export async function getCollegePersonEditor(context:RequestContext,rawId:unknown,kind:"FACULTY"|"LEARNER"){
   const own=await scope(context),id=uuid.parse(rawId);
-  const [row]=await getDb().select({
+  return getDb().transaction(async tx=>{
+    // A role revoked since request construction cannot disclose a student's
+    // private profile. Hold actor, membership, role and tenant locks for the read.
+    await assertPersistedPlatformPermission(tx,context,"people.manage",own);
+    await assertLiveProfileTenant(tx,own);
+  const [row]=await tx.select({
     id:collegeMemberships.id,status:collegeMemberships.status,
     name:users.displayName,phone:users.phoneE164,email:users.email,
     faculty:facultyProfiles.profileDocument,learner:learnerProfiles.profileDocument,
@@ -86,6 +113,7 @@ export async function getCollegePersonEditor(context:RequestContext,rawId:unknow
     primaryDepartmentId:row.departmentId,profileVersion:row.facultyVersion??0,
     academicTitle:row.title,
     employmentType:row.employmentType,rollNumber:row.roll,registrationNumber:row.registration};
+  });
 }
 export async function saveCollegePersonEditor(context:RequestContext,rawId:unknown,raw:unknown){
   const own=await scope(context),id=uuid.parse(rawId),input=inputSchema.parse(raw);
@@ -98,6 +126,13 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
       .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,own.collegeId)))
       .for("update",{of:collegeMemberships}).limit(1);
     if(!member||member.status==="ENDED")throw Error("PERSON_NOT_EDITABLE");
+    // Once the target row is locked, reconstruct current authority from
+    // persisted roles, user status and live college membership. This prevents
+    // an admin suspended/removed while a request was in flight from writing.
+    await assertPersistedPlatformPermission(tx,context,"people.manage",own);
+    // Super Admin may have no college membership; separately lock its
+    // selected college/organization lifecycle rather than trusting a cookie.
+    await assertLiveProfileTenant(tx,own);
     if(input.kind==="FACULTY"){
       const [found]=await tx.select({
         document:facultyProfiles.profileDocument,
