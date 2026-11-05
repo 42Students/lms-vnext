@@ -17,7 +17,7 @@ describe("ui consistency rules", () => {
   });
   it("flags off-scale font sizes and radii", () => {
     expect(rules("src/x.css", "a{font-size:15px}b{font-size:14px}")).toEqual(["font-size-off-scale"]);
-    expect(rules("src/x.tsx", 'className="text-[13px] text-[17px] rounded-[9px] rounded-[8px]"')).toEqual(["font-size-off-scale", "radius-off-scale"]);
+    expect(rules("src/x.tsx", 'a="text-[13px]" b="text-[17px]" c="rounded-[9px]" d="rounded-[8px]"')).toEqual(["font-size-off-scale", "radius-off-scale"]);
     expect(rules("src/x.css", "a{border-radius:9px}b{border-radius:12px}")).toEqual(["radius-off-scale"]);
   });
   it("flags font families other than the Inter stack", () => {
