@@ -362,7 +362,7 @@ export default async function HrCalendarPage({
       />
       {noCollegeAccess ? (
         <section className="border-b border-[var(--lms-canvas-border)] pb-6">
-          <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+          <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
             Open this on your college&apos;s placement address
           </Heading>
           <p className="mt-2 text-sm text-body">
@@ -461,7 +461,7 @@ export default async function HrCalendarPage({
               <div className="space-y-3 lg:hidden">
                 {mobileDays.map((day) => (
                   <article key={day.day} className={styles["mobileDay"]}>
-                    <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{fullDayLabel(day.day)}{day.day===today?" · Today":""}</Heading>
+                    <Heading level={3} className="text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">{fullDayLabel(day.day)}{day.day===today?" · Today":""}</Heading>
                     <div className={styles["mobileEvents"]}>
                       {day.events.map((event) => (
                         <RecruiterCalendarEventCard key={event.id} event={event} />
@@ -592,7 +592,7 @@ export default async function HrCalendarPage({
               className="space-y-6"
             >
               <div>
-                <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+                <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
                   Agenda
                 </Heading>
 
@@ -614,7 +614,7 @@ export default async function HrCalendarPage({
                   key={day.day}
                   className="space-y-3"
                 >
-                  <Heading level={3} className="border-b border-[var(--lms-canvas-border)] pb-2 text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">
+                  <Heading level={3} className="border-b border-[var(--lms-canvas-border)] pb-2 text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">
                     {fullDayLabel(day.day)}
                     {day.day === today
                       ? " · Today"

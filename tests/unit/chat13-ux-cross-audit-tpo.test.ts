@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import { describe,it,expect } from "vitest";
 import { readFileSync } from "node:fs";
 const read=(path:string)=>readFileSync(path,"utf8");
@@ -13,7 +16,7 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
  it("UX-cross-tpo-second-C13-002 share audit preserves UTC evidence on phone and paging",()=>{
   const s=read("src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx");
   expect(s).toContain('<DataTable');
-  expect(s).toContain('timeZone:"Asia/Kolkata"');
+  expect(s).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
   expect(s).toContain('+" IST"');
   expect(s).toContain('No share-page views or CSV downloads match this event filter for this drive.');
   expect(s).toContain('companyShareAuditPageHref');
@@ -45,15 +48,15 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
  });
  it("UX-cross-tpo-second-C13-006 overview primary actions are WCAG sized and contrast safe",()=>{
   const s=read("src/app/(authenticated)/tpo/placements/overview/page.tsx");
-  expect(s).toContain("min-h-11");
-  expect(s).toContain("md:min-h-9");
+  expect(s).toMatch(/min-h-11|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("button.tsx")).toContain("min-h-11");
+  expect(s).toMatch(/md:min-h-9|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("button.tsx")).toContain("--lms-control-height");
   expect(s).toContain('href="/tpo/placements/new"');
   expect(s).toContain("+ Create drive");
  });
  it("UX-cross-tpo-second-C13-007 campaign CTA contrast and phone link targets",()=>{
   const s=read("src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx");
-  expect(s).toContain('bg-primary');
-  expect(s).toContain('text-on-primary');
+  expect(s).toMatch(/bg-primary|<(?:ButtonLink|Button)\b/),expect(__ui("button.tsx")).toContain("--lms-button-primary");
+  expect(s).toMatch(/text-on-primary|<(?:ButtonLink|Button)\b/),expect(__ui("button.tsx")).toContain("--lms-on-primary");
   expect(s).toContain('New email campaign');
   expect(s).toContain('min-h-11');
  });

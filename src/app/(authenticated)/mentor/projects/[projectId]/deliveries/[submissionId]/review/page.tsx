@@ -50,9 +50,9 @@ export default async function MentorDeliveryVersionPage({params}:{
           <dd className="mt-1 text-sm">{v.reviewedAt?format(v.reviewedAt):"No review date recorded"}</dd></div>
         </dl>
       </Disclosure>
-      <Heading level={3} className="mt-6 text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">Learner submission summary</Heading>
+      <Heading level={3} className="mt-6 text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">Learner submission summary</Heading>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{v.summary||"No summary recorded"}</p>
-      <Heading level={3} className="mt-6 text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">Recorded reviewer feedback</Heading>
+      <Heading level={3} className="mt-6 text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">Recorded reviewer feedback</Heading>
       {v.feedback?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
         {v.feedback}</p>:
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">

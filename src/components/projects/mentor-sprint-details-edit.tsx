@@ -189,7 +189,7 @@ export function MentorSprintDetailsEdit({
       description="The revised sprint details will be visible to its project team."
       confirmLabel="Save sprint details" confirmVariant="primary"
       pending={pending} onConfirm={save}>
-      <dl className="grid min-w-0 gap-[var(--lms-space-2)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
+      <dl className="grid min-w-0 gap-[var(--lms-space-2)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-[length:var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
         <dt className="font-semibold text-foreground">Title</dt>
         <dd className="break-words">{title.trim()}</dd>
         <dt className="font-semibold text-foreground">Description</dt>

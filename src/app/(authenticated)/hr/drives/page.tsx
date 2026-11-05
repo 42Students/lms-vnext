@@ -274,7 +274,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <TextLink href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="inline-flex min-h-11 items-center py-2 text-sm">Reset</TextLink>
     </form>
     {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
-      <Heading level={2} className="text-[var(--lms-font-lg)] leading-[26px] text-[var(--lms-heading)] md:text-[var(--lms-font-xl)] md:leading-7">Your drive requests</Heading>
+      <Heading level={2} className="text-[length:var(--lms-font-lg)] leading-[26px] text-[var(--lms-heading)] md:text-[length:var(--lms-font-xl)] md:leading-7">Your drive requests</Heading>
       <ul className="min-w-0 divide-y divide-border border-y border-border">{requestView.map(req=>{
         const draft=req.draft&&typeof req.draft==="object"?req.draft:{};
         const title=typeof draft["title"]==="string"?draft["title"]:"Drive request";

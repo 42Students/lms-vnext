@@ -259,7 +259,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     return <li key={b.id} className={"flex min-w-0 flex-col gap-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-4 shadow-sm "+(b.finishedAt?"bg-[var(--lms-neutral-50)]":"bg-surface")}>
      <header className="flex min-w-0 items-start justify-between gap-2">
       <div className="flex min-w-0 flex-col gap-1">
-       <Heading level={2} className="m-0 break-words text-[var(--lms-font-lg)] leading-6">
+       <Heading level={2} className="m-0 break-words text-[length:var(--lms-font-lg)] leading-6">
         <TextLink href={detailsHref} className="text-[var(--lms-heading)]">{b.name}</TextLink>
        </Heading>
        <p className="text-xs text-muted-foreground">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>

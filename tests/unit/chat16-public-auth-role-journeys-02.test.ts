@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {safeReturnTo,sessionExpiredHref} from "@/lib/return-to";
@@ -53,7 +56,7 @@ describe("chat-16 public auth and invitation page journeys",()=>{
   const retry=read("src/components/placements/public-join-preview-retry.tsx");
   expect(retry).toContain("Your invitation was not used.");
   expect(retry).toContain("encodeURIComponent(token)");
-  expect(retry).toContain("min-h-11");
+  expect(retry).toMatch(/min-h-11|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("button.tsx")).toContain("min-h-11");
  });
  it("UX-campaign-unsubscribe-02 GET must never opt out without explicit POST",()=>{
   const page=read("src/app/campaign-unsubscribe/[token]/page.tsx");

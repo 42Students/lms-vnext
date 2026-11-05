@@ -211,7 +211,7 @@ export default async function CollegeReadinessPage({
       </section>
 
       <section aria-label="Must fix before launch" className="min-w-0 space-y-3 border-t border-border pt-6">
-        <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Must fix before launch</Heading>
+        <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Must fix before launch</Heading>
         {mustFix.length===0
           ?<p role="status" className="text-sm text-body">All persisted readiness checks pass. Runtime DNS, login, teaching and placement verification are still required before launch.</p>
           :<ul className="list-disc space-y-2 pl-6 text-sm text-body">
@@ -223,7 +223,7 @@ export default async function CollegeReadinessPage({
             </li>)}
           </ul>}
       </section>
-      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Recommended setup</Heading>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Recommended setup</Heading>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
         
         {recommended.length?<ul className="mt-3 list-disc space-y-2 pl-6 text-sm text-body">
           {recommended.map(item=><li key={item}>{item}</li>)}
@@ -233,7 +233,7 @@ export default async function CollegeReadinessPage({
       <section className="border-t border-border pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           
-          <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+          <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
             Go-live checks
           </Heading>
           <StatusBadge
@@ -280,7 +280,7 @@ export default async function CollegeReadinessPage({
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <Heading level={3} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">
+                    <Heading level={3} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">
                       {index + 1}.{" "}
                       {check.label}
                     </Heading>
@@ -311,7 +311,7 @@ export default async function CollegeReadinessPage({
         </ol>
       </section>
 
-      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px]">Domain login readiness (legacy checks)</Heading>}
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px]">Domain login readiness (legacy checks)</Heading>}
         className="min-w-0" contentClassName="space-y-3 pt-3 pb-4">
         <p className="text-sm text-body">Read-only persisted domain evidence, separate from the stricter operational go-live checklist. DNS and actual login must still be tested.</p>
         <dl className="grid gap-2 text-sm sm:grid-cols-2">
@@ -340,7 +340,7 @@ export default async function CollegeReadinessPage({
           {legacyDomainReadiness.recommendedActions.map(action=><li key={action}>{action}</li>)}
         </ul>:null}
       </Disclosure>
-      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
           Additional setup evidence
         </Heading>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
         
@@ -382,7 +382,7 @@ export default async function CollegeReadinessPage({
         </dl>
       </Disclosure>
 
-      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
           Readiness interpretation
         </Heading>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
 

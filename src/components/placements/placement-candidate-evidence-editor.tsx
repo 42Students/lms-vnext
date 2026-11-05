@@ -239,7 +239,7 @@ export function PlacementCandidateEvidenceEditor({
   ] as const;
   const renderEvidenceField = ([name,label,value,step,max]: typeof evidenceFields[number]) => (
     <Label key={name} className="min-w-0">
-      <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">{label}</span>
+      <span className="mb-1 block text-[length:var(--lms-font-sm)] font-semibold text-body">{label}</span>
       <Input className="min-h-11 w-full md:min-h-9" name={name} type="number" min={0}
         max={max} step={step} defaultValue={value==null?"":String(value)} />
     </Label>
@@ -307,7 +307,7 @@ export function PlacementCandidateEvidenceEditor({
 
               {lateralEntry ? (
                 <Label>
-                  <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
+                  <span className="mb-1 block text-[length:var(--lms-font-sm)] font-semibold text-body">
                     Diploma %
                   </span>
                   <Input
@@ -325,7 +325,7 @@ export function PlacementCandidateEvidenceEditor({
                 </Label>
               ) : (
                 <Label>
-                  <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
+                  <span className="mb-1 block text-[length:var(--lms-font-sm)] font-semibold text-body">
                     12th %
                   </span>
                   <Input

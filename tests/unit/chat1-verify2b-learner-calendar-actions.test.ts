@@ -22,7 +22,7 @@ describe("verify2b learner calendar day drawer actions",()=>{
    expect(calendar).toContain("<LearnerRoundConfirmAttendance");
    expect(calendar).toContain("<LearnerScheduleReschedule");
    expect(calendar).toContain('event.mode==="ON_CAMPUS"||event.mode==="VIRTUAL"');
-   expect(calendar).toContain('className="md:!w-[min(440px,100vw)]"');
+   expect(calendar).toContain('className="md:w-[min(440px,100vw)]"');
    expect(calendar).toContain("selectedDayEvents.map((event)");
  });
 });

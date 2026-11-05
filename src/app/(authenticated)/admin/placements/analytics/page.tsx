@@ -174,7 +174,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    </dl>
   </section>
   <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4" aria-label="Hiring Funnel">
-   <Heading level={2} className="mb-4 text-[var(--lms-font-lg)] text-[var(--lms-heading)]">Hiring Funnel</Heading>
+   <Heading level={2} className="mb-4 text-[length:var(--lms-font-lg)] text-[var(--lms-heading)]">Hiring Funnel</Heading>
    {funnelTotals.applied===0?
     <p role="status" className="text-sm text-muted-foreground">No funnel data</p>:
     <ol className="max-w-[500px] space-y-3">{funnel.map((step,index)=>
@@ -199,7 +199,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <p className="mt-1 text-xs text-muted-foreground">Mean of drives with recorded first-shortlist transitions.</p>
   </div>:<p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. A first-shortlist transition is required before this metric can be calculated.</p>}
   <section aria-label="Company-wise Hiring Report" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
-   <Heading level={2} className="text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Company-wise Hiring Report</Heading>
+   <Heading level={2} className="text-[length:var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Company-wise Hiring Report</Heading>
    <DataTable columns={columns} rows={visibleRows} getRowKey={row=>row.jobId}
     caption="Company-wise Hiring Report" mobileMode="scroll"
     className="min-w-0 [&_table]:min-w-[952px]"

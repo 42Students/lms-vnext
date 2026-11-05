@@ -100,7 +100,7 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     const p = readComponent("courses/learner-quiz-attempt.tsx");
     expect(p).toContain("ConfirmDialog");
     expect(p).toContain("learnerQuizQuestionNavState");
-    expect(p).toContain("Back to quizzes</Link>");
+    expect(p).toContain("Back to quizzes</TextLink>");
     expect(p).toContain("inline-flex min-h-11");
     expect(p).toContain('className="min-h-11 md:min-h-9">← Back</Button>');
     expect(p).toContain("learnerQuizQuestionNavState");
@@ -169,7 +169,7 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     expect(p).toContain("max-md:min-h-11");
     const input=readComponent("ui/input.tsx");
     expect(input).toContain("max-md:min-h-11");
-    expect(input).toContain("text-[var(--lms-font-base)]");
+    expect(input).toContain("text-[length:var(--lms-font-base)]");
   });
   it("UX-learn-schedule-03 guards reschedule actions with 44px targets (LX-16)", () => {
     const p=readComponent("placements/learner-schedule-reschedule.tsx");

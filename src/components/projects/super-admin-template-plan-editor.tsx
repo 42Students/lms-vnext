@@ -33,7 +33,7 @@ type Props = {
 type Sprint = ProjectTemplateBlueprint["sprints"][number];
 type Task = ProjectTemplateBlueprint["tasks"][number];
 const field = "mt-1 w-full";
-const label = "block text-[var(--lms-font-sm)] font-semibold text-body";
+const label = "block text-[length:var(--lms-font-sm)] font-semibold text-body";
 
 export function SuperAdminTemplatePlanEditor(props: Props) {
   const {askConfirm,dialog}=useConfirmFlow();
@@ -270,7 +270,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           }))}>Add release</Button>
         {draft.sprints.map((sprint, index) => <fieldset key={index}
           className="grid min-w-0 gap-3 border-b border-border py-4">
-          <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Sprint {index + 1}</legend>
+          <legend className="px-1 text-[length:var(--lms-font-sm)] font-semibold text-foreground">Sprint {index + 1}</legend>
           {rowErrors["sprints:"+index]?<p role="alert" className="text-sm text-danger-text">
             {rowErrors["sprints:"+index]}</p>:null}
           <div className="grid min-w-0 gap-3 md:grid-cols-2">
@@ -336,7 +336,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         </Label>:null}
         {visibleTasks.map(({task,index}) => <fieldset key={task.key+":"+index}
           className="grid min-w-0 gap-3 border-b border-border py-4">
-          <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">
+          <legend className="px-1 text-[length:var(--lms-font-sm)] font-semibold text-foreground">
             Task {index+1} · {task.title||"Untitled task"}
           </legend>
           {rowErrors["tasks:"+index]?<p role="alert" className="text-sm text-danger-text">

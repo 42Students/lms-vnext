@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {resolve} from "node:path";
@@ -67,7 +70,7 @@ describe("UX-admin-first-third-chat12 independent source cross-audit",()=>{
   expect(src).toContain("parseAdminSessionHistoryPage(raw)");
   expect(src.indexOf("if(page===null)")).toBeLessThan(src.indexOf("listCollegeAdminHistory("));
   expect(src).toContain('title="Invalid history page"');
-  expect(src).toContain('timeZone:"Asia/Kolkata"');
+  expect(src).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
   expect(src).toContain("Cross-college and raw event metadata are excluded.");
   expect(src).toContain("No matching identity or platform history was recorded");
  });

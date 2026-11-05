@@ -17,8 +17,8 @@ export function SuperAdminPlacementDetailView({data,extraActions}:{data:SuperAdm
   </div>
   <dl className="grid min-w-0 grid-cols-1 gap-x-[var(--lms-space-6)] gap-y-0 sm:grid-cols-2">
    {data.facts.map(fact=><div key={fact.label} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] first:pt-0">
-    <dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{fact.label}</dt>
-    <dd className="mt-[var(--lms-space-1)] break-words text-[var(--lms-font-base)] font-medium leading-6 text-foreground">{fact.value}</dd>
+    <dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{fact.label}</dt>
+    <dd className="mt-[var(--lms-space-1)] break-words text-[length:var(--lms-font-base)] font-medium leading-6 text-foreground">{fact.value}</dd>
    </div>)}
   </dl>
   <p className="max-w-3xl text-xs leading-5 text-muted-foreground">This is a read-only, selected-college view. Changing the scope never changes the record being requested; inaccessible records return not found.</p>

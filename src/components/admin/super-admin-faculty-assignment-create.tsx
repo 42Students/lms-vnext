@@ -156,7 +156,7 @@ export function SuperAdminFacultyAssignmentCreate({
      </Select>
     </Label>
     {selected?<fieldset className="grid gap-2 border-b border-border pb-3 md:col-span-2">
-      <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Course(s)</legend>
+      <legend className="px-1 text-[length:var(--lms-font-sm)] font-semibold text-foreground">Course(s)</legend>
       <p className="text-xs text-body leading-5">Select several courses to assign this lecturer to all of them at once. The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
       <Input type="search" aria-label="Search courses" value={courseQuery} placeholder="Search courses"
         onChange={e=>setCourseQuery(e.target.value)} />

@@ -308,7 +308,7 @@ export default async function SuperAdminTenantSetup({
     <ol className="grid min-w-0 gap-x-6 gap-y-2 2xl:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
-      <Heading level={3} className="mt-1 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{step.title}</Heading>
+      <Heading level={3} className="mt-1 break-words text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">{step.title}</Heading>
       <p className="mt-2 text-sm text-body">{step.description}</p>
       <TextLink href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm">Open workspace →</TextLink>
      </li>)}

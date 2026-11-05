@@ -239,7 +239,7 @@ export async function CollegeRoleDirectoryWorkspace({
           className="inline-flex min-h-11 items-center md:min-h-9">People Directory</TextLink>
       </nav> : null}
       {kind === "FACULTY" ? <div className="space-y-2">
-        <Heading level={2} className="text-[var(--lms-font-lg)] text-[var(--lms-heading)]">Registered Faculty</Heading>
+        <Heading level={2} className="text-[length:var(--lms-font-lg)] text-[var(--lms-heading)]">Registered Faculty</Heading>
         <TextLink href="/college/faculty-assignment"
           className="inline-flex min-h-11 items-center md:min-h-9">Faculty Assignment →</TextLink>
       </div> : null}

@@ -16,4 +16,8 @@ describe("cx", () => {
     expect(cx("focus-ring", "shadow-(--lms-elevation-2)")).toBe("focus-ring shadow-(--lms-elevation-2)");
     expect(cx("shadow-(--lms-elevation-1)", "shadow-(--lms-elevation-3)")).toBe("shadow-(--lms-elevation-3)");
   });
+  it("keeps a length-hinted font size next to a text color (the unhinted var form is merged away)", () => {
+    expect(cx("text-[length:var(--lms-font-base)] font-normal", "text-[var(--lms-form-ink)]")).toBe("text-[length:var(--lms-font-base)] font-normal text-[var(--lms-form-ink)]");
+    expect(cx("text-[var(--lms-font-base)]", "text-[var(--lms-form-ink)]")).toBe("text-[var(--lms-form-ink)]");
+  });
 });

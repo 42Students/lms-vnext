@@ -206,7 +206,7 @@ export function AdminProgramDirectory({
   return (
     <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
       <section aria-label="Create New Program" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 print:hidden">
-        <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)]">Create New Program</Heading>
+        <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)]">Create New Program</Heading>
         <form onSubmit={create} noValidate className="min-w-0 pt-3">
         {createError?<Alert tone="error" role="alert">
           <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">

@@ -63,7 +63,7 @@ export function Drawer({ open, onOpenChange, title, description, children, foote
     <div className={inlineDesktop ? "flex h-full min-h-0 flex-col overflow-hidden md:h-auto md:overflow-visible" : "flex h-full min-h-0 flex-col overflow-hidden"}>
       <header data-slot="drawer-header" className={cx("flex min-w-0 shrink-0 items-start justify-between gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] p-4 pt-[max(1rem,env(safe-area-inset-top))] md:gap-[var(--lms-space-4)] md:px-[var(--lms-canvas-padding)]", inlineDesktop ? "md:!hidden" : "")}>
         {headerLeading ? <div data-slot="drawer-leading" className="shrink-0">{headerLeading}</div> : null}
-        <div className="min-w-0"><h2 id={titleId} className={cx("m-0 break-words text-[var(--lms-font-lg)] font-semibold leading-[1.4] text-[var(--lms-heading)]", headerLeading ? "sr-only" : "")}>{title}</h2>
+        <div className="min-w-0"><h2 id={titleId} className={cx("m-0 break-words text-[length:var(--lms-font-lg)] font-semibold leading-[1.4] text-[var(--lms-heading)]", headerLeading ? "sr-only" : "")}>{title}</h2>
           {description ? <p id={descriptionId} className="mt-[var(--lms-space-1)] min-w-0 break-words [overflow-wrap:anywhere] text-[13px] leading-5 text-[var(--lms-body-text)]">{description}</p> : null}</div>
         {dismissible ? <Button className="min-h-11 min-w-11 shrink-0 rounded-full bg-surface p-0 text-[var(--lms-muted-text)] hover:bg-[var(--lms-neutral-100)]" variant="ghost" aria-label="Close drawer" onClick={() => onOpenChange(false)}><OverlayCloseIcon /></Button> : null}
       </header>

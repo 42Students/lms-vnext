@@ -113,7 +113,7 @@ export default async function TenantDetail({params,searchParams}:{
   </div>
   </Disclosure>
   <dl className="grid gap-4 border-t border-border pt-4 md:grid-cols-2">
-   {fields.map(([label,value])=><div key={label}><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</dt>
+   {fields.map(([label,value])=><div key={label}><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{value}</dd></div>)}
   </dl>
   {item.status==="ARCHIVED"&&item.organizationStatus==="ACTIVE"?

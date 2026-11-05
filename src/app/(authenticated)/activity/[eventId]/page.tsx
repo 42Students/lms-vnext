@@ -114,7 +114,7 @@ export default async function ActivityDetailPage({
       </div>
 
       <section className="space-y-3">
-        <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Event context</Heading>
+        <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Event context</Heading>
         {Object.keys(event.metadata).length === 0 ? (
           <p className="border-t border-border pt-4 text-sm text-muted-foreground">
             This event has no structured context.

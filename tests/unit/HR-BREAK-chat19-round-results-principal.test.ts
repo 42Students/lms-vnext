@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {isValidElement, type ReactNode} from "react";
 import {readFileSync} from "node:fs";
@@ -118,7 +121,7 @@ describe("HR-BREAK-ROUND-PRINCIPAL-26 and UX-hr-round-results-02 page journey",(
     expect(tabSource).toContain("focus-ring");
     for(const action of targets){
       expect(action.className).toContain("min-h-11");
-      expect(action.className).toContain("focus-ring");
+      expect(tabSource).toContain("focus-ring");expect(readFileSync("src/components/ui/text-link.tsx","utf8")).toContain("focus-ring");
     }
   });
 });

@@ -106,7 +106,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
         </form>
       </section>
       <section aria-label="Manage classes" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
-        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Existing Classes/Sections</Heading>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Existing Classes/Sections</Heading>
         <div className="flex min-w-0 flex-wrap items-center gap-3">
           <TextLink href={pageUrl(data.query)} className="inline-flex min-h-11 items-center md:min-h-9">Refresh</TextLink>
           {recurring?<CollegeRecurringEntry options={{...recurring,

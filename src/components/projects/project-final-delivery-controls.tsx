@@ -344,7 +344,7 @@ export function LearnerFinalDeliveryControl({
         }
         description="Drafts can be prepared early. Final submission unlocks after Project execution is complete."
       >
-        <section aria-label="What is left before you can submit" className="mb-[var(--lms-space-4)] min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
+        <section aria-label="What is left before you can submit" className="mb-[var(--lms-space-4)] min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-[length:var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
           <Heading level={3} className="text-foreground">What’s left before you can submit</Heading>
           {canSubmitDraft?<p className="mt-1">Ready to submit after saving this draft.</p>:<ul className="mt-2 list-disc space-y-1 pl-5">
             <li>{readinessDetail?.tasksRemaining??"Some"} task(s) still need completion</li>
@@ -429,7 +429,7 @@ export function LearnerFinalDeliveryControl({
             <ProjectDeliveryFileUploader projectId={projectId}
               disabled={pending||attachments.length>=10}
               onUploaded={item=>setAttachments(rows=>rows.length>=10?rows:[...rows,item])}/>
-            {attachments.map((item,index)=><div key={index} className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-2)] text-[var(--lms-font-base)] sm:flex-row sm:items-center">
+            {attachments.map((item,index)=><div key={index} className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-2)] text-[length:var(--lms-font-base)] sm:flex-row sm:items-center">
               <span className="min-w-0 flex-1 break-words">{item.name}</span>
               <Button className="w-full sm:w-auto" type="button" size="sm" variant="secondary" disabled={pending}
                 onClick={()=>setAttachments(rows=>rows.filter((_,i)=>i!==index))}>Remove</Button>
@@ -629,7 +629,7 @@ export function FinalReviewControl({
               <option value="CHANGES_REQUESTED">Request changes</option>
             </Select>
           </Label> : null}
-          {staleReview?<div role="alert" className="space-y-[var(--lms-space-2)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
+          {staleReview?<div role="alert" className="space-y-[var(--lms-space-2)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-[length:var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
             <p>This submission may have changed since you opened this review. Refresh before accepting, requesting changes, or locking.</p>
             <Button type="button" variant="secondary" disabled={pending}
               onClick={()=>{setConfirmReview(false);setOpen(false);setStaleReview(false);router.refresh();}}>

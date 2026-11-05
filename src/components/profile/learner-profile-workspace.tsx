@@ -615,7 +615,7 @@ export function LearnerProfileWorkspace(props: {
         <div className="flex flex-col gap-5 md:flex-row md:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[50%] bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
-            <Heading level={2} className="m-0 min-w-0 break-words text-[var(--lms-font-lg)] leading-[1.4] text-[var(--lms-heading)]">{props.displayName || "Learner"}</Heading>
+            <Heading level={2} className="m-0 min-w-0 break-words text-[length:var(--lms-font-lg)] leading-[1.4] text-[var(--lms-heading)]">{props.displayName || "Learner"}</Heading>
             <p className="mt-[var(--lms-space-1)] min-w-0 break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{document.headline || "Add a headline to introduce yourself."}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {props.rollNumber ? <StatusBadge>Roll {props.rollNumber}</StatusBadge> : null}

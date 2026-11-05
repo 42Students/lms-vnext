@@ -330,7 +330,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           aria-label="Selected learner module access"
         >
           <div className="border-b border-border pb-6">
-            <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+            <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
               Why this learner sees these modules
             </Heading>
 
@@ -355,7 +355,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </div>
 
           <section aria-label="Placement cell decision" className="border-t border-border pt-6">
-            <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">Placement cell decision</Heading>
+            <Heading level={3} className="text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">Placement cell decision</Heading>
             <p className="mt-2 text-sm text-body">{
               selected.placementParticipation.status==="NOT_DECIDED"?"Not decided yet":
               selected.placementParticipation.status==="ELIGIBLE"?"Eligible":
@@ -402,7 +402,7 @@ export default async function SuperAdminLearnerAccessTracePage({
            </TextLink>
           </nav>
           <section className="min-w-0 border-t border-border pt-6" aria-label="Student overrides and locks">
-            <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">Student overrides and locks</Heading>
+            <Heading level={3} className="text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">Student overrides and locks</Heading>
             <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner&apos;s final access is enabled.</p>
             <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-3">
               {membershipOverrideSummary(selected.modules).map(item => (
@@ -424,7 +424,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <Heading level={3} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">
+                  <Heading level={3} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">
                     {module.label}
                   </Heading>
                   <p className="mt-2 max-w-3xl break-words text-sm leading-6 text-body">
@@ -492,7 +492,7 @@ export default async function SuperAdminLearnerAccessTracePage({
         </section>
       ) : (
         <section className="border-t border-border pt-6">
-          <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+          <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
             Select a learner to explain access
           </Heading>
           <p className="mt-2 text-sm leading-6 text-body">

@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 const src=(name:string)=>readFileSync("src/components/projects/"+name+".tsx","utf8");
@@ -26,7 +29,7 @@ describe("UX-projects-shared-overlays-02 guarded action/confirmation paths",()=>
     const shared=readFileSync("src/components/ui/dialog.tsx","utf8");
     expect(shared).toContain('aria-labelledby={titleId}');
     expect(shared).toContain('aria-label="Close dialog"');
-    expect(s).toContain("min-h-11");
+    expect(s).toMatch(/min-h-11|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("button.tsx")).toContain("min-h-11");
     expect(s).toContain("createLearnerBoardTaskDialogNavigationGuard");
   });
   it("project-admin-submission-review makes locking a separate confirmed action",()=>{

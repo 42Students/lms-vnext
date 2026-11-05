@@ -33,7 +33,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
   aria-label="Section course content">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
    <div className="space-y-1">
-    <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Lessons</Heading>
+    <Heading level={2} className="m-0 text-[length:var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Lessons</Heading>
     <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">
      {data.selected?"What the selected class can see, including shared lessons and section-specific items.":"All content in this course (every section)"}
     </p>

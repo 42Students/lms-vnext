@@ -18,6 +18,6 @@ it("UX-mentor-cross-F04 keeps mobile editors accessible, 16px text and linked re
  expect(b).toContain("p-2 text-base focus-ring");
  expect(sharedInput).toContain("focus-ring");
  expect(sharedInput).toContain("max-md:min-h-11");
- expect(sharedTextarea).toContain("text-[var(--lms-font-base)]");
+ expect(sharedTextarea).toContain("text-[length:var(--lms-font-base)]");
  expect(sharedTextarea).toContain("focus-ring");
 });

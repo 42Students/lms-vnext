@@ -27,7 +27,7 @@ export function Textarea({ className, error = false, rows, ...props }: TextareaP
         "w-full min-w-0 resize-y disabled:resize-none font-[inherit] scroll-mt-3",
         "rounded-[var(--lms-field-radius)] border-0",
         "bg-[var(--lms-form-bg)] px-[12px] py-[16px]",
-        "text-[var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",
+        "text-[length:var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",
         "caret-[var(--lms-primary)] outline-none shadow-none",
         "transition-[border-color,box-shadow,background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)]",
         "placeholder:text-[var(--lms-placeholder)]",

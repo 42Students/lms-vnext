@@ -318,7 +318,7 @@ export function PersonOnboardDialog({
             {fieldError?.field==="email"?<p id="onboard-email-error" role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:null}
           </div>
           {forcedRole==="FACULTY" ? <fieldset className="grid min-w-0 gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:col-span-2">
-            <legend className="text-[var(--lms-font-sm)] font-semibold text-body">Faculty details</legend>
+            <legend className="text-[length:var(--lms-font-sm)] font-semibold text-body">Faculty details</legend>
             <Label stack>Department
               <Select required disabled={pending || departments.length===0} value={departmentId}
                 aria-invalid={fieldError?.field==="department"}
@@ -357,7 +357,7 @@ export function PersonOnboardDialog({
             <Label stack>Bio
               <Textarea rows={3} maxLength={3000} disabled={pending} value={bio} onChange={event=>setBio(event.target.value)}/>
             </Label>
-            <p className="text-[var(--lms-font-sm)] font-semibold text-body">Additional assignment</p>
+            <p className="text-[length:var(--lms-font-sm)] font-semibold text-body">Additional assignment</p>
             <Label className="flex min-h-11 items-center gap-2 md:min-h-9">
               <Checkbox checked={registerAsMentor} disabled={pending}
                 onChange={event=>setRegisterAsMentor(event.target.checked)}/>

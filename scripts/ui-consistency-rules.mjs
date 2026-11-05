@@ -27,6 +27,7 @@ export const RULES = {
   "handrolled-skeleton": "Use SkeletonBlock or Skeleton instead of animate-pulse placeholders.",
   "class-conflict": "Two classes from the same property group in one class list (e.g. p-2 p-4); keep only the one that wins.",
   "adhoc-format": "Format dates and numbers with the shared helpers in src/lib/format-date.ts and src/lib/safe-format.ts, not toLocale*/Intl.* in components.",
+  "merge-ambiguous": "Write text-[length:var(--lms-font-*)]: the unhinted form is merged away by cx() when a text color class follows it.",
   "button-bare": 'Button variant="bare" has no standard look. Use primary/secondary/ghost/danger/link/chip/menu-item.',
   "hex-color": "Use a --lms-* color token instead of a hex literal.",
   "color-literal": "Use a --lms-* color token instead of rgb()/hsl()/named colors.",

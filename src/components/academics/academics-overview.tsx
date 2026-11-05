@@ -22,8 +22,8 @@ type Workspace = Awaited<
 function AcademicEmpty({ action }: { action: string }) {
   return (
     <div role="status" aria-live="polite" className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
-      <p className="m-0 text-[var(--lms-font-base)] text-[var(--lms-body-text)]">No records to show.</p>
-      <TextLink href={{"Create period":"#academic-create-period","Create program":"#academic-create-program","Create cohort":"#academic-create-cohort","Create section":"#academic-create-section"}[action] ?? "#academic-create-period"} className="inline-flex min-h-11 items-center text-[var(--lms-font-base)] md:min-h-9">
+      <p className="m-0 text-[length:var(--lms-font-base)] text-[var(--lms-body-text)]">No records to show.</p>
+      <TextLink href={{"Create period":"#academic-create-period","Create program":"#academic-create-program","Create cohort":"#academic-create-cohort","Create section":"#academic-create-section"}[action] ?? "#academic-create-period"} className="inline-flex min-h-11 items-center text-[length:var(--lms-font-base)] md:min-h-9">
         {action}
       </TextLink>
     </div>
@@ -374,7 +374,7 @@ export function AcademicsOverview({
             </p>
           </div>
           {programsDirectoryHref ? (
-            <TextLink href={programsDirectoryHref} className="inline-flex min-h-11 items-center text-[var(--lms-font-base)] md:min-h-9">
+            <TextLink href={programsDirectoryHref} className="inline-flex min-h-11 items-center text-[length:var(--lms-font-base)] md:min-h-9">
               Open Programs directory
             </TextLink>
           ) : null}

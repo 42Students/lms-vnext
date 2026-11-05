@@ -66,7 +66,7 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     for (const html of items) {
       expect(html).toContain('disabled=""');
       expect(html).toContain('aria-invalid="true"');
-      expect(html).toContain("text-[var(--lms-font-base)]");
+      expect(html).toContain("text-[length:var(--lms-font-base)]");
       expect(html).toContain("focus-visible");
     }
     expect(render(<Input required aria-label="Roll number" />)).toContain('required=""');

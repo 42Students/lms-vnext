@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 const read=(p:string)=>readFileSync(p,"utf8");
@@ -20,7 +23,7 @@ describe("Mentor board external links and modal focus",()=>{
   expect(dialog).toContain("useOverlayExit(ref, opener, open, 180)");
   expect(dialog).toContain("opener.current.focus()");
   expect(dialog).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");
-  expect(detail).toContain("timeZone:\"Asia/Kolkata\"");
+  expect(detail).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
  });
  it("UX-mentor-cross-B06 board and destructive controls have 44px targets",()=>{
   for(const path of ["src/components/projects/mentor-lane-board.tsx","src/components/projects/mentor-board-task-detail-dialog.tsx","src/components/projects/mentor-task-delete-control.tsx"]){

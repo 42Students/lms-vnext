@@ -314,7 +314,7 @@ export default async function ElectiveRoster({
       {pageCount > 1 && <Pagination label="Roster pages" page={page} pageCount={pageCount} hrefForPage={filterHref} />}
     </section>
     <section id="faculty" className="min-w-0 scroll-mt-24 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-      <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Faculty</Heading>
+      <Heading level={2} className="m-0 text-[length:var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">Faculty</Heading>
       <p className="text-sm text-muted-foreground leading-[22px]">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
       {assignments.length === 0 && <EmptyState title="No faculty assigned" description="Assign an eligible faculty member to this elective offering."/>}
       {assignments.map(item => <div key={item.id} className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">

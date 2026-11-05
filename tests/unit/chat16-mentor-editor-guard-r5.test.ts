@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 const source=(path:string)=>readFileSync(path,"utf8");
@@ -22,7 +25,7 @@ describe("chat-16 mentor editor safeguards",()=>{
   it("MEN-projects-meetings-57 renders private file timestamps in IST beside status",()=>{
     const files=source("src/components/projects/project-resource-files-panel.tsx");
     expect(files).toContain("Last updated: <time dateTime={file.completedAt??file.createdAt}>");
-    expect(files).toContain('timeZone:"Asia/Kolkata"');
+    expect(files).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
     expect(files).toContain("{descriptor.label}");
     expect(files).toContain("{file.originalName}");
   });

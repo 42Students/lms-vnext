@@ -71,7 +71,7 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
   return (
     <form onSubmit={submit} aria-label={DEPARTMENT_COPY.createCardTitle}
       className="flex min-w-0 flex-col items-stretch gap-4 print:hidden">
-      <Heading level={2} className="m-0 -mx-4 border-b border-[var(--lms-canvas-border)] px-4 pb-4 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
+      <Heading level={2} className="m-0 -mx-4 border-b border-[var(--lms-canvas-border)] px-4 pb-4 text-[length:var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
         {DEPARTMENT_COPY.createCardTitle}
       </Heading>
       <div className="min-w-0 w-full flex-1">

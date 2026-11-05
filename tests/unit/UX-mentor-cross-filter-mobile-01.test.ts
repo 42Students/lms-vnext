@@ -8,7 +8,9 @@ describe("Mentor projects directory responsive filters and paging",()=>{
   expect(source).toContain('className="min-h-11 w-full min-w-0 max-w-full text-base');
   expect(source).toContain("text-base font-normal text-foreground");
   expect(source).toContain('<Button type="submit" className="min-h-11 w-full');
-  expect(source).toContain('className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)]');
+  expect(source).toContain('<ButtonLink variant="secondary"');
+  expect(source).toContain('className="w-full"');
+  expect(readFileSync("src/components/ui/button.tsx","utf8")).toContain("min-h-11");
  });
  it("UX-mentor-cross-X02 hides inaccessible disabled pagination links from tab order",()=>{
   expect(source).toContain("tabIndex={page <= 1 ? -1 : undefined}");

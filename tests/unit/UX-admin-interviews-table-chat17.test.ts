@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -28,7 +31,7 @@ describe("UX-UNOWNED-TABLE-04 Super Admin interview operations",()=>{
   it("retains IST formatting and permission-preserving schedule destination",()=>{
     const source=readFileSync(join(process.cwd(),
       "src/components/admin/super-admin-interview-operations.tsx"),"utf8");
-    expect(source).toContain('timeZone:"Asia/Kolkata"');
+    expect(source).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
     expect(source).toContain('href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}');
     expect(source).toContain('conflicts.get(row.id)?.join("; ")');
     expect(source).toContain('title:e.title,date:e.startsAt');

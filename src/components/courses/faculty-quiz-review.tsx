@@ -263,7 +263,7 @@ export function FacultyQuizReview({
       <div className="min-w-0 space-y-4">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <p className="text-[var(--lms-font-sm)] leading-5 text-[var(--lms-body-text)]">
+          <p className="text-[length:var(--lms-font-sm)] leading-5 text-[var(--lms-body-text)]">
             Submitted scores and answer review are read from
             immutable submitted snapshots.
           </p>

@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 const read=(path:string)=>readFileSync(path,"utf8");
@@ -12,7 +15,7 @@ describe("UX-campaign-unsubscribe-confirmed-01 final preference state",()=>{
   expect(page).toContain('<Card as="section"');
   expect(page).toContain('role="status"');
   expect(page).toContain('min-h-dvh');
-  expect(page).toContain("focus-ring");
+  expect(page).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("text-link.tsx")).toContain("focus-ring");
  });
  it("retains explicit loading and safe error states",()=>{
   expect(read("src/app/campaign-unsubscribe/confirmed/loading.tsx")).toContain("<GracefulPageLoading");

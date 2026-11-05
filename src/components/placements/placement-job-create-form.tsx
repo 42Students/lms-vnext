@@ -1257,7 +1257,7 @@ export function PlacementJobCreateForm({
                   className={inputClass+" mt-2"}/>
               </Label>
               <Label>
-              <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Company Name
               </span>
               <Select
@@ -1309,7 +1309,7 @@ export function PlacementJobCreateForm({
           ) : (
             <div className="grid min-w-0 gap-4 sm:grid-cols-2">
               <Label>
-                <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Company Name
                 </span>
                 <Input
@@ -1322,7 +1322,7 @@ export function PlacementJobCreateForm({
                 />
               </Label>
               <Label>
-                <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Primary domain
                 </span>
                 <Input
@@ -1334,7 +1334,7 @@ export function PlacementJobCreateForm({
                 />
               </Label>
               <Label>
-                <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Website
                 </span>
                 <Input
@@ -1375,7 +1375,7 @@ export function PlacementJobCreateForm({
         </div>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2 md:grid-cols-3">
           <Label className="sm:col-span-2">
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job Title
             </span>
             <Input
@@ -1390,7 +1390,7 @@ export function PlacementJobCreateForm({
             />
           </Label>
           <Label className="sm:col-span-2">
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job Description
             </span>
             <Textarea
@@ -1423,7 +1423,7 @@ export function PlacementJobCreateForm({
             </span>
           </Label>
           <Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job Type
             </span>
             <Select
@@ -1437,7 +1437,7 @@ export function PlacementJobCreateForm({
             <span className="mt-1 block text-xs text-muted-foreground">Job types are managed in Settings &gt; Job types. A switched-off type remains on existing drives but cannot be selected for new drives.</span>
           </Label>
           <Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Mode
             </span>
             <Select className={inputClass} value={driveMode}
@@ -1458,7 +1458,7 @@ export function PlacementJobCreateForm({
             </span>
           </Label>
           <Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Work mode
             </span>
             <Select
@@ -1479,7 +1479,7 @@ export function PlacementJobCreateForm({
             <span className="mt-1 block text-xs text-muted-foreground">These describe work location, not a pool or campus-hosted interview event. Pool reporting time and travel arrangements must be coordinated separately.</span>
           </Label>
           <Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Location
             </span>
             <Input
@@ -1489,7 +1489,7 @@ export function PlacementJobCreateForm({
             />
           </Label>
           <Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Openings
             </span>
             <Input
@@ -1502,7 +1502,7 @@ export function PlacementJobCreateForm({
             />
           </Label>
           <Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Application mode
             </span>
             <Select
@@ -1527,7 +1527,7 @@ export function PlacementJobCreateForm({
             <span className="mt-1 block text-xs text-muted-foreground">Hybrid accepts LMS or employer applications. Employer-form-only applications are completed outside LMS; on-campus slot scheduling is not set up by this selection.</span>
           </Label>
           {applicationMode!=="INTERNAL"||driveMode==="OFF_CAMPUS"?<Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Company application link
             </span>
             <Input
@@ -1540,7 +1540,7 @@ export function PlacementJobCreateForm({
           </Label>:null}
           <div>
             <Label>
-              <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Application deadline
               </span>
               <Input id="tpo-drive-application-deadline"
@@ -1592,7 +1592,7 @@ export function PlacementJobCreateForm({
 
           <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">Default package · main job role. Salary amounts are in LPA unless labelled otherwise.</p>
           <Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum CTC (LPA)
             </span>
             <Input
@@ -1606,7 +1606,7 @@ export function PlacementJobCreateForm({
             <span className="mt-1 block text-xs text-muted-foreground">CTC Range, e.g. 6–10 LPA; use minimum and maximum fields.</span>
           </Label>
           <Label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum CTC (LPA)
             </span>
             <Input
@@ -1619,19 +1619,19 @@ export function PlacementJobCreateForm({
               onChange={event=>setMaxLpaText(event.target.value)}
             />
           </Label>
-          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label><span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Fixed CTC (LPA)
           </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.5"/></Label>
-          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label><span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Variable CTC (LPA)
           </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.5"/></Label>
-          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label><span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Stipend per month (INR)
           </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></Label>
-          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label><span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Joining bonus (LPA)
           </span><Input className={inputClass} name="joiningBonusLpa" type="number" min={0} max={1000} step="0.5"/></Label>
-          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label><span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Duration (months)
           </span><Input className={inputClass} name="stipendMonths" type="number" min={1} max={120} step={1}/></Label>
           <div className="grid gap-1 rounded-lg border border-border bg-muted/30 p-3 text-sm">
@@ -2002,7 +2002,7 @@ export function PlacementJobCreateForm({
           ].map(
             ([name, label, step]) => (
               <Label key={name}>
-                <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   {label}
                 </span>
                 <Input
@@ -2019,7 +2019,7 @@ export function PlacementJobCreateForm({
             ),
           )}
           <Label className="sm:col-span-2">
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Passing years
             </span>
             <Input
@@ -2034,7 +2034,7 @@ export function PlacementJobCreateForm({
           </Label>
           <p className="sm:col-span-2 text-xs leading-5 text-muted-foreground">College-verified marks only: unverified evidence and missing marks must be reviewed by the college. Missing marks are displayed as Not provided, not a failed threshold.</p>
           <Label className="sm:col-span-2">
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-1.5 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Missing evidence
             </span>
             <Select

@@ -180,7 +180,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             key={decision.module}
             className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 md:py-4"
           >
-            <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+            <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
               {decision.label}
             </Heading>
             <div className="mt-3">
@@ -207,7 +207,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <section className="min-w-0 border-t border-border pt-4" aria-label="Placements college access impact">
-        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Placements: college-level access impact</Heading>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Placements: college-level access impact</Heading>
         <Disclosure title="View Placements impact" className="mt-2" contentClassName="pb-3 pt-2">
         {modules.filter(decision=>decision.module==="placements").map(decision=>(
           <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
@@ -269,7 +269,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <section className="min-w-0 space-y-3">
         <div>
-          <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+          <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
             College inheritance
           </Heading>
           <p className="mt-1 text-sm leading-6 text-body">
@@ -312,7 +312,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <section id="academic-module-rules" aria-label="Academic module rules" className="scroll-mt-24 border-t border-border pt-6">
-        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Department, Program, Batch and Class access</Heading>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Department, Program, Batch and Class access</Heading>
         <p className="mt-2 text-sm text-body">Select an academic scope to set Projects or Electives On, Off, or Inherit, with an optional lock. Lower-level Placements rules are ignored by the resolver.</p>
         <p className="mt-2 text-sm text-body">Placements is switched for the whole college. Who is in placements is decided by the placement cell on the Batches page.</p>
         {academicRead.ok ? <>
@@ -348,7 +348,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
       <section className="min-w-0 space-y-3">
         <div>
-          <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+          <Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
             Persisted lower-level overrides
           </Heading>
           <p className="mt-1 text-sm leading-6 text-body">

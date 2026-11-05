@@ -139,7 +139,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   finally{setBusy(false);}
  }
  return <section aria-label="College logo upload" className="min-w-0 space-y-[var(--lms-space-3)]">
-  <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">College logo</Heading>
+  <Heading level={2} className="m-0 text-[length:var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">College logo</Heading>
   <p className="max-w-[75ch] text-sm leading-[22px] text-body">Choose a square logo, crop it, then select Save in the branding form. The current login logo stays active unless the branding save succeeds.</p>
   <p className="text-xs leading-5 text-muted-foreground">Legacy logo links are not imported as active storage objects. To migrate an older logo, choose the original image here, crop it and save; the new private upload and college branding lifecycle then take ownership.</p>
   {stagedBlob||stagedRemoval?<Alert tone="warning">{retryAfterBrandingSave?"Branding settings were saved, but the separate logo publication has not been confirmed. Retry publishing this logo below; the previous logo remains active until the server acknowledges the change.":"Unsaved logo "+(stagedRemoval?"removal":"replacement")+" is staged. Save the branding form to apply it, or leave this page to discard it. Your current logo is still live."}</Alert>:null}

@@ -1146,7 +1146,7 @@ export function FacultyAttendanceWorkspace({
                 <Label className="mt-4 block space-y-2">
                   Correction explanation (required)
                   <Textarea value={correctionReason} maxLength={500} rows={3}
-                    className="w-full text-[var(--lms-font-base)] font-normal"
+                    className="w-full text-[length:var(--lms-font-base)] font-normal"
                     placeholder="What changed in the recorded attendance?"
                     onChange={event=>setCorrectionReason(event.target.value)}/>
                   <span className="block text-xs font-normal text-muted-foreground">

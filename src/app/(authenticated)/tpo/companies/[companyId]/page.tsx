@@ -122,7 +122,7 @@ export default async function TpoCompanyDetailPage({
       </nav>
 
       <section aria-label="College company relationship" className="border-b border-[var(--lms-canvas-border)] py-4">
-        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">College relationship and trust</Heading>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-7">College relationship and trust</Heading>
         <p className="mt-2 text-sm text-body leading-[22px]">
           Trust is this college&apos;s recorded relationship setting, not a platform-wide employer verification.
         </p>
@@ -222,13 +222,13 @@ export default async function TpoCompanyDetailPage({
               : "Not recorded"],
           ].map(([name, value]) => (
             <div key={name} className="min-w-0 border-b border-r border-border px-3 py-3 last:border-r-0">
-              <dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{name}</dt>
-              <dd className={name==="Latest recorded event"?"mt-2 break-words text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-body-text)]":"mt-2 break-words text-[var(--lms-font-2xl)] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]"}>{value}</dd>
+              <dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{name}</dt>
+              <dd className={name==="Latest recorded event"?"mt-2 break-words text-[length:var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-body-text)]":"mt-2 break-words text-[length:var(--lms-font-2xl)] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]"}>{value}</dd>
             </div>
           ))}
         </dl>
         <div className="mt-5 border-t border-border pt-4">
-          <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]" id="company-students-placed">Students placed, by year</Heading>
+          <Heading level={3} className="text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]" id="company-students-placed">Students placed, by year</Heading>
           <p className="mt-1 text-xs text-muted-foreground leading-5">
             Distinct confirmed JOINED learners by recorded joining year (IST), not offers issued.
             {hiringPulse.yearsHiring>=2
@@ -256,7 +256,7 @@ export default async function TpoCompanyDetailPage({
       <div className="grid min-w-0 gap-4 xl:grid-cols-2">
         <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
           <div className="border-b border-[var(--lms-canvas-border)] py-4">
-            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
+            <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-7">
               Recruiter contacts
             </Heading>
             <p className="mt-1 text-sm text-body leading-[22px]">
@@ -319,7 +319,7 @@ export default async function TpoCompanyDetailPage({
 
         <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
           <div className="border-b border-[var(--lms-canvas-border)] py-4">
-            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
+            <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-7">
               Placement drives
             </Heading>
             <p className="mt-1 text-sm text-body leading-[22px]">
@@ -360,7 +360,7 @@ export default async function TpoCompanyDetailPage({
 
       <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
         <div className="border-b border-[var(--lms-canvas-border)] py-4">
-          <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
+          <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-7">
             Hiring history
           </Heading>
           <p className="mt-1 text-sm text-body leading-[22px]">
@@ -411,7 +411,7 @@ export default async function TpoCompanyDetailPage({
       <Disclosure title="Company timeline" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
       <section id="company-canonical-timeline" className="min-w-0 border-y border-[var(--lms-canvas-border)]">
         <div className="border-b border-[var(--lms-canvas-border)] py-4">
-          <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
+          <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-7">
             Company timeline
           </Heading>
           <p className="mt-1 text-sm text-body leading-[22px]">

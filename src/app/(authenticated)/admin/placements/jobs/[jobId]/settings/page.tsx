@@ -89,7 +89,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."
    actions={<PageBackLink href={base} label="Drive overview"/>}/>
   <section aria-label="Job details" className="min-w-0 space-y-[var(--lms-space-2)] border-b border-border pb-[var(--lms-space-4)]">
-   <Heading level={2} className="break-words text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">{job.title}</Heading>
+   <Heading level={2} className="break-words text-[length:var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">{job.title}</Heading>
    <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? driveSettingsIstDate(job.applicationDeadline) : "Not configured"}</p>
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
   </section>

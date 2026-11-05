@@ -128,12 +128,12 @@ export default async function SuperAdminFeaturesPage({
       />
 
       <section aria-label="Feature Controls overview" className="border-t border-border pt-6">
-        <p className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
+        <p className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
         <Heading level={2} size="lg" className="mt-1 text-foreground">Optional modules by college</Heading>
         <dl className="mt-3 grid grid-cols-2 gap-0 divide-y divide-border border-y border-border text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges matching current filters</dt><dd className="mt-2 font-semibold">{result.total} in the authorized query scope</dd></div>
-          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Projects on</dt><dd className="mt-2 font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} matching colleges</dd></div>
-          <div className="min-w-0 col-span-2 px-4 py-3 sm:col-span-1"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} matching colleges</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges matching current filters</dt><dd className="mt-2 font-semibold">{result.total} in the authorized query scope</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Projects on</dt><dd className="mt-2 font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} matching colleges</dd></div>
+          <div className="min-w-0 col-span-2 px-4 py-3 sm:col-span-1"><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} matching colleges</dd></div>
         </dl>
       </section>
       <section className="border-t border-border pt-6">

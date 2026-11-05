@@ -19,8 +19,9 @@ describe("UX-tracker-mine-chat15-01",()=>{
   for(const part of ['context.user.platformStatus!=="ACTIVE"',
     "trackerPublicIdSchema.safeParse(canonical).success", "notFound()",
     "getMyTrackerReport(context,publicId)", "trackerAdminRuntimeEnabled()",
-    '<Banner tone="warning">', 'href="/tracker/mine"',"timeZone:\"Asia/Kolkata\"",
+    '<Banner tone="warning">', 'href="/tracker/mine"',
     "<PageHeader"])expect(s).toContain(part);
+  expect(s).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/);expect(readFileSync("src/lib/format-date.ts","utf8")).toContain("Asia/Kolkata");
   expect(s).not.toMatch(/error\.(message|stack)/);
  });
 });

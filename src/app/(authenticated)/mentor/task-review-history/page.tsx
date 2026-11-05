@@ -109,7 +109,7 @@ export default async function MentorTaskReviewHistoryPage({
       : <ol aria-label="mentor task review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Heading level={2} className="min-w-0 break-words text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">{item.taskTitle}</Heading>
+            <Heading level={2} className="min-w-0 break-words text-[length:var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">{item.taskTitle}</Heading>
             <span className="text-sm font-semibold text-body">{taskReviewDecisionLabel(item.status)}</span>
           </div>
           <p className="mt-2 text-sm text-body leading-[22px]">{item.projectTitle} · Version {item.version}</p>

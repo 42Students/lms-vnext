@@ -411,7 +411,7 @@ export default async function TpoAuditPage({
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
+            <Heading level={2} className="m-0 text-[length:var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
               Event history
             </Heading>
             <p className="mt-1 text-sm text-muted-foreground leading-[22px]">

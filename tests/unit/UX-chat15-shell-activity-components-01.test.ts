@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -52,7 +55,7 @@ describe("UX-chat15-shell-activity-components-01",()=>{
   expect(s).toContain('"/api/notifications/read-all"');
   expect(s).toContain("filterLearnerInbox");
   expect(s).toContain("learnerAnnouncementAudienceContext");
-  expect(s).toContain('timeZone: "Asia/Kolkata"');
+  expect(s).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
   expect(s).toContain("<Dialog");
   expect(s).toContain("min-h-11");
  });

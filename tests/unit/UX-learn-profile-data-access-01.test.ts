@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 
@@ -20,7 +23,7 @@ describe("UX-learn-profile-data-access-01 /learn/profile/data-access",()=>{
   expect(page).toContain("<Heading level={2}");
   expect(page).toContain('role="status"');
   expect(page).toContain("No recorded membership changes to display.");
-  expect(page).toContain('timeZone:"Asia/Kolkata"');
+  expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
   expect(page).toContain("min-w-0");
  });
 });

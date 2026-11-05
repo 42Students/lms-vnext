@@ -5,7 +5,7 @@ describe("Super Admin placement pipeline actions",()=>{
  it("SA-placements-projects-20 supports guarded application moves, reinstate, bulk cap and friendly fetch failures",()=>{
   const c=source("src/components/placements/college-application-pipeline-controls.tsx");
   for(const s of ['"REINSTATE"','matchingFilter:allMatching?query:undefined',
-    "Select all {total.toLocaleString", "total>3000", "Move to Assessment","apiFetch<"])expect(c).toContain(s);
+    "Select all {formatNumberIN(total)}", "total>3000", "Move to Assessment","apiFetch<"])expect(c).toContain(s);
   expect(c).not.toContain("throw Error(payload.issues");
   const p=source("src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx");
   expect(p).toContain('basePath="/admin/placements"');

@@ -282,7 +282,7 @@ export default async function SuperAdminCompaniesPage({
     <Disclosure title="Company curation" className="min-w-0" contentClassName="space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]">
     <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Company curation candidates">
       <div>
-        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Potential duplicate companies</Heading>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Potential duplicate companies</Heading>
         <p className="mt-1 text-sm text-body">Different company identities sharing the same website domain within this authorized result page. These are suggestions, not verified merges.</p>
       </div>
       {candidates.length===0?<EmptyState title="No matching domains" description="No matching domains found in this result page."/>:
@@ -297,11 +297,11 @@ export default async function SuperAdminCompaniesPage({
       {data.truncated?<p className="text-xs text-muted-foreground">Only this 10-row page was checked. Move through pages before concluding there are no duplicate identities.</p>:null}
     </section>
     <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Name identity review">
-      <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Same-name identities to review</Heading>
+      <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Same-name identities to review</Heading>
       <p className="text-sm text-body">Distinct employer IDs with matching normalized names may be aliases, franchises or unrelated companies. No automatic verification or merge is made.</p>
       {nameConflicts.length===0?<EmptyState title="No duplicate names" description="No distinct IDs share a normalized name in this page."/>:
        <ul className="grid gap-2 md:grid-cols-2">{nameConflicts.map(group=><li key={group.key} className="min-w-0 border-b border-border py-3">
-        <Heading level={3} className="break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{group.label}</Heading>
+        <Heading level={3} className="break-words text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">{group.label}</Heading>
         <p className="mt-2 text-xs text-muted-foreground">{group.companyIds.length} distinct identities · manual verification required</p>
        </li>)}</ul>}
       {data.truncated?<p className="text-xs text-muted-foreground">Only this page of scoped relationships was reviewed.</p>:null}

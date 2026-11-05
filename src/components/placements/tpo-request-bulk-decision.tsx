@@ -122,7 +122,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
  }
  return <section aria-label="Bulk request decisions" aria-busy={pending} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
-   <Heading level={2} className="min-w-0 text-[var(--lms-font-md)] leading-[26px]">
+   <Heading level={2} className="min-w-0 text-[length:var(--lms-font-md)] leading-[26px]">
     <Button variant="ghost" type="button" aria-expanded={expanded} aria-controls={selectionId} disabled={pending}
      onClick={()=>setExpanded(value=>!value)}
      className="max-w-full">
@@ -196,11 +196,11 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
     </Button>
    </div>}>
    <div className="space-y-[var(--lms-space-4)]">
-    <p className="text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
+    <p className="text-[length:var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
      Review {chosen.length} {chosenKind?.replaceAll("_"," ").toLowerCase()} request(s) one by one.
     </p>
     <ul tabIndex={0} aria-label="Selected request names, scroll for more"
-     className="max-h-40 min-h-0 list-disc divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-1)] pl-[var(--lms-space-5)] pr-[var(--lms-space-2)] text-[var(--lms-font-base)] leading-5 [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)] focus-ring">
+     className="max-h-40 min-h-0 list-disc divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-1)] pl-[var(--lms-space-5)] pr-[var(--lms-space-2)] text-[length:var(--lms-font-base)] leading-5 [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)] focus-ring">
      {chosen.map(row=><li key={row.id} className="min-w-0 break-words py-[var(--lms-space-2)]">{row.studentName}</li>)}
     </ul>
     <Label variant="choice" className="flex min-h-11 cursor-pointer items-start gap-[var(--lms-space-3)]">
@@ -209,7 +209,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
     </Label>
    </div>
   </Dialog>
-  {outcomes.length>0?<div role="status" aria-live="polite" className="mt-[var(--lms-space-4)] space-y-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5">
+  {outcomes.length>0?<div role="status" aria-live="polite" className="mt-[var(--lms-space-4)] space-y-[var(--lms-space-3)] text-[length:var(--lms-font-base)] leading-5">
    <div className="flex flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
     <p className="font-semibold text-[var(--lms-body-text)]">
      {outcomes.filter(row=>row.status==="updated").length} decided · {outcomes.filter(row=>row.status==="failed").length} not decided.

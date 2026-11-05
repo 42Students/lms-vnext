@@ -228,7 +228,7 @@ export default async function CollegeActivityPage({
         action={<TextLink href="/college/activity" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>} />:null}
       {[...groupedByDay.entries()].map(([day,groups])=>
         <section key={day} className="space-y-3" aria-label={"Activity on "+day}>
-          <Heading level={3} className="border-b border-[var(--lms-canvas-border)] pb-2 text-[var(--lms-font-base)] text-[var(--lms-heading)]">{day}</Heading>
+          <Heading level={3} className="border-b border-[var(--lms-canvas-border)] pb-2 text-[length:var(--lms-font-base)] text-[var(--lms-heading)]">{day}</Heading>
           <ol className="divide-y divide-[var(--lms-canvas-border)]">
             {groups.map(group=>{
               const item=group.latest;
@@ -241,7 +241,7 @@ export default async function CollegeActivityPage({
                 <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">
                     <p className="font-semibold text-[var(--lms-heading)]">{item.event.summary}</p>
-                    <p className="text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">{collegeActivityActor(item.actor)} · {collegeActivityAction(item.event.eventType)}</p>
+                    <p className="text-[length:var(--lms-font-sm)] text-[var(--lms-body-text)]">{collegeActivityActor(item.actor)} · {collegeActivityAction(item.event.eventType)}</p>
                     <p className="text-xs text-muted-foreground">{collegeActivityItem(item.event)} · {when(item.event.occurredAt)}</p>
                   </div>
                   {group.count>1?<span className="rounded-md border border-[var(--lms-canvas-border)] px-2 py-1 text-xs font-semibold">{group.count} related events · several at once</span>:null}

@@ -137,7 +137,7 @@ export default async function SuperAdminBatchPromotionPage({
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto self-end">Preview</Button>
     </form>
     <section aria-label="Batch promotion queue" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
-      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Batches</Heading>} defaultOpen contentClassName="pb-[var(--lms-space-4)]">
+      <Disclosure title={<Heading level={2} className="m-0 text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Batches</Heading>} defaultOpen contentClassName="pb-[var(--lms-space-4)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
 
         <p role="status" className="text-sm text-muted-foreground">
@@ -195,7 +195,7 @@ export default async function SuperAdminBatchPromotionPage({
     <>
       <section className="min-w-0 space-y-3 border-b border-border pb-5">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <Heading level={2} className="m-0 break-words text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">{preview.batch.name}</Heading>
+          <Heading level={2} className="m-0 break-words text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">{preview.batch.name}</Heading>
           <StatusBadge tone={preview.simulatedReadiness ? "success" : "warning"}>{preview.simulatedReadiness ? "No detected blockers" : "Blocked or incomplete"}</StatusBadge>
         </div>
         <p className="text-sm text-body">{preview.batch.programName} · {preview.batch.status}</p>
@@ -230,16 +230,16 @@ export default async function SuperAdminBatchPromotionPage({
           ) : null}
       </section>
       <section className="border-b border-border pb-5">
-        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Known batch blockers ({summary.knownBlockers})</Heading>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Known batch blockers ({summary.knownBlockers})</Heading>
         {preview.blockers.length ? <ul className="mt-2 list-inside list-disc text-sm text-body">
           {preview.blockers.map(b => <li key={b}>{b.replaceAll("_", " ")}</li>)}
         </ul> : <p className="text-sm text-muted-foreground">No batch-level blocker was detected. Learner and runtime checks still apply.</p>}
       </section>
-      <Disclosure title={<Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Learner-level preview</Heading>} contentClassName="space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+      <Disclosure title={<Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Learner-level preview</Heading>} contentClassName="space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
         <p className="text-xs text-muted-foreground">Showing at most 100 of {preview.learners.length} examined enrollments; a shortened display is not a complete readiness decision.</p>
         {preview.learners.length ? <div className="grid gap-3 md:grid-cols-2">
           {preview.learners.slice(0, 100).map(learner => <article key={learner.membershipId} className="min-w-0 border-b border-border py-3">
-            <Heading level={3} className="m-0 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{learner.name}</Heading>
+            <Heading level={3} className="m-0 break-words text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">{learner.name}</Heading>
             <p className="mt-1 text-sm text-body">Enrollment: {learner.enrollmentStatus}</p>
             <p className="mt-2 text-sm text-body">{learner.blockers.length ? learner.blockers.join(", ").replaceAll("_", " ") : "No detected learner blocker"}</p>
           </article>)}

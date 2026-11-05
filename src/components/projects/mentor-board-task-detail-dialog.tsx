@@ -30,7 +30,7 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
  const attempts=submissions.filter(row=>row.taskId===task.id);
  return <Dialog open={true} onOpenChange={next=>{if(!next)onClose();}} title={task.title} description="Mentor · Task details" className="max-w-[42rem]">
   <p className="sr-only">Scroll for more task details and activity.</p>
-   <dl className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] text-[var(--lms-font-base)] sm:grid-cols-3">
+   <dl className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] text-[length:var(--lms-font-base)] sm:grid-cols-3">
    {([{label:"Status",value:task.status},{label:"Priority",value:task.priority},
       {label:"Assignee",value:author},{label:"Sprint",value:sprintTitle??"Product backlog"},
       {label:"Due date",value:(task.dueDate??"No due date")+

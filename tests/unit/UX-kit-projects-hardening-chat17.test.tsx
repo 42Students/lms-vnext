@@ -58,7 +58,7 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
       render(<Textarea aria-invalid id="reason"/>),
     ]){
       // The old LMS form family uses its shared font token, not a Tailwind base size.
-      expect(html).toContain("text-[var(--lms-font-base)]");
+      expect(html).toContain("text-[length:var(--lms-font-base)]");
       expect(html).toContain('aria-invalid="true"');
       expect(html).toContain("min-h-");
     }

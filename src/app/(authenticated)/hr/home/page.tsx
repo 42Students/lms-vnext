@@ -91,7 +91,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         <div className="flex min-w-0 items-start gap-3">
           {rich?.logoUrl?<Img src={rich.logoUrl} alt="" width={48} height={48} className="size-12 shrink-0 rounded border border-border object-contain"/>:
            <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded border border-border bg-muted text-lg font-semibold">{detail.collegeName.slice(0,1)}</span>}
-          <div className="min-w-0"><Heading level={2} className="break-words text-[var(--lms-font-lg)] leading-[26px] text-[var(--lms-heading)] md:text-[var(--lms-font-xl)] md:leading-7">{detail.collegeName}</Heading>
+          <div className="min-w-0"><Heading level={2} className="break-words text-[length:var(--lms-font-lg)] leading-[26px] text-[var(--lms-heading)] md:text-[length:var(--lms-font-xl)] md:leading-7">{detail.collegeName}</Heading>
             <p className="text-xs text-body">{detail.collegeCode?"College code: "+detail.collegeCode:"College code unavailable"} · Verified recruiter access</p>
           </div>
         </div>

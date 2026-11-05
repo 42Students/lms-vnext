@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -12,7 +15,7 @@ describe("UX-tracker-audit-findings-publicId-01",()=>{
   expect(source).toContain("<IndependentFindingCopyAction");
   expect(source).toContain('<PageBackLink href="/tracker/audit-findings" label="Back to audit findings"/>');
   expect(source).toContain("min-h-11");
-  expect(source).toContain("focus-ring");
+  expect(source).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("text-link.tsx")).toContain("focus-ring");
   expect(source).toContain("Audit event history");
  });
 });

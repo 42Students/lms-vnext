@@ -44,17 +44,17 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <input type="hidden" name="tab" value="activity" />
       <Label>Activity type
         <Select name="activityCategory" defaultValue={category}
-          className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9">
+          className="mt-[6px] min-h-11 w-full border border-border px-3 text-[length:var(--lms-font-base)] font-normal md:min-h-9">
           {learnerProjectActivityCategories.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
         </Select>
       </Label>
       <Label>From (IST)
         <Input type="date" name="activityFrom" defaultValue={parsed.success ? parsed.data.from : ""}
-          className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9" />
+          className="mt-[6px] min-h-11 w-full border border-border px-3 text-[length:var(--lms-font-base)] font-normal md:min-h-9" />
       </Label>
       <Label>Through (IST)
         <Input type="date" name="activityTo" defaultValue={parsed.success ? parsed.data.to : ""}
-          className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9" />
+          className="mt-[6px] min-h-11 w-full border border-border px-3 text-[length:var(--lms-font-base)] font-normal md:min-h-9" />
       </Label>
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Apply</Button>
       <ButtonLink variant="secondary" data-unskin="" href={route + "?tab=activity"} className="self-end">Clear</ButtonLink>

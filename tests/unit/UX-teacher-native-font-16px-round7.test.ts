@@ -26,7 +26,7 @@ describe("Faculty native controls preserve readable mobile fonts",()=>{
    expect(source).not.toMatch(/<(?:input|select|textarea)\b(?![^>]*type="hidden")/);
    for(const control of ["input","select","textarea"] as const){
     const component=readControl(control);
-    expect(component).toContain("text-[var(--lms-font-base)]");
+    expect(component).toContain("text-[length:var(--lms-font-base)]");
     expect(component).not.toMatch(/\bsm:text-(?:xs|sm)\b/);
    }
    expect(readControl("select")).toContain("max-md:text-[16px]");

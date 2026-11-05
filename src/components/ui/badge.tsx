@@ -14,7 +14,7 @@ const tones = {
 
 const interactiveBadgeClass = "cursor-pointer hover:brightness-[0.97] focus-ring max-md:min-h-11";
 
-const baseBadgeClass = "inline-flex min-h-[24px] min-w-0 max-w-full items-center justify-center gap-[var(--lms-space-1)] rounded-[var(--lms-radius-pill)] border border-current/10 px-[var(--lms-space-2)] py-[1px] align-middle whitespace-normal text-center tabular-nums text-[var(--lms-font-xs)] font-semibold leading-[18px] break-words shadow-none";
+const baseBadgeClass = "inline-flex min-h-[24px] min-w-0 max-w-full items-center justify-center gap-[var(--lms-space-1)] rounded-[var(--lms-radius-pill)] border border-current/10 px-[var(--lms-space-2)] py-[1px] align-middle whitespace-normal text-center tabular-nums text-[length:var(--lms-font-xs)] font-semibold leading-[18px] break-words shadow-none";
 
 export function Badge({ tone = "neutral", className, children, ...props }: BadgeProps) {
   const interactive = props.role === "button" || props.tabIndex !== undefined;

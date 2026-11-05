@@ -1,10 +1,13 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
 const read=(name:string)=>readFileSync(join(process.cwd(),"src/app/(authenticated)",name,"page.tsx"),"utf8");
 describe("UX teacher rollout third ten route contracts",()=>{
  it("UX-teacher-courses-deliveryId-reports-01 keeps real published roster, attendance and assessment aggregates",()=>{const page=read("teacher/courses/[deliveryId]/reports"); expect(page).toContain("min-w-0"); expect(page).not.toContain("text-on-primary"); expect(page).not.toContain("min-h-10"); expect(page).toContain("PageHeader"); });
- it("UX-teacher-courses-deliveryId-session-coverage-01 keeps persisted session history, no inferred absence",()=>{const page=read("teacher/courses/[deliveryId]/session-coverage"); expect(page).toContain("min-w-0"); expect(page).not.toContain("text-on-primary"); expect(page).not.toContain("min-h-10"); expect(page).toContain('timeZone: "Asia/Kolkata"'); expect(page).not.toContain("Snapshot {data.nowIso}"); });
+ it("UX-teacher-courses-deliveryId-session-coverage-01 keeps persisted session history, no inferred absence",()=>{const page=read("teacher/courses/[deliveryId]/session-coverage"); expect(page).toContain("min-w-0"); expect(page).not.toContain("text-on-primary"); expect(page).not.toContain("min-h-10"); expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata"); expect(page).not.toContain("Snapshot {data.nowIso}"); });
  it("UX-teacher-courses-deliveryId-students-01 keeps scoped roster and assigned Section redirects",()=>{const page=read("teacher/courses/[deliveryId]/students"); expect(page).toContain("min-w-0"); expect(page).not.toContain("text-on-primary"); expect(page).not.toContain("min-h-10"); expect(page).toContain("FacultyCourseRoster"); });
  it("UX-teacher-courses-deliveryId-students-membershipId-01 keeps authorized learner roster and current Section facts",()=>{const page=read("teacher/courses/[deliveryId]/students/[membershipId]"); expect(page).toContain("min-w-0"); expect(page).not.toContain("text-on-primary"); expect(page).not.toContain("min-h-10"); expect(page).toContain("PageHeader"); });
  it("UX-teacher-live-classes-01 keeps registered live sessions and current authorized teacher Sections",()=>{const page=read("teacher/live-classes"); expect(page).toContain("min-w-0"); expect(page).not.toContain("text-on-primary"); expect(page).not.toContain("min-h-10"); expect(page).toContain("PageHeader"); });

@@ -65,7 +65,7 @@ export default async function HrRoundsEditorPage({params}:{
    </Disclosure>
   </section>
   <section className="min-w-0 space-y-3">
-   <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Current rounds ({rounds.length})</Heading>
+   <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Current rounds ({rounds.length})</Heading>
    {rounds.length===0?<EmptyState title="No hiring rounds" description="This drive has no hiring rounds. Add a round using the form above."
     action={<TextLink href="#add-round" className="inline-flex min-h-11 items-center md:min-h-9">Add a round</TextLink>} />:null}
    {rounds.length>0?<div className="hidden min-w-0 md:block">
@@ -82,7 +82,7 @@ export default async function HrRoundsEditorPage({params}:{
    {rounds.map(round=><article id={"round-edit-"+round.id} key={round.id}
     className={"min-w-0 scroll-mt-24 space-y-2 border-b border-border py-4 "+
      (round.editable?"":"md:hidden")}>
-    <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between md:hidden"><Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{round.sequence}. {round.name}</Heading>
+    <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between md:hidden"><Heading level={3} className="text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">{round.sequence}. {round.name}</Heading>
      <span className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone={round.status==="PENDING"?"warning":round.status==="COMPLETED"?"success":"neutral"}>{round.status}</StatusBadge></span></div>
     {round.editable?<Disclosure title={<>Change {round.sequence}. {round.name}</>} className="min-w-0">
      <form action={endpoint} method="post" className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">

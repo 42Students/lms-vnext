@@ -14,7 +14,7 @@ export default async function SuperAdminDriveLayout({children,params}:{
  const job=await getPlacementJob(context,jobId);
  const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
-  <nav aria-label="Drive breadcrumb" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] leading-5 text-[var(--lms-body-text)]">
+  <nav aria-label="Drive breadcrumb" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] leading-5 text-[var(--lms-body-text)]">
    <TextLink href="/admin/placements/drives" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Drives</TextLink>
    <span aria-hidden="true">›</span>
    <span className="min-w-0 flex-1 truncate">{job.title}</span>

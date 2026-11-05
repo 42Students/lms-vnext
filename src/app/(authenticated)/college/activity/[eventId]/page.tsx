@@ -35,18 +35,18 @@ export default async function CollegeActivityDetailPage({
     <PageHeader title="Activity detail"
       description={event.summary}
       actions={<PageBackLink href="/college/activity" label="Back to Activity Log"/>} />
-    <dl className="grid min-w-0 gap-x-[var(--lms-space-6)] gap-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] text-[var(--lms-font-base)] sm:grid-cols-2">
-      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Occurred (IST)</dt>
+    <dl className="grid min-w-0 gap-x-[var(--lms-space-6)] gap-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] text-[length:var(--lms-font-base)] sm:grid-cols-2">
+      <div><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Occurred (IST)</dt>
         <dd className="mt-1 text-body">{date}</dd></div>
-      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor</dt>
+      <div><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor</dt>
         <dd className="mt-1 min-w-0 break-words [overflow-wrap:anywhere] text-body">{actor?.displayName ?? actor?.email ?? "System"} ({actor?.id ?? "Unrecorded"})</dd></div>
-      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event type</dt>
+      <div><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event type</dt>
         <dd className="mt-1 break-words [overflow-wrap:anywhere] text-body">{event.eventType}</dd></div>
-      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Importance</dt>
+      <div><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Importance</dt>
         <dd className="mt-1 text-body"><StatusBadge tone={event.importance==="CRITICAL"?"error":event.importance==="HIGH"?"warning":"neutral"}>{event.importance}</StatusBadge></dd></div>
-      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity type</dt>
+      <div><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity type</dt>
         <dd className="mt-1 text-body">{event.subjectType}</dd></div>
-      <div><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity reference</dt>
+      <div><dt className="text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity reference</dt>
         <dd className="mt-1 break-words [overflow-wrap:anywhere] text-body">{event.subjectLabel ?? event.subjectId}</dd></div>
     </dl>
     {compact.length ? <section className="min-w-0 space-y-3" aria-label="Activity details">

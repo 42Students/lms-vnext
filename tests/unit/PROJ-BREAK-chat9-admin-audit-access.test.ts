@@ -41,7 +41,7 @@ describe("IIT Dharwad Projects: global audit authorization", () => {
     expect(page).toContain("const globalTemplateAudit = mayReadGlobalProjectAudit(context)");
     // Cursor pagination replaced the removed button's local remaining state.
     // Keep its persisted cursor and count in the rendered navigation.
-    expect(page).toContain("result.nextCursor?<Link");
+    expect(page).toContain("result.nextCursor?<ButtonLink");
     expect(page).toContain('basePath+"/audit?"+nextParams.toString()');
     expect(page).toContain('result.remainingCount?" ("+result.remainingCount+" remaining)":""');
   });

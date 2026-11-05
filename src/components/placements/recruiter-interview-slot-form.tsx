@@ -142,13 +142,13 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
  return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid min-w-0 gap-4 sm:grid-cols-2">
   <Input type="hidden" name="action" value="CREATE"/>
   <Label stack className="min-w-0">Interview round
-   <Select name="roundId" required={queued.length===0} defaultValue="" className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9">
+   <Select name="roundId" required={queued.length===0} defaultValue="" className="min-h-11 w-full text-[length:var(--lms-font-base)] md:min-h-9">
     <option value="" disabled>Select an interview round</option>
     {rounds.map(row=><option key={row.id} value={row.id}>{row.sequence}. {row.name}</option>)}
    </Select>
   </Label>
   <Label stack className="min-w-0">Mode
-   <Select name="mode" required defaultValue="VIRTUAL" className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9">
+   <Select name="mode" required defaultValue="VIRTUAL" className="min-h-11 w-full text-[length:var(--lms-font-base)] md:min-h-9">
     <option value="VIRTUAL">Virtual</option><option value="ON_CAMPUS">On campus</option>
    </Select>
   </Label>
@@ -164,15 +164,15 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   </Label>
   <Label stack className="min-w-0">Capacity
    <Input name="capacity" type="number" min={1} max={100} defaultValue={1}
-    required className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9"/>
+    required className="min-h-11 w-full text-[length:var(--lms-font-base)] md:min-h-9"/>
   </Label>
   <Disclosure title="Panel label (not a learner name) · Meeting location" className="min-w-0 sm:col-span-2">
    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2">
     <Label stack className="min-w-0">Panel label (not a learner name)
-     <Input name="panelLabel" maxLength={160} className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9"/>
+     <Input name="panelLabel" maxLength={160} className="min-h-11 w-full text-[length:var(--lms-font-base)] md:min-h-9"/>
     </Label>
     <Label stack className="min-w-0">Meeting location
-     <Input name="meetingLocation" maxLength={500} className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9"/>
+     <Input name="meetingLocation" maxLength={500} className="min-h-11 w-full text-[length:var(--lms-font-base)] md:min-h-9"/>
     </Label>
    </div>
   </Disclosure>

@@ -19,7 +19,8 @@ describe("Shared Faculty Courses controls",()=>{
  it("UX-teach-courses-shared-03 keeps exact learner-safe empty copy and keyboard-reachable Section shortcuts",()=>{
   const page=source();
   expect(page).toContain("No teaching assignments found. Please contact your administrator.");
-  expect(page).toContain("min-h-11 items-center text-[var(--lms-teal-deep)] underline");
+  expect(page).toContain('<TextLink className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)]"');
+  expect(readFileSync(join(process.cwd(),"src/components/ui/text-link.tsx"),"utf8")).toContain("underline");
   expect(page).toContain("facultyCourseListHref({...query,page:pagination.page+1})");
  });
 });

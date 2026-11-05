@@ -106,12 +106,12 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       action={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
       query={query}/>
     <section aria-label="Drive and application summary" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
-      <div className="flex flex-wrap items-center gap-3 text-[var(--lms-font-sm)]">
+      <div className="flex flex-wrap items-center gap-3 text-[length:var(--lms-font-sm)]">
         <strong className="font-semibold">{job?.title ?? data.drive.title}</strong>
         {job ? <StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge> : null}
         {job?.openings != null ? <span>{job.openings} advertised opening(s)</span> : null}
       </div>
-      <div className="flex flex-wrap gap-2 text-[var(--lms-font-sm)]">
+      <div className="flex flex-wrap gap-2 text-[length:var(--lms-font-sm)]">
         <span className="font-semibold">Pipeline:</span>
         {Object.entries(data.stageCounts).map(([stage,count])=>
           <span key={stage} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1 text-sm font-semibold">
@@ -126,7 +126,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       Department, program and batch choices could not be refreshed. Existing filters and the applicant register are still available.
       {" "}<TextLink href={driveApplicationsHref(jobId,query)}>Retry filter choices</TextLink>
     </Alert> : null}
-    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[length:var(--lms-font-sm)] text-[var(--lms-body-text)]">
       <span>{formatNumberIN(data.total)} matching applications</span>
       <CollegeDriveApplicationsExport href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
         matching={data.total} cap={DRIVE_APPLICATION_EXPORT_CAP}/>
@@ -172,7 +172,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       </Disclosure>
     </form>
     {!data.storageReady?<section className="space-y-3">
-      <p role="status" className="border-b border-[var(--lms-canvas-border)] pb-5 text-[var(--lms-font-base)] leading-[1.6]">
+      <p role="status" className="border-b border-[var(--lms-canvas-border)] pb-5 text-[length:var(--lms-font-base)] leading-[1.6]">
         Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
       </p>
       <DataTable caption="College drive applicant register" columns={columns}
@@ -180,7 +180,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         empty={<EmptyState title="No matching applications" description="No applications match these filters." action={<TextLink href={driveApplicationsHref(jobId,{...query,q:"",status:"ALL",screening:"ALL",source:"ALL",stage:"ALL",departmentId:undefined,programId:undefined,cohortId:undefined,page:1})} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>}/>} />
      </section>:
      <CollegeApplicationPipelineControls key={jobId+":"+JSON.stringify(query)} jobId={jobId} rows={data.items} total={data.total} query={query} initialDetailId={initialDetailId}/>}
-    <nav aria-label="Application pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-sm)] text-[var(--lms-body-text)] sm:flex-row sm:items-center">
+    <nav aria-label="Application pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[length:var(--lms-font-sm)] text-[var(--lms-body-text)] sm:flex-row sm:items-center">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex min-w-0 flex-wrap gap-3 max-md:[&_a]:flex-1 max-md:[&_a]:justify-center">
         {query.page>1?<ButtonLink variant="secondary" href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</ButtonLink>:null}
         {query.page<data.totalPages?<ButtonLink variant="secondary" href={driveApplicationsHref(jobId,{...query,page:query.page+1})}>Next</ButtonLink>:null}

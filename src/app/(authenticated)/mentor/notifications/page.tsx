@@ -218,7 +218,7 @@ async function MentorNotificationsContent({
       Unread shows the loaded personal, project-attention and college-announcement sources with a saved recipient read state. Older paginated sources may have additional items.
     </p>:null}
     {failedSources.length ? <Alert tone={allRelevantFailed?"error":"warning"} role="alert">
-      <Heading level={2} className="m-0 text-[var(--lms-font-md)] leading-6 text-[var(--lms-heading)]">
+      <Heading level={2} className="m-0 text-[length:var(--lms-font-md)] leading-6 text-[var(--lms-heading)]">
         {allRelevantFailed?"We couldn't load your notifications.":"Some notification sources are unavailable"}
       </Heading>
       <p className="mt-1 text-sm text-body leading-[22px]">
@@ -311,7 +311,7 @@ async function MentorNotificationsContent({
                 className="block min-h-11 min-w-0 py-4 transition md:min-h-[var(--lms-control-height)]">
                 <TextLink variant="bare" href={alert.href} className="block min-h-11 rounded focus-ring">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <Heading level={3} className="min-w-0 break-words text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{alert.title}</Heading>
+                  <Heading level={3} className="min-w-0 break-words text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">{alert.title}</Heading>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
                     ["REVIEW","REQUESTED","TASK_REVIEW","TASK_BLOCKED",
                       "SPRINT_SIGN_OFF","UNASSIGNED_NEXT"].includes(alert.kind) ? "warning" : "info"}>

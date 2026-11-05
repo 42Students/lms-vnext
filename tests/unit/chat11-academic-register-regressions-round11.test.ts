@@ -29,7 +29,7 @@ describe("College Academic Setup open-register functional checks",()=>{
  it("COL-academic-setup-32 retains a section-specific schedule action and class identifier",()=>{
   const code=read("src/components/academics/college-structure-directory.tsx");
   expect(code).toContain('aria-label={"Schedule recurring sessions for "+item.name}');
-  expect(code).toContain("Schedule</Link>");
+  expect(code).toContain("Schedule</ButtonLink>");
   expect(code).toContain("item.id");
  });
  it.each([[2024,"2024-25"],[2029,"2029-30"],[2099,"2099-00"]])(

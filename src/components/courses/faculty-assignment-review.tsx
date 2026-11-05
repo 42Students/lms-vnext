@@ -758,7 +758,7 @@ export function FacultyAssignmentReview({
         <nav aria-label="Submission student navigation" className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:flex md:flex-wrap">
           <Label stack className="col-span-2 min-w-0 flex-1 md:min-w-48">
             Students ({submissions.filter(isSubmissionGraded).length}/{submissions.length} graded on this page · {pagination?.total??submissions.length} total)
-            <Select className="min-h-11 text-[var(--lms-font-base)] md:hidden"
+            <Select className="min-h-11 text-[length:var(--lms-font-base)] md:hidden"
               value={selectedSubmissionId??submissions[0]?.id??""}
               disabled={mutationBusy||bulkBusy}
               onChange={event=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(event.target.value);}}>

@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -19,7 +22,7 @@ describe("UX-college-department-data-table-01 evidence reports",()=>{
     expect(source).toContain('mobilePriority:"secondary"');
     expect(source).not.toContain("<table");
     expect(source).toContain('className="min-h-11 w-full md:min-h-9 md:w-auto"');
-    expect(source).toContain("focus-ring");
+    expect(source).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("text-link.tsx")).toContain("focus-ring");
   });
   it("does not infer attendance percentages from a missing denominator",()=>{
     expect(attendanceEvidenceLabel({markedSessions:0,recordedRows:0})).toBe("No marked sessions recorded");

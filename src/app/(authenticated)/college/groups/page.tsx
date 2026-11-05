@@ -97,7 +97,7 @@ export default async function CollegeGroupsPage({
         className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]"
       >
         <Label className="block min-w-0 w-full">
-          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <span className="mb-1 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Type
           </span>
           <Select name="kind" defaultValue={kind ?? "STUDY_GROUP"}>
@@ -111,7 +111,7 @@ export default async function CollegeGroupsPage({
           </Select>
         </Label>
         <Label className="block min-w-0 w-full">
-          <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <span className="mb-1 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
           </span>
           <Select name="status" defaultValue={status ?? ""}>

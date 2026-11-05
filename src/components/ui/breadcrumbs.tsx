@@ -8,7 +8,7 @@ export type BreadcrumbsProps = { items: readonly BreadcrumbItem[]; className?: s
 export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
   return (
     <nav aria-label="Breadcrumb" data-slot="breadcrumbs" className={cx("min-w-0", className)}>
-      <ol className="flex min-w-0 flex-wrap items-center gap-x-[var(--lms-space-2)] gap-y-1 text-[var(--lms-font-sm)] leading-5 text-[var(--lms-body-text)]">
+      <ol className="flex min-w-0 flex-wrap items-center gap-x-[var(--lms-space-2)] gap-y-1 text-[length:var(--lms-font-sm)] leading-5 text-[var(--lms-body-text)]">
         {items.map((item, index) => (
           <li key={`${item.label}-${index}`} className="flex min-w-0 max-w-full items-center gap-[var(--lms-space-2)]">
             {index > 0 ? <span aria-hidden="true" className="text-[var(--lms-neutral-400)]">/</span> : null}

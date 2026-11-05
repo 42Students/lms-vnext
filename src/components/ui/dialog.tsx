@@ -65,7 +65,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
     <div className="flex max-h-[calc(var(--lms-visual-height)_-_3rem)] min-h-0 min-w-0 flex-col overflow-hidden max-md:max-h-[var(--lms-visual-height)]">
       <div data-slot="dialog-header" className="relative z-(--lms-z-raised) flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] bg-surface px-4 py-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-[var(--lms-canvas-padding)]">
         <div className="min-w-0 flex-1">
-          <h2 id={titleId} className="m-0 break-words text-[var(--lms-font-lg)] font-semibold leading-[1.4] text-[var(--lms-heading)]">{title}</h2>
+          <h2 id={titleId} className="m-0 break-words text-[length:var(--lms-font-lg)] font-semibold leading-[1.4] text-[var(--lms-heading)]">{title}</h2>
           {description ? <p id={descriptionId} className="mt-[var(--lms-space-1)] break-words text-[13px] leading-5 text-[var(--lms-body-text)]">{description}</p> : null}
         </div>
         {dismissible ? <Button className="min-h-11 min-w-11 shrink-0 rounded-full bg-surface p-0 text-[var(--lms-muted-text)] shadow-(--lms-elevation-1) hover:bg-[var(--lms-neutral-50)] md:min-h-11 md:min-w-11" variant="ghost" aria-label="Close dialog" onClick={() => onOpenChange(false)}><OverlayCloseIcon /></Button> : null}

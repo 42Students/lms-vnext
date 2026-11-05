@@ -104,7 +104,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
 
       <section aria-label="Manage batches" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Existing Batches</Heading>
+          <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Existing Batches</Heading>
           <ButtonLink variant="secondary" href={exportHref}>
             Export batches.csv
           </ButtonLink>

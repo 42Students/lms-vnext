@@ -123,7 +123,7 @@ export default async function RecruiterCompanyReportsPage({
           />
         ) : (
           <section className="border-b border-border pb-6">
-            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+            <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
               Choose a college
             </Heading>
 
@@ -211,7 +211,7 @@ export default async function RecruiterCompanyReportsPage({
       ]} />
 
       <section aria-label="All your drives at this college" className="border-b border-border pb-4 md:pb-6">
-        <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">All your drives at this college</Heading>
+        <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">All your drives at this college</Heading>
         <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">
           {buildRecruiterReportFunnel(report.funnel)
@@ -297,7 +297,7 @@ export default async function RecruiterCompanyReportsPage({
 
       <section className="min-w-0 space-y-3">
         <div>
-          <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">
+          <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">
             Hiring activity by drive
           </Heading>
 

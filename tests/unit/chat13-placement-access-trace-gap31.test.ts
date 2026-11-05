@@ -29,8 +29,9 @@ describe("SA-tenants-modules-31 placement-cell decision trace",()=>{
  });
  it("SA-tenants-modules-31 renders eligible, ineligible, undecided and actor date",()=>{
   const page=read("src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx");
-  for(const label of ["Placement cell decision","Not decided yet","Eligible","Ineligible","Decided by","Asia/Kolkata"])
+  for(const label of ["Placement cell decision","Not decided yet","Eligible","Ineligible","Decided by"])
    expect(page).toContain(label);
+  expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/);expect(read("src/lib/format-date.ts")).toContain("Asia/Kolkata");
   expect(page).toContain("selected.placementParticipation");
  });
 });

@@ -168,8 +168,8 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <div className="grid min-w-0 gap-4 lg:grid-cols-2 lg:items-start">
  <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
   className="scroll-mt-24 space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
-  <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Next step</Heading>
-  <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">{next.title}</Heading>
+  <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-7">Next step</Heading>
+  <Heading level={3} className="text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">{next.title}</Heading>
   <p className="text-sm text-body leading-[22px]">{next.detail}</p>
   <div className="flex flex-wrap gap-3">
    <ButtonLink variant="secondary" href={"/tpo/batches/"+batchId+next.href}>
@@ -182,7 +182,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   </div>
  </section>
  <section aria-label="Batch eligibility snapshot" className="min-w-0 space-y-3 border-b border-border py-4">
-  <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Eligibility decisions</Heading>
+  <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-7">Eligibility decisions</Heading>
   <p className="text-sm text-muted-foreground leading-[22px]">{summary.complete?
    "Inherited learner, class and batch decisions for the active roster.":
    "Partial snapshot: only the first "+eligibility.limit+" learners were assessed. Do not treat these counts as batch totals."}</p>
@@ -224,7 +224,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   </ButtonLink>:<p role="status" className="text-sm text-body leading-[22px]">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
  <section aria-label="Whole batch eligibility decision" className="space-y-2 border-b border-border py-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
-    <div><Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Whole batch</Heading>
+    <div><Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-7">Whole batch</Heading>
       <p className="text-sm text-body leading-[22px]">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
       {decision.reason?<p className="text-xs text-muted-foreground leading-5">Reason: {decision.reason}</p>:null}
     </div>

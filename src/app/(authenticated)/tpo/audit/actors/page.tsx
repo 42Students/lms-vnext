@@ -139,7 +139,7 @@ export default async function TpoActorAuditPage({
       </div>
     </form>
     <section className="min-w-0 space-y-4">
-      <Heading level={2} className="m-0 text-[var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
+      <Heading level={2} className="m-0 text-[length:var(--lms-font-lg)] leading-7 text-[var(--lms-heading)]">
         {formatNumberIN(data.total)} matching canonical record(s)
       </Heading>
       <DataTable

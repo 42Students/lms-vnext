@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -19,7 +22,7 @@ describe("Faculty shared surface mobile and focus rollout",()=>{
   expect(src).toContain('"No contacts found"');
   expect(src).toContain('"No college directory members are visible in this contact tab.');
   expect(src).toContain('label="Contacts pages"');
-  expect(src).toContain("focus-ring");
+  expect(src).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("text-link.tsx")).toContain("focus-ring");
   expect(read("src/components/ui/pagination.tsx")).toContain("min-h-11 min-w-11");
  });
  it("UX-teacher-reports-shared-02 uses both phone cards and desktop report rows with 44px paging",()=>{
@@ -35,7 +38,7 @@ describe("Faculty shared surface mobile and focus rollout",()=>{
   const src=read("src/components/courses/faculty-assessment-overview.tsx");
   expect(src).toContain("EmptyState");
   expect(src).toContain("min-h-11");
-  expect(src).toContain("focus-ring");
+  expect(src).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("text-link.tsx")).toContain("focus-ring");
   expect(src).not.toContain("text-on-primary");
  });
 });

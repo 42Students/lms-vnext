@@ -389,7 +389,7 @@ export function AdminCourseDisplayEditor({
           <Label className="block min-w-0">
             Rich description HTML
             <Textarea
-              className="mt-[var(--lms-space-2)] min-h-40 w-full font-mono text-[var(--lms-font-base)]"
+              className="mt-[var(--lms-space-2)] min-h-40 w-full font-mono text-[length:var(--lms-font-base)]"
               value={bodyHtml}
               maxLength={20000}
               placeholder="<p>Describe the course...</p>"

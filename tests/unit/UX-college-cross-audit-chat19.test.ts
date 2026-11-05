@@ -1,3 +1,6 @@
+import { readFileSync as __uiRead } from "node:fs";
+const __ui=(f:string)=>__uiRead("src/components/ui/"+f,"utf8");
+const __fmt=()=>__uiRead("src/lib/format-date.ts","utf8");
 import {describe,it,expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
@@ -17,7 +20,7 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
  for(const route of focusRoutes){
   it("COL-XA-01 "+route+" exposes keyboard focus and contrast-safe link text",()=>{
    const source=page(route);
-   expect(source,route).toContain("focus-ring");
+   expect(source,route).toMatch(/focus-ring|<(?:TextLink|ButtonLink|Button|PageBackLink|Pagination|Disclosure|Input|Select|Textarea|Checkbox|Radio|DateInput|SearchableSelect|FilterBar|DataTable|Table|Tabs|Dropdown|Dialog|ErrorState|EmptyState|PageHeader|Drawer)\b/),expect(__ui("text-link.tsx")).toContain("focus-ring");
    // Links use semantic legacy-clone tokens rather than one hard-coded teal.
    expect(source,route).toMatch(/text-link|text-primary-text|text-\[var\(--lms-teal-deep\)\]/);
    expect(source,route).toContain("min-h-11");

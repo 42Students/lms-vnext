@@ -103,7 +103,7 @@ async function SuperAdminDashboard({
       <PageHeader eyebrow="Super Admin" title="Overview" description="Platform-wide operations and navigation" />
       <section aria-labelledby="platform-operations-title" className="space-y-3">
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">Platform operations</p>
-        <Heading level={2} id="platform-operations-title" className="text-[var(--lms-font-xl)] leading-7 text-[var(--lms-heading)] md:text-[var(--lms-font-2xl)]">
+        <Heading level={2} id="platform-operations-title" className="text-[length:var(--lms-font-xl)] leading-7 text-[var(--lms-heading)] md:text-[length:var(--lms-font-2xl)]">
           Choose the level you need to operate at.
         </Heading>
         <p className="max-w-3xl text-sm leading-[22px] text-body">

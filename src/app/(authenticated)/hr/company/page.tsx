@@ -96,7 +96,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           title="Open this on your college&apos;s placement address"
           description="Your recruiter account has no active college session. Contact the placement cell that invited you."/>:
           <section className="space-y-3 border-b border-border pb-6">
-            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Choose a college</Heading>
+            <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Choose a college</Heading>
             <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
               key:grant.collegeId,label:grant.collegeName,
               href:"/hr/company?collegeId="+encodeURIComponent(grant.collegeId),
@@ -220,7 +220,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                   result.company.name.slice(0,1).toUpperCase()}
               </span>
               <div className="min-w-0">
-                <Heading level={2} className="break-words text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">{result.company.name}</Heading>
+                <Heading level={2} className="break-words text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">{result.company.name}</Heading>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   {profile?.verifiedAt&&result.company.trusted?<Badge tone="success">Verified</Badge>:null}
                   {companyDomains.length?<span className="break-all text-sm text-muted-foreground">{companyDomains.join(", ")}</span>:null}
@@ -249,7 +249,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             {" "}To change the name or logo, ask the placement cell.
           </p>
           <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-6">
-            <Heading level={3} className="text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] md:text-[var(--lms-font-lg)] md:leading-[26px]">Hiring footprint with this college</Heading>
+            <Heading level={3} className="text-[var(--lms-heading)] text-[length:var(--lms-font-md)] leading-[24px] md:text-[length:var(--lms-font-lg)] md:leading-[26px]">Hiring footprint with this college</Heading>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
             {overview.recent.length ? <div className="mt-4 space-y-2">
               <Heading level={4} size="sm" className="text-foreground">Recent hiring drives</Heading>
@@ -271,7 +271,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       ) : (
         <section className="border-b border-border pb-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Heading level={2} className="text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] md:text-[var(--lms-font-xl)] md:leading-[28px]">Recruiter team</Heading>
+            <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Recruiter team</Heading>
             <TextLink href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
               className="inline-flex min-h-11 items-center text-sm md:min-h-9">
               Export authorized team CSV

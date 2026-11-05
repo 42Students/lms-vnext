@@ -17,7 +17,7 @@ export function Input({ className, error = false, ...props }: InputProps) {
         "min-h-[var(--lms-control-height)] max-md:min-h-11 w-full min-w-0 font-[inherit]",
         "rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)]",
         "bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[8px]",
-        "text-[var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",
+        "text-[length:var(--lms-font-base)] font-normal leading-5 tracking-[0.2px] text-[var(--lms-form-ink)]",
         "caret-[var(--lms-primary)] outline-none shadow-none",
         "transition-[border-color,box-shadow,background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)]",
         "placeholder:text-[var(--lms-placeholder)] selection:bg-[var(--lms-primary-subtle)] selection:text-[var(--lms-form-ink)]",
