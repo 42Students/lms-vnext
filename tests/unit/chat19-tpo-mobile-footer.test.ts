@@ -39,16 +39,16 @@ describe("chat-19 TPO five-icon mobile footer",()=>{
   it("keeps accessible link names, valid tags and icon-label contents",()=>{
     const source=footer();
     expect(source).toContain('import Image from "next/image"');
-    expect(source).toContain('import Link from "next/link"');
+    expect(source).toContain('import { TextLink } from "@/components/ui/text-link"');
     expect(source).toContain('aria-label="TPO mobile footer"');
     expect(source).toContain('title={link.label}');
-    expect(source).toContain('</Link>');
+    expect(source).toContain('</TextLink>');
     expect(source).toContain('className="lms-tpo-mobile-footer-icon"');
     expect(source).toContain('className="lms-tpo-mobile-footer-label"');
   });
   it("copies legacy 24px icon, .5 inactive, 1 active, 10px captions and press",()=>{
     expect(css()).toContain("width:24px;height:24px");
-    expect(css()).toContain("opacity:.5;transition:opacity .15s ease");
+    expect(css()).toContain("opacity:.5;transition:opacity var(--lms-motion-fast) var(--lms-motion-ease)");
     expect(css()).toContain("transform:scale(.93)");
     expect(css()).toContain("font-size:10px;font-weight:500;color:var(--lms-neutral-400)");
     expect(css()).toContain(".lms-tpo-mobile-footer-item.active .lms-tpo-mobile-footer-label");

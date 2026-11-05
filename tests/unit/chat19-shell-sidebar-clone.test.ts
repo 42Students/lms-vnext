@@ -19,7 +19,7 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
 
   it("points brand and sidebar recovery to the first permitted account destination", () => {
     expect(shell()).toContain('const homeHref=navigation[0]?.href??"/dashboard"');
-    expect(shell()).toContain('<Link href={homeHref} aria-label="42Students LMS home"');
+    expect(shell()).toContain('<TextLink variant="bare" href={homeHref} aria-label="42Students LMS home"');
     expect(shell()).toContain('fallbackHref={homeHref}');
     expect(shell()).not.toContain('<Link href="/dashboard" aria-label="42Students LMS home"');
   });
@@ -28,8 +28,8 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(css()).toContain("width:96px");
     expect(css()).toContain("min-width:96px");
     expect(css()).toContain("width:256px");
-    expect(css()).toContain("transition:width .15s cubic-bezier(.2,0,0,1)");
-    expect(css()).toContain("box-shadow:inset 3px 0 var(--lms-primary)");
+    expect(css()).toContain("transition:width var(--lms-motion-fast) var(--lms-motion-ease)");
+    expect(css()).toContain("box-shadow:var(--lms-accent-bar-start)");
   });
 
   it("uses legacy learner rail inset and admin row padding only for the matching visible role", () => {
@@ -55,7 +55,7 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(mobile).toContain('import {Button} from "@/components/ui/button"');
     expect(mobile).toContain('side="left"');
     expect(mobile).toContain('headerLeading={<ShellLogoMark />}');
-    expect(mobile).toContain('!px-[var(--lms-space-3)] !pt-[var(--lms-space-2)] !pb-[calc(24px+env(safe-area-inset-bottom,0px))]');
+    expect(mobile).toContain('px-[var(--lms-space-3)] pt-[var(--lms-space-2)] pb-[calc(24px+env(safe-area-inset-bottom,0px))]');
     expect(css()).toContain('.lms-mobile-sidebar[data-slot="drawer"]');
     expect(css()).toContain("width:82vw");
     expect(css()).toContain("max-width:300px");
@@ -68,7 +68,7 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
     expect(legacy).toContain("word-break: break-word");
     expect(legacy).toContain("overflow-wrap: break-word");
     expect(legacy).toContain("margin: 6px 8px !important");
-    expect(css()).toContain("box-shadow:4px 0 16px rgba(0,0,0,.12)");
+    expect(css()).toContain("box-shadow:var(--lms-shadow-drawer-end)");
     expect(css()).toContain(".lms-mobile-sidebar .lms-nav-label {");
     expect(css()).toContain("white-space:normal;");
     expect(css()).toContain("overflow-wrap:break-word;");
@@ -97,6 +97,6 @@ describe("chat-19 legacy sidebar structural guardrails", () => {
   it("isolates the route animation to content below the topbar", () => {
     expect(shell()).toContain("<RouteTransition>{children}</RouteTransition>");
     expect(shell().indexOf("<RouteTransition>")).toBeGreaterThan(shell().indexOf("<LegacyTopbar"));
-    expect(read("src/components/shell/route-transition.css")).toContain("250ms ease-out");
+    expect(read("src/components/shell/route-transition.css")).toContain("var(--lms-motion-base) var(--lms-motion-ease)");
   });
 });

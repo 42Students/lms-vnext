@@ -347,7 +347,7 @@ dialog[data-slot="bottom-sheet"][open] > div {
   inset: 0;
   transform: translateX(-100%);
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--lms-surface) 68%, transparent), transparent);
-  animation: lms-skeleton-shimmer var(--lms-motion-slow) linear infinite;
+  animation: lms-skeleton-shimmer calc(var(--lms-motion-slow) * 4) linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

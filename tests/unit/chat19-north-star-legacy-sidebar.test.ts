@@ -177,12 +177,12 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain(".lms-shell-frame {display:flex;align-items:stretch;}");
   expect(css).toContain(".lms-shell-page {min-width:0;flex:1 1 0%;}");
   expect(css).not.toContain("padding-left:256px");
-  expect(css).toContain("width .15s cubic-bezier(.2,0,0,1)");
+  expect(css).toContain("width var(--lms-motion-fast) var(--lms-motion-ease)");
   expect(css).toContain(".lms-desktop-sidebar:is(:hover,:focus-within)");
   expect(css).toContain("background:var(--lms-primary-subtle)");
-  expect(css).toContain("box-shadow:inset 3px 0 var(--lms-primary)");
+  expect(css).toContain("box-shadow:var(--lms-accent-bar-start)");
   expect(css).toContain("color:var(--lms-primary-text)");
-  expect(css).toContain("background:rgba(38,186,199,.07)");
+  expect(css).toContain("background:color-mix(in srgb, var(--lms-primary) 7%, transparent)");
   expect(css).toContain("font-size:15px");
   expect(css).toContain("scrollbar-width:none");
   expect(css).toContain("transform:scale(.72)");
@@ -192,25 +192,25 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   const shell=source("src/components/shell/app-shell.tsx");
   const mobile=source("src/components/shell/mobile-navigation.tsx");
   const glyphs=source("src/components/shell/shell-nav-icons.tsx");
-  for(const value of ["min-height:44px","margin-bottom:6px","padding:10px 12px",
-   "border-radius:8px","width:24px","height:24px","opacity:.55",
-   "font-size:15px","line-height:20px","letter-spacing:.105em",
-   "margin:7px 12px 4px","width:22px","top:4px","left:50%",
-   "margin-left:5px","transform:scale(.72)","outline-offset:-2px"]) {
+  for(const value of ["min-height:44px","margin-bottom:6px","padding:12px 12px",
+   "border-radius:8px","width:24px","height:24px","opacity:.6",
+   "font-size:15px","line-height:20px","letter-spacing:.08em",
+   "margin:8px 12px 4px","width:24px","top:4px","left:50%",
+   "margin-left:6px","transform:scale(.72)","outline-offset:-2px"]) {
    expect(css,value).toContain(value);
   }
   expect(css).toContain("border-right:1px solid var(--lms-neutral-100)");
-  expect(css).toContain("outline:2px solid rgba(38,186,199,.45)");
+  expect(css).toContain("outline:2px solid color-mix(in srgb, var(--lms-primary) 45%, transparent)");
   expect(shell).toContain("<ShellLogoMark />");
   expect(mobile).toContain("<ShellLogoMark />");
-  expect(glyphs).toContain('width="38" height="36"');
+  expect(glyphs).toContain('viewBox="0 0 41 38" width="40" height="40"');
   const drawer=source("src/components/ui/drawer.tsx");
   expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');
   expect(drawer).toContain("<dialog ref={ref}");
   expect(drawer).toContain("onCancel={event =>");
   expect(mobile).toContain("onNavigate={() => setOpen(false)}");
   expect(css).toContain(".lms-mobile-sidebar .lms-sidebar-nav {padding-inline:0;");
-  expect(mobile).toContain("bodyClassName=\"!px-[var(--lms-space-3)] !pt-[var(--lms-space-2)]");
+  expect(mobile).toContain("bodyClassName=\"px-[var(--lms-space-3)] pt-[var(--lms-space-2)]");
   expect(css).toContain("margin-bottom:2px;");
   expect(mobile).toContain("pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
  });
@@ -221,7 +221,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain('.lms-sidebar-nav[data-sidebar-portal="tpo"]');
   expect(css).toContain("scrollbar-width:thin;");
   expect(css).toContain("width:4px;");
-  expect(css).toContain("scrollbar-color:rgba(107,114,128,.28) transparent;");
+  expect(css).toContain("scrollbar-color:color-mix(in srgb, var(--lms-text-muted) 28%, transparent) transparent;");
   expect(css).toContain("line-height:1;");
   expect(css).toContain(".lms-sidebar-nav .lms-sidebar-item-icon svg {display:block;width:20px;height:20px;flex-shrink:0;}");
  });
@@ -245,9 +245,9 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
  });
  it("uses the exact historic 42LMS logomark and preserves the mobile focus-trapped drawer",()=>{
   const icon=source("src/components/shell/shell-nav-icons.tsx");
-  expect(icon).toContain('fill="#266891"');
-  expect(icon).toContain('fill="#9EE4E8"');
-  expect(icon).toContain('fill="#26BAC7"');
+  expect(icon).toContain('fill="var(--lms-info-text)"');
+  expect(icon).toContain('fill="var(--lms-primary-light)"');
+  expect(icon).toContain('fill="var(--lms-primary)"');
   expect(icon).toContain("viewBox=\"0 0 41 38\"");
   const app=source("src/components/shell/app-shell.tsx");
   expect(app).toContain('data-slot="legacy-sidebar"');

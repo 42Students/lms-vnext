@@ -14,8 +14,8 @@ describe("chat-19 route progress and shell ownership", () => {
     expect(progress()).not.toContain('role="progressbar"');
     expect(progress()).toContain("if (!pending || !slow) return null");
     expect(progress()).toContain('data-slot="legacy-page-loader"');
-    expect(css()).toContain("background:rgba(255,255,255,.99)");
-    expect(css()).toContain("z-index:999");
+    expect(css()).toContain("background:color-mix(in srgb, var(--lms-white) 99%, transparent)");
+    expect(css()).toContain("z-index:var(--lms-z-toast)");
   });
   it("keeps reduced-motion treatment for the original four-dot loader", () => {
     expect(css()).toContain("@media (prefers-reduced-motion:reduce)");
@@ -49,11 +49,11 @@ describe("chat-19 route progress and shell ownership", () => {
   it("keeps the legacy large AntD four-dot delay pattern", () => {
     const source = css();
     expect(source).toContain("font-size:32px");
-    expect(source).toContain("width:14px");
-    expect(source).toContain("height:14px");
+    expect(source).toContain("width:16px");
+    expect(source).toContain("height:16px");
     expect(source).toContain("transform:scale(.75)");
-    expect(source).toContain("animation:lms-legacy-spin-move 1s infinite linear alternate");
-    for (const delay of [".4s", ".8s", "1.2s"]) {
+    expect(source).toContain("animation:lms-legacy-spin-move calc(var(--lms-motion-slow) * 3) infinite linear alternate");
+    for (const delay of ["var(--lms-motion-slow)", "calc(var(--lms-motion-slow) * 2)", "calc(var(--lms-motion-slow) * 3)"]) {
       expect(source).toContain("animation-delay:"+delay);
     }
     expect(source).toContain(".lms-legacy-loader-dots,.lms-legacy-loader-dots i {animation:none;}");

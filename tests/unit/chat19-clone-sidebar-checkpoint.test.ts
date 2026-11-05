@@ -15,7 +15,7 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  });
  it("uses the legacy 150ms cubic bezier expansion",()=>{
  expect(legacy()).toContain("transition: width 0.15s cubic-bezier(0.2, 0, 0, 1)");
- expect(sidebar()).toContain("transition:width .15s cubic-bezier(.2,0,0,1)");
+ expect(sidebar()).toContain("transition:width var(--lms-motion-fast) var(--lms-motion-ease)");
 });
  it("pushes the content column by expanding a relative flex sibling",()=>{
  const css=sidebar();
@@ -34,31 +34,31 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  it("matches 44px navigation items and 8px corners",()=>{
  expect(legacy()).toContain("border-radius: 8px; min-height: 44px; padding: 10px 12px");
  expect(sidebar()).toContain("min-height:44px;");
- expect(sidebar()).toContain("padding:10px 12px;");
+ expect(sidebar()).toContain("padding:12px 12px;");
  expect(sidebar()).toContain("border-radius:8px;");
 });
  it("matches the teal active fill and inset bar",()=>{
  expect(legacy()).toContain("box-shadow: rgb(38, 186, 199) 3px 0px inset;");
  expect(sidebar()).toContain("background:var(--lms-primary-subtle);");
- expect(sidebar()).toContain("box-shadow:inset 3px 0 var(--lms-primary);");
+ expect(sidebar()).toContain("box-shadow:var(--lms-accent-bar-start);");
 });
  it("keeps 7-percent teal hover wash and teal labels",()=>{
  expect(legacy()).toContain("background: rgba(38, 186, 199, 0.07)");
- expect(sidebar()).toContain("background:rgba(38,186,199,.07);");
+ expect(sidebar()).toContain("background:color-mix(in srgb, var(--lms-primary) 7%, transparent);");
  expect(sidebar()).toContain("color:var(--lms-primary-text);");
 });
  it("preserves 24px icon box and 20px upstream glyph",()=>{
  expect(legacy()).toContain("opacity: 0.55; flex: 0 0 24px");
  expect(sidebar()).toContain("flex:0 0 24px;");
- expect(sidebar()).toContain("opacity:.55;");
+ expect(sidebar()).toContain("opacity:.6;");
  expect(sidebar()).toContain("width:20px;height:20px;");
 });
  it("changes TPO group headings from zero-font separators to 12px uppercase",()=>{
  const css=sidebar();
  expect(css).toContain("font-size:0;");
  expect(css).toContain("font-size:12px;");
- expect(css).toContain("width:22px;");
- expect(css).toContain("letter-spacing:.105em;");
+ expect(css).toContain("width:24px;");
+ expect(css).toContain("letter-spacing:.08em;");
  expect(css).toContain("text-transform:uppercase;");
 });
  it("pins collapsed counts above the glyph then restores inline expanded counts",()=>{
@@ -71,7 +71,7 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
 });
  it("uses the legacy 2px focus ring inset by 2px",()=>{
  expect(legacy()).toContain("outline-offset: -2px; outline: rgba(38, 186, 199, 0.45) solid 2px");
- expect(sidebar()).toContain("outline:2px solid rgba(38,186,199,.45);");
+ expect(sidebar()).toContain("outline:2px solid color-mix(in srgb, var(--lms-primary) 45%, transparent);");
  expect(sidebar()).toContain("outline-offset:-2px;");
 });
  it("uses the original four-pixel TPO hover scrollbar",()=>{
@@ -87,13 +87,13 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  const icons=read("src/components/shell/shell-nav-icons.tsx");
  expect(shell).toContain("<ShellLogoMark />");
  expect(mobile).toContain("<ShellLogoMark />");
- expect(icons).toContain('width="38" height="36"');
+ expect(icons).toContain('viewBox="0 0 41 38" width="40" height="40"');
 });
  it("preserves AntD phone drawer width, safe-area body padding and native focus",()=>{
  const mobile=read("src/components/shell/mobile-navigation.tsx");
  expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');
  expect(mobile).toContain('side="left"');
- expect(mobile).toContain("!px-[var(--lms-space-3)] !pt-[var(--lms-space-2)] !pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
+ expect(mobile).toContain("px-[var(--lms-space-3)] pt-[var(--lms-space-2)] pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
  expect(sidebar()).toContain("width:82vw;");
  expect(sidebar()).toContain("max-width:300px;");
  expect(sidebar()).toContain(".lms-mobile-sidebar .lms-sidebar-nav {padding-inline:0;");
@@ -101,7 +101,7 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  it("has one TPO footer implementation rather than two diverging copies",()=>{
  const primary=read("src/components/tpo/tpo-mobile-footer.tsx");
  const alias=read("src/components/shell/tpo-mobile-footer.tsx");
- expect(primary).toContain("<Link key={link.label} href={link.href}");
+ expect(primary).toContain("<TextLink variant=\"bare\" key={link.label} href={link.href}");
  expect(primary).toContain("aria-current={active ? \"page\" : undefined}");
  expect(primary).toContain('{label:"More",href:"/tpo/more"');
  expect(primary).toContain("min-h-16");

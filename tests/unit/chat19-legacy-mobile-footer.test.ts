@@ -15,12 +15,12 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
     expect(styles()).toContain("bottom:0");
     expect(styles()).toContain("border-top:1px solid var(--lms-neutral-100)");
     expect(styles()).toContain("padding-bottom:env(safe-area-inset-bottom,0px)");
-    expect(styles()).toContain("box-shadow:0 -2px 8px rgba(0,0,0,.04)");
+    expect(styles()).toContain("box-shadow:var(--lms-shadow-top)");
   });
   it("uses production 24px artwork, neutral inactive opacity and active opacity 1", () => {
     expect(mobile()).toContain("width={24} height={24}");
     expect(styles()).toContain("width:24px;height:24px;object-fit:contain;opacity:.5");
-    expect(styles()).toContain("transition:opacity .15s ease");
+    expect(styles()).toContain("transition:opacity var(--lms-motion-fast) var(--lms-motion-ease)");
     expect(styles()).toContain(".lms-legacy-mobile-footer-items .active .lms-legacy-mobile-footer-icon {opacity:1;}");
   });
   it("anchors the original AntD small badge to the bell with a red 14px indicator", () => {
@@ -30,8 +30,8 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
     expect(styles()).toContain(".lms-legacy-mobile-footer-icon-wrap {");
     expect(styles()).toContain("position:relative;");
     expect(styles()).toContain("transform:translate(50%,-50%)");
-    for (const value of ["min-width:14px;", "height:14px;", "font-size:12px;",
-      "line-height:14px;", "background:#ff4d4f;", "box-shadow:0 0 0 1px var(--lms-white);"]) {
+    for (const value of ["min-width:16px;", "height:16px;", "font-size:12px;",
+      "line-height:16px;", "background:var(--lms-error);", "box-shadow:var(--lms-focus-ring);"]) {
       expect(styles(), value).toContain(value);
     }
     // The counter is visual decoration; the link names its count for screen readers.

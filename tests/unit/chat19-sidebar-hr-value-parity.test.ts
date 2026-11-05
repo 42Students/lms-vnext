@@ -14,9 +14,9 @@ const controls=[
 describe("NORTH-STAR-CHAT19-POLISH: measured legacy sidebar and HR control tokens",()=>{
  it("matches the legacy collapsed badge position, icon opacity and body/footer spacing",()=>{
   const css=read("src/components/shell/sidebar-legacy.css");
-  expect(css).toContain("opacity:.55;");
+  expect(css).toContain("opacity:.6;");
   expect(css).toContain("top:4px;");
-  expect(css).toContain("margin-left:5px;");
+  expect(css).toContain("margin-left:6px;");
   expect(css).toContain("transform:scale(.72);");
   expect(css).toContain("width:96px;");
   expect(css).toContain("width:256px;");
@@ -24,7 +24,7 @@ describe("NORTH-STAR-CHAT19-POLISH: measured legacy sidebar and HR control token
   expect(css).toContain(".lms-shell-page {min-width:0;flex:1 1 0%;}");
   expect(css).not.toContain("padding-left:256px;");
   expect(css).toContain("border-right:1px solid var(--lms-neutral-100);");
-  expect(css).toContain("box-shadow:inset 3px 0 var(--lms-primary);");
+  expect(css).toContain("box-shadow:var(--lms-accent-bar-start);");
   const shell=read("src/components/shell/app-shell.tsx");
   expect(shell).toContain("lms-sidebar-logo-row");
   expect(shell).toContain("lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4");

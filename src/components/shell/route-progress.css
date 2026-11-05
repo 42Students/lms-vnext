@@ -35,7 +35,7 @@
  width:1em;
  height:1em;
  transform:rotate(45deg);
- animation:lms-legacy-spin-rotate var(--lms-motion-slow) infinite linear;
+ animation:lms-legacy-spin-rotate calc(var(--lms-motion-slow) * 3.5) infinite linear;
 }
 .lms-legacy-loader-dots i {
  position:absolute;
@@ -47,12 +47,12 @@
  transform:scale(.75);
  transform-origin:50% 50%;
  opacity:.4;
- animation:lms-legacy-spin-move var(--lms-motion-slow) infinite linear alternate;
+ animation:lms-legacy-spin-move calc(var(--lms-motion-slow) * 3) infinite linear alternate;
 }
 .lms-legacy-loader-dots i:nth-child(1) {top:0;left:0;}
 .lms-legacy-loader-dots i:nth-child(2) {top:0;right:0;animation-delay:var(--lms-motion-slow);}
-.lms-legacy-loader-dots i:nth-child(3) {bottom:0;right:0;animation-delay:var(--lms-motion-slow);}
-.lms-legacy-loader-dots i:nth-child(4) {bottom:0;left:0;animation-delay:var(--lms-motion-slow);}
+.lms-legacy-loader-dots i:nth-child(3) {bottom:0;right:0;animation-delay:calc(var(--lms-motion-slow) * 2);}
+.lms-legacy-loader-dots i:nth-child(4) {bottom:0;left:0;animation-delay:calc(var(--lms-motion-slow) * 3);}
 
 
 .lms-legacy-loader-recovery {margin-top:12px;text-align:center;}

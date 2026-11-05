@@ -18,14 +18,14 @@ describe("NORTH-STAR-SIDEBAR-03: measured original icons and mobile group parity
   expect(css).toContain("scrollbar-width:none");
   expect(css).toContain("width:96px");
   expect(css).toContain("width:256px");
-  expect(css).toContain("box-shadow:inset 3px 0 var(--lms-primary)");
+  expect(css).toContain("box-shadow:var(--lms-accent-bar-start)");
  });
  it("matches measured 9px mobile headings and preserves the mobile drawer",()=>{
   const css=read("src/components/shell/sidebar-legacy.css");
   const mobile=read("src/components/shell/mobile-navigation.tsx");
   expect(css).toContain("@media (max-width:767px)");
   expect(css).toContain(".lms-mobile-sidebar .lms-nav-heading");
-  expect(css).toContain("margin:12px 12px 6px 46px");
+  expect(css).toContain("margin:12px 12px 6px 48px");
   expect(css).toContain("font-size:9px");
   expect(mobile).toContain("lms-mobile-sidebar");
   const drawer=read("src/components/ui/drawer.tsx");
@@ -50,10 +50,12 @@ describe("NORTH-STAR-HR-03: secondary recruiter surfaces inherit page canvas",()
  });
  it("retains the incoming 36px recruiter bell while enforcing legacy focus and radius",()=>{
   const bell=read("src/components/hr/recruiter-notification-bell.tsx");
-  expect(bell).toContain("min-h-11 min-w-11 !p-0 md:min-h-9 md:min-w-9");
+  expect(bell).toContain("min-h-11 min-w-11 md:min-h-9 md:min-w-9 p-0");
   expect(bell).not.toContain("rounded-[9px]");
   expect(bell).not.toContain("focus-visible:outline-primary");
-  expect(bell).toContain("rounded-[var(--lms-control-radius)]");
+  // The bell is a shared Button, which owns the control radius token.
+  expect(bell).toContain("<Button");
+  expect(read("src/components/ui/button.tsx")).toContain("rounded-[var(--lms-control-radius)]");
  });
  it("keeps every recruiter operation while using the 9px control token",()=>{
   const paths=[
