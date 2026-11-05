@@ -209,7 +209,7 @@ export function LearnerNotificationsInbox({
               aria-pressed={active === key}
               aria-label={label+", "+categoryCounts[key]+" notifications"}
               onClick={() => selectCategory(key)}
-              className={"!min-h-11 shrink-0 rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] whitespace-nowrap focus-visible:!outline-offset-2 focus-visible:!outline-[var(--lms-primary)] "+
+ className={"!min-h-11 shrink-0 rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] whitespace-nowrap focus-ring "+
                 (active===key
                   ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-[color:var(--lms-on-primary)] enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-[color:var(--lms-on-primary)]"
                   : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] enabled:hover:!bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] enabled:hover:!text-[var(--lms-primary)]")}

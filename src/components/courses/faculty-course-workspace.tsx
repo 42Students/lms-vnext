@@ -128,7 +128,7 @@ function ContentItem({
   ];
 
   return (
-    <article id={"course-item-"+item.id} aria-label={item.contentType.replaceAll("_"," ")+" "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] focus-outline":"")}>
+    <article id={"course-item-"+item.id} aria-label={item.contentType.replaceAll("_"," ")+" "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] shadow-(--lms-ring-inset-selected)":"")}>
       {focused?<StatusBadge tone="info">Selected content</StatusBadge>:null}
       <FacultyCourseItemViewer title={item.title} kind={item.contentType}
         notes={item.notes} externalHref={externalHref} youtubeEmbed={youtubeEmbed}
@@ -217,7 +217,7 @@ function AssignmentItem({
 }) {
 
   return (
-    <article id={"course-item-"+item.id} aria-label={"Assignment "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] focus-outline":"")}>
+    <article id={"course-item-"+item.id} aria-label={"Assignment "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] shadow-(--lms-ring-inset-selected)":"")}>
       {focused?<StatusBadge tone="info">Selected assignment</StatusBadge>:null}
       <FacultyCourseItemViewer title={item.title} kind="ASSIGNMENT" notes={item.description}
         dueAt={item.dueAt?.toISOString()??null}/>
@@ -311,7 +311,7 @@ function QuizItem({
 }) {
 
   return (
-    <article id={"course-item-"+item.id} aria-label={"Quiz "+item.title+(item.status==="DRAFT"?", draft, hidden from students":"")} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] focus-outline":"")}>
+    <article id={"course-item-"+item.id} aria-label={"Quiz "+item.title+(item.status==="DRAFT"?", draft, hidden from students":"")} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] shadow-(--lms-ring-inset-selected)":"")}>
       {focused?<StatusBadge tone="info">Selected quiz</StatusBadge>:null}
       <FacultyCourseItemViewer title={item.title} kind="QUIZ" notes={item.description}
         dueAt={item.dueAt?.toISOString()??null}/>

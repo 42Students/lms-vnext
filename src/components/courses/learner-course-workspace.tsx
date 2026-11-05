@@ -69,7 +69,7 @@ function LearnerSyllabusItem({
  const completed=props.progress==="COMPLETED";
  return <section aria-label={title}
    className={"min-w-0 scroll-mt-28 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 "+
-    (props.highlighted?"focus-outline":"")}>
+    (props.highlighted?"shadow-(--lms-ring-inset-selected)":"")}>
   <div className="flex min-w-0 items-start gap-3">
    <span title={completed?"Completed":props.locked?"Content locked":"Not completed"}
     aria-label={completed?"Completed":props.locked?"Content locked":"Not completed"}

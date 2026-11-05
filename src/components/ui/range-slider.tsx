@@ -30,7 +30,7 @@ export function RangeSlider({ label, className, id, error = false, readOnly, onP
         className={cx(
           "min-w-[120px] flex-1 cursor-pointer accent-[var(--lms-primary)]",
           "focus-ring",
-          "aria-invalid:accent-[var(--lms-error)] aria-invalid:focus-visible:outline-[var(--lms-error)]",
+          "aria-invalid:accent-[var(--lms-error)] aria-invalid:focus-ring-error",
           "disabled:cursor-not-allowed disabled:opacity-100 disabled:accent-[var(--lms-neutral-400)] read-only:cursor-default motion-reduce:transition-none",
           className,
         )}

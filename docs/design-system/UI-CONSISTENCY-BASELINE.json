@@ -228,8 +228,7 @@
    "link-bare": 3
   },
   "src/app/(authenticated)/tpo/reports/page.tsx": {
-   "link-bare": 7,
-   "focus-style-off": 1
+   "link-bare": 7
   },
   "src/app/(authenticated)/tpo/students/page.tsx": {
    "link-bare": 2
@@ -259,8 +258,7 @@
    "important": 4
   },
   "src/app/home/page.tsx": {
-   "link-bare": 1,
-   "focus-style-off": 1
+   "link-bare": 1
   },
   "src/app/page.tsx": {
    "link-bare": 8
@@ -298,8 +296,7 @@
    "important": 1
   },
   "src/components/activity/learner-notifications-inbox.tsx": {
-   "focus-style-off": 2,
-   "important": 35
+   "important": 33
   },
   "src/components/activity/notification-list.tsx": {
    "important": 1
@@ -783,8 +780,7 @@
    "link-bare": 1
   },
   "src/components/shell/account-actions.tsx": {
-   "link-bare": 2,
-   "focus-style-off": 1
+   "link-bare": 2
   },
   "src/components/shell/app-shell.tsx": {
    "link-bare": 2
@@ -962,8 +958,7 @@
    "link-bare": 10
   },
   "src/components/tpo/tpo-topbar-new-menu.tsx": {
-   "link-bare": 1,
-   "focus-style-off": 1
+   "link-bare": 1
   },
   "src/components/tracker/independent-audit-findings-board.tsx": {
    "important": 1
@@ -983,26 +978,14 @@
   "src/components/tracker/tracker-screenshot-gallery.tsx": {
    "important": 1
   },
-  "src/components/ui/avatar.tsx": {
-   "focus-style-off": 1
-  },
-  "src/components/ui/bottom-sheet.tsx": {
-   "focus-style-off": 2,
-   "important": 2
-  },
   "src/components/ui/button.tsx": {
-   "focus-style-off": 1,
-   "important": 2
-  },
-  "src/components/ui/checkbox.tsx": {
-   "focus-style-off": 1
+   "important": 1
   },
   "src/components/ui/confirm-action-dialog.tsx": {
    "important": 5
   },
   "src/components/ui/date-input.tsx": {
-   "focus-style-off": 8,
-   "important": 66
+   "important": 58
   },
   "src/components/ui/dialog.tsx": {
    "important": 6
@@ -1017,14 +1000,10 @@
    "important": 3
   },
   "src/components/ui/file-upload.tsx": {
-   "focus-style-off": 1,
    "important": 3
   },
   "src/components/ui/filter-chip.tsx": {
    "important": 8
-  },
-  "src/components/ui/input.tsx": {
-   "focus-style-off": 1
   },
   "src/components/ui/legacy-overlays.css": {
    "important": 4
@@ -1035,46 +1014,20 @@
   "src/components/ui/multi-select.tsx": {
    "important": 8
   },
-  "src/components/ui/password-input.tsx": {
-   "focus-style-off": 2,
-   "important": 2
-  },
-  "src/components/ui/radio.tsx": {
-   "focus-style-off": 1
-  },
-  "src/components/ui/range-slider.tsx": {
-   "focus-style-off": 1
-  },
   "src/components/ui/search-field.tsx": {
-   "focus-style-off": 2,
-   "important": 8
+   "important": 6
   },
   "src/components/ui/searchable-select.tsx": {
-   "focus-style-off": 3,
-   "important": 38
+   "important": 35
   },
   "src/components/ui/segmented-control.tsx": {
-   "focus-style-off": 1,
    "important": 2
   },
-  "src/components/ui/select.tsx": {
-   "focus-style-off": 1
-  },
-  "src/components/ui/selection-controls.tsx": {
-   "focus-style-off": 1
-  },
   "src/components/ui/split-button.tsx": {
-   "focus-style-off": 4,
-   "important": 7
+   "important": 3
   },
   "src/components/ui/tabs.tsx": {
    "important": 4
-  },
-  "src/components/ui/textarea.tsx": {
-   "focus-style-off": 1
-  },
-  "src/components/ui/toast.tsx": {
-   "focus-style-off": 2
   },
   "src/components/verification/TpoVerificationPrototypeQueue.tsx": {
    "button-bare": 1

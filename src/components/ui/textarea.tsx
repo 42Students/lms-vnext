@@ -42,7 +42,7 @@ export function Textarea({ className, error = false, rows, ...props }: TextareaP
         "aria-invalid:enabled:hover:border-[var(--lms-error)]",
         "aria-invalid:focus-visible:border-[var(--lms-error)]",
         "aria-invalid:focus-visible:shadow-(--lms-focus-ring-error)",
-        "aria-invalid:focus-visible:outline-[var(--lms-error)]",
+        "aria-invalid:focus-ring-error",
         "motion-reduce:transition-none",
         className,
       )}

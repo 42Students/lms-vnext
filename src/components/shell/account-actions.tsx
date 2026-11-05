@@ -49,7 +49,7 @@ export function AccountActions({
     "inline-flex w-full min-w-0 min-h-[var(--lms-control-height)] items-center justify-center " +
     "rounded-[var(--lms-control-radius)] px-[var(--lms-space-3)] text-center text-sm font-semibold " +
     "text-foreground outline-none hover:bg-muted focus-ring " +
-    "focus-visible:outline-[var(--lms-primary)] motion-safe:transition-colors " +
+ "focus-ring motion-safe:transition-colors " +
     "motion-safe:duration-[var(--lms-motion-fast)] motion-reduce:transition-none " +
     "max-md:min-h-11 md:w-auto";
 

@@ -39,7 +39,7 @@ export function LearnerRoadmapItemDialog({
   }
   setOpen(openNow);
  }
- return <section aria-label={title} className={highlighted?"rounded-[var(--lms-control-radius)] focus-outline":""}>
+ return <section aria-label={title} className={highlighted?"rounded-[var(--lms-control-radius)] shadow-(--lms-ring-inset-selected)":""}>
   <nav aria-label={"Lesson item: "+title} id={navigationId}>
   <Button type="button" variant="secondary" aria-haspopup="dialog"
    aria-expanded={open} aria-disabled={locked}

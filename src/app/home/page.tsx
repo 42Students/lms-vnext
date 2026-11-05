@@ -137,7 +137,7 @@ export default function HomeMarketingPage() {
                 (index === 1 ? "bg-[color:color-mix(in_srgb,var(--lms-white)_15%,transparent)] text-[color:var(--lms-on-primary)]" : "bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary-hover)]")}>{outcome}</li>)}
             </ul>
             <TextLink variant="bare" href={audience.href} className={"mt-7 inline-flex min-h-11 self-start items-center justify-center rounded-full px-5 font-semibold focus-ring " +
-              (index === 1 ? "bg-surface text-[color:var(--lms-brand-dark)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-[color:var(--lms-white)]" : "border border-[color:var(--lms-button-primary)] text-[color:var(--lms-button-primary)] hover:bg-[color:var(--lms-primary-subtle)]")}>
+              (index === 1 ? "bg-surface text-[color:var(--lms-brand-dark)] hover:bg-[color:var(--lms-primary-subtle)] focus-ring-on-dark" : "border border-[color:var(--lms-button-primary)] text-[color:var(--lms-button-primary)] hover:bg-[color:var(--lms-primary-subtle)]")}>
               For {audience.title}<span aria-hidden="true" className="ml-2">↗</span>
             </TextLink>
           </article>)}

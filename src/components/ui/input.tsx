@@ -33,7 +33,7 @@ export function Input({ className, error = false, ...props }: InputProps) {
         "aria-invalid:placeholder:text-[var(--lms-neutral-400)]",
         "aria-invalid:focus-visible:border-[var(--lms-error)]",
         "aria-invalid:focus-visible:shadow-(--lms-focus-ring-error)",
-        "aria-invalid:focus-visible:outline-[var(--lms-error)]",
+        "aria-invalid:focus-ring-error",
         props.type === "search" && "rounded-[8px] pr-[44px] [background-image:url('/assets/images/common/search.svg')] [background-position:right_15px_center] [background-repeat:no-repeat] [background-size:19px_19px] focus:[background-image:none]",
         "motion-reduce:transition-none",
         className,

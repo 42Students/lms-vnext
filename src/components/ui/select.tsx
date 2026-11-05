@@ -39,7 +39,7 @@ export function Select({ className, children, error = false, ...props }: SelectP
         "aria-invalid:enabled:hover:border-[var(--lms-error)]",
         "aria-invalid:focus-visible:border-[var(--lms-error)]",
         "aria-invalid:focus-visible:shadow-(--lms-focus-ring-error)",
-        "aria-invalid:focus-visible:outline-[var(--lms-error)]",
+        "aria-invalid:focus-ring-error",
         "aria-invalid:disabled:border-[var(--lms-canvas-border)] aria-invalid:disabled:bg-[var(--lms-neutral-50)]",
         "[&_option:checked]:bg-[var(--lms-primary)] [&_option:checked]:text-[color:var(--lms-on-primary)]",
         "[&_option[value='']]:text-[var(--lms-placeholder)]",

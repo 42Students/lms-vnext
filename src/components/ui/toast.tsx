@@ -80,7 +80,7 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
         </div>
         <Button variant="ghost" type="button" aria-label={`Dismiss ${toast.tone === "error" ? "error" : "notification"}: ${toast.title}`}
           onClick={() => onDismiss(toast.id)}
-          className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"><OverlayCloseIcon /></Button>
+ className="min-h-11 min-w-11 shrink-0 rounded-[var(--lms-control-radius)] p-0 text-lg text-[var(--lms-muted-text)] hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] focus-ring "><OverlayCloseIcon /></Button>
       </div>
     </section>)}
   </div>;

@@ -168,6 +168,12 @@
 }
 
 /* The one focus style. Never hand-write outline/ring classes (guarded by ux:consistency). */
+@utility focus-ring-on-dark {
+  &:focus-visible {
+    outline: 2px solid var(--lms-white);
+    outline-offset: 3px;
+  }
+}
 @utility focus-outline {
   outline: 2px solid var(--lms-primary-text);
   outline-offset: 3px;

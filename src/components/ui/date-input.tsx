@@ -311,7 +311,7 @@ export function DateInput({
                       const available = Array.from({ length: 60 }, (_, minute) => timeAllowed(hour, minute)).some(Boolean);
                       return <Button key={hour} data-picker-hour={hour} variant="ghost" type="button" size="sm" disabled={!available}
                         aria-pressed={draftHour === hour} onClick={() => setDraftHour(hour)}
-                        className="mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
+ className="mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-ring disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
                         {pad2(hour)}
                       </Button>;
                     })}
@@ -322,7 +322,7 @@ export function DateInput({
                         disabled={!timeAllowed(draftHour, minute)}
                         aria-pressed={selected === `${pad2(draftHour)}:${pad2(minute)}`}
                         onClick={() => choose(`${pad2(draftHour)}:${pad2(minute)}`)}
-                        className="mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
+ className="mb-1 !w-full !justify-center !rounded-[6px] !border-0 focus-ring disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
                         {pad2(minute)}
                       </Button>
                     ))}
@@ -337,7 +337,7 @@ export function DateInput({
                         !calendarStepAllowed(monthValue);
                       return <Button key={month} data-picker-month={index} type="button" variant="ghost" size="sm" disabled={Boolean(limited)}
                         aria-pressed={selected === monthValue} onClick={() => choose(monthValue)}
-                        className="!rounded-[6px] !border-0 !px-1 focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
+ className="!rounded-[6px] !border-0 !px-1 focus-ring disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
                         {month.slice(0, 3)}
                       </Button>;
                     })}
@@ -362,7 +362,7 @@ export function DateInput({
                   data-outside={outsideMonth}
                   data-sunday={!outsideMonth && day.getDay() === 0}
                   onClick={() => { if (mode === "datetime-local") setDraftDate(candidate); else choose(candidate); }}
-                  className="!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px] focus-visible:!outline-[var(--lms-primary-text)] focus-visible:!outline-offset-[3px] disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 max-md:!h-11 data-[outside=true]:!text-[var(--lms-neutral-400)] data-[sunday=true]:!text-[var(--lms-calendar-sunday)] aria-[current=date]:!text-[var(--lms-primary-text)] aria-[current=date]:!underline aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
+ className="!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px] focus-ring disabled:!bg-[var(--lms-neutral-100)] disabled:!text-[var(--lms-neutral-400)] max-md:!min-h-11 max-md:!h-11 data-[outside=true]:!text-[var(--lms-neutral-400)] data-[sunday=true]:!text-[var(--lms-calendar-sunday)] aria-[current=date]:!text-[var(--lms-primary-text)] aria-[current=date]:!underline aria-pressed:!bg-[var(--lms-primary)] aria-pressed:!text-[var(--lms-on-primary)] hover:!bg-[var(--lms-primary-subtle)]">
                   {day.getDate()}
                 </Button>;
               })}

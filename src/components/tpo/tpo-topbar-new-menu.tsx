@@ -19,7 +19,7 @@ export function TpoTopbarNewMenu({collegeId}:{collegeId:string}){
   href:"/tpo/placements/new?company="+encodeURIComponent(companyName),
  }]:TPO_TOPBAR_QUICK_LINKS.filter(item=>item.label!=="Follow-up");
  return <Dropdown align="end" label="New placement work" trigger="+ New" mobileSheet
-  triggerClassName="min-h-11 w-full justify-center border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
+  triggerClassName="min-h-11 w-full justify-center border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto md:min-h-9">
   <nav role="menu" aria-label={companyName?"Create work for "+companyName:"Create placement work"}
    className="grid min-w-0 w-full gap-1 md:w-[min(19rem,calc(100vw_-_3rem))]">
    {links.map(item=><TextLink variant="bare" role="menuitem" key={item.href} href={item.href} className={navClass}>{item.label}</TextLink>)}

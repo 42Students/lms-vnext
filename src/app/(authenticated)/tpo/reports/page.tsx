@@ -404,7 +404,7 @@ export default async function TpoReportsPage({
             <div className="grid gap-3 md:grid-cols-2">
               {group.cards.map((card) => (
                 <TextLink variant="bare" key={card.path} href={reportHref(card.path,workspace)}
-                  className={"group block min-w-0 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-ring "+(card.path==="/tpo/reports/placement-summary"?"border-primary ring-1 focus-outline":"border-border")}>
+                  className={"group block min-w-0 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-ring "+(card.path==="/tpo/reports/placement-summary"?"border-primary shadow-(--lms-ring-inset-selected)":"border-border")}>
                   {card.path==="/tpo/reports/placement-summary"?
                    <p className="mb-1 text-xs font-bold uppercase tracking-wide text-link">Start here</p>:null}
                   <div className="flex items-start justify-between gap-3">

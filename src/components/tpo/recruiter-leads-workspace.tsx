@@ -1254,7 +1254,7 @@ export function RecruiterLeadsWorkspace({
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
                 <section key={column} className={
                   boardStyles["column"]+" "+
-                  (draggedBoardId&&column==="CONTACTED"?"focus-outline":"")
+                  (draggedBoardId&&column==="CONTACTED"?"shadow-(--lms-ring-inset-selected)":"")
                  }
                   onDragOver={event=>{
                     if(column==="CONTACTED"&&draggedBoardId&&!boardMoving)event.preventDefault();
