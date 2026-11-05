@@ -16,7 +16,7 @@ export function AdminLearnerProfileSections({name,sections}:{
    details are available only through their separately authorized workflows.
   </p>
   <div className="min-w-0 divide-y divide-border border-y border-border">
-   {sections.map((section,index)=><Disclosure title={<>
+   {sections.map((section,index)=><Disclosure key={section.key} title={<>
      <span>{section.label}</span>
      <span className="shrink-0 text-xs font-normal text-muted-foreground">
       {section.present?"On file":"Not recorded"}

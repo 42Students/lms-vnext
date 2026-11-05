@@ -703,7 +703,7 @@ export async function SuperAdminTemplateSubviewPage({
             {legacyEvents.length>0?<section aria-label="Legacy template history" className="mt-5 space-y-3">
               <Heading level={3} size="base">Legacy version events</Heading>
               <p className="text-sm text-muted-foreground">Historic actions retain their original version number, action type and source snapshot. They are not editable vNext blueprint versions.</p>
-              {legacyEvents.map(event=><Disclosure title={<>
+              {legacyEvents.map(event=><Disclosure key={event.id} title={<>
                   Version {event.legacyTemplateVersion??"—"} · {event.actionType??"Updated"} · {event.changedAt?formatDate(event.changedAt):"Date unavailable"}
                 </>}>
                 <dl className="mt-3 grid gap-2 sm:grid-cols-2">

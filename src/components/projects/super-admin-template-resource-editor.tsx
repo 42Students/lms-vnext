@@ -160,7 +160,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     <span>Removed {removed.row.title||"resource"} (unsaved).</span>
     <Button type="button" variant="link" onClick={undo} disabled={pending}>Undo remove</Button>
    </div>:null}
-   {visibleRows.map(({row,index:i})=><Disclosure title={<>
+   {visibleRows.map(({row,index:i})=><Disclosure key={row.key+":"+i} title={<>
       {row.title||"Untitled resource"} <span className="ml-auto text-xs font-normal text-muted-foreground">Resource {i+1}{rowErrors[i]?.length?" · Fix "+rowErrors[i].length+" error(s)":""}</span>
     </>} defaultOpen={rowErrors[i]?.length?true:undefined} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 items-center gap-2">
     {rowErrors[i]?.length?<ul role="alert" className="list-disc space-y-1 px-5 py-2 text-xs text-danger-text">

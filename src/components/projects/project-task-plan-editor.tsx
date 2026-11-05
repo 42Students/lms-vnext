@@ -165,7 +165,7 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
           (sourceSprint && (sourceSprint.status === "COMPLETED" ||
             sourceSprint.releaseStatus === "SHIPPED"));
         const rowDirty = JSON.stringify(row) !== JSON.stringify(baseline[index]);
-        return <Disclosure title={<>
+        return <Disclosure key={task.id} title={<>
             {row.title || "Untitled task"} · {row.key} {locked ? " · Read only" : ""}
             {rowDirty ? " · Edited" : ""}
           </>} className="min-w-0">

@@ -21,8 +21,8 @@ export function Disclosure({
   /** Keep page-specific rich lesson summaries without adding a second chevron. */
   preserveSummary?: boolean;
   /** Pass-through for test ids, onToggle, ref, aria-labelledby and drag handlers on the details element. */
-  detailsProps?: Omit<ComponentPropsWithRef<"details">, "children" | "className" | "open" | "id">;
-  summaryProps?: Omit<ComponentPropsWithRef<"summary">, "children" | "className" | "title">;
+  detailsProps?: Omit<ComponentPropsWithRef<"details">, "children" | "className" | "open" | "id"> & { [name: `data-${string}`]: string | undefined };
+  summaryProps?: Omit<ComponentPropsWithRef<"summary">, "children" | "className" | "title"> & { [name: `data-${string}`]: string | undefined };
 }) {
   return <details id={id} aria-label={ariaLabel} data-slot="disclosure" open={defaultOpen || undefined} {...detailsProps}
     className={cx("group min-w-0 border-t border-[var(--lms-canvas-border)]", className)}>

@@ -169,7 +169,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
         ) : (
           <div className="divide-y divide-border">
             {actionRows.slice(0, 20).map(({ job }) => (
-              <Disclosure title={<>
+              <Disclosure key={job.id} title={<>
                   <span className="min-w-0 break-words">{job.title} · {job.company.name}</span>
                   <StatusBadge tone={job.status === "PUBLISHED" ? "success" : job.status === "DRAFT" ? "warning" : "neutral"}>{job.status}</StatusBadge>
                 </>} className="min-w-0" preserveSummary summaryClassName="flex min-h-11 flex-wrap items-center justify-between gap-[var(--lms-space-2)] md:min-h-9">

@@ -1248,7 +1248,7 @@ export async function PlacementCalendarWorkspace({
                       const href=eventHref(event,audience);
                       const eventLabel=[eventTime(event.startsAt),event.companyName,
                         event.title].filter(Boolean).join(" · ");
-                      return <Disclosure title={<>
+                      return <Disclosure key={event.id} title={<>
                         <span className="block truncate">{eventTime(event.startsAt)}{event.status==="DONE"?" · Done":""}</span>
                         <span className="block truncate">{event.title}</span>
                        </>} summaryAriaLabel={eventLabel+"; press Enter to view details"} summaryTitle={eventLabel+" (open event details)"} className="min-w-0" preserveSummary summaryClassName="min-h-11">
