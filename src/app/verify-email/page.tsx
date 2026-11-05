@@ -1,6 +1,7 @@
 "use client";
 
 import {useEffect,useState} from "react";
+import { Button } from "@/components/ui/button";
 
 /** Fragment-based proof: the 256-bit bearer never enters HTTP request URLs,
  * SSR logs, analytics routes or a Referer. The only network transfer is a
@@ -38,8 +39,8 @@ export default function VerifyEmailPage(){
   {state==="loading"?<p>Checking your link…</p>:null}
   {state==="ready"?<>
    <p>Confirm that this email address belongs to your signed-in college account. This link is valid for 24 hours and can be used only once.</p>
-   <button className="rounded-md bg-slate-900 px-4 py-3 font-medium text-white"
-    onClick={confirm}>Confirm email ownership</button>
+   <Button variant="bare" type="submit" className="rounded-md bg-slate-900 px-4 py-3 font-medium text-white"
+    onClick={confirm}>Confirm email ownership</Button>
   </>:null}
   {state==="sending"?<p role="status">Verifying…</p>:null}
   {state==="done"?<p role="status">Email ownership verified. You may return to your account.</p>:null}

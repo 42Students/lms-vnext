@@ -793,7 +793,7 @@ export function FacultyAssignmentReview({
               Students · {submissions.filter(isSubmissionGraded).length} graded on this page
             </p>
             <div className="space-y-1">
-              {submissions.map(item=><button key={item.id} type="button"
+              {submissions.map(item=><Button variant="bare" key={item.id} type="button"
                 disabled={mutationBusy||bulkBusy}
                 onClick={()=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(item.id);}}
                 aria-current={item.id===(selectedSubmissionId??submissions[0]?.id)?"true":undefined}
@@ -807,7 +807,7 @@ export function FacultyAssignmentReview({
                     {item.gradePublished?"Published":isSubmissionGraded(item)?"Graded":"Pending"}
                   </span>
                 </span>
-              </button>)}
+              </Button>)}
             </div>
           </aside>
           <div className="min-w-0 space-y-3">

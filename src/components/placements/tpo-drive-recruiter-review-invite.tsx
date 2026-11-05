@@ -5,6 +5,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Alert} from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Preview={jobTitle:string;companyName:string;verifiedDomain:string|null;canInvite:boolean;
  publicLinkAvailable:boolean};
@@ -73,12 +74,12 @@ export function TpoDriveRecruiterReviewInvite({jobId}:{jobId:string}){
      <Input type="email" value={email} maxLength={150} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>
     <label className="grid gap-1 text-sm font-semibold">Message (optional)
      <Textarea value={note} maxLength={1000} rows={3} onChange={e=>setNote(e.target.value)} disabled={busy}/></label>
-    <label className="flex gap-2 text-sm"><input type="checkbox" checked={publicLink}
+    <label className="flex gap-2 text-sm"><Checkbox checked={publicLink}
      onChange={e=>setPublicLink(e.target.checked)} disabled={busy}/>
      Include public drive link</label>
     {publicLink&&!preview?.publicLinkAvailable?
      <p className="text-xs text-muted-foreground">No authorized public link exists for this drive. A secure reviewer invitation will be included instead.</p>:null}
-    <label className="flex gap-2 text-sm"><input type="checkbox" checked={sendEmail}
+    <label className="flex gap-2 text-sm"><Checkbox checked={sendEmail}
      onChange={e=>setSendEmail(e.target.checked)} disabled={busy}/>
      Send invitation email where delivery is configured</label>
     <Button type="button" disabled={busy||!preview?.canInvite||name.trim().length<2||!email.includes("@")}

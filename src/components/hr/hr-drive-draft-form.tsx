@@ -509,7 +509,7 @@ export function HrDriveDraftForm({
           </span>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <label htmlFor="hr-jd-upload" className="text-sm font-semibold">Upload a PDF or Word file (optional, up to 5 MB)</label>
-            <input id="hr-jd-upload" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            <Input id="hr-jd-upload" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               disabled={submitting || jdUploading} className="max-w-full text-sm"
               onChange={event => { const file = event.currentTarget.files?.[0];
                 void uploadJobDescription(file); event.currentTarget.value = ""; }} />

@@ -881,7 +881,7 @@ export function FacultyAttendanceWorkspace({
                                   <StatusBadge tone={tone}>{state.ratio ?? state.code}</StatusBadge>
                                 </summary>
                                 <div className="absolute bottom-full left-0 z-30 min-w-48 rounded-lg border border-border bg-surface p-2 text-xs shadow-lg">
-                                  <table className="w-full text-left">
+                                  <Table>
                                     <thead><tr><th scope="col" className="pr-3">Session Time</th><th scope="col">Attendance</th></tr></thead>
                                     <tbody>{day.sessions.map(session => {
                                       const record = recordsByKey.get(session.id + ":" + learner.membershipId);
@@ -892,7 +892,7 @@ export function FacultyAttendanceWorkspace({
                                         timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
                                       }).format(new Date(session.startsAt))}</td><td>{code}</td></tr>;
                                     })}</tbody>
-                                  </table>
+                                  </Table>
                                 </div>
                               </details>
                             ) : <StatusBadge tone={tone}>{state.code}</StatusBadge>}
@@ -1078,7 +1078,7 @@ export function FacultyAttendanceWorkspace({
 
               <div className="mt-[var(--lms-space-4)] max-h-[420px] min-w-0 overflow-auto border-y border-border"
                 aria-label="Attendance roster" role="region" tabIndex={0}>
-                <table className="min-w-[500px] w-full table-fixed border-collapse text-left text-sm">
+                <Table className="min-w-[500px] table-fixed">
                   <thead className="sticky top-0 z-10 border-b border-border bg-surface text-xs font-semibold text-muted-foreground">
                     <tr><th scope="col" className="w-1/2 px-3 py-2">Student Name</th><th scope="col" className="w-1/2 px-3 py-2">Status</th></tr>
                   </thead>
@@ -1106,7 +1106,7 @@ export function FacultyAttendanceWorkspace({
                               <Button
                                 size="md"
                                 className={"min-h-11 rounded-lg border px-[14px] text-[13px] font-semibold md:min-h-9 " +
-                                  (!isAbsent ? "!border-[rgba(34,139,83,0.28)] !bg-[rgba(34,139,83,0.08)] !text-[#228b53]" : "!border-[#dce0e8] !bg-[#f8f9fb] !text-[#64748b]")}
+                                  (!isAbsent ? "!border-[rgba(34,139,83,0.28)] !bg-[rgba(34,139,83,0.08)] !text-[color:var(--lms-success-strong)]" : "!border-[color:var(--lms-neutral-300)] !bg-[color:var(--lms-neutral-50)] !text-[color:var(--lms-text-muted)]")}
                                 variant="secondary"
                                 disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={!isAbsent}
@@ -1125,7 +1125,7 @@ export function FacultyAttendanceWorkspace({
                               <Button
                                 size="md"
                                 className={"min-h-11 rounded-lg border px-[14px] text-[13px] font-semibold md:min-h-9 " +
-                                  (isAbsent ? "!border-[rgba(220,38,38,0.28)] !bg-[rgba(220,38,38,0.08)] !text-[#dc2626]" : "!border-[#dce0e8] !bg-[#f8f9fb] !text-[#64748b]")}
+                                  (isAbsent ? "!border-[rgba(220,38,38,0.28)] !bg-[rgba(220,38,38,0.08)] !text-[color:var(--lms-error)]" : "!border-[color:var(--lms-neutral-300)] !bg-[color:var(--lms-neutral-50)] !text-[color:var(--lms-text-muted)]")}
                                 variant="secondary"
                                 disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={isAbsent}
@@ -1146,7 +1146,7 @@ export function FacultyAttendanceWorkspace({
                       </tr>;
                     })}
                   </tbody>
-                </table>
+                </Table>
               </div>
 
               {selectedSession?.attendanceStatus==="MARKED"?(

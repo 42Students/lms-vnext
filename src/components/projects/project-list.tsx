@@ -195,7 +195,7 @@ export function ProjectList({
             <span className={"inline-flex max-w-full items-center rounded px-2 py-0.5 text-xs font-semibold "+
               (archived?"bg-muted text-muted-foreground":stalled?"bg-error-subtle text-error":
                 blocked?"bg-warning-subtle text-warning-text":needsReview?"bg-warning-subtle text-warning-text":
-                item.status==="ACTIVE"?"bg-[#e6f9fa] text-[#228e99]":"bg-primary-subtle text-primary-text")}>
+                item.status==="ACTIVE"?"bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-primary-text)]":"bg-primary-subtle text-primary-text")}>
               {notice}
             </span>
             <svg aria-hidden="true" viewBox="0 0 24 24"
@@ -218,7 +218,7 @@ export function ProjectList({
           <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[var(--lms-neutral-100)]"
             role="progressbar" aria-label={"Project progress for "+item.title} aria-valuemin={0}
             aria-valuemax={100} aria-valuenow={completion}>
-            <span className="block h-full rounded-full bg-[#2db7c4]" style={{width:completion+"%"}}/>
+            <span className="block h-full rounded-full bg-[color:var(--lms-primary)]" style={{width:completion+"%"}}/>
           </div>
           <p className="mt-1 text-right text-xs tabular-nums text-muted-foreground">
             {completion}% complete

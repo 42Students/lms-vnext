@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProjectMemberActions } from "./project-team-controls";
+import { Table } from "@/components/ui/table";
 
 export type ProjectRosterRow = {
   id: string;
@@ -69,7 +70,7 @@ export function ProjectRosterTable({ projectId, rows }: {
     </div>
     {visible.length?<div role="region" aria-label="Project team roster table" tabIndex={0}
       className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-      <table className="w-full min-w-[780px] border-collapse text-left text-sm leading-5 tabular-nums">
+      <Table className="min-w-[780px] tabular-nums">
         <caption className="sr-only">Project team members; scroll horizontally to see all columns</caption>
         <thead className="bg-[var(--lms-neutral-50)] text-xs text-[var(--lms-neutral-400)]">
           <tr>{["Member","Role","Tasks assigned","Done · In review · In progress","Last task update",...(hasActions?["Actions"]:[])].map(name=>
@@ -96,7 +97,7 @@ export function ProjectRosterTable({ projectId, rows }: {
               member={{id:member.id,role:member.role,isPrimary:member.isPrimary,displayName:member.displayName}}/>:null}
           </td>:null}
         </tr>)}</tbody>
-      </table>
+      </Table>
     </div>:<EmptyState title={rows.length?"No members match these filters":"No members yet"}
       description={rows.length?"Try a different member name or type.":"No team members have been added."}/>}
     {filtered.length > MEMBER_PAGE_SIZE ? <nav aria-label="Project team pages"

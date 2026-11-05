@@ -3,6 +3,8 @@ import {useState} from "react";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Alert} from "@/components/ui/alert";
+import { Radio } from "@/components/ui/radio";
+import { Button } from "@/components/ui/button";
 type Audience="COLLEGE"|"PLACEMENTS"|"BATCHES"|"BRANCHES"|"DRIVE";
 type Option={id:string;label:string};
 export type TpoNoticeTargetOptions={
@@ -39,7 +41,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
        className={"inline-flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold md:min-h-9 "+
         (audience===option.value?"bg-[var(--lms-primary)] text-white":
           "text-body hover:bg-surface-subtle")}>
-        <input type="radio" name="audience-choice" value={option.value} checked={audience===option.value}
+        <Radio name="audience-choice" value={option.value} checked={audience===option.value}
           onChange={()=>{setAudience(option.value);setTarget("");setTargets([]);setSearch("");setValidationError("");}}
           className="sr-only"/>
         {option.label}
@@ -70,11 +72,11 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
    {validationError?<span id="notice-audience-error" role="alert" className="text-xs text-error">{validationError}</span>:null}
    {targets.map(id=><Input key={id} type="hidden" name="targetIds" value={id}/>)}
    {targets.length>0?<div className="flex min-w-0 flex-wrap gap-2" aria-label="Selected groups">
-     {targets.map(id=><button key={id} type="button" onClick={()=>setTargets(current=>current.filter(x=>x!==id))}
+     {targets.map(id=><Button variant="bare" key={id} type="button" onClick={()=>setTargets(current=>current.filter(x=>x!==id))}
        className="inline-flex min-h-9 items-center gap-2 rounded-full border border-border bg-surface-subtle px-3 text-xs font-semibold">
        {available.find(option=>option.id===id)?.label??"Selected group"} <span aria-hidden="true">×</span>
        <span className="sr-only">Remove</span>
-     </button>)}
+     </Button>)}
    </div>:null}
    <span role="status" className="text-xs text-muted-foreground">
     {available.length===0?emptyText:targets.length+" chosen. Use Ctrl or Cmd to choose more."}

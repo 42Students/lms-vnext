@@ -1,6 +1,9 @@
 "use client";
 import Link from "next/link";
 import {useState} from "react";
+import { Select } from "@/components/ui/select";
+import { Table } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 export type MentorSprintDetailRow={
   id:string;sequence:number;title:string;release:string;
@@ -27,29 +30,29 @@ export function MentorSprintDetailTable({projectId,rows}:{
     </div>
     <div className="mb-3 flex flex-wrap gap-3">
       <label className="text-sm font-semibold">State
-        <select aria-label="Filter sprint state" value={status}
+        <Select aria-label="Filter sprint state" value={status}
           onChange={event=>setStatus(event.target.value)}
           className="ml-2 min-h-11 rounded border border-border bg-surface px-2">
           {["ALL","ACTIVE","PLANNED","COMPLETED"].map(value=>
             <option key={value} value={value}>{value==="ALL"?"All states":
               value.replaceAll("_"," ").toLowerCase()}</option>)}
-        </select>
+        </Select>
       </label>
       <label className="text-sm font-semibold">Release
-        <select aria-label="Filter sprint release" value={release}
+        <Select aria-label="Filter sprint release" value={release}
           onChange={event=>setRelease(event.target.value)}
           className="ml-2 min-h-11 rounded border border-border bg-surface px-2">
           <option value="ALL">All releases</option>
           {releases.map(value=><option key={value} value={value}>{value}</option>)}
-        </select>
+        </Select>
       </label>
-      {(status!=="ALL"||release!=="ALL")?<button type="button"
+      {(status!=="ALL"||release!=="ALL")?<Button variant="bare" type="button"
         className="min-h-11 text-sm font-semibold text-link underline"
-        onClick={()=>{setStatus("ALL");setRelease("ALL");}}>Clear filters</button>:null}
+        onClick={()=>{setStatus("ALL");setRelease("ALL");}}>Clear filters</Button>:null}
     </div>
     {!matching.length?<p role="status">No sprints match these filters.</p>:
       <div className="min-w-0 overflow-x-auto">
-        <table className="w-full min-w-[730px] border-collapse text-left text-sm">
+        <Table className="min-w-[730px]">
           <caption className="sr-only">Recorded release and sprint detail, state and points</caption>
           <thead><tr className="border-b border-border">
             <th scope="col" className="p-2">Sprint</th>
@@ -76,7 +79,7 @@ export function MentorSprintDetailTable({projectId,rows}:{
               href={base+"?tab=board&sprint="+encodeURIComponent(row.id)}>
               View tasks</Link></td>
           </tr>)}</tbody>
-        </table>
+        </Table>
       </div>}
     <p className="mt-2 text-xs text-muted-foreground">
       Completed-sprint points and open tasks use saved sign-off snapshots;

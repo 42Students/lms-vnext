@@ -46,8 +46,8 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
    <p className="faculty-proto-subtitle">{assignment.courseCode} · {assignment.sectionName} · {assignment.dueAt?"due "+stamp(assignment.dueAt):"no due date"} · {assignment.maxPoints} points · {metrics.submitted}{percent===null?"":" of "+percent} handed in, {ungraded.length} to grade</p>
   </div>
   <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(280px,0.38fr)_minmax(0,1fr)]">
-   <aside className="overflow-hidden rounded-xl border border-[#e5ebf2]">
-    <nav className="flex flex-wrap gap-2 border-b border-[#e5ebf2] px-4 py-4" aria-label="Submission grading filters">
+   <aside className="overflow-hidden rounded-xl border border-[color:var(--lms-border)]">
+    <nav className="flex flex-wrap gap-2 border-b border-[color:var(--lms-border)] px-4 py-4" aria-label="Submission grading filters">
      {[
       {key:"all",label:"All",count:percent??submissions.length},
       {key:"pending",label:"To grade",count:ungraded.length},
@@ -55,12 +55,12 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
       {key:"missing",label:"Missing",count:report.rosterUnavailable?"—":missingLearners.length},
      ].map(item=><Link key={item.key} href={href(item.key)}
       className="faculty-proto-pill no-underline" aria-current={filter===item.key?"page":undefined}
-      style={filter===item.key?{color:"#007f8e",background:"#eaf8fa",borderColor:"#078191"}:undefined}>{item.label} {item.count}</Link>)}
+      style={filter===item.key?{color:"var(--lms-button-primary)",background:"var(--lms-primary-subtle)",borderColor:"var(--lms-button-primary)"}:undefined}>{item.label} {item.count}</Link>)}
     </nav>
-    <ol className="divide-y divide-[#edf1f5]">
-     {visible.map(row=><li key={row.id} className={"border-l-[3px] "+(row.id===selected?.id?"border-[#078191] bg-[#f0f9fa]":"border-transparent")}>
+    <ol className="divide-y divide-[color:var(--lms-neutral-100)]">
+     {visible.map(row=><li key={row.id} className={"border-l-[3px] "+(row.id===selected?.id?"border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border-transparent")}>
       <Link className="flex min-h-16 items-center gap-3 px-4 py-3 no-underline" href={href(filter,row.id)}>
-       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e1f1f4] text-xs font-bold text-[#007f8e]">
+       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--lms-primary-subtle)] text-xs font-bold text-[color:var(--lms-button-primary)]">
         {(row.learnerDisplayName?.trim().split(/\s+/).map(part=>part[0]??"").slice(0,2).join("")??"ST").toUpperCase()}
        </span>
        <span className="min-w-0 flex-1"><strong className="block truncate text-sm text-heading">{row.learnerDisplayName??row.learnerEmail??"Student"}</strong>
@@ -76,9 +76,9 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
     </ol>
     {!visible.length&&filter!=="missing"?<p className="faculty-proto-subtitle p-4">No matching submissions.</p>:null}
    </aside>
-   <div className="min-w-0 overflow-hidden rounded-xl border border-[#e5ebf2]">
+   <div className="min-w-0 overflow-hidden rounded-xl border border-[color:var(--lms-border)]">
     {selected&&filter!=="missing"?<>
-     <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e5ebf2] px-5 py-5">
+     <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[color:var(--lms-border)] px-5 py-5">
       <div><h2 className="text-lg font-bold text-heading">{selected.learnerDisplayName??"Student"}</h2>
        <p className="faculty-proto-subtitle">Handed in {stamp(selected.submittedAt)} IST · {selected.gradingStatus==="GRADED"?"Graded":"To grade"}</p></div>
       <nav aria-label="Submission navigation" className="flex shrink-0 gap-2">
@@ -90,7 +90,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
         <span className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs opacity-50">Next ›</span>}
       </nav>
      </header>
-     <div className="min-h-56 border-b border-[#e5ebf2] px-5 py-5">
+     <div className="min-h-56 border-b border-[color:var(--lms-border)] px-5 py-5">
       {selected.submissionType==="FILE"&&assignmentFilesRuntimeEnabled()?
        <FacultySubmissionFileReview submissionId={selected.id}/>:
        selected.textContent?<article className="rounded-xl bg-surface p-6 text-sm whitespace-pre-wrap text-body">{selected.textContent}</article>:

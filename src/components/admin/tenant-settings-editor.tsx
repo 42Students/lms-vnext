@@ -231,8 +231,8 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
        aria-describedby={"tenant-help-"+spec.key+(invalidKeys.has(spec.key)?" tenant-invalid-"+spec.key:"")}
        onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
        className="min-h-11 md:min-h-9 w-full"/>}
-     {draft[spec.key]?<button type="button" className="justify-self-start text-xs font-semibold text-primary-text underline" disabled={saving||!ready}
-       onClick={()=>setDraft(old=>({...old,[spec.key]:""}))} aria-label={"Reset "+spec.label+" to default"}>Reset to default</button>:null}
+     {draft[spec.key]?<Button variant="bare" type="button" className="justify-self-start text-xs font-semibold text-primary-text underline" disabled={saving||!ready}
+       onClick={()=>setDraft(old=>({...old,[spec.key]:""}))} aria-label={"Reset "+spec.label+" to default"}>Reset to default</Button>:null}
      {invalidKeys.has(spec.key)?<span id={"tenant-invalid-"+spec.key} role="alert"
       className="text-xs font-semibold text-error">{invalidKeys.get(spec.key)}</span>:null}
      {"min" in spec&&spec.min!==undefined?<span className="text-xs text-muted-foreground">

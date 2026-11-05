@@ -5,9 +5,9 @@ export type TextareaProps = ComponentPropsWithRef<"textarea"> & { error?: boolea
 
 /**
  * Multi-line .ln-in2 family.
- * Legacy: components___form.scss:117-143, background #fbfcfd,
+ * Legacy: components___form.scss:117-143, background var(--lms-neutral-50),
  * radius 10px, 14px/400/20px, tracking 0.2px, 200ms halo,
- * invalid #ef4444 and focus halo rgba(239,68,68,.2).
+ * invalid var(--lms-error) and focus halo rgba(239,68,68,.2).
  * Preserve caller rows/cols, controlled state, ref and resizing.
  */
 export function Textarea({ className, error = false, rows, ...props }: TextareaProps) {

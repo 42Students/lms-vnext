@@ -13,8 +13,8 @@
   --lms-micro-normal: 250ms;
   --lms-micro-slow: 350ms;
   --lms-micro-ease: cubic-bezier(0.2, 0, 0, 1);
-  --lms-micro-focus: #1a95a1;
-  --lms-micro-selected: #eff8fa;
+  --lms-micro-focus: var(--lms-primary-text);
+  --lms-micro-selected: var(--lms-primary-subtle);
 }
 
 /* Legacy: components___accessibility.scss:13-23 — mouse focus is quiet,
@@ -108,7 +108,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 }
 
 /* Legacy: components___form.scss:57-60 and
-   components___variables.scss:28 — muted placeholder #a9a7ae. */
+   components___variables.scss:28 — muted placeholder var(--lms-neutral-400). */
 :where(input:not([type="checkbox"]):not([type="radio"]), textarea):not(:where([data-unskin], [data-unskin] *))::placeholder {
   color: var(--lms-neutral-400);
   opacity: 1;
@@ -226,7 +226,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 /* A4 — global hidden scrollbars are already present in globals.css:183-193.
  * Legacy exceptions: pages___admin-list-pages.scss:96-106 (table wrapper
  * horizontal 4px rgba(0,0,0,.2) thumb), :244-254 (tabs 3px);
- * components___common.scss:294-304 (generic 8px thumb #c4c4c4, but body
+ * components___common.scss:294-304 (generic 8px thumb var(--lms-neutral-300), but body
  * scrollbar-width:none), :307-311,329-331 (hidden overflow chrome).
  * These selectors map the existing ScrollCue viewport, not its layout.
  */
@@ -311,7 +311,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   }
 }
 
-/* Legacy: components___antddesign.scss:48-64 (tooltip charcoal #1a1d21,
+/* Legacy: components___antddesign.scss:48-64 (tooltip charcoal var(--lms-neutral-900),
  * 8px radius, 12px/16px text and 2px/8px shadow); already exact in
  * legacy-overlays.css. SCSS does not prescribe a mouseEnterDelay.
  * CSS cannot alter component timer semantics, so no invented delay.
@@ -415,7 +415,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 }
 
 /* CHAT-20 SOURCE-VERIFIED REMAINING MICRO STATES */
-/* Legacy: components___accessibility.scss:13-23 applies the 2px #1a95a1
+/* Legacy: components___accessibility.scss:13-23 applies the 2px var(--lms-primary-text)
    keyboard outline with 3px offset to every focus-visible element. Extend
    the original fallback to explicit focusable regions (ScrollCue viewports,
    editable surfaces, option/checkbox/radio roles) while retaining the
@@ -455,10 +455,10 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
   background-color: transparent;
 }
 
-/* vNext-only tracker dark theme: globals.css:168-181 defines #75dce3 focus
-   teal and #164e57 selection tint, replacing legacy light tokens only while
+/* vNext-only tracker dark theme: globals.css:168-181 defines var(--lms-primary-light) focus
+   teal and var(--lms-button-primary-hover) selection tint, replacing legacy light tokens only while
    the opt-in tracker theme is active. Without these overrides, selected table
-   rows become #eff8fa (light mode), obscuring pale dark-theme text. This
+   rows become var(--lms-primary-subtle) (light mode), obscuring pale dark-theme text. This
    changes no layout, no standard LMS appearance, and no React components. */
 :root[data-tracker-theme="dark"] {
   --lms-micro-focus: var(--lms-primary-text);

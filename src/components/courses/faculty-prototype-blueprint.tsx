@@ -6,6 +6,7 @@ import {orderFacultyBlueprintContentSlots} from "@/modules/courses/faculty-bluep
 import {FACULTY_BLUEPRINT_ADD_KINDS,facultyBlueprintAddTarget} from "@/modules/courses/faculty-blueprint-add-target";
 import type {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import type {FacultyBlueprintLessonEngagement} from "@/modules/courses/faculty-blueprint-lesson-engagement-model";
+import { Button } from "@/components/ui/button";
 
 type Workspace=Awaited<ReturnType<typeof getFacultyCourseWorkspace>>;
 const istDate=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
@@ -81,32 +82,32 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
  const selectedEngagement=current?engagement?.find(row=>row.lessonId===current.id)??null:null;
  return <section className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[310px_minmax(0,1fr)]"
   aria-label="Course blueprint lesson explorer">
-  <aside className="min-w-0 overflow-hidden rounded-[13px] border border-[#e5ebf2]">
-   <div className="flex items-center justify-between gap-2 border-b border-[#e5ebf2] px-[18px] py-4">
-    <h2 className="text-xs font-bold uppercase tracking-wider text-[#60718b]">{lessons.length} lessons</h2>
+  <aside className="min-w-0 overflow-hidden rounded-[12px] border border-[color:var(--lms-border)]">
+   <div className="flex items-center justify-between gap-2 border-b border-[color:var(--lms-border)] px-[18px] py-4">
+    <h2 className="text-xs font-bold uppercase tracking-wider text-[color:var(--lms-text-muted)]">{lessons.length} lessons</h2>
     <span className="group relative">
-     <button type="button" disabled title="Only the college admin can add shared syllabus lessons"
+     <Button variant="bare" type="button" disabled title="Only the college admin can add shared syllabus lessons"
       className="faculty-proto-secondary !min-h-8 !px-3 !py-1.5 !text-xs disabled:cursor-not-allowed disabled:opacity-60">
       + Lesson
-     </button>
+     </Button>
     </span>
    </div>
-   <p role="note" className="border-b border-[#e5ebf2] px-4 py-2 text-xs leading-5 text-[#60718b]">
+   <p role="note" className="border-b border-[color:var(--lms-border)] px-4 py-2 text-xs leading-5 text-[color:var(--lms-text-muted)]">
     Shared syllabus lessons are managed by your college. Add or edit content inside your assigned class without changing other Sections.
    </p>
-   <ol className="max-h-[454px] divide-y divide-[#e5ebf2] overflow-y-auto overscroll-contain" aria-label="Course syllabus lessons">
+   <ol className="max-h-[454px] divide-y divide-[color:var(--lms-border)] overflow-y-auto overscroll-contain" aria-label="Course syllabus lessons">
     {lessons.map((lesson,index)=>{
      const count=lesson.contents.length+lesson.assignments.length+lesson.quizzes.length;
      const active=lesson.id===current?.id;
      const live=lesson.visibleToStudents&&workspace.learningPath?.status==="PUBLISHED";
-     return <li key={lesson.id} className={active?"border-l-[3px] border-l-[#078191] bg-[#eff9fa]":"border-l-[3px] border-l-transparent"}>
+     return <li key={lesson.id} className={active?"border-l-[3px] border-l-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border-l-[3px] border-l-transparent"}>
       <Link href={lessonUrl(lesson.id)} aria-current={active?"page":undefined}
-       className="flex min-h-[64px] items-center gap-4 px-4 py-3 no-underline hover:bg-[#f6fafb]">
-       <span className="w-4 shrink-0 text-sm text-[#60718b]">{index+1}</span>
-       <span className="min-w-0 flex-1"><strong className="block text-sm text-[#1d293f]">{lesson.name}</strong>
+       className="flex min-h-[64px] items-center gap-4 px-4 py-3 no-underline hover:bg-[color:var(--lms-neutral-50)]">
+       <span className="w-4 shrink-0 text-sm text-[color:var(--lms-text-muted)]">{index+1}</span>
+       <span className="min-w-0 flex-1"><strong className="block text-sm text-[color:var(--lms-heading)]">{lesson.name}</strong>
         <span className="faculty-proto-subtitle">{count===0?"Empty":count+" items"}</span></span>
        <span className={"rounded-full px-2 py-0.5 text-xs font-bold "+
-         (count===0?"bg-[#f2f4f7] text-[#64748b]":live?"bg-green-50 text-green-700":"bg-amber-50 text-amber-800")}>
+         (count===0?"bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-text-muted)]":live?"bg-green-50 text-green-700":"bg-amber-50 text-amber-800")}>
         {count===0?"Empty":live?"Live":"Draft"}</span>
       </Link>
      </li>;
@@ -114,25 +115,25 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
    </ol>
    {!lessons.length?<p className="faculty-proto-subtitle p-5">No lessons in the current learning path. Ask your college admin to add one.</p>:null}
   </aside>
-  <section className="min-w-0 overflow-hidden rounded-[13px] border border-[#e5ebf2]">
-   <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e5ebf2] px-[18px] py-4">
-    <div><h2 className="text-[18px] font-bold text-[#1d293f]">
+  <section className="min-w-0 overflow-hidden rounded-[12px] border border-[color:var(--lms-border)]">
+   <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[color:var(--lms-border)] px-[18px] py-4">
+    <div><h2 className="text-[18px] font-bold text-[color:var(--lms-heading)]">
      {current?"Lesson "+(lessons.findIndex(lesson=>lesson.id===current.id)+1)+": "+current.name:"No lesson selected"}
     </h2>
     <p className="faculty-proto-subtitle mt-1">{items.length} items · {currentLive?"Live":"Draft"}</p></div>
     {current?<div className="flex flex-wrap items-center gap-2">
-     <button type="button" disabled title="The college admin manages the shared lesson name"
-      className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs disabled:cursor-not-allowed disabled:opacity-60">Rename</button>
+     <Button variant="bare" type="button" disabled title="The college admin manages the shared lesson name"
+      className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs disabled:cursor-not-allowed disabled:opacity-60">Rename</Button>
      <details className="relative">
       <summary className="faculty-proto-action !min-h-9 !cursor-pointer !px-3 !py-1.5 !text-xs">+ Add content ▾</summary>
-      <div className="absolute right-0 z-20 mt-2 min-w-52 overflow-hidden rounded-lg border border-[#dce5ee] bg-white py-1 shadow-lg">
+      <div className="absolute right-0 z-20 mt-2 min-w-52 overflow-hidden rounded-lg border border-[color:var(--lms-border)] bg-white py-1 shadow-lg">
        {FACULTY_BLUEPRINT_ADD_KINDS.map(label=><Link
         key={label}
-        className="block px-4 py-2 text-sm text-[#243149] hover:bg-[#eff9fa] focus-visible:bg-[#eff9fa]"
+        className="block px-4 py-2 text-sm text-[color:var(--lms-text-body)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:bg-[color:var(--lms-primary-subtle)]"
         href={facultyBlueprintAddTarget(course.deliveryId,current.id,label)}>
         {label}
        </Link>)}
-       <p className="border-t border-[#e5ebf2] px-4 py-2 text-xs text-[#60718b]">Uses Section-scoped video upload, content authoring or full assessment builder.</p>
+       <p className="border-t border-[color:var(--lms-border)] px-4 py-2 text-xs text-[color:var(--lms-text-muted)]">Uses Section-scoped video upload, content authoring or full assessment builder.</p>
       </div>
      </details>
     </div>:null}
@@ -141,23 +142,23 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
     lessonId={current.id} deliveryId={course.deliveryId}
     enabled={lessonContentOrderRuntimeEnabled()}/>:
     <p className="faculty-proto-subtitle p-5">Select a lesson to view the class content.</p>}
-   {current?<footer className="border-t border-[#edf1f5] bg-[#fafcfd] px-[18px] py-4">
-     <h3 className="text-xs font-bold uppercase tracking-wider text-[#60718b]">
+   {current?<footer className="border-t border-[color:var(--lms-neutral-100)] bg-[color:var(--lms-neutral-50)] px-[18px] py-4">
+     <h3 className="text-xs font-bold uppercase tracking-wider text-[color:var(--lms-text-muted)]">
       How {course.sectionName} did on this lesson
      </h3>
      {selectedEngagement&&selectedEngagement.trackedItems>0?
-       <p className="mt-1 text-sm text-[#243149]">
+       <p className="mt-1 text-sm text-[color:var(--lms-text-body)]">
         Recorded activity: <strong>{selectedEngagement.engagedBy} of {selectedEngagement.rosterTotal}</strong> enrolled learners.
         <span className="ml-2">All {selectedEngagement.trackedItems} measurable activities completed by
          <strong> {selectedEngagement.completedBy}</strong>.</span>
-        <span className="block text-xs text-[#60718b]">Time spent is not tracked. Resource and live-class completions without recorded activity are excluded.</span>
-       </p>:<p className="mt-1 text-sm text-[#60718b]">
+        <span className="block text-xs text-[color:var(--lms-text-muted)]">Time spent is not tracked. Resource and live-class completions without recorded activity are excluded.</span>
+       </p>:<p className="mt-1 text-sm text-[color:var(--lms-text-muted)]">
         {!currentLive?"Progress becomes available after this lesson is published.":
          engagement===null?"Lesson activity data is currently unavailable.":
          selectedEngagement?.rosterTotal===0?"No enrolled learners in this class.":
          "No measurable video or assessment activity in this lesson."}
        </p>}
-       <Link className="mt-2 inline-flex font-semibold text-[#078191] hover:underline"
+       <Link className="mt-2 inline-flex font-semibold text-[color:var(--lms-button-primary)] hover:underline"
         href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/students"}>View students</Link>
     </footer>:null}
   </section>

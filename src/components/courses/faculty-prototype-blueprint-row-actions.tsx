@@ -8,6 +8,7 @@ import {facultyAssessmentLifecyclePayload} from "./faculty-assessment-lifecycle-
 import {courseApiError} from "./learner-course-api";
 import {facultyBlueprintArchiveReceiptMatches} from "@/modules/courses/faculty-blueprint-archive-receipt-model";
 import {facultyBlueprintWriteNeedsReload} from "@/modules/courses/faculty-blueprint-write-recovery";
+import { Button } from "@/components/ui/button";
 
 type ContentItem=ComponentProps<typeof FacultyContentEditor>["item"];
 type AssessmentItem=ComponentProps<typeof FacultyAssessmentEditor>["assessment"];
@@ -72,10 +73,10 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
   {selectedEditor.type==="CONTENT"
    ?<FacultyContentEditor item={selectedEditor.item} compact/>
    :<FacultyAssessmentEditor assessment={selectedEditor.item} compact/>}
-  {archivePossible?<button type="button"
-   className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-[#dce5ee] bg-white text-lg text-[#334155] hover:border-[#c33937] hover:text-[#a12724] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078191]"
+  {archivePossible?<Button variant="bare" type="button"
+   className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-[color:var(--lms-border)] bg-white text-lg text-[color:var(--lms-text-body)] hover:border-[color:var(--lms-error-text)] hover:text-[color:var(--lms-error-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-button-primary)]"
    aria-label={"Remove "+item.title} title={"Archive "+item.title}
-   disabled={busy||unknown} onClick={()=>{setError(null);setConfirm(true);}}>×</button>:null}
+   disabled={busy||unknown} onClick={()=>{setError(null);setConfirm(true);}}>×</Button>:null}
   <ConfirmDialog open={confirm}
    onOpenChange={open=>{if(!busy)setConfirm(open);}}
    title={"Remove "+item.title+"?"}
@@ -85,7 +86,7 @@ export function FacultyPrototypeBlueprintRowActions({editor,deliveryId}:{
    {error?<p role="alert" className="text-sm text-red-700">{error}</p>:null}
   </ConfirmDialog>
   {error&&!confirm?<p role="alert" className="max-w-44 text-xs text-red-700">{error}</p>:null}
-  {unknown?<button type="button" className="text-xs font-semibold text-[#078191] underline"
-   onClick={()=>window.location.reload()}>Reload to verify</button>:null}
+  {unknown?<Button variant="bare" type="button" className="text-xs font-semibold text-[color:var(--lms-button-primary)] underline"
+   onClick={()=>window.location.reload()}>Reload to verify</Button>:null}
  </div>;
 }

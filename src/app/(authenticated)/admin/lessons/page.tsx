@@ -21,6 +21,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { listCollegeLessons } from "@/modules/courses/college-learning-directory-service";
 import { adminLearningHref, adminLessonStats } from "@/modules/courses/admin-learning-read-model";
 import {parseSuperAdminLearningQuery} from "@/modules/admin-ui/super-admin-learning-query-model";
+import { Table } from "@/components/ui/table";
 
 export default async function SuperAdminLessonsPage({
   searchParams,
@@ -191,7 +192,7 @@ export default async function SuperAdminLessonsPage({
     </p>:null}
     {hasCourseSelection&&listedLessons.length?<div className="mt-4 min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-border"
       role="region" aria-label="Lessons table" tabIndex={0}>
-      <table className="w-full min-w-[770px] border-collapse text-left text-sm">
+      <Table className="min-w-[770px]">
         <thead className="bg-[var(--lms-canvas-subtle)] text-[var(--lms-neutral-400)]">
           <tr>
             <th scope="col" className="whitespace-nowrap border-b border-border p-3 font-semibold">Lesson Name</th>
@@ -260,7 +261,7 @@ export default async function SuperAdminLessonsPage({
             </tr>;
           })}
         </tbody>
-      </table>
+      </Table>
     </div>:<div className="mt-4 border border-border p-6 text-sm text-muted-foreground">
       {!hasCourseSelection?"Choose a course, or opt in to all-courses view.":
         data.query.q?"No matching lessons. Clear search to see the course.":

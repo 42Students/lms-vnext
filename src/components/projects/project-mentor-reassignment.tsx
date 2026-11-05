@@ -11,6 +11,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import { Table } from "@/components/ui/table";
 
 type Workspace = {
   id: string;
@@ -276,7 +277,7 @@ export function ProjectMentorReassignment({
         ):(
           <div className="mt-3 min-w-0 space-y-2">
             <div className="min-w-0 overflow-x-auto border-y border-border">
-              <table className="w-full min-w-[620px] border-collapse text-left text-sm">
+              <Table className="min-w-[620px]">
                 <caption className="sr-only">Select workspaces for mentor reassignment</caption>
                 <thead><tr className="border-b border-border bg-muted/20">
                   <th scope="col" className="w-12 px-3 py-2">
@@ -318,7 +319,7 @@ export function ProjectMentorReassignment({
                     </td>
                   </tr>)}
                 </tbody>
-              </table>
+              </Table>
             </div>
             {workspacePageCount>1?<nav aria-label="Workspace selection pages"
               className="flex flex-wrap items-center gap-2 text-sm">

@@ -1,6 +1,7 @@
+import { PageHeader } from "@/components/ui/page-header";
 export default function TpoProfileLoading(){
  return <section aria-busy="true" className="min-w-0 space-y-4">
-  <h1 className="text-xl font-semibold">Your Profile</h1>
+  <PageHeader title="Your Profile" />
   <p role="status" className="sr-only">Loading your TPO profile…</p>
   <div aria-hidden="true" className="flex items-center gap-4 border-b border-border pb-5">
    <div className="size-16 shrink-0 animate-pulse rounded-full bg-muted"/>

@@ -4,6 +4,7 @@ import {type FormEvent,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {projectMutation} from "./project-api";
+import { Textarea } from "@/components/ui/textarea";
 
 export function MentorProjectUpdateComposer({projectId,readOnly}:{
   projectId:string;readOnly:boolean;
@@ -34,7 +35,7 @@ export function MentorProjectUpdateComposer({projectId,readOnly}:{
     <label htmlFor={"mentor-project-update-"+projectId} className="sr-only">
       Tell the team something
     </label>
-    <textarea id={"mentor-project-update-"+projectId} rows={3}
+    <Textarea id={"mentor-project-update-"+projectId} rows={3}
       value={message} onChange={event=>{setMessage(event.target.value);setPosted(false);}}
       maxLength={1000} readOnly={readOnly||pending}
       placeholder="Tell the team something. It shows here and on their Overview." />

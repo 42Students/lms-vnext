@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
+import { Button } from "@/components/ui/button";
 
 type Signals = Awaited<
   ReturnType<typeof getFacultyCourseHomeSignals>
@@ -81,9 +82,9 @@ export function FacultyCourseHomeSignals({
           </div>
           {contextReady
             ? <Link href={reviewHref} className={actionClass}>{actionIcon}{actionLabel}</Link>
-            : <button type="button" disabled title="Loading course…" className={actionClass}>
+            : <Button variant="bare" type="button" disabled title="Loading course…" className={actionClass}>
                 {actionIcon}{actionLabel}
-              </button>}
+              </Button>}
         </div>
       </section>
       {missing.length ? (

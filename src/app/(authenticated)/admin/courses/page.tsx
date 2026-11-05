@@ -17,6 +17,7 @@ import {paginateCollegeCourses} from "@/modules/courses/college-course-catalogue
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {AdminCoursesLastGood} from "@/components/courses/admin-courses-last-good";
+import { Table } from "@/components/ui/table";
 
 export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[];pageSize?:string|string[];create?:string|string[]}>}) {
   const context =
@@ -110,7 +111,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
             catalogue.value.items.length===0?<EmptyState title="No courses found" description="Try another search or select a college."/>:
             <>
               <div className="min-w-0 overflow-x-auto">
-                <table className="w-full min-w-[560px] text-left text-sm">
+                <Table className="min-w-[560px]">
                   <thead><tr className="border-b border-border text-xs text-muted-foreground">
                     <th scope="col" className="p-2">Course</th><th scope="col" className="p-2">Code</th>
                     <th scope="col" className="p-2">College</th><th scope="col" className="p-2">Department</th>
@@ -123,7 +124,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
                     <td className="p-2">{item.department}</td>
                     <td className="p-2">{item.status}</td>
                   </tr>)}</tbody>
-                </table>
+                </Table>
               </div>
               <nav aria-label="Course catalogue pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
                 <span role="status">Page {catalogue.value.page} · {catalogue.value.total} matching courses</span>

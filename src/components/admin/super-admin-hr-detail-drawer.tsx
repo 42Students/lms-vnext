@@ -20,6 +20,7 @@ import {
   hrDisplayName,
   hrStatusTone,
 } from "./super-admin-hr-types";
+import { Table } from "@/components/ui/table";
 
 
 export function SuperAdminHrDetailDrawer({
@@ -257,7 +258,7 @@ export function SuperAdminHrDetailDrawer({
             </div>
 
             <div className="mt-4 min-w-0 overflow-x-auto" role="region" aria-label="College access and history" tabIndex={0}>
-             <table className="w-full min-w-[590px] border-collapse text-left text-sm">
+             <Table className="min-w-[590px]">
               <thead><tr className="border-b border-border bg-surface-subtle">
                <th scope="col" className="px-3 py-2 font-semibold">College</th>
                <th scope="col" className="px-3 py-2 font-semibold">Access</th>
@@ -287,7 +288,7 @@ export function SuperAdminHrDetailDrawer({
                 </tr>;
                })}
               </tbody>
-             </table>
+             </Table>
             </div>
 
             {account.status === "ACTIVE" ? (

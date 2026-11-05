@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { courseApiError } from "./learner-course-api";
+import { Checkbox } from "@/components/ui/checkbox";
 
 async function requestJson(
   path: string,
@@ -590,7 +591,7 @@ export function LessonActions({
             </span>
           </label>:null}
           {lesson.visibleToStudents!==undefined?<label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
-            <input type="checkbox" className="h-4 w-4 accent-[var(--lms-primary)]"
+            <Checkbox className="h-4 w-4 accent-[var(--lms-primary)]"
              checked={visibleToStudents} disabled={pending}
              onChange={event=>setVisibleToStudents(event.target.checked)}/>
             Visible to students

@@ -1,7 +1,8 @@
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
+import { PageHeader } from "@/components/ui/page-header";
 export default function Loading(){
  return <section role="status" aria-busy="true" className="min-w-0 space-y-4">
-   <h1 className="text-2xl font-semibold text-[var(--lms-heading)]">Programs</h1>
+   <PageHeader title="Programs" />
    <GracefulPageLoading label="Loading programs…" shape="directory" />
    <div aria-hidden="true" className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
      <div className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">

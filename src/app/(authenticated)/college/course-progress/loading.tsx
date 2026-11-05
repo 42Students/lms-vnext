@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Table } from "@/components/ui/table";
 
 export default function CollegeCourseProgressLoading(){
  return <div className="min-w-0 space-y-5" aria-busy="true">
@@ -13,7 +14,7 @@ export default function CollegeCourseProgressLoading(){
     </div>)}
   </section>
   <section aria-label="Course progress table loading" className="min-w-0 overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)]">
-   <table className="w-full min-w-[720px] table-fixed border-collapse" aria-label="Course progress table">
+   <Table className="min-w-[720px] table-fixed" aria-label="Course progress table">
     <thead><tr>{["Student","Course","Class","Completed","Progress","Last activity"].map(label=>
       <th key={label} scope="col" className="border-b border-[var(--lms-canvas-border)] px-3 py-4 text-left text-xs font-semibold text-muted-foreground">{label}</th>)}
     </tr></thead>
@@ -22,7 +23,7 @@ export default function CollegeCourseProgressLoading(){
       <td key={column} className="border-b border-[var(--lms-canvas-border)] px-3 py-3">
        <Skeleton variant="line" label={`Loading progress row ${row+1} column ${column+1}`} height={14}/>
       </td>)}</tr>)}</tbody>
-   </table>
+   </Table>
   </section>
  </div>;
 }

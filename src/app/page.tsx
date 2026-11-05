@@ -293,35 +293,35 @@ function LegacyLoginMascot() {
     <svg viewBox="0 0 232 262" className="h-full w-full" focusable="false">
       <defs>
         <linearGradient id="authRobotShell" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset="1" stopColor="#eef3f8" />
+          <stop offset="0" stopColor="var(--lms-white)" />
+          <stop offset="1" stopColor="var(--lms-neutral-100)" />
         </linearGradient>
-        <radialGradient id="authRobotGlow"><stop offset="0" stopColor="#7af0f2" />
-          <stop offset="1" stopColor="#14a3b0" /></radialGradient>
+        <radialGradient id="authRobotGlow"><stop offset="0" stopColor="var(--lms-primary-light)" />
+          <stop offset="1" stopColor="var(--lms-primary-hover)" /></radialGradient>
       </defs>
-      <ellipse cx="142" cy="254" rx="42" ry="6" fill="#d1dce5" opacity=".55" />
-      <rect x="120" y="204" width="15" height="38" rx="7.5" fill="#c4d7e3" />
-      <rect x="147" y="204" width="15" height="38" rx="7.5" fill="#c4d7e3" />
-      <rect x="113" y="236" width="26" height="12" rx="6" fill="#40586c" />
-      <rect x="143" y="236" width="26" height="12" rx="6" fill="#40586c" />
-      <path d="M114 150 Q78 170 34 152" fill="none" stroke="#829daf" strokeWidth="17" strokeLinecap="round" />
-      <circle cx="30" cy="151" r="10" fill="#f4f9fc" stroke="#adc3d2" strokeWidth="2" />
-      <rect x="108" y="128" width="66" height="84" rx="24" fill="url(#authRobotShell)" stroke="#8da8bd" strokeWidth="2" />
-      <rect x="125" y="150" width="32" height="22" rx="8" fill="#37566f" />
+      <ellipse cx="142" cy="254" rx="42" ry="6" fill="var(--lms-neutral-300)" opacity=".55" />
+      <rect x="120" y="204" width="15" height="38" rx="7.5" fill="var(--lms-neutral-300)" />
+      <rect x="147" y="204" width="15" height="38" rx="7.5" fill="var(--lms-neutral-300)" />
+      <rect x="113" y="236" width="26" height="12" rx="6" fill="var(--lms-text-muted)" />
+      <rect x="143" y="236" width="26" height="12" rx="6" fill="var(--lms-text-muted)" />
+      <path d="M114 150 Q78 170 34 152" fill="none" stroke="var(--lms-neutral-400)" strokeWidth="17" strokeLinecap="round" />
+      <circle cx="30" cy="151" r="10" fill="var(--lms-primary-subtle)" stroke="var(--lms-border-strong)" strokeWidth="2" />
+      <rect x="108" y="128" width="66" height="84" rx="24" fill="url(#authRobotShell)" stroke="var(--lms-neutral-400)" strokeWidth="2" />
+      <rect x="125" y="150" width="32" height="22" rx="8" fill="var(--lms-text-body)" />
       <circle cx="141" cy="161" r="4.5" fill="url(#authRobotGlow)" />
-      <rect x="132" y="116" width="18" height="14" rx="4" fill="#40586c" />
-      <path d="M141 54V38" stroke="#58768d" strokeWidth="4" strokeLinecap="round" />
-      <circle cx="141" cy="33" r="5.5" fill="#14a3b0" />
-      <circle cx="95" cy="88" r="6.5" fill="#829daf" />
-      <circle cx="187" cy="88" r="6.5" fill="#829daf" />
-      <rect x="97" y="52" width="88" height="70" rx="28" fill="url(#authRobotShell)" stroke="#8da8bd" strokeWidth="2" />
-      <rect x="107" y="66" width="68" height="42" rx="18" fill="#314e68" />
-      <rect x="124" y="79" width="11" height="16" rx="5.5" fill="#7af0f2" />
-      <rect x="148" y="79" width="11" height="16" rx="5.5" fill="#7af0f2" />
-      <ellipse cx="117" cy="101" rx="5" ry="2.5" fill="#f7b8c1" opacity=".7" />
-      <ellipse cx="165" cy="101" rx="5" ry="2.5" fill="#f7b8c1" opacity=".7" />
-      <path d="M168 146 Q180 172 182 196" fill="none" stroke="#829daf" strokeWidth="17" strokeLinecap="round" />
-      <circle cx="182" cy="200" r="10.5" fill="#f4f9fc" stroke="#adc3d2" strokeWidth="2" />
+      <rect x="132" y="116" width="18" height="14" rx="4" fill="var(--lms-text-muted)" />
+      <path d="M141 54V38" stroke="var(--lms-text-muted)" strokeWidth="4" strokeLinecap="round" />
+      <circle cx="141" cy="33" r="5.5" fill="var(--lms-primary-hover)" />
+      <circle cx="95" cy="88" r="6.5" fill="var(--lms-neutral-400)" />
+      <circle cx="187" cy="88" r="6.5" fill="var(--lms-neutral-400)" />
+      <rect x="97" y="52" width="88" height="70" rx="28" fill="url(#authRobotShell)" stroke="var(--lms-neutral-400)" strokeWidth="2" />
+      <rect x="107" y="66" width="68" height="42" rx="18" fill="var(--lms-text-body)" />
+      <rect x="124" y="79" width="11" height="16" rx="5.5" fill="var(--lms-primary-light)" />
+      <rect x="148" y="79" width="11" height="16" rx="5.5" fill="var(--lms-primary-light)" />
+      <ellipse cx="117" cy="101" rx="5" ry="2.5" fill="var(--lms-error-surface)" opacity=".7" />
+      <ellipse cx="165" cy="101" rx="5" ry="2.5" fill="var(--lms-error-surface)" opacity=".7" />
+      <path d="M168 146 Q180 172 182 196" fill="none" stroke="var(--lms-neutral-400)" strokeWidth="17" strokeLinecap="round" />
+      <circle cx="182" cy="200" r="10.5" fill="var(--lms-primary-subtle)" stroke="var(--lms-border-strong)" strokeWidth="2" />
     </svg>
   </div>;
 }

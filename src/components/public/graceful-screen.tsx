@@ -65,8 +65,8 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
             </div>
           ) : null}
           <div className={styles["actions"]}>
-            {legacyStatus?<button type="button" className={styles["secondary"]}
-              onClick={goBack}>Go back</button>:null}
+            {legacyStatus?<Button variant="bare" type="button" className={styles["secondary"]}
+              onClick={goBack}>Go back</Button>:null}
             <Link href={destination} className={styles["primary"]}>
               {statusCode===500?"Go to Home":homeLabel}
             </Link>

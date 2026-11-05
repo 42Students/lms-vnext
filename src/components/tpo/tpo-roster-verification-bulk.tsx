@@ -11,6 +11,7 @@ import type {VerificationQueueCard} from "@/components/verification/Verification
 import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
 import {describeBulkReviewOutcomeRows,type BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
+import { Table } from "@/components/ui/table";
 
 type Action="VERIFY"|"SEND_BACK";
 export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly VerificationQueueCard[];scope?:"roster"|"verification"}){
@@ -136,7 +137,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    <p role="status">{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
    {outcomes.some(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK")?<p className="text-sm text-muted-foreground">Failed sections remain selected if still waiting. Refresh to retry with their latest versions. Sections no longer waiting cannot be retried.</p>:null}
    <div className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-border">
-    <table className="w-full min-w-[420px] text-left text-sm">
+    <Table className="min-w-[420px]">
      <thead className="border-b border-border bg-muted/30"><tr>
       <th scope="col" className="p-2 font-semibold">Learner</th>
       <th scope="col" className="p-2 font-semibold">Section</th>
@@ -147,7 +148,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
       <td className="p-2">{item.section}</td>
       <td className="p-2">{item.message}</td>
      </tr>)}</tbody>
-    </table>
+    </Table>
    </div>
   </section>:null}
   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}

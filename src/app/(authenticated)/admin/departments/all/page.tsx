@@ -4,6 +4,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {listAdminDepartmentsAcrossColleges} from "@/modules/admin-ui/super-admin-department-directory-service";
+import { Table } from "@/components/ui/table";
 
 const decimal=(raw:string|string[]|undefined,fallback:number)=>{
  if(typeof raw!=="string"||!/^[1-9][0-9]*$/.test(raw))return fallback;
@@ -32,7 +33,7 @@ export default async function AdminAllDepartmentsPage({
     <p className="text-sm text-body">{directory.total} departments · {directory.scope.toLowerCase()} scope · read only</p>
     {directory.items.length===0?<p className="text-sm text-body">No departments in the selected scope.</p>:
      <div role="region" aria-label="Departments table, scroll for columns" tabIndex={0} className="min-w-0 overflow-x-auto border-y border-border">
-      <table className="min-w-[560px] w-full border-collapse text-sm">
+      <Table className="min-w-[560px]">
        <thead><tr className="border-b border-border text-left">
         <th scope="col" className="p-3">Department</th>
         <th scope="col" className="p-3">College</th>
@@ -43,7 +44,7 @@ export default async function AdminAllDepartmentsPage({
         <td className="p-3">{row.collegeName}</td>
         <td className="p-3">{row.organizationName}</td>
        </tr>)}</tbody>
-      </table>
+      </Table>
      </div>}
     {directory.totalPages>1?<nav aria-label="Department directory pages" className="flex items-center justify-between gap-3 text-sm">
      {page>1?<Link href={prefix+(page-1)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Previous</Link>:<span/>}

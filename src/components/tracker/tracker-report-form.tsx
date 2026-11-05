@@ -394,7 +394,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           onDrop={event=>{event.preventDefault();addScreenshots(Array.from(event.dataTransfer.files));}}
           onPaste={event=>{const files=Array.from(event.clipboardData.files);
             if(files.length){event.preventDefault();addScreenshots(files);}}}>
-          <input ref={screenshotInputRef} type="file" multiple aria-label="Choose screenshots"
+          <Input ref={screenshotInputRef} type="file" multiple aria-label="Choose screenshots"
             accept="image/png,image/jpeg,image/webp" className="sr-only"
             onChange={event=>{addScreenshots(Array.from(event.target.files??[]));event.target.value="";}} />
           <div className="flex flex-wrap items-center gap-3">

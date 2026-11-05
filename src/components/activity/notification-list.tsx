@@ -178,7 +178,7 @@ export function NotificationList({
             >
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
-                  <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-[9px] bg-[var(--lms-neutral-100)] text-lg">🔔</span>
+                  <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--lms-neutral-100)] text-lg">🔔</span>
                   <Button variant="ghost" type="button" className="min-w-0 flex-1"
                     aria-label={"View "+(item.title||"Notification")+", "+notificationCategory(item)+(item.contextLine?", "+item.contextLine:"")}
                     onClick={()=>{if(onSelect)onSelect(item);else setSelected(item);}}>

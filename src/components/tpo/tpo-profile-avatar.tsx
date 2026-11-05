@@ -84,26 +84,26 @@ export function TpoProfileAvatar({name,initials}:{name:string;initials:string}){
  }
  return <div className="min-w-0 shrink-0 space-y-2">
   <div className="relative h-[120px] w-[120px]">
-   <div className="flex h-[120px] w-[120px] items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-[#d2e7e7] bg-[#e9f6f5] text-[34px] font-semibold text-[#1a6872]">
+   <div className="flex h-[120px] w-[120px] items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-[color:var(--lms-border)] bg-[color:var(--lms-primary-subtle)] text-[36px] font-semibold text-[color:var(--lms-button-primary-hover)]">
     {preview?<img src={preview} alt={name+"'s profile photo"} referrerPolicy="no-referrer"
       className="h-full w-full object-cover"
       onError={()=>{setPreview(null);setError("Could not load the current photo. Retry to refresh it.");}}/>:
       <span role="img" aria-label={name+"'s profile photo is unavailable"}>{initials}</span>}
    </div>
-   <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp"
+   <Input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp"
     className="sr-only" tabIndex={-1} disabled={busy}
     onChange={event=>{const selected=event.currentTarget.files?.[0];
      if(selected)void upload(selected);event.currentTarget.value="";}}/>
-   <button type="button" title="Change profile photo" aria-label="Change profile photo"
+   <Button variant="bare" type="button" title="Change profile photo" aria-label="Change profile photo"
     disabled={busy} onClick={()=>fileRef.current?.click()}
     className="absolute -bottom-1 -right-1 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] bg-surface text-[var(--lms-primary-text)] shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
      <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>
     </svg>
-   </button>
+   </Button>
   </div>
-  <button type="button" className="inline-flex min-h-11 items-center text-left md:min-h-9 text-xs font-semibold text-link underline"
-   disabled={busy} aria-expanded={showLink} onClick={()=>setShowLink(!showLink)}>Use an image link</button>
+  <Button variant="bare" type="button" className="inline-flex min-h-11 items-center text-left md:min-h-9 text-xs font-semibold text-link underline"
+   disabled={busy} aria-expanded={showLink} onClick={()=>setShowLink(!showLink)}>Use an image link</Button>
   {showLink?<div className="w-full min-w-[220px] max-w-[340px] space-y-2">
    <label htmlFor="tpo-avatar-link" className="block text-xs font-semibold">HTTPS image URL</label>
    <Input id="tpo-avatar-link" type="url" maxLength={2048} value={link}

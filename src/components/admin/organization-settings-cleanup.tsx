@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {apiFetch} from "@/lib/api-fetch";
+import { Table } from "@/components/ui/table";
 
 type Entry={key:string;value:string;version:number};
 
@@ -43,7 +44,7 @@ export function OrganizationSettingsCleanup({organizationId,ready,entries}:{
   <p className="text-sm text-body">These unused organization keys do not affect running settings. No new ORG overrides can be created here. Deletion is audited and cannot be undone from this screen.</p>
   {!ready?<p role="status" className="text-sm text-warning-text">Historical organization setting storage is unavailable. Nothing was changed.</p>:
     entries.length===0?<p role="status" className="text-sm text-body">No stored organization-level overrides remain.</p>:
-    <div className="overflow-x-auto"><table className="w-full min-w-[480px] border-collapse text-left text-sm">
+    <div className="overflow-x-auto"><Table className="min-w-[480px]">
      <thead><tr className="border-b border-border text-muted-foreground">
       <th scope="col" className="p-2">Key</th>
       <th scope="col" className="p-2">Historical value</th>
@@ -59,7 +60,7 @@ export function OrganizationSettingsCleanup({organizationId,ready,entries}:{
         Remove
        </Button></td>
       </tr>)}</tbody>
-    </table></div>}
+    </Table></div>}
   {error?<InlineNotice tone="error" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
   <ConfirmDialog open={target!==null}

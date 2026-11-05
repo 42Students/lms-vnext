@@ -86,7 +86,7 @@ export default function UniversitiesPage(){
       </h2>
       <ol className="grid gap-3 sm:grid-cols-2 min-[992px]:grid-cols-3">
         {journey.map((stage,index)=><li key={stage.label}
-          className="relative flex min-w-0 items-start gap-4 rounded-[16px] border border-[var(--lms-canvas-border)] bg-white p-5">
+          className="relative flex min-w-0 items-start gap-4 rounded-[14px] border border-[var(--lms-canvas-border)] bg-white p-5">
           <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--lms-primary-subtle)] font-bold text-[var(--lms-primary-text)]">
             {index+1}
           </span>

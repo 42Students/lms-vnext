@@ -3,6 +3,7 @@ import Link from "next/link";
 import {useEffect,useRef} from "react";
 import {usePathname,useSearchParams} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function RouteError({reset}:{
   error: Error & {digest?:string}; reset:()=>void;
@@ -17,7 +18,7 @@ export default function RouteError({reset}:{
  },[routeKey,reset]);
  return <main className="flex min-h-[65vh] items-center justify-center px-4 py-10">
   <section role="alert" className="min-w-0 max-w-xl space-y-4 text-center">
-   <h1 className="text-2xl font-semibold text-[var(--lms-heading)]">Something went wrong</h1>
+   <PageHeader title="Something went wrong" />
    <p className="text-sm text-body">Failed to load the quiz. Your answers are not being submitted from this error screen.</p>
    <div className="flex flex-wrap justify-center gap-2">
     <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Try Again</Button>

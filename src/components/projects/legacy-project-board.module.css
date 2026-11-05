@@ -65,7 +65,7 @@
   min-width: 0;
   min-height: 44px;
   border: 1px solid rgba(229, 233, 240, .85) !important;
-  border-radius: 16px !important;
+  border-radius: 14px !important;
   background: var(--lms-white) !important;
   box-shadow: 0 1px 2px rgba(26, 29, 33, .04), 0 8px 20px rgba(26, 29, 33, .05);
   transition: border-color 200ms cubic-bezier(.2,0,0,1), box-shadow 200ms cubic-bezier(.2,0,0,1), transform 200ms cubic-bezier(.2,0,0,1);

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { sessionExpiredHref } from "@/lib/return-to";
+import { Button } from "@/components/ui/button";
 
 /**
  * vNext uses first-party opaque device sessions, not refresh tokens. A stale
@@ -61,8 +62,8 @@ export function SessionResponseGuard() {
     <div role="alert"
       className="fixed bottom-4 left-4 z-[90] max-w-sm rounded-md border border-border bg-surface p-3 text-sm text-primary-text shadow-md">
       Access changed. Switch to an authorized workspace or refresh this page.
-      <button type="button" onClick={()=>setAccessRevoked(false)}
-        className="ml-2 font-semibold underline">Dismiss</button>
+      <Button variant="bare" type="button" onClick={()=>setAccessRevoked(false)}
+        className="ml-2 font-semibold underline">Dismiss</Button>
     </div>
   ) : null;
 }

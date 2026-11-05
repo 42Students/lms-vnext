@@ -6,6 +6,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import { Checkbox } from "@/components/ui/checkbox";
 export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:string}){
  const router=useRouter(),{run}=useGuardedAction({timeoutMs:35000});
  const [reviewed,setReviewed]=useState(false),[pending,setPending]=useState(false);
@@ -31,7 +32,7 @@ export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:s
  return <section className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3" aria-label="Delete unpublished draft">
   <h3 className="font-semibold">Delete this draft?</h3>
   <p className="text-sm text-body">It was never published, so no student has seen it. It is removed from your drives.</p>
-  <label className="flex items-start gap-2 text-[13px] text-[var(--lms-neutral-400)]"><input type="checkbox"
+  <label className="flex items-start gap-2 text-[13px] text-[var(--lms-neutral-400)]"><Checkbox
    checked={reviewed} disabled={pending} onChange={event=>setReviewed(event.target.checked)}
    className="mt-1 h-4 w-4 accent-primary"/>
    I reviewed this unpublished drive and understand it will leave the active list.

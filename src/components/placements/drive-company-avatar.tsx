@@ -6,19 +6,19 @@ import {useEffect,useState} from "react";
  * Only public HTTPS logo URLs are eligible for remote rendering. Broken
  * images fall back to the original letter tile and retry on URL changes. */
 const AVATAR_COLORS=[
- {bg:"#e8f4fd",text:"#0c63d4"},
- {bg:"#e8f5e9",text:"#2e7d32"},
- {bg:"#f3e5f5",text:"#7b1fa2"},
- {bg:"#fff3e0",text:"#e65100"},
- {bg:"#e0f2f1",text:"#00695c"},
- {bg:"#fce4ec",text:"#c2185b"},
- {bg:"#e8eaf6",text:"#3949ab"},
- {bg:"#f1f8e9",text:"#558b2f"},
+ {bg:"var(--lms-info-blue-surface)",text:"var(--lms-info-blue)"},
+ {bg:"var(--lms-success-surface)",text:"var(--lms-success-strong)"},
+ {bg:"var(--lms-purple-surface)",text:"var(--lms-purple-text)"},
+ {bg:"var(--lms-gold-subtle)",text:"var(--lms-warning)"},
+ {bg:"var(--lms-primary-subtle)",text:"var(--lms-button-primary-hover)"},
+ {bg:"var(--lms-error-surface)",text:"var(--lms-error-strong)"},
+ {bg:"var(--lms-border)",text:"var(--lms-icon-purple)"},
+ {bg:"var(--lms-success-surface)",text:"var(--lms-success-strong)"},
 ] as const;
 function avatarColor(name:string){
  let hash=0;
  for(let i=0;i<name.length;i++)hash=name.charCodeAt(i)+((hash<<5)-hash);
- return AVATAR_COLORS[Math.abs(hash)%AVATAR_COLORS.length] ?? {bg:"#e8f4fd",text:"#0c63d4"};
+ return AVATAR_COLORS[Math.abs(hash)%AVATAR_COLORS.length] ?? {bg:"var(--lms-info-blue-surface)",text:"var(--lms-info-blue)"};
 }
 export function DriveCompanyAvatar({name,logoUrl}:{name:string;logoUrl:string|null}){
  const [failed,setFailed]=useState(false);
@@ -28,7 +28,7 @@ export function DriveCompanyAvatar({name,logoUrl}:{name:string;logoUrl:string|nu
  const showLogo=Boolean(logoUrl&&logoUrl.startsWith("https://")&&!failed);
  return <span aria-label={name+" logo"}
   className="inline-flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border"
-  style={{background:showLogo?"#fff":palette.bg,color:palette.text,
+  style={{background:showLogo?"var(--lms-white)":palette.bg,color:palette.text,
    fontSize:18,fontWeight:600}}>
   {showLogo&&logoUrl?<img src={logoUrl} alt={name} loading="lazy"
     referrerPolicy="no-referrer" className="h-full w-full object-contain p-1"

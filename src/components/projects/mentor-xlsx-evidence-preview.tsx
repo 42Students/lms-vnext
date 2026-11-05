@@ -4,6 +4,8 @@ import {useState} from "react";
 import {recruiterXlsxToCsv} from "@/modules/placements/tpo-lead-xlsx-import-model";
 import {mentorXlsxTrialSummary,type MentorXlsxTrialSummary}
  from "@/modules/projects/mentor-xlsx-trial-summary-model";
+import { Table } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 const MAX_SPREADSHEET=4_000_000;
 /** Preview only a browser-readable authorized same-origin reference. Never
@@ -62,10 +64,10 @@ export function MentorXlsxEvidencePreview({href,name}:{
    only when every populated data row contains a numeric value. They are not
    interpreted as grades, submissions or official trial results.
   </p>
-  <button type="button" disabled={loading} onClick={()=>void load()}
+  <Button variant="bare" type="button" disabled={loading} onClick={()=>void load()}
     className="rounded border border-border px-3 py-2 text-sm font-semibold disabled:opacity-60">
     {loading?"Reading spreadsheet…":summary?"Reload spreadsheet summary":"Load spreadsheet summary"}
-  </button>
+  </Button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {summary?<div className="space-y-2">
     <p className="text-sm">{summary.totalDataRows} data rows ·
@@ -77,7 +79,7 @@ export function MentorXlsxEvidencePreview({href,name}:{
     </ul>:<p className="text-sm">No fully numeric columns to total.</p>}
     <div className="max-w-full overflow-auto" role="region"
       aria-label="First spreadsheet rows" tabIndex={0}>
-      <table className="w-full border-collapse text-xs">
+      <Table>
         <thead><tr>{summary.headers.map((name,i)=>
           <th key={i} scope="col" className="border border-border p-2 text-left">
             {name}</th>)}</tr></thead>
@@ -85,7 +87,7 @@ export function MentorXlsxEvidencePreview({href,name}:{
           {row.map((cell,j)=><td key={j}
             className="border border-border p-2">{cell}</td>)}
         </tr>)}</tbody>
-      </table>
+      </Table>
     </div>
   </div>:null}
  </section>;

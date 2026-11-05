@@ -14,6 +14,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import { Table } from "@/components/ui/table";
 
 function employerWebsiteHost(url:string|null){
  if(!url)return null;
@@ -365,10 +366,10 @@ export function PlacementEmployerRelationships({
               <span role="columnheader">Contact</span>
               <span role="columnheader">Website</span>
               <span role="columnheader" aria-sort={driveSort==="none"?"none":driveSort==="desc"?"descending":"ascending"}>
-               <button type="button" className="inline-flex min-h-11 items-center gap-1 font-semibold text-link underline md:min-h-9"
+               <Button variant="bare" type="button" className="inline-flex min-h-11 items-center gap-1 font-semibold text-link underline md:min-h-9"
                  onClick={()=>setDriveSort(current=>current==="desc"?"asc":"desc")}>
                 Drives <span aria-hidden="true">{driveSort==="asc"?"↑":driveSort==="desc"?"↓":"↕"}</span>
-               </button>
+               </Button>
               </span>
               <span role="columnheader">Last active</span>
               <span role="columnheader">Actions</span>
@@ -610,7 +611,7 @@ export function PlacementEmployerRelationships({
               Unrecorded or pending outcomes are not guessed.
             </p>
             <div className="overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)]">
-              <table className="w-full min-w-[580px] text-left text-sm">
+              <Table className="min-w-[580px]">
                 <thead className="border-b border-[var(--lms-canvas-border)] text-xs text-body">
                   <tr>
                     <th scope="col" className="p-3 font-semibold">Drive</th>
@@ -638,7 +639,7 @@ export function PlacementEmployerRelationships({
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </Table>
               {historyData.items.length === 0 ? (
                 <p className="px-3 py-6 text-center text-sm text-muted-foreground">
                   No drives recorded for this company.

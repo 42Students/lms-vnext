@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Card } from "@/components/ui/card";
 import type { AdminCollegeBrandingPreview } from "@/modules/colleges/admin-branding-preview-model";
+import { Button } from "@/components/ui/button";
 
 function SignInStylePreview({
   branding,
@@ -17,7 +18,7 @@ function SignInStylePreview({
     : branding.desktopBackgroundUrl;
 
   const canvasStyle: CSSProperties = {
-    backgroundColor: "#effbfa",
+    backgroundColor: "var(--lms-primary-subtle)",
     backgroundImage: "radial-gradient(circle at 14% 18%,rgba(10,124,136,.2),transparent 50%),radial-gradient(circle at 82% 84%,rgba(45,183,196,.18),transparent 55%)",
     ...(backgroundUrl
       ? {
@@ -38,9 +39,9 @@ function SignInStylePreview({
       style={{...canvasStyle,width:mobile?170:340,height:mobile?302:191,
         paddingTop:mobile?28:0,alignItems:mobile?"flex-start":"center"}}
     >
-      <div className="shrink-0 rounded-lg border border-[#e7ecf2] bg-white p-[10px] shadow-md"
+      <div className="shrink-0 rounded-lg border border-[color:var(--lms-border)] bg-white p-[10px] shadow-md"
         style={{width:mobile?138:128}}>
-        <div className="mb-[7px] flex items-center gap-[5px] border-b border-[#e7ecf2] pb-[6px]">
+        <div className="mb-[7px] flex items-center gap-[5px] border-b border-[color:var(--lms-border)] pb-[6px]">
         {branding.logoUrl ? (
           // An existing pure helper has verified the public HTTPS logo URL.
           // eslint-disable-next-line @next/next/no-img-element
@@ -51,13 +52,13 @@ function SignInStylePreview({
             referrerPolicy="no-referrer"
           />
         ) : (
-          <span aria-hidden="true" className="h-4 w-4 shrink-0 rounded-[4px] border border-[#0a7c8855] bg-[#0a7c8822]" />
+          <span aria-hidden="true" className="h-4 w-4 shrink-0 rounded-[4px] border border-[color:color-mix(in_srgb,var(--lms-button-primary)_33%,transparent)] bg-[color:color-mix(in_srgb,var(--lms-button-primary)_13%,transparent)]" />
         )}
-          <span aria-hidden="true" className="h-[5px] w-[50px] rounded-sm bg-[#172033]"/>
+          <span aria-hidden="true" className="h-[5px] w-[50px] rounded-sm bg-[color:var(--lms-heading)]"/>
         </div>
-        <div aria-hidden="true" className="mb-2 h-[6px] w-[34px] rounded-sm bg-[#172033]"/>
-        <div aria-hidden="true" className="mb-[6px] h-3 rounded-[3px] border border-[#d6e1ee]"/>
-        <div aria-hidden="true" className="h-3 rounded-[3px] bg-[#0a7c88]"/>
+        <div aria-hidden="true" className="mb-2 h-[6px] w-[34px] rounded-sm bg-[color:var(--lms-heading)]"/>
+        <div aria-hidden="true" className="mb-[6px] h-3 rounded-[4px] border border-[color:var(--lms-neutral-300)]"/>
+        <div aria-hidden="true" className="h-3 rounded-[4px] bg-[color:var(--lms-button-primary)]"/>
       </div>
     </div>
   );
@@ -223,13 +224,13 @@ export function CollegeBrandingPreview({
         </p>
         <div className="space-y-3">
           <div role="group" aria-label="Sign-in preview size" className="inline-flex rounded-lg border border-border bg-surface p-1">
-            {(["desktop","mobile"] as const).map(mode=><button type="button" key={mode}
+            {(["desktop","mobile"] as const).map(mode=><Button variant="bare" type="button" key={mode}
               aria-pressed={previewMode===mode}
               onClick={()=>setPreviewMode(mode)}
               className={"min-h-11 md:min-h-9 rounded-md px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
                 (previewMode===mode?"bg-primary text-[var(--lms-on-primary)]":"bg-transparent text-body hover:bg-primary-subtle")}>
               {mode==="desktop"?"Desktop":"Mobile"}
-            </button>)}
+            </Button>)}
           </div>
           <Card as="article" className="max-w-[380px] p-4 md:p-4">
             <SignInStylePreview branding={branding} mobile={previewMode==="mobile"}/>

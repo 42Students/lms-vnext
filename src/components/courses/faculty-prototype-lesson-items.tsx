@@ -10,6 +10,7 @@ import {
 import {courseApiError} from "./learner-course-api";
 import {facultyBlueprintWriteNeedsReload} from "@/modules/courses/faculty-blueprint-write-recovery";
 import {facultyBlueprintFullContentOrder} from "@/modules/courses/faculty-blueprint-full-content-order";
+import { Button } from "@/components/ui/button";
 
 export type FacultyBlueprintItem={
  id:string;title:string;kind:string;description:string|null;
@@ -113,18 +114,18 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
      "Class-only content reordering needs verified ordering support. Use the full editor for publishing and sequencing tools."}
    </p>
    {dirty?<div className="flex flex-wrap gap-2">
-    <button type="button" className="faculty-proto-secondary" onClick={()=>{
+    <Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>{
      setOrdered([...baseline.current]);setMessage(null);
-    }} disabled={saving}>Reset</button>
-    <button type="button" className="faculty-proto-action" onClick={save}
-     disabled={!canChange}>{saving?"Saving…":"Save order"}</button>
+    }} disabled={saving}>Reset</Button>
+    <Button variant="bare" type="button" className="faculty-proto-action" onClick={save}
+     disabled={!canChange}>{saving?"Saving…":"Save order"}</Button>
    </div>:null}
   </div>
   {message?<p role={message.ok?"status":"alert"} className={"mb-3 rounded-lg p-3 text-sm "+
    (message.ok?"bg-green-50 text-green-800":"bg-red-50 text-red-800")}>{message.text}</p>:null}
-  {outcomeUnknown?<button type="button" className="faculty-proto-secondary mb-3"
-   onClick={()=>window.location.reload()}>Reload lesson to verify saved order</button>:null}
-  <ol key={localVersion} className="divide-y divide-[#edf1f5]" aria-label="Lesson content order">
+  {outcomeUnknown?<Button variant="bare" type="button" className="faculty-proto-secondary mb-3"
+   onClick={()=>window.location.reload()}>Reload lesson to verify saved order</Button>:null}
+  <ol key={localVersion} className="divide-y divide-[color:var(--lms-neutral-100)]" aria-label="Lesson content order">
    {displayed.map(item=>{
     const idx=item.reorderable?ordered.indexOf(item.id):-1;
     const movable=item.reorderable&&canChange;
@@ -149,18 +150,18 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
      className={"flex min-w-0 items-center gap-3 py-3 "+
       (dragging===item.id?"opacity-50":"")}>
      <div className="flex w-8 shrink-0 flex-col items-center">
-      {movable?<span className="text-[#60718b]" title="Drag to reorder">⠿</span>:
-       <span aria-hidden="true" className="text-[#a1aebc]">·</span>}
+      {movable?<span className="text-[color:var(--lms-text-muted)]" title="Drag to reorder">⠿</span>:
+       <span aria-hidden="true" className="text-[color:var(--lms-neutral-400)]">·</span>}
       {item.reorderable?<div className="flex gap-1">
-       <button type="button" disabled={!movable||idx===0} onClick={()=>move(idx,idx-1)}
-        aria-label={"Move "+item.title+" up"} className="min-h-8 min-w-7 text-xs text-[#078191] disabled:opacity-30">↑</button>
-       <button type="button" disabled={!movable||idx===ordered.length-1} onClick={()=>move(idx,idx+1)}
-        aria-label={"Move "+item.title+" down"} className="min-h-8 min-w-7 text-xs text-[#078191] disabled:opacity-30">↓</button>
+       <Button variant="bare" type="button" disabled={!movable||idx===0} onClick={()=>move(idx,idx-1)}
+        aria-label={"Move "+item.title+" up"} className="min-h-8 min-w-7 text-xs text-[color:var(--lms-button-primary)] disabled:opacity-30">↑</Button>
+       <Button variant="bare" type="button" disabled={!movable||idx===ordered.length-1} onClick={()=>move(idx,idx+1)}
+        aria-label={"Move "+item.title+" down"} className="min-h-8 min-w-7 text-xs text-[color:var(--lms-button-primary)] disabled:opacity-30">↓</Button>
       </div>:null}
      </div>
-     <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#eef7f9] text-xs font-bold text-[#078191]">{glyph(item.kind)}</span>
+     <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[color:var(--lms-primary-subtle)] text-xs font-bold text-[color:var(--lms-button-primary)]">{glyph(item.kind)}</span>
      <span className="min-w-0 flex-1">
-      <Link className="block text-sm font-bold text-[#1d293f] hover:underline"
+      <Link className="block text-sm font-bold text-[color:var(--lms-heading)] hover:underline"
        href={item.href}>{item.title}</Link>
       <span className="faculty-proto-subtitle">{item.description??item.kind.replaceAll("_"," ").toLowerCase()}</span>
      </span>

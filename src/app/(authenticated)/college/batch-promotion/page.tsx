@@ -143,7 +143,7 @@ export default async function CollegeBatchPromotionPage({
           <Input name="search" maxLength={120} defaultValue={batchSearch} placeholder="Search name, year, status or semester"/>
         </label>
         <label className="inline-flex min-h-11 items-center gap-2 text-sm text-body">
-          <input name="showInactive" type="checkbox" value="1" defaultChecked={showInactive} aria-label="Show completed and inactive batches" className="h-4 w-4 accent-[var(--lms-primary)]"/>
+          <Checkbox name="showInactive" value="1" defaultChecked={showInactive} aria-label="Show completed and inactive batches" className="h-4 w-4 accent-[var(--lms-primary)]"/>
           {BATCH_PROMOTION_COPY.showCompleted} ({inactiveCount})
         </label>
         <Button type="submit" className="min-h-11 md:min-h-9">Refresh</Button>

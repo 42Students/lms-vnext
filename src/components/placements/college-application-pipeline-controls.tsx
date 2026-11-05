@@ -268,8 +268,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    const score=row.screeningScore;
    if(score===null||score===undefined||!Number.isFinite(score))return "—";
    const percent=Math.max(0,Math.min(100,Math.round(score)));
-   const tone=percent>=70?"bg-[#f9f0ff] text-[#722ed1]":
-    percent>=40?"bg-[#e6fffb] text-[#08979c]":"bg-surface-secondary text-muted-foreground";
+   const tone=percent>=70?"bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]":
+    percent>=40?"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-primary-text)]":"bg-surface-secondary text-muted-foreground";
    return <span className="inline-flex flex-wrap items-center gap-1.5">
     <span className={"rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums "+tone}>{percent}%</span>
     {row.partialScore!==null&&row.partialScore!==undefined?

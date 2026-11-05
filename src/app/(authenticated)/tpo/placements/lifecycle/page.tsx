@@ -22,6 +22,7 @@ import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {TpoLifecycleRefreshAction,TpoLifecycleStaleSnapshot} from "@/components/placements/tpo-lifecycle-stale-snapshot";
+import { Table } from "@/components/ui/table";
 type Search = { request?:string|string[]; cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];tab?:string|string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];recruiterDriveMode?:string|string[];employmentType?:string|string[];jobTypeLabel?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -501,7 +502,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <div className="min-w-0 space-y-3">
          <div className="min-w-0 overflow-x-auto rounded-xl border border-border bg-surface" role="region"
           aria-label="Prototype drive operations table" data-testid="tpo.drives.prototype-list" tabIndex={0}>
-          <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+          <Table className="min-w-[860px]">
            <thead><tr className="bg-surface-secondary text-xs font-bold uppercase tracking-wide text-muted-foreground">
             <th scope="col" className="w-[27%] px-4 py-3">Drive</th>
             <th scope="col" className="w-[27%] px-4 py-3">Where it is</th>
@@ -548,7 +549,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
              <td className="px-4 py-3 align-top text-xs text-body">{job.createdBy??"College staff"}</td>
             </tr>;
            })}</tbody>
-          </table>
+          </Table>
          </div>
          <p className="text-xs leading-5 text-muted-foreground">
           Ordered and filtered through the same authorized lifecycle query. Counts are recorded application, round and offer facts, not inferred shortlist totals.
@@ -565,7 +566,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <p className="text-sm text-body">Select up to 25 drives shown on this page to export or act on those rows. Closing or cancelling requires a separate server-verified preview and confirmation.</p>
           <div className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)]" role="region"
             aria-label="Drives data table" tabIndex={0}>
-            <table className="w-full min-w-[1150px] border-collapse text-left text-sm">
+            <Table className="min-w-[1150px]">
               <caption className="sr-only">Drives in the selected status tab. Scroll horizontally for all columns and drive actions.</caption>
               <thead className="bg-[var(--lms-neutral-50)] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
                 <tr className="border-b border-[var(--lms-canvas-border)]">
@@ -658,7 +659,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 </td>
               </tr>)}
               </tbody>
-            </table>
+            </Table>
           </div>
           <div className="flex flex-wrap items-start gap-3">
           <Button variant="secondary" type="submit" className="justify-self-start">

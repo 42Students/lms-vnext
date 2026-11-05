@@ -60,11 +60,11 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
     if(!rows.length)return null;
     const shown=expanded[category]?rows:rows.slice(0,3);
     return <section key={category} aria-label={categoryLabels[category]}
-      className="min-w-0 rounded-[8px] border border-[#fff1b8] border-l-4 border-l-[#faad14] bg-[#fffbe6] p-3">
-      <h3 className="flex items-center gap-2 text-sm font-semibold text-[#8d6300]">
+      className="min-w-0 rounded-[8px] border border-[color:var(--lms-gold-subtle)] border-l-4 border-l-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] p-3">
+      <h3 className="flex items-center gap-2 text-sm font-semibold text-[color:var(--lms-gold-accent)]">
        <AttentionGlyph/>{categoryLabels[category]} ({rows.length})
       </h3>
-      <ul className="mt-3 divide-y divide-[#e6c35c]">
+      <ul className="mt-3 divide-y divide-[color:var(--lms-icon-amber)]">
        {shown.map(row=><li key={row.jobId}
         className="flex min-w-0 flex-col justify-between gap-3 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-start">
         <div className="min-w-0 flex-1">
@@ -90,11 +90,11 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
         </Link>
        </li>)}
       </ul>
-      {rows.length>3?<button type="button" aria-expanded={Boolean(expanded[category])}
+      {rows.length>3?<Button variant="bare" type="button" aria-expanded={Boolean(expanded[category])}
         onClick={()=>setExpanded(current=>({...current,[category]:!current[category]}))}
         className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-link underline md:min-h-9">
         {expanded[category]?"Show less":"+"+(rows.length-3)+" more"}
-      </button>:null}
+      </Button>:null}
     </section>;
    })}
    {!data.hasOfferLetterEvidence?<p className="text-xs text-muted-foreground">
@@ -128,12 +128,12 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
       const href="/college/placements/jobs/"+encodeURIComponent(job.id)+
         "/overview?returnTo=%2Fcollege%2Fplacements";
       return <article key={job.id}
-        className="group relative min-h-[152px] min-w-0 rounded-[13px] border border-[#e5e9f0] bg-surface p-4 transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md focus-within:border-primary focus-within:shadow-md">
+        className="group relative min-h-[152px] min-w-0 rounded-[12px] border border-[color:var(--lms-border)] bg-surface p-4 transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md focus-within:border-primary focus-within:shadow-md">
         <Link href={href} aria-label={"Open drive overview: "+job.title}
-          className="absolute inset-0 rounded-[13px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
+          className="absolute inset-0 rounded-[12px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
         <div className="pointer-events-none relative flex min-w-0 gap-3">
           <span aria-label={job.companyName+" avatar"}
-            className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-[#e6f6f8] text-sm font-bold text-[var(--lms-primary-text)]">
+            className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-[color:var(--lms-primary-subtle)] text-sm font-bold text-[var(--lms-primary-text)]">
             {job.companyName.trim().slice(0,2).toUpperCase()||"CO"}
           </span>
           <div className="min-w-0 flex-1">
@@ -142,12 +142,12 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
           </div>
           {job.attention>0?<span title={job.attention+" attention item(s)"}
             aria-label={job.attention+" attention item(s) need action"}
-            className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-[#fff1b8] text-xs font-bold text-[#ad6800]">
+            className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-[color:var(--lms-gold-subtle)] text-xs font-bold text-[color:var(--lms-gold-accent)]">
             {job.attention}
           </span>:null}
         </div>
         <div className="pointer-events-none relative mt-4 flex flex-wrap items-center gap-2 text-xs">
-          {job.applicants>0?<span className="rounded border border-[#91caff] bg-[#e6f4ff] px-2 py-1 font-semibold text-[#0958d9]">
+          {job.applicants>0?<span className="rounded border border-[color:var(--lms-border-strong)] bg-[color:var(--lms-info-blue-surface)] px-2 py-1 font-semibold text-[color:var(--lms-info-blue)]">
             {job.applicants} applicants
           </span>:<span className="text-muted-foreground">0 applicants</span>}
           <span className="inline-flex items-center gap-1 text-muted-foreground">

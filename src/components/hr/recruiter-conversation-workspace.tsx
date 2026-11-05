@@ -4,6 +4,7 @@ import {RecruiterConversationReplyForm} from "./recruiter-conversation-reply-for
 import {RecruiterConversationReadControl} from "./recruiter-conversation-read-control";
 import {RecruiterConversationLiveRefresh} from "./recruiter-conversation-live-refresh";
 import type {readRecruiterThreadMessages} from "@/modules/placements/tpo-messaging-service";
+import { Button } from "@/components/ui/button";
 
 type InboxRow={id:string;jobId:string|null;jobTitle:string;unread:number;
  preview:{text:string}|null;lastMessageAt:Date|null;createdAt:Date};
@@ -66,7 +67,7 @@ export function RecruiterConversationWorkspace({
      <Input id="recruiter-message-search" name="q" type="search"
       defaultValue={q} maxLength={120} placeholder="Search by drive or message"/>
      <div className="flex justify-between gap-3 text-xs">
-      <button type="submit" className="min-h-9 font-semibold text-primary-text underline">Search</button>
+      <Button variant="bare" type="submit" className="min-h-9 font-semibold text-primary-text underline">Search</Button>
       {q?<Link href={base} className="inline-flex min-h-9 items-center text-primary-text underline">Clear</Link>:null}
      </div>
     </form>
@@ -131,9 +132,9 @@ export function RecruiterConversationWorkspace({
     "Start a general conversation with the placement cell, or open a drive to discuss its hiring process."}</p>
      {!q&&!generalPreviewUnavailable?<form method="post" action="/api/placements/recruiter/conversations/open">
        <input type="hidden" name="collegeId" value={collegeId}/>
-       <button type="submit" className="inline-flex min-h-11 items-center rounded-lg border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+       <Button variant="bare" type="submit" className="inline-flex min-h-11 items-center rounded-lg border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
         Open general conversation
-       </button>
+       </Button>
      </form>:<Link href={base} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear search</Link>}
     </div>}
    </section>

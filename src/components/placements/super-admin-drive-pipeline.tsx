@@ -61,7 +61,7 @@ export function SuperAdminDrivePipeline({rows,attention=[],jobId}: {
         <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{stage.label}</p>
         <p className={"mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums " +
           (stage.key==="applied"?"text-[var(--lms-primary)]":
-            stage.key==="hired"?"text-[#3f8600]":"text-[var(--lms-heading)]")}>{stage.count}</p>
+            stage.key==="hired"?"text-[color:var(--lms-success-strong)]":"text-[var(--lms-heading)]")}>{stage.count}</p>
       </div>)}
     </div>
     <p className="sr-only">

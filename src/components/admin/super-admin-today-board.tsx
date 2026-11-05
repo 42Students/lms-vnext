@@ -29,8 +29,8 @@ function CheckIcon(){return <svg aria-hidden="true" width={16} height={16}
  <path d="m8 12 3 3 5-6"/></svg>;}
 function AttentionCard({item,loading,failed}:{item:Metric;loading:boolean;failed:boolean}){
  const clear=!loading&&!failed&&item.count===0;
- const tone=failed?"#b42318":clear?"#237804":item.tone==="info"?"#1677ff":
-  item.tone==="danger"?"#cf1322":"#d48806";
+ const tone=failed?"var(--lms-error-text)":clear?"var(--lms-success-strong)":item.tone==="info"?"var(--lms-info-blue)":
+  item.tone==="danger"?"var(--lms-error-text)":"var(--lms-icon-amber)";
  return <article aria-busy={loading} className="min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-border bg-surface shadow-none"
   style={{borderTop:"3px solid "+tone}}>
   <div className="flex min-w-0 items-center justify-between gap-2 border-b border-border px-4 py-3">

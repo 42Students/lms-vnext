@@ -83,43 +83,43 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
  const description=display?.introductionText?.trim()||course.courseDescription?.trim()||null;
  return <div className="grid min-w-0 items-start gap-[18px] xl:grid-cols-[minmax(0,1fr)_307px]">
   <section aria-label="Needs you" className="faculty-proto-task-list min-w-0">
-   <h2 className="border-b border-[#e5ebf2] px-5 py-4 text-xs font-bold uppercase tracking-wide text-[#60718b]">
+   <h2 className="border-b border-[color:var(--lms-border)] px-5 py-4 text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">
     Needs you · <span>{course.sectionName}</span>
    </h2>
    {priorities.map(item=><article key={item.id}
-     className="flex min-h-[67px] flex-wrap items-center justify-between gap-4 border-b border-[#edf1f5] px-5 py-4 last:border-b-0">
+     className="flex min-h-[67px] flex-wrap items-center justify-between gap-4 border-b border-[color:var(--lms-neutral-100)] px-5 py-4 last:border-b-0">
     <div className="min-w-0 flex-1">
-     <h3 className="text-sm font-bold leading-5 text-[#1d293f]">{item.title}</h3>
+     <h3 className="text-sm font-bold leading-5 text-[color:var(--lms-heading)]">{item.title}</h3>
      <p className="faculty-proto-subtitle">{item.detail}</p>
     </div>
     <Link className={(item.urgent||item.id==="attendance"?"faculty-proto-action":"faculty-proto-secondary")+" shrink-0"}
      href={item.href}>{item.action}</Link>
    </article>)}
-   {!signals?<p role="status" className="px-5 py-3 text-xs text-[#60718b]">
+   {!signals?<p role="status" className="px-5 py-3 text-xs text-[color:var(--lms-text-muted)]">
     The latest class indicators are unavailable. Open the relevant section tool to retry.
    </p>:null}
   </section>
   <aside aria-label="Course summary" className="grid min-w-0 gap-4">
-   <section className="rounded-xl border border-[#e5ebf2] p-5">
+   <section className="rounded-xl border border-[color:var(--lms-border)] p-5">
     <div className="flex items-center justify-between gap-2">
-     <h2 className="text-xs font-bold uppercase tracking-wide text-[#60718b]">About this course</h2>
+     <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">About this course</h2>
      <Link href={base+"/home?advanced=1#course-details"}
       className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 text-xs">Details</Link>
     </div>
-    <h3 className="mt-3 text-sm font-bold text-[#1d293f]">{course.courseName}</h3>
+    <h3 className="mt-3 text-sm font-bold text-[color:var(--lms-heading)]">{course.courseName}</h3>
     <p className="faculty-proto-subtitle line-clamp-3">{description??"No course description has been provided."}</p>
     <p className="faculty-proto-subtitle mt-2">{summary.lessons} lessons · {course.credits===null?"Credits not set":course.credits+" credits"} · {course.academicPeriodName}</p>
    </section>
-   <section className="rounded-xl border border-[#e5ebf2] px-5 py-4">
-    <h2 className="text-xs font-bold uppercase tracking-wide text-[#60718b]">How the class is doing</h2>
-    <dl className="mt-2 divide-y divide-[#edf1f5]">
+   <section className="rounded-xl border border-[color:var(--lms-border)] px-5 py-4">
+    <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">How the class is doing</h2>
+    <dl className="mt-2 divide-y divide-[color:var(--lms-neutral-100)]">
      {rows.map(row=><div key={row.label} className="flex items-center justify-between gap-3 py-3 text-sm">
-      <dt className="min-w-0 text-[#1d293f]">{row.label}</dt>
-      <dd><Link className="font-bold text-[#243149] hover:text-[#078191] hover:underline"
+      <dt className="min-w-0 text-[color:var(--lms-heading)]">{row.label}</dt>
+      <dd><Link className="font-bold text-[color:var(--lms-text-body)] hover:text-[color:var(--lms-button-primary)] hover:underline"
        href={row.href}>{row.value}</Link></dd>
      </div>)}
     </dl>
-    <p className="mt-2 text-xs leading-5 text-[#60718b]">
+    <p className="mt-2 text-xs leading-5 text-[color:var(--lms-text-muted)]">
      Progress measures published videos, assignments and quizzes, using the current attempt where relevant. Quiz averages use real submitted scores; unavailable values stay unknown.
     </p>
    </section>

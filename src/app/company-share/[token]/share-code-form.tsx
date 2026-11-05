@@ -1,6 +1,7 @@
 "use client";
 import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 /** Six visible positions, one real accessible text input. Paste/autofill stays
  * atomic instead of fighting six different input focus/clipboard states. */
@@ -22,7 +23,7 @@ export function ShareCodeForm({action}:{action:string}){
       "group-focus-within:border-primary"
      }>{code[index]??"\u00a0"}</span>)}
    </div>
-   <input id="company-share-code" ref={input} name="code" type="text"
+   <Input id="company-share-code" ref={input} name="code" type="text"
     inputMode="text" autoComplete="one-time-code" spellCheck={false}
     autoCapitalize="characters" aria-describedby="company-share-code-help"
     pattern="[A-Za-z0-9]{6}" required minLength={6} maxLength={6}

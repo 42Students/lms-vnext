@@ -89,7 +89,7 @@ export default async function CollegeActivityPage({
       actions={<Link href="/college/projects/audit"
         className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">View project activity</Link>} />
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3" aria-label="Activity controls">
-      <nav aria-label="Activity categories" className="flex min-w-0 flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-[#f0f3f4] p-1">
+      <nav aria-label="Activity categories" className="flex min-w-0 flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-[color:var(--lms-neutral-100)] p-1">
         {([
           ["IMPORTANT","Important"],["ACADEMIC_SETUP","Academic setup"],
           ["PEOPLE_ACCESS","People & access"],["TEACHING","Teaching"],
@@ -100,13 +100,13 @@ export default async function CollegeActivityPage({
             href={collegeActivityHref({...data.query,loaded:1,category:key==="IMPORTANT"||key==="EVERYTHING"?undefined:key,
               view:key==="EVERYTHING"?"EVERYTHING":"IMPORTANT",module:undefined,importance:undefined})}
             className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
-             (active?"bg-white text-[#0b6772] shadow-sm":"text-[var(--lms-body-text)] hover:bg-white/70")}>
+             (active?"bg-white text-[color:var(--lms-button-primary-hover)] shadow-sm":"text-[var(--lms-body-text)] hover:bg-white/70")}>
             {label}
           </Link>;
         })}
       </nav>
       <div className="flex min-w-0 flex-wrap items-center gap-2">
-        <nav aria-label="Activity date ranges" className="flex flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-[#f0f3f4] p-1">
+        <nav aria-label="Activity date ranges" className="flex flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-[color:var(--lms-neutral-100)] p-1">
           {([
             ["Today",collegeActivityTodayHref(data.query,now)],
             ["7 days",collegeActivityRecentHref(data.query,7,now)],
@@ -115,7 +115,7 @@ export default async function CollegeActivityPage({
           ] as const).map(([label,href])=><Link key={label} href={href}
             aria-current={collegeActivityHref(data.query)===href?"page":undefined}
             className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
-              (collegeActivityHref(data.query)===href?"bg-white text-[#0b6772] shadow-sm":"text-[var(--lms-body-text)] hover:bg-white/70")}>
+              (collegeActivityHref(data.query)===href?"bg-white text-[color:var(--lms-button-primary-hover)] shadow-sm":"text-[var(--lms-body-text)] hover:bg-white/70")}>
             {label}</Link>)}
         </nav>
         <CollegeActivityRefresh />

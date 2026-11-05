@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import {
   afterCollegeOptions,AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES, type AfterCollegeOutcome,
 } from "@/modules/placements/tpo-after-college-model";
+import { Textarea } from "@/components/ui/textarea";
 
 type AfterCollegeValue={outcome:AfterCollegeOutcome;outcomeLabel:string|null;outcomeDetail:string|null};
 const equal=(a:AfterCollegeValue,b:AfterCollegeValue)=>
@@ -83,7 +84,7 @@ export function TpoAfterCollegeEditor({
    </label>
    <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold">
     Destination detail (optional, staff only)
-    <textarea value={draft.outcomeDetail??""} maxLength={200} rows={2}
+    <Textarea value={draft.outcomeDetail??""} maxLength={200} rows={2}
      disabled={!available||pending} placeholder="Course, exam or destination details"
      onChange={event=>setDraft({...draft,outcomeDetail:event.target.value||null})}
      className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm text-foreground"/>

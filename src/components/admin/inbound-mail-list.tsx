@@ -10,6 +10,7 @@ import {safeInboundPreview,inboundMailRoutingStatusLabels,type InboundMailRoutin
  from "@/modules/inbound-mail/message-model";
 import {createInboundMailTriageGate} from "@/modules/inbound-mail/triage-submit-model";
 import {inboundMailStatusActions,type InboundMailStatus} from "@/modules/inbound-mail/triage-transition-model";
+import { Table } from "@/components/ui/table";
 
 /** Inbox list data is a preview, never a full-message permission grant.
  * The full plain-text body is fetched only after opening the global-SA drawer. */
@@ -136,7 +137,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
      Clear
     </Link>
    </div>:<div className="min-w-0 overflow-x-auto border-y border-border">
-    <table className="w-full min-w-[680px] border-collapse text-left text-sm">
+    <Table className="min-w-[680px]">
      <caption className="sr-only">Inbound messages; select a row to read the full email</caption>
      <thead><tr className="bg-[var(--lms-neutral-50)] text-xs text-muted-foreground">
       <th className="border-b border-border px-3 py-3 font-semibold" scope="col">Received</th>
@@ -183,7 +184,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
         </td>
        </tr>)}
      </tbody>
-    </table>
+    </Table>
    </div>}
   {selected?<Drawer open side="right" className="md:!w-[min(640px,100vw)]"
     onOpenChange={opened=>{if(!opened)close();}}

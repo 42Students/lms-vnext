@@ -8,6 +8,7 @@ import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {TPO_SEASON_CREATE_REVIEW_COPY} from "@/modules/placements/tpo-season-write-model";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Season = {
   id: string;
@@ -120,7 +121,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
          <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Dates</dt><dd className="break-words">{form.startDate} – {form.endDate}</dd></div>
         </dl>
         {!edit ? <label className="mt-3 flex items-start gap-2 text-sm text-body">
-          <input type="checkbox" checked={acknowledged} disabled={busy}
+          <Checkbox checked={acknowledged} disabled={busy}
             onChange={event=>{setAcknowledged(event.currentTarget.checked);setError(null);}}
             className="mt-1 size-4 shrink-0" />
           <span>{TPO_SEASON_CREATE_REVIEW_COPY.confirm}</span>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Table } from "@/components/ui/table";
 
 type CampaignReceipt={leadId:string;name:string;status:string};
 type CampaignStory={
@@ -54,9 +55,9 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
     Authored by {campaign.senderName} · draft recorded {campaignDay(campaign.createdAt)}.
     The draft timestamp is not evidence of a send time.
    </p>
-   <div className="mt-5 space-y-6 border-l-2 border-[#dce7ee] pl-5">
+   <div className="mt-5 space-y-6 border-l-2 border-[color:var(--lms-border)] pl-5">
     <section aria-label="What you sent">
-     <h3 className="text-xs font-bold uppercase tracking-wide text-[#52687b]">What you sent</h3>
+     <h3 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">What you sent</h3>
      <p className="mt-2 text-sm text-body">Subject: <strong>{campaign.subject}</strong></p>
      <details className="mt-2 rounded-lg border border-border px-3 py-2">
       <summary className="min-h-8 cursor-pointer text-sm font-semibold text-link">See the email</summary>
@@ -64,20 +65,20 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      </details>
     </section>
     <section aria-label="What happened">
-     <h3 className="text-xs font-bold uppercase tracking-wide text-[#52687b]">What happened</h3>
+     <h3 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">What happened</h3>
      <p className="mt-2 text-sm text-foreground">
       {campaign.providerAccepted} of {campaign.totalRecipients} intended recipients
       have a persisted provider-acceptance receipt.
      </p>
      <div className="mt-3 grid gap-3 sm:grid-cols-3">
       {([
-       ["Provider accepted",campaign.providerAccepted,"bg-[#087f8b]"],
+       ["Provider accepted",campaign.providerAccepted,"bg-[color:var(--lms-button-primary)]"],
        ["Failed",campaign.failed,"bg-red-500"],
        ["Skipped",campaign.skipped,"bg-slate-500"],
       ] as const).map(([label,count,tone])=>
        <div key={label} className="min-w-0">
         <p className="text-lg font-bold text-foreground">{count}</p>
-        <div aria-hidden="true" className="mt-1 h-1.5 overflow-hidden rounded-full bg-[#e8edf2]">
+        <div aria-hidden="true" className="mt-1 h-1.5 overflow-hidden rounded-full bg-[color:var(--lms-border)]">
          <div className={"h-full rounded-full "+tone}
           style={{width:(campaign.totalRecipients?Math.min(100,100*count/campaign.totalRecipients):0)+"%"}}/>
         </div>
@@ -94,7 +95,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      </p>
     </section>
     <section aria-label="What to do now">
-     <h3 className="text-xs font-bold uppercase tracking-wide text-[#52687b]">What to do now</h3>
+     <h3 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">What to do now</h3>
      {campaign.failed>0?<p className="mt-2 text-sm text-body">
       {campaign.failed} recorded failed {campaign.failed===1?"attempt needs":"attempts need"}
       investigation. Review recipient status before preparing any new outreach.
@@ -115,13 +116,13 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      </div>
     </section>
     <section aria-label="Everyone it went to">
-     <h3 className="text-xs font-bold uppercase tracking-wide text-[#52687b]">
+     <h3 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">
       Everyone it went to · {campaign.totalRecipients} intended
      </h3>
      {!recipientsReady?<p role="status" className="mt-2 text-sm text-body">
       Individual recipient statuses are unavailable. No one is assumed delivered or skipped.
      </p>:<div className="mt-2 overflow-x-auto">
-      <table className="w-full min-w-[420px] text-left text-[13px]">
+      <Table className="min-w-[420px]">
        <thead className="border-y border-border bg-surface-secondary text-xs text-body">
         <tr><th className="p-2">Recruiter</th><th className="p-2">Recorded receipt</th><th className="p-2">Next step</th></tr>
        </thead>
@@ -133,7 +134,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
            className="font-semibold text-link underline">Open recruiter</Link></td>
         </tr>)}
        </tbody>
-      </table>
+      </Table>
       {recipients.length>25||hasMoreRecipients?<p className="py-2 text-xs text-body">
        Showing the first 25 receipt rows in this preview. Use the detailed recipient ledger below for the rest.
       </p>:null}

@@ -28,7 +28,7 @@ export function TpoReportPresentation(){
   </FilterChip>
   {error?<InlineNotice tone="error" message={error}/>:null}
   <style>{`
-   [data-tpo-presentation-report]:fullscreen { background: #ffffff; color: var(--lms-body-text); min-height: 100vh; overflow-y: auto; padding: var(--lms-canvas-padding, 24px); }
+   [data-tpo-presentation-report]:fullscreen { background: var(--lms-white); color: var(--lms-body-text); min-height: 100vh; overflow-y: auto; padding: var(--lms-canvas-padding, 24px); }
   `}</style>
  </div>;
 }

@@ -35,9 +35,9 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>
    No drives currently flagged in this view.
   </section>;
- return <section aria-label="Needs attention" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[#faad14] border-l-4 border-l-[#faad14] bg-[#fff1b8] px-4 py-3 shadow-[0_1px_4px_rgba(250,173,20,0.25)]">
-  <h2 className="flex items-center gap-2 text-[16px] font-semibold text-[#613400]">
-   <svg aria-hidden="true" className="size-4 text-[#ad6800]" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" fill="none"><path d="M10.3 3.8 1.8 18.5a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/><path d="M12 9v5m0 3v.2"/></svg>
+ return <section aria-label="Needs attention" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[color:var(--lms-icon-amber)] border-l-4 border-l-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)] px-4 py-3 shadow-[0_1px_4px_rgba(250,173,20,0.25)]">
+  <h2 className="flex items-center gap-2 text-[16px] font-semibold text-[color:var(--lms-warning-strong)]">
+   <svg aria-hidden="true" className="size-4 text-[color:var(--lms-gold-accent)]" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" fill="none"><path d="M10.3 3.8 1.8 18.5a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/><path d="M12 9v5m0 3v.2"/></svg>
    Needs attention ({total})
   </h2>
   <div className="mt-3 space-y-3">
@@ -46,7 +46,7 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
     const incomplete=category.sampleBasis==="learners"?category.affected>category.rows.length:
      category.distinctDrives>category.rows.length;
     return <div key={category.code} className="min-w-0 space-y-1">
-     <h3 className="text-[13px] font-semibold text-[#613400]">{category.label} ({category.affected})</h3>
+     <h3 className="text-[13px] font-semibold text-[color:var(--lms-warning-strong)]">{category.label} ({category.affected})</h3>
      <div className="space-y-1">{shown.map((item,index)=>{
        const params=new URLSearchParams();
        if(category.tab!==null)params.set("stage",category.tab);
@@ -62,9 +62,9 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
         (category.tab===null?"":"/applications?"+params.toString());
        return <Link key={item.jobId+"-"+index} href={href}
         aria-label={(item.learnerName?item.learnerName+", ":"")+item.jobTitle+", "+category.label+", "+item.count+" affected"}
-        className="flex min-h-11 md:min-h-[var(--lms-control-height)] min-w-0 items-center justify-between gap-3 rounded px-1 py-1 text-[13px] text-[#613400] hover:bg-[#ffe58f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ad6800]">
+        className="flex min-h-11 md:min-h-[var(--lms-control-height)] min-w-0 items-center justify-between gap-3 rounded px-1 py-1 text-[13px] text-[color:var(--lms-warning-strong)] hover:bg-[color:var(--lms-gold-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-gold-accent)]">
         <span className="min-w-0 truncate">{item.learnerName?<strong className="font-semibold">{item.learnerName} · </strong>:null}{item.companyName?item.companyName+" — ":""}{item.jobTitle}</span>
-        <span className="flex shrink-0 items-center gap-1 text-xs text-[#8c6a35]">{item.detail??item.count+" affected"}
+        <span className="flex shrink-0 items-center gap-1 text-xs text-[color:var(--lms-gold-accent)]">{item.detail??item.count+" affected"}
          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
         </span>
        </Link>;
@@ -73,12 +73,12 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
       onClick={()=>setExpanded(previous=>previous.includes(category.code)?previous.filter(x=>x!==category.code):[...previous,category.code])}>
       {expanded.includes(category.code)?"Show less":"+"+(category.rows.length-shown.length)+" more"}
      </Button>:null}
-     {incomplete?<div className="flex flex-wrap items-center gap-3 text-xs text-[#8c6a35]">
+     {incomplete?<div className="flex flex-wrap items-center gap-3 text-xs text-[color:var(--lms-gold-accent)]">
        <p role="status">{category.sampleBasis==="learners"?
          <>Showing top {shown.length} of {category.affected} affected candidate records across {category.distinctDrives} flagged drives.</>:
          <>Showing top {shown.length} of {category.distinctDrives} flagged drives ({category.affected} affected records across the category).</>}
         {" "}Open a drive to review all matching candidates.</p>
-       <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center font-semibold underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ad6800]">
+       <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center font-semibold underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-gold-accent)]">
         +{Math.max(0,(category.sampleBasis==="learners"?category.affected:category.distinctDrives)-shown.length)} more {category.sampleBasis==="learners"?"records":"drives"} — browse all drives
        </Link>
       </div>:null}

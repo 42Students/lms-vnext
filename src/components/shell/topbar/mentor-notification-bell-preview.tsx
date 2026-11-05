@@ -10,6 +10,7 @@ import {mentorUnifiedOpenReadRequest,type MentorUnifiedNotification}
 import {shellUnreadBadge} from "../shell-counts-model";
 import {BellIcon} from "./icons";
 import style from "./topbar.module.css";
+import { Button } from "@/components/ui/button";
 
 type PreviewResponse={items:MentorUnifiedNotification[];hasMore:boolean};
 /** The Mentor portal gets its own verified merged-source bell, not the generic
@@ -97,7 +98,7 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
  }
  const badge=shellUnreadBadge(unreadCount);
  return <div ref={root} className="relative shrink-0">
-  <button type="button" data-bell-trigger
+  <Button variant="bare" type="button" data-bell-trigger
    className={style.iconButton+" shrink-0"}
    aria-label={"Mentor notifications"+(unreadCount!==null?
      ", "+(partial?"at least ":"")+unreadCount+" unread":"")}
@@ -105,13 +106,13 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
    onClick={toggle}>
    <BellIcon/>
    {badge?<span className={style.badge} aria-hidden="true">{badge}</span>:null}
-  </button>
+  </Button>
   {open?<section role="dialog" aria-label="Recent Mentor notifications"
     className="absolute right-0 top-full z-50 mt-2 max-h-[75vh] w-[min(22rem,90vw)] overflow-y-auto rounded-xl border border-border bg-surface p-3 shadow-xl">
    <div className="mb-3 flex items-center justify-between gap-2">
     <h2 className="font-semibold">Recent notifications</h2>
-    <button type="button" className="text-sm underline"
-      onClick={()=>setOpen(false)}>Close</button>
+    <Button variant="bare" type="button" className="text-sm underline"
+      onClick={()=>setOpen(false)}>Close</Button>
    </div>
    {busy?<p role="status">Loading verified notifications…</p>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
@@ -145,9 +146,9 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
     })}
    </ol>
    <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-    <button type="button" className="text-xs underline"
+    <Button variant="bare" type="button" className="text-xs underline"
      disabled={working!==null||busy}
-     onClick={()=>setConfirmOpen(true)}>Mark all read</button>
+     onClick={()=>setConfirmOpen(true)}>Mark all read</Button>
     <Link href="/mentor/notifications" onClick={()=>setOpen(false)}
       className="text-sm font-semibold text-link underline">
       See all{hasMore?" notifications":" notifications"} →

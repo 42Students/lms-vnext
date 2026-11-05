@@ -70,7 +70,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
                <span aria-hidden="true">{logoFallback}</span>}
             </div>
             <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
-              <span className={job.status==="PUBLISHED"?(expired?"rounded-full bg-[#fff1f0] px-2 py-1 text-xs font-semibold text-[#cf1322]":"rounded-full bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text"):"rounded-full bg-surface-secondary px-2 py-1 text-xs font-semibold text-muted-foreground"}>
+              <span className={job.status==="PUBLISHED"?(expired?"rounded-full bg-[color:var(--lms-error-surface)] px-2 py-1 text-xs font-semibold text-[color:var(--lms-error-text)]":"rounded-full bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text"):"rounded-full bg-surface-secondary px-2 py-1 text-xs font-semibold text-muted-foreground"}>
                {job.status==="PUBLISHED"?(expired?"Expired":"Live"):job.status.toLowerCase().replace(/(^|\s)\S/g,s=>s.toUpperCase())}
               </span>
               {job.attentionCount!=null&&job.attentionCount>0?

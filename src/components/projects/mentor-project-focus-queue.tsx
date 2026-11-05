@@ -5,6 +5,7 @@ import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {mentorAttentionReceiptKey} from "@/modules/projects/mentor-attention-read-model";
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
+import { Button } from "@/components/ui/button";
 
 export function MentorProjectFocusQueue({items,initialLater}:{
  items:readonly MentorProjectAttention[];initialLater:readonly string[];
@@ -35,10 +36,10 @@ export function MentorProjectFocusQueue({items,initialLater}:{
   {actionable.map(item=><div key={mentorAttentionReceiptKey(item)}>
    <strong>{item.title}</strong><p>{item.description}</p>
    <Link href={item.href}>Open related item →</Link>
-   <button type="button" disabled={busy!==null}
+   <Button variant="secondary" type="button" disabled={busy!==null}
      onClick={()=>void postpone(item)}>
      {busy===mentorAttentionReceiptKey(item)?"Saving…":"Later"}
-   </button>
+   </Button>
   </div>)}
   {!actionable.length?<p>No current recorded attention remains for this project.</p>:null}
  </div>;

@@ -248,7 +248,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   const shell = (children: React.ReactNode) => (
     <main className={authStyles["page"]}>
-      <div className="flex min-h-dvh min-w-0 items-center justify-center bg-[#f5f7f9] px-4 py-8 md:py-12">
+      <div className="flex min-h-dvh min-w-0 items-center justify-center bg-[color:var(--lms-neutral-50)] px-4 py-8 md:py-12">
       <Card as="section" className="w-full max-w-[440px]">
         {children}
       </Card>

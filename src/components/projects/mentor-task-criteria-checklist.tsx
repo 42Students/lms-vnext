@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {mentorCriteriaLines,toggleMentorCriterion} from
  "@/modules/projects/mentor-task-criteria-model";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function MentorTaskCriteriaChecklist({projectId,task,editable}:{
  projectId:string;editable:boolean;
@@ -37,7 +38,7 @@ export function MentorTaskCriteriaChecklist({projectId,task,editable}:{
   {lines.length?<ul className="space-y-2">
    {lines.map(line=><li key={line.index}>
      {line.checkable?<label className="flex items-start gap-2">
-       <input type="checkbox" checked={line.checked}
+       <Checkbox checked={line.checked}
          disabled={!editable||busy}
          onChange={()=>void toggle(line.index)}
          aria-label={"Criterion "+(line.index+1)+": "+line.text}

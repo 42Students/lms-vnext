@@ -776,11 +776,11 @@ export function RecruiterLeadsWorkspace({
 
   const needsPanel=(
           <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
-            <button type="button" aria-expanded={needsExpanded} aria-controls="engage-needs-content"
+            <Button variant="bare" type="button" aria-expanded={needsExpanded} aria-controls="engage-needs-content"
               onClick={()=>setNeedsExpanded(open=>!open)}
               className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               Needs doing <span aria-hidden="true">{needsExpanded?"▴":"▾"}</span>
-            </button>
+            </Button>
             <div id="engage-needs-content" hidden={!needsExpanded} className="space-y-2">
             <div className="flex min-w-0 flex-wrap gap-2">
               {([
@@ -1242,8 +1242,8 @@ export function RecruiterLeadsWorkspace({
              onDismiss={()=>setFocusedRecruiterId("")}/>:
              <aside className="min-w-0 rounded-xl border border-border bg-surface p-4 text-sm text-body">
               <p>Select a recruiter in the roster to see the next action.</p>
-              <button type="button" className="mt-2 min-h-11 font-semibold text-link underline"
-               onClick={()=>setFocusedRecruiterId(null)}>Show first recruiter</button>
+              <Button variant="bare" type="button" className="mt-2 min-h-11 font-semibold text-link underline"
+               onClick={()=>setFocusedRecruiterId(null)}>Show first recruiter</Button>
              </aside>}
             </div>
           ) : (

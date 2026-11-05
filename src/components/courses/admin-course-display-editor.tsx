@@ -323,7 +323,7 @@ export function AdminCourseDisplayEditor({
           <Input value={officialCode} maxLength={40} disabled={pending} onChange={e=>setOfficialCode(e.target.value)}/>
         </label>
         <label className="grid gap-2 text-sm font-semibold">Course color
-          <Input value={cardColor} maxLength={16} placeholder="#1677FF" disabled={pending} onChange={e=>setCardColor(e.target.value)}/>
+          <Input value={cardColor} maxLength={16} placeholder="#1677FF" /* ui-consistency-allow-hex */ disabled={pending} onChange={e=>setCardColor(e.target.value)}/>
         </label>
         <label className="grid gap-2 text-sm font-semibold md:col-span-2">Course description
           <Textarea value={description} maxLength={5000} rows={3} disabled={pending} onChange={e=>setDescription(e.target.value)}/>
@@ -406,7 +406,7 @@ export function AdminCourseDisplayEditor({
             </p>
             <label className="grid min-w-0 gap-2 text-sm font-semibold">
               Upload image
-              <input type="file" accept="image/jpeg,image/png,image/webp"
+              <Input type="file" accept="image/jpeg,image/png,image/webp"
                 className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
                 disabled={pending||imageBusy}
                 onChange={event=>{setImageFile(event.currentTarget.files?.[0]??null);

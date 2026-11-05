@@ -32,7 +32,7 @@ export default async function RecruiterDriveProposalHistory({
    description="Private placement-cell discussion messages, not submitted drive approval requests."/>
   <nav aria-label="Proposal actions" className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:items-center">
    <PageBackLink href="/hr/drives" label="Back to Drives"/>
-   <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">Draft another proposal</Link>
+   <Link href="/hr/drives/new" className="inline-flex min-h-11 items-center text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)] min-[768px]:min-h-9">Draft another proposal</Link>
   </nav>
   {data.status==="CHOOSE_COLLEGE"?<section className="space-y-3">
    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Choose a college</h2>

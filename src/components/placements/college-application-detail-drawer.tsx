@@ -10,6 +10,7 @@ import {useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {CollegeInterviewAppointments} from "./college-interview-appointments";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
+import { Checkbox } from "@/components/ui/checkbox";
 type Event={from:string|null;to:string;reason:string|null;when:string;actorName?:string|null};
 type CandidateInterviews={
  rounds:Array<{id:string;name:string;status:string;kind:string}>;
@@ -296,7 +297,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
     {loading?<p role="status" className="py-4 text-sm">Loading application details…</p>:null}
     {error?<p ref={errorRef} tabIndex={-1} role="alert" className="my-4 text-sm text-error">{error}</p>:null}
     {detail?<div className="mt-4 min-w-0 space-y-4">
-      <div className="min-w-0 rounded-[8px] border border-[#f0f0f0] px-4 pb-4 pt-2">
+      <div className="min-w-0 rounded-[8px] border border-[color:var(--lms-neutral-100)] px-4 pb-4 pt-2">
        <section className="border-b border-border py-3" aria-labelledby="application-candidate-heading">
         <h3 id="application-candidate-heading" className="text-base font-semibold text-heading">Candidate</h3>
         <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-[11rem_minmax(0,1fr)] [&>dd]:break-words [&>dd]:[overflow-wrap:anywhere]">
@@ -609,7 +610,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           onChange={event=>setAssessmentUrl(event.target.value)}/>
       </label>
       <label className="flex min-h-11 items-center gap-2 text-sm">
-        <input type="checkbox" checked={saveAssessmentToJob}
+        <Checkbox checked={saveAssessmentToJob}
           onChange={event=>setSaveAssessmentToJob(event.target.checked)}
           disabled={movingToAssessment||!assessmentUrl.trim()}
           className="size-4 accent-[var(--lms-primary)]"/>

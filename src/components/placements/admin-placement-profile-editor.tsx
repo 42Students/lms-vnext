@@ -8,6 +8,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Alert} from "@/components/ui/alert";
 import {apiFetch} from "@/lib/api-fetch";
+import { Table } from "@/components/ui/table";
 
 type Skill={id:string;name:string;proficiency:""|"Beginner"|"Intermediate"|"Advanced"|"Expert"};
 type Preferences={
@@ -61,7 +62,7 @@ export function AdminPlacementProfileEditor({membershipId,initialSkills,initialP
   <details className="border-b border-border pb-3" open>
    <summary className="cursor-pointer py-2 text-sm font-semibold">Skills ({skills.length})</summary>
    <div className="mt-2 overflow-x-auto">
-    <table className="w-full min-w-[360px] text-left text-sm">
+    <Table className="min-w-[360px]">
      <thead><tr className="border-b border-border">
       <th scope="col" className="p-2">Skill</th><th scope="col" className="p-2">Proficiency</th><th scope="col" className="p-2">Actions</th>
      </tr></thead>
@@ -74,7 +75,7 @@ export function AdminPlacementProfileEditor({membershipId,initialSkills,initialP
         onClick={()=>setRemove(index)}>Remove</Button>
       </div></td>
      </tr>)}</tbody>
-    </table>
+    </Table>
     {skills.length===0?<p className="py-3 text-sm text-muted-foreground">No skills recorded for this learner.</p>:null}
    </div>
    <Button type="button" variant="secondary" className="mt-3"

@@ -17,7 +17,7 @@
  */
 
 /* TABLE BASE
- * Legacy: components___common.scss:700-709 (white cells, #e5e9f0 hairlines);
+ * Legacy: components___common.scss:700-709 (white cells, var(--lms-border) hairlines);
  *         components___variables.scss:24-32 (neutral ink/surfaces);
  *         globals.css:550-572 (existing AntD-derived 13px data-table metrics).
  * Row heights and cell padding are deliberately left to the existing page/table
@@ -35,7 +35,7 @@
 }
 
 /* Legacy: components___common.scss:831-837 (muted column headings),
- * components___variables.scss:28,30,32 (#a9a7ae, #e5e9f0, #fafbfc).
+ * components___variables.scss:28,30,32 (var(--lms-neutral-400), var(--lms-border), var(--lms-neutral-50)).
  */
 /* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -97,7 +97,7 @@
 }
 
 /* FORM FIELDS
- * Legacy: components___form.scss:117-128 (.ln-in2: #fbfcfd, radius 10,
+ * Legacy: components___form.scss:117-128 (.ln-in2: var(--lms-neutral-50), radius 10,
  * 14px/400, tracking 0.2px) and components___variables.scss:30,46
  * (neutral separator and field surface). Retain each field's native sizing,
  * padding and appearance. Range, file, check/radio, color and hidden controls
@@ -154,7 +154,7 @@
 
 /* FORM INTERACTIONS
  * Legacy: components___form.scss:130-143 (2px teal 15% focus halo,
- * invalid #ef4444 border and 6% fill, invalid focus 20% red halo);
+ * invalid var(--lms-error) border and 6% fill, invalid focus 20% red halo);
  * components___variables.scss:10,71 and components___accessibility.scss:13-23.
  * This preserves keyboard focus outlines supplied by shared components.
  */
@@ -182,8 +182,8 @@
 }
 
 /* READ-ONLY / DISABLED FIELDS
- * Legacy: components___variables.scss:27-32 (muted ink #6b7280,
- * disabled labels #a9a7ae and off-white neutral-50 #fafbfc);
+ * Legacy: components___variables.scss:27-32 (muted ink var(--lms-text-muted),
+ * disabled labels var(--lms-neutral-400) and off-white neutral-50 var(--lms-neutral-50));
  * components___form.scss:117-143 (field error/focus surface).
  * Do not change native disabled state or pointer/keyboard handling.
  */
@@ -208,7 +208,7 @@
 /* PLAIN NATIVE BUTTONS (shared Button, tabs, pressed toggles, menus and
  * opt-out subtrees are excluded).
  * Measured legacy: old-lms-shell.css:56-63 and old-lms-shell-spec.md:22-24:
- * #0a7c88, white, 9px, 14px/650, 36px shell height (height untouched here).
+ * var(--lms-button-primary), white, 9px, 14px/650, 36px shell height (height untouched here).
  * Source states: components___antddesign.scss:153-169; 150ms ease.
  */
 /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
@@ -216,7 +216,7 @@
   :where(button:not([data-slot="button"]):not([role="tab"]):not([aria-pressed]):not([aria-expanded]):not([role="menuitem"]):not([role="option"]):not([role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-button-primary) !important;
   border-color: var(--lms-button-primary) !important;
-  border-radius: 9px !important;
+  border-radius: 8px !important;
   color: var(--lms-on-primary) !important;
   font-family: inherit !important;
   font-size: 14px !important;
@@ -229,7 +229,7 @@
 }
 
 /* Legacy primary hover: components___antddesign.scss:160-163;
- * old-lms-shell-spec.md:23 and globals.css:18 (measured darker #086873).
+ * old-lms-shell-spec.md:23 and globals.css:18 (measured darker var(--lms-button-primary-hover)).
  */
 /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -239,8 +239,8 @@
   color: var(--lms-on-primary) !important;
 }
 
-/* Legacy button disabled: components___antddesign.scss:176-181 (#e5e9f0,
- * #6b7280); legacy focus: components___antddesign.scss:171-174
+/* Legacy button disabled: components___antddesign.scss:176-181 (var(--lms-border),
+ * var(--lms-text-muted)); legacy focus: components___antddesign.scss:171-174
  * (3px teal 35% / 2px offset). Use halo paint, not geometric outline offsets.
  */
 /* Legacy refs: components___antddesign.scss:153-189; old-lms-shell-spec.md:23-24 */
@@ -267,7 +267,7 @@
 
 /* TYPOGRAPHY
  * Running-old-LMS measurement: old-lms-shell-spec.md:26-28 (Inter;
- * h1 30px/600/#172033), echoed by old-lms-pages.md:6-8.
+ * h1 30px/600/var(--lms-heading)), echoed by old-lms-pages.md:6-8.
  * Legacy tokens: components___variables.scss:176-190 (weights and type scale).
  * Font only; existing page spacing, line boxes and structure remain untouched.
  */
@@ -415,7 +415,7 @@
   text-decoration-line: underline !important;
 }
 /* Legacy: components___accessibility.scss:19-23 (brand keyboard focus);
- * components___variables.scss:12 (#1a95a1 accessible focus teal).
+ * components___variables.scss:12 (var(--lms-primary-text) accessible focus teal).
  */
 /* Legacy refs: components___common.scss:68-75; components___accessibility.scss:19-23 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -424,7 +424,7 @@
 }
 
 /* FORM LABELS
- * Legacy: components___form.scss:110-115 (.ln-lb2: #a9a7ae,
+ * Legacy: components___form.scss:110-115 (.ln-lb2: var(--lms-neutral-400),
  * 13px/600), components___variables.scss:28,183,178.
  * Field spacing and mandatory-star placement remain with page components.
  */
@@ -464,7 +464,7 @@
   font-family: inherit !important;
 }
 /* Legacy: components___common.scss:1093-1102 (modal header division),
- * components___variables.scss:30 (#e5e9f0 borders).
+ * components___variables.scss:30 (var(--lms-border) borders).
  */
 /* Legacy refs: components___antddesign.scss:1033-1061,143-146; components___variables.scss:224-232 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -499,8 +499,8 @@
   transition: color 150ms cubic-bezier(0.2, 0, 0, 1),
     background-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
-/* Legacy: components___variables.scss:10-13 (#eff8fa hover fill,
- * #1a95a1 accessible teal); old-lms-shell.css:45-48 (soft active/hover).
+/* Legacy: components___variables.scss:10-13 (var(--lms-primary-subtle) hover fill,
+ * var(--lms-primary-text) accessible teal); old-lms-shell.css:45-48 (soft active/hover).
  */
 /* Legacy refs: components___common.scss:1322-1326; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -510,7 +510,7 @@
 }
 
 /* HORIZONTAL DIVIDERS
- * Legacy: components___variables.scss:30 (#e5e9f0 neutral-200);
+ * Legacy: components___variables.scss:30 (var(--lms-border) neutral-200);
  * components___common.scss:118-120 (quiet hairline divisions).
  * Existing border widths and element flow remain as authored.
  */
@@ -524,7 +524,7 @@
 
 /* PLACEHOLDERS
  * Legacy: components___form.scss:57-60 (14px neutral-400 placeholder),
- * components___variables.scss:28,184 (#a9a7ae / 14px).
+ * components___variables.scss:28,184 (var(--lms-neutral-400) / 14px).
  */
 /* Legacy refs: components___form.scss:57-60; components___variables.scss:28 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -535,7 +535,7 @@
 
 /* TEXT SELECTION
  * Legacy accent/fill: components___variables.scss:10-13
- * (#26bac7 primary, #eff8fa soft teal); old-lms-shell.css:45-48
+ * (var(--lms-primary) primary, var(--lms-primary-subtle) soft teal); old-lms-shell.css:45-48
  * (same active-item fill). Pure selection paint, no text metrics.
  */
 /* Legacy refs: components___variables.scss:10-13 */
@@ -546,7 +546,7 @@
 }
 
 /* SCROLLBAR PAINT
- * Legacy: components___common.scss:294-311 (light-gray thumb #c4c4c4,
+ * Legacy: components___common.scss:294-311 (light-gray thumb var(--lms-neutral-300),
  * transparent body / generally hidden chrome); components___variables.scss:48.
  * Existing global overflow and scrollbar visibility policies are untouched.
  * Explicit .lms-scrollbar-thin areas still decide whether a thumb is shown.
@@ -560,7 +560,7 @@
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(*):not(:where([data-unskin], [data-unskin] *))::-webkit-scrollbar-thumb {
   background-color: var(--lms-scrollbar-thumb) !important;
-  border-radius: 1px;
+  border-radius: 2px;
 }
 
 /* GENERIC FOCUS FEEDBACK
@@ -587,7 +587,7 @@
 }
 
 /* HOVERED INPUTS
- * Legacy: components___variables.scss:91-92 ($btn-default #bfc9da);
+ * Legacy: components___variables.scss:91-92 ($btn-default var(--lms-border-strong));
  * components___form.scss:117-143 (quiet resting form border, teal on focus).
  * Read-only and disabled controls retain their own neutral border styling.
  */
@@ -638,8 +638,8 @@
 }
 
 /* Choice labels are BODY TEXT, not muted form captions.
- * Legacy: components___antddesign.scss:213-216 (checked checkbox text #0a0517),
- * components___variables.scss:25,43,184 (body ink, #0a0517 checked, 14px).
+ * Legacy: components___antddesign.scss:213-216 (checked checkbox text var(--lms-black)),
+ * components___variables.scss:25,43,184 (body ink, var(--lms-black) checked, 14px).
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(label:has(input[type="checkbox"], input[type="radio"], input[type="range"], [role="switch"])):not(:where([data-unskin], [data-unskin] *)) {
@@ -654,7 +654,7 @@
 }
 
 /* Explicit legacy error class and user-touched native validity:
- * components___form.scss:136-143 (.ln-in2.error: #ef4444 border,
+ * components___form.scss:136-143 (.ln-in2.error: var(--lms-error) border,
  * rgba(239,68,68,.06) background, 20% focus halo). Untouched :invalid
  * is intentionally left alone to avoid displaying errors on empty forms.
  */
@@ -671,7 +671,7 @@
 }
 /* Legacy: components___antddesign.scss:178-185 (loading actions retain
  * the teal fill while being inert, rather than appearing disabled gray);
- * old-lms-shell-spec.md:23 (#0a7c88 / white measured action).
+ * old-lms-shell-spec.md:23 (var(--lms-button-primary) / white measured action).
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(button[aria-busy="true"]:not([data-slot="button"]):not([role="tab"]):not([aria-pressed])):not(:where([data-unskin], [data-unskin] *)) {
@@ -682,7 +682,7 @@
 }
 
 /* Native select option selection follows AntD's selected teal/white state.
- * Legacy: components___antddesign.scss:134-140 (#26bac7, #fff and wrapped
+ * Legacy: components___antddesign.scss:134-140 (var(--lms-primary), var(--lms-white) and wrapped
  * option content). Popup rendering remains OS-dependent and is not forced
  * into a custom overlay by this global paint layer.
  */
@@ -692,8 +692,8 @@
   color: var(--lms-white) !important;
 }
 /* Selected menu option invalid/disabled state remains readable.
- * Legacy: components___variables.scss:27-32 (disabled ink #a9a7ae,
- * neutral surface #fafbfc).
+ * Legacy: components___variables.scss:27-32 (disabled ink var(--lms-neutral-400),
+ * neutral surface var(--lms-neutral-50)).
  */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(select option:disabled):not(:where([data-unskin], [data-unskin] *)) {
@@ -731,7 +731,7 @@
 /* Field validation COPY, not page banners or overlay alerts.
  * The disabled picker message ends in -unavailable and MUST keep its muted
  * neutral ink rather than the red of actual size/type validation (-error).
- * Legacy: components___global.scss:66-70 (12px status-error #ef4444);
+ * Legacy: components___global.scss:66-70 (12px status-error var(--lms-error));
  * components___variables.scss:71 (status error token).
  * Other lanes own non-form alerts and notification banners.
  */

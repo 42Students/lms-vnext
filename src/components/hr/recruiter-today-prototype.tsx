@@ -7,6 +7,7 @@ import {
 } from "@/modules/placements/recruiter-today-later-model";
 import {recruiterTodayHeadline} from "@/modules/placements/recruiter-today-headline-model";
 import styles from "./recruiter-today-prototype.module.css";
+import { Button } from "@/components/ui/button";
 
 type WeekEvent={id:string;kind:string;title:string;jobTitle:string;href:string;when:string};
 type Waiting={id:string;title:string;detail:string;href?:string};
@@ -71,8 +72,8 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
           </div>
           <div className={styles.needActions}>
             {task.href?<Link href={task.href} className={styles.primary}>{cta(task)}</Link>:null}
-            <button type="button" className={styles.button} title="Hide until something changes"
-              onClick={()=>persist(putRecruiterTodayLater(later,task))}>Later</button>
+            <Button variant="bare" type="button" className={styles.button} title="Hide until something changes"
+              onClick={()=>persist(putRecruiterTodayLater(later,task))}>Later</Button>
           </div>
         </div>)}
         {!shown.length&&postponed===0&&props.hasDriveHistory===false?
@@ -96,10 +97,10 @@ export function RecruiterTodayPrototype(props:RecruiterTodayPrototypeProps){
         {!shown.length&&postponed>0?<div className={styles.empty} role="status">
           {postponed} {postponed===1?"action is":"actions are"} put off for later. Use “Show them” below when ready.
         </div>:null}
-        {visible.length>3?<button className={styles.more} type="button"
-          onClick={()=>setExpanded(value=>!value)}>{expanded?"Show the first three":"Show "+(visible.length-3)+" more actions"}</button>:null}
+        {visible.length>3?<Button variant="bare" className={styles.more} type="button"
+          onClick={()=>setExpanded(value=>!value)}>{expanded?"Show the first three":"Show "+(visible.length-3)+" more actions"}</Button>:null}
         {postponed>0?<div className={styles.foot}>{postponed} put off for later.{" "}
-          <button type="button" onClick={()=>persist({})}>Show them</button>
+          <Button variant="secondary" type="button" onClick={()=>persist({})}>Show them</Button>
         </div>:null}
       </section>
       <aside className={styles.side}>

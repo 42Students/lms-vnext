@@ -547,6 +547,7 @@ export function PlacementJobCreateForm({
       // Keep HTML-stripped validation at prepublish without interpreting
       // arbitrary rich markup or introducing an unsafe HTML renderer.
       const meaningfulDescription=description.replace(/<[^>]*>/g,"")
+        // ui-consistency-allow-hex: #160 is an HTML entity, not a colour
         .replace(/&(?:nbsp|#160);/gi," ").trim();
       // TPO-drives-45: datetime-local is IST regardless of browser timezone.
       const deadlineRaw=String(data.get("applicationDeadline")??"").trim();

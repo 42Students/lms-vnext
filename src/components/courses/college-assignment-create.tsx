@@ -17,6 +17,7 @@ import {FacultyAssignmentMaterialLinks} from "./faculty-assignment-material-link
 import {FacultyAssignmentResourcesEditor} from "./faculty-assignment-resources-editor";
 import {type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
+import { Radio } from "@/components/ui/radio";
 const DEFAULT_ASSIGNMENT_METHODS: AssignmentMethod[] = ["WRITTEN_RESPONSE"];
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
@@ -171,9 +172,9 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    <fieldset className="min-w-0 space-y-2 sm:col-span-2">
     <legend className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Audience</legend>
     <div className="flex flex-wrap gap-4 text-sm">
-     <label className="flex items-center gap-2"><input type="radio" name="assignment-audience"
+     <label className="flex items-center gap-2"><Radio name="assignment-audience"
       checked={audience==="SHARED"} disabled={pending} onChange={()=>{setAudience("SHARED");setDeliveryId("");}}/>All currently eligible sections for this course</label>
-     <label className="flex items-center gap-2"><input type="radio" name="assignment-audience"
+     <label className="flex items-center gap-2"><Radio name="assignment-audience"
       checked={audience==="SECTION"} disabled={pending||!sections.length}
       onChange={()=>{setAudience("SECTION");setDeliveryId(sections[0]?.deliveryId??"");}}/>Specific section</label>
     </div>

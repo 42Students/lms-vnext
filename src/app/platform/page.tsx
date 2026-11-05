@@ -59,7 +59,7 @@ export default function PlatformMarketingPage() {
     <MarketingFeatureGrid title="Every role has a purpose-built workspace" items={WORKSPACES} />
     <MarketingFeatureGrid title="Everything you need to develop talent" items={PILLARS} />
 
-    <section className="relative left-1/2 w-screen -translate-x-1/2 border-y border-[var(--lms-canvas-border)] bg-[#eaf6f6] py-14 min-[768px]:py-20"
+    <section className="relative left-1/2 w-screen -translate-x-1/2 border-y border-[var(--lms-canvas-border)] bg-[color:var(--lms-primary-subtle)] py-14 min-[768px]:py-20"
       aria-labelledby="platform-workflows-heading">
       <div className="mx-auto max-w-[1180px] space-y-4 px-5">
       <h2 id="platform-workflows-heading" className="text-[20px] font-semibold leading-7 text-[var(--lms-heading)]">

@@ -10,6 +10,7 @@ import type {MentorStudentWatchItem} from "@/modules/projects/mentor-student-wat
 import type {MentorMeetingCalendarItem} from "@/modules/projects/mentor-calendar-view";
 import {selectMentorHomeWeekMeetings,mentorHomeMeetingDisplayTitle} from "@/modules/projects/mentor-home-week-meetings-model";
 import {mentorHomeGreeting} from "@/modules/projects/mentor-home-greeting-model";
+import { Button } from "@/components/ui/button";
 
 type FocusItem = MentorProjectAttention;
 
@@ -135,11 +136,11 @@ export function MentorPrototypeHome({
           </div>
           <div className="prototype-mentor-focus-actions">
             <Link href={item.href}>{attentionAction(item.kind)}</Link>
-            <button type="button" disabled={laterBusy!==null}
+            <Button variant="secondary" type="button" disabled={laterBusy!==null}
               onClick={()=>void later(item)}
               aria-label={"Later: "+item.title}>
               {laterBusy===mentorAttentionReceiptKey(item)?"Saving…":"Later"}
-            </button>
+            </Button>
           </div>
         </article>):<p className="prototype-mentor-empty">No pending sprint sign-offs, task reviews, blockers or meeting requests in your current projects.</p>}
         {active.length>5?<p className="prototype-mentor-focus-footer">{active.length-5} more items need attention. <Link href="/mentor/notifications">See notifications</Link></p>:null}

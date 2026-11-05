@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import {useEffect,useRef,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 /** Only the selected-college server may supply suggestions; do not persist
  * names or lookups in browser storage across tenants. A missing provider
@@ -100,21 +101,21 @@ export function AdminScopedLiveSearch({initial,path,placeholder,recentSuggestion
     role="listbox" aria-label="Search suggestions"
     className="absolute left-0 right-0 top-full z-30 max-h-72 overflow-auto rounded border border-border bg-surface p-2 shadow-md">
     {recent.length?<div><p className="px-2 py-1 text-xs font-semibold">Recent</p>
-      {recent.map((label,index)=><button key={"recent:"+label} id={"admin-scoped-suggestion-"+index} role="option" type="button" aria-selected={value===label||active===index}
+      {recent.map((label,index)=><Button variant="bare" key={"recent:"+label} id={"admin-scoped-suggestion-"+index} role="option" type="button" aria-selected={value===label||active===index}
         onMouseDown={event=>event.preventDefault()} onClick={()=>{setFocused(false);setValue(label);navigate(label);}}
-        className="block min-h-9 w-full truncate rounded px-2 py-1 text-left text-sm hover:bg-muted">{label}</button>)}
+        className="block min-h-9 w-full truncate rounded px-2 py-1 text-left text-sm hover:bg-muted">{label}</Button>)}
     </div>:null}
     {popular.length?<div><p className="px-2 py-1 text-xs font-semibold">Popular</p>
-      {popular.map((label,index)=><button key={"popular:"+label} id={"admin-scoped-suggestion-"+(recent.length+index)} role="option" type="button" aria-selected={value===label||active===recent.length+index}
+      {popular.map((label,index)=><Button variant="bare" key={"popular:"+label} id={"admin-scoped-suggestion-"+(recent.length+index)} role="option" type="button" aria-selected={value===label||active===recent.length+index}
         onMouseDown={event=>event.preventDefault()} onClick={()=>{setFocused(false);setValue(label);navigate(label);}}
-        className="block min-h-9 w-full truncate rounded px-2 py-1 text-left text-sm hover:bg-muted">{label}</button>)}
+        className="block min-h-9 w-full truncate rounded px-2 py-1 text-left text-sm hover:bg-muted">{label}</Button>)}
     </div>:null}
     {results.length?<div><p className="px-2 py-1 text-xs font-semibold">Search Results</p>
-      {results.map((label,index)=><button key={"search:"+label}
+      {results.map((label,index)=><Button variant="bare" key={"search:"+label}
         id={"admin-scoped-suggestion-"+(recent.length+popular.length+index)}
         role="option" type="button" aria-selected={active===recent.length+popular.length+index}
         onMouseDown={event=>event.preventDefault()} onClick={()=>{setFocused(false);setValue(label);navigate(label);}}
-        className="block min-h-9 w-full truncate rounded px-2 py-1 text-left text-sm hover:bg-muted">{label}</button>)}
+        className="block min-h-9 w-full truncate rounded px-2 py-1 text-left text-sm hover:bg-muted">{label}</Button>)}
     </div>:null}
   </div>:null}
   <p role="status" aria-live="polite" className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -124,7 +125,7 @@ export function AdminScopedLiveSearch({initial,path,placeholder,recentSuggestion
      "No records found. Try a different search.":
      "Results refresh automatically as you search."}
   </p>
-  {hasResults===false&&!isPending&&!lookingUp?<button type="button" className="min-h-9 text-xs font-semibold text-link underline"
-    onClick={()=>navigate(value)}>Retry search</button>:null}
+  {hasResults===false&&!isPending&&!lookingUp?<Button variant="bare" type="button" className="min-h-9 text-xs font-semibold text-link underline"
+    onClick={()=>navigate(value)}>Retry search</Button>:null}
  </div>;
 }

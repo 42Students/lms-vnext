@@ -2,6 +2,8 @@
 import {useState} from "react";
 import {Textarea} from "@/components/ui/textarea";
 import {recruiterCompanyChangeRequest} from "@/modules/placements/recruiter-company-change-request-model";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 type Props={collegeId:string;companyName:string;kind:"PROFILE"|"TEAM";
  teammate?:{email:string|null;name:string|null}};
 export function RecruiterCompanyChangeRequest({collegeId,companyName,kind,teammate}:Props){
@@ -28,13 +30,13 @@ export function RecruiterCompanyChangeRequest({collegeId,companyName,kind,teamma
       "Please update our company website to…"} />
    </label>
    <label className="flex min-h-11 items-center gap-2 text-xs text-body">
-    <input type="checkbox" checked={ack} onChange={event=>setAck(event.target.checked)}/>
+    <Checkbox checked={ack} onChange={event=>setAck(event.target.checked)}/>
     This request does not immediately change verified company information or teammate access.
    </label>
-   <button type="submit" disabled={!ack||message===null}
+   <Button variant="bare" type="submit" disabled={!ack||message===null}
     className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface-secondary px-3 text-sm font-semibold text-primary-text disabled:cursor-not-allowed disabled:opacity-40">
     Send to placement cell
-   </button>
+   </Button>
   </form>
  </details>;
 }

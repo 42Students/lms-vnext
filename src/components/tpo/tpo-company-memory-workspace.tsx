@@ -288,7 +288,7 @@ export function TpoCompanyMemoryWorkspace({
 
       <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
         <div className="min-w-0 space-y-4">
-          <section className="overflow-hidden rounded-[13px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
+          <section className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
             <h2 className="font-semibold text-foreground">People</h2>
             {company.people.length === 0 ? (
               <p className="mt-3 text-sm text-body">No contacts yet</p>
@@ -324,7 +324,7 @@ export function TpoCompanyMemoryWorkspace({
           </section>
 
       {company.hiredPerYear.length>0?(
-        <section aria-label="Students placed, by year" className="overflow-hidden rounded-[13px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
+        <section aria-label="Students placed, by year" className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
           <h2 className="font-semibold text-foreground">Students placed, by year</h2>
           <p className="mt-1 text-xs text-muted-foreground">
             Years hiring: {company.hiredPerYear.length}. This annual chart reflects distinct confirmed JOINED learners
@@ -343,7 +343,7 @@ export function TpoCompanyMemoryWorkspace({
           </ul>
         </section>
       ):null}
-      {company.canonicalCompanyId?<section aria-label="Company link and access" className="overflow-hidden rounded-[13px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
+      {company.canonicalCompanyId?<section aria-label="Company link and access" className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
         <TpoPublicJoinLinkCard key={company.canonicalCompanyId} scope="COMPANY"
           companyId={company.canonicalCompanyId} companyName={company.name}
           initial={{ready:false,domain:null,link:null}}/>
@@ -353,14 +353,14 @@ export function TpoCompanyMemoryWorkspace({
           Trust and review settings
         </Link>
       </section>:(
-        <section aria-label="Company link unavailable" className="overflow-hidden rounded-[13px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
+        <section aria-label="Company link unavailable" className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
           <h2 className="font-semibold text-foreground">Company link and trust</h2>
           <p className="mt-2 text-sm text-body">No verified college company is linked to this name yet. Link it before editing the domain, trust or recruiter join link.</p>
           <Link className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
             href="/tpo/companies">Find a college company</Link>
         </section>
       )}
-          <section className="overflow-hidden rounded-[13px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
+          <section className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
             <h2 className="font-semibold text-foreground">Documents</h2>
             {company.documentsStatus!=="READY"?
               <p role="status" className="mt-3 text-sm text-muted-foreground">
@@ -379,7 +379,7 @@ export function TpoCompanyMemoryWorkspace({
         </div>
 
         <div className="min-w-0 space-y-4">
-          <section className="overflow-hidden rounded-[13px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
+          <section className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
             <h2 className="font-semibold text-foreground">Drives</h2>
             {company.drives.length===0?
               <p className="mt-3 text-sm text-body">No drives yet</p>:
@@ -397,7 +397,7 @@ export function TpoCompanyMemoryWorkspace({
               <p className="mt-2 text-sm text-body">Link this company to a verified college employer before starting a private Team conversation.</p>
               <Link href="/tpo/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Find company</Link>
             </section>}
-          <section className="overflow-hidden rounded-[13px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
+          <section className="overflow-hidden rounded-[12px] border border-border bg-surface p-4 shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
             <h2 className="font-semibold text-foreground">Timeline</h2>
             {company.timeline.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">Nothing logged yet</p>

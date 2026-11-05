@@ -1,12 +1,13 @@
 "use client";
 import {useSearchParams} from "next/navigation";
 import {canonicalLearnerProjectTab,LEARNER_PROJECT_DETAIL_TABS} from "@/modules/projects/learner-project-tab-alias-model";
+import { PageHeader } from "@/components/ui/page-header";
 export default function LearnerProjectDetailLoading(){
  const params=useSearchParams();
  const tab=canonicalLearnerProjectTab(params.get("tab"));
  const label=LEARNER_PROJECT_DETAIL_TABS.find(item=>item.key===tab)?.label??"Overview";
  return <section role="status" aria-busy="true" aria-label={"Loading project "+label} className="min-w-0 space-y-5">
-  <h1 className="text-xl font-semibold">Project · {label}</h1>
+  <PageHeader title={`Project · ${label}`} />
   <div className="flex flex-wrap gap-4 border-b border-border pb-3" aria-hidden="true">
    {LEARNER_PROJECT_DETAIL_TABS.map(t=><span key={t.key} className="h-5 w-20 animate-pulse rounded bg-muted"/>)}
   </div>

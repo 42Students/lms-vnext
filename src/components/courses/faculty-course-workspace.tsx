@@ -454,7 +454,7 @@ export function FacultyCourseWorkspace({
       {view !== "BLUEPRINT" ? (
         <>
       <FacultyPrototypeCoursePriorities signals={homeSignals} workspace={workspace} display={display} />
-      <details id="course-details" open={advanced} className="min-w-0 border-t border-[#e5ebf2] pt-3"><summary className="cursor-pointer text-sm font-semibold text-[#078191]">More course insights and teaching tools</summary><div className="mt-5 space-y-6">
+      <details id="course-details" open={advanced} className="min-w-0 border-t border-[color:var(--lms-border)] pt-3"><summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">More course insights and teaching tools</summary><div className="mt-5 space-y-6">
 
       <CourseDisplayReadOnly
         introductionText={
@@ -548,8 +548,8 @@ export function FacultyCourseWorkspace({
         <>
         <FacultyPrototypeBlueprint workspace={workspace} selectedLessonId={selectedLessonId}
          engagement={homeSignals?.lessonEngagement??null}/>
-        <details className="border-t border-[#e5ebf2] pt-4" open={advanced||Boolean(initialCreateMode)}>
-         <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Full blueprint editor, publishing and content ordering</summary>
+        <details className="border-t border-[color:var(--lms-border)] pt-4" open={advanced||Boolean(initialCreateMode)}>
+         <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">Full blueprint editor, publishing and content ordering</summary>
          <div className="mt-5 space-y-5">
       {!learningPath ? (
         <EmptyState

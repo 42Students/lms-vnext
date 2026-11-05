@@ -30,7 +30,7 @@
 }
 .percent {
   margin: 4px 0 0;
-  color: #5b6b82;
+  color: var(--lms-text-muted);
   font-size: 12px;
   line-height: 1.4;
 }

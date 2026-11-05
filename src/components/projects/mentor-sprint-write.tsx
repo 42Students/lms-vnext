@@ -14,6 +14,7 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {mentorSprintDefaultReleaseId} from "@/modules/projects/mentor-sprint-order-model";
 import {mentorSprintPlanningDefaults,type MentorSprintPlanningRow} from "@/modules/projects/mentor-sprint-planning-defaults-model";
 import {MentorSprintBacklogPull,type MentorSprintBacklogChoice} from "./mentor-sprint-backlog-pull";
+import { Checkbox } from "@/components/ui/checkbox";
 
 /** Deliberate vNext granularity: each sprint mutation is a separate
  * version-checked transaction. A multi-sprint legacy Save plan is NOT atomic
@@ -231,7 +232,7 @@ export function MentorSprintTransition({
       description={action==="REOPEN"?"Reopening changes the Sprint status. Task moves are not reversed unless you explicitly restore an unchanged recent sign-off. Restoring fails safely if tasks have changed or the release has shipped.":"The Sprint status and project activity will change."}
       confirmLabel={label} pending={busy} onConfirm={transition}>
       {action==="REOPEN"?<label className="flex items-start gap-2 text-sm">
-        <input type="checkbox" checked={restoreCarry} disabled={busy}
+        <Checkbox checked={restoreCarry} disabled={busy}
           onChange={event=>setRestoreCarry(event.target.checked)}/>
         Restore tasks carried to the next Sprint, backlog or archive at this Sprint’s last sign-off (only if all are untouched).
       </label>:null}

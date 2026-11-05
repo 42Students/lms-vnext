@@ -12,6 +12,7 @@ import {mentorMemberSprintHistory,deriveMentorPerformanceInsights} from
 import {mentorPointStack} from "@/modules/projects/mentor-point-stack-model";
 import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
 import {mentorSprintPointSparkline} from "@/modules/projects/mentor-member-points-sparkline-model";
+import { Select } from "@/components/ui/select";
 
 type Student={id:string;name:string;label:string};
 type FormerStudent={id:string;name:string};
@@ -109,7 +110,7 @@ export function MentorPrototypePerformanceTable({
       <div className="prototype-mentor-card-title prototype-mentor-performance-filter-bar">
         <h2>Who did what</h2>
         <label>In
-          <select value={range} onChange={event=>setRange(event.target.value)}>
+          <Select value={range} onChange={event=>setRange(event.target.value)}>
             <option value="all">All (current task records)</option>
             <option value="whole">Whole project (sign-off history + current)</option>
             <option value="current">Current sprint</option>
@@ -121,7 +122,7 @@ export function MentorPrototypePerformanceTable({
             {sorted.map(sprint=><option key={sprint.id} value={sprint.id}>
               Sprint {sprint.sequence} · {sprint.title}
             </option>)}
-          </select>
+          </Select>
         </label>
       </div>
       {range==="picked"?<fieldset className="mb-4 rounded-lg border border-border p-3"

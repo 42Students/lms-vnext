@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { apiFetch } from "@/lib/api-fetch";
 import { projectReadinessLegacyCopy as copy } from "@/modules/projects/readiness-override-copy";
 import type { ReadinessOverrideState } from "@/modules/projects/readiness-override-model";
+import { Radio } from "@/components/ui/radio";
 
 export function ProjectReadinessOverrideForm({
   projectId,
@@ -132,7 +133,7 @@ export function ProjectReadinessOverrideForm({
               {value:"FORCE_BLOCK" as const,label:copy.block},
               ...(initialState&&initialState!=="CLEAR"?[{value:"CLEAR" as const,label:copy.clear}]:[]),
             ]).map(option=><label key={option.value} htmlFor={overrideId+option.value} className="min-w-0">
-              <input id={overrideId+option.value} type="radio" name={overrideId+"-override"}
+              <Radio id={overrideId+option.value} name={overrideId+"-override"}
                 value={option.value} checked={state===option.value}
                 onChange={()=>chooseOverride(option.value)}
                 className="peer sr-only"/>

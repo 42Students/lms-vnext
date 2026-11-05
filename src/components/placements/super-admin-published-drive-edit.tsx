@@ -265,7 +265,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application deadline (IST)<Input type="datetime-local" required
      name="deadline" defaultValue={istLocal(job.applicationDeadline)} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company Name
-     <input list="published-drive-companies" name="companySearch" className={cls} defaultValue={
+     <Input list="published-drive-companies" name="companySearch" className={cls} defaultValue={
        companies.find(c=>c.relationshipId===job.companyRelationshipId)?.name??""}
        onChange={event=>{
         const match=companies.find(c=>c.name===event.target.value);

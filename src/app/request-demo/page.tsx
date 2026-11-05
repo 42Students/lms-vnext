@@ -88,7 +88,7 @@ export default function RequestDemoPage() {
         </header>
 
         <div className="mx-auto grid max-w-[920px] min-w-0 grid-cols-1 gap-[22px] min-[900px]:grid-cols-2">
-          <article className="min-w-0 rounded-[18px] border border-[#dce7e9] bg-white p-[30px]">
+          <article className="min-w-0 rounded-[18px] border border-[color:var(--lms-border)] bg-white p-[30px]">
             <h2 className="mb-4 mt-2 text-2xl font-semibold text-[var(--lms-heading)]">
               What to expect
             </h2>
@@ -106,7 +106,7 @@ export default function RequestDemoPage() {
             </ul>
           </article>
 
-          <article className="min-w-0 rounded-[18px] border border-transparent bg-[#142f3b] p-[30px] text-white">
+          <article className="min-w-0 rounded-[18px] border border-transparent bg-[color:var(--lms-brand-dark)] p-[30px] text-white">
             <h2 className="mb-4 mt-2 text-2xl font-semibold text-white">Get in touch</h2>
             <p className="leading-6 text-white/85">
               Email us and a specialist will reach out to schedule your demo. No form data is collected on this page.
@@ -123,7 +123,7 @@ export default function RequestDemoPage() {
             </div>
             <p className="mt-4 text-sm leading-6 text-white/75">
               or write to{" "}
-              <a href={"mailto:" + DEMO_EMAIL} className="font-semibold text-[#9ee4e8] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+              <a href={"mailto:" + DEMO_EMAIL} className="font-semibold text-[color:var(--lms-primary-light)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
                 {DEMO_EMAIL}
               </a>
             </p>

@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/ui/page-header";
 
 export default function PublicPlacementsNotFound() {
   return (
-    <div className="min-h-screen bg-[#f5f7f9] px-4 py-8">
+    <div className="min-h-screen bg-[color:var(--lms-neutral-50)] px-4 py-8">
     <main className="mx-auto w-full max-w-[760px] rounded-[8px] border border-border bg-surface p-6">
       <section role="status" className="space-y-3">
         <PageHeader title="This page isn't available" />

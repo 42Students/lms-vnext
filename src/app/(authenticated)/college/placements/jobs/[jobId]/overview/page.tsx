@@ -80,7 +80,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
     </nav>
     <PageHeader title="Drive overview" description={drive.companyName+" · "+drive.seasonName}/>
     {attention?<CollegeDriveAttentionBanner jobId={jobId} attention={attention}/>:null}
-    <section aria-label="Drive company and role" className={"min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] border-l-[3px] bg-surface p-[var(--lms-space-4)] "+(drive.status==="PUBLISHED"?"border-l-[#52c41a]":drive.status==="DRAFT"?"border-l-[#faad14]":"border-l-[#8c8c8c]")}>
+    <section aria-label="Drive company and role" className={"min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] border-l-[3px] bg-surface p-[var(--lms-space-4)] "+(drive.status==="PUBLISHED"?"border-l-[color:var(--lms-success-strong)]":drive.status==="DRAFT"?"border-l-[color:var(--lms-icon-amber)]":"border-l-[color:var(--lms-neutral-400)]")}>
       <div className="flex min-w-0 flex-wrap items-start gap-[var(--lms-space-4)]">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle text-lg font-semibold text-[var(--lms-heading)]" aria-label={drive.companyName+" company logo"}>
           {drive.companyLogoUrl?<img alt="" src={drive.companyLogoUrl} referrerPolicy="no-referrer" width={56} height={56} className="size-14 object-contain" />:
@@ -139,7 +139,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
           funnel?.cumulativeTotals.HIRED??null;
          return <div key={stage} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3">
           <p className="text-xs text-muted-foreground">{stage[0]+stage.slice(1).toLowerCase()}</p>
-          <strong className={"mt-1 block text-2xl font-semibold tabular-nums "+(index===0?"text-[var(--lms-primary-text)]":index===5?"text-[#3f8600]":"text-[var(--lms-heading)]")}>{value===null?"—":value.toLocaleString("en-IN")}</strong>
+          <strong className={"mt-1 block text-2xl font-semibold tabular-nums "+(index===0?"text-[var(--lms-primary-text)]":index===5?"text-[color:var(--lms-success-strong)]":"text-[var(--lms-heading)]")}>{value===null?"—":value.toLocaleString("en-IN")}</strong>
          </div>;
         })}
       </div>

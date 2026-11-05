@@ -445,7 +445,7 @@ export function AdminOfferingLearningOverview({
 
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <h2 className="m-0 flex items-center gap-2 text-xl font-semibold text-[var(--lms-heading)]">
-          <span aria-hidden="true" className="h-6 w-1 rounded bg-[#e9a23b]"/>
+          <span aria-hidden="true" className="h-6 w-1 rounded bg-[color:var(--lms-icon-amber)]"/>
           Lessons
         </h2>
         <div id="lesson-authoring" className="flex flex-wrap items-center gap-3">

@@ -1,10 +1,11 @@
+import { PageHeader } from "@/components/ui/page-header";
 /** Legacy template history uses eight paragraph placeholders and a
  * distinct comparison loading section instead of an empty version table. */
 export default function Loading(){
  const pulse="rounded-[var(--lms-control-radius)] bg-muted motion-safe:animate-pulse";
  return <div className="min-w-0 space-y-6" role="status" aria-busy="true" aria-live="polite">
   <p className="sr-only">Loading template version history and comparison</p>
-  <h1 className="text-xl font-semibold">Template version history</h1>
+  <PageHeader title="Template version history" />
   <section aria-label="Version history loading" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
    <div className={pulse+" mb-4 h-6 w-48"} aria-hidden="true"/>
    <div className="space-y-3" aria-hidden="true">

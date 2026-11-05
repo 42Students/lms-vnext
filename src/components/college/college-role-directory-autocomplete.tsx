@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
 import {Input} from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type Result={membershipId:string;name:string};
 type Kind="LEARNER"|"FACULTY";
@@ -116,10 +117,10 @@ export function CollegeRoleDirectoryAutocomplete({
         {loading?"Searching…":showingLive?"Matching this college":recent.length?"Recent searches":"Popular on this page"}
       </p>
       {(choices.length?choices:showingLive?[]:(popularResults.length?popularResults:popular).slice(0,6)).map(row=>
-        <button type="button" role="option" aria-selected={query===row.name}
+        <Button variant="bare" type="button" role="option" aria-selected={query===row.name}
           key={row.membershipId} className="block min-h-9 w-full truncate rounded px-2 text-left text-sm text-body hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]"
           onMouseDown={event=>event.preventDefault()} onClick={()=>void choose(row)}>
-          {row.name}</button>)}
+          {row.name}</Button>)}
       {!choices.length&&showingLive&&!loading?
         <p className="px-2 py-1 text-xs text-muted-foreground">{notice||"No names match. Search all filters with the entered text."}</p>:null}
     </div>:null}

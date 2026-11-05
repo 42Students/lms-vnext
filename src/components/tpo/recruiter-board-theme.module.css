@@ -9,7 +9,7 @@
   max-width: 260px;
   flex-shrink: 0;
   border: 1px solid var(--lms-header-border);
-  border-radius: 13px;
+  border-radius: 12px;
   background: var(--lms-topbar-search);
   box-shadow: none;
   padding: 10px;
@@ -17,8 +17,8 @@
 .columnTitle {
   min-height: 46px;
   padding: 10px 12px;
-  border-bottom: 1px solid #e8edf3;
-  background: #f4f7fb;
+  border-bottom: 1px solid var(--lms-border);
+  background: var(--lms-neutral-100);
 }
 .leadCard {
   border: 1px solid var(--lms-header-border);

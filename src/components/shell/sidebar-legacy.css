@@ -183,7 +183,7 @@
  display:flex;
  align-items:center;
  margin:7px 12px 4px;
- color:#5b6b82;
+ color:var(--lms-text-muted);
  letter-spacing:.105em;
  font-size:12px;
  font-weight:750;
@@ -207,14 +207,14 @@
   box-shadow:4px 0 16px rgba(0,0,0,.12);
  }
  /* Old Ant drawer mask: components___antddesign.scss:143-146. */
- .lms-mobile-sidebar::backdrop {background:rgba(30,54,63,.1);box-shadow:0 4px 4px #00000040;}
+ .lms-mobile-sidebar::backdrop {background:rgba(30,54,63,.1);box-shadow:0 4px 4px color-mix(in srgb, var(--lms-black) 25%, transparent);}
  .lms-mobile-sidebar [data-slot="drawer-header"] {
   flex-direction:row;
   align-items:center;
   min-height:calc(52px + env(safe-area-inset-top,0px));
   padding:calc(10px + env(safe-area-inset-top,0px)) 4px 10px 16px;
   gap:8px;
-  border-bottom:1px solid #f0f0f0;
+  border-bottom:1px solid var(--lms-neutral-100);
  }
  .lms-mobile-sidebar [data-slot="drawer-header"] button[aria-label="Close drawer"] {
   flex:0 0 44px;

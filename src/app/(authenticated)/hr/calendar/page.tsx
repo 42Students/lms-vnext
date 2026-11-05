@@ -341,16 +341,16 @@ export default async function HrCalendarPage({
               <nav aria-label="Calendar period navigation" className={styles["nav"]}>
                 <Link href={calendarHref(previous,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Previous week":"Previous month"}
-                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)] min-[768px]:min-h-9">
                   <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 8H4m4-4L4 8l4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </Link>
                 <Link href={calendarHref(today,view,category,selectedCollegeId)}
-                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)] min-[768px]:min-h-9">
                   This week
                 </Link>
                 <Link href={calendarHref(next,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Next week":"Next month"}
-                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)] min-[768px]:min-h-9">
                   <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M4 8h8m-4-4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </Link>
               </nav>
@@ -360,7 +360,7 @@ export default async function HrCalendarPage({
             Add to my calendar (.ics)
           </Link> : null}
           <Link href="/hr/placements"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 md:w-auto">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)] min-[768px]:min-h-9 md:w-auto">
           Drives →
         </Link></div>}
       />
@@ -411,7 +411,7 @@ export default async function HrCalendarPage({
 
               <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start">
                 <details className="min-w-0">
-                  <summary className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  <summary className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)] min-[768px]:min-h-9">
                     Jump to date
                   </summary>
                   <form action="/recruiter/calendar" method="get"
@@ -430,7 +430,7 @@ export default async function HrCalendarPage({
                 </details>
                 {!noCollegeAccess && grants.length<=1 ? <Link
                   href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
-                  className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 min-[768px]:w-auto">
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:w-auto">
                   Export calendar CSV
                 </Link> : null}
               </div>
@@ -476,7 +476,7 @@ export default async function HrCalendarPage({
                       ))}
                       {day.resultsDue.map((item) => (
                         <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId,item.id)}
-                          className="inline-flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface p-4 text-sm text-primary-text min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1]">
+                          className="inline-flex min-h-11 w-full min-w-0 flex-col items-start justify-center gap-1 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface p-4 text-sm text-primary-text min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)]">
                           <strong className="block">Results due · {item.roundName}</strong>
                           <span className="block max-w-full break-words text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</span>
                         </Link>

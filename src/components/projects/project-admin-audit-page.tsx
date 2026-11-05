@@ -25,6 +25,7 @@ import { parseProjectAdminAuditQuery,legacyProjectAuditActions,
 import { mayReadGlobalProjectAudit } from "@/modules/projects/admin-audit-access-model";
 import {z} from "zod";
 import {getProjectResourceHistory} from "@/modules/projects/resource-history-service";
+import { Table } from "@/components/ui/table";
 
 /** Mirrors the legacy destructive/access-changing action keys. Count each
  * raw activity item, not distinct projects or condensed groups. */
@@ -538,7 +539,7 @@ export async function ProjectAdminAuditPage({
             "No changes match these filters. Clear filters to see all activity.":
             "No changes recorded yet."}
         </p>:<div className="min-w-0 max-w-full overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-sm">
+          <Table className="min-w-[760px]">
             <caption className="sr-only">Project change log by action, entity, actor and date</caption>
             <thead><tr className="border-b border-border text-xs text-muted-foreground">
               <th scope="col" className="p-3">Action</th>
@@ -588,7 +589,7 @@ export async function ProjectAdminAuditPage({
                 </td>
               </tr>;
             })}</tbody>
-          </table>
+          </Table>
         </div>}
       </section>
 

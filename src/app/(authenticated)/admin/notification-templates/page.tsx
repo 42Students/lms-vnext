@@ -5,6 +5,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {logInitialZeptoMailTemplateReadiness,zeptoMailTemplateReadiness} from "@/modules/notifications/zeptomail-template-readiness";
+import { Table } from "@/components/ui/table";
 
 export const dynamic="force-dynamic";
 /** Operators see per-event status, never provider template keys. */
@@ -33,7 +34,7 @@ export default async function NotificationTemplateReadinessPage(){
    Other channels remain unaffected. Check deployment environment provisioning.
   </p>:null}
   <div className="min-w-0 overflow-x-auto">
-   <table className="w-full min-w-[460px] border-collapse text-left text-sm">
+   <Table className="min-w-[460px]">
     <caption className="sr-only">Required and disabled notification event templates</caption>
     <thead><tr><th className="border-b border-border p-3">Legacy event</th>
      <th className="border-b border-border p-3">Channel</th>
@@ -43,7 +44,7 @@ export default async function NotificationTemplateReadinessPage(){
      <td className="p-3">{item.channel}</td>
      <td className="p-3"><StatusBadge tone={item.status==="READY"?"success":item.status==="MISSING TEMPLATE"?"warning":"neutral"}>{item.status}</StatusBadge></td>
     </tr>)}</tbody>
-   </table>
+   </Table>
   </div>
   <p className="text-xs text-muted-foreground">Template provisioning is controlled by deployment secrets.
    Readiness does not validate remote provider acceptance. Nonproduction recipients remain allowlisted,

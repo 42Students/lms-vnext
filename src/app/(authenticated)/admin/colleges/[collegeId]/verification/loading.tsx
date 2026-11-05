@@ -1,6 +1,7 @@
+import { PageHeader } from "@/components/ui/page-header";
 export default function Loading(){
  return <section role="status" aria-busy="true" aria-label="Loading verification" className="min-w-0 space-y-4 animate-pulse">
-  <h1 className="text-xl font-semibold">Verification</h1>
+  <PageHeader title="Verification" />
   <p className="text-sm text-muted-foreground">Checking college verification access…</p>
   <div className="h-20 rounded border border-border bg-muted/40" aria-hidden="true"/>
   <div className="rounded border border-border p-4" aria-hidden="true">

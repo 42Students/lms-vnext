@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { recruiterSelectionRangeWarning } from "@/modules/placements/recruiter-selection-list-model";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Candidate = { applicationId: string; name: string };
 
@@ -80,7 +81,7 @@ export function HrSelectionProposalComposer({
           <legend className="text-sm font-semibold">Eligible applicants</legend>
           {candidates.length ? candidates.map(candidate => (
             <label key={candidate.applicationId} className="flex min-h-11 items-center gap-3 border-b border-border py-2 text-sm">
-              <input type="checkbox" className="size-4 accent-[var(--lms-primary)]"
+              <Checkbox className="size-4 accent-[var(--lms-primary)]"
                 checked={selectedIds.includes(candidate.applicationId)}
                 onChange={event => toggle(candidate.applicationId, event.target.checked)} />
               <span className="min-w-0 break-words">{candidate.name || "Candidate"}</span>
@@ -109,7 +110,7 @@ export function HrSelectionProposalComposer({
             onChange={event => setPackageDescription(event.target.value)} />
         </label>
         {warning ? <label className="flex items-start gap-2 text-sm text-body">
-          <input type="checkbox" checked={warningAccepted}
+          <Checkbox checked={warningAccepted}
             onChange={event => setWarningAccepted(event.target.checked)} />
           <span>{warning} I have checked the amount.</span>
         </label> : null}

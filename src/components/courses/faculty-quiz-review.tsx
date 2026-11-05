@@ -67,9 +67,9 @@ function learnerLabel(attempt: Attempt) {
 }
 
 const AVATAR_TONES=[
- "bg-[#e5f3ff] text-[#1766a3]","bg-[#fef0e0] text-[#995114]",
- "bg-[#ebfaed] text-[#187c36]","bg-[#f6e8fb] text-[#7e399f]",
- "bg-[#fff0f1] text-[#a53e57]","bg-[#e4f3f1] text-[#186b67]",
+ "bg-[color:var(--lms-info-blue-surface)] text-[color:var(--lms-info-text)]","bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]",
+ "bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success-strong)]","bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-icon-purple)]",
+ "bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-strong)]","bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary-hover)]",
 ] as const;
 function scoreTone(attempt:Attempt):"success"|"warning"|"error"{
  if(attempt.maxScore<=0)return "warning";

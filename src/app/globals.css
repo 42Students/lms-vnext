@@ -79,6 +79,22 @@
   --lms-teal-deep: #0e7c87;
   --lms-gold-accent: #a16207;
   --lms-gold-subtle: #fef6e7;
+  /* Shared semantic palette. UI code must use these tokens, never hex literals (npm run ux:consistency). */
+  --lms-text-body: var(--lms-topbar-ink);
+  --lms-text-muted: var(--lms-topbar-muted);
+  --lms-border: var(--lms-header-border);
+  --lms-border-strong: var(--lms-field-hover-border);
+  --lms-success-surface: #ecfdf3;
+  --lms-success-strong: #15803d;
+  --lms-error-surface: #fef3f2;
+  --lms-error-strong: #991b1b;
+  --lms-warning-strong: #92400e;
+  --lms-info-blue: #2563eb;
+  --lms-info-blue-surface: #e6f4ff;
+  --lms-info-text: #075985;
+  --lms-purple: #722ed1;
+  --lms-purple-text: #5b21b6;
+  --lms-purple-surface: #f4efff;
 
   --lms-page-background: var(--lms-neutral-100);
   --lms-surface: var(--lms-white);
@@ -585,7 +601,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 }
 [data-slot="dropdown"], [data-slot="menu"], [role="menu"] {
   border-color: var(--lms-canvas-border);
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--lms-white);
   box-shadow: var(--lms-overlay-shadow);
   font-size: 14px;
@@ -701,14 +717,14 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   border-color: #dc2626;
 }
 [data-slot="banner"], [data-slot="alert"] {
-  border-radius: 9px;
+  border-radius: 8px;
   font-size: 13px;
   line-height: 20px;
   box-shadow: none;
 }
 [data-slot="dropdown-root"] > summary {
   min-height: 36px;
-  border-radius: 9px;
+  border-radius: 8px;
 }
 [data-slot="dropdown-root"][open] > summary {
   color: var(--lms-primary-text);
@@ -716,7 +732,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
   background: var(--lms-primary-subtle);
 }
 [data-slot="dropdown"], [data-slot="menu"] {
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--lms-white);
   box-shadow: var(--lms-overlay-shadow);
 }
@@ -739,7 +755,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="disclosure"] { border-color: var(--lms-neutral-200); }
 [data-slot="file-upload"] input[type="file"] {
   border: 1px solid var(--lms-neutral-200);
-  border-radius: 9px;
+  border-radius: 8px;
   font-size: 14px;
 }
 [data-slot="filter-bar"] > div[role="dialog"] {
@@ -1051,7 +1067,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 .lms-scrollbar-thin::-webkit-scrollbar { display: block; width: 8px; height: 8px; }
 .lms-scrollbar-thin::-webkit-scrollbar-thumb {
   background: var(--lms-scrollbar-thumb);
-  border-radius: 1px;
+  border-radius: 2px;
 }
 @media (max-width: 767px) {
   [data-slot="dropdown-root"] > summary,

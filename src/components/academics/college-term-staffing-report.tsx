@@ -3,6 +3,7 @@
 import {useEffect,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {Button} from "@/components/ui/button";
+import { Table } from "@/components/ui/table";
 
 type StaffingRow={
  courseId:string;courseName:string;totalClasses:number;
@@ -48,7 +49,7 @@ export function CollegeTermStaffingReport({termId}:{termId:string}){
     ` · ${result.historicalClassCount} historical/inactive`:""}. This report includes classes without live offerings.</p>
    {result.data.length===0?<p className="text-sm text-body">No courses mapped to this semester.</p>:
     <div tabIndex={0} role="region" aria-label="Faculty staffing report table, scroll for columns" className="min-w-0 overflow-x-auto border-y border-border">
-     <table className="min-w-[580px] w-full border-collapse text-sm">
+     <Table className="min-w-[580px]">
       <thead><tr className="border-b border-border text-left">
        <th scope="col" className="px-3 py-3">Course</th>
        <th scope="col" className="px-3 py-3">Total classes</th>
@@ -66,7 +67,7 @@ export function CollegeTermStaffingReport({termId}:{termId:string}){
         </ul>:null}
        </td>
       </tr>)}</tbody>
-     </table>
+     </Table>
     </div>}
   </div>:null}
  </section>;

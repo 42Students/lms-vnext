@@ -17,6 +17,7 @@ import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import {verificationQueueCardPresentation} from "@/modules/verification/queue-card-action";
 import {collegeVerificationLegacyCopy} from "@/modules/verification/college-legacy-verification-copy";
 import type {VerificationRecord} from "@/modules/profile-verification/domain";
+import { Table } from "@/components/ui/table";
 
 export type VerificationQueueCard = Pick<VerificationRecord,
  "learnerMembershipId"|"section"|"status"|"submittedAt"|"version"> & {
@@ -43,11 +44,11 @@ function VerificationTimestamp({value,nowMs}:{value:Date;nowMs:number|null}){
 function VerificationTableSkeleton(){
  return <div role="status" aria-label="Loading verification requests" className="max-h-[calc(100vh-380px)] overflow-auto rounded-[var(--lms-control-radius)] border border-border">
   <span className="sr-only">Loading verification requests…</span>
-  <table aria-hidden="true" className="min-w-[960px] w-full border-collapse">
+  <Table aria-hidden="true" className="min-w-[960px]">
    <thead><tr>{["Student","Roll","Batch","Branch","Section","Status","Marksheets","Submitted","By","Review"].map(name=><th key={name} className="border-b border-border px-3 py-3 text-left text-xs">{name}</th>)}</tr></thead>
    <tbody>{[0,1,2,3,4].map(n=><tr key={n}>{Array.from({length:10},(_,i)=>
     <td key={i} className="border-b border-border px-3 py-3"><div className="h-4 w-20 animate-pulse rounded bg-border"/></td>)}</tr>)}</tbody>
-  </table>
+  </Table>
  </div>;
 }
 

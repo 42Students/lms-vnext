@@ -1,17 +1,17 @@
 /* Faculty prototype, October 2026: a fixed readable navigation rail,
  * white page, fine dividers and calm teal actions. Scoped to Faculty only. */
 [data-prototype-portal="faculty"] {
-  --faculty-ink:#1d293f;
-  --faculty-muted:#60718b;
-  --faculty-accent:#078191;
-  --faculty-border:#e5ebf2;
-  background:#fff;
+  --faculty-ink:var(--lms-heading);
+  --faculty-muted:var(--lms-text-muted);
+  --faculty-accent:var(--lms-button-primary);
+  --faculty-border:var(--lms-border);
+  background:var(--lms-white);
   color:var(--faculty-ink);
 }
 [data-prototype-portal="faculty"] .lms-shell-page,
 [data-prototype-portal="faculty"] .lms-shell-page-main,
 [data-prototype-portal="faculty"] .lms-authenticated-canvas {
-  background:#fff;
+  background:var(--lms-white);
 }
 [data-prototype-portal="faculty"] .lms-authenticated-canvas {
   border:0;
@@ -28,7 +28,7 @@
   width:224px;
   min-width:224px;
   max-width:224px;
-  background:#fff;
+  background:var(--lms-white);
   border-right:1px solid var(--faculty-border);
   transition:none;
 }
@@ -53,7 +53,7 @@
   padding:12px 14px;
   min-height:48px;
   border-radius:10px;
-  color:#394963;
+  color:var(--lms-text-body);
   font-size:16px;
 }
 [data-prototype-portal="faculty"] .lms-desktop-sidebar .lms-sidebar-item-icon {display:none;}
@@ -68,31 +68,31 @@
   line-height:1.4;
 }
 [data-prototype-portal="faculty"] .lms-sidebar-item[data-active="true"] {
-  background:#eef7f9;
-  color:#007f8e;
+  background:var(--lms-primary-subtle);
+  color:var(--lms-button-primary);
   font-weight:700;
 }
 [data-prototype-portal="faculty"] .lms-sidebar-nav .lms-nav-group-rule {display:none;}
 [data-prototype-portal="faculty"] .lms-sidebar-role-details {display:none;}
-.faculty-proto-heading {font-size:24px;line-height:1.25;font-weight:750;letter-spacing:-.035em;color:#1d293f;}
-.faculty-proto-subtitle {font-size:14px;line-height:1.55;color:#60718b;}
-.faculty-proto-action {display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;min-height:42px;border-radius:9px;border:1px solid #078191;background:#078191;color:white;font-size:14px;font-weight:700;text-decoration:none;}
-.faculty-proto-action:hover {background:#006d7a;color:white;}
-.faculty-proto-secondary {display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;min-height:42px;border-radius:9px;border:1px solid #dce5ee;background:white;color:#1d293f;font-size:14px;font-weight:650;}
-.faculty-proto-secondary:hover {background:#f4f8fa;}
-.faculty-proto-table {width:100%;border:1px solid #e5ebf2;border-spacing:0;border-radius:14px;overflow:hidden;border-collapse:separate;}
-.faculty-proto-table th {padding:12px 14px;text-transform:uppercase;text-align:left;font-size:12px;letter-spacing:.02em;color:#60718b;background:#fbfcfe;border-bottom:1px solid #e5ebf2;}
-.faculty-proto-table td {padding:15px 14px;border-bottom:1px solid #e5ebf2;font-size:14px;vertical-align:middle;color:#1d293f;}
+.faculty-proto-heading {font-size:24px;line-height:1.25;font-weight:750;letter-spacing:-.035em;color:var(--lms-heading);}
+.faculty-proto-subtitle {font-size:14px;line-height:1.55;color:var(--lms-text-muted);}
+.faculty-proto-action {display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;min-height:42px;border-radius:8px;border:1px solid var(--lms-button-primary);background:var(--lms-button-primary);color:white;font-size:14px;font-weight:700;text-decoration:none;}
+.faculty-proto-action:hover {background:var(--lms-button-primary-hover);color:white;}
+.faculty-proto-secondary {display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;min-height:42px;border-radius:8px;border:1px solid var(--lms-border);background:white;color:var(--lms-heading);font-size:14px;font-weight:650;}
+.faculty-proto-secondary:hover {background:var(--lms-neutral-50);}
+.faculty-proto-table {width:100%;border:1px solid var(--lms-border);border-spacing:0;border-radius:14px;overflow:hidden;border-collapse:separate;}
+.faculty-proto-table th {padding:12px 14px;text-transform:uppercase;text-align:left;font-size:12px;letter-spacing:.02em;color:var(--lms-text-muted);background:var(--lms-neutral-50);border-bottom:1px solid var(--lms-border);}
+.faculty-proto-table td {padding:15px 14px;border-bottom:1px solid var(--lms-border);font-size:14px;vertical-align:middle;color:var(--lms-heading);}
 .faculty-proto-table tr:last-child td {border-bottom:0;}
-.faculty-proto-link {font-weight:700;color:#008391;text-decoration:none;}
+.faculty-proto-link {font-weight:700;color:var(--lms-button-primary);text-decoration:none;}
 .faculty-proto-link:hover {text-decoration:underline;}
-.faculty-proto-pill {border:1px solid #dce5ee;border-radius:999px;padding:7px 15px;font-size:13px;font-weight:650;background:white;color:#40516a;}
-.faculty-proto-pill[aria-pressed="true"] {background:#ebf8fa;border-color:#058b9a;color:#007f8e;}
+.faculty-proto-pill {border:1px solid var(--lms-border);border-radius:999px;padding:7px 15px;font-size:13px;font-weight:650;background:white;color:var(--lms-text-body);}
+.faculty-proto-pill[aria-pressed="true"] {background:var(--lms-primary-subtle);border-color:var(--lms-primary-text);color:var(--lms-button-primary);}
 .faculty-proto-task-list {border:1px solid var(--faculty-border);border-radius:14px;overflow:hidden;}
-.faculty-proto-task {display:flex;align-items:center;justify-content:space-between;gap:24px;padding:17px 20px;border-bottom:1px solid #edf1f5;}
+.faculty-proto-task {display:flex;align-items:center;justify-content:space-between;gap:24px;padding:17px 20px;border-bottom:1px solid var(--lms-neutral-100);}
 .faculty-proto-task:last-child {border-bottom:0;}
-.faculty-proto-task-label {font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.055em;color:#078191;}
-.faculty-proto-task h2 {font-size:18px;line-height:1.4;font-weight:750;color:#1d293f;}
+.faculty-proto-task-label {font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.055em;color:var(--lms-button-primary);}
+.faculty-proto-task h2 {font-size:18px;line-height:1.4;font-weight:750;color:var(--lms-heading);}
 @media(max-width:767px){
  [data-prototype-portal="faculty"] .lms-shell-page-main {padding:18px 16px 72px;}
  .faculty-proto-task {align-items:flex-start;flex-direction:column;gap:12px;}
@@ -103,27 +103,27 @@
 /* Course detail hierarchy and underline navigation of screens #04–08. */
 [data-prototype-portal="faculty"] .faculty-prototype-course-tabs [data-slot="tabs"] nav {
   gap:30px;
-  border-color:#e5ebf2;
+  border-color:var(--lms-border);
 }
 [data-prototype-portal="faculty"] .faculty-prototype-course-tabs nav a {
   font-size:16px;
   font-weight:500;
   padding-bottom:14px;
-  color:#61728c;
+  color:var(--lms-text-muted);
 }
 [data-prototype-portal="faculty"] .faculty-prototype-course-tabs nav a[aria-current="page"] {
-  color:#007f8e;
+  color:var(--lms-button-primary);
   font-weight:750;
 }
 [data-prototype-portal="faculty"] .faculty-prototype-course-tabs nav a::after {
-  background:#078191;
+  background:var(--lms-button-primary);
 }
 
 /* Class discussion timeline from the Faculty reference: a single flat feed,
    preserved reply/pin/moderation and the live-updating server protocol. */
 [data-prototype-portal="faculty"] .faculty-prototype-discussion {
-  border:1px solid #e5ebf2;
-  border-radius:16px;
+  border:1px solid var(--lms-border);
+  border-radius:14px;
   padding:0 0 4px;
   overflow:hidden;
 }
@@ -141,21 +141,21 @@
   gap:0;
 }
 [data-prototype-portal="faculty"] .faculty-prototype-discussion [role="log"] article {
-  background:#fff;
-  border-bottom:1px solid #edf1f5;
+  background:var(--lms-white);
+  border-bottom:1px solid var(--lms-neutral-100);
   border-radius:0;
   margin-top:0;
   padding:16px 24px;
 }
 [data-prototype-portal="faculty"] .faculty-prototype-discussion [role="log"] article:hover {
-  background:#f8fcfd;
+  background:var(--lms-neutral-50);
 }
 [data-prototype-portal="faculty"] .faculty-prototype-discussion [role="log"] .sticky {
   position:static;
 }
 [data-prototype-portal="faculty"] .faculty-prototype-discussion textarea {
-  background:#fff;
-  border-color:#dce5ee;
+  background:var(--lms-white);
+  border-color:var(--lms-border);
   min-height:64px;
 }
 @media(max-width:767px){
@@ -179,7 +179,7 @@
  .lms-shell-frame[data-prototype-portal="faculty"] .lms-desktop-sidebar,
  .lms-shell-frame[data-prototype-portal="faculty"] .lms-desktop-sidebar:is(:hover,:focus-within){
   width:205px;min-width:205px;max-width:205px;position:sticky;top:0;
-  background:white;border-right:1px solid #e7ecf2;
+  background:white;border-right:1px solid var(--lms-border);
  }
  .lms-shell-frame[data-prototype-portal="faculty"] .lms-sidebar-logo-row,
  .lms-shell-frame[data-prototype-portal="faculty"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-logo-row{
@@ -208,12 +208,12 @@
 }
 .lms-shell-frame[data-prototype-portal="faculty"] .lms-prototype-wordmark::after{
  content:"42 LMS";position:absolute;left:0;top:40px;width:48px;
- color:#526072;font-family:var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;font-size:12px;
+ color:var(--lms-text-muted);font-family:var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;font-size:12px;
  font-weight:700;line-height:15px;text-align:center;letter-spacing:.025em;
 }
 .lms-shell-frame[data-prototype-portal="faculty"] header[aria-label="Application top bar"]{
  height:58px;min-height:58px;padding:0 24px;gap:10px;
- border-bottom:1px solid #e7ecf2;box-shadow:none;background:#fff;
+ border-bottom:1px solid var(--lms-border);box-shadow:none;background:var(--lms-white);
 }
 @media(min-width:768px){
  .lms-shell-frame[data-prototype-portal="faculty"] header[aria-label="Application top bar"] >div:nth-child(2){
@@ -226,24 +226,24 @@
 }
 
 /* Faculty Today (#02): exact prototype stays white even below a short/empty
- * task list. The shared portal paints #f4f7fa with higher specificity; this
+ * task list. The shared portal paints var(--lms-neutral-100) with higher specificity; this
  * override intentionally affects only the Faculty shell.
  * Right-rail caption type must stay compact, unlike generic H2 defaults. */
 .lms-shell-frame[data-prototype-portal="faculty"],
 .lms-shell-frame[data-prototype-portal="faculty"] .lms-shell-page,
 .lms-shell-frame[data-prototype-portal="faculty"] .lms-shell-page-main {
- background:#fff;
+ background:var(--lms-white);
 }
 .lms-shell-frame[data-prototype-portal="faculty"] .faculty-proto-today aside h2 {
  font-size:12px;
  line-height:1.4;
  font-weight:700;
  letter-spacing:.035em;
- color:#60718b;
+ color:var(--lms-text-muted);
 }
 .lms-shell-frame[data-prototype-portal="faculty"] .faculty-proto-today .faculty-proto-empty-heading {
  font-size:16px;
  line-height:1.4;
  font-weight:700;
- color:#1d293f;
+ color:var(--lms-heading);
 }

@@ -51,7 +51,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
   {queue.available&&queue.enabled&&queue.permitted?<nav aria-label="Verification status" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3">
     {([["WAITING","Waiting"],["SENT_BACK","Sent back"],["VERIFIED","Verified"]] as const).map(([tab,label])=>
       <Link key={tab} href={tpoVerificationHref({...query,tab,page:1})} aria-current={query.tab===tab?"page":undefined}
-        className={"inline-flex min-h-11 items-center rounded-[9px] border px-4 text-sm font-semibold md:min-h-9 "+
+        className={"inline-flex min-h-11 items-center rounded-[8px] border px-4 text-sm font-semibold md:min-h-9 "+
           (query.tab===tab?"border-primary bg-primary text-on-primary":"border-border text-body hover:bg-primary-subtle")}>
         {label} ({queue.counts?.[tab]??0})
       </Link>)}

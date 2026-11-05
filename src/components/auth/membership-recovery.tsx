@@ -32,7 +32,7 @@ export function MembershipRecovery({
   }
 
   return (
-    <main className="min-h-dvh min-w-0 bg-[#f1f4f9] px-3 py-4 sm:px-4 md:p-6">
+    <main className="min-h-dvh min-w-0 bg-[color:var(--lms-neutral-100)] px-3 py-4 sm:px-4 md:p-6">
       <section className="mx-auto w-full min-w-0 max-w-3xl rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-[var(--lms-canvas-padding)]">
         <PageHeader title="Choose another active college" description="College access changed" />
         <p className="mt-4 max-w-prose text-[14px] leading-6 text-[var(--lms-body-text)]">

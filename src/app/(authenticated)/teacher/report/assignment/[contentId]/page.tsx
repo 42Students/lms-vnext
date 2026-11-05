@@ -111,8 +111,8 @@ export default async function FacultyAssignmentReportPage({
       />
       </nav>
       <FacultyPrototypeAssignmentReport report={report}/>
-      <details className="border-t border-[#e5ebf2] pt-4">
-        <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Advanced report analysis, full student records and grading tools</summary>
+      <details className="border-t border-[color:var(--lms-border)] pt-4">
+        <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">Advanced report analysis, full student records and grading tools</summary>
         <div className="mt-5 space-y-5">
       <PageHeader title={assignment.title?.trim()||"Untitled assignment"}
         description={assignment.courseName}/>
@@ -178,7 +178,7 @@ export default async function FacultyAssignmentReportPage({
         </h2>
         {metrics.submitted===0?<p className="mt-3 text-sm text-muted-foreground">No submitted assignments to chart yet.</p>:
          <div role="img" aria-label={metrics.onTime+" on time, "+metrics.late+" late"}
-          className="mt-4 flex h-4 min-w-0 overflow-hidden rounded-[3px] bg-[var(--lms-neutral-100)]">
+          className="mt-4 flex h-4 min-w-0 overflow-hidden rounded-[4px] bg-[var(--lms-neutral-100)]">
            {metrics.onTime>0?<span title={metrics.onTime+" on time"} aria-hidden="true" className="bg-[var(--lms-primary)]"
             style={{width:(100*metrics.onTime/Math.max(metrics.submitted,1))+"%"}}/>:null}
            {metrics.late>0?<span title={metrics.late+" late"} aria-hidden="true" className="bg-warning"

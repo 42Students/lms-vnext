@@ -26,6 +26,7 @@ import {
   ACTIVITY_IMPORTANCE,
   ACTIVITY_MODULES,
 } from "@/modules/activity/taxonomy";
+import { Table } from "@/components/ui/table";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -580,7 +581,7 @@ export default async function ActivityPage({
             the audit record uses privacy-safe provenance instead.
           </p>
           <div className="w-full min-w-0 overflow-x-auto rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)]">
-            <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
+            <Table className="min-w-[1120px]">
               <thead className="bg-[var(--lms-neutral-100)] text-[var(--lms-heading)]">
                 <tr>{RAW_AUDIT_FORENSIC_HEADERS.map(label=>(
                   <th key={label} scope="col" className="px-3 py-3 font-semibold">{label}</th>
@@ -606,7 +607,7 @@ export default async function ActivityPage({
                 ))}
                 {result.items.length===0?<tr><td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">No audit logs match these filters.</td></tr>:null}
               </tbody>
-            </table>
+            </Table>
           </div>
           {result.nextCursor ? <Link href={"/activity?"+nextParams.toString()}
             className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">

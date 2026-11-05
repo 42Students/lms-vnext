@@ -4,6 +4,8 @@ import Link from "next/link";
 import {FacultyAssessmentCreate} from "./faculty-assessment-create";
 import type {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {facultyAssessmentSectionOptions,facultyAssessmentRowsForSection} from "@/modules/courses/faculty-assessment-section-filter-model";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 export type AssessmentRow={
  key:string;kind:"Assignment"|"Quiz";deliveryId:string;title:string;courseCode:string;sectionName:string;
  dueAt:string|null;status:string;handedIn:number;eligible:number|null;toGrade:number|null;
@@ -50,16 +52,16 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
   </div>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <nav aria-label="Assessment type" className="flex flex-wrap gap-2">
-    {tabs.map(tab=><button key={tab.value} type="button" className="faculty-proto-pill"
+    {tabs.map(tab=><Button variant="bare" key={tab.value} type="button" className="faculty-proto-pill"
      aria-pressed={kind===tab.value} onClick={()=>selectKind(tab.value)}>
-     {tab.label} {tab.count}</button>)}
+     {tab.label} {tab.count}</Button>)}
    </nav>
    <label className="sr-only" htmlFor="faculty-assessment-course">Filter by course</label>
-   <select id="faculty-assessment-course" value={course} onChange={e=>setCourse(e.target.value)}
-    className="min-h-11 min-w-48 rounded-lg border border-[#dce5ee] bg-white px-3 text-sm">
+   <Select id="faculty-assessment-course" value={course} onChange={e=>setCourse(e.target.value)}
+    className="min-h-11 min-w-48 rounded-lg border border-[color:var(--lms-border)] bg-white px-3 text-sm">
     <option value="all">All courses</option>
     {courses.map(section=><option value={section.deliveryId} key={section.deliveryId}>{section.label}</option>)}
-   </select>
+   </Select>
   </div>
   <div className="faculty-proto-table-wrap"><table className="faculty-proto-table">
    <thead><tr><th>Title</th><th>Course · Class</th><th>Due</th><th>Handed in</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead>
@@ -71,9 +73,9 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
       item.kind==="Quiz"?item.reportHref:item.handedIn?item.primaryHref:item.editorHref;
     const status=draft?"Draft":pending?item.toGrade+" to grade":item.status==="PUBLISHED"?"Open":item.status;
     return <tr key={item.key}>
-     <td><Link href={item.editorHref} className="font-semibold text-[#1d293f] hover:underline">
+     <td><Link href={item.editorHref} className="font-semibold text-[color:var(--lms-heading)] hover:underline">
       <span className={"mr-2 rounded-full px-2 py-0.5 text-xs font-bold "+(item.kind==="Assignment"?
-       "bg-cyan-50 text-[#078191]":"bg-violet-50 text-violet-700")}>{item.kind}</span>
+       "bg-cyan-50 text-[color:var(--lms-button-primary)]":"bg-violet-50 text-violet-700")}>{item.kind}</span>
       {item.title}</Link></td>
      <td><span className="block text-sm">{item.courseCode}</span>
       <span className="faculty-proto-subtitle">{item.sectionName}</span></td>
@@ -88,6 +90,6 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
     </tr>;
    })}</tbody>
   </table></div>
-  {visible.length===0?<p className="faculty-proto-subtitle rounded-lg border border-[#e5ebf2] p-5">No assessments match these filters.</p>:null}
+  {visible.length===0?<p className="faculty-proto-subtitle rounded-lg border border-[color:var(--lms-border)] p-5">No assessments match these filters.</p>:null}
  </section>;
 }

@@ -339,7 +339,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                 Previous page
               </Button>
               <label>Page
-                <input className="ml-2 w-20 rounded border border-border p-2"
+                <Input className="ml-2 w-20 rounded border border-border p-2"
                   type="number" min={1} max={999} value={pdfPage}
                   onChange={event=>{
                     const n=Number(event.target.value);
@@ -351,11 +351,11 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                 Next page
               </Button>
               <label>Zoom
-                <select className="ml-2 rounded border border-border p-2"
+                <Select className="ml-2 rounded border border-border p-2"
                   value={pdfZoom}
                   onChange={event=>setPdfZoom(Number(event.target.value))}>
                   {[50,75,100,125,150,200].map(n=><option key={n} value={n}>{n}%</option>)}
-                </select>
+                </Select>
               </label>
             </div>:null}
             {preview.kind==="PDF"?<iframe title={"Private PDF "+file.title}

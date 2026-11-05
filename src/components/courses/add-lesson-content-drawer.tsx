@@ -26,6 +26,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Drawer } from "@/components/ui/drawer";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
+import { Button } from "@/components/ui/button";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -176,7 +177,7 @@ export function AddLessonContentDrawer({
         >
           {visibleCategories.map((category, index) => (
             <li key={category}>
-              <button
+              <Button variant="bare"
                 type="button"
                 aria-label={`Add ${category}`}
                 className="flex w-full min-h-11 items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm font-semibold text-body transition-colors hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
@@ -186,7 +187,7 @@ export function AddLessonContentDrawer({
                   {index + 1}.
                 </span>
                 <span>{category}</span>
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
@@ -210,13 +211,13 @@ export function AddLessonContentDrawer({
           >
             Open Quiz Builder
           </Link>
-          <button
+          <Button variant="bare"
             type="button"
             className="block text-sm font-semibold text-primary-text underline"
             onClick={() => setSelectedCategory(null)}
           >
             ← Back to content types
-          </button>
+          </Button>
         </div>
       ) : null}
 
@@ -238,13 +239,13 @@ export function AddLessonContentDrawer({
           >
             Open Assignment Builder
           </Link>
-          <button
+          <Button variant="bare"
             type="button"
             className="block text-sm font-semibold text-primary-text underline"
             onClick={() => setSelectedCategory(null)}
           >
             ← Back to content types
-          </button>
+          </Button>
         </div>
       ) : null}
 
@@ -252,13 +253,13 @@ export function AddLessonContentDrawer({
       {authoringMode === "YOUTUBE" && selectedCategory === "Videos" ? (
         <div className="min-w-0">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-            <button
+            <Button variant="bare"
               type="button"
               className="text-sm font-semibold text-primary-text underline"
               onClick={() => setSelectedCategory(null)}
             >
               ← Back to content types
-            </button>
+            </Button>
             <Link
               href={
                 "/teacher/courses/" +
@@ -293,13 +294,13 @@ export function AddLessonContentDrawer({
       {authoringMode === "RESOURCE" ? (
         <div className="min-w-0">
           {selectedCategory !== null ? (
-            <button
+            <Button variant="bare"
               type="button"
               className="mb-4 text-sm font-semibold text-primary-text underline"
               onClick={() => setSelectedCategory(null)}
             >
               ← Back to content types
-            </button>
+            </Button>
           ) : null}
           <FacultyLessonAuthoring
             key={"drawer-resource:" + lessonId}
@@ -320,13 +321,13 @@ export function AddLessonContentDrawer({
       {authoringMode === "LIVE_CLASS" ? (
         <div className="min-w-0">
           {selectedCategory !== null ? (
-            <button
+            <Button variant="bare"
               type="button"
               className="mb-4 text-sm font-semibold text-primary-text underline"
               onClick={() => setSelectedCategory(null)}
             >
               ← Back to content types
-            </button>
+            </Button>
           ) : null}
           <FacultyLessonAuthoring
             key={"drawer-live:" + lessonId}

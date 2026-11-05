@@ -1,6 +1,8 @@
 "use client";
 import {useState} from "react";
 import Link from "next/link";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 export type FacultyCalendarItem={id:string;title:string;sectionName:string;courseCode:string|null;
  startsAt:string;location:string|null;deliveryId:string|null};
 function istDay(instant:string):string{
@@ -54,48 +56,48 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
      {todayClasses} {todayClasses===1?"class":"classes"} today · {thisWeekClasses} this week · {nextMessage}
     </p></div>
    <div className="flex flex-wrap gap-2" role="group" aria-label="Calendar views">
-    {(["Week","Day","Month"] as const).map(v=><button key={v} type="button"
-      className="faculty-proto-pill" aria-pressed={view===v} onClick={()=>setView(v)}>{v}</button>)}
+    {(["Week","Day","Month"] as const).map(v=><Button variant="bare" key={v} type="button"
+      className="faculty-proto-pill" aria-pressed={view===v} onClick={()=>setView(v)}>{v}</Button>)}
     <label className="sr-only" htmlFor="faculty-calendar-course">Filter class schedule by course</label>
-    <select id="faculty-calendar-course" value={course} onChange={e=>setCourse(e.target.value)}
-     className="min-h-11 rounded-lg border border-[#dce5ee] bg-white px-3 text-sm">
+    <Select id="faculty-calendar-course" value={course} onChange={e=>setCourse(e.target.value)}
+     className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-white px-3 text-sm">
      <option value="all">All courses</option>
      {courses.map(code=><option key={code} value={code}>{code}</option>)}
-    </select>
-    <span className="self-center text-sm font-semibold text-[#1d293f]">
+    </Select>
+    <span className="self-center text-sm font-semibold text-[color:var(--lms-heading)]">
      {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",day:"numeric",month:"short"}).format(date(keys[0]!))}
      {" – "}
      {new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",day:"numeric",month:"short"}).format(date(keys.at(-1)!))}
     </span>
-    <button type="button" className="faculty-proto-secondary" disabled={previous<minDate}
-      onClick={()=>setDay(previous)} aria-label={"Previous "+view}>←</button>
-    <button type="button" className="faculty-proto-secondary" onClick={()=>setDay(today)}>Today</button>
-    <button type="button" className="faculty-proto-secondary" disabled={next>maxDate}
-      onClick={()=>setDay(next)} aria-label={"Next "+view}>→</button>
+    <Button variant="bare" type="button" className="faculty-proto-secondary" disabled={previous<minDate}
+      onClick={()=>setDay(previous)} aria-label={"Previous "+view}>←</Button>
+    <Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>setDay(today)}>Today</Button>
+    <Button variant="bare" type="button" className="faculty-proto-secondary" disabled={next>maxDate}
+      onClick={()=>setDay(next)} aria-label={"Next "+view}>→</Button>
    </div>
   </div>
   <div className="overflow-x-auto" role="region" aria-label="Calendar dates, scroll horizontally for other days" tabIndex={0}>
    <div className="grid min-w-[800px] gap-[6px]" style={{gridTemplateColumns:view==="Day"?"1fr":"repeat(7,minmax(0,1fr))"}}>
-    {keys.map(key=><section key={key} aria-label={key+" IST"} className={"min-h-[264px] rounded-xl border p-2.5 "+(key===today?"border-[#69b5be] bg-[#f1f9fa]":"border-[#e5ebf2]")}>
-     <h2 className={"text-sm font-bold "+(key===today?"text-[#078191]":"text-[#1d293f]")}>{dayLabel(key)}{key===today?" · today":""}</h2>
+    {keys.map(key=><section key={key} aria-label={key+" IST"} className={"min-h-[264px] rounded-xl border p-2.5 "+(key===today?"border-[color:var(--lms-primary)] bg-[color:var(--lms-primary-subtle)]":"border-[color:var(--lms-border)]")}>
+     <h2 className={"text-sm font-bold "+(key===today?"text-[color:var(--lms-button-primary)]":"text-[color:var(--lms-heading)]")}>{dayLabel(key)}{key===today?" · today":""}</h2>
      {selectedEvents.filter(e=>istDay(e.startsAt)===key).map((e,i)=>{
-      const tone=["border-[#078191] bg-[#eef8f9]","border-[#e79c00] bg-[#fff9eb]","border-[#7447df] bg-[#f6f2ff]"][
+      const tone=["border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]","border-[color:var(--lms-icon-amber)] bg-[color:var(--lms-gold-subtle)]","border-[color:var(--lms-purple)] bg-[color:var(--lms-purple-surface)]"][
        [...(e.courseCode??e.title)].reduce((n,char)=>n+char.charCodeAt(0),0)%3]!;
       return <article key={e.id+":"+(e.deliveryId??"section")+":"+i}
        className={"mt-2 rounded-md border-l-[3px] px-2 py-2 text-xs "+tone}>
-      <p className="font-semibold text-[#1d293f]">{localTime(e.startsAt)} · {e.courseCode??e.title} · {e.sectionName}</p>
-      {e.location?<p className="mt-1 text-[#334155]">{e.location}</p>:null}
+      <p className="font-semibold text-[color:var(--lms-heading)]">{localTime(e.startsAt)} · {e.courseCode??e.title} · {e.sectionName}</p>
+      {e.location?<p className="mt-1 text-[color:var(--lms-text-body)]">{e.location}</p>:null}
       {e.deliveryId?<Link className="faculty-proto-link mt-1 inline-block"
        href={"/teacher/courses/"+encodeURIComponent(e.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(e.id)}>
         Take attendance</Link>:null}
      </article>})}
-     {!selectedEvents.some(e=>istDay(e.startsAt)===key)?<p className="mt-3 text-xs text-[#98a5b8]">No scheduled classes</p>:null}
+     {!selectedEvents.some(e=>istDay(e.startsAt)===key)?<p className="mt-3 text-xs text-[color:var(--lms-neutral-400)]">No scheduled classes</p>:null}
     </section>)}
    </div>
   </div>
-  <section className="rounded-xl border border-[#e5ebf2] p-5">
-   <h2 className="text-xs font-bold uppercase text-[#60718b]">Next 3 classes</h2>
-   {ordered.length?<ol className="mt-2 divide-y divide-[#e5ebf2]">{ordered.map(e=><li key={e.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+  <section className="rounded-xl border border-[color:var(--lms-border)] p-5">
+   <h2 className="text-xs font-bold uppercase text-[color:var(--lms-text-muted)]">Next 3 classes</h2>
+   {ordered.length?<ol className="mt-2 divide-y divide-[color:var(--lms-border)]">{ordered.map(e=><li key={e.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
     <span><strong>{istDay(e.startsAt)===today?"Today":dayLabel(istDay(e.startsAt))} {localTime(e.startsAt)}</strong> · {e.courseCode??e.title} · {e.sectionName}{e.location?" · "+e.location:""}</span>
     {e.deliveryId?<Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(e.deliveryId)+"/attendanceDetail?sessionId="+encodeURIComponent(e.id)}>Take attendance</Link>:null}
    </li>)}</ol>:<p className="faculty-proto-subtitle mt-2">No upcoming classes in the verified timetable window.</p>}

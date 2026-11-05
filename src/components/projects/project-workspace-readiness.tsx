@@ -15,6 +15,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { Disclosure } from "@/components/ui/disclosure";
 import { StatusBadge } from "@/components/ui/status-badge";
 import Link from "next/link";
+import { Table } from "@/components/ui/table";
 export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:string;basePath:string}){
   // A forged project UUID, expired role or interrupted DB read must never
   // produce a raw server error or expose another college's readiness values.
@@ -143,7 +144,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
           </ul>
         </aside>:null}
       <section className="overflow-x-auto" aria-label="Readiness detail">
-        <table className="w-full min-w-[420px] border-collapse text-left text-sm">
+        <Table className="min-w-[420px]">
           <caption className="pb-2 text-left font-semibold text-[var(--lms-heading)]">Readiness details</caption>
           <tbody className="divide-y divide-border">
             <tr><th scope="row" className="py-2 pr-4 font-medium">Tasks</th>
@@ -166,7 +167,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
             <tr><th scope="row" className="py-2 pr-4 font-medium">Effective readiness</th>
               <td className="py-2">{isReady?"Ready":"Not ready"} · {readiness.projectStatus==="ARCHIVED"?"Archived workspaces cannot submit":hasFinalSubmission?"Final submission takes precedence":"Tasks, sprints and override policy apply"}</td></tr>
           </tbody>
-        </table>
+        </Table>
       </section>
     </section>
     <section aria-label="Manual readiness override" className="rounded-[8px] border border-border bg-surface p-4">

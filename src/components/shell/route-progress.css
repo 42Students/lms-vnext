@@ -42,7 +42,7 @@
  display:block;
  width:14px;
  height:14px;
- background:#1677ff;
+ background:var(--lms-info-blue);
  border-radius:100%;
  transform:scale(.75);
  transform-origin:50% 50%;
@@ -59,7 +59,7 @@
 }
 @keyframes lms-legacy-spin-move {to {opacity:1;}}
 .lms-legacy-loader-recovery {margin-top:12px;text-align:center;}
-.lms-legacy-loader-recovery p {margin:0 0 8px;color:#84828b;font-size:14px;}
+.lms-legacy-loader-recovery p {margin:0 0 8px;color:var(--lms-neutral-400);font-size:14px;}
 @media (prefers-reduced-motion:reduce) {
  .lms-legacy-loader-dots,.lms-legacy-loader-dots i {animation:none;}
 }

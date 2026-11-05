@@ -1,17 +1,17 @@
 /* Auth-only shell. Measurements follow docs/design/legacy-styles/pages___login.scss
    and the 2026-10-19 North Star; shared app chrome belongs to other lanes. */
 .viewport {
-  --auth-primary: var(--lms-button-primary, #0a7c88);
-  --auth-ink: var(--lms-heading, #172033);
-  --auth-body: var(--lms-body-text, #54505d);
-  --auth-border: var(--lms-border, #e5e9f0);
+  --auth-primary: var(--lms-button-primary, var(--lms-button-primary));
+  --auth-ink: var(--lms-heading, var(--lms-heading));
+  --auth-body: var(--lms-body-text, var(--lms-text-body));
+  --auth-border: var(--lms-border, var(--lms-border));
   position: relative;
   isolation: isolate;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   min-height: 100dvh;
   overflow-x: hidden;
-  background: var(--lms-page-background, #f1f4f9);
+  background: var(--lms-page-background, var(--lms-neutral-100));
   color: var(--auth-ink);
   font-family: var(--font-inter), Inter, Lato, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -96,7 +96,7 @@
   padding: 40px 42px 38px;
   border: 1px solid var(--auth-border);
   border-radius: var(--lms-canvas-radius, 12px);
-  background: var(--lms-surface, #fff);
+  background: var(--lms-surface, var(--lms-white));
   box-shadow: none;
 }
 .card :global(.login-form) { width: 100%; max-width: none; }
@@ -110,15 +110,15 @@
 }
 .card :global(.login-form > p) {
   margin-top: 8px;
-  color: var(--lms-muted-text, #6b7280);
+  color: var(--lms-muted-text, var(--lms-text-muted));
   font-size: 14px;
   line-height: 22px;
 }
 .card :global([role="tablist"]) {
   gap: 4px;
-  border-radius: 9px;
+  border-radius: 8px;
   padding: 4px;
-  background: var(--lms-page-background, #f1f4f9);
+  background: var(--lms-page-background, var(--lms-neutral-100));
 }
 .card :global([role="tab"]) {
   min-height: 40px;
@@ -127,7 +127,7 @@
   transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
 }
  .card :global([role="tab"][aria-selected="true"]) {
-  background: var(--lms-surface, #fff);
+  background: var(--lms-surface, var(--lms-white));
   color: var(--auth-primary);
   box-shadow: 0 1px 4px rgba(23, 32, 51, .10);
 }
@@ -137,12 +137,12 @@
   display: block;
   width: 100%;
   min-height: 52px;
-  border: 1px solid #e9eff9;
+  border: 1px solid var(--lms-border);
   border-radius: 10px;
-  background: var(--lms-surface, #fff);
+  background: var(--lms-surface, var(--lms-white));
   padding: 15px 10px;
   height: auto;
-  color: var(--lms-input-text, #0a0517);
+  color: var(--lms-input-text, var(--lms-black));
   font-size: 14px;
   line-height: 20px;
   letter-spacing: .2px;
@@ -158,9 +158,9 @@
   width: 100%;
   min-height: 40px;
   border: 1px solid var(--auth-primary);
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--auth-primary);
-  color: var(--lms-on-primary, #fff);
+  color: var(--lms-on-primary, var(--lms-white));
   font-size: 14px;
   font-weight: 650;
   line-height: 20px;
@@ -184,10 +184,10 @@
 }
 .card :global(button:not([type="submit"]):not([role="tab"])),
 .card :global(a) { color: var(--auth-primary); }
-.card :global(button:disabled:not([type="submit"])) { color: var(--lms-neutral-400, #a9a7ae); }
+.card :global(button:disabled:not([type="submit"])) { color: var(--lms-neutral-400, var(--lms-neutral-400)); }
 .status { margin-bottom: 16px; border-radius: var(--lms-control-radius, 9px); padding: 14px 16px; font-size: 14px; line-height: 22px; }
-.statusWarning { border: 1px solid #f3d1a0; background: #fffbeb; color: #92400e; }
-.statusError { border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; }
+.statusWarning { border: 1px solid var(--lms-gold-subtle); background: var(--lms-gold-subtle); color: var(--lms-warning-strong); }
+.statusError { border: 1px solid var(--lms-error-surface); background: var(--lms-error-surface); color: var(--lms-error-strong); }
 .statusTitle { margin: 0 0 4px; font-weight: 650; }
 .statusMessage { margin: 0; overflow-wrap: anywhere; }
 .statusLink { display: inline-block; margin-top: 12px; color: var(--auth-primary); font-weight: 650; text-decoration: underline; }
@@ -199,7 +199,7 @@
   align-items: center;
   gap: 10px 20px;
   padding: 20px clamp(24px, 5vw, 72px) 28px;
-  color: var(--lms-muted-text, #6b7280);
+  color: var(--lms-muted-text, var(--lms-text-muted));
   font-size: 12px;
   line-height: 20px;
 }
@@ -237,12 +237,12 @@
   box-shadow: 0 0 0 2px rgba(239, 68, 68, .2);
   outline-color: var(--lms-error);
 }
-.card :global(input::placeholder) { color: #bbb9be; opacity: 1; }
+.card :global(input::placeholder) { color: var(--lms-neutral-400); opacity: 1; }
 .card :global([role="tab"][aria-selected="true"]:focus-visible) {
   outline: 2px solid var(--auth-primary);
   outline-offset: 2px;
 }
-.card :global([role="tab"][aria-selected="false"]:hover) { background: var(--lms-primary-subtle, #eff8fa); color: var(--auth-primary); }
+.card :global([role="tab"][aria-selected="false"]:hover) { background: var(--lms-primary-subtle, var(--lms-primary-subtle)); color: var(--auth-primary); }
 
 /* The OTP view inherits the same form shell, with larger monospaced digits. */
 .card :global(.login-form[data-step="code"] input[name="code"]),
@@ -302,8 +302,8 @@
   align-items: center;
   padding: 0 16px;
   border: 2px solid var(--auth-primary);
-  border-radius: 9px;
-  background: var(--lms-surface, #fff);
+  border-radius: 8px;
+  background: var(--lms-surface, var(--lms-white));
   color: var(--auth-ink);
   font-size: 14px;
   font-weight: 600;

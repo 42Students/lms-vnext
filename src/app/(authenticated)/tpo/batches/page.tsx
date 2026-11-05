@@ -33,6 +33,7 @@ import {visibleTpoBatchWorkingSet} from "@/modules/placements/tpo-batch-working-
 import {sortTpoBatchWorkingPriority} from "@/modules/placements/tpo-batch-priority-sort-model";
 import {parseTpoBatchFacetQuery,filterTpoBatchFacets} from "@/modules/placements/tpo-batch-facets-model";
 import {TpoBatchFacetFilters} from "@/components/tpo/tpo-batch-facet-filters";
+import { Table } from "@/components/ui/table";
 export const dynamic="force-dynamic";
 
 export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[];facetState?:string|string[];facetProgram?:string|string[];facetDepartment?:string|string[];facetFinalYear?:string|string[];selectedBatch?:string|string[]}>}){
@@ -180,7 +181,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
    <div className="min-w-0 overflow-x-auto rounded-xl border border-border bg-surface"
     role="region" aria-label="Batch placement table" tabIndex={0}>
-    <table className="w-full min-w-[700px] border-collapse text-sm">
+    <Table className="min-w-[700px]">
      <thead><tr className="bg-surface-secondary text-left text-xs font-bold uppercase text-muted-foreground">
       <th scope="col" className="p-3">Batch and classes</th><th scope="col" className="p-3 text-right">Students</th>
       <th scope="col" className="p-3">Decided</th><th scope="col" className="p-3 text-right">Registered</th>
@@ -208,7 +209,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
         {tpoBatchNextAction(batch,data.ready,counts,progress)}</Link></td>
       </tr>;
      })}</tbody>
-    </table>
+    </Table>
    </div>
    <aside aria-label="Selected batch decision" className="min-w-0 rounded-xl border border-border bg-surface p-4">
     {activeBatch?<><h2 className="text-lg font-bold text-foreground">Decide {activeBatch.name}</h2>
@@ -271,7 +272,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
        <span><strong className="text-[var(--lms-heading)]">{(summary.undecided+summary.needsReview).toLocaleString("en-IN")}</strong> not decided</span>
       </div>
       <div role="img" aria-label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+(summary.undecided+summary.needsReview)+" not decided"} className="flex h-[6px] overflow-hidden rounded-full bg-[var(--lms-header-border)]">
-       <span className="bg-[#15803d]" style={{width:total>0?summary.eligible/total*100+"%":"0%"}}/>
+       <span className="bg-[color:var(--lms-success-strong)]" style={{width:total>0?summary.eligible/total*100+"%":"0%"}}/>
        <span className="bg-[var(--lms-error-text)]" style={{width:total>0?summary.ineligible/total*100+"%":"0%"}}/>
       </div>
       {summary.needsReview>0?<p className="text-xs font-semibold text-[var(--lms-warning-text)]">{summary.needsReview} need class membership review</p>:null}

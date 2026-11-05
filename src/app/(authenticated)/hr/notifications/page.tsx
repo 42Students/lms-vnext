@@ -28,7 +28,7 @@ export default async function HrMessagesPage({searchParams}:{
    actions={<Link href="/hr/conversations"
      className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto">Recruiter conversations</Link>}/>
   <ErrorState title="Invalid inbox filter" description="Review the college, search and unread options." role="alert"
-   action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9">Reset</Link>}/>
+   action={<Link href="/hr/notifications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-text)] md:min-h-9">Reset</Link>}/>
  </div>;
  const result=await listHrNotifications(context,query.data);
  const time=(d:Date)=>new Intl.DateTimeFormat("en-IN",{

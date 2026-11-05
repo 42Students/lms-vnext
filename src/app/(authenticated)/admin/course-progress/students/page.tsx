@@ -228,7 +228,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
             const completed=studentCourseCompletion(row);
             const percent=completed===null?null:Math.max(0,Math.min(100,completed));
             const progressState=percent===0?"Not started":percent!==null&&percent<40?"Below 40%":"Progress recorded";
-            const progressColour=percent===0?"bg-[#ff4d4f]":percent!==null&&percent<40?"bg-[#1890ff]":"bg-[#52c41a]";
+            const progressColour=percent===0?"bg-[color:var(--lms-error)]":percent!==null&&percent<40?"bg-[color:var(--lms-info-blue)]":"bg-[color:var(--lms-success-strong)]";
             return percent===null?<span className="text-muted-foreground">Not measured</span>:
               <div className="flex min-w-[190px] items-center gap-2">
                 <div role="progressbar" aria-label={"Course completion for "+(row.studentName||"student")}

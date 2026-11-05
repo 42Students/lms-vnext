@@ -101,13 +101,13 @@ export function FacultyAvatarUpload({initialVersion,initials}:{initialVersion:nu
      <span aria-label="Profile initials">{initials}</span>}
   </div>
   <label className="block font-semibold text-[var(--lms-heading)]">Change profile image
-   <input className="mt-2 block w-full max-w-xs text-sm" type="file"
+   <Input className="mt-2 block w-full max-w-xs text-sm" type="file"
     accept="image/png,image/jpeg,image/webp" disabled={pending||importing}
     onChange={event=>{const file=event.currentTarget.files?.[0];
      if(file)void upload(file);event.currentTarget.value="";}}/>
   </label>
-  <button type="button" className="text-sm font-semibold text-link underline"
-   aria-expanded={showLink} onClick={()=>setShowLink(value=>!value)}>Import from image link</button>
+  <Button variant="bare" type="button" className="text-sm font-semibold text-link underline"
+   aria-expanded={showLink} onClick={()=>setShowLink(value=>!value)}>Import from image link</Button>
   {showLink?<div className="flex max-w-sm flex-col gap-2">
    <label className="text-xs font-semibold" htmlFor="faculty-avatar-link">HTTPS image URL</label>
    <Input id="faculty-avatar-link" type="url" value={link} onChange={event=>setLink(event.target.value)}

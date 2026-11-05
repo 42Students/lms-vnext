@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-model";
 import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
+import { Table } from "@/components/ui/table";
 type Preview={ready:boolean;roundName?:string;staged:number;applied:number;
  outcomes:{PASS:number;FAIL:number;HOLD:number;ABSENT:number};destinations:{PASS:string;FAIL:string;HOLD:string;ABSENT:string};previewToken:string;
  rows:Array<{resultId:string;student:string;outcome:string;status:string;destination:string;rollNumber?:string|null;enteredBy?:string|null;reason?:string|null}>;
@@ -89,7 +90,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
      placeholder="Student, roll or reason" />
    </label>
    <div className="max-h-[360px] overflow-auto rounded-[var(--lms-control-radius)] border border-border">
-    <table className="w-full min-w-[680px] border-collapse text-left text-sm">
+    <Table className="min-w-[680px]">
      <thead className="sticky top-0 bg-surface-subtle"><tr>
       {["Student","Roll","Result","Entered by","Reason"].map(label=>
        <th key={label} scope="col" className="border-b border-border px-3 py-2 font-semibold">{label}</th>)}
@@ -104,7 +105,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
        <td className="px-3 py-2">{r.enteredBy??"Not recorded"}</td>
        <td className="px-3 py-2">{r.reason??"Not recorded"}</td>
       </tr>)}</tbody>
-    </table>
+    </Table>
    </div>
    <p className="text-xs text-body leading-[20px]">{preview.skippedUnrecordedNote}</p>
    <Button variant="secondary" type="button" onClick={()=>downloadRoundCsv(

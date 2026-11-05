@@ -1,6 +1,7 @@
 "use client";
 import {usePathname} from "next/navigation";
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 const names:Record<string,string>={home:"Course overview",lessons:"Lessons",content:"Content",
  assignments:"Assignments",quizzes:"Quizzes",attendance:"Attendance",progress:"Progress",
  resources:"Resources",live:"Live classes",roadmap:"Learning Path"};
@@ -11,7 +12,7 @@ export default function Loading(){
  return <div role="status" aria-live="polite" aria-busy="true"
    aria-label={"Loading "+label} className="min-w-0 space-y-4">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-   <h1 className="text-xl font-semibold">Loading {label}</h1>
+   <PageHeader title={`Loading ${label}`} />
    <Link href="/learn/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">All courses</Link>
   </div>
   <div className="animate-pulse space-y-4" aria-hidden="true">

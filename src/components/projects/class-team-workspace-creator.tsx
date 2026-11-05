@@ -24,6 +24,7 @@ import {classTeamCreationFeedback} from "@/modules/projects/class-team-create-fe
 import {mayBeginClassTeamCreation} from "@/modules/projects/class-team-create-once-model";
 import {canEditClassTeamPlanner} from "@/modules/projects/class-team-edit-guard-model";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
+import { Radio } from "@/components/ui/radio";
 
 type ClassChoice = { id:string;name:string;code:string };
 type Learner = {membershipId:string;rollNumber:string;displayName:string};
@@ -537,7 +538,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         ] as const).map(([value,title])=><label key={value}
          className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold "+
           (mode===value?"border-primary bg-primary-subtle text-link":"border-transparent bg-surface text-body")}>
-         <input type="radio" name="workspaceMode" value={value}
+         <Radio name="workspaceMode" value={value}
           checked={mode===value} disabled={!plannerEditable}
           onChange={()=>setMode(value)}/>
          {title}

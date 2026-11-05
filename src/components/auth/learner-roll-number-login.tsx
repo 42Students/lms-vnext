@@ -69,11 +69,11 @@ export function LearnerRollNumberLogin() {
       <Button type="submit" disabled={busy} className="w-full">
         {busy ? "Verifying…" : "Verify and sign in"}
       </Button>
-      <button type="button" disabled={busy}
+      <Button variant="bare" type="button" disabled={busy}
         className="block text-sm text-primary-text underline"
         onClick={() => { setAttempt(null); setCode(""); setMessage(""); }}>
         Request another code
-      </button>
+      </Button>
     </form>}
     {message ? <p role="alert" className="text-sm text-error">{message}</p> : null}
     <p className="text-xs text-muted-foreground">

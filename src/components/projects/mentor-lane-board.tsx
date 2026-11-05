@@ -30,6 +30,7 @@ import {MentorTaskHistory} from "./mentor-task-history";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Alert} from "@/components/ui/alert";
 import {BoardColumn} from "@/components/ui/board-column";
+import { Input } from "@/components/ui/input";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
@@ -329,7 +330,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   <div className="prototype-mentor-board-toolbar">
     <label className="prototype-mentor-board-task-search">
       <span className="sr-only">Search project tasks</span>
-      <input type="search" value={taskQuery}
+      <Input type="search" value={taskQuery}
         onChange={event=>{setTaskQuery(event.target.value);setVisibleLimit(150);}}
         placeholder={"Find a task in all "+sprints.length+" sprints"}
         aria-label="Find a task by title, type, description or assignee" />
@@ -488,8 +489,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     {focused?<>
       <div className="prototype-mentor-board-detail-title">
         <span>{focused.status.replaceAll("_"," ")}</span>
-        <button type="button" onClick={()=>setSelected(focused.id)}
-          aria-label={"Open complete task details for "+focused.title}>⋯</button>
+        <Button variant="secondary" type="button" onClick={()=>setSelected(focused.id)}
+          aria-label={"Open complete task details for "+focused.title}>⋯</Button>
       </div>
       <h3 aria-live="polite">{focused.title}</h3>
       <div className="prototype-mentor-board-detail-tags">
@@ -565,8 +566,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
           onReviewSuccess={advanceAfterReview}/>
       </div>:null}
       <MentorTaskHistory key={focused.id} projectId={projectId} taskId={focused.id}/>
-      <button type="button" className="prototype-mentor-board-detail-more"
-        onClick={()=>setSelected(focused.id)}>Open full task details →</button>
+      <Button variant="bare" type="button" className="prototype-mentor-board-detail-more"
+        onClick={()=>setSelected(focused.id)}>Open full task details →</Button>
       <div className="prototype-mentor-board-detail-block">
         <h4>Comments and progress</h4>
         <ProjectTaskComments key={focused.id} projectId={projectId} taskId={focused.id}

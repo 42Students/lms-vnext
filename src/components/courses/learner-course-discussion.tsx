@@ -43,10 +43,10 @@ type DiscussionMessage = {
 
 // Eight deterministic pastel tints, matching the legacy Classroom palette.
 const AVATAR_TINTS=[
-  {bg:"#e0f2f1",fg:"#0f766e"}, {bg:"#ede9fe",fg:"#5b21b6"},
-  {bg:"#fef3c7",fg:"#92400e"}, {bg:"#e0e7ff",fg:"#3730a3"},
-  {bg:"#fce7f3",fg:"#9d174d"}, {bg:"#dcfce7",fg:"#166534"},
-  {bg:"#ffe4e6",fg:"#9f1239"}, {bg:"#e0f2fe",fg:"#075985"},
+  {bg:"var(--lms-primary-subtle)",fg:"var(--lms-button-primary)"}, {bg:"var(--lms-purple-surface)",fg:"var(--lms-purple-text)"},
+  {bg:"var(--lms-gold-subtle)",fg:"var(--lms-warning-strong)"}, {bg:"var(--lms-purple-surface)",fg:"var(--lms-purple-text)"},
+  {bg:"var(--lms-purple-surface)",fg:"var(--lms-error-strong)"}, {bg:"var(--lms-success-surface)",fg:"var(--lms-success-strong)"},
+  {bg:"var(--lms-error-surface)",fg:"var(--lms-error-strong)"}, {bg:"var(--lms-info-blue-surface)",fg:"var(--lms-info-text)"},
 ] as const;
 function avatarTint(senderId:string,senderName:string){
   const source=senderId||senderName;
@@ -519,7 +519,7 @@ export function LearnerCourseDiscussion({
       </div>:null}
       <h2 className="sr-only">Discussions</h2>
       {!moderate&&pinned ? (
-        <section className="flex min-w-0 items-start gap-2.5 rounded-[12px] border border-[#d8e7ea] bg-[#f6fbfb] px-[14px] py-3">
+        <section className="flex min-w-0 items-start gap-2.5 rounded-[12px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-[14px] py-3">
           <span className="mt-0.5 shrink-0 text-[var(--lms-primary-text)]"><DiscussionPinIcon filled /></span>
           <div className="min-w-0 flex-1">
           <p className="break-words text-sm font-semibold text-foreground">{pinned.messageText}</p>
@@ -564,7 +564,7 @@ export function LearnerCourseDiscussion({
       {moderationError?<Alert tone="error">{moderationError}</Alert>:null}
       <section className={"relative min-w-0 overflow-hidden bg-surface "+(moderate?"":"border border-[var(--lms-canvas-border)]")} >
         {loadError && messages.length > 0 && loadedOnce.current && !refreshDismissed ? (
-          <div role="alert" className="flex flex-wrap items-center gap-3 border-b border-[#f2e3b9] bg-[#fffbea] px-3 py-2 text-sm">
+          <div role="alert" className="flex flex-wrap items-center gap-3 border-b border-[color:var(--lms-gold-subtle)] bg-[color:var(--lms-gold-subtle)] px-3 py-2 text-sm">
             <div className="min-w-0 flex-1">
               <strong>Discussion refresh failed</strong>
               <p>Showing the last messages we loaded.</p>
@@ -578,7 +578,7 @@ export function LearnerCourseDiscussion({
           ref={scrollRef}
           onScroll={handleScroll}
           role="region" aria-label="Course discussion messages" tabIndex={0}
-          className={moderate?"min-h-[180px] max-h-[min(65vh,650px)] overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#078191]":"max-h-[min(62vh,640px)] min-h-[320px] overflow-y-auto overscroll-contain px-2 py-3 sm:px-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}
+          className={moderate?"min-h-[180px] max-h-[min(65vh,650px)] overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-button-primary)]":"max-h-[min(62vh,640px)] min-h-[320px] overflow-y-auto overscroll-contain px-2 py-3 sm:px-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}
         >
           {scopeUnavailable ? (
             <div className="flex min-h-64 flex-col items-center justify-center gap-2 p-4 text-center">
@@ -629,7 +629,7 @@ export function LearnerCourseDiscussion({
               />
             )
           ) : (
-            <div className={moderate?"min-w-0 divide-y divide-[#edf1f5]":"min-w-0 space-y-2"} role="log" aria-live="polite" aria-relevant="additions">
+            <div className={moderate?"min-w-0 divide-y divide-[color:var(--lms-neutral-100)]":"min-w-0 space-y-2"} role="log" aria-live="polite" aria-relevant="additions">
               {olderCursor ? (
                 <div className="flex flex-col items-center gap-2 pb-3">
                   <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={loadingOlder}
@@ -659,10 +659,10 @@ export function LearnerCourseDiscussion({
                     key={row.key}
                     className={moderate
                      ? "group grid min-w-0 grid-cols-[36px_minmax(0,1fr)_auto] items-start gap-3 break-words px-4 py-3 "+
-                       (row.item.pinned?"bg-[#fcf9f1]":"bg-white hover:bg-[#f9fafb]")
+                       (row.item.pinned?"bg-[color:var(--lms-gold-subtle)]":"bg-white hover:bg-[color:var(--lms-neutral-50)]")
                      : `group grid max-w-full min-w-0 grid-cols-[36px_minmax(0,1fr)_auto] items-start gap-3 break-words rounded-[12px] px-3 py-2
                       ${row.grouped ? "mt-0" : "mt-4"}
-                      ${row.item.isMine ? "bg-[#f0fafa] hover:bg-[#e7f7f7]" : "bg-white hover:bg-[#f9fafb]"}`}
+                      ${row.item.isMine ? "bg-[color:var(--lms-primary-subtle)] hover:bg-[color:var(--lms-primary-subtle)]" : "bg-white hover:bg-[color:var(--lms-neutral-50)]"}`}
                   >
                     {row.grouped?<span aria-hidden="true" className="w-8 shrink-0"/>:
                       <span aria-hidden="true" title={row.item.senderRole}
@@ -703,7 +703,7 @@ export function LearnerCourseDiscussion({
                           title={row.item.pinned?"Unpin this message":"Pin this message"}
                           disabled={pinningId!==null}
                           onClick={()=>void togglePin(row.item.id)}
-                          className={moderate?"!min-h-9 !rounded-md !border !border-[#e8edf3] !px-3 !text-xs !text-[#67758a]":"min-h-9 min-w-9 p-2 !text-[var(--lms-primary-text)]"}>
+                          className={moderate?"!min-h-9 !rounded-md !border !border-[color:var(--lms-border)] !px-3 !text-xs !text-[color:var(--lms-text-muted)]":"min-h-9 min-w-9 p-2 !text-[var(--lms-primary-text)]"}>
                           {moderate?(row.item.pinned?"Unpin":"Pin"):<DiscussionPinIcon filled={row.item.pinned}/>}
                         </Button> : null}
                         {(moderate || row.item.isMine) ? <Button
@@ -711,7 +711,7 @@ export function LearnerCourseDiscussion({
                           aria-label={"Delete "+(row.item.isMine?"your":row.item.senderName+"'s")+" message"} title="Delete this message"
                           disabled={deletingId===row.item.id}
                           onClick={()=>{setModerationError(null);setDeleteTarget(row.item.id);}}
-                          className={moderate?"!min-h-9 !rounded-md !border !border-[#e8edf3] !px-3 !text-xs !text-[#67758a]":"min-h-9 min-w-9 p-2 !text-[var(--lms-error)]"}>
+                          className={moderate?"!min-h-9 !rounded-md !border !border-[color:var(--lms-border)] !px-3 !text-xs !text-[color:var(--lms-text-muted)]":"min-h-9 min-w-9 p-2 !text-[var(--lms-error)]"}>
                           {moderate?"Delete":<DiscussionDeleteIcon/>}
                         </Button> : null}
                       </div>
@@ -745,7 +745,7 @@ export function LearnerCourseDiscussion({
         ) : null}
 
         {canPost && !scopeUnavailable ? (
-        <form onSubmit={submit} className={moderate?"flex min-w-0 flex-wrap items-center gap-2 border-t border-[#e5ebf2] bg-[#fbfcfd] px-4 py-4":"min-w-0 border-t border-border px-1 py-3 sm:px-3 md:py-4"}>
+        <form onSubmit={submit} className={moderate?"flex min-w-0 flex-wrap items-center gap-2 border-t border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-4 py-4":"min-w-0 border-t border-border px-1 py-3 sm:px-3 md:py-4"}>
           <p className={moderate?"sr-only":"mb-2 text-xs leading-5 text-muted-foreground"}>
             {moderate
               ? "Students can post questions here anytime — you'll see them appear in real time."
@@ -781,7 +781,7 @@ export function LearnerCourseDiscussion({
             rows={moderate?1:2}
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
-            className={moderate?"!min-h-11 min-w-0 flex-[1_1_220px] resize-none !rounded-lg border-[#dce5ee] !py-2":"mt-1.5 w-full"}
+            className={moderate?"!min-h-11 min-w-0 flex-[1_1_220px] resize-none !rounded-lg border-[color:var(--lms-border)] !py-2":"mt-1.5 w-full"}
             aria-describedby="course-discussion-compose-hint"
           />
           <div className={moderate?"flex shrink-0 items-center":"mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"}>

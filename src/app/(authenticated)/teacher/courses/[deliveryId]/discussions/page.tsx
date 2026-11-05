@@ -27,14 +27,14 @@ export default async function FacultyCourseDiscussionsPage({
    )).catch(()=>[{total:0}]);
   return (
     <div className="faculty-prototype-discussion min-w-0 max-w-full">
-      <section className="min-w-0 overflow-hidden rounded-[13px] border border-[#e5ebf2]">
-       <header className="flex min-w-0 flex-wrap items-center justify-between gap-4 border-b border-[#e5ebf2] px-[18px] py-4">
+      <section className="min-w-0 overflow-hidden rounded-[12px] border border-[color:var(--lms-border)]">
+       <header className="flex min-w-0 flex-wrap items-center justify-between gap-4 border-b border-[color:var(--lms-border)] px-[18px] py-4">
         <div className="min-w-0">
          <h2 className="text-base font-bold text-heading">Course discussions · {workspace.course.sectionName}</h2>
          <p className="mt-1 text-xs text-body">Everyone in {workspace.course.sectionName} who takes this course sees these.
           Other classes have their own.</p>
         </div>
-        {recent&&recent.total>0?<span className="shrink-0 rounded-full bg-[#eef8f9] px-3 py-1 text-xs font-semibold text-[#078191]">
+        {recent&&recent.total>0?<span className="shrink-0 rounded-full bg-[color:var(--lms-primary-subtle)] px-3 py-1 text-xs font-semibold text-[color:var(--lms-button-primary)]">
          {recent.total} recent</span>:null}
        </header>
        <LearnerCourseDiscussion key={deliveryId} deliveryId={deliveryId} moderate/>

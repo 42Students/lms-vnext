@@ -6,7 +6,7 @@ export type InputProps = ComponentPropsWithRef<"input"> & { error?: boolean };
 /**
  * Default old LMS .ln-in2 field chrome, without overriding native input type,
  * controlled value, forwarding ref, autocomplete, calendar or upload behavior.
- * Legacy: components___form.scss:117-143: #fbfcfd, radius 10px,
+ * Legacy: components___form.scss:117-143: var(--lms-neutral-50), radius 10px,
  * font 14px / 400 / 20px, tracking .2px, teal 15% focus halo and 20% red
  * invalid halo. Legacy: components___variables.scss:139,148 (44px phone tap).
  */

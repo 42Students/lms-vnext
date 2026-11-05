@@ -10,6 +10,9 @@ import {mentorMeetingFacilitationSchema,
 import {addMentorMeetingAction,editMentorMeetingAction,
  removeMentorMeetingAction,MENTOR_MEETING_MAX_ACTION_ITEMS} from
  "@/modules/projects/mentor-meeting-facilitation-editor-model";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 
 type Fields=Partial<MentorMeetingFacilitation>;
 
@@ -74,7 +77,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
     <legend className="font-semibold">Who attended?</legend>
     {facilitation.attendees.map((person,index)=><label key={person.membershipId??index}
       className="flex items-center gap-2">
-      <input type="checkbox" checked={person.attended} disabled={busy}
+      <Checkbox checked={person.attended} disabled={busy}
         onChange={event=>setFacilitation(old=>({...old,
           attendees:old.attendees.map((entry,i)=>i===index?{
             ...entry,attended:event.target.checked}:entry),
@@ -91,7 +94,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
        className="grid gap-2 rounded border border-border p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto]">
        <label className="grid gap-1 text-sm font-semibold">
          Action {index+1}
-         <input type="text" required maxLength={500} disabled={busy}
+         <Input type="text" required maxLength={500} disabled={busy}
            className="min-h-11 min-w-0 rounded border border-border p-2"
            value={item.text} placeholder="Action to complete"
            onChange={event=>setFacilitation(old=>({...old,
@@ -102,7 +105,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
        </label>
        <label className="grid gap-1 text-sm font-semibold">
          Owner (recorded text)
-         <input type="text" maxLength={160} disabled={busy}
+         <Input type="text" maxLength={160} disabled={busy}
            className="min-h-11 min-w-0 rounded border border-border p-2"
            value={item.owner??""}
            onChange={event=>setFacilitation(old=>({...old,
@@ -113,7 +116,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
        </label>
        <div className="flex flex-wrap items-end gap-2">
          <label className="flex min-h-11 items-center gap-2 text-sm">
-           <input type="checkbox" checked={item.complete} disabled={busy}
+           <Checkbox checked={item.complete} disabled={busy}
              aria-label={"Complete action "+(index+1)}
              onChange={event=>setFacilitation(old=>({...old,
                actionItemRows:editMentorMeetingAction(old.actionItemRows,index,{
@@ -140,14 +143,14 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
    </fieldset>
    <label className="block text-sm font-semibold">
      Follow-up state
-     <select value={facilitation.followUpStatus} disabled={busy}
+     <Select value={facilitation.followUpStatus} disabled={busy}
        className="ml-2 rounded border border-border p-2"
        onChange={event=>setFacilitation(old=>({...old,
          followUpStatus:event.target.value as MentorMeetingFacilitation["followUpStatus"],
        }))}>
        {["NOT_PLANNED","OPEN","IN_PROGRESS","DONE","BLOCKED"].map(value=>
         <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
-     </select>
+     </Select>
    </label>
    <p className="text-xs text-muted-foreground">Saving changes records an
      auditable event. The meeting time, invitation status and outcome text are

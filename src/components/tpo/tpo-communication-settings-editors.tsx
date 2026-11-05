@@ -7,6 +7,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type ResponseBody={error?:string;version?:string};
 function saveError(body:ResponseBody){
@@ -117,7 +118,7 @@ export function TpoRecruiterApprovalEditor({initial,version}:{initial:boolean;ve
  return <section className="space-y-3 border-t border-border pt-5">
   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">How recruiters work with you</h2>
   <label className="flex items-start gap-3 text-sm font-semibold">
-   <input type="checkbox" checked={approval} disabled={busy}
+   <Checkbox checked={approval} disabled={busy}
     onChange={event=>setApproval(event.target.checked)} className="mt-1 h-5 w-5"/>
    <span>Approve each drive a recruiter requests</span>
   </label>

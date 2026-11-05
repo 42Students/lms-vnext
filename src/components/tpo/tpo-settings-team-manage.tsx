@@ -53,12 +53,12 @@ export function TpoSettingsTeamManage({candidates,activeIds,available}:{
    <Input id="tpo-faculty-search" value={query} disabled={busy} onChange={event=>{setQuery(event.target.value);setSelected("");}}
     placeholder="Search by name"/>
    <div className="max-h-48 space-y-1 overflow-y-auto" role="listbox" aria-label="Available faculty members">
-    {choices.map(person=><button key={person.membershipId} type="button" role="option"
+    {choices.map(person=><Button variant="bare" key={person.membershipId} type="button" role="option"
      aria-selected={selected===person.membershipId} disabled={busy}
      onClick={()=>setSelected(person.membershipId)}
      className={"flex min-h-11 w-full items-center rounded-[var(--lms-control-radius)] px-3 text-left text-sm hover:bg-[var(--lms-primary-subtle)] "+(selected===person.membershipId?"bg-[var(--lms-primary-subtle)] font-semibold":"")}>
       {person.displayName} · {person.hasTpoRole?"TPO Admin":"Faculty Coordinator"}
-     </button>)}
+     </Button>)}
     {choices.length===0?<p className="px-3 py-3 text-sm text-muted-foreground">No available faculty members match this search.</p>:null}
    </div>
    <p className="text-xs text-muted-foreground">New members can access placement team work according to their existing college role and scoped permissions.</p>

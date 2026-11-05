@@ -12,6 +12,7 @@ import { listProgramsPage, listGlobalProgramsForSuperAdmin } from "@/modules/aca
 import {z} from "zod";
 import { listProgramContents } from "@/modules/admin-ui/program-contents-service";
 import { listDepartments } from "@/modules/departments/service";
+import { Table } from "@/components/ui/table";
 
 export default async function SuperAdminProgramsPage({
  searchParams,
@@ -51,7 +52,7 @@ export default async function SuperAdminProgramsPage({
           {directory.total.toLocaleString("en-IN")} active programs across active colleges. Page {directory.page} of {directory.totalPages}.
         </p>
         {directory.items.length?<div className="min-w-0 overflow-x-auto border-y border-border">
-          <table className="w-full min-w-[640px] text-left text-sm">
+          <Table className="min-w-[640px]">
             <caption className="sr-only">Programs across colleges, read only</caption>
             <thead><tr className="border-b border-border text-xs font-semibold text-muted-foreground">
               <th scope="col" className="px-3 py-3">Program</th>
@@ -67,7 +68,7 @@ export default async function SuperAdminProgramsPage({
               <td className="px-3 py-3">{program.organizationName}</td>
               <td className="px-3 py-3 tabular-nums">{program.durationYears} years</td>
             </tr>)}</tbody>
-          </table>
+          </Table>
         </div>:<EmptyState title="No programs found" description="No active college programs are available in the platform catalogue."/>}
         <nav aria-label="Program directory pagination" className="flex flex-wrap gap-4 text-sm font-semibold">
           {directory.page>1?<Link href={"/admin/programs?page="+(directory.page-1)} className="text-link underline">Previous page</Link>:null}

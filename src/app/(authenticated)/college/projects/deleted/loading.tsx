@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
+import { Table } from "@/components/ui/table";
 
 /** Six legacy-width table placeholders distinguish pending reads from empty success. */
 export default function DeletedWorkspacesLoading(){
@@ -12,7 +13,7 @@ export default function DeletedWorkspacesLoading(){
    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Deleted workspaces</h2>
    <p className="text-sm text-muted-foreground">Loading deleted workspaces…</p>
    <div className="min-w-0 overflow-x-auto">
-    <table className="w-full min-w-[630px] text-left text-sm">
+    <Table className="min-w-[630px]">
      <caption className="sr-only">Loading the deleted workspaces table</caption>
      <thead><tr className="border-b border-border"><th className="py-3">Workspace</th><th>Mentor</th><th>Action</th></tr></thead>
      <tbody>{Array.from({length:6},(_,index)=><tr key={index} className="border-b border-border">
@@ -20,7 +21,7 @@ export default function DeletedWorkspacesLoading(){
       <td><span aria-hidden="true" className="block h-4 w-32 animate-pulse rounded bg-muted motion-reduce:animate-none"/></td>
       <td><span aria-hidden="true" className="block h-8 w-24 animate-pulse rounded bg-muted motion-reduce:animate-none"/></td>
      </tr>)}</tbody>
-    </table>
+    </Table>
    </div>
   </section>
  </div>;

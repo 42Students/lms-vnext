@@ -392,9 +392,9 @@ export function LearnerCourseList({
                 }}
               />
               {query ? (
-                <button type="button" aria-label="Clear course search"
+                <Button variant="bare" type="button" aria-label="Clear course search"
                   onClick={() => {setQuery("");setSearchWasTruncated(false);setVisibleLimit(PAGE_SIZE);}}
-                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">×</button>
+                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">×</Button>
               ) : null}
             </div>
           </div>

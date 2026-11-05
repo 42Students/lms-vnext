@@ -4,6 +4,7 @@ import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {EmptyState} from "@/components/ui/empty-state";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Table } from "@/components/ui/table";
 
 export type TaskSubmissionOverviewRow={
  id:string;taskTitle:string;submitter:string;version:number;
@@ -45,7 +46,7 @@ export function ProjectTaskSubmissionOverview({rows,metrics}:{
    {rows.length===0?<EmptyState title="No task submissions"
       description="No tasks have a submission link yet."/>:
     <div className="max-w-full overflow-x-auto">
-     <table className="w-full min-w-[660px] border-collapse text-left text-sm">
+     <Table className="min-w-[660px]">
       <caption className="sr-only">Recorded task submissions, ten per page</caption>
       <thead><tr className="border-b border-border text-xs font-semibold text-body">
        <th scope="col" className="px-2 py-2">Task</th>
@@ -68,7 +69,7 @@ export function ProjectTaskSubmissionOverview({rows,metrics}:{
        <td className="px-2 py-3">{item.submitter||"—"}</td>
        <td className="px-2 py-3 tabular-nums">{format(item.submittedAt)}</td>
       </tr>)}</tbody>
-     </table>
+     </Table>
     </div>}
    <nav aria-label="Submission pages" className="flex flex-wrap items-center justify-between gap-3 text-xs text-body">
     <p role="status">Showing {rows.length?first+1:0}–{Math.min(first+size,rows.length)}

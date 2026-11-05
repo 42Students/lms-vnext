@@ -1,6 +1,7 @@
+import { PageHeader } from "@/components/ui/page-header";
 export default function LoadingMentorProject(){
  return <section role="status" aria-busy="true" aria-label="Loading project workspace" className="min-w-0 space-y-4">
-  <h1 className="text-xl font-semibold">Loading project workspace…</h1>
+  <PageHeader title="Loading project workspace…" />
   <div className="flex min-w-0 gap-3 border-b border-border pb-3" aria-hidden="true">
    {["Overview","Tasks","Team","Sprints"].map(v=><span key={v} className="h-4 w-20 animate-pulse rounded bg-muted"/>)}
   </div>

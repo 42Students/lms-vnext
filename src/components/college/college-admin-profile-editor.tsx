@@ -126,7 +126,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
     setEditableSection(section);
   }
   function cardHeader(section:ProfileSection,title:string){
-    return <header className="-mx-4 -mt-4 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-t-[var(--lms-canvas-radius)] border-b border-[#b8dce9] bg-[#e8f5fd] px-4 py-3">
+    return <header className="-mx-4 -mt-4 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-t-[var(--lms-canvas-radius)] border-b border-[color:var(--lms-border-strong)] bg-[color:var(--lms-info-blue-surface)] px-4 py-3">
       <h2 className="font-semibold text-[var(--lms-heading)]">{title}</h2>
       <Button variant="secondary" type="button" disabled={saving||readOnly}
         onClick={()=>editSection(section)}

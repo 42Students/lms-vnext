@@ -11,11 +11,11 @@ import {
 /** Legacy admin dashboard quick actions use this LMS icon/color palette. The
  * small SVGs are local so neither a new dependency nor an icon font is needed. */
 const ACTION_COLORS = {
-  slate: "#1e363f",
-  teal: "#26bac7",
-  blueSlate: "#266891",
-  blue: "#3b87ad",
-  muted: "#54505d",
+  slate: "var(--lms-brand-dark)",
+  teal: "var(--lms-primary)",
+  blueSlate: "var(--lms-info-text)",
+  blue: "var(--lms-button-primary)",
+  muted: "var(--lms-text-body)",
 } as const;
 
 function accentFor(label:string):string{

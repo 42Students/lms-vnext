@@ -3,6 +3,7 @@ import {useState} from "react";
 import {Input} from "@/components/ui/input";
 import {recruiterColleagueInviteRequestMessage,recruiterColleagueWorkEmail} from "@/modules/placements/recruiter-team-invite-request-model";
 import styles from "./recruiter-company-prototype.module.css";
+import { Button } from "@/components/ui/button";
 
 export function RecruiterColleagueInviteRequest({
  collegeId,companyName,collegeName,allowedDomains,
@@ -29,7 +30,7 @@ export function RecruiterColleagueInviteRequest({
     onBlur={()=>setTouched(true)} onChange={event=>setEmail(event.target.value)}
     aria-describedby="recruiter-colleague-invite-help"/>
   </label>
-  <button type="submit" disabled={!normalized} className={styles.inviteAction}>Request invite</button>
+  <Button variant="bare" type="submit" disabled={!normalized} className={styles.inviteAction}>Request invite</Button>
   <p id="recruiter-colleague-invite-help" className={styles.muted}>
    Use a verified company email ({allowedDomains.map(domain=>"@"+domain.replace(/^@/,"")).join(", ")}).
    The placement cell will review the request before access is granted.

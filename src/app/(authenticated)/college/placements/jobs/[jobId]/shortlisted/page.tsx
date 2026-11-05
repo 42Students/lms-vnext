@@ -129,8 +129,8 @@ export default async function CollegeDriveShortlistedPage({
       const score=row.screeningScore;
       if(score==null||!Number.isFinite(score))return "—";
       const percent=Math.max(0,Math.min(100,Math.round(score)));
-      const tone=percent>=70?"bg-[#f9f0ff] text-[#722ed1]":
-        percent>=40?"bg-[#e6fffb] text-[#08979c]":"bg-surface-secondary text-muted-foreground";
+      const tone=percent>=70?"bg-[color:var(--lms-purple-surface)] text-[color:var(--lms-purple)]":
+        percent>=40?"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-primary-text)]":"bg-surface-secondary text-muted-foreground";
       return <span className={"rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums "+tone}>{percent}%</span>;
     } },
     { key: "actions", header: "Actions", cell: () => "View only" },
@@ -173,7 +173,7 @@ export default async function CollegeDriveShortlistedPage({
       </p>
       <div className="mt-4 flex flex-wrap gap-2" role="list" aria-label="Applicant stage totals">
         {stages.filter(stage => (data.stageCounts[stage] ?? 0) > 0).map(stage=><span role="listitem" key={stage}
-          className="rounded border border-[var(--lms-canvas-border)] bg-[#f7fbfb] px-3 py-2 text-xs font-semibold text-[var(--lms-heading)]">
+          className="rounded border border-[var(--lms-canvas-border)] bg-[color:var(--lms-neutral-50)] px-3 py-2 text-xs font-semibold text-[var(--lms-heading)]">
           {stageName(stage)} <strong className="ml-1 tabular-nums">{data.stageCounts[stage]}</strong>
         </span>)}
       </div>

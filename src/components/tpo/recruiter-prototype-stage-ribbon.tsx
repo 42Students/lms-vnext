@@ -1,5 +1,6 @@
 "use client";
 import type {TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lead-policy";
+import { Button } from "@/components/ui/button";
 
 type FilterStage=TpoRecruiterLeadStage|"ALL";
 type LeadStage={stage:TpoRecruiterLeadStage};
@@ -25,13 +26,13 @@ export function TpoRecruiterPrototypeStageRibbon({
     {stages.map(({value,label})=>{
      const count=value==="ALL"?rows.length:rows.filter(lead=>lead.stage===value).length;
      const active=selected===value;
-     return <button key={value} type="button" onClick={()=>onSelect(value)}
+     return <Button variant="bare" key={value} type="button" onClick={()=>onSelect(value)}
       aria-pressed={active} aria-label={label+": "+count}
       className={"flex min-h-[72px] flex-col items-start justify-center gap-1 border-r border-border px-3 py-2 text-left last:border-r-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary-text "+
        (active?"border-b-[3px] border-b-primary bg-primary-subtle":"border-b-[3px] border-b-transparent hover:bg-primary-subtle")}>
        <strong className="text-[20px] font-bold leading-6 text-foreground">{count}</strong>
        <span className="text-xs leading-4 text-body">{label}</span>
-      </button>;
+      </Button>;
     })}
    </div>
   </nav>;

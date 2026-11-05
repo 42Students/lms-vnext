@@ -3,6 +3,7 @@ import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import type {FacultyProfileDocument} from "@/modules/people/faculty-profile-document";
+import { Input } from "@/components/ui/input";
 type Purpose="EDUCATION_CERTIFICATE"|"CERTIFICATION"|"EXPERIENCE_CERTIFICATE"|"OFFER_LETTER";
 type Item={purpose:Purpose;entryId:string;label:string;receiptId:string|null};
 type Changed={purpose:Purpose;entryId:string;receiptId:string|null;version:number};
@@ -137,7 +138,7 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
      <span className="text-xs">{item.receiptId?"On file":"Not uploaded"}</span>
     </div>
     <label className="block text-xs font-medium">Upload or replace
-     <input type="file" disabled={locked} accept="application/pdf,image/png,image/jpeg,image/webp"
+     <Input type="file" disabled={locked} accept="application/pdf,image/png,image/jpeg,image/webp"
       className="mt-1 block max-w-full text-xs"
       onChange={event=>{
        const file=event.currentTarget.files?.[0];

@@ -11,19 +11,19 @@
  * Do not copy these overrides to TPO, Recruiter or another account.
  */
 .lms-shell-frame[data-prototype-portal="mentor"] {
-  --prototype-bg: #f1f4f9;
-  font-family: Inter, Lato, Arial, sans-serif;
+  --prototype-bg: var(--lms-neutral-100);
+  font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 }
 .lms-shell-frame[data-prototype-portal="mentor"] .lms-shell-page {
-  background: #f1f4f9;
+  background: var(--lms-neutral-100);
 }
 .lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-canvas"] {
   box-sizing: border-box;
   min-width: 0;
   min-height: 495px;
   padding: 24px;
-  background: #fff;
-  border: 1px solid #e5e9f0;
+  background: var(--lms-white);
+  border: 1px solid var(--lms-border);
   border-radius: 12px;
   box-shadow: none;
 }
@@ -36,7 +36,7 @@
 .lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-header"] {
   width: 100%;
   margin: 0 0 16px;
-  border-bottom: 1px solid #e5e9f0;
+  border-bottom: 1px solid var(--lms-border);
   padding-bottom: 16px;
 }
 .lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-header"] > div:first-child {
@@ -53,14 +53,14 @@
   font-size: 30px;
   font-weight: 600;
   line-height: 1.33;
-  color: #172033;
+  color: var(--lms-heading);
 }
 .lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-header"] > div:first-child > span {
   display: block;
   width: 100%;
   font-size: 13px;
   line-height: 1.5;
-  color: #5b6b82;
+  color: var(--lms-text-muted);
 }
 @media (min-width:768px) {
   .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar {
@@ -73,8 +73,8 @@
     max-width: 256px;
     height: 100dvh;
     padding-right: 0;
-    background: #fff;
-    border-right: 1px solid #f1f4f9;
+    background: var(--lms-white);
+    border-right: 1px solid var(--lms-neutral-100);
     box-shadow: none;
     overflow: hidden;
     transition: width 150ms cubic-bezier(.2,0,0,1);
@@ -120,7 +120,7 @@
     justify-content: center;
     gap: 0;
     border-radius: 8px;
-    color: #54505d;
+    color: var(--lms-text-body);
   }
   .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-sidebar-item {
     justify-content: flex-start;
@@ -155,9 +155,9 @@
     display: none;
   }
   .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-nav .lms-sidebar-item[data-active="true"] {
-    background: #eff8fa;
-    box-shadow: inset 3px 0 #26bac7;
-    color: #1a95a1;
+    background: var(--lms-primary-subtle);
+    box-shadow: inset 3px 0 var(--lms-primary);
+    color: var(--lms-primary-text);
   }
   .lms-shell-frame[data-prototype-portal="mentor"] .lms-shell-page-main {
     max-width: none;
@@ -180,9 +180,9 @@
     height: 85px;
     min-height: 85px;
     padding: 0 24px;
-    background: #fff;
+    background: var(--lms-white);
     border: 0;
-    border-bottom: 1px solid #e7ecf2;
+    border-bottom: 1px solid var(--lms-border);
     box-shadow: 0 1px 3px rgba(26,45,72,.035);
   }
   .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] input {

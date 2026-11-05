@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {courseBulkSelectionFilterKey} from "@/modules/courses/course-bulk-selection-scope-model";
+import { Table } from "@/components/ui/table";
 type Course={id:string;name:string};
 type Report={
  selectedCourses:number;matchedLessons:number;matchedContents:number;
@@ -123,7 +124,7 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
    Select all courses on this page ({courses.length})
   </label>
   <div className="min-w-0 overflow-x-auto rounded border border-border">
-   <table className="w-full min-w-[460px] border-collapse text-left text-sm">
+   <Table className="min-w-[460px]">
     <thead><tr className="border-b border-border">
      <th className="p-2"><span className="sr-only">Selected</span></th>
      <th className="p-2">Course</th><th className="p-2">Status</th>
@@ -137,7 +138,7 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
      <td className="p-2">{course.name}</td>
      <td className="p-2 text-xs text-muted-foreground">{selected.includes(course.id)?"Selected":"—"}</td>
     </tr>)}</tbody>
-   </table>
+   </Table>
   </div>
   {missingOnPage>0?<Alert tone="info">
    {missingOnPage} previously selected course(s) are on other loaded pages.

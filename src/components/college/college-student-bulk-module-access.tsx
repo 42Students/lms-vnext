@@ -6,6 +6,7 @@ import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Dialog} from "@/components/ui/dialog";
+import { Table } from "@/components/ui/table";
 type Student={membershipId:string;name:string;active:boolean};
 type Preview={membershipId:string;name:string;effective:boolean;
  winnerLevel:string;winnerLocked:boolean;
@@ -114,7 +115,7 @@ export function CollegeStudentBulkModuleAccess({students}:{
      </Button>
    </div>
    {preview.length?<div className="overflow-x-auto rounded border border-border">
-     <table className="w-full min-w-[500px] text-left text-xs">
+     <Table className="min-w-[500px]">
        <thead><tr className="border-b border-border">
          <th className="p-2">Student</th><th className="p-2">Override</th>
          <th className="p-2">Effective</th><th className="p-2">Source</th>
@@ -127,7 +128,7 @@ export function CollegeStudentBulkModuleAccess({students}:{
            {row.effective?"On":"Off"}</StatusBadge></td>
          <td className="p-2">{row.winnerLevel}{row.winnerLocked?" · Locked":""}</td>
        </tr>)}</tbody>
-     </table>
+     </Table>
    </div>:null}
    <Dialog open={review!==null} role="alertdialog" title="Apply bulk module access?"
      {...(review ? {description:"Apply "+review.next+" to "+review.selectedModule+" for "+review.ids.length+

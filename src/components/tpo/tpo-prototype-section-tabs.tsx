@@ -17,11 +17,11 @@ export function TpoPrototypeSectionTabs(){
   section==="Settings"?TPO_PROTOTYPE_SECTIONS.Settings:null;
  if(!links||links.length<2)return null;
  const isActive=(href:string)=>tpoPrototypeTabActive(pathname,search,href);
- return <nav aria-label={section+" sections"} className="min-w-0 overflow-x-auto border-b border-[#e7ecf2]">
+ return <nav aria-label={section+" sections"} className="min-w-0 overflow-x-auto border-b border-[color:var(--lms-border)]">
   <div className="flex w-max min-w-full items-center gap-7 px-1">
    {links.map(link=><Link href={link.href} key={link.href}
      aria-current={isActive(link.href)?"page":undefined}
-     className="inline-flex min-h-11 items-center border-b-2 border-transparent px-0.5 pb-2 pt-2 text-[16px] text-[#5b6b82] hover:text-[#0a7c88] aria-[current=page]:border-[#0a7c88] aria-[current=page]:font-bold aria-[current=page]:text-[#0a7c88]">
+     className="inline-flex min-h-11 items-center border-b-2 border-transparent px-0.5 pb-2 pt-2 text-[16px] text-[color:var(--lms-text-muted)] hover:text-[color:var(--lms-button-primary)] aria-[current=page]:border-[color:var(--lms-button-primary)] aria-[current=page]:font-bold aria-[current=page]:text-[color:var(--lms-button-primary)]">
       {link.label}
     </Link>)}
   </div>

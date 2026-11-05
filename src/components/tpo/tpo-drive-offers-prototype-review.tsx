@@ -1,6 +1,8 @@
 "use client";
 import {useState} from "react";
 import Link from "next/link";
+import { Table } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 type OfferRow={
  id:string;name:string;membershipId:string;rollNumber:string|null;branch:string|null;
  role:string;status:string;statusLabel:string;kind:string;issued:string;
@@ -89,17 +91,17 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
      <span className="rounded-full border border-border px-3 py-2">All matching offer versions · {total}</span>
     </div>
     <div className="min-w-0 overflow-x-auto" role="region" aria-label="Offer versions on this page">
-     <table className="w-full min-w-[510px] text-left text-[13px]">
+     <Table className="min-w-[510px]">
       <thead className="bg-surface-secondary text-xs uppercase tracking-wide text-muted-foreground">
        <tr><th className="p-3">Student</th><th className="p-3">Offer</th><th className="p-3">Letter / joining</th></tr>
       </thead>
       <tbody className="divide-y divide-border">
        {rows.map(row=><tr key={row.id} className={selected?.id===row.id?"bg-primary-subtle":undefined}>
-        <td className="p-3"><button type="button" onClick={()=>setSelectedId(row.id)}
+        <td className="p-3"><Button variant="bare" type="button" onClick={()=>setSelectedId(row.id)}
          aria-current={selected?.id===row.id?"true":undefined}
          className="min-h-11 text-left font-semibold text-link underline md:min-h-9">
           {row.name}
-         </button>
+         </Button>
          <span className="block break-words text-xs text-muted-foreground">
           {row.rollNumber??"Roll not recorded"} · {row.branch??"Branch not recorded"}
          </span>
@@ -113,7 +115,7 @@ export function TpoDriveOffersPrototypeReview({jobId,rows,total,selectedQueue,qu
         </td>
        </tr>)}
       </tbody>
-     </table>
+     </Table>
      {!rows.length?<p role="status" className="p-4 text-sm text-body">
       No offer versions match the active filters; this does not mean no company selections exist.
      </p>:null}

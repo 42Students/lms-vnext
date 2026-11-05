@@ -234,8 +234,8 @@ export function LearnerCareerCalendar({
         </label>
         {surface==="schedule" ? <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-border py-3 text-xs text-body" aria-label="Calendar legend">
           {([
-            ["Your tests and interviews","bg-[#e6f6f8]"],
-            ["Talks","bg-[#eef2ff]"],
+            ["Your tests and interviews","bg-[color:var(--lms-primary-subtle)]"],
+            ["Talks","bg-[color:var(--lms-purple-surface)]"],
             ["Application deadlines","bg-[rgba(217,119,6,0.18)]"],
             ["No drives (exams)","bg-[rgba(180,35,24,0.15)]"],
           ] as const).map(([label,color])=>(

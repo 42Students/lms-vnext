@@ -14,7 +14,7 @@
 }
 .year {
   overflow: hidden;
-  color: #5b6b82;
+  color: var(--lms-text-muted);
   font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;

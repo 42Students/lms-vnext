@@ -1,6 +1,7 @@
+import { PageHeader } from "@/components/ui/page-header";
 export default function Loading(){
  return <div role="status" aria-busy="true" aria-label="Loading contacts" className="min-w-0 space-y-4 animate-pulse">
-  <h1 className="text-xl font-semibold">Contacts</h1>
+  <PageHeader title="Contacts" />
   <p className="text-sm text-muted-foreground">Loading contacts…</p>
   <div className="grid grid-cols-1 gap-3 sm:grid-cols-3" aria-hidden="true">
    {Array.from({length:3},(_,i)=><div key={i} className="flex items-center gap-3 rounded border border-border p-4">

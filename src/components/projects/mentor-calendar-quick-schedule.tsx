@@ -12,6 +12,8 @@ import {projectMutation} from "./project-api";
 import {fromIstLocalInput} from "@/modules/projects/mentor-meeting-reschedule-model";
 import {mentorQuickGoogleScheduleFeedback} from
  "@/modules/projects/mentor-quick-google-schedule-feedback";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Choice={id:string;title:string;updatedAt:string;
   sprints:readonly {id:string;title:string;sequence:number;status:string}[]};
@@ -123,29 +125,29 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
       description="Choose an assigned project and IST time. Add a real join link, save a draft, or create a Google Meet in one action when consent is saved.">
       <form onSubmit={submit} className="prototype-mentor-calendar-quick-form">
         <label>Team or project
-          <select value={selected} onChange={event=>{setSelected(event.target.value);setLinkedSprintId("");}}
+          <Select value={selected} onChange={event=>{setSelected(event.target.value);setLinkedSprintId("");}}
             disabled={pending} required>
             {projects.map(row=><option key={row.id} value={row.id}>{row.title}</option>)}
-          </select>
+          </Select>
         </label>
         <label>Meeting type
-          <select value={meetingType} disabled={pending}
+          <Select value={meetingType} disabled={pending}
             onChange={event=>setMeetingType(event.target.value as MeetingType)}>
             <option value="GENERAL">General</option>
             <option value="PLANNING">Sprint planning</option>
             <option value="STANDUP">Stand-up</option>
             <option value="REVIEW">Sprint review</option>
             <option value="RETRO">Retrospective</option>
-          </select>
+          </Select>
         </label>
         <label>Linked sprint (optional)
-          <select value={linkedSprintId} disabled={pending}
+          <Select value={linkedSprintId} disabled={pending}
             onChange={event=>setLinkedSprintId(event.target.value)}>
             <option value="">No linked sprint</option>
             {project?.sprints.map(item=><option key={item.id} value={item.id}>
               Sprint {item.sequence} · {item.title} ({item.status.toLowerCase()})
             </option>)}
-          </select>
+          </Select>
         </label>
         <label>Meeting title
           <Input required value={title} maxLength={200} disabled={pending}
@@ -179,18 +181,18 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
         {!meetingUrl.trim()&&!venue.trim()&&googleConnected?
           <div className="space-y-2 rounded border border-border p-3">
             <label className="flex min-h-11 items-center gap-2 text-sm">
-              <input type="checkbox" className="size-5" checked={useGoogle}
+              <Checkbox className="size-5" checked={useGoogle}
                 disabled={pending} onChange={event=>setUseGoogle(event.target.checked)}/>
               Generate a Google Meet link and invite the active team on save
             </label>
             {useGoogle?<label className="block text-sm">Repeat on Google Calendar
-              <select className="ml-2 min-h-11 rounded border border-border bg-background p-2"
+              <Select className="ml-2 min-h-11 rounded border border-border bg-background p-2"
                 value={repeat} disabled={pending}
                 onChange={event=>setRepeat(event.target.value as "once"|"4"|"8")}>
                 <option value="once">Once</option>
                 <option value="4">Weekly × 4</option>
                 <option value="8">Weekly × 8</option>
-              </select>
+              </Select>
             </label>:null}
             <p className="text-xs text-muted-foreground">
               Saved consent is not proof of a live grant. Google creates the event

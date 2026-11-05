@@ -1,7 +1,8 @@
+import { PageHeader } from "@/components/ui/page-header";
 /** Legacy candidate interview loading: four tiles and a 20-row agenda skeleton. */
 export default function Loading(){
  return <section role="status" aria-busy="true" aria-label="Loading interviews" className="min-w-0 animate-pulse space-y-4">
-  <h1 className="text-xl font-semibold">Interviews</h1>
+  <PageHeader title="Interviews" />
   <p className="text-sm text-muted-foreground">Loading interviews...</p>
   <div className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-hidden="true">
    {Array.from({length:4},(_,i)=><div key={i} className="rounded border border-border p-4">

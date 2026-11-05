@@ -8,7 +8,7 @@ export default async function CampaignUnsubscribe({
   // A GET is deliberately not a token-validity oracle. The signed token is
   // checked only when the user explicitly submits the suppression request.
   return (
-    <main className="flex min-h-dvh w-full min-w-0 items-center justify-center bg-[#f5f7f9] p-4">
+    <main className="flex min-h-dvh w-full min-w-0 items-center justify-center bg-[color:var(--lms-neutral-50)] p-4">
       <div className="w-full max-w-[440px]">
         <Card as="section" className="rounded-[8px] border border-border bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
           <h1 className="m-0 text-[20px] font-semibold leading-[28px] text-[var(--lms-heading)]">

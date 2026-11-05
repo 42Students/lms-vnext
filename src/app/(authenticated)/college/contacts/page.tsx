@@ -27,9 +27,9 @@ type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const AVATAR_TINTS=[
- ["#e0f2f1","#0f766e"],["#ede9fe","#5b21b6"],["#fef3c7","#92400e"],
- ["#e0e7ff","#3730a3"],["#fce7f3","#9d174d"],["#dcfce7","#166534"],
- ["#ffe4e6","#9f1239"],["#e0f2fe","#075985"],
+ ["var(--lms-primary-subtle)","var(--lms-button-primary)"],["var(--lms-purple-surface)","var(--lms-purple-text)"],["var(--lms-gold-subtle)","var(--lms-warning-strong)"],
+ ["var(--lms-purple-surface)","var(--lms-purple-text)"],["var(--lms-purple-surface)","var(--lms-error-strong)"],["var(--lms-success-surface)","var(--lms-success-strong)"],
+ ["var(--lms-error-surface)","var(--lms-error-strong)"],["var(--lms-info-blue-surface)","var(--lms-info-text)"],
 ] as const;
 function ContactAvatar({initial,tint}:{initial:string;tint:number}){
  const pair=AVATAR_TINTS[Math.abs(tint)%AVATAR_TINTS.length]??AVATAR_TINTS[0];

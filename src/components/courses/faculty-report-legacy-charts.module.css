@@ -61,9 +61,9 @@
 }
 .distributionTrack > div { border-radius: 999px; }
 .distributionExcellent > div { background: var(--lms-success) !important; }
-.distributionGood > div { background: #64883c !important; }
+.distributionGood > div { background: var(--lms-success-strong) !important; }
 .distributionFair > div { background: var(--lms-warning) !important; }
-.distributionWeak > div { background: #e36421 !important; }
+.distributionWeak > div { background: var(--lms-warning) !important; }
 .distributionPoor > div { background: var(--lms-error) !important; }
 .accuracyRow {
   min-width: 0;

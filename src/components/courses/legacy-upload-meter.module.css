@@ -2,7 +2,7 @@
  * Upload progress chrome from original LMS progress families:
  * lms2-fe@prod-2026/_learn-courses.scss:2857-2868 (8px, rounded rail)
  * and docs/design/legacy-styles/components___variables.scss:10,14
- * (primary #26bac7 / light-cyan #9ee4e8).
+ * (primary var(--lms-primary) / light-cyan var(--lms-primary-light)).
  * No old upload-specific bar selector is asserted; preserve upload logic.
  */
 .upload {

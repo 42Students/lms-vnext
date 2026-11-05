@@ -3,6 +3,7 @@ import {useState} from "react";
 import Link from "next/link";
 import {filterMentorSprintTimeline,type MentorSprintSearchItem}
   from "@/modules/projects/mentor-sprint-timeline-search-model";
+import { Input } from "@/components/ui/input";
 
 export function MentorSprintTimelineSearch({items}:{items:readonly MentorSprintSearchItem[]}){
  const [query,setQuery]=useState("");
@@ -11,7 +12,7 @@ export function MentorSprintTimelineSearch({items}:{items:readonly MentorSprintS
    aria-label="Find a sprint, release or task">
    <label className="block font-semibold">
      Find a sprint, release or task
-     <input type="search" value={query} maxLength={120}
+     <Input type="search" value={query} maxLength={120}
        onChange={event=>setQuery(event.target.value)}
        placeholder="Sprint 13, release or task title"
        className="mt-2 w-full rounded border border-border bg-surface px-3 py-2"/>

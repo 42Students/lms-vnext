@@ -65,7 +65,7 @@ export function NotificationToolbar({
   return (
     <div className={display==="mark-all"?"min-w-0":display==="filters"?"min-w-0":"min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4"}>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-      {display!=="mark-all"?<div className={segmented?"inline-flex max-w-full flex-wrap gap-0 overflow-hidden rounded-[9px] border border-border bg-[var(--lms-neutral-50)] p-[3px]":"flex min-w-0 flex-wrap gap-2"} role="group" aria-label="Notification filter">
+      {display!=="mark-all"?<div className={segmented?"inline-flex max-w-full flex-wrap gap-0 overflow-hidden rounded-[8px] border border-border bg-[var(--lms-neutral-50)] p-[3px]":"flex min-w-0 flex-wrap gap-2"} role="group" aria-label="Notification filter">
         <Link
           href={baseHref + "?view=all" + (selectedCategory&&selectedCategory!=="all"?"&"+categoryParam+"="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "all" ? "page" : undefined}

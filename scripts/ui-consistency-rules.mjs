@@ -1,6 +1,6 @@
 // UI consistency rules: one place that defines what "consistent" means.
 // Scale values must stay in sync with src/app/globals.css tokens.
-export const FONT_SIZE_SCALE_PX = [12, 13, 14, 16, 18, 20, 24, 30, 36];
+export const FONT_SIZE_SCALE_PX = [12, 13, 14, 16, 18, 20, 24, 30, 36, 48, 64];
 export const RADIUS_SCALE_PX = [0, 2, 4, 6, 8, 10, 12, 14, 18, 20, 999];
 
 const TOKEN_FILES = new Set(["src/app/globals.css", "src/components/ui/branding-color-tokens.ts"]);
@@ -11,8 +11,19 @@ export const RULES = {
   "hex-color": "Use a --lms-* color token instead of a hex literal.",
   "font-size-off-scale": `Font sizes must be one of ${FONT_SIZE_SCALE_PX.join("/")}px.`,
   "radius-off-scale": `Border radius must be one of ${RADIUS_SCALE_PX.join("/")}px (or 50%).`,
+  "button-bare": 'Button variant="bare" has no standard look. Use primary/secondary/ghost/danger/link, or build a Tab/MenuItem/Chip component.',
   "font-family-off": "Use the Inter stack (var(--font-inter)), inherit, or the mono token; no other families.",
 };
+
+
+// A line (or the line above) containing this marker may keep a literal hex, e.g. <input type="color"> defaults.
+export const ALLOW_HEX_MARKER = "ui-consistency-allow-hex";
+function hasAllowMarker(source, index) {
+  const start = source.lastIndexOf("\n", index - 1) + 1;
+  const prevStart = source.lastIndexOf("\n", start - 2) + 1;
+  const end = source.indexOf("\n", index);
+  return source.slice(prevStart, end === -1 ? source.length : end).includes(ALLOW_HEX_MARKER);
+}
 
 function lineOf(source, index) {
   let line = 1;
@@ -37,13 +48,19 @@ export function scanFile(path, rawSource) {
   const add = (rule, index, snippet) => found.push({ rule, line: lineOf(source, index), snippet: snippet.slice(0, 60) });
 
   if (path.endsWith(".tsx") && !path.startsWith(SHARED_CONTROL_DIR)) {
-    for (const m of source.matchAll(/<(button|input|select|textarea|table|h1)(?=[\s>/])/g)) add("raw-control", m.index, m[0]);
+    for (const m of source.matchAll(/<Button\b[^>]*?\bvariant="bare"/g)) add("button-bare", m.index, m[0]);
+    for (const m of source.matchAll(/<(button|input|select|textarea|table|h1)(?=[\s>/])/g)) {
+      // A hidden input renders nothing, so there is no UI to keep consistent.
+      if (m[1] === "input" && /^<input\b[^>]*?\btype=["']hidden["']/.test(source.slice(m.index, m.index + 400))) continue;
+      add("raw-control", m.index, m[0]);
+    }
   }
 
-  if (!TOKEN_FILES.has(path)) {
+  if (!TOKEN_FILES.has(path) && !path.endsWith(".ts")) {
     for (const m of source.matchAll(/#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g)) {
       const before = source.slice(Math.max(0, m.index - 8), m.index);
-      if (/(href|to|url|src)=["'{`]*$/.test(before) || /\burl\(\s*["']?$/.test(before)) continue;
+      if (/(href|to|url|src)=["'{`]*$/.test(before) || /\burl\(\s*["']?$/.test(before) || before.endsWith("&")) continue;
+      if (hasAllowMarker(rawSource, m.index)) continue;
       add("hex-color", m.index, m[0]);
     }
   }

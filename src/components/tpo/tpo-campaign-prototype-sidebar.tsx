@@ -1,6 +1,8 @@
 "use client";
 import {useMemo,useState} from "react";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 export type TpoCampaignSidebarRow={
  campaign_id:string;title:string;subject:string;status:string;
  created_at:Date|string;createdByUserId:string;
@@ -41,16 +43,16 @@ export function TpoCampaignPrototypeSidebar({
     New email
    </Link>
    <label className="sr-only" htmlFor="tpo-campaign-search">Search emails</label>
-   <input id="tpo-campaign-search" type="search" placeholder="Search emails"
+   <Input id="tpo-campaign-search" type="search" placeholder="Search emails"
     value={search} onChange={event=>setSearch(event.target.value)}
     className="min-h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground"/>
    <div className="flex flex-wrap gap-2" role="group" aria-label="Campaign author filter">
-    <button type="button" aria-pressed={!mine} onClick={()=>setMine(false)}
+    <Button variant="bare" type="button" aria-pressed={!mine} onClick={()=>setMine(false)}
      className={"min-h-11 rounded-full border px-3 text-sm font-semibold "+(!mine?
-      "border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>Everyone's</button>
-    <button type="button" aria-pressed={mine} onClick={()=>setMine(true)}
+      "border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>Everyone's</Button>
+    <Button variant="bare" type="button" aria-pressed={mine} onClick={()=>setMine(true)}
      className={"min-h-11 rounded-full border px-3 text-sm font-semibold "+(mine?
-      "border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>Mine</button>
+      "border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>Mine</Button>
    </div>
   </div>
   {!ready?<p role="alert" className="p-4 text-sm text-body">Saved email history is temporarily unavailable. No missing campaigns are assumed.</p>:null}

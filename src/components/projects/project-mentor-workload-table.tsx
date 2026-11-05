@@ -5,6 +5,7 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {isProjectMentorOverloaded} from "@/modules/projects/mentor-overload-model";
+import { Table } from "@/components/ui/table";
 
 type WorkloadRow={
  mentorMembershipId:string|null;mentorName:string|null;
@@ -45,7 +46,7 @@ export function ProjectMentorWorkloadTable({
    while archived workspaces remain outside the reassignment queue.
   </p>
   <div className="min-w-0 overflow-x-auto border-y border-border">
-   <table className="w-full min-w-[520px] border-collapse text-left text-sm">
+   <Table className="min-w-[520px]">
     <caption className="sr-only">Mentor workload · 10 mentors per page</caption>
     <thead><tr className="border-b border-border bg-muted/20">
      {([
@@ -53,11 +54,11 @@ export function ProjectMentorWorkloadTable({
      ] as const).map(([key,label])=><th key={key} scope="col"
       aria-sort={sort===key?(ascending?"ascending":"descending"):"none"}
       className="px-3 py-2 font-semibold">
-       <button type="button" onClick={()=>chooseSort(key)}
+       <Button variant="bare" type="button" onClick={()=>chooseSort(key)}
         className="inline-flex min-h-9 items-center gap-1 text-left font-semibold underline-offset-2 hover:underline">
         {label}{key==="active"?<span title="Flagged when a mentor's active workspace count is 50% or more above the college average."
           aria-label="Counts above the overload threshold are flagged">?</span>:null}
-       </button>
+       </Button>
       </th>)}
     </tr></thead>
     <tbody>
@@ -81,7 +82,7 @@ export function ProjectMentorWorkloadTable({
        </td>
       </tr>)}
     </tbody>
-   </table>
+   </Table>
   </div>
   {!sorted.length?<p className="text-sm text-body">
    No project workspaces available for this college.

@@ -5,6 +5,8 @@ import {TpoApplicantReviewForm} from "@/components/placements/tpo-applicant-revi
 import {applicantDrawerReviewable,type TpoApplicantReviewSnapshot}
  from "@/modules/placements/tpo-applicant-review-drawer-model";
 import {applicantStage} from "@/modules/placements/tpo-applicant-pipeline-model";
+import { Table } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 type Candidate=TpoApplicantReviewSnapshot&{
  rollNumber:string|null;branchName:string|null;cgpaHundredths:number|null;
@@ -55,12 +57,12 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
   <section className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface" aria-label="Drive applicant queue">
    <div className="border-b border-border p-3">
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Applicant review status">
-     {tabs.map(tab=><button key={tab.id} type="button" aria-pressed={bucket===tab.id}
+     {tabs.map(tab=><Button variant="bare" key={tab.id} type="button" aria-pressed={bucket===tab.id}
        onClick={()=>pick(tab.id)}
        className={"inline-flex min-h-11 items-center rounded-full border px-3 text-[13px] font-semibold md:min-h-9 "+(bucket===tab.id?
         "border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:bg-surface-secondary")}>
        {tab.label} · {tab.n}
-      </button>)}
+      </Button>)}
     </div>
     <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
      <p className="text-xs text-muted-foreground">
@@ -74,7 +76,7 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
     </div>
    </div>
    <div role="region" aria-label="Page-scoped applicant review rows" className="min-w-0 overflow-x-auto">
-    <table className="w-full min-w-[600px] border-collapse text-left text-sm">
+    <Table className="min-w-[600px]">
      <thead className="bg-surface-secondary text-xs uppercase tracking-wide text-muted-foreground">
       <tr><th scope="col" className="px-3 py-3">Student</th><th scope="col" className="px-3 py-3">CGPA</th>
        <th scope="col" className="px-3 py-3">Resume</th><th scope="col" className="px-3 py-3">Where they are</th>
@@ -83,11 +85,11 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
      <tbody className="divide-y divide-border">
       {filtered.map(row=><tr key={row.id} className={focused?.id===row.id?"bg-primary-subtle":undefined}>
        <td className="px-3 py-3">
-        <button type="button" onClick={()=>select(row.id)}
+        <Button variant="bare" type="button" onClick={()=>select(row.id)}
          aria-current={focused?.id===row.id?"true":undefined}
          className="min-h-11 text-left font-semibold text-link underline underline-offset-2 md:min-h-9">
          {row.student??"Name unavailable"}
-        </button>
+        </Button>
         <span className="block break-words text-xs text-muted-foreground">
          {row.rollNumber??"Roll not recorded"} · {row.branchName??"Branch not recorded"}
         </span>
@@ -103,7 +105,7 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
        </td>
       </tr>)}
      </tbody>
-    </table>
+    </Table>
     {!filtered.length?<p role="status" className="px-4 py-8 text-sm text-body">
       {bucket==="WAITING"?"No applicants on this page are waiting for a screening decision.":
        "No applicants on this page match this review filter."}
@@ -157,16 +159,16 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
        Only submitted pending or held applications in a published drive can be reviewed.
       </p>}
      <nav aria-label="Review next applicant" className="flex flex-wrap gap-2 border-t border-border pt-3">
-      <button type="button" disabled={selectedIndex<=0}
+      <Button variant="bare" type="button" disabled={selectedIndex<=0}
        onClick={()=>{const next=filtered[selectedIndex-1];if(next)select(next.id);}}
        className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-body disabled:opacity-50 md:min-h-9">
        Previous
-      </button>
-      <button type="button" disabled={selectedIndex<0||selectedIndex>=filtered.length-1}
+      </Button>
+      <Button variant="bare" type="button" disabled={selectedIndex<0||selectedIndex>=filtered.length-1}
        onClick={()=>{const next=filtered[selectedIndex+1];if(next)select(next.id);}}
        className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-body disabled:opacity-50 md:min-h-9">
        Skip to next
-      </button>
+      </Button>
      </nav>
      {visited.length>0?<p className="text-xs text-muted-foreground">
       {visited.length} distinct applicant previews opened in this session; opening does not record a decision.

@@ -2,6 +2,7 @@
 import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Input } from "@/components/ui/input";
 type Purpose="AADHAAR"|"PAN";
 type Grant={objectKey:string;uploadUrl:string;requiredHeaders:Record<string,string>};
 type Saved={saved:boolean;version:number;receiptId:string;kind:Purpose};
@@ -117,7 +118,7 @@ export function FacultyIdentityEvidenceEditor({
     <span className="text-xs">{item.id?"On file":"Not uploaded"}</span>
    </div>
    <label className="block text-xs font-medium">Upload or replace {item.label}
-    <input type="file" accept="application/pdf,image/png,image/jpeg,image/webp"
+    <Input type="file" accept="application/pdf,image/png,image/jpeg,image/webp"
      disabled={blocked} className="mt-1 block max-w-full text-xs"
      onChange={event=>{
       const file=event.currentTarget.files?.[0];

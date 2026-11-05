@@ -5,6 +5,8 @@ import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {recruiterJoiningReportMessage,recruiterJoiningReportSchema}
  from "@/modules/placements/recruiter-joining-report-model";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 export function RecruiterJoiningReportForm({
  collegeId,jobId,jobTitle,offerId,candidate,currentOutcome,
@@ -50,11 +52,11 @@ export function RecruiterJoiningReportForm({
     onChange={event=>{setReason(event.target.value);setConfirm(false);}}/>
   </label>
   <label className="flex min-h-11 items-start gap-2 py-2 text-xs text-body">
-   <input type="checkbox" className="mt-1" checked={confirm} onChange={event=>setConfirm(event.target.checked)}/>
+   <Checkbox className="mt-1" checked={confirm} onChange={event=>setConfirm(event.target.checked)}/>
    Send this report to the college placement cell for verification. It will not overwrite the official outcome.
   </label>
-  <button type="submit" disabled={!ready} className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface-secondary px-4 text-sm font-semibold text-primary-text disabled:cursor-not-allowed disabled:opacity-40">
+  <Button variant="bare" type="submit" disabled={!ready} className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface-secondary px-4 text-sm font-semibold text-primary-text disabled:cursor-not-allowed disabled:opacity-40">
    Send joining report
-  </button>
+  </Button>
  </form>;
 }

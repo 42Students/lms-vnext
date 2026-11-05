@@ -156,7 +156,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
       />
 
       {rounds.length === 0 ? (
-        <section className="rounded-[13px] border border-border bg-surface p-6 text-center">
+        <section className="rounded-[12px] border border-border bg-surface p-6 text-center">
           <EmptyState title="There is no drive day for you today."
             action={<Link href="/tpo/calendar"
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-link">
@@ -168,7 +168,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           {rounds.map((round) => (
             <article
               key={round.roundId}
-              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[13px] border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md sm:flex-row sm:items-center"
+              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[12px] border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md sm:flex-row sm:items-center"
             >
               <div className="min-w-0">
                   <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-link leading-5">

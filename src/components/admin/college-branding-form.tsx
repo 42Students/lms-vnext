@@ -324,25 +324,25 @@ export function CollegeBrandingForm({
           </div>
           <div role="img" aria-label={previewDesktop?"Desktop 42LMS sign-in preview":"Mobile 42LMS sign-in preview"}
             style={{width:previewWidth,height:previewHeight,borderRadius:12,
-             border:"1px solid #d9d9d9",position:"relative",overflow:"hidden",
+             border:"1px solid var(--lms-neutral-300)",position:"relative",overflow:"hidden",
              display:"flex",alignItems:previewDesktop?"center":"flex-start",justifyContent:"center",
              paddingTop:previewDesktop?0:28,background:
-             "radial-gradient(ellipse 45% 40% at 52% 50%, #0a7c8822, transparent 70%), radial-gradient(ellipse 75% 70% at 50% 48%, #26bac740, #7dd3e01a 45%, transparent 75%), #f6f8fb",
+             "radial-gradient(ellipse 45% 40% at 52% 50%, color-mix(in srgb, var(--lms-button-primary) 13%, transparent), transparent 70%), radial-gradient(ellipse 75% 70% at 50% 48%, color-mix(in srgb, var(--lms-primary) 25%, transparent), color-mix(in srgb, var(--lms-primary-light) 10%, transparent) 45%, transparent 75%), var(--lms-neutral-50)",
              maxWidth:"100%"}}
             className="mx-auto sm:mx-0">
             <div style={{width:previewDesktop?128:138,padding:10,borderRadius:8,
-              background:"#fff",border:"1px solid #e7ecf2",
+              background:"var(--lms-white)",border:"1px solid var(--lms-border)",
               boxShadow:"0 6px 16px -8px rgba(16,24,40,.25)"}}>
-              <div className="flex items-center gap-[5px] border-b border-[#e7ecf2] pb-[6px] mb-[7px]">
+              <div className="flex items-center gap-[5px] border-b border-[color:var(--lms-border)] pb-[6px] mb-[7px]">
                 {previewLogoUrl?<img src={previewLogoUrl} width={16} height={16}
                   alt="Logo preview" className="h-4 w-4 object-contain" referrerPolicy="no-referrer"/>:
-                  <span className="inline-block h-4 w-4 rounded bg-[#0a7c8822] shadow-[inset_0_0_0_1px_#0a7c8855]"
+                  <span className="inline-block h-4 w-4 rounded bg-[color:color-mix(in_srgb,var(--lms-button-primary)_13%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--lms-button-primary)_33%,transparent)]"
                     aria-label={collegeName.slice(0,2).toUpperCase()+" initials fallback"}/>}
-                <span className="h-[5px] w-[50px] rounded-sm bg-[#172033]"/>
+                <span className="h-[5px] w-[50px] rounded-sm bg-[color:var(--lms-heading)]"/>
               </div>
-              <div className="mb-2 h-[6px] w-[34px] rounded-sm bg-[#172033]"/>
-              <div className="mb-[6px] h-3 rounded-sm border border-[#d6e1ee]"/>
-              <div className="h-3 rounded-sm bg-[#0a7c88]"/>
+              <div className="mb-2 h-[6px] w-[34px] rounded-sm bg-[color:var(--lms-heading)]"/>
+              <div className="mb-[6px] h-3 rounded-sm border border-[color:var(--lms-neutral-300)]"/>
+              <div className="h-3 rounded-sm bg-[color:var(--lms-button-primary)]"/>
             </div>
           </div>
           <p className="text-xs text-muted-foreground">

@@ -39,8 +39,8 @@ export function TpoStudentRosterInspector({student,onDetails,onDismiss}:{
      {student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName} · {student.cohortName}
     </p>
    </div>
-   <button type="button" onClick={onDismiss} aria-label="Close student summary"
-    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border text-body md:min-h-9 md:min-w-9">×</button>
+   <Button variant="bare" type="button" onClick={onDismiss} aria-label="Close student summary"
+    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border text-body md:min-h-9 md:min-w-9">×</Button>
   </div>
   {needsReview?<section className="mt-4 rounded-lg bg-warning-subtle p-3" aria-label="Verification needed">
    <strong className="text-xs font-bold uppercase tracking-wide text-warning-text">{verification}</strong>

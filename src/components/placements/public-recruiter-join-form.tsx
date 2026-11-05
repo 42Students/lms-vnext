@@ -185,7 +185,7 @@ export function PublicRecruiterJoinForm({
   }
 
   return (
-    <main className={`${authStyles["page"]} !bg-[#f5f7f9] mx-auto flex w-full min-w-0 items-center justify-center px-4 py-4`} style={{minHeight:"100dvh"}}>
+    <main className={`${authStyles["page"]} !bg-[color:var(--lms-neutral-50)] mx-auto flex w-full min-w-0 items-center justify-center px-4 py-4`} style={{minHeight:"100dvh"}}>
       <Card as="section" className="w-full max-w-[440px] rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm sm:p-5">
         {preview.kind !== "READY" ? (
           <>
@@ -287,7 +287,7 @@ export function PublicRecruiterJoinForm({
                   </label>
                   <div className="flex min-w-0 flex-col items-stretch gap-2">
                     <Button type="submit" loading={pending} className="w-full">Join {college} placements</Button>
-                    <button type="button" disabled={pending} onClick={()=>void sendCode()} className="min-h-11 w-full px-2 text-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover disabled:opacity-50 md:min-h-9">Send a new code</button>
+                    <Button variant="bare" type="button" disabled={pending} onClick={()=>void sendCode()} className="min-h-11 w-full px-2 text-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover disabled:opacity-50 md:min-h-9">Send a new code</Button>
                   </div>
                 </>
               )}

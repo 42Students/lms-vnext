@@ -548,7 +548,7 @@ export function AdminCourseCreatePanel({
                 <Input id="course-card-color" value={cardColor} onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.cardColor;return updated;});}}
                   maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="Optional #RRGGBB" className="min-w-0 flex-1"/>
                 <Input type="color" aria-label="Choose card colour" className="!h-11 !w-14 !p-1"
-                  value={/^#[0-9a-fA-F]{6}$/.test(cardColor)?cardColor:"#e4eef4"}
+                  value={/^#[0-9a-fA-F]{6}$/.test(cardColor)?cardColor:"#e4eef4"} /* ui-consistency-allow-hex */
                   onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.cardColor;return updated;});}}/>
               </div>
               {createErrors.cardColor ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.cardColor}</p> : null}
@@ -589,7 +589,7 @@ export function AdminCourseCreatePanel({
             <label htmlFor="course-image-file" className="mt-3 block text-[13px] font-semibold text-body">
               Upload course image
             </label>
-            <input id="course-image-file" type="file" accept="image/jpeg,image/png,image/webp"
+            <Input id="course-image-file" type="file" accept="image/jpeg,image/png,image/webp"
               disabled={pending||imageBusy||Boolean(createdImageCourseId)}
               className="mt-2 block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
               onChange={event=>{setImageFile(event.currentTarget.files?.[0]??null);setImageError("");}}/>

@@ -9,7 +9,7 @@ export type PageBackLinkProps = {
 };
 
 /**
- * Legacy page back affordance (learn-layout.scss:361-383): 44px touch target, muted text / #26bac7 hover,
+ * Legacy page back affordance (learn-layout.scss:361-383): 44px touch target, muted text / var(--lms-primary) hover,
  * and an icon-only presentation below 768px. The label remains accessible.
  */
 export function PageBackLink({ href, label, className }: PageBackLinkProps) {

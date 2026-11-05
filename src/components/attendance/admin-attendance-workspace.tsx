@@ -32,6 +32,7 @@ import {
   attendanceMonthLabel,
   shiftAttendanceMonth,
 } from "@/modules/attendance/admin-grid-model";
+import { Radio } from "@/components/ui/radio";
 
 type DeliveryOption = {
   deliveryId: string;
@@ -796,7 +797,7 @@ export function AdminAttendanceWorkspace({
                 <div className="flex flex-wrap gap-4">
                   {([["ABSENT","Absent"],["EXCUSED","Excused"],["MEDICAL","Medical"],["LATE","Late"]] as const).map(([value,label])=>
                     <label key={value} className="inline-flex min-h-11 items-center gap-2 text-sm">
-                      <input type="radio" name="attendance-absence-reason" value={value}
+                      <Radio name="attendance-absence-reason" value={value}
                         checked={absenceReason===value} onChange={()=>setAbsenceReason(value)}
                         className="size-4 accent-[var(--lms-primary)]"/>
                       {label}

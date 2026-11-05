@@ -31,6 +31,7 @@ import {tpoRequestAttentionOnPage} from "@/modules/placements/tpo-request-attent
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import { Table } from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 type Params = { request?:string|string[];proof?:string|string[];branchId?:string|string[];
@@ -225,7 +226,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         {data.total>0?"First matching page":"Reset filters"}
       </Link>}/>:
       <div className="min-w-0 overflow-x-auto" role="region" aria-label="Requests table" tabIndex={0}>
-        <table className="w-full min-w-[950px] border-collapse text-sm">
+        <Table className="min-w-[950px]">
           <thead><tr className="border-y border-border bg-muted text-left text-foreground">
             <th scope="col" className="px-3 py-3">Request</th>
             <th scope="col" className="px-3 py-3">Student</th>
@@ -287,7 +288,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
               </tr>;
             })}
           </tbody>
-        </table>
+        </Table>
       </div>}
     <Pagination label="Request pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>href({...data.query,page})}/>
     <Disclosure title="Export and row tools" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">

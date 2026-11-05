@@ -87,8 +87,8 @@ export default async function FacultyCalendarPage({
         .map(e=>({id:e.id,title:e.title,sectionName:e.sectionName,courseCode:e.courseCode,
           startsAt:e.startsAt.toISOString(),location:e.location,deliveryId:e.deliveryId}))}
       />:<Alert tone="warning">Unable to load the weekly schedule. The detailed calendar is still available below.</Alert>}
-    <details className="border-t border-[#e5ebf2] pt-4">
-      <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Advanced schedule and full calendar</summary>
+    <details className="border-t border-[color:var(--lms-border)] pt-4">
+      <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">Advanced schedule and full calendar</summary>
       <div className="mt-4 space-y-4">
     <section aria-label="Upcoming classes" className="min-w-0 space-y-3 border-b border-border pb-4">
      <div className="flex flex-wrap items-center justify-between gap-3">

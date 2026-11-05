@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 /** The old recruiter drive search updated while typing; results stay server-scoped. */
 export function RecruiterDriveLiveSearch({initialQuery,currentHref}:{
@@ -29,8 +30,8 @@ export function RecruiterDriveLiveSearch({initialQuery,currentHref}:{
         aria-label="Search drives by role"
         placeholder="Search by role" className="min-h-11 w-full md:min-h-9"/>
     </label>
-    {query?<button type="button" onClick={()=>setQuery("")}
+    {query?<Button variant="bare" type="button" onClick={()=>setQuery("")}
       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
-      aria-label="Clear drive search">Clear</button>:null}
+      aria-label="Clear drive search">Clear</Button>:null}
   </div>;
 }

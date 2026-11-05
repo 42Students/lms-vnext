@@ -3,6 +3,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {Fragment,type ReactNode} from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Table } from "@/components/ui/table";
 
 /** The raw forensic view is a different presentation from the readable
  * Activity feed. Historical IP/user-agent fields are not collected by this
@@ -244,7 +245,7 @@ export function ActivityCenter({
   if (emptyActionHref.includes("/projects")) return (
     <div className="min-w-0 space-y-3">
       <div className="w-full overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border">
-        <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+        <Table className="min-w-[720px]">
           <thead className="bg-surface-subtle text-foreground">
             <tr>{["Time (IST)","Who","Action","Item","Details"].map(label=>
               <th key={label} scope="col" className="px-3 py-3 font-semibold">{label}</th>)}</tr>
@@ -291,7 +292,7 @@ export function ActivityCenter({
               </Fragment>;
             })}
           </tbody>
-        </table>
+        </Table>
       </div>
       {nextHref?<Link href={nextHref}
         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
@@ -396,7 +397,7 @@ export function ActivityCenter({
         Raw forensic table · current page
        </summary>
        <p className="text-xs text-muted-foreground">One representative event appears per activity group. IP and user-agent source values were not retained. Use individual details for full audit records.</p>
-       <div className="mt-3 w-full overflow-x-auto"><table className="min-w-[960px] w-full border-collapse text-left text-xs">
+       <div className="mt-3 w-full overflow-x-auto"><Table className="min-w-[960px]">
         <thead><tr>{RAW_AUDIT_FORENSIC_HEADERS.map(label=>
          <th scope="col" key={label} className="border-b border-border px-3 py-2">{label}</th>)}</tr></thead>
         <tbody>{groups.map(group=>{
@@ -412,7 +413,7 @@ export function ActivityCenter({
           <td className="px-3 py-2">{RAW_AUDIT_MISSING_TRANSPORT}</td>
          </tr>;
         })}</tbody>
-       </table></div>
+       </Table></div>
       </details>
 
       {nextHref ? (

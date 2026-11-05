@@ -6,6 +6,9 @@ import {facultyAttendanceMarkingWindow} from "@/modules/attendance/faculty-marki
 import {facultyAttendanceWriteNeedsReload} from "@/modules/attendance/faculty-attendance-write-recovery";
 import {selectFacultyPrototypeSession} from "@/modules/attendance/faculty-prototype-session-selection";
 import type {FacultyAttendanceWorkspaceData} from "./faculty-attendance-workspace";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 type AttendanceMark="PRESENT"|"ABSENT";
 type Session=FacultyAttendanceWorkspaceData["sessions"][number];
@@ -131,18 +134,18 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
  return <section aria-label="Faculty prototype attendance" className="space-y-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div className="flex flex-wrap gap-2" role="group" aria-label="Attendance view">
-    <button type="button" className="faculty-proto-pill" aria-pressed={view==="mark"}
-     onClick={()=>setView("mark")}>Mark attendance</button>
-    <button type="button" className="faculty-proto-pill" aria-pressed={view==="month"}
-     onClick={()=>setView("month")}>This month</button>
+    <Button variant="bare" type="button" className="faculty-proto-pill" aria-pressed={view==="mark"}
+     onClick={()=>setView("mark")}>Mark attendance</Button>
+    <Button variant="bare" type="button" className="faculty-proto-pill" aria-pressed={view==="month"}
+     onClick={()=>setView("month")}>This month</Button>
    </div>
   </div>
-  {view==="month"?<section className="rounded-xl border border-[#e5ebf2] p-5">
-   <h2 className="text-base font-bold text-[#1d293f]">{monthLabel(new Date().toISOString())} attendance</h2>
+  {view==="month"?<section className="rounded-xl border border-[color:var(--lms-border)] p-5">
+   <h2 className="text-base font-bold text-[color:var(--lms-heading)]">{monthLabel(new Date().toISOString())} attendance</h2>
    <p className="faculty-proto-subtitle mt-1">Review the scheduled classes and open one to mark or correct its attendance.</p>
    {sessions.some(s=>monthLabel(s.startsAt)===monthLabel(new Date().toISOString()))?null:
     <p role="status" className="faculty-proto-subtitle mt-3">No class sessions scheduled for this month.</p>}
-   <ol className="mt-3 divide-y divide-[#edf1f5]">{sessions.filter(s=>
+   <ol className="mt-3 divide-y divide-[color:var(--lms-neutral-100)]">{sessions.filter(s=>
     monthLabel(s.startsAt)===monthLabel(new Date().toISOString())).map(s=><li key={s.id}
     className="flex flex-wrap items-center justify-between gap-4 py-3 text-sm">
     <span>{sessionLabel(s.startsAt)} · {s.title}</span>
@@ -151,85 +154,85 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
    </li>)}</ol>
    <a className="faculty-proto-link mt-3 inline-block" href="#faculty-attendance-editor">Open detailed monthly report below</a>
   </section>:!selected?
-  <div className="rounded-xl border border-[#e5ebf2] p-6">
+  <div className="rounded-xl border border-[color:var(--lms-border)] p-6">
    <h2 className="text-base font-bold">No class session scheduled yet</h2>
    <p className="faculty-proto-subtitle mt-1">Schedule a class from the full attendance workspace.</p>
    <a className="faculty-proto-link mt-2 inline-block" href="#faculty-attendance-editor">Open attendance tools</a>
   </div>:
-  <div className="overflow-hidden rounded-xl border border-[#e5ebf2]">
-   <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e5ebf2] p-4">
-    <div><h2 className="text-base font-bold text-[#1d293f]">{sessionLabel(selected.startsAt)} · {selected.location??"Room not assigned"}</h2>
+  <div className="overflow-hidden rounded-xl border border-[color:var(--lms-border)]">
+   <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[color:var(--lms-border)] p-4">
+    <div><h2 className="text-base font-bold text-[color:var(--lms-heading)]">{sessionLabel(selected.startsAt)} · {selected.location??"Room not assigned"}</h2>
      <p className="faculty-proto-subtitle mt-1">{markedPresent} present, {markedAbsent} absent, {unmarked} not marked</p></div>
     <div className="flex flex-wrap gap-2">
      <label className="sr-only" htmlFor="faculty-attendance-search">Find a student by name</label>
-     <input id="faculty-attendance-search" value={search} onChange={e=>setSearch(e.target.value)}
-      placeholder="Find a student by name" className="min-h-11 rounded-lg border border-[#dce5ee] bg-white px-3 text-sm"/>
-     <button type="button" className="faculty-proto-secondary" onClick={()=>setMarks(new Map(scopeRecords.map(s=>[s.membershipId,"PRESENT" as const])))}
-      disabled={!writable||!scopeRecords.length}>Mark everyone present</button>
+     <Input id="faculty-attendance-search" value={search} onChange={e=>setSearch(e.target.value)}
+      placeholder="Find a student by name" className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-white px-3 text-sm"/>
+     <Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>setMarks(new Map(scopeRecords.map(s=>[s.membershipId,"PRESENT" as const])))}
+      disabled={!writable||!scopeRecords.length}>Mark everyone present</Button>
      <Link className="faculty-proto-secondary" href={base+"?sessionId="+encodeURIComponent(selected.id)+"&schedule=1#faculty-attendance-scheduling"}>Schedule a class</Link>
     </div>
    </div>
-   <ul className="divide-y divide-[#edf1f5]">{visible.map(student=>{
+   <ul className="divide-y divide-[color:var(--lms-neutral-100)]">{visible.map(student=>{
     const mark=marks.get(student.membershipId)??null;
     const name=student.displayName?.trim()||"Student";
     const words=name.split(/\s+/).filter(Boolean);
     const initials=((words[0]?.[0]??"")+(words.at(-1)?.[0]??"")).toUpperCase()||"ST";
     return <li key={student.membershipId} className="flex min-h-14 items-center justify-between gap-3 px-4 py-2">
      <div className="flex min-w-0 items-center gap-3">
-      <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e0f1f4] text-xs font-bold text-[#078191]">{initials}</span>
-      <span className="min-w-0"><strong className="text-sm text-[#1d293f]">{name}</strong>
-       <span className="ml-1.5 text-xs text-[#60718b]">{student.rollNumber??"Roll not assigned"}</span></span>
+      <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[color:var(--lms-primary-subtle)] text-xs font-bold text-[color:var(--lms-button-primary)]">{initials}</span>
+      <span className="min-w-0"><strong className="text-sm text-[color:var(--lms-heading)]">{name}</strong>
+       <span className="ml-1.5 text-xs text-[color:var(--lms-text-muted)]">{student.rollNumber??"Roll not assigned"}</span></span>
      </div>
      <div className="flex shrink-0 gap-1.5" role="group" aria-label={"Attendance for "+name}>
-      {(["PRESENT","ABSENT"] as const).map(option=><button key={option} type="button"
+      {(["PRESENT","ABSENT"] as const).map(option=><Button variant="bare" key={option} type="button"
        onClick={()=>setMark(student.membershipId,option)} disabled={!writable}
        aria-pressed={mark===option} className={"faculty-proto-pill min-h-11 px-3 "+
         (mark===option?(option==="PRESENT"?"!border-green-500 !bg-green-50 !text-green-700":
          "!border-red-500 !bg-red-50 !text-red-700"):"")}>
-        {option==="PRESENT"?"Present":"Absent"}</button>)}
+        {option==="PRESENT"?"Present":"Absent"}</Button>)}
      </div>
     </li>;
    })}</ul>
    {filtered.length===0?<p className="faculty-proto-subtitle p-5">No students match your search.</p>:null}
-   {filtered.length>visible.length?<button type="button" className="faculty-proto-link mx-4 my-3"
-    onClick={()=>setAllVisible(true)}>Show all {filtered.length} students</button>:null}
+   {filtered.length>visible.length?<Button variant="bare" type="button" className="faculty-proto-link mx-4 my-3"
+    onClick={()=>setAllVisible(true)}>Show all {filtered.length} students</Button>:null}
    {selected.attendanceStatus==="MARKED"&&changed?
-    <div className="border-t border-[#e5ebf2] px-4 py-3">
+    <div className="border-t border-[color:var(--lms-border)] px-4 py-3">
      <label htmlFor="faculty-attendance-correction-reason" className="block text-sm font-semibold">Reason for correcting recorded attendance</label>
-     <textarea id="faculty-attendance-correction-reason" rows={2} value={correctionReason}
+     <Textarea id="faculty-attendance-correction-reason" rows={2} value={correctionReason}
       onChange={e=>setCorrectionReason(e.target.value)} maxLength={500}
-      className="mt-1 w-full rounded-lg border border-[#dce5ee] p-3 text-sm" placeholder="What changed in the recorded attendance?"/>
+      className="mt-1 w-full rounded-lg border border-[color:var(--lms-border)] p-3 text-sm" placeholder="What changed in the recorded attendance?"/>
     </div>:null}
    {error?<p role="alert" className="m-4 rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>:null}
    {success?<p role="status" className="m-4 rounded-lg bg-green-50 p-3 text-sm text-green-800">{success}</p>:null}
    {timing!=="OPEN"?<p className="faculty-proto-subtitle px-4 pb-3">
     {timing==="NOT_STARTED"?"Marking opens when the class starts.":"Faculty attendance correction window is closed; contact your college administrator."}
    </p>:null}
-   <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-[#e5ebf2] bg-[#fafbfc] px-4 py-4">
+   <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-4 py-4">
     <p className="faculty-proto-subtitle">Showing {visible.length} of {scopeRecords.length}.
      {unmarked>0?" "+unmarked+" unmarked; each learner must be explicitly marked before saving.":""}</p>
     <div className="flex flex-wrap gap-2">
-     {outcomeUncertain?<button type="button" className="faculty-proto-secondary" onClick={()=>router.refresh()}>Refresh attendance</button>:null}
-     <button type="button" className="faculty-proto-action" disabled={!writable||unmarked!==0||!changed}
-      onClick={beforeSubmit}>{submitting?"Submitting…":selected.attendanceStatus==="MARKED"?"Submit correction":"Submit attendance"}</button>
+     {outcomeUncertain?<Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>router.refresh()}>Refresh attendance</Button>:null}
+     <Button variant="bare" type="button" className="faculty-proto-action" disabled={!writable||unmarked!==0||!changed}
+      onClick={beforeSubmit}>{submitting?"Submitting…":selected.attendanceStatus==="MARKED"?"Submit correction":"Submit attendance"}</Button>
     </div>
    </footer>
   </div>}
   {confirming&&selected?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
    <div role="alertdialog" aria-modal="true" aria-labelledby="faculty-attendance-confirm-title"
     className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-    <h2 id="faculty-attendance-confirm-title" className="text-lg font-bold text-[#1d293f]">
+    <h2 id="faculty-attendance-confirm-title" className="text-lg font-bold text-[color:var(--lms-heading)]">
      {selected.attendanceStatus==="MARKED"?"Confirm attendance correction":"Submit attendance?"}</h2>
     <p className="faculty-proto-subtitle my-3">Save {markedPresent} present and {markedAbsent} absent marks for the complete roster?
      {selected.attendanceStatus==="MARKED"?" This creates an audited correction.":""}</p>
     <div className="flex justify-end gap-2">
-     <button type="button" className="faculty-proto-secondary" onClick={()=>setConfirming(false)}>Cancel</button>
-     <button type="button" className="faculty-proto-action" onClick={()=>void submit()}>Confirm and save</button>
+     <Button variant="bare" type="button" className="faculty-proto-secondary" onClick={()=>setConfirming(false)}>Cancel</Button>
+     <Button variant="bare" type="button" className="faculty-proto-action" onClick={()=>void submit()}>Confirm and save</Button>
     </div>
    </div>
   </div>:null}
   {sessions.length>1&&view==="mark"?<div className="flex flex-wrap gap-2">
-   <span className="self-center text-xs font-bold text-[#60718b]">Other class sessions</span>
+   <span className="self-center text-xs font-bold text-[color:var(--lms-text-muted)]">Other class sessions</span>
    {sessions.slice(0,6).map(session=><Link key={session.id} href={selectedHref(session.id)}
     className="faculty-proto-pill no-underline"
     aria-current={session.id===selected?.id?"page":undefined}>

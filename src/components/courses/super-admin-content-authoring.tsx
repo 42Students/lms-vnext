@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import {resolveSuperAdminAuthoringLesson} from "@/modules/courses/super-admin-selected-lesson-model";
 import { FacultyLessonAuthoring } from "@/components/courses/faculty-lesson-authoring";
 import { FacultyLessonVideoManager } from "@/components/courses/faculty-lesson-video-manager";
+import { Radio } from "@/components/ui/radio";
 
 type Lesson={id:string;name:string;courseName:string;courseCode:string;offeringId:string;nextContentSequence:number};
 type Section={id:string;offeringId:string;courseCode:string;courseName:string;sectionName:string};
@@ -67,12 +68,12 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
     <fieldset className="flex min-w-[220px] flex-[1.2] flex-wrap gap-2 border-0 p-0">
      <legend className="mb-1 text-[13px] font-semibold text-body">Audience</legend>
      <label className="flex min-h-9 items-center gap-1.5 text-xs text-body">
-      <input type="radio" name={"content-audience-"+kind} checked={!deliveryId}
+      <Radio name={"content-audience-"+kind} checked={!deliveryId}
        onChange={()=>{setSectionId("");setResourceOpen(false);}}/>
       All currently eligible sections for this course
      </label>
      <label className="flex min-h-9 items-center gap-1.5 text-xs text-body">
-      <input type="radio" name={"content-audience-"+kind} checked={Boolean(deliveryId)}
+      <Radio name={"content-audience-"+kind} checked={Boolean(deliveryId)}
        disabled={!courseSections.length}
        onChange={()=>{setSectionId(courseSections[0]?.id??"");setResourceOpen(false);}}/>
       One specific section
@@ -122,12 +123,12 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
      {kind==="VIDEOS"?<fieldset className="flex flex-wrap gap-3" aria-label="Video type">
       <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
       <label className="inline-flex min-h-9 items-center gap-2 text-sm">
-       <input type="radio" name="super-admin-video-kind" value="UPLOAD"
+       <Radio name="super-admin-video-kind" value="UPLOAD"
         checked={videoMode==="UPLOAD"} disabled={!allowVideoUpload}
         onChange={()=>setVideoMode("UPLOAD")}/>Video (Upload)
       </label>
       <label className="inline-flex min-h-9 items-center gap-2 text-sm">
-       <input type="radio" name="super-admin-video-kind" value="YOUTUBE"
+       <Radio name="super-admin-video-kind" value="YOUTUBE"
         checked={videoMode==="YOUTUBE"} onChange={()=>setVideoMode("YOUTUBE")}/>
        YouTube Video
       </label>

@@ -12,6 +12,7 @@ import {validateSuperAdminAuditRouteQuery} from "@/modules/activity/super-admin-
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {SubjectEventHistory} from "@/components/activity/subject-event-history";
+import { Table } from "@/components/ui/table";
 
 function smsDate(value:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
@@ -110,7 +111,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
     </Alert>:!smsRead.ready?<Alert tone="warning">SMS provider-attempt ledger is not ready. No records or delivery counts are inferred from activity events.</Alert>:
      smsRead.rows.length===0?<p role="status" className="py-4 text-sm text-muted-foreground">No SMS attempts match this page.</p>:
      <div className="min-w-0 overflow-x-auto rounded border border-[var(--lms-canvas-border)]">
-      <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+      <Table className="min-w-[640px]">
        <thead><tr className="bg-muted text-xs text-muted-foreground">
         <th scope="col" className="p-3">Attempted</th>
         <th scope="col" className="p-3">Purpose</th>
@@ -133,7 +134,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
          </dl>
         </details></td>
        </tr>)}</tbody>
-      </table>
+      </Table>
      </div>}
    {isGlobal&&smsRead?.ok&&smsRead.ready?<nav aria-label="SMS attempts pagination"
     className="flex flex-wrap items-center justify-between gap-3 text-sm">

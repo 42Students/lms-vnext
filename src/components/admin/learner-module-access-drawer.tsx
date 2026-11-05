@@ -9,6 +9,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
 import {StudentRuleEditor} from "@/components/admin/student-rule-editor";
+import { Table } from "@/components/ui/table";
 type Learner={membershipId:string;displayName:string|null;rollNumber:string|null};
 type Rule={module:"projects"|"electives";label:string;stored:boolean|null;locked:boolean;blocked:boolean};
 type TraceStep={level:string;inChain:boolean;source:"PERSISTED"|"SOURCE_DEFAULT"|"NONE";
@@ -218,7 +219,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
         onClick={()=>setRosterRetry(v=>v+1)}>Retry</Button>
       </div>:null}
      {!rosterLoading&&!rosterError?<div className="min-w-0 overflow-x-auto">
-       <table className="w-full border-collapse text-left text-sm">
+       <Table>
         <caption className="sr-only">Learner overrides in the selected college</caption>
         <thead><tr className="border-b border-border"><th className="py-2">Student</th>
          <th className="py-2">Roll number</th><th className="py-2">Review</th></tr></thead>
@@ -228,7 +229,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
          <td className="py-2"><Button size="sm" variant="secondary" type="button"
           onClick={()=>void lookup(search,item.membershipId)}>Review</Button></td>
         </tr>)}</tbody>
-       </table>
+       </Table>
        {rosterRows.length===0?<p role="status" className="py-3 text-sm text-body">No student overrides</p>:null}
       </div>:null}
      <nav className="flex flex-wrap items-center justify-between gap-2 text-sm" aria-label="Override pages">

@@ -9,6 +9,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Checkbox} from "@/components/ui/checkbox";
 import {broadcastConsentSummary} from "@/modules/announcements/super-admin-college-broadcast-model";
 import {broadcastLocalTiming} from "@/modules/announcements/super-admin-broadcast-timing-model";
+import { Radio } from "@/components/ui/radio";
 type CollegeTarget={id:string;label:string};
 export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly CollegeTarget[]}){
  const router=useRouter();
@@ -77,11 +78,11 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    <legend className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To</legend>
    <div className="flex flex-wrap gap-x-5 gap-y-2">
     <label className="flex min-h-11 items-center gap-2 text-sm text-body md:min-h-9">
-     <input type="radio" name="broadcast-audience" value="ALL_COLLEGES" checked={mode==="ALL_COLLEGES"} onChange={()=>{setMode("ALL_COLLEGES");setSelected([]);setAudienceTouched(true);}} className="accent-[var(--lms-primary-text)]"/>
+     <Radio name="broadcast-audience" value="ALL_COLLEGES" checked={mode==="ALL_COLLEGES"} onChange={()=>{setMode("ALL_COLLEGES");setSelected([]);setAudienceTouched(true);}} className="accent-[var(--lms-primary-text)]"/>
      Every placement cell ({colleges.length})
     </label>
     <label className="flex min-h-11 items-center gap-2 text-sm text-body md:min-h-9">
-     <input type="radio" name="broadcast-audience" value="SELECTED_COLLEGES" checked={mode==="SELECTED_COLLEGES"} onChange={()=>{setMode("SELECTED_COLLEGES");setSelected([]);setAudienceTouched(true);}} className="accent-[var(--lms-primary-text)]"/>
+     <Radio name="broadcast-audience" value="SELECTED_COLLEGES" checked={mode==="SELECTED_COLLEGES"} onChange={()=>{setMode("SELECTED_COLLEGES");setSelected([]);setAudienceTouched(true);}} className="accent-[var(--lms-primary-text)]"/>
      Some placement cells
     </label>
    </div>

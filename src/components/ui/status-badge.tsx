@@ -6,7 +6,7 @@ export type StatusBadgeProps = HTMLAttributes<HTMLSpanElement> & {
   tone?: "neutral" | "info" | "success" | "warning" | "error";
 };
 const toneClasses = {
-  neutral: "bg-[var(--lms-neutral-50)] text-[#84828b]",
+  neutral: "bg-[var(--lms-neutral-50)] text-[color:var(--lms-neutral-400)]",
   info: "bg-[var(--lms-info-subtle)] text-[var(--lms-info)]",
   success: "bg-[var(--lms-success-subtle)] text-[var(--lms-success)]",
   warning: "bg-[var(--lms-warning-subtle)] text-[var(--lms-warning)]",

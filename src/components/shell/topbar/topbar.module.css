@@ -357,7 +357,7 @@
 .orgTrigger {
   display:inline-flex; align-items:center; justify-content:space-between; gap:8px;
   min-height:38px; max-width:260px; border:1px solid var(--lms-header-border);
-  border-radius:9px; padding:0 9px; background:var(--lms-white);
+  border-radius:8px; padding:0 9px; background:var(--lms-white);
   box-shadow:none; color:var(--lms-topbar-ink); cursor:pointer;
 }
 
@@ -398,7 +398,7 @@
 .orgPopover :global(#admin-scope-switcher),
 .orgPopover :global(#membership-switcher) {
   min-height:38px;
-  border-radius:9px;
+  border-radius:8px;
   border-color:var(--lms-header-border);
   box-shadow:none;
 }

@@ -7,6 +7,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import styles from "./legacy-project-touch-actions.module.css";
+import { Checkbox } from "@/components/ui/checkbox";
 export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
  currentVersion,status,impact}:{templateId:string;selectedVersion:{
   id:string;version:number;title:string};
@@ -78,7 +79,7 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
     Showing {impact.sampleWorkspaces.length} of {impact.pinnedWorkspaceCount} workspaces.</p>:null}
   </div>:null}
   <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
-    <input type="checkbox" checked={reviewed} disabled={!enabled||busy}
+    <Checkbox checked={reviewed} disabled={!enabled||busy}
       onChange={event=>setReviewed(event.target.checked)}
       className="size-4 accent-[var(--lms-primary)]"/>
     I reviewed these changes

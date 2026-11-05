@@ -14,6 +14,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Dialog } from "@/components/ui/dialog";
 import { CollegeTermStaffingReport } from "./college-term-staffing-report";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage, parseTermCourseCreditsDraft } from "@/modules/academics/college-term-mapping-model";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type MappingRead = {
   terms: readonly { id: string; name: string; termNumber: number; programId: string; programName: string; departmentId: string; isActive: boolean }[];
@@ -352,7 +353,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
           className="max-h-44 min-h-20 space-y-1 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
           {filteredCourses.length ? filteredCourses.map(course =>
             <label key={course.id} className="flex min-h-9 cursor-pointer items-center gap-2 rounded px-2 py-1 font-normal text-foreground hover:bg-muted">
-              <input type="checkbox" className="h-4 w-4 accent-[var(--lms-primary)]"
+              <Checkbox className="h-4 w-4 accent-[var(--lms-primary)]"
                 disabled={pending || refreshing || mappingStale || draggedId !== null} checked={selectedIds.includes(course.id)}
                 onChange={event => toggleCourse(course.id, event.target.checked)} />
               <span>{course.name} ({course.code || "—"})</span>
@@ -531,7 +532,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
           </Select>
         </label>
         <label className="flex items-center gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
-          <input type="checkbox" checked={editing.isMandatory} disabled={pending || editing.type !== "CORE"}
+          <Checkbox checked={editing.isMandatory} disabled={pending || editing.type !== "CORE"}
             onChange={event => setEditing({ ...editing, isMandatory: event.target.checked })}
             className="h-4 w-4 accent-[var(--lms-primary)]" />
           Mandatory course

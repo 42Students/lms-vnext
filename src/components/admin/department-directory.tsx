@@ -15,6 +15,7 @@ import {
   pageDepartmentRows,
   type DepartmentDirectoryRow,
 } from "@/modules/admin-ui/department-directory";
+import { Table } from "@/components/ui/table";
 
 function countText(value:number|null|undefined){return value==null?"—":String(value);}
 function usageChip(label:string,value:number|null|undefined){
@@ -55,8 +56,8 @@ export function DepartmentDirectory({
             <Input id="department-directory-search" type="search" placeholder="Search departments"
               value={search} className="min-h-11 w-full pr-12 md:min-h-9"
               onChange={event=>{setSearch(event.target.value);setPage(1);}}/>
-            {search?<button type="button" title="Clear search" aria-label="Clear search" onClick={()=>{setSearch("");setPage(1);}}
-              className="absolute right-2 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:text-foreground">×</button>:
+            {search?<Button variant="bare" type="button" title="Clear search" aria-label="Clear search" onClick={()=>{setSearch("");setPage(1);}}
+              className="absolute right-2 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:text-foreground">×</Button>:
               <span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">⌕</span>}
           </div>
           {filtered.length?<a href={exportHref} download="departments.csv"
@@ -89,7 +90,7 @@ export function DepartmentDirectory({
       </p>
       {result.items.length?<div role="region" aria-label="Existing departments table" tabIndex={0}
         className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-        <table className="w-full min-w-[660px] border-collapse text-left text-sm leading-5">
+        <Table className="min-w-[660px]">
           <caption className="sr-only">Departments and dependency counts; scroll horizontally to see all columns</caption>
           <thead className="bg-[var(--lms-neutral-50)] text-xs text-muted-foreground"><tr>
             <th scope="col" aria-sort={nameOrder==="ASC"?"ascending":"descending"}
@@ -115,7 +116,7 @@ export function DepartmentDirectory({
               <DepartmentActions departmentId={row.id} name={row.name} usage={row.usage}/>
             </td>
           </tr>)}</tbody>
-        </table>
+        </Table>
       </div>:<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-muted-foreground">
         {search.trim()?"No departments match this search.":"No departments found. Create a department to get started."}
       </div>}

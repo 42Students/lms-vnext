@@ -69,8 +69,8 @@ export default async function FacultyCourseStudentsPage({
       <p className="sr-only">{delivery.courseName} · {delivery.sectionName} · {delivery.academicPeriodName}</p>
       <FacultyPrototypeStudentDirectory
         learners={roster} signals={signalResult} deliveryId={delivery.deliveryId}/>
-      <details className="border-t border-[#e5ebf2] pt-4">
-        <summary className="cursor-pointer text-sm font-semibold text-[#078191]">Detailed roster, contacts and CSV export</summary>
+      <details className="border-t border-[color:var(--lms-border)] pt-4">
+        <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">Detailed roster, contacts and CSV export</summary>
         <div className="mt-4">
       <FacultyCourseRoster
         key={delivery.deliveryId}

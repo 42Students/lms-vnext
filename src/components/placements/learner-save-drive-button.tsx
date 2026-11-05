@@ -3,6 +3,7 @@ import {useRef,useState} from "react";
 import {usePathname,useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useToast} from "@/components/ui/toast";
+import { Button } from "@/components/ui/button";
 
 /** Legacy list cards use an icon-only optimistic heart. The detail header
  * uses the same heart but announces successful saves with an app toast. */
@@ -57,11 +58,11 @@ export function LearnerSaveDriveButton({
  const accessibleName=!known?"Saved drives temporarily unavailable":
   saved?"Remove "+jobTitle+" from saved jobs":"Save "+jobTitle+" for later";
  return <span className="inline-flex min-w-0 flex-wrap items-center gap-2">
-  <button type="button" data-saved={saved?"true":"false"} aria-pressed={saved}
+  <Button variant="bare" type="button" data-saved={saved?"true":"false"} aria-pressed={saved}
    aria-label={accessibleName} title={tooltip} disabled={busy||!known}
    onClick={()=>void toggle()}
-   className={"inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-transparent bg-transparent transition-colors hover:border-border hover:bg-[#e6f6f8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 md:size-9 "+
-     (saved?"text-[var(--lms-primary-text)]":"text-[#61727d]")}
+   className={"inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-transparent bg-transparent transition-colors hover:border-border hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 md:size-9 "+
+     (saved?"text-[var(--lms-primary-text)]":"text-[color:var(--lms-text-muted)]")}
   >
    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
     viewBox="0 0 24 24" fill={saved?"currentColor":"none"}
@@ -69,13 +70,13 @@ export function LearnerSaveDriveButton({
     strokeLinejoin="round" aria-hidden="true">
     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/>
    </svg>
-  </button>
+  </Button>
   <span role="status" aria-live="polite" className="sr-only">{announcement}</span>
   {error?<span role="alert" className="max-w-56 text-xs font-semibold text-error">{error}</span>:null}
   {!known?<span className="inline-flex flex-wrap items-center gap-2 text-xs text-body">
     Saved drives are temporarily unavailable; retry loading.
-    <button type="button" onClick={()=>router.refresh()}
-      className="min-h-11 font-semibold text-link underline md:min-h-9">Retry</button>
+    <Button variant="bare" type="button" onClick={()=>router.refresh()}
+      className="min-h-11 font-semibold text-link underline md:min-h-9">Retry</Button>
   </span>:null}
  </span>;
 }

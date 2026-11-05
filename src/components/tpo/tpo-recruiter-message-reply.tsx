@@ -140,13 +140,13 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
      <p className="text-xs text-muted-foreground">{matchedTemplates.length} of {TPO_MESSAGE_TEMPLATE_LIBRARY.length} built-in templates · suggested text only</p>
      <div className="max-h-72 min-w-0 overflow-y-auto" role="group" aria-label="Available message templates">
       {matchedTemplates.map(item=>
-       <button key={item.id} type="button" aria-pressed={templateId===item.id}
+       <Button variant="bare" key={item.id} type="button" aria-pressed={templateId===item.id}
         onClick={()=>setTemplateId(item.id)}
         className={"block min-h-11 w-full rounded-md px-3 py-2 text-left text-sm "+
           (templateId===item.id?"bg-primary-subtle font-semibold text-primary-text":"text-body hover:bg-surface-secondary")}>
         <span className="block text-xs text-muted-foreground">{item.group}</span>
         <span className="block">{item.title}</span>
-       </button>)}
+       </Button>)}
       {matchedTemplates.length===0?
        <p role="status" className="p-3 text-xs text-muted-foreground">No templates match this search.</p>:null}
      </div>

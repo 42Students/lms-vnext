@@ -45,18 +45,18 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
    }
   });}finally{endDriveMutation(jobId);}
  }
- return <section aria-labelledby="super-admin-drive-danger-title" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border border-[#ffccc7] bg-[#fff1f0] p-[var(--lms-space-4)]">
-  <h2 id="super-admin-drive-danger-title" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[#cf1322]">Danger zone · Delete drive</h2>
-  <p className="text-sm leading-[22px] text-[#7a231b]">This action archives the drive, rather than permanently deleting its applicant records.
+ return <section aria-labelledby="super-admin-drive-danger-title" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border border-[color:var(--lms-error-surface)] bg-[color:var(--lms-error-surface)] p-[var(--lms-space-4)]">
+  <h2 id="super-admin-drive-danger-title" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[color:var(--lms-error-text)]">Danger zone · Delete drive</h2>
+  <p className="text-sm leading-[22px] text-[color:var(--lms-error-strong)]">This action archives the drive, rather than permanently deleting its applicant records.
    Application history is retained. Scheduled interviews and unaccepted offers are cancelled,
    and affected learners are notified by the registered in-app notice flow.</p>
-  <p className="text-xs text-[#7a231b]">Unlike the old LMS Delete action, this operation preserves the listing as archived
+  <p className="text-xs text-[color:var(--lms-error-strong)]">Unlike the old LMS Delete action, this operation preserves the listing as archived
    and may notify learners. Preview its exact impact before confirming.</p>
   {!preview?<Button type="button" variant="danger" disabled={pending} onClick={()=>void inspect()}>
    Preview delete impact</Button>:
    <form onSubmit={e=>void confirm(e)} className="space-y-3"
     aria-label={"Delete "+title+" confirmation"}>
-    <p role="alert" className="text-sm font-semibold leading-[22px] text-[#cf1322]">
+    <p role="alert" className="text-sm font-semibold leading-[22px] text-[color:var(--lms-error-text)]">
      Delete &apos;{title}&apos;?
     </p>
     <p className="text-sm text-body">

@@ -10,6 +10,7 @@ import {Input} from "@/components/ui/input";
 import {LoadingState} from "@/components/ui/loading-state";
 import {Checkbox} from "@/components/ui/checkbox";
 import {useToast} from "@/components/ui/toast";
+import { Radio } from "@/components/ui/radio";
 
 type Candidate={membershipId:string;displayName:string|null;email:string|null};
 type Member=Candidate&{role:string;id:string};
@@ -127,12 +128,12 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
     <fieldset className="flex flex-wrap gap-3 rounded border border-border p-3">
      <legend className="text-xs font-semibold">Update mode</legend>
      <label className="flex items-center gap-2 text-sm">
-      <input type="radio" name="roster-mode" checked={mode==="ADD"}
+      <Radio name="roster-mode" checked={mode==="ADD"}
        onChange={()=>{setMode("ADD");setSelected([]);}} disabled={busy}/>
       Add learners (keep existing)
      </label>
      <label className="flex items-center gap-2 text-sm">
-      <input type="radio" name="roster-mode" checked={mode==="REPLACE"}
+      <Radio name="roster-mode" checked={mode==="REPLACE"}
        onChange={()=>{setMode("REPLACE");setSelected([...initial]);}} disabled={busy}/>
       Replace existing roster
      </label>

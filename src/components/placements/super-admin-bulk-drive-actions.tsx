@@ -69,7 +69,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
        <p className="text-xs text-muted-foreground">Select up to 100 drives; changes run in groups of 25.</p>
       </div>
       {selected.length>0?<div role="status"
-        className="flex min-h-11 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-[#91caff] bg-[#e6f4ff] px-3 py-2 text-sm text-[#0958d9]">
+        className="flex min-h-11 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-[color:var(--lms-border-strong)] bg-[color:var(--lms-info-blue-surface)] px-3 py-2 text-sm text-[color:var(--lms-info-blue)]">
         <strong>{selected.length} selected</strong>
         <div className="flex flex-wrap items-center gap-2">
          <Button type="button" size="sm" disabled={busy} onClick={()=>{setAction("OPEN");setPreview(null);setResult(null);void send(false,"OPEN");}}>Open</Button>

@@ -12,13 +12,13 @@
 .range {
   display: block;
   margin: 4px 0 12px;
-  color: #66758d;
+  color: var(--lms-text-muted);
   font-size: 13px;
 }
 .boardFrame {
   min-width: 0;
   overflow-x: auto;
-  border-block: 1px solid #e3e8ef;
+  border-block: 1px solid var(--lms-border);
   padding-bottom: 6px;
 }
 /* The shared CalendarGrid supplies grid-cols-7/gap-1. Match the original
@@ -36,7 +36,7 @@
 .dayHead {
   padding: 12px 8px;
   text-align: center;
-  color: #66758d;
+  color: var(--lms-text-muted);
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -48,16 +48,16 @@
   min-height: 140px;
   min-width: 0;
   padding: 12px;
-  border: 1px solid #e3e8ef;
+  border: 1px solid var(--lms-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--lms-white);
 }
 .day[data-today="true"] {
-  border-color: #2f6fed;
-  box-shadow: inset 0 0 0 1px #2f6fed;
+  border-color: var(--lms-info-blue);
+  box-shadow: inset 0 0 0 1px var(--lms-info-blue);
 }
 .day[data-outside="true"] {
-  background: #f6f8fb;
+  background: var(--lms-neutral-50);
 }
 .event {
   display: flex;
@@ -65,44 +65,44 @@
   gap: 2px;
   min-height: 36px;
   padding: 8px !important;
-  border: 1px solid #e3e8ef !important;
+  border: 1px solid var(--lms-border) !important;
   border-radius: 8px !important;
-  background: #fff !important;
-  color: #334155;
+  background: var(--lms-white) !important;
+  color: var(--lms-text-body);
   font-size: 12px;
   text-decoration: none;
   cursor: pointer;
 }
 .event:hover {
-  background: #f6f8fb !important;
-  border-color: #cdd5e0 !important;
+  background: var(--lms-neutral-50) !important;
+  border-color: var(--lms-neutral-300) !important;
 }
 .event:focus-visible {
   outline: 2px solid var(--lms-button-primary);
   outline-offset: 3px;
 }
 .time {
-  color: #4a5568;
+  color: var(--lms-text-body);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 .due {
-  border-color: #f5c27a !important;
-  background: #fffaf2 !important;
+  border-color: var(--lms-icon-amber) !important;
+  background: var(--lms-gold-subtle) !important;
 }
 .mobileDay {
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 12px 0;
-  border-bottom: 1px solid #e3e8ef;
+  border-bottom: 1px solid var(--lms-border);
 }
 .mobileEvents {
   display: grid;
   gap: 8px;
 }
 .empty {
-  color: #66758d;
+  color: var(--lms-text-muted);
   font-size: 12px;
 }
 /* At <=1099px the route renders occupied-day articles instead of a
@@ -115,8 +115,8 @@
 }
 @media (max-width: 767px) {
   .boardFrame {
-    border-top: 1px solid #e3e8ef;
-    border-bottom: 1px solid #e3e8ef;
+    border-top: 1px solid var(--lms-border);
+    border-bottom: 1px solid var(--lms-border);
   }
   .nav {
     display: grid;

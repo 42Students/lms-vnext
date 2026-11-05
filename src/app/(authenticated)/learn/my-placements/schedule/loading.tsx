@@ -1,7 +1,8 @@
+import { PageHeader } from "@/components/ui/page-header";
 export default function Loading(){
  return <section role="status" aria-busy="true" aria-label="Loading placement schedule"
   className="min-w-0 space-y-4 animate-pulse">
-  <h1 className="text-xl font-semibold">Schedule</h1>
+  <PageHeader title="Schedule" />
   <p className="text-sm text-muted-foreground">Loading your placement schedule…</p>
   <div aria-hidden="true" className="flex flex-wrap gap-2">
    {Array.from({length:3},(_,index)=><span key={index} className="h-9 w-24 rounded bg-muted"/>)}

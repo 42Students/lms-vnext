@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type ResumeList = {
   selected: string | null;
@@ -201,7 +202,7 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
     <div className="flex min-w-0 flex-wrap items-end gap-3">
       <label className="min-w-0 text-sm font-semibold text-body">
         Upload resume (PDF, up to 10 MB)
-        <input type="file" accept="application/pdf,.pdf"
+        <Input type="file" accept="application/pdf,.pdf"
           className="mt-2 block max-w-full text-sm"
           disabled={working || Boolean(pendingKey)}
           onChange={event => setFile(event.currentTarget.files?.[0] ?? null)} />

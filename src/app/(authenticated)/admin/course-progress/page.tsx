@@ -17,6 +17,7 @@ import {getSuperAdminStudentCourseProgress} from "@/modules/courses/super-admin-
 import { adminLearningHref, adminProgressStats } from "@/modules/courses/admin-learning-read-model";
 import {parseSuperAdminCourseProgressParams} from "@/modules/courses/super-admin-course-progress-query";
 import {requirePermission} from "@/modules/permissions/policy";
+import { Table } from "@/components/ui/table";
 
 export default async function SuperAdminCourseProgressPage({
   searchParams,
@@ -129,7 +130,7 @@ export default async function SuperAdminCourseProgressPage({
       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Per student</h2>
       {inlineStudents ? <section aria-label="Per student progress preview"
         className="min-w-0 overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-        <table className="min-w-[600px] w-full text-left text-sm">
+        <Table className="min-w-[600px]">
           <caption className="px-3 pt-3 text-left text-xs text-muted-foreground">
             First {inlineStudents.rows.length} of {inlineStudents.totalRows} learners, sorted furthest behind first
           </caption>
@@ -153,7 +154,7 @@ export default async function SuperAdminCourseProgressPage({
                 ?learner.percent+"%":"Not measured"}
             </td>
           </tr>)}</tbody>
-        </table>
+        </Table>
         <Link href={"/admin/course-progress/students?offeringId="+encodeURIComponent(inlineStudents.offeringId)}
           className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text underline">
           View all students and filter by class

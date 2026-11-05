@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LEGACY_TENANT_SETTING_MAP } from "@/modules/platform-settings/legacy-setting-specs";
+import { Table } from "@/components/ui/table";
 
 type Entry = {key:string;value:string;version:number};
 const KEY_PATTERN = /^[A-Za-z][A-Za-z0-9._-]*$/;
@@ -91,7 +92,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
   <p className="max-w-prose text-sm leading-[22px] text-body">Keys stored at this scope that are not in the documented list above — a new backend setting this screen does not name yet, or a value left at a scope that never reads it. Never enter passwords, credentials, tokens or secrets.</p>
   {!ready?<Alert tone="warning">Stored setting changes are unavailable in this scope.</Alert>:null}
   <div className="min-w-0 overflow-x-auto" role="region" aria-label="Other stored settings table" tabIndex={0}>
-   <table className="w-full min-w-[600px] border-collapse text-left text-sm">
+   <Table className="min-w-[600px]">
     <thead><tr className="border-b border-border bg-surface-subtle">
      <th scope="col" className="w-[300px] px-3 py-2 font-semibold">Key</th>
      <th scope="col" className="px-3 py-2 font-semibold">Value</th>
@@ -117,7 +118,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
        </tr>;
       })}
     </tbody>
-   </table>
+   </Table>
   </div>
   {others.length>visibleCount?<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-body">
    <span>Showing {Math.min(visibleCount,others.length)} of {others.length} keys</span>

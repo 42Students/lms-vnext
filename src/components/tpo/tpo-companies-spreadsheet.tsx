@@ -9,6 +9,7 @@ import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {safeTpoCompanyWebsiteUrl} from "@/modules/placements/tpo-safe-company-url";
 import {GridWorkspace} from "./grid/grid-workspace";
+import { Button } from "@/components/ui/button";
 
 /** Desktop: the old LMS Quartz spreadsheet. Phone: its responsive list fallback.
  * Keep server-side company/lead authorization and paging unchanged. */
@@ -85,8 +86,8 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
      <p className="mt-1 text-xs text-body">{focused.unlinkedLeadGroup?
       "CRM-only name · not linked to a verified employer":"College-linked employer"}</p>
     </div>
-    <button type="button" aria-label="Close company summary" onClick={()=>setDismissed(true)}
-     className="min-h-11 min-w-11 rounded-lg border border-border text-body md:min-h-9 md:min-w-9">×</button>
+    <Button variant="bare" type="button" aria-label="Close company summary" onClick={()=>setDismissed(true)}
+     className="min-h-11 min-w-11 rounded-lg border border-border text-body md:min-h-9 md:min-w-9">×</Button>
    </div>
    <dl className="mt-4 grid grid-cols-3 gap-2" aria-label="Verified company numbers">
     {([
@@ -116,8 +117,8 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
      className="mt-3 inline-flex min-h-11 items-center break-all text-sm text-link underline md:min-h-9">Company website</a>:null}
  </aside>:<aside className="min-w-0 rounded-xl border border-border bg-surface p-4 text-sm text-body">
   <p>Choose a company in the table to see its summary.</p>
-  <button type="button" className="mt-2 min-h-11 font-semibold text-link underline"
-   onClick={()=>{setFocusedKey(null);setDismissed(false);}}>Show first company</button>
+  <Button variant="bare" type="button" className="mt-2 min-h-11 font-semibold text-link underline"
+   onClick={()=>{setFocusedKey(null);setDismissed(false);}}>Show first company</Button>
  </aside>}
  </div>;
 }

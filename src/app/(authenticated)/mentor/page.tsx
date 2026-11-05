@@ -24,7 +24,7 @@ export default async function MentorLandingPage() {
   return <section role={failed?"alert":"status"} aria-live="polite"
     className="mx-auto flex min-h-[320px] min-w-0 max-w-full w-full flex-col items-center justify-center px-4 py-12 text-center md:max-w-[700px] md:py-16">
     <span aria-hidden="true"
-      className={"mb-5 flex size-16 items-center justify-center rounded-full border text-[32px] "+
+      className={"mb-5 flex size-16 items-center justify-center rounded-full border text-[30px] "+
        (failed?"border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] text-warning":"border-[var(--lms-info)] bg-[var(--lms-info-subtle)] text-primary-text")}>
       {failed?"!":"ⓘ"}
     </span>

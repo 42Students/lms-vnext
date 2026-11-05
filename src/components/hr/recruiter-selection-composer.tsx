@@ -155,7 +155,7 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
     </Button>
     <Button variant="secondary" disabled={disabled||busy||importing||candidates.length===0}
      onClick={()=>fileInput.current?.click()}>Upload your list (Excel)</Button>
-    <input ref={fileInput} type="file" hidden
+    <Input ref={fileInput} type="file" hidden
      aria-label="Choose Excel or CSV selection list"
      accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
      onChange={event=>{void importList(event.target.files?.[0]);event.target.value="";}}/>

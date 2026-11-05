@@ -5,6 +5,9 @@ import {mentorEvidenceDisplayKind} from
   "@/modules/projects/mentor-evidence-preview-model";
 import {mentorPdfEmbedUrl} from "@/modules/projects/mentor-pdf-evidence-controls-model";
 import {MentorXlsxEvidencePreview} from "./mentor-xlsx-evidence-preview";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 export type MentorEvidenceGalleryItem={
   index:number;name:string;type:string;href:string|null;
@@ -22,7 +25,7 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
   return <div className="prototype-mentor-delivery-artifacts">
     <h3>What they sent · {items.length} files and links</h3>
     <div role="group" aria-label="Choose evidence to preview">
-      {items.map(item=><button key={item.index} type="button"
+      {items.map(item=><Button variant="bare" key={item.index} type="button"
         aria-pressed={active?.index===item.index}
         onClick={()=>{setSelected(item.index);setPdfPage(1);setPdfZoom(100);}}
         className="flex min-h-11 w-full items-start justify-between gap-2 border-b border-border px-3 py-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -33,7 +36,7 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
               item.change==="LINK_CHANGED"?"Reference changed":"Same saved reference"}
           </small>:null}</span>
         <span>{active?.index===item.index?"Selected":"Preview →"}</span>
-      </button>)}
+      </Button>)}
     </div>
     {active?<section aria-live="polite" aria-label="Selected submission evidence"
       className="space-y-2 border border-border p-3">
@@ -47,13 +50,13 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
       </p>:null}
       {pdfSrc?<div role="group" aria-label="PDF page and zoom"
         className="flex flex-wrap items-center gap-2">
-        <button type="button" disabled={pdfPage<=1}
+        <Button variant="bare" type="button" disabled={pdfPage<=1}
           className="rounded border border-border px-3 py-2"
           onClick={()=>setPdfPage(old=>Math.max(1,old-1))}>
           Previous page
-        </button>
+        </Button>
         <label>Page
-          <input type="number" min={1} max={999} value={pdfPage}
+          <Input type="number" min={1} max={999} value={pdfPage}
             className="ml-2 w-20 rounded border border-border p-2"
             onChange={event=>{
               const value=Number(event.target.value);
@@ -61,17 +64,17 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
                 setPdfPage(Math.min(999,Math.max(1,value)));
             }}/>
         </label>
-        <button type="button" disabled={pdfPage>=999}
+        <Button variant="bare" type="button" disabled={pdfPage>=999}
           className="rounded border border-border px-3 py-2"
           onClick={()=>setPdfPage(old=>Math.min(999,old+1))}>
           Next page
-        </button>
+        </Button>
         <label>Zoom
-          <select value={pdfZoom} className="ml-2 rounded border border-border p-2"
+          <Select value={pdfZoom} className="ml-2 rounded border border-border p-2"
             onChange={event=>setPdfZoom(Number(event.target.value))}>
             {[50,75,100,125,150,200].map(value=>
               <option key={value} value={value}>{value}%</option>)}
-          </select>
+          </Select>
         </label>
         <p className="text-xs text-muted-foreground">
           Page and zoom controls depend on your browser's PDF viewer.

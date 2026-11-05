@@ -102,25 +102,25 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       }catch{/* The fallback must not trust a malformed referrer. */}
       window.location.assign(new URL("/",window.location.origin).href);
     };
-    return <main role="alert" className="flex min-h-dvh w-full min-w-0 flex-col items-center justify-center bg-[#fafbfc] p-8 text-center">
-      <h1 className="m-0 text-[64px] font-extrabold leading-none text-[#1e9aa8]">500</h1>
-      <h2 className="mb-2 mt-4 text-[24px] font-semibold leading-[32px] text-[#1a1d21]">Server Error</h2>
-      <p className="mb-8 max-w-[420px] text-sm leading-[22px] text-[#6b7280]">
+    return <main role="alert" className="flex min-h-dvh w-full min-w-0 flex-col items-center justify-center bg-[color:var(--lms-neutral-50)] p-8 text-center">
+      <h1 className="m-0 text-[64px] font-extrabold leading-none text-[color:var(--lms-primary-hover)]">500</h1>
+      <h2 className="mb-2 mt-4 text-[24px] font-semibold leading-[32px] text-[color:var(--lms-neutral-900)]">Server Error</h2>
+      <p className="mb-8 max-w-[420px] text-sm leading-[22px] text-[color:var(--lms-text-muted)]">
         Something went wrong on our side. Please try again in a moment.
       </p>
       <div className="flex min-w-0 flex-wrap justify-center gap-3">
-        <button type="button" onClick={safeBack}
-          className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#1e9aa8] bg-surface px-6 py-3 text-sm font-semibold text-[#1e9aa8] hover:bg-[#e8f7f8] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1e9aa8]">
+        <Button variant="bare" type="button" onClick={safeBack}
+          className="inline-flex min-h-11 items-center justify-center rounded-full border border-[color:var(--lms-primary-hover)] bg-surface px-6 py-3 text-sm font-semibold text-[color:var(--lms-primary-hover)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-hover)]">
           Go back
-        </button>
-        <Link href="/" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#1e9aa8] bg-[#1e9aa8] px-6 py-3 text-sm font-semibold text-white no-underline hover:bg-[#178a96] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1e9aa8]">
+        </Button>
+        <Link href="/" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[color:var(--lms-primary-hover)] bg-[color:var(--lms-primary-hover)] px-6 py-3 text-sm font-semibold text-white no-underline hover:bg-[color:var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[color:var(--lms-primary-hover)]">
           Go to Home
         </Link>
       </div>
       <Button type="button" variant="link" onClick={reset} className="mt-4 min-h-11 text-sm">
         Try again
       </Button>
-      {reference?<p className="mt-4 break-words text-xs text-[#6b7280]">{reference}</p>:null}
+      {reference?<p className="mt-4 break-words text-xs text-[color:var(--lms-text-muted)]">{reference}</p>:null}
     </main>;
   }
   return <GracefulScreen title={title} message={message} retry={reset}

@@ -129,7 +129,7 @@
   overflow-wrap: anywhere;
 }
 .dayEvent:hover {
-  background: #f6f8fb;
+  background: var(--lms-neutral-50);
   border-color: var(--lms-neutral-300);
   border-left-color: var(--lms-primary);
 }

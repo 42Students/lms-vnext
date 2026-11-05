@@ -624,8 +624,8 @@ function JobActions({
             <Link href="/learn/my-placements/applications" className="inline-flex min-h-9 items-center text-primary-text underline">
               My applications
             </Link>
-            {applyResolution==="FAILED"?<button type="button" className="min-h-9 text-muted-foreground underline"
-              onClick={()=>{setApplyError("");setApplyResolution("NONE");}}>Dismiss</button>:null}
+            {applyResolution==="FAILED"?<Button variant="bare" type="button" className="min-h-9 text-muted-foreground underline"
+              onClick={()=>{setApplyError("");setApplyResolution("NONE");}}>Dismiss</Button>:null}
           </div>
         </div>
       ):null}

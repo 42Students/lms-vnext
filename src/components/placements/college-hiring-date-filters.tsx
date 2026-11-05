@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { collegeHiringAnalyticsHref } from "@/modules/placements/college-hiring-analytics-model";
 import {Input} from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type FilterKey = "seasonId" | "jobId" | "departmentId" | "programId" | "cohortId" | "from" | "to";
 type Filters = Partial<Record<FilterKey, string>>;
@@ -28,6 +29,6 @@ export function CollegeHiringDateFilters({ filters }: { filters: Filters }) {
       className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
       Clear dates
     </Link>
-    <button type="submit" className="sr-only">Apply dates</button>
+    <Button variant="bare" type="submit" className="sr-only">Apply dates</Button>
   </form>;
 }

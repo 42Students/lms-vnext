@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
 import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch, facultyAssessmentCanArchive, facultyAssessmentEditReceiptMatches, facultyAssessmentArchiveReceiptMatches } from "@/modules/courses/faculty-assessment-editor-model";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Kind = "ASSIGNMENT" | "QUIZ";
 
@@ -391,7 +392,7 @@ export function FacultyAssessmentEditor({
             <legend className="text-sm font-semibold">Allowed submission methods</legend>
             {(Object.keys(ASSIGNMENT_METHOD_LABELS) as AssignmentMethod[]).map(method=>
              <label key={method} className="flex min-h-11 items-center gap-2 text-sm">
-              <input type="checkbox" checked={methods.includes(method)} disabled={saving}
+              <Checkbox checked={methods.includes(method)} disabled={saving}
                onChange={event=>setMethods(current=>event.target.checked?
                 [...current,method]:current.filter(value=>value!==method))}
                className="size-4 accent-[var(--lms-primary)]"/>

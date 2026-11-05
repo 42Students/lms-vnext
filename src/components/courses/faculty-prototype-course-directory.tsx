@@ -3,6 +3,9 @@
 import {useState} from "react";
 import Link from "next/link";
 import type {FacultyCourseListRow} from "./faculty-course-list";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 type CourseRow = {
  id:string;
@@ -75,47 +78,47 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
    </div>
    <div className="flex min-w-0 flex-wrap gap-2">
    <label className="sr-only" htmlFor="faculty-course-search">Search courses</label>
-   <input id="faculty-course-search" type="search" value={q}
+   <Input id="faculty-course-search" type="search" value={q}
     onChange={event=>setQ(event.target.value)} placeholder="Search courses"
-    className="h-11 w-full rounded-lg border border-[#dce5ee] bg-white px-4 text-sm sm:w-56"
+    className="h-11 w-full rounded-lg border border-[color:var(--lms-border)] bg-white px-4 text-sm sm:w-56"
    />
    <label className="sr-only" htmlFor="faculty-course-period">Academic period</label>
-   <select id="faculty-course-period" value={period}
-    className="min-h-11 min-w-48 rounded-lg border border-[#dce5ee] bg-white px-3 text-sm"
+   <Select id="faculty-course-period" value={period}
+    className="min-h-11 min-w-48 rounded-lg border border-[color:var(--lms-border)] bg-white px-3 text-sm"
     onChange={event=>{setPeriod(event.target.value);setKind("All");}}>
     <option value="all">All academic periods</option>
     {periods.map(([id,name])=><option key={id} value={id}>{name}</option>)}
-   </select>
+   </Select>
    </div>
   </div>
   <div className="flex flex-wrap gap-2" role="group" aria-label="Course type">
    {(["All","Regular","Elective"] as const).map(option=>
-    <button key={option} type="button" onClick={()=>setKind(option)} aria-pressed={kind===option}
-     className="faculty-proto-pill">{option==="Elective"?"Electives":option} {counts[option]}</button>)}
+    <Button variant="bare" key={option} type="button" onClick={()=>setKind(option)} aria-pressed={kind===option}
+     className="faculty-proto-pill">{option==="Elective"?"Electives":option} {counts[option]}</Button>)}
   </div>
   <div className="faculty-proto-table-wrap">
    <table className="faculty-proto-table">
     <thead><tr><th>Course</th><th>Classes</th><th>To do</th><th>Attendance</th><th><span className="sr-only">Open</span></th></tr></thead>
     <tbody>{visible.map(course=><tr key={course.id}>
      <td>{course.classLinks.length===1?<Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>
-      {course.name}</Link>:<strong className="text-[#078191]">{course.name}</strong>}
+      {course.name}</Link>:<strong className="text-[color:var(--lms-button-primary)]">{course.name}</strong>}
       <p className="faculty-proto-subtitle">{course.code} · {course.kind}{course.credits!==null?" · "+course.credits+" credits":""}</p>
      </td>
      <td><div className="flex flex-wrap gap-x-1 gap-y-2">
       {course.classLinks.map((link,index)=><span key={link.deliveryId}><Link
-       className="text-[#1d293f] hover:text-[#078191] hover:underline" href={"/teacher/courses/"+encodeURIComponent(link.deliveryId)+"/home"}>{link.name}</Link>{index<course.classLinks.length-1?",":""}</span>)}
+       className="text-[color:var(--lms-heading)] hover:text-[color:var(--lms-button-primary)] hover:underline" href={"/teacher/courses/"+encodeURIComponent(link.deliveryId)+"/home"}>{link.name}</Link>{index<course.classLinks.length-1?",":""}</span>)}
      </div></td>
      <td><span className={"rounded-full px-2.5 py-1 text-xs font-semibold "+(course.toGrade>0?"bg-red-50 text-red-700":course.drafts>0?"bg-amber-50 text-amber-800":"bg-emerald-50 text-emerald-800")}>
        {course.toGrade>0?course.toGrade+" to grade":course.drafts>0?course.drafts+" to publish":"Nothing waiting"}
      </span></td>
-     <td>{course.classLinks.length===1?<Link className="text-sm text-[#1d293f] hover:text-[#078191] hover:underline" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/attendanceDetail"}>{course.attendancePossible>0?Math.round(course.attendancePresent*100/course.attendancePossible)+"% this month":"Not recorded"}</Link>
+     <td>{course.classLinks.length===1?<Link className="text-sm text-[color:var(--lms-heading)] hover:text-[color:var(--lms-button-primary)] hover:underline" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/attendanceDetail"}>{course.attendancePossible>0?Math.round(course.attendancePresent*100/course.attendancePossible)+"% this month":"Not recorded"}</Link>
       :<span className="text-sm text-body">{course.classLinks.length} classes · Select a class to view attendance</span>}</td>
      <td>{course.classLinks.length===1?<Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>Open</Link>
-      :<span className="text-sm font-semibold text-[#078191]">Choose class</span>}</td>
+      :<span className="text-sm font-semibold text-[color:var(--lms-button-primary)]">Choose class</span>}</td>
     </tr>)}</tbody>
    </table>
   </div>
-  {visible.length===0?<div role="status" className="faculty-proto-subtitle rounded-lg border border-[#dce5ee] p-5">
+  {visible.length===0?<div role="status" className="faculty-proto-subtitle rounded-lg border border-[color:var(--lms-border)] p-5">
    {courses.length===0?<p>No teaching assignments found. Please contact your administrator.</p>:
     <p>{q.trim()?"No courses match your search":"No assigned courses match this course type."}</p>}
    {courses.length===0?<p>Your teaching courses will appear after an administrator assigns you a class.</p>:null}

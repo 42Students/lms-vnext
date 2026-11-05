@@ -482,7 +482,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       <strong>Reschedule requested.</strong> Review the candidate’s request before applying a new slot.
       {editing.outcomeNote?<p className="mt-2 whitespace-pre-wrap">{editing.outcomeNote}</p>:null}
     </Banner>:null}
-    {currentCandidate?<div className="rounded-[8px] border border-border bg-[#fafafa] p-3 text-sm"
+    {currentCandidate?<div className="rounded-[8px] border border-border bg-[color:var(--lms-neutral-50)] p-3 text-sm"
       aria-label="Interview candidate details">
       <strong className="block">{currentCandidate?.name?.trim()||"Candidate"}</strong>
       <span className="block text-xs text-muted-foreground">
@@ -593,7 +593,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       {feedbackExisting?"Close":"Cancel"}
     </Button>
    </>}>
-   {feedbackFor?<div className="rounded-[6px] border border-[#e8e8e8] bg-[#f6f8fa] px-[14px] py-[10px] text-sm">
+   {feedbackFor?<div className="rounded-[6px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-[14px] py-[10px] text-sm">
      <strong>{applicant(feedbackFor.applicationId)?.name??"Candidate"}</strong>
      {jobTitle?<span className="text-muted-foreground"> · {jobTitle}</span>:null}
      <span className="text-muted-foreground"> · {(feedbackFor.interviewType??"Interview").charAt(0)+

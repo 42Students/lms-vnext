@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import { Button } from "@/components/ui/button";
 export function LearnerApplicationResumeLink({applicationId}:{applicationId:string}){
  const [state,setState]=useState<{
   status:"IDLE"|"LOADING"|"READY"|"ABSENT"|"ERROR";
@@ -31,11 +32,11 @@ export function LearnerApplicationResumeLink({applicationId}:{applicationId:stri
      className="font-semibold text-primary-text underline">
       View scanned application resume (temporary private link) ↗
     </a>
-   :<button type="button" onClick={()=>void load()}
+   :<Button variant="bare" type="button" onClick={()=>void load()}
       disabled={state.status==="LOADING"}
       className="min-h-11 text-left font-semibold text-primary-text underline">
       {state.status==="LOADING"?"Checking resume…":"Check current application resume"}
-    </button>}
+    </Button>}
   {state.status==="ABSENT"?<span role="status" className="block">
     No current resume was verified for this application.</span>:null}
   {state.status==="ERROR"?<span role="alert" className="block">

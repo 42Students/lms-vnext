@@ -1,9 +1,10 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function Loading() {
  return <section aria-label="Loading class roster" aria-busy="true"
    className="min-w-0 space-y-4 py-2">
-   <h1 className="sr-only">Students</h1>
+   <PageHeader title="Students" />
    <p role="status" className="sr-only">Loading class list</p>
    <div aria-hidden="true" className="space-y-3 border-b border-border pb-3">
     <Skeleton variant="line" label="Loading class list" count={1}/>

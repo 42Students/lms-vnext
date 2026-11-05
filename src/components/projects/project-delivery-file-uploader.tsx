@@ -5,6 +5,7 @@ import {projectResourceFileDeclaration,validProjectResourceUploadGrant,
  type ProjectResourceFile} from "@/modules/projects/project-resource-files-ui-model";
 import {acceptAttributeFor} from "@/modules/storage/file-policy";
 import {storageErrorMessage} from "@/modules/storage/ui-models";
+import { Input } from "@/components/ui/input";
 type Attachment={kind:"FILE";name:string;fileId:string;url:null};
 async function json<T>(url:string,method:"POST",body?:unknown):Promise<T>{
  const response=await fetch(url,{method,credentials:"same-origin",
@@ -59,7 +60,7 @@ export function ProjectDeliveryFileUploader({projectId,disabled,onUploaded}:{
  }
  return <div className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Upload a file (up to 50 MB)
-   <input type="file" accept={acceptAttributeFor("project-resource")} disabled={disabled||busy}
+   <Input type="file" accept={acceptAttributeFor("project-resource")} disabled={disabled||busy}
     aria-invalid={Boolean(error)} aria-describedby={error?errorId:undefined}
     className="block min-h-11 w-full min-w-0 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link" onChange={e=>setFile(e.target.files?.[0]??null)}/>
   </label>

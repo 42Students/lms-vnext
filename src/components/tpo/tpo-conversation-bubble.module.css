@@ -8,10 +8,10 @@
   min-width: 0;
   margin-right: auto;
   padding: 9px 12px !important;
-  border: 1px solid #e3e8ef !important;
+  border: 1px solid var(--lms-border) !important;
   border-radius: 5px 13px 13px 13px !important;
   background: var(--lms-white) !important;
-  color: #2e3c52 !important;
+  color: var(--lms-text-body) !important;
   line-height: 1.5;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
@@ -20,10 +20,10 @@
 .mine {
   margin-right: 0;
   margin-left: auto;
-  border-color: #cce1fb !important;
+  border-color: var(--lms-border-strong) !important;
   border-radius: 12px 6px 12px 12px !important;
-  background: #edf6ff !important;
-  color: #20344f !important;
+  background: var(--lms-info-blue-surface) !important;
+  color: var(--lms-text-body) !important;
 }
 @media (max-width: 899px) {
   .bubble { max-width: 86%; }

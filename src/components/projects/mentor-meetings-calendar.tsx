@@ -21,6 +21,7 @@ import {MentorMeetingFacilitationQuickEdit} from "./mentor-meeting-facilitation-
 import {MentorGoogleMeetingProviderStatus} from "./mentor-google-meeting-provider-status";
 import {MentorGoogleMeetingSyncControls} from "./mentor-google-meeting-sync-controls";
 import styles from "./mentor-meetings-calendar.module.css";
+import { Select } from "@/components/ui/select";
 
 const PAST_PREVIEW = 20;
 const validTime=(raw:string)=>raw.trim().length>0&&Number.isFinite(Date.parse(raw));
@@ -318,11 +319,11 @@ export function MentorMeetingsCalendar({
         {past.length?past.slice(0,expanded?past.length:PAST_PREVIEW).map(item=>
           <LegacyMeetingRow key={item.id} meeting={item} now={instant} viewerTimeZone={viewerTimeZone}/>):
           <p className={styles.legacyEmpty}>No past meetings yet.</p>}
-        {past.length>PAST_PREVIEW?<button type="button"
+        {past.length>PAST_PREVIEW?<Button variant="bare" type="button"
           className={styles.legacyShowMore}
           onClick={()=>setExpanded(value=>!value)}>
           {expanded?"Show fewer":"Show all "+past.length+" past meetings"}
-        </button>:null}
+        </Button>:null}
       </section>
     </div>
     <details className={styles.advancedCalendarTools}>
@@ -361,7 +362,7 @@ export function MentorMeetingsCalendar({
           </Button>)}
         </div>
         <label className="block p-3 text-xs font-semibold">Show
-          <select aria-label="Meeting period and notes" value={listScope}
+          <Select aria-label="Meeting period and notes" value={listScope}
             className="ml-2 rounded border border-border bg-surface px-2 py-2"
             onChange={event=>{
               setListScope(event.target.value as MentorMeetingListScope);
@@ -369,13 +370,13 @@ export function MentorMeetingsCalendar({
             }}>
             {mentorMeetingListScopes.map(option=>
               <option value={option.id} key={option.id}>{option.label}</option>)}
-          </select>
+          </Select>
           <small className="ml-2 font-normal text-muted-foreground">
             {matchingMeetings.length} of {meetings.length} loaded meetings
           </small>
         </label>
         <h2>{listScope==="ASKED"?"Meeting requests":"Upcoming"}</h2>
-        {upcoming.length ? upcoming.map(item=><button key={item.id}
+        {upcoming.length ? upcoming.map(item=><Button variant="bare" key={item.id}
           type="button" className="prototype-mentor-meeting-option"
           aria-pressed={selected?.id===item.id}
           onClick={()=>setSelectedId(item.id)}>
@@ -383,9 +384,9 @@ export function MentorMeetingsCalendar({
           <span><strong>{item.projectTitle}</strong> · {item.title}
             <small>{mentorMeetingDisplayStatus(item,instant)}</small>
           </span>
-        </button>):<p className={styles.empty}>No upcoming meetings.</p>}
+        </Button>):<p className={styles.empty}>No upcoming meetings.</p>}
         <h2>{listScope==="NOTES_MISSING"?"Past · notes to finish":"Past and cancelled"}</h2>
-        {visiblePast.length ? visiblePast.map(item=><button key={item.id}
+        {visiblePast.length ? visiblePast.map(item=><Button variant="bare" key={item.id}
           type="button" className="prototype-mentor-meeting-option"
           aria-pressed={selected?.id===item.id}
           onClick={()=>setSelectedId(item.id)}>
@@ -393,7 +394,7 @@ export function MentorMeetingsCalendar({
           <span><strong>{item.projectTitle}</strong> · {item.title}
             <small>{mentorMeetingDisplayStatus(item,instant)}</small>
           </span>
-        </button>):<p className={styles.empty}>No past meetings yet.</p>}
+        </Button>):<p className={styles.empty}>No past meetings yet.</p>}
         {past.length>PAST_PREVIEW?<Button variant="secondary" type="button"
           onClick={()=>setExpanded(value=>!value)} aria-expanded={expanded}
           className="m-3">

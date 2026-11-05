@@ -155,7 +155,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     <SuperAdminDriveDirectoryFilters q={parsed.data.q} status={parsed.data.status}
       pageSize={parsed.data.pageSize}/>
   </section>
-  <div className="min-w-0 rounded-md border border-transparent has-[input:checked]:border-[#91caff] has-[input:checked]:bg-[#e6f4ff] has-[input:checked]:px-3">
+  <div className="min-w-0 rounded-md border border-transparent has-[input:checked]:border-[color:var(--lms-border-strong)] has-[input:checked]:bg-[color:var(--lms-info-blue-surface)] has-[input:checked]:px-3">
     <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
   </div>
   <p role="status" className="text-sm text-muted-foreground">

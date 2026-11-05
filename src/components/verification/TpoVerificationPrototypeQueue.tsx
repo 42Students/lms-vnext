@@ -25,7 +25,7 @@ export function TpoVerificationPrototypeQueue({rows,active,onReview}:{
     {rows.map(row=>{
      const key=row.learnerMembershipId+":"+row.section;
      return <li key={key}>
-      <button type="button" onClick={()=>setFocusId(key)} aria-pressed={focus?.learnerMembershipId===row.learnerMembershipId&&focus?.section===row.section}
+      <Button variant="bare" type="button" onClick={()=>setFocusId(key)} aria-pressed={focus?.learnerMembershipId===row.learnerMembershipId&&focus?.section===row.section}
        className={"block min-h-11 w-full px-4 py-3 text-left hover:bg-primary-subtle "+(focus?.learnerMembershipId===row.learnerMembershipId&&focus?.section===row.section?
         "border-l-[3px] border-primary bg-primary-subtle":"")}>
        <span className="flex items-start justify-between gap-2">
@@ -34,7 +34,7 @@ export function TpoVerificationPrototypeQueue({rows,active,onReview}:{
        </span>
        <span className="mt-1 block text-xs text-muted-foreground">{row.rollNumber??"No roll number"} · {row.branchName??"No branch"} · {row.section==="EDUCATION"?"Education":"Identity"}</span>
        {row.status==="UPDATE_PENDING"?<span className="mt-1 block text-xs font-semibold text-warning-text">Update to verified details</span>:null}
-      </button>
+      </Button>
      </li>;
     })}
    </ul>

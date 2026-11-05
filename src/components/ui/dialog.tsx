@@ -61,7 +61,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
     }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
     style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px", "--lms-visual-bottom": viewportBottom ?? "0px", "--lms-visual-center": visualCenter } as CSSProperties}
-    className={cx("fixed left-1/2 top-[var(--lms-visual-center)] m-0 h-auto max-h-[calc(var(--lms-visual-height)_-_3rem)] w-[calc(100%_-_2rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-0 text-foreground shadow-[var(--lms-elevation-4)] backdrop:bg-[#1e363f]/10 ", widthClass, className)}>
+    className={cx("fixed left-1/2 top-[var(--lms-visual-center)] m-0 h-auto max-h-[calc(var(--lms-visual-height)_-_3rem)] w-[calc(100%_-_2rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-0 text-foreground shadow-[var(--lms-elevation-4)] backdrop:bg-[color:var(--lms-brand-dark)]/10 ", widthClass, className)}>
     <div className="flex max-h-[calc(var(--lms-visual-height)_-_3rem)] min-h-0 min-w-0 flex-col overflow-hidden max-[767px]:max-h-[var(--lms-visual-height)]">
       <div data-slot="dialog-header" className="relative z-10 flex shrink-0 items-start justify-between gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] bg-surface px-4 py-4 pt-[max(1rem,env(safe-area-inset-top))] md:px-[var(--lms-canvas-padding)]">
         <div className="min-w-0 flex-1">

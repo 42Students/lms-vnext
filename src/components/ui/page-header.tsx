@@ -36,7 +36,7 @@ export function PageHeader({ eyebrow, title, id, description, actions, needsDoin
           style={{ fontSize: "var(--lms-page-header-title-size, 30px)", fontWeight: 600 }}
           title={title}
         >
-          {errorCode ? <><span className="mr-3 text-[24px] font-semibold text-[#1a1d21]" aria-hidden="true">{errorCode}</span>{errorCode===404?"Page Not Found":"Server Error"}</> : title}
+          {errorCode ? <><span className="mr-3 text-[24px] font-semibold text-[color:var(--lms-neutral-900)]" aria-hidden="true">{errorCode}</span>{errorCode===404?"Page Not Found":"Server Error"}</> : title}
         </h1>
         {subtitle ? (
           <span

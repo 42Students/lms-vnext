@@ -76,7 +76,7 @@ export function MarketingLayout({children,path,pageTitle,pageDescription}:{
   </a>
   <MarketingHeaderClient />
   <main id="main-content" tabIndex={-1} className="mx-auto min-w-0 max-w-[1180px] px-5 [&>*]:min-w-0">{children}</main>
-  <footer className="border-t border-[#d9e8e9] bg-[#f5faf9]">
+  <footer className="border-t border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)]">
    <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-10 px-5 py-14 text-sm sm:grid-cols-2 min-[992px]:grid-cols-[2fr_1fr_1fr] min-[992px]:py-20">
     <div className="space-y-4">
      <Link href="/" className="inline-flex min-h-11 items-center" aria-label="42 LMS home">
@@ -107,7 +107,7 @@ export function MarketingLayout({children,path,pageTitle,pageDescription}:{
      <Link href="/assets/static/terms-and-conditions-view.html" className="inline-flex min-h-11 items-center hover:text-[var(--lms-primary-text)]">Terms</Link>
     </nav>
    </div>
-   <div className="mx-auto max-w-[1180px] border-t border-[#d9e8e9] px-5 py-5 text-xs text-[var(--lms-body-text)]">© {new Date().getFullYear()} JRSPF Technologies Pvt. Ltd. All rights reserved.</div>
+   <div className="mx-auto max-w-[1180px] border-t border-[color:var(--lms-border)] px-5 py-5 text-xs text-[var(--lms-body-text)]">© {new Date().getFullYear()} JRSPF Technologies Pvt. Ltd. All rights reserved.</div>
   </footer>
  </div>;
 }
@@ -132,11 +132,11 @@ export function MarketingHero({eyebrow,title,description,showExploreLink=true,su
     {home?<p className="text-sm font-medium text-[var(--lms-body-text)]">One platform for universities and enterprises.</p>:null}
     {subline?<p className="text-sm text-[var(--lms-body-text)]">{subline}</p>:null}
    </div>
-   {home?<aside aria-label="Connected LMS workspaces" className="hidden min-w-0 rounded-[22px] border border-[#c5e6e9] bg-white/90 p-6 shadow-[0_24px_60px_rgba(21,73,83,0.12)] min-[992px]:block">
+   {home?<aside aria-label="Connected LMS workspaces" className="hidden min-w-0 rounded-[20px] border border-[color:var(--lms-info-blue-surface)] bg-white/90 p-6 shadow-[0_24px_60px_rgba(21,73,83,0.12)] min-[992px]:block">
     <p className="text-sm font-semibold text-[var(--lms-heading)]">A connected journey</p>
     <ol className="mt-5 grid gap-3">
-     {["Learn and assess","Build with mentors","Interview and grow"].map((label,index)=><li key={label} className="flex items-center gap-3 rounded-xl bg-[#edf8f8] px-4 py-3 text-sm font-semibold text-[var(--lms-heading)]">
-      <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#d5f0f0] text-[var(--lms-primary-text)]">{index+1}</span>{label}
+     {["Learn and assess","Build with mentors","Interview and grow"].map((label,index)=><li key={label} className="flex items-center gap-3 rounded-xl bg-[color:var(--lms-primary-subtle)] px-4 py-3 text-sm font-semibold text-[var(--lms-heading)]">
+      <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[color:var(--lms-primary-subtle)] text-[var(--lms-primary-text)]">{index+1}</span>{label}
      </li>)}
     </ol>
    </aside>:null}
@@ -145,12 +145,12 @@ export function MarketingHero({eyebrow,title,description,showExploreLink=true,su
 }
 export function MarketingFeatureGrid({title,items,maxColumns=3}:{title:string;items:readonly {title:string;description:string}[];maxColumns?:2|3}){
  const headingId="marketing-features-"+title.toLowerCase().replace(/[^a-z0-9]+/g,"-");
- return <section aria-labelledby={headingId} className="relative left-1/2 w-screen -translate-x-1/2 bg-white py-14 even:bg-[#f5faf9] min-[768px]:py-20">
+ return <section aria-labelledby={headingId} className="relative left-1/2 w-screen -translate-x-1/2 bg-white py-14 even:bg-[color:var(--lms-neutral-50)] min-[768px]:py-20">
   <div className="mx-auto max-w-[1180px] space-y-9 px-5">
    <h2 id={headingId} className="text-[clamp(1.5rem,3vw,2.125rem)] font-semibold leading-tight text-[var(--lms-heading)]">{title}</h2>
    <ul className={`grid min-w-0 gap-5 min-[640px]:grid-cols-2 ${maxColumns===2?"min-[992px]:grid-cols-2":"min-[992px]:grid-cols-3"}`}>
-    {items.map((item,index)=><li key={item.title} className="min-w-0 rounded-[18px] border border-[#e0ebeb] bg-white p-6 shadow-[0_8px_30px_rgba(28,79,88,0.05)]">
-     <span aria-hidden="true" className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#dcf4f3] text-[var(--lms-primary-text)]">
+    {items.map((item,index)=><li key={item.title} className="min-w-0 rounded-[18px] border border-[color:var(--lms-border)] bg-white p-6 shadow-[0_8px_30px_rgba(28,79,88,0.05)]">
+     <span aria-hidden="true" className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[color:var(--lms-primary-subtle)] text-[var(--lms-primary-text)]">
       <svg viewBox="0 0 32 32" fill="none" width="26" height="26" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
        {index%3===0?<><path d="M5 9l11-5 11 5-11 5-11-5zM8 14v8l8 4 8-4v-8"/></>:index%3===1?<><rect x="5" y="6" width="22" height="20" rx="3"/><path d="M10 13h12M10 19h8"/></>:<><circle cx="16" cy="9" r="4"/><path d="M6 27c0-6 4-10 10-10s10 4 10 10"/></>}
       </svg>
@@ -164,11 +164,11 @@ export function MarketingFeatureGrid({title,items,maxColumns=3}:{title:string;it
 }
 export function MarketingCta({title,subline}:{title:string;subline?:string}){
  return <section aria-labelledby="marketing-cta-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-white px-5 py-14 min-[768px]:py-20">
-  <div className="mx-auto max-w-[1180px] space-y-6 rounded-[22px] bg-[linear-gradient(125deg,#123d4e_0%,#126e78_100%)] px-6 py-12 text-white min-[768px]:px-14 min-[768px]:py-16">
+  <div className="mx-auto max-w-[1180px] space-y-6 rounded-[20px] bg-[linear-gradient(125deg,#123d4e_0%,#126e78_100%)] px-6 py-12 text-white min-[768px]:px-14 min-[768px]:py-16">
    <h2 id="marketing-cta-heading" className="text-[clamp(1.625rem,3vw,2.5rem)] font-semibold leading-tight text-white">{title}</h2>
    <p className="text-sm leading-6 text-white/90 min-[768px]:text-base">{subline??"Explore how 42 LMS can support your learners and teams."}</p>
    <div className="flex flex-col flex-wrap gap-3 sm:flex-row">
-    <Link href="/request-demo" className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-6 font-semibold text-[#124f59] hover:bg-[#edf8f8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Request a Demo <span aria-hidden="true" className="ml-2">↗</span></Link>
+    <Link href="/request-demo" className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-6 font-semibold text-[color:var(--lms-button-primary-hover)] hover:bg-[color:var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Request a Demo <span aria-hidden="true" className="ml-2">↗</span></Link>
     <Link href="/login" className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/75 px-6 font-semibold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Login</Link>
    </div>
   </div>

@@ -6,6 +6,9 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {istDateKey,nextTpoFollowupTomorrow,nextTpoTodayFollowupAt, type TpoTodayNextPlan,type TpoCompaniesTodayRow} from
  "@/modules/placements/tpo-companies-today-model";
 import styles from "./tpo-companies-today.module.css";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 type LeadContext={id:string;stage:string;designation:string|null;emailNorm:string|null;ownerName:string|null};
 type CompanyAttention={items:Array<{
@@ -203,11 +206,11 @@ export function TpoCompaniesToday({
      </div>
      <Link href="/tpo/follow-ups">Re-plan your week ›</Link></div>
     <div className={styles.week} role="group" aria-label="This week">
-     {days.map(item=><button type="button" key={item.offset}
+     {days.map(item=><Button variant="bare" type="button" key={item.offset}
        aria-pressed={day===item.offset}
        className={day===item.offset?styles.chosen:styles.day}
        onClick={()=>pickDay(item.offset)}>
-       <span>{item.weekday.toUpperCase()}</span><strong>{item.dayNumber}</strong><small>{item.count||"·"}</small></button>)}
+       <span>{item.weekday.toUpperCase()}</span><strong>{item.dayNumber}</strong><small>{item.count||"·"}</small></Button>)}
     </div>
     {day===0&&companyAttention===null?<p role="status" className={styles.helper}>Company verification attention is unavailable. A missing source does not mean every company is verified.</p>:null}
     {day===0&&replyTotal===null?<p role="status" className={styles.helper}>Recruiter replies are temporarily unavailable. Open Messages for the current inbox.</p>:null}
@@ -225,7 +228,7 @@ export function TpoCompaniesToday({
        item.reply.subject:item.row.note?.trim()||"Open the recorded follow-up";
       const stamp=isCompany?"Needs review":isReply?when(item.reply.receivedAt):when(item.row.dueAt);
       const urgent=!isCompany&&!isReply&&istDateKey(new Date(item.row.dueAt))<todayKey;
-      return <button type="button" key={item.key} role="option"
+      return <Button variant="bare" type="button" key={item.key} role="option"
        aria-selected={selected?.key===item.key} className={styles.item}
        onClick={()=>pickKey(item.key)}>
        <span className={urgent?styles.red:isReply?styles.replyDot:styles.teal} aria-hidden="true"/>
@@ -234,23 +237,23 @@ export function TpoCompaniesToday({
         <small>{detail}</small>
         <small>{stamp}</small>
        </span>
-      </button>;
+      </Button>;
      })}</div>:
      <div className={styles.empty}>No recorded work in this date window.
       <Link href="/tpo/follow-ups">Check the full follow-up queue</Link>
      </div>}
-    <div className="flex flex-col gap-1 border-t border-[#e7ecf2] bg-[#f8fafb] px-4 py-3 text-[13px]">
-     {notContacted===null?<span role="status" className="text-[#617084]">Not-contacted recruiter count unavailable.</span>:
-      <Link href="/tpo/recruiters?stage=NEW" className="font-bold text-[#087f8b]">
+    <div className="flex flex-col gap-1 border-t border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] px-4 py-3 text-[13px]">
+     {notContacted===null?<span role="status" className="text-[color:var(--lms-text-muted)]">Not-contacted recruiter count unavailable.</span>:
+      <Link href="/tpo/recruiters?stage=NEW" className="font-bold text-[color:var(--lms-button-primary)]">
        {notContacted.count} not contacted yet · start with them
       </Link>}
-     {outsideWeek?<span className="text-[#087f8b]">
+     {outsideWeek?<span className="text-[color:var(--lms-button-primary)]">
       <Link href="/tpo/recruiters?nextFollowup=NONE">{outsideWeek.withoutDate} with no date</Link>
       {" · "}
       <Link href="/tpo/recruiters?nextFollowup=LATER">{outsideWeek.laterThanWeek} later than this week</Link>
       {" · "}
       <Link href="/tpo/follow-ups">Re-plan your week</Link>
-     </span>:<Link href="/tpo/follow-ups" className="text-[#087f8b]">Re-plan your week</Link>}
+     </span>:<Link href="/tpo/follow-ups" className="text-[color:var(--lms-button-primary)]">Re-plan your week</Link>}
     </div>
     <footer className={styles.foot}>J / K to move · T tomorrow and Enter to review Done for follow-ups · {focusItems.length} shown
      {attentionIncomplete?" · more may exist":""}</footer>
@@ -279,7 +282,7 @@ export function TpoCompaniesToday({
      </div>
      <div className={styles.actions}>
       <Link href={"/tpo/companies/"+encodeURIComponent(selectedCompany.companyId)} className={styles.primary}>Review company trust on its record</Link>
-      <button type="button" onClick={laterAndNext} className={styles.secondary}>Later &amp; next</button>
+      <Button variant="bare" type="button" onClick={laterAndNext} className={styles.secondary}>Later &amp; next</Button>
      </div>
      <p className={styles.helper}>Reviewing this company does not automatically verify it or change recruiter access. Later &amp; next changes selection only.</p>
     </div>:selectedReply?<div className={styles.replyDetail} data-testid="tpo.today.reply-detail">
@@ -295,7 +298,7 @@ export function TpoCompaniesToday({
      <div className={styles.actions}>
       <Link href={"/tpo/messages?tab=recruiters&status=REPLY&thread="+encodeURIComponent(selectedReply.id)}
        className={styles.primary}>{selectedReply.accessEnded?"Open history":"Answer in Messages"}</Link>
-      <button type="button" onClick={laterAndNext} className={styles.secondary}>Later &amp; next</button>
+      <Button variant="bare" type="button" onClick={laterAndNext} className={styles.secondary}>Later &amp; next</Button>
      </div>
      <p className={styles.helper}>Open Messages to reply. Merely selecting this item never sends email or marks a message handled.</p>
     </div>:null}
@@ -312,44 +315,44 @@ export function TpoCompaniesToday({
      <div className={styles.context}><span className={styles.eyebrow}>{leadInfo?.stage?"RECRUITER · "+leadInfo.stage.replaceAll("_"," "):"RECORDED FOLLOW-UP"}</span>
        <strong>{current.note?.trim()||"A recorded recruiter follow-up is due."}</strong></div>
      <p className={styles.sub}>Due {when(current.dueAt)}. Review the full recruiter record for company trust and verification before changing access.</p>
-     <div className={styles.actions}><button type="button" disabled={pending} className={styles.secondary} onClick={()=>setConfirm("TOMORROW")}>Tomorrow</button>
-      <button type="button" disabled={pending} className={styles.primary} onClick={laterAndNext}>Later &amp; next</button></div>
+     <div className={styles.actions}><Button variant="bare" type="button" disabled={pending} className={styles.secondary} onClick={()=>setConfirm("TOMORROW")}>Tomorrow</Button>
+      <Button variant="bare" type="button" disabled={pending} className={styles.primary} onClick={laterAndNext}>Later &amp; next</Button></div>
      <p className={styles.helper}>Later &amp; next moves to the next item without changing the current reminder.</p>
      <div className={styles.facts}><div><span className={styles.eyebrow}>RECRUITER STATUS</span><p>{leadInfo?.stage?leadInfo.stage.replaceAll("_"," "):"See recruiter history"}</p></div>
       <div><span className={`${styles.eyebrow} uppercase`}>Company</span><p>{current.companyName??"Not linked"} · Review company trust on its record</p></div></div>
      <details className={styles.advanced}><summary>Record outcome and plan next follow-up</summary>
       <p className={styles.sub}>Confirmed outcomes are saved with your account and close this follow-up atomically.</p>
      <fieldset className={styles.outcomes}><legend className={styles.eyebrow}>HOW DID IT GO?</legend>
-      {outcomes.map(item=><button key={item.value} type="button"
+      {outcomes.map(item=><Button variant="bare" key={item.value} type="button"
        aria-pressed={outcome===item.value}
        className={outcome===item.value?styles.outcomeActive:styles.outcome}
-       onClick={()=>chooseOutcome(item.value)} disabled={pending}>{item.label}</button>)}
+       onClick={()=>chooseOutcome(item.value)} disabled={pending}>{item.label}</Button>)}
      </fieldset>
      <fieldset className={styles.outcomes}>
        <legend className={styles.eyebrow}>WHEN SHOULD YOU FOLLOW UP?</legend>
        {([["NONE","No next follow-up"],["TOMORROW","Tomorrow · 10 AM"],
           ["WEEK","In 7 days · 10 AM"],["CUSTOM","Pick a date"]] as const).map(([value,label])=>
-         <button type="button" key={value} disabled={pending||(!current.canContact&&value!=="NONE")}
+         <Button variant="bare" type="button" key={value} disabled={pending||(!current.canContact&&value!=="NONE")}
           aria-pressed={nextPlan===value}
           className={nextPlan===value?styles.outcomeActive:styles.outcome}
-          onClick={()=>setNextPlan(value)}>{label}</button>)}
+          onClick={()=>setNextPlan(value)}>{label}</Button>)}
        {nextPlan==="CUSTOM"?<label className={styles.noteLabel}>Follow up at (IST)
-          <input type="datetime-local" value={customLocal} disabled={pending}
+          <Input type="datetime-local" value={customLocal} disabled={pending}
            onChange={event=>setCustomLocal(event.target.value)}
-           className="min-h-11 rounded-lg border border-[#d6e1ee] bg-surface p-2 text-[14px]"/>
+           className="min-h-11 rounded-lg border border-[color:var(--lms-neutral-300)] bg-surface p-2 text-[14px]"/>
          </label>:null}
        {!current.canContact?<p className={styles.sub}>Further outreach to this contact is unavailable under current CRM rules.</p>:null}
      </fieldset>
      <label className={styles.noteLabel}>Outcome note (required)
-       <textarea maxLength={500} rows={4} value={note} disabled={pending}
+       <Textarea maxLength={500} rows={4} value={note} disabled={pending}
          onChange={e=>setNote(e.target.value)}
          placeholder="What happened? This is saved in the recruiter history."/>
      </label>
      <div className={styles.actions}>
-      <button type="button" disabled={pending||!note.trim()} className={styles.primary}
-       onClick={()=>setConfirm("DONE")}>Done & next</button>
-      <button type="button" disabled={pending} className={styles.secondary}
-       onClick={()=>setConfirm("TOMORROW")}>Tomorrow, 10 AM</button>
+      <Button variant="bare" type="button" disabled={pending||!note.trim()} className={styles.primary}
+       onClick={()=>setConfirm("DONE")}>Done & next</Button>
+      <Button variant="bare" type="button" disabled={pending} className={styles.secondary}
+       onClick={()=>setConfirm("TOMORROW")}>Tomorrow, 10 AM</Button>
       {contact?<a href={contact} className={styles.secondary}>Call recruiter ↗</a>:null}
      </div>
      </details>

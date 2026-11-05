@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Table } from "@/components/ui/table";
 
 export type RoundPreview={
  id:string;sequence:number;name:string;kind:string;status:string;mode:string|null;
@@ -125,7 +126,7 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
           className="text-xs font-semibold text-link underline">Change the plan</Link>
         </div>
         {preview.length?<div className="min-w-0 overflow-x-auto" role="region" aria-label="Recorded interview timetable">
-         <table className="w-full min-w-[420px] border-collapse text-left text-xs">
+         <Table className="min-w-[420px]">
           <thead className="bg-surface-secondary text-muted-foreground"><tr>
            <th className="px-3 py-2">Time (IST)</th>
            <th className="px-3 py-2">Candidate</th>
@@ -138,7 +139,7 @@ export function TpoDriveRoundsPrototypeReview({rounds,selectedId,jobId,slots,now
            <td className="px-3 py-2">{[item.panel,item.room].filter(Boolean).join(" · ")||"Not recorded"}</td>
            <td className="px-3 py-2">{item.status==="BOOKED"?"Booked":"Available"}</td>
           </tr>)}</tbody>
-         </table>
+         </Table>
          {selectedSlots.length>preview.length?<p className="p-2 text-xs text-body">Previewing {preview.length} of {selectedSlots.length} booked slots. Open the full planner for all rows.</p>:null}
         </div>:<p className="text-sm text-body">No booked candidate slots are recorded for this round.</p>}
        </div>

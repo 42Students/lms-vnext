@@ -76,7 +76,7 @@ export function TpoMoreNavigation(){
        className="mb-[7px] ml-1 text-xs font-bold uppercase leading-[1.2] tracking-[0.09em] text-muted-foreground">
        {group.heading}
      </h2>
-     <div className="overflow-hidden rounded-[13px] border border-[var(--lms-canvas-border)] bg-surface shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
+     <div className="overflow-hidden rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface shadow-[0_4px_18px_rgba(26,45,72,0.04)]">
       {group.links.map(item=>{
        const count=item.href==="/tpo/requests"?counts?.requests:
          item.href==="/tpo/messages"?counts?.messages:undefined;
@@ -84,11 +84,11 @@ export function TpoMoreNavigation(){
        return <Link key={item.href} href={item.href}
         className="group flex min-h-16 min-w-0 items-center gap-3 border-t border-[var(--lms-canvas-border)] bg-surface px-3 py-[11px] transition-colors duration-150 first:border-t-0 hover:bg-[var(--lms-primary-subtle)] focus-visible:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[68px] min-[768px]:px-[14px] min-[768px]:py-3">
         <span aria-hidden="true"
-          className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[#e6ebf1] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-500)] min-[768px]:size-[38px]">
+          className="flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[color:var(--lms-border)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-500)] min-[768px]:size-[38px]">
          <MoreIcon href={item.href}/>
         </span>
         <span className="min-w-0 flex-1">
-         <span className="block text-[14px] font-[650] leading-[1.3] text-[#27364d] group-hover:text-[var(--lms-primary)]">{item.label}</span>
+         <span className="block text-[14px] font-[650] leading-[1.3] text-[color:var(--lms-text-body)] group-hover:text-[var(--lms-primary)]">{item.label}</span>
          <span className="mt-[2px] block break-words text-xs leading-[1.4] text-muted-foreground">{item.description}</span>
         </span>
         {badge?<span aria-label={item.href==="/tpo/messages"?count+" unread messages":count+" waiting requests"} className="inline-flex min-w-6 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-on-primary">{badge}</span>:null}

@@ -8,6 +8,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {
  listGlobalSuperAdminLessonIndex,GLOBAL_LESSON_INDEX_PAGE_SIZE,
 } from "@/modules/courses/super-admin-global-lesson-index-service";
+import { Table } from "@/components/ui/table";
 
 export const dynamic="force-dynamic";
 
@@ -58,7 +59,7 @@ export default async function GlobalLessonIndexPage({searchParams}:{
     <Link href={href(data.page)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Refresh</Link>
    </form>
    {data.items.length?<div className="overflow-x-auto">
-    <table className="w-full min-w-[630px] border-collapse text-left text-sm">
+    <Table className="min-w-[630px]">
      <thead className="bg-[var(--lms-canvas)]"><tr>
       <th scope="col" className="border-b border-border p-3">Organization</th>
       <th scope="col" className="border-b border-border p-3">College</th>
@@ -74,7 +75,7 @@ export default async function GlobalLessonIndexPage({searchParams}:{
       <td className="border-b border-border p-3 text-right tabular-nums">{item.visibleLessons}</td>
       <td className="border-b border-border p-3 text-right tabular-nums">{item.inactiveLessons}</td>
      </tr>)}</tbody>
-    </table>
+    </Table>
    </div>:<p role="status" className="p-4 text-sm text-muted-foreground">No colleges match this search.</p>}
    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4 text-sm">
     <p className="text-muted-foreground">Page {data.page} · up to {GLOBAL_LESSON_INDEX_PAGE_SIZE} colleges per page · Refreshed {new Date(data.refreshedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>

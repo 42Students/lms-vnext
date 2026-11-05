@@ -592,10 +592,10 @@ export function SuperAdminHrAccounts({
       header: "Name",
       cell: (account) => (
         <div>
-          <button type="button" className="m-0 min-h-9 max-w-full break-words text-left font-semibold text-primary-text underline underline-offset-2 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]"
+          <Button variant="bare" type="button" className="m-0 min-h-9 max-w-full break-words text-left font-semibold text-primary-text underline underline-offset-2 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]"
             onClick={()=>openDetail(account)} aria-label={"View recruiter "+hrDisplayName(account)}>
             {hrDisplayName(account)}
-          </button>
+          </Button>
           <p className="mt-1 break-words text-xs text-muted-foreground">
             {account.email || account.title || "—"}
           </p>
@@ -618,7 +618,7 @@ export function SuperAdminHrAccounts({
       header: "Colleges",
       cell: (account) =>
         account.grants.length > 0 ? (
-          <button type="button" className="min-h-9 font-semibold tabular-nums text-primary-text underline hover:text-primary-hover" aria-label={"View "+account.grants.length+" visible college grants for "+hrDisplayName(account)} onClick={()=>openDetail(account)}>{account.grants.length}</button>
+          <Button variant="bare" type="button" className="min-h-9 font-semibold tabular-nums text-primary-text underline hover:text-primary-hover" aria-label={"View "+account.grants.length+" visible college grants for "+hrDisplayName(account)} onClick={()=>openDetail(account)}>{account.grants.length}</Button>
         ) : (
           <span className="text-muted-foreground">
             No visible grants
@@ -808,7 +808,7 @@ export function SuperAdminHrAccounts({
                   <article key={account.userId} className="min-w-0 py-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <h2 className="m-0 break-words text-base font-semibold text-foreground"><button type="button" onClick={()=>openDetail(account)} className="min-h-9 text-left font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">{hrDisplayName(account)}</button></h2>
+                        <h2 className="m-0 break-words text-base font-semibold text-foreground"><Button variant="bare" type="button" onClick={()=>openDetail(account)} className="min-h-9 text-left font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">{hrDisplayName(account)}</Button></h2>
                         <p className="mt-1 break-words text-xs text-muted-foreground">{account.email || account.phoneE164 || "No contact listed"}</p>
                       </div>
                       <StatusBadge tone={hrAccountStatusTone(account)}>{hrAccountStatusLabel(account)}</StatusBadge>

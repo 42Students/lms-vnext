@@ -6,6 +6,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {attendanceParentContactInputSchema} from "@/modules/attendance/parent-sms-model";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 export function AdminAttendanceParentContactEditor({collegeId,learners}:{collegeId:string;
  learners:readonly {membershipId:string;displayName:string|null}[]}){
  const [open,setOpen]=useState(false);
@@ -87,11 +88,11 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
      className="mt-1 block w-full"/>
    </label>
    <label className="flex items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-    <input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>
+    <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
     Parent consent was recorded and confirmed
    </label>
    <label className="flex items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-    <input type="checkbox" checked={verified} onChange={e=>setVerified(e.target.checked)}/>
+    <Checkbox checked={verified} onChange={e=>setVerified(e.target.checked)}/>
     Parent phone verified independently
    </label>
    <Button variant="primary" type="button" loading={pending} disabled={!valid||pending} onClick={()=>void save()}

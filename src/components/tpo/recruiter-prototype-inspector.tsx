@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {RECRUITER_STAGE_LEGACY_LABELS,type TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lead-policy";
 import {tpoRecruiterFollowupSignal} from "@/modules/placements/tpo-recruiter-attention-model";
+import { Button } from "@/components/ui/button";
 
 export type TpoRecruiterInspectorLead={
  id:string;name:string;designation:string|null;companyName:string|null;
@@ -42,8 +43,8 @@ export function TpoRecruiterPrototypeInspector({
     <h2 className="break-words text-[18px] font-bold text-foreground">{lead.name}</h2>
     <p className="mt-1 text-xs text-body">{[lead.designation,lead.companyName].filter(Boolean).join(" · ")||"Recruiter contact"}</p>
    </div>
-   <button type="button" onClick={onDismiss} aria-label="Close recruiter details"
-    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border text-body md:min-h-9 md:min-w-9">×</button>
+   <Button variant="bare" type="button" onClick={onDismiss} aria-label="Close recruiter details"
+    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border text-body md:min-h-9 md:min-w-9">×</Button>
   </div>
   <section aria-label="Next recruiter step" className={"mt-4 rounded-lg p-3 "+(nextSignal.lateDays>0?"bg-red-50":"bg-primary-subtle")}>
    <h3 className={"text-xs font-bold uppercase tracking-wide "+(nextSignal.lateDays>0?"text-red-700":"text-primary-text")}>Next step</h3>

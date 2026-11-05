@@ -18,6 +18,7 @@ import {CollegeQuizActions} from "@/components/courses/college-quiz-actions";
 import {CollegeQuizAttempts} from "@/components/courses/college-quiz-attempts";
 import { adminAssessmentHref, adminAssessmentStats } from "@/modules/courses/admin-assessment-directory-model";
 import type { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
+import { Table } from "@/components/ui/table";
 
 type Data = Awaited<ReturnType<typeof listCollegeAssessmentAggregate>>;
 function formatDue(value: Date | null) {
@@ -67,7 +68,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
     <p className="m-0 break-words text-sm text-muted-foreground leading-[22px]">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length && assignment ?
       <div className="min-w-0 overflow-x-auto border-y border-[var(--lms-canvas-border)]" role="region" aria-label="Assignment directory" tabIndex={0}>
-        <table className="w-full min-w-[1030px] border-collapse text-left text-sm">
+        <Table className="min-w-[1030px]">
           <caption className="sr-only">College assignments. Table scrolls horizontally on smaller screens.</caption>
           <thead><tr className="border-b border-border bg-muted text-xs font-semibold">
             {["Title","Course","Scope","Points","Deadline","Submissions","Actions"].map(column=>
@@ -103,9 +104,9 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
               </td>
             </tr>)}
           </tbody>
-        </table>
+        </Table>
       </div> : data.items.length ? <div className="min-w-0 overflow-x-auto border-y border-[var(--lms-canvas-border)]" role="region" aria-label="Quiz directory" tabIndex={0}>
-      <table className="w-full min-w-[1080px] border-collapse text-left text-sm">
+      <Table className="min-w-[1080px]">
         <caption className="sr-only">Quizzes for the selected college. Scroll horizontally to review the Actions column.</caption>
         <thead className="bg-muted"><tr className="border-b border-border text-xs font-semibold">
           {["Title","Course","Status","Results","Audience","Points","Due"].map(column=>
@@ -157,7 +158,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
             </td>
           </tr>)}
         </tbody>
-      </table>
+      </Table>
     </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}
     <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between print:hidden">
       <span className="text-xs text-muted-foreground">{data.pageSize} per page</span>

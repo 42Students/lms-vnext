@@ -4,12 +4,14 @@ import Link from "next/link";
 import type {FacultyCourseRosterLearner} from "@/components/courses/faculty-course-roster";
 import {facultyRosterCsv,facultyRosterFileName} from "@/modules/courses/faculty-roster-export";
 import type {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 function maskPhone(value:string){const digits=value.replace(/\D/g,"");return digits.length<6?"Call student":digits.slice(0,2)+"x".repeat(digits.length-4)+digits.slice(-2);}
 
 
 type Signals=Awaited<ReturnType<typeof getFacultyCourseHomeSignals>>|null;
 function percent(value:number|null,mode:"progress"|"attendance"){
- const tone=value===null?"bg-[#f1f4f7] text-[#60718b]":
+ const tone=value===null?"bg-[color:var(--lms-neutral-100)] text-[color:var(--lms-text-muted)]":
   value<(mode==="progress"?50:70)?"bg-red-50 text-red-700":
   value<80?"bg-amber-50 text-amber-800":"bg-emerald-50 text-emerald-700";
  return <span className={"rounded-full px-2.5 py-1 text-xs font-bold "+tone}>
@@ -46,36 +48,36 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
   window.setTimeout(()=>URL.revokeObjectURL(url),30_000);
  }
  const cards=[
-  {label:"Students",value:learners.length,tone:"text-[#1d293f]"},
+  {label:"Students",value:learners.length,tone:"text-[color:var(--lms-heading)]"},
   {label:"Behind on the course",value:completion?.behindTotal??"—",
    tone:"text-red-700"},
   {label:"Attendance under 75%",value:attendanceComplete&&metrics?metrics.lowAttendanceTotal:"—",
    tone:"text-orange-700"},
   {label:signals?.latestAssignmentMissing?"Not submitted "+signals.latestAssignmentMissing.title:"Not submitted latest assignment",
-   value:signals?.latestAssignmentMissing?.missing??"—",tone:"text-[#1d293f]"},
+   value:signals?.latestAssignmentMissing?.missing??"—",tone:"text-[color:var(--lms-heading)]"},
  ];
  return <section aria-label="Faculty prototype students" className="space-y-5">
   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{cards.map(card=>
-   <div key={card.label} className="rounded-xl border border-[#e5ebf2] p-5">
+   <div key={card.label} className="rounded-xl border border-[color:var(--lms-border)] p-5">
     <p className="faculty-proto-subtitle">{card.label}</p>
     <p className={"mt-1 text-3xl font-extrabold tabular-nums "+card.tone}>{card.value}</p>
    </div>)}</div>
   <div className="flex min-w-0 flex-wrap items-center gap-2">
    <label htmlFor="faculty-student-directory-search" className="sr-only">Search students</label>
-   <input id="faculty-student-directory-search" value={query} type="search"
+   <Input id="faculty-student-directory-search" value={query} type="search"
     onChange={event=>setQuery(event.target.value)}
-    className="h-11 min-w-0 flex-[1_1_220px] rounded-lg border border-[#dce5ee] px-4 text-sm"
+    className="h-11 min-w-0 flex-[1_1_220px] rounded-lg border border-[color:var(--lms-border)] px-4 text-sm"
     placeholder="Search by name, roll no, phone or email"/>
    <div className="flex shrink-0 flex-wrap gap-2" role="group" aria-label="Roster filter">
-    <button type="button" aria-pressed={effectiveView==="ALL"} onClick={()=>setView("ALL")}
-     className={"faculty-proto-pill"+(view==="ALL"?" !border-[#078191] !text-[#078191]":"")}>All {learners.length}</button>
-    <button type="button" aria-pressed={effectiveView==="BEHIND"} disabled={!hasMeasurableProgress}
+    <Button variant="bare" type="button" aria-pressed={effectiveView==="ALL"} onClick={()=>setView("ALL")}
+     className={"faculty-proto-pill"+(view==="ALL"?" !border-[color:var(--lms-button-primary)] !text-[color:var(--lms-button-primary)]":"")}>All {learners.length}</Button>
+    <Button variant="bare" type="button" aria-pressed={effectiveView==="BEHIND"} disabled={!hasMeasurableProgress}
      onClick={()=>setView("BEHIND")}
-     className={"faculty-proto-pill"+(view==="BEHIND"?" !border-[#078191] !text-[#078191]":"")}>
-      Behind {completion?.behindTotal??"—"}</button>
+     className={"faculty-proto-pill"+(view==="BEHIND"?" !border-[color:var(--lms-button-primary)] !text-[color:var(--lms-button-primary)]":"")}>
+      Behind {completion?.behindTotal??"—"}</Button>
    </div>
-   <button className="faculty-proto-secondary shrink-0" aria-label="Download roster CSV"
-    type="button" onClick={exportCsv} disabled={!students.length}>Download list</button>
+   <Button variant="bare" className="faculty-proto-secondary shrink-0" aria-label="Download roster CSV"
+    type="button" onClick={exportCsv} disabled={!students.length}>Download list</Button>
   </div>
   <div className="faculty-proto-table-wrap"><table className="faculty-proto-table">
    <thead><tr><th>Student</th><th>Roll no</th>
@@ -91,18 +93,18 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
     const attendance=attendanceComplete?row?.attendancePercent??null:null;
     return <tr key={student.membershipId}>
      <td><div className="flex items-center gap-3">
-      <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e0f1f4] text-xs font-bold text-[#007f8e]">{initials||"ST"}</span>
-      <Link className="font-semibold text-[#1d293f] hover:text-[#007f8e] hover:underline" href={detail}>{name}</Link>
+      <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--lms-primary-subtle)] text-xs font-bold text-[color:var(--lms-button-primary)]">{initials||"ST"}</span>
+      <Link className="font-semibold text-[color:var(--lms-heading)] hover:text-[color:var(--lms-button-primary)] hover:underline" href={detail}>{name}</Link>
      </div></td>
      <td>{student.rollNumber??"—"}</td>
      <td>{percent(progress,"progress")}</td>
      <td>{percent(attendance,"attendance")}</td>
      <td>{assignmentComplete&&row?row.submittedAssignments+" of "+row.totalAssignments:"—"}</td>
      <td><div className="flex min-w-0 flex-col text-xs leading-5">
-      {student.phoneE164?<a className="text-[#60718b] hover:text-[#078191] hover:underline"
+      {student.phoneE164?<a className="text-[color:var(--lms-text-muted)] hover:text-[color:var(--lms-button-primary)] hover:underline"
        href={"tel:"+student.phoneE164.replace(/[^+\d]/g,"")} title={"Call "+name}>
        {maskPhone(student.phoneE164)}</a>:null}
-      {student.email?<a className="break-all text-[#60718b] hover:text-[#078191] hover:underline"
+      {student.email?<a className="break-all text-[color:var(--lms-text-muted)] hover:text-[color:var(--lms-button-primary)] hover:underline"
        href={"mailto:"+student.email} title={"Email "+name}>{student.email}</a>:null}
       {!student.phoneE164&&!student.email?<span>—</span>:null}
      </div></td>

@@ -128,7 +128,7 @@ export function SuperAdminSectionSyllabusOrder({
       <strong>{item.title}</strong>
       <span className="ml-2 text-xs text-muted-foreground">{item.contentType.replaceAll("_"," ")}</span>
      </span>
-     <button type="button" disabled={!editable||busy}
+     <Button variant="bare" type="button" disabled={!editable||busy}
       aria-label={"Reorder "+item.title} aria-describedby={hintId}
       aria-pressed={grabbed===id}
       onKeyDown={event=>keyMove(event,id)}
@@ -139,7 +139,7 @@ export function SuperAdminSectionSyllabusOrder({
       style={{touchAction:"none"}}
       className="inline-flex min-h-11 min-w-11 cursor-grab touch-none select-none items-center justify-center rounded border border-border text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 md:min-h-9 md:min-w-9">
       <span aria-hidden="true">⠿</span>
-     </button>
+     </Button>
      <Button type="button" variant="secondary" size="sm"
       aria-label={"Move "+item.title+" up"} disabled={!editable||busy||index===0}
       onClick={()=>move(index,-1)}>↑</Button>

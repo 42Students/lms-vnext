@@ -76,11 +76,11 @@ export default async function PublicPlacementsPage() {
     return value===null?[]:[{key,label:PUBLIC_METRIC_LABELS[key],value}];
   });
   return (
-    <div className="min-h-screen bg-[#f5f7f9] px-4 py-8">
+    <div className="min-h-screen bg-[color:var(--lms-neutral-50)] px-4 py-8">
       <main data-testid="placements.public" className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
         <section className="min-w-0 rounded-[8px] border border-border bg-surface p-5 shadow-none sm:p-6"
           aria-labelledby="placements-public-heading">
-          <h1 id="placements-public-heading" className="m-0 break-words text-[24px] font-semibold leading-tight text-[#172033] sm:text-[30px]">
+          <h1 id="placements-public-heading" className="m-0 break-words text-[24px] font-semibold leading-tight text-[color:var(--lms-heading)] sm:text-[30px]">
             {college?.collegeName??"College placements"}
           </h1>
           {published&&content?.about ? (

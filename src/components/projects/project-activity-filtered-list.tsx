@@ -15,6 +15,7 @@ import {mentorLoadedWeekActivitySummary} from "@/modules/projects/mentor-week-ac
 import {mentorFewestRecordedContributors} from "@/modules/projects/mentor-week-contributor-model";
 import {mentorActivityMatchesDateFilters,mentorActivityIstDayKey}
  from "@/modules/projects/mentor-activity-date-filter-model";
+import { Table } from "@/components/ui/table";
 
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;subjectType?:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
@@ -413,7 +414,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
           : fromDate||toDate||range!=="ALL" ? "No activity in this date range."
           : "No activity recorded from this source yet."} />
     : resourceAudit ? <div className="min-w-0 overflow-x-auto">
-      <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+      <Table className="min-w-[640px]">
         <caption className="sr-only">Workspace resource audit</caption>
         <thead><tr className="border-b border-border">
           <th scope="col" className="p-2">Resource</th><th scope="col" className="p-2">Action</th>
@@ -427,7 +428,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
             {new Date(event.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST
           </time></td>
         </tr>)}</tbody>
-      </table>
+      </Table>
     </div>
     : <div role="feed" aria-label="Project activity" aria-busy={busy} className="space-y-2">
       {filtered.map((event,index)=><Fragment key={event.id}>

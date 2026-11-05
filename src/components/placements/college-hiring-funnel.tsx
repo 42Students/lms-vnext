@@ -12,6 +12,7 @@ import type {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-f
 import {Button} from "@/components/ui/button";
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
+import { Table } from "@/components/ui/table";
 
 type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
 const order=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED",
@@ -72,7 +73,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     </div>
    </div>
    {(q.from||q.to)?<div role="group" aria-label="Applied date range" className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="rounded-full border border-[#91caff] bg-[#e6f4ff] px-3 py-1 text-[#0958d9]">
+      <span className="rounded-full border border-[color:var(--lms-border-strong)] bg-[color:var(--lms-info-blue-surface)] px-3 py-1 text-[color:var(--lms-info-blue)]">
         Applied: {q.from||"Any date"} – {q.to||"Today"}
       </span>
       <Link href={clearRangeHref} aria-label="Clear applied date range"
@@ -211,7 +212,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     <div aria-label="Company summary rows" className="sticky bottom-0 z-10 border border-border bg-surface shadow-[0_-4px_12px_rgba(15,23,42,0.08)]">
       <div className="border-b border-border px-3 py-2 text-sm font-semibold text-foreground">Company totals · all matching drives</div>
       <div className="max-h-52 overflow-auto overscroll-contain" role="region" tabIndex={0} aria-label="Company summary table">
-        <table className="w-full min-w-[920px] border-collapse text-left text-xs tabular-nums">
+        <Table className="min-w-[920px] tabular-nums">
           <caption className="sr-only">Company-wise totals by current application stage</caption>
           <thead className="sticky top-0 bg-surface-subtle text-foreground">
             <tr><th scope="col" className="px-3 py-2">Company</th><th scope="col" className="px-2 py-2">Total</th>
@@ -229,7 +230,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
               {order.map(stage=><td key={stage} className="px-2 py-2">{data.normalizedCompanySubtotals.reduce((total,row)=>total+(row.byStage[stage]??0),0)}</td>)}
             </tr>
           </tfoot>
-        </table>
+        </Table>
       </div>
       <p className="px-3 py-1 text-xs text-muted-foreground">Summary groups company aliases case-insensitively and uses the same filters as the report above.</p>
     </div> : null}

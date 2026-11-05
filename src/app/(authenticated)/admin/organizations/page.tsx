@@ -22,6 +22,7 @@ import { can, requirePermission } from "@/modules/permissions/policy";
 import { listOrganizations,listArchivedOrganizations } from "@/modules/organizations/service";
 import {listArchivedColleges} from "@/modules/colleges/service";
 import {organizationCreatedIstDate} from "@/modules/organizations/organization-created-date-model";
+import { Table } from "@/components/ui/table";
 
 type OrganizationRow = Awaited<
   ReturnType<typeof listOrganizations>
@@ -178,7 +179,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
           description="Archived inventory is temporarily unavailable; no empty-state claim is made."
           action={<Link href={"/admin/organizations?type="+(selectedRestoreType==="college"?"college":"organization")} className="font-semibold text-link underline">Retry</Link>}/>:
         selectedRestoreType==="organization"?<div className="min-w-0 overflow-x-auto">
-          <table className="w-full min-w-[460px] border-collapse text-left text-sm">
+          <Table className="min-w-[460px]">
             <caption className="sr-only">Archived organizations (first 200 in the authorized scope)</caption>
             <thead className="bg-[var(--lms-neutral-50)]"><tr>
               {["Name","Details","Restore"].map(label=><th key={label} className="border-b border-border px-3 py-3" scope="col">{label}</th>)}
@@ -189,11 +190,11 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
                 {organization.updatedAt?" · Updated "+organizationCreatedIstDate(organization.updatedAt):""}</td>
               <td className="px-3 py-3"><TenantRestoreAction kind="organization" id={organization.id} name={organization.name}/></td>
             </tr>)}</tbody>
-          </table>
+          </Table>
           {!archived.length?<EmptyState title="No archived organizations" description="No archived organizations in this scope."/>:null}
           {archived.length>=200?<p className="mt-2 text-xs text-muted-foreground">Only the first 200 archived organizations are shown.</p>:null}
         </div>:selectedRestoreType==="college"?<div className="min-w-0 overflow-x-auto">
-          <table className="w-full min-w-[460px] border-collapse text-left text-sm">
+          <Table className="min-w-[460px]">
             <caption className="sr-only">Archived colleges (first 200 in the authorized scope)</caption>
             <thead className="bg-[var(--lms-neutral-50)]"><tr>
               {["College","Status","Restore"].map(label=><th key={label} scope="col" className="border-b border-border px-3 py-3">{label}</th>)}
@@ -203,7 +204,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
               <td className="px-3 py-3 text-muted-foreground">Archived · Updated {organizationCreatedIstDate(college.updatedAt)}</td>
               <td className="px-3 py-3"><TenantRestoreAction kind="college" id={college.id} name={college.name}/></td>
             </tr>)}</tbody>
-          </table>
+          </Table>
           {!archived.length?<EmptyState title="No archived colleges" description="No archived colleges in this scope with an active organization."/>:null}
           {archived.length>=200?<p className="mt-2 text-xs text-muted-foreground">Only the first 200 archived colleges are shown.</p>:null}
         </div>:<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">

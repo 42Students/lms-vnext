@@ -15,6 +15,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Dialog} from "@/components/ui/dialog";
 import {Select} from "@/components/ui/select";
 import {useToast} from "@/components/ui/toast";
+import { Radio } from "@/components/ui/radio";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
@@ -214,10 +215,10 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
           </Alert>:null}
           {selected.action==="PUBLISH"?<fieldset className="space-y-1 text-sm">
             <legend>Tell students</legend>
-            <label className="flex gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><input type="radio" name="publish-delivery"
+            <label className="flex gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Radio name="publish-delivery"
               checked={!notifyByEmail} onChange={()=>setNotifyByEmail(false)}/>
               App only</label>
-            <label className="flex gap-2 opacity-60 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><input type="radio" name="publish-delivery"
+            <label className="flex gap-2 opacity-60 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Radio name="publish-delivery"
               checked={false} disabled/>
               App and email (email delivery not configured)</label>
           </fieldset>:null}

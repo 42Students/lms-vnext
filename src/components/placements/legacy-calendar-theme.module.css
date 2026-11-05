@@ -4,24 +4,24 @@
  * Geometry, navigation, timezone and keyboard handlers stay in each caller.
  */
 .calendarHairline {
-  /* $tableBordersLightGreyColor: #dddddd52, variables.scss:275 */
-  border-color: #dddddd52 !important;
-  background-color: #dddddd52 !important;
+  /* $tableBordersLightGreyColor: color-mix(in srgb, var(--lms-neutral-300) 32%, transparent), variables.scss:275 */
+  border-color: color-mix(in srgb, var(--lms-neutral-300) 32%, transparent) !important;
+  background-color: color-mix(in srgb, var(--lms-neutral-300) 32%, transparent) !important;
 }
 .calendarWeekday {
   background-color: var(--lms-white);
 }
 .calendarDay {
   background-color: var(--lms-white);
-  border-color: #dddddd52 !important;
+  border-color: color-mix(in srgb, var(--lms-neutral-300) 32%, transparent) !important;
   border-radius: 0 !important;
 }
 .calendarSunday {
-  /* $sunCalendarColor: #ff7576, variables.scss:273 */
+  /* $sunCalendarColor: var(--lms-error), variables.scss:273 */
   color: var(--lms-calendar-sunday) !important;
 }
 .calendarCurrentDay {
-  /* $activeCalendarDayColor: #26bac7, variables.scss:272 */
+  /* $activeCalendarDayColor: var(--lms-primary), variables.scss:272 */
   box-shadow: inset 0 0 0 2px var(--lms-primary);
 }
 .calendarDay:focus-visible {

@@ -11,6 +11,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {PopoverPanel} from "@/components/ui/popover";
 import {Input} from "@/components/ui/input";
+import { Table } from "@/components/ui/table";
 
 type College={
  id:string;name:string;code?:string;location?:string|null;
@@ -177,7 +178,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
       </div>
      </div>
      <div className="min-w-0 overflow-x-auto">
-      <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+      <Table className="min-w-[560px]">
        <caption className="sr-only">Select colleges for template availability</caption>
        <thead><tr className="border-b border-border bg-muted/20">
         <th scope="col" className="w-12 px-3 py-2">Select</th>
@@ -216,7 +217,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
        </tr>
       ))}
        </tbody>
-      </table>
+      </Table>
      </div>
      {!shown.length?<EmptyState title="No matching colleges"
        description="No colleges match this search on the current page. Clear the search or browse another page."/>:null}

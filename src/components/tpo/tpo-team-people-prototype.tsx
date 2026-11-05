@@ -5,6 +5,7 @@ import {
  type TpoPrototypeTeamPerson,summarizeTpoPrototypePerson,
 } from "@/modules/placements/tpo-team-people-prototype-model";
 import styles from "./tpo-team-people-prototype.module.css";
+import { Button } from "@/components/ui/button";
 
 export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
  people:readonly TpoPrototypeTeamPerson[];
@@ -26,7 +27,7 @@ export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
      {people.map(row=>{
       const values=summarizeTpoPrototypePerson(row,workloadReady);
       const active=row.membershipId===(selected?.membershipId??null);
-      return <button key={row.membershipId} type="button" className={styles.row}
+      return <Button variant="bare" key={row.membershipId} type="button" className={styles.row}
        data-selected={active?"true":undefined} aria-pressed={active}
        onClick={()=>setSelectedId(row.membershipId)}>
        <span className={styles.person}>
@@ -37,7 +38,7 @@ export function TpoTeamPeoplePrototype({people,workloadReady,selfMembershipId}:{
        <span className={row.overdueAsks>0?styles.late:""}>{values.late}</span>
        <span>{values.waiting}</span>
        <span>Not recorded</span>
-      </button>;
+      </Button>;
      })}
      {!people.length?<div className={styles.empty}>No verified active team assignments were found.</div>:null}
     </div>

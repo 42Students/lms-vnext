@@ -7,9 +7,9 @@ import type {FacultyReportStudentRow} from "@/modules/courses/faculty-report-stu
 import {Button} from "@/components/ui/button";
 
 const avatarTints=[
- {bg:"#e0f2f1",fg:"#0f766e"},{bg:"#ede9fe",fg:"#5b21b6"},
- {bg:"#fef3c7",fg:"#92400e"},{bg:"#e0e7ff",fg:"#3730a3"},
- {bg:"#fce7f3",fg:"#9d174d"},{bg:"#dcfce7",fg:"#166534"},
+ {bg:"var(--lms-primary-subtle)",fg:"var(--lms-button-primary)"},{bg:"var(--lms-purple-surface)",fg:"var(--lms-purple-text)"},
+ {bg:"var(--lms-gold-subtle)",fg:"var(--lms-warning-strong)"},{bg:"var(--lms-purple-surface)",fg:"var(--lms-purple-text)"},
+ {bg:"var(--lms-purple-surface)",fg:"var(--lms-error-strong)"},{bg:"var(--lms-success-surface)",fg:"var(--lms-success-strong)"},
 ] as const;
 function initials(name:string){
  const parts=name.trim().split(/\s+/).filter(Boolean);
@@ -20,7 +20,7 @@ function initials(name:string){
 function tint(seed:string){
  let hash=0;
  for(const char of seed)hash=(hash*31+char.charCodeAt(0))>>>0;
- return avatarTints[hash%avatarTints.length]??{bg:"#e0f2f1",fg:"#0f766e"};
+ return avatarTints[hash%avatarTints.length]??{bg:"var(--lms-primary-subtle)",fg:"var(--lms-button-primary)"};
 }
 function submittedText(value:string|null){
  if(!value)return "—";

@@ -5,6 +5,8 @@ import {Button} from "@/components/ui/button";
 import type {MentorGoogleMeetingStatus} from
  "@/modules/projects/mentor-google-calendar-status";
 import {MentorGoogleMeetingProviderStatus} from "./mentor-google-meeting-provider-status";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,draft=false,cancelled=false}:{
  projectId:string;meetingId:string;canEdit:boolean;draft?:boolean;cancelled?:boolean;
@@ -86,21 +88,21 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
    </p>
    {canEdit&&!cancelled?<div className="flex flex-wrap items-center gap-2">
     <label className="text-sm">Repeat
-     <select value={repeat} disabled={busy}
+     <Select value={repeat} disabled={busy}
       onChange={e=>setRepeat(e.target.value)}
       className="ml-2 min-h-11 rounded border border-border bg-background p-2">
       <option value="once">Once</option>
       <option value="4">Weekly × 4</option>
       <option value="8">Weekly × 8</option>
-     </select>
+     </Select>
     </label>
     <label className="text-sm">Invite
-     <select value={inviteMode} disabled={busy}
+     <Select value={inviteMode} disabled={busy}
       onChange={e=>void selectInviteMode(e.target.value as "ALL"|"SELECTED")}
       className="ml-2 min-h-11 rounded border border-border bg-background p-2">
       <option value="ALL">Whole active team</option>
       <option value="SELECTED">Selected active members</option>
-     </select>
+     </Select>
     </label>
     <Button size="sm" type="button" disabled={busy||
       inviteMode==="SELECTED"&&(!inviteOptions||selectedIds.length===0)}
@@ -118,7 +120,7 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
         <p className="text-sm">No members with saved email addresses are available.</p>:
         inviteOptions.map(person=><label key={person.membershipId}
           className="flex min-h-11 items-center gap-2 text-sm">
-          <input type="checkbox" className="size-5"
+          <Checkbox className="size-5"
             checked={selectedIds.includes(person.membershipId)}
             onChange={e=>setSelectedIds(ids=>e.target.checked?
               [...ids,person.membershipId]:ids.filter(id=>id!==person.membershipId))}/>

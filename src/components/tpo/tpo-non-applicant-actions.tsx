@@ -6,6 +6,8 @@ import {Select} from "@/components/ui/select";
 import {Alert} from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Table } from "@/components/ui/table";
 type Student={membershipId:string;displayName:string|null};
 type Role={id:string;title:string};
 export function TpoNonApplicantActions({jobId,roles,students,canAdd,reminder}:{
@@ -72,19 +74,19 @@ export function TpoNonApplicantActions({jobId,roles,students,canAdd,reminder}:{
    Reminder unavailable: {reminder.reason}
   </p>:null}
   <div className="min-w-0 overflow-x-auto border border-border">
-   <table className="w-full min-w-[420px] text-left text-sm">
+   <Table className="min-w-[420px]">
     <thead><tr className="border-b border-border">
      <th className="p-3">Include</th><th className="p-3">Student</th><th className="p-3">Status</th>
     </tr></thead>
     <tbody>{students.map(row=><tr key={row.membershipId} className="border-b border-border last:border-0">
-      <td className="p-3"><input type="checkbox" aria-label={"Select "+(row.displayName??"learner")}
+      <td className="p-3"><Checkbox aria-label={"Select "+(row.displayName??"learner")}
        disabled={busy||!canAdd} checked={selected.includes(row.membershipId)}
        onChange={e=>setSelected(current=>e.target.checked?
         [...current,row.membershipId]:current.filter(id=>id!==row.membershipId))}/></td>
       <td className="p-3">{row.displayName??"Unnamed learner"}</td>
       <td className="p-3">Eligible · not applied</td>
      </tr>)}</tbody>
-   </table>
+   </Table>
   </div>
   <ConfirmDialog open={confirm!==null} onOpenChange={next=>{if(!next&&!busy)setConfirm(null);}}
    title={confirm==="ADD"?"Apply on behalf of selected students?":"Remind students who have not applied?"}

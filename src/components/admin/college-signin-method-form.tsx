@@ -172,7 +172,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
     {choices.map((choice,index)=>{
      const selected=selection===choice.value;
      const order=signInChannelOrder(choice.value).map(channel=>channel==="EMAIL"?"Email":"Phone");
-     return <button key={choice.value} type="button" role="radio" aria-checked={selected}
+     return <Button variant="bare" key={choice.value} type="button" role="radio" aria-checked={selected}
       disabled={!ready||saving||fetching||Boolean(loadError)}
       onClick={()=>setSelection(choice.value)}
       onKeyDown={event=>{
@@ -185,21 +185,21 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
         buttons?.[next]?.focus();
        }
       }}
-      className={"min-w-0 rounded-xl px-[14px] py-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a7c88] "+
-        (selected?"border-2 border-[#0a7c88] bg-[#f0f9fa]":"border border-[#d9d9d9] bg-white hover:bg-[#f0f9fa]")}>
+      className={"min-w-0 rounded-xl px-[14px] py-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--lms-button-primary)] "+
+        (selected?"border-2 border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border border-[color:var(--lms-neutral-300)] bg-white hover:bg-[color:var(--lms-primary-subtle)]")}>
       <span className="flex min-w-0 items-center justify-between gap-2">
-       <span className="text-sm font-semibold text-[#172033]">{choice.label}</span>
-       {choice.value==="EMAIL_AND_PHONE"?<span className="shrink-0 rounded-full bg-[#e6f4f5] px-[7px] py-[1px] text-xs text-[#075963]">Default</span>:null}
+       <span className="text-sm font-semibold text-[color:var(--lms-heading)]">{choice.label}</span>
+       {choice.value==="EMAIL_AND_PHONE"?<span className="shrink-0 rounded-full bg-[color:var(--lms-primary-subtle)] px-[7px] py-[1px] text-xs text-[color:var(--lms-button-primary-hover)]">Default</span>:null}
       </span>
-      <span className="mt-[2px] block text-[12.5px] text-[#5b6b82]">{choice.hint}</span>
-      <span aria-hidden="true" className="mt-[10px] flex gap-[3px] rounded-[7px] border border-[#e7ecf2] bg-[#f1f4f8] p-[3px]">
+      <span className="mt-[2px] block text-[13px] text-[color:var(--lms-text-muted)]">{choice.hint}</span>
+      <span aria-hidden="true" className="mt-[10px] flex gap-[3px] rounded-[8px] border border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-100)] p-[3px]">
        {order.map((label,i)=><span key={label}
-        className={"min-w-0 flex-1 rounded-[5px] px-1 py-[3px] text-center text-xs "+
-         (i===0?"bg-white font-semibold text-[#172033] shadow-[0_1px_2px_rgba(16,24,40,0.08)]":"text-[#5b6b82]")}>
+        className={"min-w-0 flex-1 rounded-[6px] px-1 py-[3px] text-center text-xs "+
+         (i===0?"bg-white font-semibold text-[color:var(--lms-heading)] shadow-[0_1px_2px_rgba(16,24,40,0.08)]":"text-[color:var(--lms-text-muted)]")}>
         {label}
        </span>)}
       </span>
-     </button>;
+     </Button>;
     })}
    </div>
   </fieldset>

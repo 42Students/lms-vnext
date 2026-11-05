@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {projectMutation} from "./project-api";
 import {mentorPullEligible,mentorPullSelectedPoints} from "@/modules/projects/mentor-sprint-backlog-pull-model";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export type MentorSprintBacklogChoice={
  id:string;title:string;status:string;updatedAt:string;estimatePoints:number|null;
@@ -71,7 +72,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
      {remaining.length?<ul className="max-h-64 space-y-2 overflow-y-auto">
        {remaining.map(task=><li key={task.id}>
          <label className="flex min-h-11 items-start gap-2">
-           <input type="checkbox" className="mt-1" disabled={busy}
+           <Checkbox className="mt-1" disabled={busy}
              checked={selected.includes(task.id)}
              onChange={event=>setSelected(old=>event.target.checked?
                [...old,task.id]:old.filter(id=>id!==task.id))}/>

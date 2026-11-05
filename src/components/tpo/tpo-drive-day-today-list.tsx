@@ -85,7 +85,7 @@ export function TpoDriveDayTodayList({
         </Alert>
       ) : null}
       {visible.length === 0 && !failed ? (
-        <div className="rounded-[13px] border border-border bg-surface p-6 text-center">
+        <div className="rounded-[12px] border border-border bg-surface p-6 text-center">
           <EmptyState title="There is no drive day for you today."
             action={<Link href="/tpo/calendar"
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-link md:min-h-9">See upcoming rounds</Link>}/>
@@ -95,7 +95,7 @@ export function TpoDriveDayTodayList({
         <div className="grid min-w-0 gap-3 md:grid-cols-2">
           {visible.map(round => (
             <article key={round.id}
-              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[13px] border border-[#e5e9f0] bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md sm:flex-row sm:items-center">
+              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[12px] border border-[color:var(--lms-border)] bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[color:var(--lms-primary-light)] hover:shadow-md sm:flex-row sm:items-center">
               <div className="min-w-0">
                 <p className="text-xs font-semibold uppercase tracking-wide text-link">Assigned round</p>
                 <h3 className="mt-1 break-words text-lg font-semibold leading-snug text-foreground">

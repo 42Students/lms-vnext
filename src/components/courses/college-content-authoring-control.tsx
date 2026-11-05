@@ -12,6 +12,7 @@ import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
 import {FacultyLessonVideoManager} from "./faculty-lesson-video-manager";
+import { Radio } from "@/components/ui/radio";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;contentType:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number;visibleToStudents:boolean};
@@ -465,7 +466,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </label>
    {kind==="RESOURCE"&&!editing&&materialsEnabled?<div className="space-y-2 md:col-span-2">
     <label className="grid gap-2 text-sm font-semibold">Upload files
-     <input type="file" multiple disabled={busy} accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.webp"
+     <Input type="file" multiple disabled={busy} accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.webp"
       className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
       onChange={event=>{
        const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value="";
@@ -514,7 +515,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   {dependencyErrors.length>0?<div role="alert" className="rounded border border-warning p-3 text-sm">
    <p className="font-semibold">Some authoring options are unavailable</p>
    <ul className="list-disc pl-5">{dependencyErrors.map(item=><li key={item}>{item} unavailable</li>)}</ul>
-   <button type="button" className="mt-2 font-semibold text-link underline" onClick={()=>router.refresh()}>Retry missing options</button>
+   <Button variant="bare" type="button" className="mt-2 font-semibold text-link underline" onClick={()=>router.refresh()}>Retry missing options</Button>
   </div>:null}
   <div className="flex flex-wrap items-center gap-3">
    <h2 className={kind==="LIVE_CLASS"||kind==="RESOURCE"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Videos":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
@@ -525,7 +526,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <p>Create a course offering, learning path and lesson before adding content.</p>
     <p>Start from Course, then choose an active Offering and add a Lesson. The content editor becomes available as soon as a lesson exists.</p>
     <Link href="/college/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Go to Courses</Link>
-    <button type="button" onClick={()=>router.refresh()} className="ml-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry course and lesson options</button>
+    <Button variant="bare" type="button" onClick={()=>router.refresh()} className="ml-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry course and lesson options</Button>
   </div>}
   {open&&(kind!=="YOUTUBE"||videoMode==="YOUTUBE") ? kind==="RESOURCE"?
     <Dialog open={open} onOpenChange={value=>{if(!value)closeEditor();}}
@@ -569,12 +570,12 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    <fieldset className="flex flex-wrap items-center gap-4 border-0 p-0" aria-label="Video type">
     <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
     <label className="inline-flex min-h-9 items-center gap-2 text-sm">
-     <input type="radio" name="college-content-video-type" value="UPLOAD"
+     <Radio name="college-content-video-type" value="UPLOAD"
       checked={videoMode==="UPLOAD"} onChange={()=>{setVideoMode("UPLOAD");setOpen(false);}}/>
      Video (Upload)
     </label>
     <label className="inline-flex min-h-9 items-center gap-2 text-sm">
-     <input type="radio" name="college-content-video-type" value="YOUTUBE"
+     <Radio name="college-content-video-type" value="YOUTUBE"
       checked={videoMode==="YOUTUBE"} onChange={()=>setVideoMode("YOUTUBE")}/>
      YouTube Video
     </label>
@@ -617,17 +618,17 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     Showing page {listPage} of saved items. More content is available through the next page.
    </p>:null}
    <label className="flex min-h-11 items-center gap-2 text-sm">
-    <input type="checkbox" checked={allKindsForReorder} onChange={event=>{
+    <Checkbox checked={allKindsForReorder} onChange={event=>{
      const enabled=event.target.checked;setAllKindsForReorder(enabled);
      applyExistingFilters({existingOrderAll:enabled?"true":""});
     }}/>
     Include all types when reordering this Lesson (other types cannot be edited here)
    </label>
-   <button type="button" disabled={existingBusy} onClick={()=>
+   <Button variant="bare" type="button" disabled={existingBusy} onClick={()=>
      loadExisting(new URLSearchParams(window.location.search))}
      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
      {existingBusy?"Refreshing…":"Retry / Refresh content list"}
-   </button>
+   </Button>
    {existingError?<p role="alert" className="text-sm text-error">{existingError}</p>:null}
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search Existing Content
     <Input type="search" maxLength={100} value={listQuery} onChange={event=>setListQuery(event.target.value)}

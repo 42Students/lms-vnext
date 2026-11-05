@@ -8,6 +8,8 @@ import {Dialog} from "@/components/ui/dialog";
 import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
+import { Radio } from "@/components/ui/radio";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type UnfinishedTask={id:string;title:string;status:string;updatedAt:string};
 
@@ -100,7 +102,7 @@ export function MentorSprintSignOff({
                 {destination:"DROP" as const,label:"Drop it"},
               ]).map(choice=><label key={choice.destination}
                 className={destinationFor(task.id)===choice.destination?"is-selected":""}>
-                <input type="radio" name={"carry-"+task.id}
+                <Radio name={"carry-"+task.id}
                   checked={destinationFor(task.id)===choice.destination}
                   onChange={()=>{setDestinations(previous=>({
                     ...previous,[task.id]:choice.destination,
@@ -110,7 +112,7 @@ export function MentorSprintSignOff({
             </fieldset>
           </li>)}</ul>
           {dropping>0?<label className="prototype-mentor-signoff-next">
-            <input type="checkbox" checked={dropConfirmed} disabled={pending}
+            <Checkbox checked={dropConfirmed} disabled={pending}
               onChange={event=>setDropConfirmed(event.target.checked)}/>
             I understand that {dropping} dropped task{dropping===1?" is":"s are"} archived
             from the board, with their history retained.
@@ -124,7 +126,7 @@ export function MentorSprintSignOff({
             disabled={pending}/>
         </label>
         {nextSprint?<label className="prototype-mentor-signoff-next">
-          <input type="checkbox" checked={startNext} disabled={pending}
+          <Checkbox checked={startNext} disabled={pending}
             onChange={event=>setStartNext(event.target.checked)}/>
           Start next sprint: {nextSprint.title}
         </label>:null}

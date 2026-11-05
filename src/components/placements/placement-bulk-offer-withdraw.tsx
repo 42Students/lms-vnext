@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import type { BulkOfferWithdrawalResult } from "@/modules/placements/bulk-offer-withdrawal-model";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Choice = {
   id: string;
@@ -116,8 +117,7 @@ export function PlacementBulkOfferWithdraw({
           <div tabIndex={0} role="group" aria-label="Offers eligible for withdrawal, scroll for more" className="max-h-64 min-h-0 min-w-0 space-y-1 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
             {available.map((item) => (
               <label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-2 px-2 py-1 text-[13px]">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={selected.includes(item.id)}
                   onChange={(event) => change(item.id, event.target.checked)}
                   disabled={busy || (selected.length >= 50 && !selected.includes(item.id))}

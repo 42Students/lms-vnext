@@ -299,7 +299,7 @@ export function CourseActions({
               className="h-[100px] w-[180px] rounded-[var(--lms-control-radius)] border border-border object-cover"/>
           </div>:<p className="text-xs text-muted-foreground">This course has no image.</p>}
           <label className="grid gap-2 text-sm font-semibold">Change / Upload image
-            <input type="file" accept="image/jpeg,image/png,image/webp"
+            <Input type="file" accept="image/jpeg,image/png,image/webp"
               className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
               disabled={imageBusy} onChange={event=>{
                 setImageFile(event.currentTarget.files?.[0]??null);setImageError("");
@@ -435,16 +435,18 @@ export function CourseActions({
             </label>
             <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Card colour
               <div className="flex flex-wrap items-center gap-2">
+                {/* ui-consistency-allow-hex: native colour input needs a hex value */}
                 <Input type="color" aria-label="Choose card colour"
                   className="h-11 !w-20 cursor-pointer md:h-9"
-                  value={/^#[0-9A-Fa-f]{6}$/.test(cardColor)?cardColor:"#0a7c88"}
+                  value={/^#[0-9A-Fa-f]{6}$/.test(cardColor)?cardColor:"var(--lms-button-primary)"}
                   onChange={event=>setCardColor(event.target.value)}/>
                 <Input aria-label="Card colour HEX value" value={cardColor}
                   onChange={event=>setCardColor(event.target.value)}
-                  maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="#0a7c88"
+                  maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="#0a7c88" /* ui-consistency-allow-hex */
                   className="min-w-[116px] max-w-[156px]"/>
               </div>
               {cardColor&&!/^#[0-9A-Fa-f]{6}$/.test(cardColor)?
+                /* ui-consistency-allow-hex */
                 <span role="alert" className="text-xs text-error">Use a colour like #0a7c88</span>:null}
             </label>
           </div>:null}

@@ -86,8 +86,8 @@ export default async function TeacherCoursesPage({searchParams}: {
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <FacultyPrototypeCourseDirectory rows={rows} totalAssignments={list.scopeCount} pendingByDelivery={pendingByDelivery} attendanceByDelivery={attendanceByDelivery}/>
-      <details className="min-w-0 border-t border-[#e5ebf2] pt-4">
-        <summary className="cursor-pointer text-sm font-semibold text-[#078191]">
+      <details className="min-w-0 border-t border-[color:var(--lms-border)] pt-4">
+        <summary className="cursor-pointer text-sm font-semibold text-[color:var(--lms-button-primary)]">
           Advanced teaching filters, class assignments and detailed course cards
         </summary>
         <div className="mt-4">

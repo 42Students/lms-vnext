@@ -264,7 +264,7 @@ export default async function TpoReportsPage({
            (workspace.report.metrics.averagePackageInr/100000).toFixed(1)+" LPA":"—",detail:"Accepted full-time packages only",href:"/tpo/reports/ctc"},
          {label:"Not placed yet",value:Math.max(0,looking-placed).toLocaleString("en-IN"),detail:"Of the registered placement pool",href:"/tpo/reports/unplaced"},
         ] as const).map(card=><Link key={card.label} href={reportHref(card.href,workspace)}
-         className="min-w-0 border-b border-border p-4 last:border-0 hover:bg-[#eff8fa] sm:odd:border-r xl:border-b-0 xl:border-r xl:last:border-r-0">
+         className="min-w-0 border-b border-border p-4 last:border-0 hover:bg-[color:var(--lms-primary-subtle)] sm:odd:border-r xl:border-b-0 xl:border-r xl:last:border-r-0">
          <strong className="block text-2xl font-bold tabular-nums text-heading">{card.value}</strong>
          <span className="mt-1 block text-sm font-semibold text-heading">{card.label}</span>
          <span className="mt-1 block text-xs text-body">{card.detail}</span>
@@ -292,7 +292,7 @@ export default async function TpoReportsPage({
           ["Manage report filters","/tpo/reports","Saved report scopes below"]]},
         ] as const).map(group=><section key={group.heading} className="min-w-0 rounded-xl border border-border bg-surface px-4 py-4">
          <h2 className="mb-2 text-xs font-bold tracking-[.07em] text-body">{group.heading}</h2>
-         <ul className="divide-y divide-[#edf0f3]">{group.links.map(([label,path,detail])=>
+         <ul className="divide-y divide-[color:var(--lms-neutral-100)]">{group.links.map(([label,path,detail])=>
           <li key={path+label}><Link href={reportHref(path,workspace)}
            className="flex min-h-11 min-w-0 items-center justify-between gap-3 py-2 hover:text-[var(--lms-primary-text)]">
            <span className="text-sm font-medium text-heading">{label}</span>

@@ -130,23 +130,23 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Quick-start email wording</h3>
     <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
      {TPO_CAMPAIGN_COMPOSE_PRESETS.map(preset=>
-      <button type="button" key={preset.id} onClick={()=>selectPreset(preset)}
+      <Button variant="bare" type="button" key={preset.id} onClick={()=>selectPreset(preset)}
        className="min-h-11 rounded-xl border border-border bg-surface p-3 text-left hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary">
        <strong className="block text-sm text-foreground">{preset.title}</strong>
        <span className="mt-1 block text-xs text-muted-foreground">{preset.description}</span>
-      </button>)}
+      </Button>)}
     </div>
    </section>
    <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
     <span className="text-muted-foreground">Personalize each copy:</span>
-    <button type="button" onClick={()=>setBody(current=>tpoCampaignMergeToken(current,"name"))}
+    <Button variant="bare" type="button" onClick={()=>setBody(current=>tpoCampaignMergeToken(current,"name"))}
      className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-link">
      Insert name
-    </button>
-    <button type="button" onClick={()=>setBody(current=>tpoCampaignMergeToken(current,"company"))}
+    </Button>
+    <Button variant="bare" type="button" onClick={()=>setBody(current=>tpoCampaignMergeToken(current,"company"))}
      className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-link">
      Insert company
-    </button>
+    </Button>
    </div>
    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Email
     <Textarea value={body} maxLength={10000} aria-required="true" rows={8}

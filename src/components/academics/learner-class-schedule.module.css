@@ -201,7 +201,7 @@
   background: rgba(38,186,199,.08);
   box-shadow: inset 0 0 0 2px var(--lms-primary);
 }
-.monthDay[data-outside="true"] { background: var(--lms-topbar-search); color: #9ca3af; }
+.monthDay[data-outside="true"] { background: var(--lms-topbar-search); color: var(--lms-neutral-400); }
 .monthDay[data-outside="true"]:hover { background: var(--lms-primary-subtle); }
 .selectedAgenda {
   border-top: 1px solid var(--lms-neutral-200);
@@ -257,7 +257,7 @@
   background: var(--lms-white);
   border: 1px solid var(--lms-neutral-200);
 }
-.eventCard:hover { border-color: #cbd5e1; }
+.eventCard:hover { border-color: var(--lms-neutral-300); }
 .agendaDay { border-top: 1px solid var(--lms-neutral-200); padding: 16px 0; }
 @media (min-width: 768px) {
   .hourGrid { min-width: 0; width: 100%; }

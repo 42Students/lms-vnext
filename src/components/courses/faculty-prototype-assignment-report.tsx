@@ -50,44 +50,44 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
       "due "+dayLabel(assignment.dueAt):"No due date"}</p>
    </div>
    <nav aria-label="Assessment report type" className="flex flex-wrap gap-2">
-    <span className="faculty-proto-pill !border-[#078191] !bg-[#eef8f9] !text-[#078191]" aria-current="page">
+    <span className="faculty-proto-pill !border-[color:var(--lms-button-primary)] !bg-[color:var(--lms-primary-subtle)] !text-[color:var(--lms-button-primary)]" aria-current="page">
       Assignment report</span>
     <Link className="faculty-proto-pill no-underline" href="/teacher/allQuizzes">Quiz report</Link>
    </nav>
   </header>
   <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{values.map(item=><div key={item.label}
-   className="rounded-xl border border-[#e5ebf2] px-[18px] py-4">
+   className="rounded-xl border border-[color:var(--lms-border)] px-[18px] py-4">
    <dt className="faculty-proto-subtitle">{item.label}</dt>
-   <dd className="mt-1 text-2xl font-extrabold text-[#1d293f] tabular-nums">{item.value}</dd>
+   <dd className="mt-1 text-2xl font-extrabold text-[color:var(--lms-heading)] tabular-nums">{item.value}</dd>
   </div>)}</dl>
   <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-   <section className="rounded-xl border border-[#e5ebf2] px-[18px] py-5">
-    <h2 className="text-xs font-bold uppercase tracking-wide text-[#60718b]">Score distribution</h2>
+   <section className="rounded-xl border border-[color:var(--lms-border)] px-[18px] py-5">
+    <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">Score distribution</h2>
     {metrics.graded? <div className="mt-4 flex min-h-[158px] items-end gap-2" role="img"
      aria-label={distribution.map(bucket=>bucket.label+": "+bucket.count).join(", ")}>
      {[...distribution].reverse().map(bucket=><div className="flex min-w-0 flex-1 flex-col items-center"
       key={bucket.label}>
       <strong className="text-xs font-semibold tabular-nums">{bucket.count}</strong>
-      <div className="mt-1 w-full rounded-t bg-[#08818f]"
+      <div className="mt-1 w-full rounded-t bg-[color:var(--lms-button-primary)]"
        style={{height:Math.max(bucket.count?7:1,136*bucket.count/max)}}/>
-      <span className="mt-1 text-center text-xs text-[#60718b]">{bucket.label}</span>
+      <span className="mt-1 text-center text-xs text-[color:var(--lms-text-muted)]">{bucket.label}</span>
      </div>)}
     </div>:<p className="faculty-proto-subtitle mt-5">No graded submissions yet.</p>}
    </section>
-   <section className="rounded-xl border border-[#e5ebf2] px-[18px] py-5">
-    <h2 className="text-xs font-bold uppercase tracking-wide text-[#60718b]">When they handed in</h2>
-    <dl className="mt-2 divide-y divide-[#edf1f5]">{summary.map(item=><div key={item.label}
+   <section className="rounded-xl border border-[color:var(--lms-border)] px-[18px] py-5">
+    <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">When they handed in</h2>
+    <dl className="mt-2 divide-y divide-[color:var(--lms-neutral-100)]">{summary.map(item=><div key={item.label}
      className="flex items-center justify-between py-3 text-sm">
-     <dt className="text-[#243149]">{item.label}</dt>
+     <dt className="text-[color:var(--lms-text-body)]">{item.label}</dt>
      <dd className={"font-semibold tabular-nums "+(item.label==="Late"&&item.value!==0?
-       "text-red-700":"text-[#1d293f]")}>{item.value}</dd>
+       "text-red-700":"text-[color:var(--lms-heading)]")}>{item.value}</dd>
     </div>)}</dl>
     {report.rosterUnavailable?<p className="faculty-proto-subtitle">The roster is unavailable; missing counts cannot be calculated.</p>:null}
    </section>
   </div>
-  <section className="overflow-hidden rounded-xl border border-[#e5ebf2]">
-   <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e5ebf2] px-[18px] py-4">
-    <h2 className="text-xs font-bold uppercase tracking-wide text-[#60718b]">Student scores</h2>
+  <section className="overflow-hidden rounded-xl border border-[color:var(--lms-border)]">
+   <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--lms-border)] px-[18px] py-4">
+    <h2 className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">Student scores</h2>
     <Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
      href={csvHref}>Download as spreadsheet</Link>
    </header>
@@ -109,7 +109,7 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
      })}
      {!report.rosterUnavailable?missingLearners.map(student=><tr key={"missing-"+student.membershipId}>
       <td>{student.displayName?.trim()||"Student"}</td>
-      <td><span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-[#60718b]">Missing</span></td>
+      <td><span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-[color:var(--lms-text-muted)]">Missing</span></td>
       <td>—</td>
       <td className="text-right"><Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
        href={"/teacher/courses/"+encodeURIComponent(assignment.deliveryId)+"/students/"+

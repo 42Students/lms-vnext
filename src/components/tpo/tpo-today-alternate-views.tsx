@@ -21,29 +21,29 @@ function messageHref(id:string){
  return "/tpo/messages?tab=recruiters&thread="+encodeURIComponent(id);
 }
 function ReplyRow({reply,mode="brief"}:{reply:TpoTodayReply;mode?:"brief"|"agenda"}){
- return <li className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e8edf2] px-4 py-3 last:border-b-0">
+ return <li className="flex flex-wrap items-start justify-between gap-3 border-b border-[color:var(--lms-border)] px-4 py-3 last:border-b-0">
   <div className="min-w-0 flex-1">
-   <p className="font-bold text-[#172033]">{reply.name}
-    <span className="ml-2 text-xs font-normal text-[#617084]">{formatTime(new Date(reply.receivedAt))}</span>
+   <p className="font-bold text-[color:var(--lms-heading)]">{reply.name}
+    <span className="ml-2 text-xs font-normal text-[color:var(--lms-text-muted)]">{formatTime(new Date(reply.receivedAt))}</span>
    </p>
-   <p className="mt-1 text-[13px] text-[#617084]">{reply.company??"Recruiter"} · {reply.subject}</p>
-   {reply.preview?<p className="mt-2 break-words rounded-lg bg-[#fff7ed] px-3 py-2 text-[13px] text-[#26354a]">{reply.preview}</p>:null}
+   <p className="mt-1 text-[13px] text-[color:var(--lms-text-muted)]">{reply.company??"Recruiter"} · {reply.subject}</p>
+   {reply.preview?<p className="mt-2 break-words rounded-lg bg-[color:var(--lms-gold-subtle)] px-3 py-2 text-[13px] text-[color:var(--lms-text-body)]">{reply.preview}</p>:null}
   </div>
   <Link className={"inline-flex min-h-11 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
-    "border-[#d6e1ee] bg-surface text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
+    "border-[color:var(--lms-neutral-300)] bg-surface text-[color:var(--lms-heading)]":"border-[color:var(--lms-button-primary)] bg-[color:var(--lms-button-primary)] text-white")}
    href={messageHref(reply.id)}>{reply.accessEnded?"Open history":"Answer"}</Link>
  </li>;
 }
 function FollowupRow({row,scope,now,mode="brief"}:{row:TpoCompaniesTodayRow;scope:"MINE"|"TEAM";now:Date;mode?:"brief"|"agenda"}){
  const late=tpoTodayLateDays(row.dueAt,now);
- return <li className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e8edf2] px-4 py-3 last:border-b-0">
+ return <li className="flex flex-wrap items-start justify-between gap-3 border-b border-[color:var(--lms-border)] px-4 py-3 last:border-b-0">
   <div className="min-w-0 flex-1">
-   <p className="font-bold text-[#172033]">{row.leadName}</p>
-   <p className="mt-1 text-[13px] text-[#617084]">{row.companyName??"Recruiter"} · {late>0?late+" "+(late===1?"day":"days")+" late":"Follow-up due"} · {formatDay(new Date(row.dueAt))}</p>
-   <p className="mt-1 text-[13px] text-[#26354a]">{row.note?.trim()||"Recorded recruiter follow-up."}</p>
+   <p className="font-bold text-[color:var(--lms-heading)]">{row.leadName}</p>
+   <p className="mt-1 text-[13px] text-[color:var(--lms-text-muted)]">{row.companyName??"Recruiter"} · {late>0?late+" "+(late===1?"day":"days")+" late":"Follow-up due"} · {formatDay(new Date(row.dueAt))}</p>
+   <p className="mt-1 text-[13px] text-[color:var(--lms-text-body)]">{row.note?.trim()||"Recorded recruiter follow-up."}</p>
   </div>
   <Link className={"inline-flex min-h-11 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
-    "border-[#d6e1ee] bg-surface text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
+    "border-[color:var(--lms-neutral-300)] bg-surface text-[color:var(--lms-heading)]":"border-[color:var(--lms-button-primary)] bg-[color:var(--lms-button-primary)] text-white")}
    href={tpoTodayFocusHref(scope,row.id)}>Review follow-up</Link>
  </li>;
 }
@@ -82,15 +82,15 @@ export function TpoTodayAlternateViews({
  const startHref=view==="agenda"?(agendaAction?messageHref(agendaAction.id):
   tpoTodayFocusHref(scope,agendaRows[0]?.id)):
   firstAction?messageHref(firstAction.id):tpoTodayFocusHref(scope,due[0]?.id);
- const panel="min-w-0 overflow-hidden rounded-xl border border-[#e7ecf2] bg-white";
- const heading="border-b border-[#e7ecf2] px-4 py-4 text-[18px] font-bold text-[#172033]";
- return <div className="min-w-0 space-y-4 text-[#172033]" data-testid={"tpo.today."+view}>
+ const panel="min-w-0 overflow-hidden rounded-xl border border-[color:var(--lms-border)] bg-white";
+ const heading="border-b border-[color:var(--lms-border)] px-4 py-4 text-[18px] font-bold text-[color:var(--lms-heading)]";
+ return <div className="min-w-0 space-y-4 text-[color:var(--lms-heading)]" data-testid={"tpo.today."+view}>
   {view==="brief"?<header className="flex flex-wrap items-center justify-between gap-4">
    <div>
-    <p className="text-xs font-bold uppercase tracking-wide text-[#617084]">{formatDay(now,"long")} · {scope==="MINE"?"Yours and unassigned":"Everyone's work"}</p>
+    <p className="text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">{formatDay(now,"long")} · {scope==="MINE"?"Yours and unassigned":"Everyone's work"}</p>
     <h1 className="mt-1 text-[24px] font-bold leading-tight">{taskCount} things need you today</h1>
    </div>
-   <Link className="inline-flex min-h-11 items-center rounded-lg bg-[#087f8b] px-5 text-[13px] font-bold text-white" href={startHref}>Start · {taskCount} things</Link>
+   <Link className="inline-flex min-h-11 items-center rounded-lg bg-[color:var(--lms-button-primary)] px-5 text-[13px] font-bold text-white" href={startHref}>Start · {taskCount} things</Link>
   </header>:null}
   {replyTotal===null?<p role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">Recruiter replies are temporarily unavailable. No zero reply count is implied. <Link href="/tpo/messages?tab=recruiters" className="font-semibold underline">Check Messages</Link></p>:null}
   {hasMore?<p role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">This agenda uses a limited preview of the due and upcoming follow-up queue. <Link href="/tpo/follow-ups" className="font-semibold underline">Open all follow-ups</Link>.</p>:null}
@@ -99,66 +99,66 @@ export function TpoTodayAlternateViews({
     {days.map((day,index)=><Link key={day.key}
      href={tpoTodayAgendaHref(scope,index)} aria-current={selectedDay===index?"date":undefined}
      className={"rounded-xl border px-2 py-3 text-center "+(selectedDay===index?
-      "border-[#087f8b] bg-[#eef8fa]":"border-[#e7ecf2] bg-white")}>
-     <span className="block text-xs font-bold uppercase text-[#617084]">{formatDay(day.date).split(" ")[0]}</span>
+      "border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)]":"border-[color:var(--lms-border)] bg-white")}>
+     <span className="block text-xs font-bold uppercase text-[color:var(--lms-text-muted)]">{formatDay(day.date).split(" ")[0]}</span>
      <strong className="mt-1 block text-xl">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(day.date)}</strong>
-     <span className="text-xs text-[#087f8b]">{day.count||"—"}</span>
+     <span className="text-xs text-[color:var(--lms-button-primary)]">{day.count||"—"}</span>
     </Link>)}
    </nav>
    <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
     <section className={panel} aria-label="Due today">
-     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e7ecf2] px-5 py-4">
-      <h2 className="text-[18px] font-bold text-[#172033]">{selectedDay===0?"Today":formatDay(agendaDay)}: {agendaReplyTotal===null?"replies unavailable":agendaReplyTotal+" to answer"}, {agendaRows.length} to reach</h2>
-      <Link className="inline-flex min-h-11 items-center rounded-lg bg-[#087f8b] px-5 text-[13px] font-bold text-white" href={startHref}>Start · {agendaRows.length+(agendaReplyTotal??0)} things</Link>
+     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[color:var(--lms-border)] px-5 py-4">
+      <h2 className="text-[18px] font-bold text-[color:var(--lms-heading)]">{selectedDay===0?"Today":formatDay(agendaDay)}: {agendaReplyTotal===null?"replies unavailable":agendaReplyTotal+" to answer"}, {agendaRows.length} to reach</h2>
+      <Link className="inline-flex min-h-11 items-center rounded-lg bg-[color:var(--lms-button-primary)] px-5 text-[13px] font-bold text-white" href={startHref}>Start · {agendaRows.length+(agendaReplyTotal??0)} things</Link>
      </div>
      {agendaReplies.length?<ul>{agendaReplies.map(reply=><ReplyRow key={reply.id} reply={reply} mode="agenda"/>)}</ul>:null}
      {agendaRows.length?<ul>{agendaRows.map(row=><FollowupRow key={row.id} row={row} scope={scope} now={now} mode="agenda"/>)}</ul>:null}
-     {!agendaReplies.length&&!agendaRows.length?<p className="p-5 text-sm text-[#617084]">No recorded recruiter replies or follow-ups for this day in the available preview.</p>:null}
+     {!agendaReplies.length&&!agendaRows.length?<p className="p-5 text-sm text-[color:var(--lms-text-muted)]">No recorded recruiter replies or follow-ups for this day in the available preview.</p>:null}
     </section>
     <aside className="space-y-3" aria-label="Other follow-up actions">
      <section className={panel}><h2 className={heading}>Not contacted yet</h2>
-      <p className="px-4 py-3 text-sm text-[#617084]">{notContacted===null?"Count unavailable":notContacted.count+" recruiter leads"} not contacted yet{notContacted?.oldestAddedAt?" · oldest added "+formatDay(new Date(notContacted.oldestAddedAt)):""}.</p>
-      <Link href="/tpo/recruiters?stage=NEW" className="inline-flex min-h-11 items-center px-4 pb-3 font-semibold text-[#087f8b]">Start with them</Link>
+      <p className="px-4 py-3 text-sm text-[color:var(--lms-text-muted)]">{notContacted===null?"Count unavailable":notContacted.count+" recruiter leads"} not contacted yet{notContacted?.oldestAddedAt?" · oldest added "+formatDay(new Date(notContacted.oldestAddedAt)):""}.</p>
+      <Link href="/tpo/recruiters?stage=NEW" className="inline-flex min-h-11 items-center px-4 pb-3 font-semibold text-[color:var(--lms-button-primary)]">Start with them</Link>
      </section>
      <section className={panel}><h2 className={heading}>Not on the week</h2>
-      {outsideWeek===null?<p role="status" className="px-4 py-3 text-sm text-[#617084]">Counts unavailable. Open the full recruiter list to review next steps.</p>:
+      {outsideWeek===null?<p role="status" className="px-4 py-3 text-sm text-[color:var(--lms-text-muted)]">Counts unavailable. Open the full recruiter list to review next steps.</p>:
        <div className="space-y-2 px-4 py-3 text-sm">
-        <p><Link href="/tpo/recruiters?nextFollowup=NONE" className="font-semibold text-[#087f8b]">{outsideWeek.withoutDate} with no date</Link></p>
-        <p><Link href="/tpo/recruiters?nextFollowup=LATER" className="font-semibold text-[#087f8b]">{outsideWeek.laterThanWeek} later than the next seven days</Link></p>
+        <p><Link href="/tpo/recruiters?nextFollowup=NONE" className="font-semibold text-[color:var(--lms-button-primary)]">{outsideWeek.withoutDate} with no date</Link></p>
+        <p><Link href="/tpo/recruiters?nextFollowup=LATER" className="font-semibold text-[color:var(--lms-button-primary)]">{outsideWeek.laterThanWeek} later than the next seven days</Link></p>
        </div>}
-      <Link href="/tpo/follow-ups" className="inline-flex min-h-11 items-center px-4 pb-3 font-semibold text-[#087f8b]">Re-plan your week</Link>
+      <Link href="/tpo/follow-ups" className="inline-flex min-h-11 items-center px-4 pb-3 font-semibold text-[color:var(--lms-button-primary)]">Re-plan your week</Link>
      </section>
     </aside>
    </div>
   </>:<div className="grid min-w-0 items-start gap-4 lg:grid-cols-3">
    <section className={panel} aria-label="Answer">
-    <h2 className={heading}>Answer <span className="float-right text-sm text-[#b42318]">{replyTotal===null?"Unavailable":replyTasks+" waiting"}</span></h2>
+    <h2 className={heading}>Answer <span className="float-right text-sm text-[color:var(--lms-error-text)]">{replyTotal===null?"Unavailable":replyTasks+" waiting"}</span></h2>
     {replies.length?<ul>{replies.map(reply=><ReplyRow key={reply.id} reply={reply}/>)}</ul>:
-     <p className="p-4 text-sm text-[#617084]">{replyTotal===null?"Check Messages for the current queue.":"No recruiter replies in this preview."}</p>}
-    {replyTotal!==null&&replyTotal>replies.length?<Link className="inline-flex p-4 text-sm font-semibold text-[#087f8b]" href="/tpo/messages?tab=recruiters">See all {replyTotal} conversations</Link>:null}
+     <p className="p-4 text-sm text-[color:var(--lms-text-muted)]">{replyTotal===null?"Check Messages for the current queue.":"No recruiter replies in this preview."}</p>}
+    {replyTotal!==null&&replyTotal>replies.length?<Link className="inline-flex p-4 text-sm font-semibold text-[color:var(--lms-button-primary)]" href="/tpo/messages?tab=recruiters">See all {replyTotal} conversations</Link>:null}
    </section>
    <section className={panel} aria-label="Reach">
-    <h2 className={heading}>Reach <span className="float-right text-sm text-[#b42318]">{due.length} due</span></h2>
+    <h2 className={heading}>Reach <span className="float-right text-sm text-[color:var(--lms-error-text)]">{due.length} due</span></h2>
     {due.length?<ul>{due.map(row=><FollowupRow key={row.id} row={row} scope={scope} now={now}/>)}</ul>:
-     <p className="p-4 text-sm text-[#617084]">No recorded due follow-ups in this preview.</p>}
+     <p className="p-4 text-sm text-[color:var(--lms-text-muted)]">No recorded due follow-ups in this preview.</p>}
    </section>
    <section className={panel} aria-label="This week">
-    <h2 className={heading}>This week <Link href="/tpo/follow-ups" className="float-right text-sm text-[#087f8b]">Re-plan</Link></h2>
-    <ul>{upcoming.slice(0,8).map(row=><li key={row.id} className="border-b border-[#e8edf2] p-4 last:border-b-0">
-     <p className="text-xs font-bold uppercase text-[#617084]">{formatDay(new Date(row.dueAt))}</p>
+    <h2 className={heading}>This week <Link href="/tpo/follow-ups" className="float-right text-sm text-[color:var(--lms-button-primary)]">Re-plan</Link></h2>
+    <ul>{upcoming.slice(0,8).map(row=><li key={row.id} className="border-b border-[color:var(--lms-border)] p-4 last:border-b-0">
+     <p className="text-xs font-bold uppercase text-[color:var(--lms-text-muted)]">{formatDay(new Date(row.dueAt))}</p>
      <div className="mt-2 flex items-center justify-between gap-2"><span className="text-sm font-semibold">{row.leadName} · {row.companyName??"Recruiter"}</span>
-      <Link href={tpoTodayFocusHref(scope,row.id)} className="text-xs font-bold text-[#087f8b]">Follow up</Link>
+      <Link href={tpoTodayFocusHref(scope,row.id)} className="text-xs font-bold text-[color:var(--lms-button-primary)]">Follow up</Link>
      </div>
     </li>)}</ul>
-    {!upcoming.length?<p className="p-4 text-sm text-[#617084]">No further scheduled follow-ups in this preview.</p>:null}
-    <div className="border-t border-[#e8edf2] bg-[#f8fafb] p-4">
+    {!upcoming.length?<p className="p-4 text-sm text-[color:var(--lms-text-muted)]">No further scheduled follow-ups in this preview.</p>:null}
+    <div className="border-t border-[color:var(--lms-border)] bg-[color:var(--lms-neutral-50)] p-4">
      <p className="font-bold">{notContacted===null?"Not contacted yet":notContacted.count+" not contacted yet"}</p>
-     <p className="mt-1 text-xs text-[#617084]">{notContacted===null?"Count temporarily unavailable.":notContacted.oldestAddedAt?"Oldest added "+formatDay(new Date(notContacted.oldestAddedAt)):"No uncontacted recruiters in the authorized roster."}</p>
-     <Link href="/tpo/recruiters?stage=NEW" className="mt-2 inline-flex min-h-11 items-center rounded-lg border border-[#d6e1ee] px-3 text-xs font-bold text-[#26354a]">Start with them</Link>
+     <p className="mt-1 text-xs text-[color:var(--lms-text-muted)]">{notContacted===null?"Count temporarily unavailable.":notContacted.oldestAddedAt?"Oldest added "+formatDay(new Date(notContacted.oldestAddedAt)):"No uncontacted recruiters in the authorized roster."}</p>
+     <Link href="/tpo/recruiters?stage=NEW" className="mt-2 inline-flex min-h-11 items-center rounded-lg border border-[color:var(--lms-neutral-300)] px-3 text-xs font-bold text-[color:var(--lms-text-body)]">Start with them</Link>
     </div>
    </section>
-   {outsideWeek===null?<p role="status" className="text-sm text-[#617084] lg:col-span-3">Undated and later follow-up totals are temporarily unavailable.</p>:
-    <nav aria-label="Not on the week" className="flex flex-wrap gap-4 text-[13px] text-[#087f8b] lg:col-span-3">
+   {outsideWeek===null?<p role="status" className="text-sm text-[color:var(--lms-text-muted)] lg:col-span-3">Undated and later follow-up totals are temporarily unavailable.</p>:
+    <nav aria-label="Not on the week" className="flex flex-wrap gap-4 text-[13px] text-[color:var(--lms-button-primary)] lg:col-span-3">
      <Link href="/tpo/recruiters?nextFollowup=NONE">{outsideWeek.withoutDate} with no date</Link>
      <Link href="/tpo/recruiters?nextFollowup=LATER">{outsideWeek.laterThanWeek} later than the next seven days</Link>
     </nav>}

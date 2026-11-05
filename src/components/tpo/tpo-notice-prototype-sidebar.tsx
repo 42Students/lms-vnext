@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import {useState} from "react";
+import { Input } from "@/components/ui/input";
 
 export type TpoNoticePrototypeListRow={
  id:string;title:string;senderName:string|null;createdAt:string;
@@ -41,7 +42,7 @@ export function TpoNoticePrototypeSidebar({rows,activeId,tab,mine,page,nowIso}:{
     + New announcement
    </Link>:null}
    <label className="sr-only" htmlFor="tpo-notice-search">Search loaded announcements</label>
-   <input id="tpo-notice-search" type="search" value={q} onChange={event=>setQ(event.target.value)}
+   <Input id="tpo-notice-search" type="search" value={q} onChange={event=>setQ(event.target.value)}
     placeholder="Search announcements on this page"
     className="min-h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground"/>
   </div>

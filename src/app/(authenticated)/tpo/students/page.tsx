@@ -652,7 +652,7 @@ export default async function TpoStudentsPage({
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
         <Link href="/tpo/batches" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open Placement eligibility</Link>
       </Alert>:null}
-      <section aria-label="Student cohort and journey" className="space-y-4 rounded-[13px] border border-border bg-surface px-3 py-4 md:px-4">
+      <section aria-label="Student cohort and journey" className="space-y-4 rounded-[12px] border border-border bg-surface px-3 py-4 md:px-4">
         <form aria-label="Student cohort selectors" method="get" action="/tpo/students"
           className="flex min-w-0 flex-wrap items-end gap-3">
           {query.search?<input type="hidden" name="search" value={query.search}/>:null}
@@ -694,7 +694,7 @@ export default async function TpoStudentsPage({
               scopedHref({...currentFilters,legacyStage:undefined,
                 journeyState:step.key==="APPLYING"||step.key==="PLACED"?step.key:undefined,page:1});
             return <Link role="button" aria-pressed={selected} key={step.key} href={href}
-              className={"relative flex min-h-24 min-w-0 flex-col justify-center rounded-[9px] border px-3 py-3 "+(selected?"border-primary bg-primary-subtle":"border-border bg-surface hover:bg-primary-subtle")}>
+              className={"relative flex min-h-24 min-w-0 flex-col justify-center rounded-[8px] border px-3 py-3 "+(selected?"border-primary bg-primary-subtle":"border-border bg-surface hover:bg-primary-subtle")}>
               <span className="text-xs font-semibold text-muted-foreground">{step.label}{index<4?" →":""}</span>
               <strong className="mt-1 text-xl tabular-nums">{step.count??"—"}</strong>
               <span className="text-xs text-muted-foreground">{step.percent===null?"Verification total unavailable":step.percent+"% of all students"}</span>

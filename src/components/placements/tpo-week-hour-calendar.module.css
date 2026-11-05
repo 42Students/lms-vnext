@@ -15,7 +15,7 @@
 }
 .corner {
   padding: 6px;
-  color: #5b6b82;
+  color: var(--lms-text-muted);
   font-size: 12px;
   text-align: right;
   border-color: var(--lms-header-border) !important;
@@ -23,13 +23,13 @@
 .dayHead {
   padding: 8px;
   border-color: var(--lms-header-border) !important;
-  color: #5b6b82;
+  color: var(--lms-text-muted);
   background: var(--lms-white);
 }
 .hourMarker {
   display: block;
   padding: 0 6px;
-  color: #5b6b82;
+  color: var(--lms-text-muted);
   font-size: 12px;
   text-align: right;
   transform: translateY(-8px);
@@ -51,13 +51,13 @@
   outline-offset: -2px;
 }
 .nowLine {
-  border-top: 2px solid #d92d20 !important;
+  border-top: 2px solid var(--lms-error-text) !important;
   z-index: 3;
 }
 .event {
   border: 1px solid var(--lms-header-border) !important;
   border-left: 4px solid var(--lms-button-primary) !important;
-  border-radius: 7px !important;
+  border-radius: 8px !important;
   padding: 5px 7px !important;
   background: var(--lms-topbar-search) !important;
   color: var(--lms-topbar-ink) !important;
@@ -66,15 +66,15 @@
   transition: background 150ms ease, border-color 150ms ease;
 }
 .event:hover {
-  background: #f6f9fd !important;
-  border-top-color: #dde6f0 !important;
-  border-right-color: #dde6f0 !important;
-  border-bottom-color: #dde6f0 !important;
+  background: var(--lms-neutral-100) !important;
+  border-top-color: var(--lms-border) !important;
+  border-right-color: var(--lms-border) !important;
+  border-bottom-color: var(--lms-border) !important;
 }
-.event[data-event-kind="ROUND"] { border-left-color: #0958d9 !important; }
-.event[data-event-kind="APPLICATION_DEADLINE"] { border-left-color: #b34700 !important; }
+.event[data-event-kind="ROUND"] { border-left-color: var(--lms-info-blue) !important; }
+.event[data-event-kind="APPLICATION_DEADLINE"] { border-left-color: var(--lms-warning-strong) !important; }
 .event[data-event-kind="FOLLOW_UP"] { border-left-color: var(--lms-button-primary) !important; }
-.event[data-event-kind="INTERVIEW_SLOT"] { border-left-color: #6b2fd1 !important; }
+.event[data-event-kind="INTERVIEW_SLOT"] { border-left-color: var(--lms-purple) !important; }
 @media (prefers-reduced-motion: reduce) {
   .event { transition: none; }
 }

@@ -10,7 +10,7 @@ export type RangeSliderProps = Omit<ComponentPropsWithRef<"input">, "type"> & {
 
 /**
  * Native range/keyboard behavior, with legacy teal accent.
- * Legacy: components___variables.scss:10 (#26bac7), :139 (44px touch);
+ * Legacy: components___variables.scss:10 (var(--lms-primary)), :139 (44px touch);
  * components___form.scss:110-115 (13px / weight 600 field label).
  */
 export function RangeSlider({ label, className, id, error = false, readOnly, onPointerDown, onKeyDown, onChange, ...props }: RangeSliderProps) {
