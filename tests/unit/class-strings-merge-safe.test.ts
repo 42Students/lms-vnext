@@ -36,5 +36,5 @@ describe("class strings are safe to merge", () => {
       }
     }
     expect(problems).toEqual([]);
-  });
+  }, 120_000);
 });

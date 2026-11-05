@@ -144,7 +144,7 @@ describe("TPO Companies / Recruiters prototype inspector",()=>{
  it("keeps advanced grid, bulk actions and recruiter detail behind the compact screenshot table",()=>{
   const roster=source("src/components/tpo/recruiter-leads-workspace.tsx");
   expect(roster).toContain('<TpoRecruiterPrototypeRoster rows={sortedVisible}');
-  expect(roster).toContain('data-testid="tpo.recruiter.advanced-grid"');
+  expect(roster).toContain('"data-testid": "tpo.recruiter.advanced-grid"');
   expect(roster).toContain('<RecruiterTpoGrid rows={sortedVisible}');
   expect(roster).toContain('<TpoRecruiterPrototypeInspector lead={focusedLead}');
  });
