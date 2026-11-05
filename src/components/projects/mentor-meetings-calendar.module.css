@@ -49,7 +49,7 @@
   border-radius: 0;
   background: var(--lms-surface);
   box-shadow: none;
-  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease);
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
 }
 .row:hover {
   background: var(--lms-primary-subtle);

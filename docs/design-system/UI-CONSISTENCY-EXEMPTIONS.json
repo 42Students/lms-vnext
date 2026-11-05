@@ -1,26 +1,5 @@
 {
  "schemaVersion": 1,
- "note": "Files the consistency guard skips because tests pin their exact measured legacy values against docs/design/old-lms-shell.css. Remove an entry by updating those pins; the list must only shrink.",
- "files": {
-  "src/components/shell/sidebar-legacy.css": {
-   "reason": "Old-LMS sidebar rail measurements",
-   "pinnedBy": ["chat19-clone-sidebar-checkpoint", "chat19-north-star-legacy-sidebar", "chat19-shell-sidebar-clone", "chat19-sidebar-hr-value-parity", "chat19-sidebar-hr-original-icons-and-secondary-surfaces"]
-  },
-  "src/components/shell/route-progress.css": {
-   "reason": "Old-LMS AntD four-dot route progress",
-   "pinnedBy": ["chat19-route-progress"]
-  },
-  "src/components/shell/route-transition.css": {
-   "reason": "Old-LMS pageSlideIn timings",
-   "pinnedBy": ["chat19-shell-route-transitions", "chat19-shell-sidebar-clone"]
-  },
-  "src/components/shell/legacy-mobile-footer.css": {
-   "reason": "Old-LMS mobile footer measurements",
-   "pinnedBy": ["chat19-legacy-mobile-footer"]
-  },
-  "src/components/shell/shell-nav-icons.tsx": {
-   "reason": "Historic 42LMS logomark colours",
-   "pinnedBy": ["chat19-north-star-legacy-sidebar"]
-  }
- }
+ "note": "No exemptions. The shell, top bar and sidebar are held to the same rules as every other file. Add an entry only with a reason and the tests that pin it, and remove it as soon as those pins are updated.",
+ "files": {}
 }

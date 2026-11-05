@@ -555,6 +555,18 @@
   "src/components/shell/learner-topbar-tools.tsx": {
    "link-bare": 1
   },
+  "src/components/shell/legacy-mobile-footer.css": {
+   "important": 1,
+   "font-size-off-scale": 1
+  },
+  "src/components/shell/route-progress.css": {
+   "font-size-off-scale": 1,
+   "radius-off-scale": 1
+  },
+  "src/components/shell/sidebar-legacy.css": {
+   "font-size-off-scale": 4,
+   "important": 1
+  },
   "src/components/shell/sidebar-nav.tsx": {
    "link-bare": 1
   },

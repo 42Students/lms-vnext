@@ -61,7 +61,7 @@
   :where(tbody tr):not(:where([data-unskin], [data-unskin] *)) {
   background-color: var(--lms-white) !important;
   box-shadow: var(--lms-shadow-sm);
-  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease);
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
 }
 /* Legacy refs: components___common.scss:700-713,831-837; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -117,7 +117,7 @@
   font-size: 14px !important;
   font-weight: 400 !important;
   box-shadow: none;
-  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease),
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)),
     box-shadow 200ms ease;
 }
 
@@ -222,7 +222,7 @@
   font-size: 14px !important;
   font-weight: 600 !important;
   box-shadow: none !important;
-  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease),
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)),
     border-color 150ms cubic-bezier(0.2, 0, 0, 1),
     color 150ms cubic-bezier(0.2, 0, 0, 1),
     box-shadow 150ms cubic-bezier(0.2, 0, 0, 1);
@@ -405,7 +405,7 @@
   :where(a:not([data-slot="button"]):not([role="tab"])):not(:where([data-unskin], [data-unskin] *)) {
   color: var(--lms-primary) !important;
   font-weight: 500 !important;
-  transition: color var(--lms-motion-fast) var(--lms-motion-ease);
+  transition: color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
 }
 /* Legacy refs: components___common.scss:68-75; components___accessibility.scss:19-23 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -486,7 +486,7 @@
   background-color: var(--lms-white) !important;
   border-color: var(--lms-neutral-200) !important;
   border-radius: 10px !important;
-  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease);
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
 }
 /* Legacy refs: components___common.scss:1322-1326; components___variables.scss:24-32 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
@@ -496,7 +496,7 @@
   font-weight: 600 !important;
   border-color: var(--lms-neutral-200) !important;
   border-radius: 10px !important;
-  transition: color var(--lms-motion-fast) var(--lms-motion-ease),
+  transition: color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)),
     background-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 /* Legacy: components___variables.scss:10-13 (var(--lms-primary-subtle) hover fill,
@@ -582,7 +582,7 @@
 /* Legacy refs: components___form.scss:117-143; components___antddesign.scss:511-523 */
 :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
   :where(input, select, textarea, summary):not(:where([data-unskin], [data-unskin] *)):focus-visible {
-  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease),
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)),
     box-shadow 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 

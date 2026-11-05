@@ -51,7 +51,7 @@
   border-radius: 8px !important;
   background: transparent !important;
   color: var(--lms-neutral-500) !important;
-  transition: color var(--lms-motion-fast) var(--lms-motion-ease), background var(--lms-motion-fast) var(--lms-motion-ease);
+  transition: color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), background var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
 }
 .navArrow:hover:not(:disabled) {
   color: var(--lms-primary) !important;
@@ -66,7 +66,7 @@
   min-height: 44px !important;
   border-color: var(--lms-primary) !important;
   color: var(--lms-primary) !important;
-  transition: color var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease), background-color var(--lms-motion-fast) var(--lms-motion-ease);
+  transition: color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
 }
 .today:hover:not(:disabled) {
   border-color: var(--lms-primary-hover) !important;
@@ -118,7 +118,7 @@
   font-size: 12px !important;
   font-weight: 400 !important;
   line-height: 1.4 !important;
-  transition: background var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
+  transition: background var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), box-shadow var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
 }
 .legendChip:hover:not(:disabled) {
   background: var(--lms-primary-subtle) !important;
@@ -278,7 +278,7 @@
   border-radius: 0;
   background: var(--lms-white);
   padding: 12px 8px;
-  transition: box-shadow var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease);
+  transition: box-shadow var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
 }
 .agendaEvent:hover,
 .mobileRow:hover {

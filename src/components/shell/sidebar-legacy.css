@@ -16,7 +16,7 @@
   background:var(--lms-white);
   border-right:1px solid var(--lms-neutral-100);
   box-shadow:none;
-  transition:width .15s cubic-bezier(.2,0,0,1),opacity .15s cubic-bezier(.2,0,0,1);
+  transition:width var(--lms-motion-fast) var(--lms-motion-ease),opacity var(--lms-motion-fast) var(--lms-motion-ease);
   overflow:hidden;
  }
  .lms-desktop-sidebar:is(:hover,:focus-within) {width:256px;}
@@ -42,7 +42,7 @@
   overflow:hidden;
   pointer-events:none;
  }
- .lms-desktop-sidebar .lms-sidebar-nav .lms-nav-label {transition:opacity .15s cubic-bezier(.2,0,0,1);}
+ .lms-desktop-sidebar .lms-sidebar-nav .lms-nav-label {transition:opacity var(--lms-motion-fast) var(--lms-motion-ease);}
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-nav-label,
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-role-details {
   opacity:1;
@@ -60,7 +60,7 @@
  .lms-desktop-sidebar .lms-sidebar-nav .lms-nav-heading::after {
   content:"";
   display:block;
-  width:22px;
+  width:24px;
   border-top:1px solid var(--lms-neutral-100);
  }
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-nav-heading {
@@ -75,7 +75,7 @@
   position:absolute;
   left:50%;
   top:4px;
-  margin-left:5px;
+  margin-left:6px;
   transform:scale(.72);
   transform-origin:center;
  }
@@ -108,14 +108,14 @@
  display:flex;
  align-items:center;
  gap:12px;
- padding:10px 12px;
+ padding:12px 12px;
  border-radius:8px;
  color:var(--lms-neutral-700);
  font-size:15px;
  line-height:20px;
  font-weight:600;
  text-decoration:none;
- transition:color .15s cubic-bezier(.2,0,0,1),background-color .15s cubic-bezier(.2,0,0,1);
+ transition:color var(--lms-motion-fast) var(--lms-motion-ease),background-color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 /* old-lms-shell.css:27-28: admin links use 12px top/bottom padding,
  * while TPO/recruiter links retain their 10px block padding. */
@@ -125,16 +125,16 @@
 }
 .lms-sidebar-nav .lms-sidebar-item:hover {
  color:var(--lms-primary-text);
- background:rgba(38,186,199,.07);
+ background:color-mix(in srgb, var(--lms-primary) 7%, transparent);
 }
 .lms-sidebar-nav .lms-sidebar-item[data-active="true"],
 .lms-sidebar-nav .lms-sidebar-item[data-active="true"]:hover {
  background:var(--lms-primary-subtle);
- box-shadow:inset 3px 0 var(--lms-primary);
+ box-shadow:var(--lms-accent-bar-start);
  color:var(--lms-primary-text);
 }
 .lms-sidebar-nav .lms-sidebar-item:focus-visible {
- outline:2px solid rgba(38,186,199,.45);
+ outline:2px solid color-mix(in srgb, var(--lms-primary) 45%, transparent);
  outline-offset:-2px;
 }
 .lms-sidebar-nav .lms-sidebar-item-icon {
@@ -147,14 +147,14 @@
  justify-content:center;
  color:inherit;
  line-height:1;
- opacity:.55;
+ opacity:.6;
 }
 .lms-sidebar-nav .lms-sidebar-item-icon svg {display:block;width:20px;height:20px;flex-shrink:0;}
 /* The original legacy icon box keeps 0.55 opacity in every state:
  * active/hover recolor its inherited foreground, not its opacity. */
 .lms-sidebar-nav .lms-nav-label {
  min-width:0;
- max-width:165px;
+ max-width:164px;
  overflow:hidden;
  text-overflow:ellipsis;
  white-space:nowrap;
@@ -163,13 +163,13 @@
 }
 .lms-sidebar-nav .lms-sidebar-badge {
  display:inline-flex;
- min-width:18px;
- height:18px;
+ min-width:20px;
+ height:20px;
  align-items:center;
  justify-content:center;
  border-radius:999px;
  background:var(--lms-primary);
- padding:0 5px;
+ padding:0 6px;
  color:var(--lms-white);
  font-size:10px;
  line-height:18px;
@@ -178,15 +178,15 @@
 }
 .lms-sidebar-nav .lms-nav-heading {
  padding:0;
- height:18px;
- min-height:18px;
+ height:20px;
+ min-height:20px;
  display:flex;
  align-items:center;
- margin:7px 12px 4px;
+ margin:8px 12px 4px;
  color:var(--lms-text-muted);
- letter-spacing:.105em;
+ letter-spacing:.08em;
  font-size:12px;
- font-weight:750;
+ font-weight:700;
  line-height:18px;
  text-transform:uppercase;
  pointer-events:none;
@@ -204,10 +204,10 @@
   max-height:var(--lms-visual-height,100dvh);
   border-right:0;
   /* components___antddesign.scss:412-426: left drawer casts rightward shadow. */
-  box-shadow:4px 0 16px rgba(0,0,0,.12);
+  box-shadow:var(--lms-shadow-drawer-end);
  }
  /* Old Ant drawer mask: components___antddesign.scss:143-146. */
- .lms-mobile-sidebar::backdrop {background:rgba(30,54,63,.1);box-shadow:0 4px 4px color-mix(in srgb, var(--lms-black) 25%, transparent);}
+ .lms-mobile-sidebar::backdrop {background:color-mix(in srgb, var(--lms-brand-dark) 10%, transparent);box-shadow:var(--lms-elevation-1);}
  .lms-mobile-sidebar [data-slot="drawer-header"] {
   flex-direction:row;
   align-items:center;
@@ -232,9 +232,9 @@
  .lms-mobile-sidebar [data-slot="scroll-cue"][data-axis="y"] > div:first-child::-webkit-scrollbar {display:none;}
  .lms-mobile-sidebar .lms-sidebar-nav {padding-inline:0;overflow-x:hidden;scrollbar-width:none;}
  .lms-mobile-sidebar .lms-sidebar-item {
-  padding:10px;
+  padding:12px;
   margin-bottom:2px;
-  gap:10px;
+  gap:12px;
  }
  /* components___antddesign.scss:383-389: unlike the 96px rail,
   * the mobile drawer allows long menu labels to wrap instead of ellipsizing. */
@@ -250,7 +250,7 @@
 @media (max-width:767px) {
  .lms-mobile-sidebar .lms-nav-heading {
   justify-content:flex-start;
-  margin:12px 12px 6px 46px;
+  margin:12px 12px 6px 48px;
   font-size:9px;
  }
  .lms-mobile-sidebar .lms-nav-heading-text {display:block;}
@@ -262,9 +262,9 @@
  box-sizing:border-box;
  align-self:center;
  flex:0 0 auto;
- width:22px;
+ width:24px;
  height:1px;
- margin:14px 0 10px;
+ margin:16px 0 12px;
  border-top:1px solid var(--lms-neutral-100);
 }
 @media (min-width:768px) {
@@ -282,7 +282,7 @@
  margin:6px 8px;
 }
 .lms-sidebar-heading-label {min-width:0; white-space:nowrap;}
-.lms-sidebar-role-details {z-index:2;min-width:0;margin-top:auto;padding:25px 16px;transition:opacity .15s cubic-bezier(.2,0,0,1);}
+.lms-sidebar-role-details {z-index:2;min-width:0;margin-top:auto;padding:24px 16px;transition:opacity var(--lms-motion-fast) var(--lms-motion-ease);}
 .lms-sidebar-scroll {overscroll-behavior-y:contain;overflow-x:hidden;text-wrap:nowrap;scrollbar-width:none;}
 .lms-sidebar-scroll::-webkit-scrollbar {display:none;width:0;height:0;}
 /* Legacy TPO rail exposes a 4px scroll thumb only while expanded.
@@ -291,7 +291,7 @@
  .lms-desktop-sidebar:is(:hover,:focus-within)
  .lms-sidebar-scroll:has(.lms-sidebar-nav[data-sidebar-portal="tpo"]) {
   scrollbar-width:thin;
-  scrollbar-color:rgba(107,114,128,.28) transparent;
+  scrollbar-color:color-mix(in srgb, var(--lms-text-muted) 28%, transparent) transparent;
  }
  .lms-desktop-sidebar:is(:hover,:focus-within)
  .lms-sidebar-scroll:has(.lms-sidebar-nav[data-sidebar-portal="tpo"])::-webkit-scrollbar {
@@ -301,7 +301,7 @@
  }
  .lms-desktop-sidebar:is(:hover,:focus-within)
  .lms-sidebar-scroll:has(.lms-sidebar-nav[data-sidebar-portal="tpo"])::-webkit-scrollbar-thumb {
-  background:rgba(107,114,128,.28);
+  background:color-mix(in srgb, var(--lms-text-muted) 28%, transparent);
   border-radius:999px;
  }
 }
@@ -315,7 +315,7 @@
 .lms-desktop-sidebar .lms-sidebar-brand-mark { display:flex; align-items:center; justify-content:center; }
 .lms-desktop-sidebar .lms-sidebar-brand-wordmark { display:none; }
 @media (min-width:768px) {
- .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-link { width:151px; }
+ .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-link { width:152px; }
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-mark { display:none; }
  .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-wordmark { display:block; }
 }

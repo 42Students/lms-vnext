@@ -1,10 +1,7 @@
 /* vNext route body copies old-lms learn-layout.scss lines 49-69.
  * Shell chrome is outside the animated body; query-only updates retain
  * their DOM tree so filters preserve focus and local component state. */
-@keyframes lms-route-slide-in {
- from { opacity:0; transform:translateY(8px); }
- to { opacity:1; transform:translateY(0); }
-}
+
 .lms-shell-route-content {
  width:100%;
  min-width:0;
@@ -15,14 +12,14 @@
 
 }
 .lms-shell-route-content[data-route-portal="learner"][data-route-transitioning="true"] {
- opacity:.78;
+ opacity:.8;
  transform:translateY(6px) scale(.998);
  will-change:opacity,transform;
 }
 @media (prefers-reduced-motion:no-preference) {
- .lms-shell-route-content[data-route-entry="true"] {animation:lms-route-slide-in 250ms ease-out;}
+ .lms-shell-route-content[data-route-entry="true"] {animation:lms-route-slide-in var(--lms-motion-base) var(--lms-motion-ease);}
  .lms-shell-route-content[data-route-portal="learner"] {
-  transition:opacity 220ms cubic-bezier(.2,.8,.2,1),transform 260ms cubic-bezier(.2,.8,.2,1);
+  transition:opacity var(--lms-motion-base) var(--lms-motion-ease),transform var(--lms-motion-base) var(--lms-motion-ease);
  }
 }
 @media (prefers-reduced-motion:reduce) {

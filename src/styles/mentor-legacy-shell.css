@@ -77,7 +77,7 @@
     border-right: 1px solid var(--lms-neutral-100);
     box-shadow: none;
     overflow: hidden;
-    transition: width var(--lms-motion-fast) var(--lms-motion-ease);
+    transition: width var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
   }
   .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar:is(:hover,:focus-within) {
     position: sticky;
