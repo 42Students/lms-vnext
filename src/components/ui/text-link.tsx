@@ -1,8 +1,8 @@
 import Link from "next/link";
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithRef } from "react";
 import { cx } from "@/lib/class-names";
 
-export type AppLinkProps = ComponentPropsWithoutRef<"a">;
+export type AppLinkProps = ComponentPropsWithRef<"a">;
 
 const focusClasses = "outline-none focus-ring";
 const linkClasses = "font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-button-primary-hover)]";
