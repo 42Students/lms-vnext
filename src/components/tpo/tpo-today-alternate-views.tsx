@@ -100,7 +100,7 @@ export function TpoTodayAlternateViews({
      href={tpoTodayAgendaHref(scope,index)} aria-current={selectedDay===index?"date":undefined}
      className={"rounded-xl border px-2 py-3 text-center "+(selectedDay===index?
       "border-[#087f8b] bg-[#eef8fa]":"border-[#e7ecf2] bg-white")}>
-     <span className="block text-[11px] font-bold uppercase text-[#617084]">{formatDay(day.date).split(" ")[0]}</span>
+     <span className="block text-xs font-bold uppercase text-[#617084]">{formatDay(day.date).split(" ")[0]}</span>
      <strong className="mt-1 block text-xl">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(day.date)}</strong>
      <span className="text-xs text-[#087f8b]">{day.count||"—"}</span>
     </Link>)}

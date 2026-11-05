@@ -123,9 +123,9 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const dateTile=(date:Date|null)=>{
    if(!date)return <span aria-hidden="true" className="flex h-20 w-16 shrink-0 items-center justify-center rounded border border-border bg-muted text-xs">TBC</span>;
    return <span aria-hidden="true" className="flex h-20 w-16 shrink-0 flex-col items-center justify-center rounded border border-border bg-primary-subtle text-center">
-    <span className="text-[11px] font-semibold uppercase">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",month:"short"}).format(date)}</span>
+    <span className="text-xs font-semibold uppercase">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",month:"short"}).format(date)}</span>
     <strong className="text-2xl tabular-nums">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(date)}</strong>
-    <span className="text-[11px]">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"}).format(date)}</span>
+    <span className="text-xs">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"}).format(date)}</span>
    </span>;
   };
   const aheadByDay=new Map<string,WorkspaceRound[]>();

@@ -189,12 +189,12 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
         (selected?"border-2 border-[#0a7c88] bg-[#f0f9fa]":"border border-[#d9d9d9] bg-white hover:bg-[#f0f9fa]")}>
       <span className="flex min-w-0 items-center justify-between gap-2">
        <span className="text-sm font-semibold text-[#172033]">{choice.label}</span>
-       {choice.value==="EMAIL_AND_PHONE"?<span className="shrink-0 rounded-full bg-[#e6f4f5] px-[7px] py-[1px] text-[11px] text-[#075963]">Default</span>:null}
+       {choice.value==="EMAIL_AND_PHONE"?<span className="shrink-0 rounded-full bg-[#e6f4f5] px-[7px] py-[1px] text-xs text-[#075963]">Default</span>:null}
       </span>
       <span className="mt-[2px] block text-[12.5px] text-[#5b6b82]">{choice.hint}</span>
       <span aria-hidden="true" className="mt-[10px] flex gap-[3px] rounded-[7px] border border-[#e7ecf2] bg-[#f1f4f8] p-[3px]">
        {order.map((label,i)=><span key={label}
-        className={"min-w-0 flex-1 rounded-[5px] px-1 py-[3px] text-center text-[11px] "+
+        className={"min-w-0 flex-1 rounded-[5px] px-1 py-[3px] text-center text-xs "+
          (i===0?"bg-white font-semibold text-[#172033] shadow-[0_1px_2px_rgba(16,24,40,0.08)]":"text-[#5b6b82]")}>
         {label}
        </span>)}

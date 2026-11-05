@@ -30,7 +30,7 @@ export function TpoVerificationPrototypeQueue({rows,active,onReview}:{
         "border-l-[3px] border-primary bg-primary-subtle":"")}>
        <span className="flex items-start justify-between gap-2">
         <strong className="text-sm text-foreground">{row.learnerName}</strong>
-        <span className="text-[11px] text-muted-foreground">{when(row.submittedAt)}</span>
+        <span className="text-xs text-muted-foreground">{when(row.submittedAt)}</span>
        </span>
        <span className="mt-1 block text-xs text-muted-foreground">{row.rollNumber??"No roll number"} · {row.branchName??"No branch"} · {row.section==="EDUCATION"?"Education":"Identity"}</span>
        {row.status==="UPDATE_PENDING"?<span className="mt-1 block text-xs font-semibold text-warning-text">Update to verified details</span>:null}

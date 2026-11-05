@@ -218,7 +218,7 @@ export function LearnerJobsBrowse({
               onChange={event=>setSearch(event.target.value)}
               placeholder="Search jobs, companies, roles, locations…"
               className={selectClass}/>
-            <span className="mt-1 block text-[11px] font-normal text-muted-foreground">
+            <span className="mt-1 block text-xs font-normal text-muted-foreground">
               {search.length}/100 characters · Search is limited to 100 characters.
             </span>
           </label>

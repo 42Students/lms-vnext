@@ -56,7 +56,7 @@ export function TpoNoticePrototypeSidebar({rows,activeId,tab,mine,page,nowIso}:{
         "border-l-[3px] border-primary bg-primary-subtle":"")}>
        <p className="flex items-start justify-between gap-2">
         <strong className="min-w-0 break-words text-sm text-foreground">{row.isPinned?"📌 ":""}{row.title}</strong>
-        <span className="shrink-0 text-[11px] text-muted-foreground">{formatDate(row.createdAt)}</span>
+        <span className="shrink-0 text-xs text-muted-foreground">{formatDate(row.createdAt)}</span>
        </p>
        <p className="mt-1 text-xs text-body">{row.audienceKind?.replaceAll("_"," ").toLowerCase()??"College"}
         {" · "}{row.senderName??"Placement team"}</p>

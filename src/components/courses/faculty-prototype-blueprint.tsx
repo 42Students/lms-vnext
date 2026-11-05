@@ -105,7 +105,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
        <span className="w-4 shrink-0 text-sm text-[#60718b]">{index+1}</span>
        <span className="min-w-0 flex-1"><strong className="block text-sm text-[#1d293f]">{lesson.name}</strong>
         <span className="faculty-proto-subtitle">{count===0?"Empty":count+" items"}</span></span>
-       <span className={"rounded-full px-2 py-0.5 text-[11px] font-bold "+
+       <span className={"rounded-full px-2 py-0.5 text-xs font-bold "+
          (count===0?"bg-[#f2f4f7] text-[#64748b]":live?"bg-green-50 text-green-700":"bg-amber-50 text-amber-800")}>
         {count===0?"Empty":live?"Live":"Draft"}</span>
       </Link>
@@ -142,7 +142,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
     enabled={lessonContentOrderRuntimeEnabled()}/>:
     <p className="faculty-proto-subtitle p-5">Select a lesson to view the class content.</p>}
    {current?<footer className="border-t border-[#edf1f5] bg-[#fafcfd] px-[18px] py-4">
-     <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#60718b]">
+     <h3 className="text-xs font-bold uppercase tracking-wider text-[#60718b]">
       How {course.sectionName} did on this lesson
      </h3>
      {selectedEngagement&&selectedEngagement.trackedItems>0?

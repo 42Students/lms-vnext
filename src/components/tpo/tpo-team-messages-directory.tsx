@@ -134,7 +134,7 @@ export async function TpoTeamMessagesDirectory({
        <span className="min-w-0 flex-1">
         <span className="flex items-start justify-between gap-1">
          <strong className="truncate text-sm text-foreground">{item.topic}</strong>
-         <time className="shrink-0 text-[11px] text-muted-foreground" dateTime={item.lastActivityAt.toISOString()}>{threadTime(item.lastActivityAt,today)}</time>
+         <time className="shrink-0 text-xs text-muted-foreground" dateTime={item.lastActivityAt.toISOString()}>{threadTime(item.lastActivityAt,today)}</time>
         </span>
         <span className="block truncate text-xs text-muted-foreground">{item.searchSnippet??item.lastPreview??"No messages yet"}</span>
         <span className="mt-1 flex flex-wrap gap-1">

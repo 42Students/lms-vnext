@@ -75,7 +75,7 @@ export function TpoDriveStudentsPrototypeReview({rows,jobId,jobStatus,totalMatch
    </div>
    <div role="region" aria-label="Page-scoped applicant review rows" className="min-w-0 overflow-x-auto">
     <table className="w-full min-w-[600px] border-collapse text-left text-sm">
-     <thead className="bg-surface-secondary text-[11px] uppercase tracking-wide text-muted-foreground">
+     <thead className="bg-surface-secondary text-xs uppercase tracking-wide text-muted-foreground">
       <tr><th scope="col" className="px-3 py-3">Student</th><th scope="col" className="px-3 py-3">CGPA</th>
        <th scope="col" className="px-3 py-3">Resume</th><th scope="col" className="px-3 py-3">Where they are</th>
       </tr>

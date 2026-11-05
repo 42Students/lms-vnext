@@ -151,7 +151,7 @@ export function LearnerSkillCatalogInput({value,onChange,disabled=false,showPopu
        onClick={()=>choose(item)}>
        <span aria-hidden="true" className="mr-2 text-xs">{!value.trim()&&index<recentCount?"◷":!value.trim()?"♨":"⌕"}</span>
        <span className="min-w-0 flex-1 truncate">{item.displayName}</span>
-       {!value.trim()?<span className="mr-2 rounded bg-info-subtle px-1.5 py-0.5 text-[10px] text-info-text">{index<recentCount?"Recent":"Hot"}</span>:null}
+       {!value.trim()?<span className="mr-2 rounded bg-info-subtle px-1.5 py-0.5 text-xs text-info-text">{index<recentCount?"Recent":"Hot"}</span>:null}
        {item.category?<span className="ml-[var(--lms-space-2)] max-w-[45%] min-w-0 truncate text-xs text-muted-foreground">{item.category}</span>:null}
       </Button>
     </li>)}

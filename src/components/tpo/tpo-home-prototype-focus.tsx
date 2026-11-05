@@ -57,7 +57,7 @@ export function TpoHomePrototypeFocus({
    {ranked.length?<ul className="divide-y divide-[#edf0f3]">{ranked.slice(0,6).map(need=>{
     const category=needCategory(need.type);
     return <li key={need.type+need.link} className="flex min-w-0 items-center gap-3 px-4 py-3 sm:px-5">
-     <span className={"w-[85px] shrink-0 rounded px-2 py-1 text-center text-[10px] font-bold tracking-[.05em] "+categoryClasses[category]}>{category}</span>
+     <span className={"w-[85px] shrink-0 rounded px-2 py-1 text-center text-xs font-bold tracking-[.05em] "+categoryClasses[category]}>{category}</span>
      <div className="min-w-0 flex-1"><Link href={need.link}
        className="break-words text-sm font-semibold text-[#172033] hover:text-[#0a7c88] hover:underline">{need.title}</Link>
       <p className="mt-1 text-xs text-[#617084]">{need.count} {need.count===1?"item":"items"} awaiting action</p></div>
@@ -78,7 +78,7 @@ export function TpoHomePrototypeFocus({
     {!calendarAvailable?<p className="mt-3 text-sm text-[#617084]">The calendar could not be refreshed. <Link href="/tpo/calendar" className="underline">Open calendar</Link>.</p>:
      tomorrowEvents.length?<ul className="mt-2 divide-y divide-[#edf0f3]">{tomorrowEvents.map((event,index)=><li key={index} className="grid grid-cols-[65px_minmax(0,1fr)] gap-2 py-2 text-sm"><time className="font-semibold text-[#172033]">{timeLabel(event.startsAt)}</time><span className="break-words text-[#53627c]">{event.title}</span></li>)}</ul>:
       <p className="mt-3 text-sm text-[#617084]">No recorded placement events tomorrow.</p>}
-    {laterEvents.length?<><h3 className="mt-4 text-[11px] font-bold uppercase tracking-wider text-[#617084]">Later this week</h3>
+    {laterEvents.length?<><h3 className="mt-4 text-xs font-bold uppercase tracking-wider text-[#617084]">Later this week</h3>
      <ul className="mt-1 divide-y divide-[#edf0f3]">{laterEvents.map((event,index)=><li key={index} className="grid grid-cols-[65px_minmax(0,1fr)] gap-2 py-2 text-sm"><time className="font-semibold text-[#172033]">{dayLabel(event.startsAt)}</time><span className="break-words text-[#53627c]">{event.title}</span></li>)}</ul>
     </>:null}
    </section>
@@ -86,9 +86,9 @@ export function TpoHomePrototypeFocus({
     <div className="flex items-center justify-between gap-2"><h2 className="text-xs font-bold uppercase tracking-[.08em] text-[#617084]">Placement overview</h2>
      <Link href="/tpo/reports" className="text-xs font-semibold text-[#0a7c88]">Reports ›</Link></div>
     <dl className="mt-3 grid grid-cols-3 gap-2">
-     <div><dt className="text-[11px] text-[#617084]">Placed</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-[#172033]">{placed??"—"}</dd></div>
-     <div><dt className="text-[11px] text-[#617084]">In pool</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-[#172033]">{pool??"—"}</dd></div>
-     <div><dt className="text-[11px] text-[#617084]">Rate</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-[#172033]">{rate!==null?rate+"%":"—"}</dd></div>
+     <div><dt className="text-xs text-[#617084]">Placed</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-[#172033]">{placed??"—"}</dd></div>
+     <div><dt className="text-xs text-[#617084]">In pool</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-[#172033]">{pool??"—"}</dd></div>
+     <div><dt className="text-xs text-[#617084]">Rate</dt><dd className="mt-1 text-2xl font-bold tabular-nums text-[#172033]">{rate!==null?rate+"%":"—"}</dd></div>
     </dl>
     <div role="img" aria-label={rate===null?"Placement rate unavailable":"Placement rate "+rate+" percent"} className="mt-4 h-2 overflow-hidden rounded-full bg-[#e8edf2]">
      {rate!==null?<div className="h-full rounded-full bg-[#0a7c88]" style={{width:Math.min(100,Math.max(0,rate))+"%"}}/>:null}

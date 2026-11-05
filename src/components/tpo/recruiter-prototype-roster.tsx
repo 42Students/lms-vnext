@@ -48,7 +48,7 @@ export function TpoRecruiterPrototypeRoster({
   data-testid="tpo.recruiter.prototype-roster">
   <div className="overflow-x-auto">
    <table className="w-full min-w-[690px] border-collapse text-left text-[13px]">
-    <thead className="bg-slate-50 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+    <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wide text-muted-foreground">
      <tr>{TPO_RECRUITER_PROTOTYPE_COLUMNS.filter(column=>enabled.has(column.key)).map(column=>
        <th key={column.key} scope="col" className="border-b border-border px-3 py-3 font-bold">{column.label}</th>)}</tr>
     </thead>
@@ -74,11 +74,11 @@ export function TpoRecruiterPrototypeRoster({
         <button type="button" onClick={()=>onSelect(lead.id)}
          aria-pressed={focused} aria-label={"View "+lead.name+" in the detail panel"}
          className="min-h-11 break-words text-left font-semibold text-foreground hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-primary-text">{lead.name}</button>
-        {lead.designation?<small className="text-[11px] text-body">{lead.designation}</small>:null}
+        {lead.designation?<small className="text-xs text-body">{lead.designation}</small>:null}
        </div>
       </td>:null}
       {enabled.has("company")?<td className="max-w-32 break-words px-3 py-3 text-foreground">{lead.companyName??"Not recorded"}</td>:null}
-      {enabled.has("stage")?<td className="px-3 py-3"><span className={"inline-block rounded-full px-2 py-1 text-[11px] font-bold "+stageClass[lead.stage]}>
+      {enabled.has("stage")?<td className="px-3 py-3"><span className={"inline-block rounded-full px-2 py-1 text-xs font-bold "+stageClass[lead.stage]}>
        {prototypeStage[lead.stage]}</span></td>:null}
       {enabled.has("next")?<td className={"max-w-40 px-3 py-3 font-semibold "+(next.lateDays>0?"text-red-700":"text-foreground")}>
        {next.label}</td>:null}

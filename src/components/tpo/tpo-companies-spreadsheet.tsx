@@ -94,7 +94,7 @@ export function TpoCompaniesSpreadsheet({rows}:{rows:readonly TpoCompanyRow[]}){
      ["Drives",focused.drives],
      ["Confirmed joins",focused.confirmedJoinedLearners],
     ] as const).map(([label,value])=><div key={label} className="min-w-0 rounded-lg bg-surface-secondary p-2">
-     <dt className="text-[11px] text-muted-foreground">{label}</dt>
+     <dt className="text-xs text-muted-foreground">{label}</dt>
      <dd className="mt-1 break-words text-base font-semibold text-foreground">{value}</dd>
     </div>)}
    </dl>

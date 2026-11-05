@@ -1,4 +1,4 @@
-.root{display:flex;flex-direction:column;gap:18px;min-width:0;color:#172033;font-family:Lato,Arial,sans-serif;font-size:14px}
+.root{display:flex;flex-direction:column;gap:18px;min-width:0;color:#172033;font-family:var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;font-size:14px}
 .heading{display:flex;flex-direction:column;gap:4px}
 .meta{font-size:14px;color:#5b6b82}.heading h1{margin:0;font-size:26px;font-weight:700;line-height:1.25;color:#172033}
 .subtitle{font-size:15px;color:#3b4a60}
@@ -13,7 +13,7 @@
 .tag[data-tone=URGENT]{color:#b42318}.tag[data-tone=SOON]{color:#9a3412}
 .detail,.small{font-size:13px;color:#5b6b82;line-height:1.45}
 .needActions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end}
-.button,.primary{display:inline-flex;min-height:36px;align-items:center;justify-content:center;padding:0 14px;border:1px solid #d6e1ee;border-radius:8px;background:#fff;color:#172033;font-family:Lato,Arial,sans-serif;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;white-space:nowrap}
+.button,.primary{display:inline-flex;min-height:36px;align-items:center;justify-content:center;padding:0 14px;border:1px solid #d6e1ee;border-radius:8px;background:#fff;color:#172033;font-family:var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;white-space:nowrap}
 .primary{background:#0a7c88;color:#fff;border-color:#0a7c88}
 .button:hover{border-color:#0a7c88;color:#0a7c88}
 .primary:hover{background:#086670;color:#fff}

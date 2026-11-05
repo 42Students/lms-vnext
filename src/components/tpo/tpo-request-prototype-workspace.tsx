@@ -49,7 +49,7 @@ export function TpoRequestPrototypeWorkspace({rows,selectedId,baseHref,total,pen
        "border-l-[3px] border-primary bg-primary-subtle":"")}>
       <span className="flex items-start justify-between gap-2">
        <strong className="break-words text-sm text-foreground">{label(row.requestType)}</strong>
-       <span className="shrink-0 text-[11px] text-muted-foreground">{when(row.requestedAt)}</span>
+       <span className="shrink-0 text-xs text-muted-foreground">{when(row.requestedAt)}</span>
       </span>
       <p className="mt-1 text-sm text-body">{row.studentName} · {row.branchName??"Branch unavailable"}</p>
       <p className="mt-1 break-words text-xs text-muted-foreground">

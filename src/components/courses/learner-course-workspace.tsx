@@ -314,7 +314,7 @@ function ContentCard({
             {content.title?.trim()||"Untitled content"}
           </h3>
         </div>
-        {legacyAddedDate(content.createdAt)?<span className="text-[11px] leading-5 text-muted-foreground">
+        {legacyAddedDate(content.createdAt)?<span className="text-xs leading-5 text-muted-foreground">
           Added {legacyAddedDate(content.createdAt)}
         </span>:null}
       </div>

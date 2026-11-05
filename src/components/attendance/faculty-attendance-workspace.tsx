@@ -819,7 +819,7 @@ export function FacultyAttendanceWorkspace({
                   </tr>
                   <tr><th scope="col" className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-2">Student Name</th>
                     {calendarDays.map(day=><th scope="col" key={day.dayKey} className={"min-w-16 px-2 py-2 text-center " + (new Date(day.dayKey + "T12:00:00+05:30").getUTCDay() === 0 ? "text-error" : "")} title={day.sessions.map(session=>sessionTime(session)).join(" · ")}>{Number(day.dayKey.slice(-2))}
-                      {day.sessions.length>1?<span className="ml-1 text-[10px] font-normal text-muted-foreground">×{day.sessions.length}</span>:null}</th>)}
+                      {day.sessions.length>1?<span className="ml-1 text-xs font-normal text-muted-foreground">×{day.sessions.length}</span>:null}</th>)}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -1092,7 +1092,7 @@ export function FacultyAttendanceWorkspace({
                       return <tr key={learner.membershipId} className="[content-visibility:auto] [contain-intrinsic-size:auto_72px]">
                         <th scope="row" className="w-1/2 px-3 py-3 text-left align-middle">
                           <div className="flex min-w-0 items-center gap-2">
-                            <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-full border border-border bg-[var(--lms-neutral-100)] text-[10px] font-semibold text-foreground">
+                            <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-full border border-border bg-[var(--lms-neutral-100)] text-xs font-semibold text-foreground">
                               {learnerName(learner).split(/\s+/u).filter(Boolean).slice(0,2).map(part=>Array.from(part)[0] ?? "").join("").toLocaleUpperCase("en-IN")}
                             </span>
                             <div className="min-w-0">

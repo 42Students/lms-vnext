@@ -56,7 +56,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
    </p>
    <div className="mt-5 space-y-6 border-l-2 border-[#dce7ee] pl-5">
     <section aria-label="What you sent">
-     <h3 className="text-[11px] font-bold uppercase tracking-wide text-[#52687b]">What you sent</h3>
+     <h3 className="text-xs font-bold uppercase tracking-wide text-[#52687b]">What you sent</h3>
      <p className="mt-2 text-sm text-body">Subject: <strong>{campaign.subject}</strong></p>
      <details className="mt-2 rounded-lg border border-border px-3 py-2">
       <summary className="min-h-8 cursor-pointer text-sm font-semibold text-link">See the email</summary>
@@ -64,7 +64,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      </details>
     </section>
     <section aria-label="What happened">
-     <h3 className="text-[11px] font-bold uppercase tracking-wide text-[#52687b]">What happened</h3>
+     <h3 className="text-xs font-bold uppercase tracking-wide text-[#52687b]">What happened</h3>
      <p className="mt-2 text-sm text-foreground">
       {campaign.providerAccepted} of {campaign.totalRecipients} intended recipients
       have a persisted provider-acceptance receipt.
@@ -94,7 +94,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      </p>
     </section>
     <section aria-label="What to do now">
-     <h3 className="text-[11px] font-bold uppercase tracking-wide text-[#52687b]">What to do now</h3>
+     <h3 className="text-xs font-bold uppercase tracking-wide text-[#52687b]">What to do now</h3>
      {campaign.failed>0?<p className="mt-2 text-sm text-body">
       {campaign.failed} recorded failed {campaign.failed===1?"attempt needs":"attempts need"}
       investigation. Review recipient status before preparing any new outreach.
@@ -115,7 +115,7 @@ export function TpoCampaignSentStory({campaign,recipients,recipientsReady,hasMor
      </div>
     </section>
     <section aria-label="Everyone it went to">
-     <h3 className="text-[11px] font-bold uppercase tracking-wide text-[#52687b]">
+     <h3 className="text-xs font-bold uppercase tracking-wide text-[#52687b]">
       Everyone it went to · {campaign.totalRecipients} intended
      </h3>
      {!recipientsReady?<p role="status" className="mt-2 text-sm text-body">

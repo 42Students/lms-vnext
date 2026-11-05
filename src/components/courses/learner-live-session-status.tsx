@@ -32,7 +32,7 @@ export function LearnerLiveSessionStatus({startsAt,endsAt}:{
  const date=Date.parse(startsAt);
  return <section role="status" aria-live="polite" className="mt-2 flex min-w-0 flex-wrap items-center gap-3 rounded border-l-2 border-[var(--lms-primary)] bg-primary-subtle px-3 py-3">
   {Number.isFinite(date)?<div aria-hidden="true" className="flex h-14 w-12 shrink-0 flex-col items-center justify-center rounded bg-surface text-center">
-   <span className="text-[10px] font-semibold uppercase">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",month:"short"}).format(date)}</span>
+   <span className="text-xs font-semibold uppercase">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",month:"short"}).format(date)}</span>
    <strong className="text-xl tabular-nums">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric"}).format(date)}</strong>
   </div>:null}
   <span aria-hidden="true" className={"inline-block size-2 shrink-0 rounded-full "+(label==="Live now"?"animate-pulse bg-success":"bg-primary")}/>

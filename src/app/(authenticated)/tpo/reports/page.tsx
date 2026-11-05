@@ -291,7 +291,7 @@ export default async function TpoReportsPage({
          {heading:"YOUR SAVED VIEWS",links:[
           ["Manage report filters","/tpo/reports","Saved report scopes below"]]},
         ] as const).map(group=><section key={group.heading} className="min-w-0 rounded-xl border border-border bg-surface px-4 py-4">
-         <h2 className="mb-2 text-[11px] font-bold tracking-[.07em] text-body">{group.heading}</h2>
+         <h2 className="mb-2 text-xs font-bold tracking-[.07em] text-body">{group.heading}</h2>
          <ul className="divide-y divide-[#edf0f3]">{group.links.map(([label,path,detail])=>
           <li key={path+label}><Link href={reportHref(path,workspace)}
            className="flex min-h-11 min-w-0 items-center justify-between gap-3 py-2 hover:text-[var(--lms-primary-text)]">

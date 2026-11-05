@@ -105,7 +105,7 @@ const RECRUITER_GRID_COLUMNS:readonly TpoGridColumn<RosterGridRow>[]=[
  (lead.designation?" · "+lead.designation:""),
  render:lead=><span className="inline-flex min-w-0 flex-col items-start leading-tight">
   <strong className="max-w-full truncate text-[var(--lms-heading)]">{lead.name||"Unnamed contact"}</strong>
-  {lead.designation?<small className="max-w-full truncate text-[11px] text-muted-foreground">{lead.designation}</small>:null}
+  {lead.designation?<small className="max-w-full truncate text-xs text-muted-foreground">{lead.designation}</small>:null}
  </span>},
  {key:"Status",label:"Status",read:lead=>lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"},
  {key:"Stage",label:"Stage",read:lead=>RECRUITER_STAGE_LEGACY_LABELS[lead.stage],
@@ -127,7 +127,7 @@ const RECRUITER_GRID_COLUMNS:readonly TpoGridColumn<RosterGridRow>[]=[
   sortKind:"date",sortValue:lead=>lead.lastActivityAt?new Date(lead.lastActivityAt).getTime():null,
   render:lead=><span className="inline-flex min-w-0 flex-col items-start leading-tight">
    <span>{recruiterDate(lead.lastActivityAt)}</span>
-   {lead.lastActivityType?<small className="text-[11px] text-muted-foreground">{lead.lastActivityType.replaceAll("_"," ").toLowerCase()}</small>:null}
+   {lead.lastActivityType?<small className="text-xs text-muted-foreground">{lead.lastActivityType.replaceAll("_"," ").toLowerCase()}</small>:null}
   </span>},
  {key:"Next follow-up",label:"Next follow-up",read:lead=>recruiterDate(lead.nextFollowupAt),
   sortKind:"date",sortValue:lead=>lead.nextFollowupAt?new Date(lead.nextFollowupAt).getTime():null},
