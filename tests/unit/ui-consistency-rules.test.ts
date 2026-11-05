@@ -12,7 +12,7 @@ describe("ui consistency rules", () => {
   });
   it("flags hex colors but not anchors or comments", () => {
     expect(rules("src/components/x.css", ".a{color:#0a7c88}")).toEqual(["hex-color"]);
-    expect(rules("src/components/x.tsx", '<a href="#abc">x</a> // #ffffff')).toEqual([]);
+    expect(rules("src/components/x.tsx", '<Link href="#abc">x</Link> // #ffffff')).toEqual([]);
     expect(rules("src/app/globals.css", ":root{--a:#0a7c88}")).toEqual([]);
   });
   it("flags off-scale font sizes and radii", () => {
