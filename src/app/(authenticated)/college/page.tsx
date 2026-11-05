@@ -78,7 +78,7 @@ export default async function CollegeOverviewPage() {
     <div className="min-w-0 max-w-full space-y-[var(--lms-space-6)]">
       <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.dashboard}/>
       <section aria-label="College greeting" className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border pb-5">
-        <h2 className="m-0 text-[26px] font-semibold leading-tight text-[var(--lms-heading)]">{college.name||"Your college"}</h2>
+        <h2 className="m-0 text-[24px] font-semibold leading-tight text-[var(--lms-heading)]">{college.name||"Your college"}</h2>
         <p className="m-0 text-sm font-medium text-muted-foreground">{formatCollegeHeaderDate(new Date())}</p>
       </section>
       <CollegeNeedsAttentionBoard collegeId={college.id} generatedAt={new Date().toISOString()} data={{

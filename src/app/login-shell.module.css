@@ -68,7 +68,7 @@
 }
 .wordmark {
   color: var(--auth-ink);
-  font-size: 23px;
+  font-size: 24px;
   font-weight: 750;
   letter-spacing: -.055em;
   line-height: 1;
@@ -209,7 +209,7 @@
 @media (max-width: 767px) {
   .brandHeader { padding: 20px 22px; }
   .brandRow { gap: 9px; }
-  .wordmark { font-size: 21px; }
+  .wordmark { font-size: 20px; }
   .collegeBrand { width: 100%; justify-content: flex-start; }
   .collegeName { flex: 1; }
   .center { align-items: start; padding: 28px 14px 36px; }
@@ -218,7 +218,7 @@
   .footerLinks { gap: 10px 16px; }
   .card :global(button[type="submit"]) { min-height: var(--lms-touch-target, 44px); }
   .card :global([role="tab"]) { min-height: var(--lms-touch-target, 44px); }
-  .card :global(.login-form > h2) { font-size: 27px; line-height: 36px; }
+  .card :global(.login-form > h2) { font-size: 24px; line-height: 36px; }
   .desktopBackdrop { display: none; }
   .mobileBackdrop { display: block; }
   .footer { padding: 16px 22px 24px; }

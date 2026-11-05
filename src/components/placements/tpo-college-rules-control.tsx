@@ -131,7 +131,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
        <p className="text-sm text-body">Read them as sentences. Click a highlighted value to change it.</p>
        {dirty?<span role="status" aria-live="polite" className="rounded-full border border-warning px-2 py-1 text-xs font-semibold text-warning-text">Unsaved changes</span>:null}
       </div>
-      <div className="divide-y divide-border text-[15px] leading-8 text-foreground">
+      <div className="divide-y divide-border text-[16px] leading-8 text-foreground">
        <p className="py-4 first:pt-2">A student counts as placed when the offer is
         <Select aria-label="Counts as placed when" disabled={busy} value={form.countsAsPlacedAt}
          onChange={event=>update("countsAsPlacedAt",event.target.value)} className={selectClass}>

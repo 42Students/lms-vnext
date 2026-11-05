@@ -97,7 +97,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     <Alert tone="warning">Change request updates are temporarily unavailable. Messages remain available; refresh to try again.</Alert>:null}
   {changeRequests?.party==="COMPANY" && changeRequests.requests.length>0?
     <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-      <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Change requests · {changeRequests.requests.length}</summary>
+      <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[24px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Change requests · {changeRequests.requests.length}</summary>
       <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
       <ScrollCue axis="y" label="Drive change request updates" className="mt-3" viewportClassName="max-h-56"><ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {changeRequests.requests.slice(0,8).map(request=><li key={request.id}

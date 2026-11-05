@@ -37,7 +37,7 @@ export default async function HrRoundsEditorPage({params}:{
    </nav>} />
   <section id="add-round" className="min-w-0 border-b border-border pb-4">
    <details open={rounds.length===0} className="min-w-0">
-    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Add a round</summary>
+    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[24px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Add a round</summary>
     <div className="mt-3 min-w-0">
    <form action={endpoint} method="post" className="grid min-w-0 gap-3 md:grid-cols-2">
     <Input type="hidden" name="action" value="CREATE"/>

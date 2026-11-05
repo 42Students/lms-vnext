@@ -289,7 +289,7 @@
   .month { margin-top: 16px; padding: 0; }
   .monthGrid { overflow-x: auto; }
   .monthDay { min-height: 64px; padding: 4px; }
-  .weekday { font-size: 10px; padding: 4px; }
+  .weekday { font-size: 12px; padding: 4px; }
   .content { min-height: 320px; }
   .hourFrame { -webkit-overflow-scrolling: touch; }
   .agendaDay { padding: 16px 0; }

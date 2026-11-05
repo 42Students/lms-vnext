@@ -227,7 +227,7 @@ export default async function RecruiterCompanyReportsPage({
       </section>
 
       <details className="min-w-0 border-b border-border pb-4 md:pb-6" open={query.status !== "ALL" || pageSize !== 25}>
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[24px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
           Drive report filters
         </summary>
 
@@ -288,7 +288,7 @@ export default async function RecruiterCompanyReportsPage({
       </details>
 
       <details className="min-w-0 border-b border-border pb-4 md:pb-6">
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Current page hiring totals</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:min-h-9 min-[768px]:text-[24px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Current page hiring totals</summary>
         <p className="mt-1 text-xs text-muted-foreground">
           Totals cover only the visible authorized drive rows on this page, not every company drive.
           Outstanding means currently issued offers; these counts may represent multiple offer versions.

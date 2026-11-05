@@ -37,7 +37,7 @@
   border-radius: 10px;
   color: var(--lms-teal-deep);
   background: rgba(38,186,199,.1);
-  font-size: 17px;
+  font-size: 18px;
 }
 .tile > p:first-child {
   grid-area: label;

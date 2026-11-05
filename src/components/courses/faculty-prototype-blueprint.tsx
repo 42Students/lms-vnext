@@ -116,7 +116,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
   </aside>
   <section className="min-w-0 overflow-hidden rounded-[13px] border border-[#e5ebf2]">
    <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e5ebf2] px-[18px] py-4">
-    <div><h2 className="text-[17px] font-bold text-[#1d293f]">
+    <div><h2 className="text-[18px] font-bold text-[#1d293f]">
      {current?"Lesson "+(lessons.findIndex(lesson=>lesson.id===current.id)+1)+": "+current.name:"No lesson selected"}
     </h2>
     <p className="faculty-proto-subtitle mt-1">{items.length} items · {currentLive?"Live":"Draft"}</p></div>

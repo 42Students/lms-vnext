@@ -155,7 +155,7 @@ export function MarketingFeatureGrid({title,items,maxColumns=3}:{title:string;it
        {index%3===0?<><path d="M5 9l11-5 11 5-11 5-11-5zM8 14v8l8 4 8-4v-8"/></>:index%3===1?<><rect x="5" y="6" width="22" height="20" rx="3"/><path d="M10 13h12M10 19h8"/></>:<><circle cx="16" cy="9" r="4"/><path d="M6 27c0-6 4-10 10-10s10 4 10 10"/></>}
       </svg>
      </span>
-     <h3 className="text-[17px] font-semibold text-[var(--lms-heading)]">{item.title}</h3>
+     <h3 className="text-[18px] font-semibold text-[var(--lms-heading)]">{item.title}</h3>
      <p className="mt-3 text-sm leading-6 text-[var(--lms-body-text)]">{item.description}</p>
     </li>)}
    </ul>

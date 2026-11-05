@@ -1,14 +1,14 @@
 .root{display:flex;min-width:0;flex-direction:column;gap:16px;color:#172033;font:14px Lato,Arial,sans-serif}
 .top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
 .top h1{font-size:24px;line-height:1.3;font-weight:700;margin:4px 0}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.07em;color:#5b6b82}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.07em;color:#5b6b82}
 .sub{color:#5b6b82;line-height:1.5;font-size:13px}
 .link,.queueHead a,.answer a{color:#0a7c88;text-decoration:none;font-weight:700;font-size:13px}
 .grid{display:grid;grid-template-columns:minmax(310px,340px) minmax(0,1fr);gap:16px;align-items:start}
 .queue,.detail{background:#fff;border:1px solid #e7ecf2;border-radius:12px;overflow:hidden}
 .queueHead{display:flex;align-items:center;justify-content:space-between;padding:16px;gap:12px}
 .week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:10px 12px;border-block:1px solid #e7ecf2;background:#fbfcfd}
-.day,.chosen{display:flex;min-width:0;flex-direction:column;gap:5px;align-items:center;padding:9px 2px;border:1px solid transparent;border-radius:8px;background:transparent;font-size:11px;color:#5b6b82;cursor:pointer}
+.day,.chosen{display:flex;min-width:0;flex-direction:column;gap:5px;align-items:center;padding:9px 2px;border:1px solid transparent;border-radius:8px;background:transparent;font-size:12px;color:#5b6b82;cursor:pointer}
 .day strong,.chosen strong{font-size:14px;color:#172033}
 .chosen{background:#eff8fa;color:#0a7c88;border-color:#0a7c88}
 .item{display:grid;width:100%;grid-template-columns:10px minmax(0,1fr);gap:12px;text-align:left;padding:14px 16px;border:0;border-bottom:1px solid #eef2f6;background:#fff;font:inherit;cursor:pointer;color:#172033}
@@ -33,7 +33,7 @@
 .primary:disabled,.secondary:disabled{opacity:.5;cursor:not-allowed}
 .empty{display:flex;flex-direction:column;gap:12px;padding:28px 18px;text-align:center;color:#5b6b82;font-size:14px}
 .empty a{color:#0a7c88;font-weight:700;text-decoration:underline}
-.foot{padding:12px 14px;border-top:1px solid #e7ecf2;color:#5b6b82;font-size:11px}
+.foot{padding:12px 14px;border-top:1px solid #e7ecf2;color:#5b6b82;font-size:12px}
 .answer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 16px;border:1px solid #e7ecf2;border-radius:10px;background:#fff}
 .error,.warning,.success{padding:12px 14px;border-radius:8px;background:#fff0ee;color:#b42318}
 .warning{background:#fffbeb;color:#92400e}.success{background:#effcf5;color:#067647}
@@ -53,7 +53,7 @@
 /* New TPO prototype: compact focus list at left, spacious recruiter workspace. */
 .queueHead{align-items:flex-start}
 .queueTitle{display:flex;min-width:0;flex-direction:column;align-items:flex-start;gap:5px}
-.queueTitle strong{font-size:19px;line-height:1.3;color:#172033}
+.queueTitle strong{font-size:20px;line-height:1.3;color:#172033}
 .queueTitle small{font-size:12px;line-height:1.5;color:#617084}
 .personHead{display:flex;min-width:0;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .personHead h2{margin:0}
@@ -88,9 +88,9 @@
 
 /* Compact seven-day strip and routed inbox messages from original TPO Today. */
 .week .day,.week .chosen{gap:2px;padding:6px 2px}
-.week .day>span,.week .chosen>span{font-size:10px;text-transform:uppercase}
-.week .day strong,.week .chosen strong{font-size:15px}
-.week .day small,.week .chosen small{font-size:11px;color:#087e8b}
+.week .day>span,.week .chosen>span{font-size:12px;text-transform:uppercase}
+.week .day strong,.week .chosen strong{font-size:16px}
+.week .day small,.week .chosen small{font-size:12px;color:#087e8b}
 .queueReplies{padding:12px 0;background:#f8fbfc;border-bottom:1px solid #e7ecf2}
 .queueReplies>p{padding:0 16px 8px}
 .replyQueueItem{display:flex;flex-direction:column;gap:3px;padding:10px 16px;text-decoration:none;color:#18263a;border-top:1px solid #edf2f5}

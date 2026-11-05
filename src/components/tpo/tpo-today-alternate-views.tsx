@@ -83,7 +83,7 @@ export function TpoTodayAlternateViews({
   tpoTodayFocusHref(scope,agendaRows[0]?.id)):
   firstAction?messageHref(firstAction.id):tpoTodayFocusHref(scope,due[0]?.id);
  const panel="min-w-0 overflow-hidden rounded-xl border border-[#e7ecf2] bg-white";
- const heading="border-b border-[#e7ecf2] px-4 py-4 text-[17px] font-bold text-[#172033]";
+ const heading="border-b border-[#e7ecf2] px-4 py-4 text-[18px] font-bold text-[#172033]";
  return <div className="min-w-0 space-y-4 text-[#172033]" data-testid={"tpo.today."+view}>
   {view==="brief"?<header className="flex flex-wrap items-center justify-between gap-4">
    <div>

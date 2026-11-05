@@ -28,7 +28,7 @@ export function CollegeAdminWorkspaceTeamOverview({members,tasks}:{
   <div className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-4">
    {metrics.map(item=><div key={item.label} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-3">
     <p className="text-xs font-semibold text-muted-foreground">{item.label}</p>
-    <p className="mt-1 break-words text-[15px] font-semibold text-[var(--lms-heading)]">{item.value}</p>
+    <p className="mt-1 break-words text-[16px] font-semibold text-[var(--lms-heading)]">{item.value}</p>
    </div>)}
   </div>
   {!primary?<div role="status" className="border-y border-warning-border bg-warning-subtle px-3 py-3 text-sm">

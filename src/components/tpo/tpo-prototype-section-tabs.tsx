@@ -21,7 +21,7 @@ export function TpoPrototypeSectionTabs(){
   <div className="flex w-max min-w-full items-center gap-7 px-1">
    {links.map(link=><Link href={link.href} key={link.href}
      aria-current={isActive(link.href)?"page":undefined}
-     className="inline-flex min-h-11 items-center border-b-2 border-transparent px-0.5 pb-2 pt-2 text-[15px] text-[#5b6b82] hover:text-[#0a7c88] aria-[current=page]:border-[#0a7c88] aria-[current=page]:font-bold aria-[current=page]:text-[#0a7c88]">
+     className="inline-flex min-h-11 items-center border-b-2 border-transparent px-0.5 pb-2 pt-2 text-[16px] text-[#5b6b82] hover:text-[#0a7c88] aria-[current=page]:border-[#0a7c88] aria-[current=page]:font-bold aria-[current=page]:text-[#0a7c88]">
       {link.label}
     </Link>)}
   </div>

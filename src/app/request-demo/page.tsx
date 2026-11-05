@@ -94,7 +94,7 @@ export default function RequestDemoPage() {
             </h2>
             <ul className="m-0 list-none p-0">
               {EXPECTATIONS.map(item => (
-                <li key={item} className="flex items-start gap-[10px] py-[7px] text-[15px] leading-6 text-[var(--lms-body-text)]">
+                <li key={item} className="flex items-start gap-[10px] py-[7px] text-[16px] leading-6 text-[var(--lms-body-text)]">
                   <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"
                     className="mt-[1px] shrink-0 text-[var(--lms-primary-text)]"
                     fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

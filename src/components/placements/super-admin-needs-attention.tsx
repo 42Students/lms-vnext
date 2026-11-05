@@ -36,7 +36,7 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
    No drives currently flagged in this view.
   </section>;
  return <section aria-label="Needs attention" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[#faad14] border-l-4 border-l-[#faad14] bg-[#fff1b8] px-4 py-3 shadow-[0_1px_4px_rgba(250,173,20,0.25)]">
-  <h2 className="flex items-center gap-2 text-[15px] font-semibold text-[#613400]">
+  <h2 className="flex items-center gap-2 text-[16px] font-semibold text-[#613400]">
    <svg aria-hidden="true" className="size-4 text-[#ad6800]" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" fill="none"><path d="M10.3 3.8 1.8 18.5a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/><path d="M12 9v5m0 3v.2"/></svg>
    Needs attention ({total})
   </h2>

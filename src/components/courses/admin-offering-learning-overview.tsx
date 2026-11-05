@@ -492,7 +492,7 @@ export function AdminOfferingLearningOverview({
                   className="min-w-0 flex-col"
                   onClick={()=>setFocusedLessonId(lesson.id)}>
                   <p className="text-xs font-semibold text-primary-text">Lesson {index+1}</p>
-                  <h3 className="mt-3 break-words text-[26px] font-semibold leading-[1.25] capitalize text-[var(--lms-heading)]">
+                  <h3 className="mt-3 break-words text-[24px] font-semibold leading-[1.25] capitalize text-[var(--lms-heading)]">
                     {lesson.name.trim()||"Untitled lesson"}
                   </h3>
                   <p className="mt-auto pt-4 text-sm text-muted-foreground">
@@ -536,7 +536,7 @@ export function AdminOfferingLearningOverview({
                       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                         Lesson {lessonIndex + 1}
                       </p>
-                      <h2 className="mt-1 text-[26px] font-semibold capitalize text-[var(--lms-heading)]">
+                      <h2 className="mt-1 text-[24px] font-semibold capitalize text-[var(--lms-heading)]">
                         {lesson.name.trim()||"Untitled lesson"}
                       </h2>
                       <p className="mt-2 text-xs text-muted-foreground">

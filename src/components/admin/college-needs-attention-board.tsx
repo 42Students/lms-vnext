@@ -34,7 +34,7 @@ type AttentionCardProps = {
 function AttentionCard({title,icon,count,href,empty,children,shown,pending}:AttentionCardProps) {
   return <article className="flex min-h-[220px] min-w-0 flex-col rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface">
     <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--lms-canvas-border)] px-4 py-3">
-      <h3 className="flex items-center gap-2 text-[15px] font-semibold text-[var(--lms-heading)]">
+      <h3 className="flex items-center gap-2 text-[16px] font-semibold text-[var(--lms-heading)]">
         <span aria-hidden="true" className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]">{icon}</span>
         {title}
       </h3>

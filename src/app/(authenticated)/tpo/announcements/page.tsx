@@ -196,7 +196,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
      {row.isPinned?<svg role="img" aria-label="Pinned" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="shrink-0 text-primary-text">
       <path d="M15.7 3.3a1 1 0 0 0-1.4 0l-.8.8 1.5 1.5-3.1 3.1-4.2-.4-1.6 1.6 3.4 3.4-5.8 5.8 1.4 1.4 5.8-5.8 3.4 3.4 1.6-1.6-.4-4.2 3.1-3.1 1.5 1.5.8-.8a1 1 0 0 0 0-1.4z"/>
      </svg>:null}
-     <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] font-semibold leading-[30px] text-[var(--lms-heading)] md:text-[22px] md:leading-[32px]">{row.title}</h2>
+     <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] font-semibold leading-[30px] text-[var(--lms-heading)] md:text-[24px] md:leading-[32px]">{row.title}</h2>
      {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<StatusBadge tone="info">New</StatusBadge>:null}
      {tab.data==="yours"&&row.scheduledAt&&new Date(row.scheduledAt)>new Date()?<StatusBadge tone="warning">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</StatusBadge>:null}
      {row.expiresAt&&new Date(row.expiresAt)<=new Date()?<StatusBadge tone="neutral">Ended</StatusBadge>:null}

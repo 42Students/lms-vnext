@@ -346,7 +346,7 @@
   /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */
   :where(main, [data-slot="canvas"], [data-slot="page-canvas"])
     :where(h2):not(:where([data-unskin], [data-unskin] *)) {
-    font-size: 22px !important;
+    font-size: 24px !important;
     line-height: 32px !important;
   }
   /* Legacy refs: components___typo.scss:3-40; old-lms-shell-spec.md:27 */

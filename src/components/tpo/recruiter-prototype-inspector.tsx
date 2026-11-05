@@ -39,7 +39,7 @@ export function TpoRecruiterPrototypeInspector({
   <div className="flex items-start gap-3">
    <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle font-semibold text-primary-text">{initials}</span>
    <div className="min-w-0 flex-1">
-    <h2 className="break-words text-[17px] font-bold text-foreground">{lead.name}</h2>
+    <h2 className="break-words text-[18px] font-bold text-foreground">{lead.name}</h2>
     <p className="mt-1 text-xs text-body">{[lead.designation,lead.companyName].filter(Boolean).join(" · ")||"Recruiter contact"}</p>
    </div>
    <button type="button" onClick={onDismiss} aria-label="Close recruiter details"
