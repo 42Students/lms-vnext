@@ -166,6 +166,21 @@ function conflictsIn(body) {
   return out;
 }
 
+
+// !important is the standard tool inside print and reduced-motion overrides, so those blocks are not counted.
+function exemptImportantRanges(source) {
+  const ranges = [];
+  const re = /@media[^{]*(?:print|prefers-reduced-motion)[^{]*\{/g;
+  let m;
+  while ((m = re.exec(source))) {
+    let d = 1, j = m.index + m[0].length;
+    while (j < source.length && d > 0) { if (source[j] === "{") d++; else if (source[j] === "}") d--; j++; }
+    ranges.push([m.index, j]);
+    re.lastIndex = j;
+  }
+  return ranges;
+}
+
 // ---------- scanning ----------
 /** Returns [{rule, line, snippet}] for one file. */
 export function scanFile(path, rawSource) {
@@ -222,11 +237,12 @@ export function scanFile(path, rawSource) {
   }
 
   // --- css declarations (real css files, css strings in tsx, and style={{}} objects)
+  const importantRanges = isCss ? exemptImportantRanges(source) : null;
   const decls = [...declarationsOf(source), ...(isCode && !isCss ? styleObjectsToCss(source) : [])];
   for (const [prop, value, at] of decls) {
     const v = value.replace(/\s*!important\s*$/i, "");
     const isVar = /^var\(/.test(v);
-    if (/!important/i.test(value)) add("important", at, `${prop}:${value}`);
+    if (/!important/i.test(value) && !(importantRanges && importantRanges.some(([a, b]) => at >= a && at < b))) add("important", at, `${prop}:${value}`);
     switch (prop) {
       case "font-size": {
         if (isVar || /^(inherit|initial|unset)$/.test(v) || v === "100%" || v === "1em" || /^0(px)?$/.test(v)) break;

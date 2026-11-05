@@ -14,25 +14,32 @@ Rules live in `scripts/ui-consistency-rules.mjs`. The debt is in `UI-CONSISTENCY
 
 New code may not add a violation. If a shared component is missing something, extend the component, not the page.
 
-## State on 2026-11-06
+## Rules (guarded by `npm run ux:consistency`)
 
-Burned down from 2,037 violations to 178: hex colors 1,505 to 4, raw controls 459 to 43, radii 61 to 1, font sizes 11 to 6, font families 1 to 0. The 4 hex, the 6 sizes and the 1 radius are legacy values pinned by tests (sidebar rail, route-progress dots, mobile footer, historic logomark). Raw inputs, selects, textareas, tables and loading/error headings now use the shared components. All raw buttons use `Button`; 124 of them use `variant="bare"` (behaviour only, no chrome) and are tracked by the `button-bare` rule until they get a real variant or a Tab/MenuItem/Chip component.
+Raw elements: raw-control (button/input/select/textarea/table/h1), raw-heading (h2-h6), raw-link (a, styled next/link), raw-image, raw-label, raw-details, button-bare, link-bare. Colors: hex-color, color-literal, palette-class. Type: font-size/family/weight, line-height, letter-spacing. Shape and space: radius, border-width, opacity, spacing grid, size grid, shadow, z-index. Behaviour: focus-style-off (one focus-ring utility), important, breakpoint-off, motion-literal, keyframes-local, handrolled-skeleton, class-conflict, adhoc-format, icon-size-off. Scales live in `scripts/ui-consistency-rules.mjs`; tokens in `src/app/globals.css`; keyframes in `src/styles/motion.css`.
 
-Semantic color tokens were added to `globals.css` (`--lms-text-body`, `--lms-text-muted`, `--lms-border`, `--lms-border-strong`, success/error/warning/info/purple surface and strong tokens). `<input type="hidden">` is exempt from `raw-control`. A literal hex that must stay (native colour input) takes a `ui-consistency-allow-hex` comment on the same or previous line.
+## Shared building blocks
+
+Button (primary, secondary, ghost, danger, link, chip, menu-item; sizes sm, md, lg, icon, inline), ButtonLink, TextLink, Heading (h1-h6), Label (field, choice), Table, Disclosure, SkeletonBlock, Img, Input, Select, Textarea, Checkbox, Radio, PageHeader. `cx()` merges conflicting Tailwind classes (tailwind-merge) so a later class wins and no `!important` is needed. Dates and numbers: `formatDateTimeIst`, `formatDateIst`, `formatDateWith`, the shared `ist*Formatter` instances, `createDateFormatter`, `formatNumberIN`, `createNumberFormatter`.
+
+## State on 2026-11-06 (end of the overnight pass)
+
+Burned down from 9,000+ violations across 23+ categories to a short tracked remainder. Zero in every rule except:
+
+- `important`: about 660 `!important` declarations in CSS files (legacy skins and CSS modules). Every `!important` utility in TSX is gone. Removing the CSS ones needs the cascade checked on real pages, so they wait for the visual pass.
+- `link-bare` and `button-bare`: about 360 links and buttons that are tab/pill/segment navigation or cards styled per page (most with a conditional class). They need a designed `Tabs`/`PillLink`/card composition each; the guard tracks them so they can only shrink.
+- `handrolled-skeleton`: a handful of conditional or live-status pulses.
+
+No exemptions: the shell, sidebar and top bar are held to the same rules (`UI-CONSISTENCY-EXEMPTIONS.json` is empty). Their pinned tests assert the on-system values; the legacy reference file `docs/design/old-lms-shell.css` is untouched.
+
+Next: run `npm run ux:audit` against a running app for each role (it reads computed styles of every visible element and flags anything off the scales), then do the visual pass.
 
 ## Overnight checklist (started 2026-11-06 01:30 IST)
 
-Tick items as they land on `main`. One commit per category.
-
-- [ ] 1. Mechanical snaps: weights, line heights, letter spacing, opacity, border widths, radii, spacing grid, named breakpoints, motion durations
-- [ ] 2. Theme tokens: breakpoints (lg = 992px), named shadows and radii point at `--lms-*` tokens
-- [ ] 3. Colors: rgba()/hsl()/named colors and Tailwind palette classes to `--lms-*` tokens
-- [ ] 4. Shadows, z-index to tokens; all `@keyframes` moved to `src/styles/motion.css`
-- [ ] 5. Shared `Heading`, `TextLink`, `Image`; convert raw `<h2>-<h6>`, `<a>`, `<img>`
-- [ ] 6. Bare buttons to real variants; last raw controls and prototype tables
-- [ ] 7. Remove `!important`
-- [ ] 8. Prototype skins (TPO, recruiter, mentor, faculty) onto shared components
-- [ ] 9. Legacy-pinned tests updated to the new values; baseline at zero
-- [ ] 10. Computed-style audit script (every page, every role)
-- [ ] 11. Full lint, unit and style tests; CI read; fix regressions
-- [ ] 12. Morning summary
+- [x] Mechanical snaps, theme tokens, colors, shadows, z-index, keyframes
+- [x] Shared Heading, TextLink, ButtonLink, Img, Label, SkeletonBlock; raw elements converted
+- [x] Focus-ring unification, size grid, icon sizes, tables, details, shell exemptions removed
+- [x] Dates and numbers through shared formatters; cx merges conflicting classes; TSX `!important` removed
+- [x] Runtime computed-style audit script (`npm run ux:audit`)
+- [ ] CSS `!important` (needs the visual pass), bare buttons and links (need designed components)
+- [ ] Visual pass on a running app

@@ -39,4 +39,7 @@ describe("ui consistency rules: extended categories", () => {
   it("applies css checks to style objects", () => {
     expect(rules("src/x.tsx", "<div style={{ fontSize: 15, padding: 9, color: 'var(--lms-heading)' }} />")).toEqual(["font-size-off-scale", "spacing-off-grid"]);
   });
+  it("does not count !important inside print or reduced-motion blocks", () => {
+    expect(rules("src/x.css", "a{color:var(--x)!important}@media print{b{display:none!important}}@media (prefers-reduced-motion: reduce){c{animation:none!important}}")).toEqual(["important"]);
+  });
 });
